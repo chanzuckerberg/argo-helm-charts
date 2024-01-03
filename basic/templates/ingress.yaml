@@ -1,4 +1,4 @@
-{{- $integrationSecret := (lookup "v1" "Secret" .Release.Namespace "integration-secret") | default dict }}
+{{- $integrationSecret := (lookup "v1" "Secret" .Release.Namespace "integration-secret") }}
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "basic.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
