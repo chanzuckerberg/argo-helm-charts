@@ -1,5 +1,4 @@
-{{- $integrationSecret := (lookup "v1" "Secret" .Release.Namespace "integration-secret") }}
-{{- $subnets = index $integrationSecret.data "subnets"}}
+{{- $integrationSecret := (lookup "v1" "Secret" .Release.Namespace "integration-secret") | default dict }}
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "basic.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
@@ -23,10 +22,8 @@ metadata:
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
-    subnets: {{ $integrationSecret.data.subnets | b64enc | quote }}
-    subnets: {{ $subnets | quote }}
+    subnets: {{ $integrationSecret.data.subnets | b64dec | quote }}
   {{- end }}
-spec:integrationSintegrationSecret
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
