@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  basic:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-01-03T16:59:26.75081-05:00"
+    description: A Helm chart for Kubernetes
+    digest: 3218a5f3f867398fda8d9d260c757538d5ed704241dad0e74a883d99289c0952
+    name: basic
+    type: application
+    urls:
+    - git@github.com:chanzuckerberg/argo-helm-charts.git/index/basic-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-01-03T16:59:26.749963-05:00"
