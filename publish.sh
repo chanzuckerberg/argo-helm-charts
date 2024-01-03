@@ -1,3 +1,3 @@
 #!/bin/sh
-helm package basic --destination index
-helm repo index index --url git@github.com:chanzuckerberg/argo-helm-charts.git/index
+helm package basic --destination .
+helm repo index . --url https://github.com/chanzuckerberg/argo-helm-charts
