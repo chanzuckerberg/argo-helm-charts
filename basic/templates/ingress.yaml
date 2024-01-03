@@ -1,5 +1,5 @@
 {{- $integrationSecret := (lookup "v1" "Secret" .Release.Namespace "integration-secret") }}
-{{- $subnets = index $existingSecret.data "subnets"}}
+{{- $subnets = index $integrationSecret.data "subnets"}}
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "basic.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
