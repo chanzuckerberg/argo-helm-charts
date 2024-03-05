@@ -1,3 +1,4 @@
+# Service defaults
 global:
   replicaCount: 1
 
@@ -90,17 +91,16 @@ global:
   tolerations: []
 
   affinity: {}
-services:
-  service1:
-    autoscaling:
-      enabled: true
-      minReplicas: 2
-      maxReplicas: 10
-    replicaCount: 2
-  service2:
-    autoscaling:
-      enabled: false
-    replicaCount: 57
-  # - name: service1
-  #   enabled: true
+
+# Service overrides
+services: {}
+  # service1:
+  #   autoscaling:
+  #     enabled: true
+  #     minReplicas: 2
+  #     maxReplicas: 10
   #   replicaCount: 2
+  # service2:
+  #   autoscaling:
+  #     enabled: false
+  #   replicaCount: 57
