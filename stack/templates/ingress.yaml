@@ -6,7 +6,7 @@
   {{- $service = set $service "Values" $values -}}
 {{- with $service -}}
 ---
-{{- if .Values.ingress.enabled -}}
+{{ if .Values.ingress.enabled }}
 {{- $fullName := include "service.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
