@@ -13,6 +13,8 @@ metadata:
   name: {{ include "service.fullname" . }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
+  ananotations:
+    {{- include "stack.annotations" $service | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

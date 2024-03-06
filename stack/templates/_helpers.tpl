@@ -51,6 +51,10 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
+{{- define "stack.annotations" -}}
+{{ toYaml .Values.annotations }}
+{{- end }}
+
 {{- define "service.labels" -}}
 {{ include "stack.labels" . }}
 {{ include "service.selectorLabels" . }}
