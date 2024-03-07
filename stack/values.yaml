@@ -13,7 +13,11 @@ global:
   fullnameOverride: ""
 
 
+  # Global annotations to add to all resources
+  annotations: {}
+  # Annotations to add to pods
   podAnnotations: {}
+  # Labels to add to pods
   podLabels: {}
 
   serviceAccount:
