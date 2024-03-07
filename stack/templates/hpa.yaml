@@ -5,8 +5,8 @@
   {{- $values = set $values "name" $serviceName -}}
   {{- $service = set $service "Values" $values -}}
 {{- with $service -}}
----
 {{- if .Values.autoscaling.enabled }}
+---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -40,6 +40,5 @@ spec:
           averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
----
 {{- end }}
 {{- end }}
