@@ -46,7 +46,7 @@ spec:
   {{- end }}
   rules:
     {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: {{ $service.Values.ingress.host | quote }}
       http:
         paths:
           {{- range .paths }} 
