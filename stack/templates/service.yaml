@@ -1,0 +1,28 @@
+{{ $global := . }}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities -}}
+  {{- $values := mergeOverwrite $global.Values.global $serviceValues -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $service = set $service "Values" $values -}}
+{{- with $service -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- include "stack.annotations" $service | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "service.selectorLabels" . | nindent 4 }}
+---
+{{- end }}
+{{- end }}

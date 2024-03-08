@@ -1,9 +1,19 @@
+{{ $global := . }}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities -}}
+  {{- $values := mergeOverwrite $global.Values.global $serviceValues -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $service = set $service "Values" $values -}}
+{{- with $service -}}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "basic.fullname" . }}
+  name: {{ include "service.fullname" . }}
   labels:
-    {{- include "basic.labels" . | nindent 4 }}
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- include "stack.annotations" $service | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -11,7 +21,7 @@ spec:
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      {{- include "basic.selectorLabels" . | nindent 6 }}
+      {{- include "service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,8 +29,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "basic.labels" . | nindent 8 }}
-	{{- with .Values.podLabels }}
+        {{- include "service.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -28,7 +38,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "basic.serviceAccountName" . }}
+      serviceAccountName: {{ include "service.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -71,3 +81,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+{{- end }}
+{{- end }}

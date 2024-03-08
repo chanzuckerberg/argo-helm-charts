@@ -1,0 +1,141 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: basic
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: basic
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: basic-0.1.0
+  name: basic
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/instance: basic
+    app.kubernetes.io/name: basic
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: basic
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: basic
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: basic-0.1.0
+  name: basic
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: basic
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: basic
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: basic
+        app.kubernetes.io/version: 1.16.0
+        helm.sh/chart: basic-0.1.0
+    spec:
+      containers:
+      - image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        name: basic
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        resources:
+          limits:
+            cpu: 1
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext: {}
+      securityContext: {}
+      serviceAccountName: default
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app.kubernetes.io/instance: basic
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: basic
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: basic-0.1.0
+  name: basic
+spec:
+  maxReplicas: 10
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: basic
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app.kubernetes.io/instance: basic
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: basic
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: basic-0.1.0
+  name: basic
+spec:
+  rules:
+  - host: chart-example.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: basic
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    helm.sh/hook: test
+  labels:
+    app.kubernetes.io/instance: basic
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: basic
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: basic-0.1.0
+  name: basic-test-connection
+spec:
+  containers:
+  - args:
+    - basic:80
+    command:
+    - wget
+    image: busybox
+    name: wget
+  restartPolicy: Never

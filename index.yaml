@@ -3,7 +3,17 @@ entries:
   basic:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-01-03T17:10:18.615806-05:00"
+    created: "2024-03-08T10:04:51.968997-05:00"
+    description: A Helm chart for Kubernetes
+    digest: 2e5370fa3f7de24aab702899a258ca56e69b05de3fa479504fa12b5fe20a63c1
+    name: basic
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/blob/main/basic-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-03-08T10:04:51.968763-05:00"
     description: A Helm chart for Kubernetes
     digest: 3de87a705905376bc85181c7326856d85a428fbb3f953433cfd0d3e55e994af6
     name: basic
@@ -11,4 +21,15 @@ entries:
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/blob/main/basic-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-03T17:10:18.612104-05:00"
+  stack:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-03-08T10:04:51.969239-05:00"
+    description: A Helm chart for Happy Stack
+    digest: 36bab6f2359155c771b6346a46b70293b3912b3a8088cbdd6a9814acd7d06847
+    name: stack
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/blob/main/stack-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-03-08T10:04:51.968398-05:00"
