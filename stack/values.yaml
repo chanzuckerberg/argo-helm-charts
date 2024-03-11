@@ -24,7 +24,7 @@ global:
     type: ClusterIP
     port: 80
 
-  initContainers: {}
+  initContainers: []
   sidecars: []
 
 
@@ -112,6 +112,10 @@ services: {}
   #       image: "sidecar1:latest"
   #     - name: sidecar2
   #       image: "sidecar2:latest"
+  #   initContainers:
+  #     - name: initContainer1
+  #       image: "alpine:latest"
+  #       command: ["echo", "Hello World"]
   # service2:
   #   autoscaling:
   #     enabled: true
