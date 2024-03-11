@@ -96,6 +96,8 @@ global:
 
   affinity: {}
 
+  initContainers: {}
+
 # Service overrides
 services: {}
   # service1:
