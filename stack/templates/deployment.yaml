@@ -1,9 +1,10 @@
 {{ $global := . }}
 {{ range $serviceName, $serviceValues := .Values.services }}
-  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities -}}
-  {{- $values := mergeOverwrite $global.Values.global $serviceValues -}}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $serviceName -}}
-  {{- $service = set $service "Values" $values -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service -}}
 ---
 apiVersion: apps/v1
@@ -65,6 +66,9 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        {{- with .Values.sidecars }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- with .Values.initContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}
