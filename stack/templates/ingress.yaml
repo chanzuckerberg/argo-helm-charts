@@ -1,9 +1,10 @@
 {{ $global := . }}
 {{ range $serviceName, $serviceValues := .Values.services }}
-  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities -}}
-  {{- $values := mergeOverwrite $global.Values.global $serviceValues -}}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $serviceName -}}
-  {{- $service = set $service "Values" $values -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service -}}
 ---
 {{ if .Values.ingress.enabled }}
@@ -55,15 +56,10 @@ spec:
             pathType: {{ .pathType }}
             {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ $fullName }}
                 port:
                   number: {{ $svcPort }}
-              {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
-              {{- end }}
           {{- end }}
     {{- end }}
 {{- end }}

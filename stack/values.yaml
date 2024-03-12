@@ -2,15 +2,30 @@
 global:
   replicaCount: 1
 
+  # Settings for the primary container
   image:
     repository: nginx
     pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
 
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
+    
+  resources:
+    limits:
+      cpu: 1
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  initContainers: []
+  sidecars: []
 
 
   # Global annotations to add to all resources
@@ -42,10 +57,6 @@ global:
     # runAsNonRoot: true
     # runAsUser: 1000
 
-  service:
-    type: ClusterIP
-    port: 80
-
   ingress:
     enabled: true
     className: ""
@@ -61,14 +72,6 @@ global:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-
-  resources:
-    limits:
-      cpu: 1
-      memory: 1024Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
 
   autoscaling:
     enabled: true
@@ -96,8 +99,6 @@ global:
 
   affinity: {}
 
-  initContainers: {}
-
 # Service overrides
 services: {}
   # service1:
@@ -106,7 +107,23 @@ services: {}
   #     minReplicas: 2
   #     maxReplicas: 10
   #   replicaCount: 2
+  #   sidecars:
+  #     - name: sidecar1
+  #       image: "sidecar1:latest"
+  #     - name: sidecar2
+  #       image: "sidecar2:latest"
+  #   initContainers:
+  #     - name: initContainer1
+  #       image: "alpine:latest"
+  #       command: ["echo", "Hello World"]
   # service2:
   #   autoscaling:
-  #     enabled: false
-  #   replicaCount: 57
+  #     enabled: true
+  #     minReplicas: 2
+  #     maxReplicas: 10
+  #   replicaCount: 2
+  #   sidecars:
+  #     - name: sidecar3
+  #       image: sidecar3:latest
+  #     - name: sidecar4
+  #       image: sidecar4:latest
