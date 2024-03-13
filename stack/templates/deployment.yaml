@@ -71,10 +71,12 @@ spec:
             {{- if ne (trim .Values.appConfig.envSecretName) "" }}
             - secretRef:
                 name: {{ .Values.appConfig.envSecretName }}
+                optional: true
             {{- end }}
             {{- if ne (trim .Values.appConfig.stackSecretName) "" }}
             - secretRef:
                 name: {{ .Values.appConfig.stackSecretName }}
+                optional: true
             {{- end }}
           {{- end }}
         {{- range $i, $container := .Values.sidecars }}
@@ -85,10 +87,12 @@ spec:
             {{- if ne (trim $service.Values.appConfig.envSecretName) "" }}
             - secretRef:
                 name: {{ $service.Values.appConfig.envSecretName }}
+                optional: true
             {{- end }}
             {{- if ne (trim $service.Values.appConfig.stackSecretName) "" }}
             - secretRef:
                 name: {{ $service.Values.appConfig.stackSecretName }}
+                optional: true
             {{- end }}
           {{- end }}
         {{- end }}
@@ -102,10 +106,12 @@ spec:
             {{- if ne (trim $service.Values.appConfig.envSecretName) "" }}
             - secretRef:
                 name: {{ $service.Values.appConfig.envSecretName }}
+                optional: true
             {{- end }}
             {{- if ne (trim $service.Values.appConfig.stackSecretName) "" }}
             - secretRef:
                 name: {{ $service.Values.appConfig.stackSecretName }}
+                optional: true
             {{- end }}
           {{- end }}
       {{- end }}
