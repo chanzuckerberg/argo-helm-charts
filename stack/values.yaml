@@ -27,6 +27,11 @@ global:
   initContainers: []
   sidecars: []
 
+  appConfig:
+    envSecretName: "" # App environment level configuration secret name
+    stackSecretName: "" # Stack level configuration secret name
+
+
 
   # Global annotations to add to all resources
   annotations: {}
