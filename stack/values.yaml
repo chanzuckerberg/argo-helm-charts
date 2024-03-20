@@ -111,6 +111,7 @@ services: {}
   #     enabled: true
   #     minReplicas: 2
   #     maxReplicas: 10
+  #     maxUnavailable: 1
   #   replicaCount: 2
   #   sidecars:
   #     - name: sidecar1
@@ -126,6 +127,7 @@ services: {}
   #     enabled: true
   #     minReplicas: 2
   #     maxReplicas: 10
+  #     maxUnavailable: 1
   #   replicaCount: 2
   #   sidecars:
   #     - name: sidecar3
