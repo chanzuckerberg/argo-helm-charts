@@ -114,7 +114,7 @@ spec:
           {{- end }}
       {{- end }}
       {{- end }}
-
+      dnsPolicy: {{ .Values.dnsPolicy }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
