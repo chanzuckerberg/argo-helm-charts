@@ -35,7 +35,17 @@ global:
     successThreshold: 1
     timeoutSeconds: 1
     initialDelaySeconds: 30
-  startupProbe: {}
+  startupProbe:
+    enabled: false
+    failureThreshold: 3
+    successThreshold: 1
+    initialDelaySeconds: 0
+    timeoutSeconds: 1
+    periodSeconds: 10
+    exec:
+      command:
+        - ps
+        - '-ef'
     
   resources:
     limits:
@@ -148,6 +158,8 @@ services: {}
   #       image: "alpine:latest"
   #       command: ["echo", "Hello World"]
   # service2:
+  #   startupProbe:
+  #     enabled: true
   #   autoscaling:
   #     enabled: true
   #     minReplicas: 2
