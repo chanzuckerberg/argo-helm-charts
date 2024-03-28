@@ -8,6 +8,9 @@ global:
     pullPolicy: IfNotPresent
     tag: "latest"
 
+  args: []
+  command: []
+
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -142,6 +145,8 @@ global:
 # Service overrides
 services: {}
   # service1:
+  #   args: ["arg1", "arg2"]
+  #   command: ["command1", "command2"]
   #   autoscaling:
   #     enabled: true
   #     minReplicas: 2
