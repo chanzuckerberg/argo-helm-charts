@@ -89,10 +89,12 @@ envFrom:
 {{- if ne (trim .Values.appConfig.envContextConfigMapName) "" }}
 - configMapRef:
     name: {{ .Values.appConfig.envContextConfigMapName }}
+    optional: true
 {{- end }}
 {{- if ne (trim .Values.appConfig.stackContextConfigMapName) "" }}
 - configMapRef:
     name: {{ .Values.appConfig.stackContextConfigMapName }}
+    optional: true
 {{- end }}
 {{- if ne (trim .Values.appConfig.envSecretName) "" }}
 - secretRef:
