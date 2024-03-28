@@ -63,10 +63,10 @@ global:
   sidecars: []
 
   appConfig:
+    envContextConfigMapName: "" # App environment level configuration configmap name
+    stackContextConfigMapName: "" # Stack level configuration configmap name
     envSecretName: "" # App environment level configuration secret name
     stackSecretName: "" # Stack level configuration secret name
-
-
 
   # Global annotations to add to all resources
   annotations: {}
