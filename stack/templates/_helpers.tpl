@@ -82,3 +82,19 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{- define "service.configuration" -}}
+{{- if and (ne (trim .Values.appConfig.envSecretName) "") (ne (trim .Values.appConfig.envSecretName) "") -}}
+envFrom:
+{{- if ne (trim .Values.appConfig.envSecretName) "" }}
+- secretRef:
+    name: {{ .Values.appConfig.envSecretName }}
+    optional: true
+{{- end }}
+{{- if ne (trim .Values.appConfig.stackSecretName) "" }}
+- secretRef:
+    name: {{ .Values.appConfig.stackSecretName }}
+    optional: true
+{{- end }}
+{{- end }}
+{{- end }}
