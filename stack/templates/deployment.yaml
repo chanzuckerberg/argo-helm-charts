@@ -74,7 +74,7 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- include "service.configuration" . | nindent 12}}
+          {{- include "service.configuration" . | nindent 10}}
         {{- range $i, $container := .Values.sidecars }}
         {{- with omit $container "envFrom" }}
         - {{- toYaml . | nindent 10 }}
