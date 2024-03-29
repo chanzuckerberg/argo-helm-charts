@@ -142,6 +142,10 @@ global:
 
   affinity: {}
 
+  podAntiAffinity: {}
+
+  topologySpreadConstraints: []
+
 # Service overrides
 services: {}
   # service1:

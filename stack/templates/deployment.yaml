@@ -101,6 +101,35 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.podAntiAffinity }}
+      {{- with .Values.podAntiAffinity }}
+      podAntiAffinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- else }}
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "service.selectorLabels" . | nindent 18 }}
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- else }}
+      topologySpreadConstraints:
+        - maxSkew: 2
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              {{- include "service.selectorLabels" . | nindent 14 }}
+      {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
