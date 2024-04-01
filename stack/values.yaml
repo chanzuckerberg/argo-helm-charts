@@ -16,6 +16,7 @@ global:
   fullnameOverride: ""
 
   dnsPolicy: ClusterFirst
+  restartPolicy: Always
 
   # Probes for the primary container
   livenessProbe:
