@@ -89,6 +89,7 @@ spec:
       {{- end }}
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
+      restartPolicy: {{ .Values.restartPolicy }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
