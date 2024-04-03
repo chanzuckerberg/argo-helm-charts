@@ -86,16 +86,6 @@ Create the name of the service account to use
 {{- define "service.configuration" -}}
 {{- if or (or (or (ne (trim .Values.appConfig.envSecretName) "") (ne (trim .Values.appConfig.envSecretName) "")) (ne (trim .Values.appConfig.envContextConfigMapName) "")) (ne (trim .Values.appConfig.stackContextConfigMapName) "") -}}
 envFrom:
-{{- if ne (trim .Values.appConfig.envContextConfigMapName) "" }}
-- configMapRef:
-    name: {{ .Values.appConfig.envContextConfigMapName }}
-    optional: true
-{{- end }}
-{{- if ne (trim .Values.appConfig.stackContextConfigMapName) "" }}
-- configMapRef:
-    name: {{ .Values.appConfig.stackContextConfigMapName }}
-    optional: true
-{{- end }}
 {{- if ne (trim .Values.appConfig.envSecretName) "" }}
 - secretRef:
     name: {{ .Values.appConfig.envSecretName }}
@@ -104,6 +94,16 @@ envFrom:
 {{- if ne (trim .Values.appConfig.stackSecretName) "" }}
 - secretRef:
     name: {{ .Values.appConfig.stackSecretName }}
+    optional: true
+{{- end }}
+{{- if ne (trim .Values.appConfig.envContextConfigMapName) "" }}
+- configMapRef:
+    name: {{ .Values.appConfig.envContextConfigMapName }}
+    optional: true
+{{- end }}
+{{- if ne (trim .Values.appConfig.stackContextConfigMapName) "" }}
+- configMapRef:
+    name: {{ .Values.appConfig.stackContextConfigMapName }}
     optional: true
 {{- end }}
 {{- end }}
