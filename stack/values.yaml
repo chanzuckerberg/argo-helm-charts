@@ -72,11 +72,11 @@ global:
 
   appSecrets:
     envSecret: # App environment level configuration secret
-      kubeSecretName: ""
-      remoteRefKey: ""
+      secretName: ""
+      secretKey: ""
     stackSecret: # Stack level configuration secret
-      kubeSecretName: ""
-      remoteRefKey: ""
+      secretName: ""
+      secretKey: ""
 
   # Global annotations to add to all resources
   annotations: {}
