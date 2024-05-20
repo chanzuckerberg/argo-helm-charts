@@ -66,11 +66,17 @@ global:
   initContainers: []
   sidecars: []
 
-  appConfig:
+  appContext:
     envContextConfigMapName: "" # App environment level configuration configmap name
     stackContextConfigMapName: "" # Stack level configuration configmap name
-    envSecretName: "" # App environment level configuration secret name
-    stackSecretName: "" # Stack level configuration secret name
+
+  appSecrets:
+    envSecret: # App environment level configuration secret
+      kubeSecretName: ""
+      remoteRefKey: ""
+    stackSecret: # Stack level configuration secret
+      kubeSecretName: ""
+      remoteRefKey: ""
 
   # Global annotations to add to all resources
   annotations: {}
