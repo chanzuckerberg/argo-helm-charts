@@ -85,9 +85,9 @@ Create the name of the service account to use
 
 {{- define "service.configuration" -}}
 
-{{- if .Values.additionalEnvVars }}
+{{- if .Values.env }}
 env:
-{{- range $i, $value := .Values.additionalEnvVars }}
+{{- range $i, $value := .Values.env }}
 - name: {{ $value.name }}
   value: {{ $value.value }}
 {{- end }}
