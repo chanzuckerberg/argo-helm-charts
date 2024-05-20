@@ -97,23 +97,23 @@ env:
 envFrom:
 {{- if ne (trim .Values.appConfig.envSecretName) "" }}
 - secretRef:
-  name: {{ .Values.appConfig.envSecretName }}
-  optional: true
+    name: {{ .Values.appConfig.envSecretName }}
+    optional: true
 {{- end }}
 {{- if ne (trim .Values.appConfig.stackSecretName) "" }}
 - secretRef:
-  name: {{ .Values.appConfig.stackSecretName }}
-  optional: true
+    name: {{ .Values.appConfig.stackSecretName }}
+    optional: true
 {{- end }}
 {{- if ne (trim .Values.appConfig.envContextConfigMapName) "" }}
 - configMapRef:
-  name: {{ .Values.appConfig.envContextConfigMapName }}
-  optional: true
+    name: {{ .Values.appConfig.envContextConfigMapName }}
+    optional: true
 {{- end }}
 {{- if ne (trim .Values.appConfig.stackContextConfigMapName) "" }}
 - configMapRef:
-  name: {{ .Values.appConfig.stackContextConfigMapName }}
-  optional: true
+    name: {{ .Values.appConfig.stackContextConfigMapName }}
+    optional: true
 {{- end }}
 {{- end }}
 {{- end }}
