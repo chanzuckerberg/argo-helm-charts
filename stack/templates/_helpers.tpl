@@ -84,6 +84,15 @@ Create the name of the service account to use
 {{- end }}
 
 {{- define "service.configuration" -}}
+
+{{- if .Values.env }}
+env:
+{{- range $i, $value := .Values.env }}
+- name: {{ $value.name }}
+  value: {{ $value.value }}
+{{- end }}
+{{- end }}
+
 {{- if or (or (or (ne (trim .Values.appConfig.envSecretName) "") (ne (trim .Values.appConfig.envSecretName) "")) (ne (trim .Values.appConfig.envContextConfigMapName) "")) (ne (trim .Values.appConfig.stackContextConfigMapName) "") -}}
 envFrom:
 {{- if ne (trim .Values.appConfig.envSecretName) "" }}
