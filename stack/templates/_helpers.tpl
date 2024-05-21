@@ -93,26 +93,26 @@ env:
 {{- end }}
 {{- end }}
 
-{{- if or (or (or (ne (trim .Values.appConfig.envSecretName) "") (ne (trim .Values.appConfig.envSecretName) "")) (ne (trim .Values.appConfig.envContextConfigMapName) "")) (ne (trim .Values.appConfig.stackContextConfigMapName) "") -}}
+{{- if or (or (or (ne (trim .Values.appSecrets.envSecret.secretName) "") (ne (trim .Values.appSecrets.envSecret.secretName) "")) (ne (trim .Values.appContext.envContextConfigMapName) "")) (ne (trim .Values.appContext.stackContextConfigMapName) "") -}}
 envFrom:
-{{- if ne (trim .Values.appConfig.envSecretName) "" }}
+{{- if ne (trim .Values.appSecrets.envSecret.secretName) "" }}
 - secretRef:
-    name: {{ .Values.appConfig.envSecretName }}
+    name: {{ .Values.appSecrets.envSecret.secretName }}
     optional: true
 {{- end }}
-{{- if ne (trim .Values.appConfig.stackSecretName) "" }}
+{{- if ne (trim .Values.appSecrets.stackSecret.secretName) "" }}
 - secretRef:
-    name: {{ .Values.appConfig.stackSecretName }}
+    name: {{ .Values.appSecrets.stackSecret.secretName }}
     optional: true
 {{- end }}
-{{- if ne (trim .Values.appConfig.envContextConfigMapName) "" }}
+{{- if ne (trim .Values.appContext.envContextConfigMapName) "" }}
 - configMapRef:
-    name: {{ .Values.appConfig.envContextConfigMapName }}
+    name: {{ .Values.appContext.envContextConfigMapName }}
     optional: true
 {{- end }}
-{{- if ne (trim .Values.appConfig.stackContextConfigMapName) "" }}
+{{- if ne (trim .Values.appContext.stackContextConfigMapName) "" }}
 - configMapRef:
-    name: {{ .Values.appConfig.stackContextConfigMapName }}
+    name: {{ .Values.appContext.stackContextConfigMapName }}
     optional: true
 {{- end }}
 {{- end }}
