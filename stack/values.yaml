@@ -152,6 +152,8 @@ global:
 
   topologySpreadConstraints: []
 
+  env: []
+
 # Service overrides
 services: {}
   # service1:
