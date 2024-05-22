@@ -75,12 +75,11 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- include "service.configuration" . | nindent 10}}
-          {{ $mergedEnv := concat (include "service.nonsensitiveEnvVars" .) .Values.env }}
-          {{- if $mergedEnv }}
+          {{- $env := concat $global.Values.global.env (fromYaml (include "service.nonsensitiveEnvVars" .)).env }}
+          {{- if $env }}
           env:
-            {{- toYaml $mergedEnv | nindent 10 }}
+            {{- toYaml $env | nindent 12}}
           {{- end }}
-
         {{- range $i, $container := .Values.sidecars }}
         {{- with omit $container "envFrom" }}
         - {{- toYaml . | nindent 10 }}
