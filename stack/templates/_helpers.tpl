@@ -116,5 +116,7 @@ env:
 - name: {{ $value.name }}
   value: {{ $value.value }}
 {{- end }}
+{{- else }}
+env: []
 {{- end }}
 {{- end }}
