@@ -84,15 +84,6 @@ Create the name of the service account to use
 {{- end }}
 
 {{- define "service.configuration" -}}
-
-{{- if .Values.env }}
-env:
-{{- range $i, $value := .Values.env }}
-- name: {{ $value.name }}
-  value: {{ $value.value }}
-{{- end }}
-{{- end }}
-
 {{- if or (or (or (ne (trim .Values.appSecrets.envSecret.secretName) "") (ne (trim .Values.appSecrets.envSecret.secretName) "")) (ne (trim .Values.appContext.envContextConfigMapName) "")) (ne (trim .Values.appContext.stackContextConfigMapName) "") -}}
 envFrom:
 {{- if ne (trim .Values.appSecrets.envSecret.secretName) "" }}
@@ -115,5 +106,17 @@ envFrom:
     name: {{ .Values.appContext.stackContextConfigMapName }}
     optional: true
 {{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "service.nonsensitiveEnvVars" -}}
+{{- if .Values.env }}
+env:
+{{- range $i, $value := .Values.env }}
+- name: {{ $value.name }}
+  value: {{ $value.value }}
+{{- end }}
+{{- else }}
+env: []
 {{- end }}
 {{- end }}
