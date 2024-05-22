@@ -78,7 +78,7 @@ spec:
           {{- $env := concat $global.Values.global.env (fromYaml (include "service.nonsensitiveEnvVars" .)).env }}
           {{- if $env }}
           env:
-            {{- toYaml $env | nindent 12}}
+            {{- toYaml (uniq $env) | nindent 12}}
           {{- end }}
         {{- range $i, $container := .Values.sidecars }}
         {{- with omit $container "envFrom" }}
