@@ -107,16 +107,7 @@ envFrom:
     optional: true
 {{- end }}
 {{- if .Values.envFrom }}
-{{- range $i, $value := .Values.envFrom }}
-{{- if $value.secretRef }}
-- secretRef:
-{{ toYaml $value.secretRef | indent 4 }}
-{{- end }}
-{{- if $value.configMapRef }}
-- configMapRef:
-{{ toYaml $value.configMapRef | indent 4 }}
-{{- end }}
-{{- end }}
+{{ toYaml .Values.envFrom | indent 2 }}
 {{- end }}
 {{- end }}
 {{- end }}
