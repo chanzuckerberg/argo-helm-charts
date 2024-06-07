@@ -107,7 +107,7 @@ envFrom:
     optional: true
 {{- end }}
 {{- if .Values.envFrom }}
-{{ toYaml .Values.envFrom | indent 2 }}
+{{ toYaml .Values.envFrom }}
 {{- end }}
 {{- end }}
 {{- end }}
