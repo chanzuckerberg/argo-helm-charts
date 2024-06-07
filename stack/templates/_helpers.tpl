@@ -84,7 +84,7 @@ Create the name of the service account to use
 {{- end }}
 
 {{- define "service.configuration" -}}
-{{- if or (or (or (ne (trim .Values.appSecrets.envSecret.secretName) "") (ne (trim .Values.appSecrets.envSecret.secretName) "")) (ne (trim .Values.appContext.envContextConfigMapName) "")) (ne (trim .Values.appContext.stackContextConfigMapName) "") -}}
+{{- if or (or (or (or (ne (trim .Values.appSecrets.envSecret.secretName) "") (ne (trim .Values.appSecrets.envSecret.secretName) "")) (ne (trim .Values.appContext.envContextConfigMapName) "")) (ne (trim .Values.appContext.stackContextConfigMapName) "")) .Values.envFrom -}}
 envFrom:
 {{- if ne (trim .Values.appSecrets.envSecret.secretName) "" }}
 - secretRef:
@@ -105,6 +105,9 @@ envFrom:
 - configMapRef:
     name: {{ .Values.appContext.stackContextConfigMapName }}
     optional: true
+{{- end }}
+{{- if .Values.envFrom }}
+{{ toYaml .Values.envFrom }}
 {{- end }}
 {{- end }}
 {{- end }}
