@@ -21,8 +21,16 @@ spec:
           - name: {{ include "service.fullname" . }}
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
             imagePullPolicy: {{ .Values.image.pullPolicy }}
-            command: 
+            {{- if and .Values.args (ne (len .Values.args) 0) }}
+            args:
+              {{- toYaml .Values.args | nindent 14 }}
+            {{- end }}
+            {{- if and .Values.command (ne (len .Values.command) 0) }}
+            command:
               {{- toYaml .Values.command | nindent 14 }}
+            {{- end }}
+            resources:
+              {{- toYaml .Values.resources | nindent 14 }}
             {{- include "service.configuration" . | nindent 12 }}
             {{- $env := concat $global.Values.global.env (fromYaml (include "service.nonsensitiveEnvVars" .)).env }}
             {{- if $env }}
