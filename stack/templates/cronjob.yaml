@@ -17,6 +17,10 @@ spec:
     spec:
       template:
         spec:
+          {{- if .Values.concurrencyPolicy }}
+          concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+          {{- end }}
+          serviceAccountName: {{ include "service.serviceAccountName" . }}
           containers:
           - name: {{ include "service.fullname" . }}
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
