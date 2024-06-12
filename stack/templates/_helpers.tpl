@@ -28,7 +28,7 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{- define "service.fullname" -}}
-{{ include "stack.fullname" . }}-{{ include "service.name" . }}
+{{ include "stack.fullname" . | lower }}-{{ include "service.name" . | lower }}
 {{- end }}
 
 {{/*
