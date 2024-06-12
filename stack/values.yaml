@@ -191,3 +191,12 @@ services: {}
   #       image: sidecar4:latest
 
 cronJobs: {}
+  # cronJob1:
+  #   concurrencyPolicy: Forbid
+  #   schedule: "* * * * *"
+  #   image:
+  #     repository: nginx
+  #     pullPolicy: IfNotPresent
+  #     tag: "latest"
+  #   command: ["command1", "command2"]
+  #   args: ["arg1", "arg2"]
