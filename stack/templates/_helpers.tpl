@@ -123,3 +123,11 @@ env:
 env: []
 {{- end }}
 {{- end }}
+
+{{- define "initContainer.image" -}}
+{{- if typeIs "string" .image }}
+string-img
+{{ else }}
+repo:tag
+{{- end }}
+{{- end }}
