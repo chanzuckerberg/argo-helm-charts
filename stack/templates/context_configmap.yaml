@@ -8,6 +8,6 @@ metadata:
   name: {{ .appContext.stackContextConfigMapName }}
 data:
   __ARGUS_STACK_NAME: $ARGOCD_APP_NAME
-  __ARGUS_INGRESS_HOST: {{ .ingress.host }}
+  __ARGUS_STACK_INGRESS_HOST: {{ .ingress.host }}
 {{- end }}
 {{- end }}
