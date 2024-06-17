@@ -1,0 +1,13 @@
+{{ $global := . }}
+{{- with $global.Values.global }}
+{{- if ne (trim .appContext.stackContextConfigMapName) "" }}
+---
+kind: ConfigMap
+apiVersion: v1 
+metadata:
+  name: {{ .appContext.stackContextConfigMapName }}
+data:
+  __ARGUS_STACK_NAME: $ARGOCD_APP_NAME
+  __ARGUS_STACK_BASE_URL: {{ .ingress.host }}
+{{- end }}
+{{- end }}

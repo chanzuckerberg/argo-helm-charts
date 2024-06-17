@@ -115,10 +115,7 @@ envFrom:
 {{- define "service.nonsensitiveEnvVars" -}}
 {{- if .Values.env }}
 env:
-{{- range $i, $value := .Values.env }}
-- name: {{ $value.name }}
-  value: {{ $value.value }}
-{{- end }}
+{{ toYaml .Values.env }}
 {{- else }}
 env: []
 {{- end }}
