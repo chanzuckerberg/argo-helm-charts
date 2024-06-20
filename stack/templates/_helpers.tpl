@@ -120,3 +120,11 @@ env:
 env: []
 {{- end }}
 {{- end }}
+
+{{- define "initContainer.image" -}}
+{{- if typeIs "string" .Values.image }}
+image: {{ .Values.image }}
+{{ else }}
+image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+{{- end }}
+{{- end }}
