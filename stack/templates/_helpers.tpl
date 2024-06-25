@@ -113,10 +113,14 @@ envFrom:
 {{- end }}
 
 {{- define "service.nonsensitiveEnvVars" -}}
-{{- if .Values.env }}
+{{- $envs := list }}
+{{- range $i, $envHolder := . -}}
+{{ $envs = concat $envs (default (list) $envHolder.env) }}
+{{- end -}}
+{{- if ne (len $envs) 0 -}}
 env:
-{{ toYaml .Values.env }}
-{{- else }}
+{{ toYaml (uniq $envs) }}
+{{- else -}}
 env: []
 {{- end }}
 {{- end }}
