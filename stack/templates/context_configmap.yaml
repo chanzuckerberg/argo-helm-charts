@@ -9,5 +9,8 @@ metadata:
 data:
   __ARGUS_STACK_NAME: {{ $global.Release.Name }}
   __ARGUS_STACK_INGRESS_HOST: {{ .ingress.host }}
+  {{- if .deploymentStage }}
+  __ARGUS_DEPLOYMENT_STAGE: {{ .deploymentStage }}
+  {{- end }}
 {{- end }}
 {{- end }}

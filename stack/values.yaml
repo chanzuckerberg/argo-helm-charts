@@ -1,5 +1,6 @@
 # Service defaults
 global:
+  deploymentStage: ''
   replicaCount: 1
 
   # Settings for the primary container
@@ -50,6 +51,8 @@ global:
       command:
         - ps
         - '-ef'
+
+  progressDeadlineSeconds: 600
     
   resources:
     limits:
