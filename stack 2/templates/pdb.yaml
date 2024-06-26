@@ -1,0 +1,24 @@
+{{ $global := . }}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service -}}
+{{- if .Values.autoscaling.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+  {{- include "service.labels" . | nindent 4 }}
+spec:
+  maxUnavailable: {{ .Values.autoscaling.maxUnavailable | default 1 }}
+  selector:
+    matchLabels:
+    {{- include "service.selectorLabels" . | nindent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}

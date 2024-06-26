@@ -1,0 +1,47 @@
+{{ $global := . }}
+{{ range $cronJobName, $cronJobValues := .Values.cronJobs }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $cronJobName -}}
+  {{- $values := mergeOverwrite $values $cronJobValues -}}
+  {{- $cronJob := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $cronJob -}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "service.fullname" . }}
+spec:
+  schedule: "{{ .Values.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if .Values.concurrencyPolicy }}
+          concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+          {{- end }}
+          serviceAccountName: {{ include "service.serviceAccountName" . }}
+          containers:
+          - name: {{ include "service.fullname" . }}
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- if and .Values.args (ne (len .Values.args) 0) }}
+            args:
+              {{- toYaml .Values.args | nindent 14 }}
+            {{- end }}
+            {{- if and .Values.command (ne (len .Values.command) 0) }}
+            command:
+              {{- toYaml .Values.command | nindent 14 }}
+            {{- end }}
+            resources:
+              {{- toYaml .Values.resources | nindent 14 }}
+            {{- include "service.configuration" . | nindent 12 }}
+            {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $cronJob.Values) | nindent 12 }}
+          restartPolicy: OnFailure
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+---
+{{- end }}
+{{- end }}
