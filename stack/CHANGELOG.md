@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.2...stack-v1.1.3) (2024-06-26)
+
+
+### Bug Fixes
+
+* artifacts URL ([d26c5ea](https://github.com/chanzuckerberg/argo-helm-charts/commit/d26c5ead159196757726f550868bd02781f83dfe))
+
 ## [1.1.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.1...stack-v1.1.2) (2024-06-26)
 
 
