@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Check Release
         id: chart_released
-        uses: actions/github-script@v5
+        uses: actions/github-script@v7
         with:
           script: |
             core.setOutput("released", context.ref.includes('refs/tags/stack'))
@@ -71,7 +71,7 @@ jobs:
           RELEASE=${{ needs.check-chart-released.outputs.tag }}
           VERSION=${{ steps.parse_version.outputs.result }}
           # location of release to download the chart from
-          CHART_DOWNLOAD_URL="https://github.com/chanzuckerberg/${{ github.repository }}/raw/artifacts/stack-${VERSION}.tgz"
+          CHART_DOWNLOAD_URL="https://github.com/chanzuckerberg/${{ github.repository }}/raw/artifacts"
 
           git config --global user.email "czihelperbot@chanzuckerberg.com"
           git config --global user.name "CZI Argus Helm Publisher Bot"
