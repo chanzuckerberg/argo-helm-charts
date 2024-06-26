@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  stack:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-06-26T11:29:53.013612-07:00"
+    description: A Helm chart for Happy Stack
+    digest: 70ae6db964351b4adc241a3ea36477818b21584fa2b96392c995cc88063a5ba0
+    name: stack
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/blob/heathj/test-helm-repo/stack-1.0.0.tgz/stack-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-06-26T11:29:53.012553-07:00"
