@@ -59,7 +59,7 @@ jobs:
           set -o pipefail
 
           # install helm
-          RELEASE_URL=https://get.helm.sh/helm-v3.13.1-linux-arm64.tar.gz
+          RELEASE_URL=https://get.helm.sh/helm-v3.15.2-linux-arm64.tar.gz
           DIR_NAME=helm
           OUT_DIR="/tmp/${DIR_NAME}"
           mkdir -p ${OUT_DIR}
@@ -70,7 +70,7 @@ jobs:
           chmod +x ${HELM_CMD}
 
           # install ghcli
-          GHCLI_URL="https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_arm64.tar.gz"
+          GHCLI_URL="https://github.com/cli/cli/releases/download/v2.52.0/gh_2.52.0_linux_arm64.tar.gz"
           GHCLI_DIR_NAME=ghcli
           GHCLI_TOOL_PATH="/tmp/${GHCLI_DIR_NAME}"
           mkdir -p ${GHCLI_TOOL_PATH}
