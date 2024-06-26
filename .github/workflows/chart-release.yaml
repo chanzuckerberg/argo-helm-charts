@@ -64,14 +64,14 @@ jobs:
           HELM_CMD=$(find ${OUT_DIR} -type f -name "helm")
           chmod +x ${HELM_CMD}
 
-          # packages will be uploaded to their release
-          PACKAGE_DIR="/tmp"
           # the index.yaml file will be hosted by the happy github pages site
           INDEX_DIR="${GITHUB_WORKSPACE}/chart-repo"
           # the location of the chart package
           CHARTS_DIR="${GITHUB_WORKSPACE}/chart-repo/stack"
+          RELEASE=${{ needs.check-chart-released.outputs.tag }}
+          VERSION=${{ steps.parse_version.outputs.result }}
           # location of release to download the chart from
-          CHART_DOWNLOAD_URL="https://github.com/chanzuckerberg/${{ github.repository }}/releases/download/${{ needs.check-chart-released.outputs.tag }}"
+          CHART_DOWNLOAD_URL="https://github.com/chanzuckerberg/${{ github.repository }}/raw/artifacts/stack-${VERSION}.tgz"
 
           git config --global user.email "czihelperbot@chanzuckerberg.com"
           git config --global user.name "CZI Argus Helm Publisher Bot"
@@ -80,16 +80,10 @@ jobs:
           cat ${INDEX_DIR}/index.yaml
           echo ------
 
-          echo ------
-          cat  ${PACKAGE_DIR}/index.yaml
-          echo ------
-
           cd chart-repo
           git pull
           git merge origin/main
 
-          RELEASE=${{ needs.check-chart-released.outputs.tag }}
-          VERSION=${{ steps.parse_version.outputs.result }}
           sed -i "s/appVersion\:\s[0-9.]\+/appVersion\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
           sed -i "s/version\:\s[0-9.]\+/version\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
           echo ------
@@ -97,7 +91,6 @@ jobs:
           echo ------
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
           ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml 
-          cp ${PACKAGE_DIR}/index.yaml ./index.yaml
 
           git add -A
           git commit -m "chore: publish charts from ${{ github.repository }} ${VERSION}"
