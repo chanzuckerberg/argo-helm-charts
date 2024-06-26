@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.0.0...stack-v1.1.0) (2024-06-26)
+
+
+### Features
+
+* bump version ([#34](https://github.com/chanzuckerberg/argo-helm-charts/issues/34)) ([cc0aaa9](https://github.com/chanzuckerberg/argo-helm-charts/commit/cc0aaa9405533d6c4ef08dad2abd1490232e68f4))
+
 ## 1.0.0 (2024-06-26)
 
 
