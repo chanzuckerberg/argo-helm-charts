@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.1...stack-v1.1.2) (2024-06-26)
+
+
+### Bug Fixes
+
+* forgot about the package dir env var ([525779a](https://github.com/chanzuckerberg/argo-helm-charts/commit/525779a8ece9131be75002f4b7cf7767f89e9ec8))
+
 ## [1.1.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.0...stack-v1.1.1) (2024-06-26)
 
 
