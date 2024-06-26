@@ -44,13 +44,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          path: main
-          token: ${{ steps.generate_token.outputs.token }}
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
           path: chart-repo
+          ref: artifacts
           repository: chanzuckerberg/argo-helm-charts
           token: ${{ steps.generate_token.outputs.token }}
       - name: Publish charts
@@ -69,24 +64,12 @@ jobs:
           HELM_CMD=$(find ${OUT_DIR} -type f -name "helm")
           chmod +x ${HELM_CMD}
 
-          # install ghcli
-          GHCLI_URL="https://github.com/cli/cli/releases/download/v2.52.0/gh_2.52.0_linux_arm64.tar.gz"
-          GHCLI_DIR_NAME=ghcli
-          GHCLI_TOOL_PATH="/tmp/${GHCLI_DIR_NAME}"
-          mkdir -p ${GHCLI_TOOL_PATH}
-          GHCLI_OUT_FILE="${GHCLI_TOOL_PATH}/ghcli.tar.gz"
-          curl -sSL $GHCLI_URL -L -o ${GHCLI_OUT_FILE}
-          tar -zxf ${GHCLI_OUT_FILE} -C ${GHCLI_TOOL_PATH} --strip-components 1
-          GHCLI_CMD=$(find ${GHCLI_TOOL_PATH} -type f -name "gh")
-          ${GHCLI_CMD} auth login --with-token < <(echo $GH_CRED)
-          ${GHCLI_CMD} auth status
-
           # packages will be uploaded to their release
           PACKAGE_DIR="/tmp"
           # the index.yaml file will be hosted by the happy github pages site
           INDEX_DIR="${GITHUB_WORKSPACE}/chart-repo"
           # the location of the chart package
-          CHARTS_DIR="${GITHUB_WORKSPACE}/main/stack"
+          CHARTS_DIR="${GITHUB_WORKSPACE}/chart-repo/stack"
           # location of release to download the chart from
           CHART_DOWNLOAD_URL="https://github.com/chanzuckerberg/${{ github.repository }}/releases/download/${{ needs.check-chart-released.outputs.tag }}"
 
@@ -97,9 +80,14 @@ jobs:
           cat ${INDEX_DIR}/index.yaml
           echo ------
 
-          cd main
-          
-          
+          echo ------
+          cat  ${PACKAGE_DIR}/index.yaml
+          echo ------
+
+          cd chart-repo
+          git pull
+          git merge origin/main
+
           RELEASE=${{ needs.check-chart-released.outputs.tag }}
           VERSION=${{ steps.parse_version.outputs.result }}
           sed -i "s/appVersion\:\s[0-9.]\+/appVersion\: ${VERSION}/g" ${CHARTS_DIR}/Chart.yaml
@@ -108,16 +96,11 @@ jobs:
           cat ${CHARTS_DIR}/Chart.yaml
           echo ------
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
-          ${GHCLI_CMD} release upload ${RELEASE} ${PACKAGE_DIR}/*.tgz --clobber
           ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml 
-
-          echo ------
-          cat  ${PACKAGE_DIR}/index.yaml
-          echo ------
-
-          cd ../chart-repo
           cp ${PACKAGE_DIR}/index.yaml ./index.yaml
-          git commit index.yaml -m "chore: publish charts from ${{ github.repository }} ${VERSION}"
+
+          git add -A
+          git commit -m "chore: publish charts from ${{ github.repository }} ${VERSION}"
           git push
         env:
           GH_CRED: ${{ secrets.GITHUB_TOKEN }}
