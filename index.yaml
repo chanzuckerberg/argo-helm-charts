@@ -9,7 +9,7 @@ entries:
       name: stack
       type: application
       urls:
-        - https://github.com/chanzuckerberg/argo-helm-charts/blob/main/stack-1.0.0.tgz
+        - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-1.0.0.tgz
       version: 1.0.0
     - apiVersion: v2
       appVersion: 1.16.0
@@ -19,6 +19,6 @@ entries:
       name: stack
       type: application
       urls:
-        - https://github.com/chanzuckerberg/argo-helm-charts/blob/main/stack-0.1.0.tgz
+        - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-0.1.0.tgz
       version: 0.1.0
 generated: "2024-06-26T10:50:31.337779-07:00"
