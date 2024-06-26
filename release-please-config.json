@@ -1,5 +1,5 @@
 {
-  "release-type": "simple",
+  "release-type": "helm",
   "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
   "bump-minor-pre-major": true,
   "changelog-sections": [
@@ -20,6 +20,8 @@
     }
   ],
   "packages": {
-    ".": {}
+    "stack": {
+      "package-name": "stack"
+    }
   }
 }
