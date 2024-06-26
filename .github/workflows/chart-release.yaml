@@ -89,6 +89,7 @@ jobs:
           echo ------
           cat ${CHARTS_DIR}/Chart.yaml
           echo ------
+          PACKAGE_DIR="."
           ${HELM_CMD} package ${CHARTS_DIR} -d ${PACKAGE_DIR} --version ${VERSION}
           ${HELM_CMD} repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml 
 
