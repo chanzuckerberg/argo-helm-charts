@@ -49,15 +49,15 @@ global:
     exec:
       command:
         - ps
-        - '-ef'
-    
+        - "-ef"
+
   resources:
     limits:
-      cpu: '1'
-      memory: '1Gi'
+      cpu: "1"
+      memory: "1Gi"
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: "100m"
+      memory: "128Mi"
 
   service:
     type: ClusterIP
@@ -96,10 +96,12 @@ global:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
 
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -111,9 +113,13 @@ global:
     enabled: true
     className: ""
     host: chart-example.local
-    annotations: {}
+    annotations:
+      {}
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
+      # For enabling auth, add these annotations:
+      # nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+      # nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
     hosts:
       - paths:
           - path: /
@@ -156,7 +162,8 @@ global:
   envFrom: []
 
 # Service overrides
-services: {}
+services:
+  {}
   # service1:
   #   args: ["arg1", "arg2"]
   #   command: ["command1", "command2"]
@@ -190,7 +197,8 @@ services: {}
   #     - name: sidecar4
   #       image: sidecar4:latest
 
-cronJobs: {}
+cronJobs:
+  {}
   # cronJob1:
   #   concurrencyPolicy: Forbid
   #   schedule: "* * * * *"
