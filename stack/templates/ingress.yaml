@@ -33,11 +33,10 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
     - host: {{ $service.Values.ingress.host | quote }}
       http:
         paths:
-          {{- range .paths }} 
+          {{- range $service.Values.ingress.paths }} 
           - path: {{ .path }}
             {{- if .pathType }}
             pathType: {{ .pathType }}
@@ -48,7 +47,23 @@ spec:
                 port:
                   number: {{ $svcPort }}
           {{- end }}
-    {{- end }}
+    {{ range $i, $rule := .Values.ingress.rules }}
+    {{- $ruleValues := mergeOverwrite (dict "host" $service.Values.ingress.host "paths" $service.Values.ingress.paths) $rule -}}
+    - host: {{ $ruleValues.host | quote }}
+      http:
+        paths:
+          {{- range $ruleValues.paths }} 
+          - path: {{ .path }}
+            {{- if .pathType }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+          {{- end }}
+    {{ end }}
 {{- end }}
 ---
 {{- end }}
