@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.2.0...stack-v1.3.0) (2024-06-27)
+
+
+### Features
+
+* add the global settings as default values to helm chart ([#41](https://github.com/chanzuckerberg/argo-helm-charts/issues/41)) ([6569b39](https://github.com/chanzuckerberg/argo-helm-charts/commit/6569b394b738e5f595e8e94a5f2cbf6a3780f42f))
+
 ## [1.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.4...stack-v1.2.0) (2024-06-27)
 
 
