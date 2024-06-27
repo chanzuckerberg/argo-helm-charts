@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.1.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.3...stack-v1.1.4) (2024-06-26)
+
+
+### Bug Fixes
+
+* wrong github repo ([20ea587](https://github.com/chanzuckerberg/argo-helm-charts/commit/20ea5878894df69c914bc9434bbd69df343713aa))
+
+## [1.1.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.2...stack-v1.1.3) (2024-06-26)
+
+
+### Bug Fixes
+
+* artifacts URL ([d26c5ea](https://github.com/chanzuckerberg/argo-helm-charts/commit/d26c5ead159196757726f550868bd02781f83dfe))
+
+## [1.1.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.1...stack-v1.1.2) (2024-06-26)
+
+
+### Bug Fixes
+
+* forgot about the package dir env var ([525779a](https://github.com/chanzuckerberg/argo-helm-charts/commit/525779a8ece9131be75002f4b7cf7767f89e9ec8))
+
+## [1.1.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.0...stack-v1.1.1) (2024-06-26)
+
+
+### Bug Fixes
+
+* wrong artificat URL ([7c4b721](https://github.com/chanzuckerberg/argo-helm-charts/commit/7c4b721121285a030a2f891027634c38a1b595b7))
+
+## [1.1.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.0.0...stack-v1.1.0) (2024-06-26)
+
+
+### Features
+
+* bump version ([#34](https://github.com/chanzuckerberg/argo-helm-charts/issues/34)) ([cc0aaa9](https://github.com/chanzuckerberg/argo-helm-charts/commit/cc0aaa9405533d6c4ef08dad2abd1490232e68f4))
+
 ## 1.0.0 (2024-06-26)
 
 
