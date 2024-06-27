@@ -138,7 +138,6 @@ global:
   podAnnotations:
     linkerd.io/inject: enabled
     config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
-    annotations: {}
 
   autoscaling:
     enabled: true
