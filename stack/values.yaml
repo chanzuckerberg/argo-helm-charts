@@ -113,6 +113,11 @@ global:
   ingress:
     enabled: true
     className: nginx
+    host: chart-example.local
+    paths:
+      - path: /
+        pathType: Prefix
+    rules: []
     annotations:
       infra: "true"
       external-dns.alpha.kubernetes.io/exclude: "true"
@@ -123,10 +128,6 @@ global:
       nginx.ingress.kubernetes.io/affinity: "cookie"
       nginx.ingress.kubernetes.io/session-cookie-name: "argus_sticky_session"
       nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
-    hosts:
-      - paths:
-          - path: /
-            pathType: ImplementationSpecific
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
