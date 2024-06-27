@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.4...stack-v1.2.0) (2024-06-27)
+
+
+### Features
+
+* allow specifying additional ingress rules ([#33](https://github.com/chanzuckerberg/argo-helm-charts/issues/33)) ([763a23b](https://github.com/chanzuckerberg/argo-helm-charts/commit/763a23b7316a11701a3d9285504d4e491a0d98af))
+
 ## [1.1.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.1.3...stack-v1.1.4) (2024-06-26)
 
 
