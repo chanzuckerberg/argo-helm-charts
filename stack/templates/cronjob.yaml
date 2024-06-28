@@ -36,11 +36,7 @@ spec:
             resources:
               {{- toYaml .Values.resources | nindent 14 }}
             {{- include "service.configuration" . | nindent 12 }}
-            {{- $env := concat $global.Values.global.env (fromYaml (include "service.nonsensitiveEnvVars" .)).env }}
-            {{- if $env }}
-            env:
-              {{- toYaml (uniq $env) | nindent 14 }}
-            {{- end }}
+            {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $cronJob.Values) | nindent 12 }}
           restartPolicy: OnFailure
           {{- with .Values.nodeSelector }}
           nodeSelector:
