@@ -1,0 +1,17 @@
+global:
+  appContext:
+    envContextConfigMapName: "argus-env-context.test" # App environment level configuration configmap name
+    stackContextConfigMapName: "argus-stack-context.test" # Stack level configuration configmap name
+
+  appSecrets:
+    envSecret: # App environment level configuration secret
+      secretName: "foo"
+      secretKey: "bar"
+    stackSecret: # Stack level configuration secret
+      secretName: ""
+      secretKey: ""
+
+  deploymentStage: "staging"
+
+  ingress:
+    host: "foo.example.co"
