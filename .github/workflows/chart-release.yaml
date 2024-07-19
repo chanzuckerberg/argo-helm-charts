@@ -74,12 +74,12 @@ jobs:
           # the location of the chart package
           CHARTS_DIR="${{ needs.check-chart-released.outputs.release_name }}"
           # location of release to download the chart from
-          PACKAGE_DIR=artifacts
-          CHART_DOWNLOAD_URL="https://github.com/${{ github.repository }}/raw/${{ steps.branch.outputs.result }}/${PACKAGE_DIR}"
+          CHART_DOWNLOAD_URL="https://github.com/${{ github.repository }}/raw/${{ steps.branch.outputs.result }}"
 
           git config --global user.email "czihelperbot@chanzuckerberg.com"
           git config --global user.name "CZI Argus Helm Publisher Bot"
 
+          PACKAGE_DIR="."
           echo ------
           cat ${PACKAGE_DIR}/index.yaml
           echo ------
