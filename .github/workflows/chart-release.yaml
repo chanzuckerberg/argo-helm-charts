@@ -25,7 +25,7 @@ jobs:
             const result = /refs\/tags\/(.*)-v[0-9.]+/.exec(context.ref)
             if (result && result.length >= 2) {
               const releaseName = result[1];
-              core.setOutput("released", fs.existSync(path.join(releaseName, 'Chart.yaml')));
+              core.setOutput("released", fs.existsSync(path.join(releaseName, 'Chart.yaml')));
               core.setOutput("release_name", releaseName);
             } else {
               core.setOutput("released", false);
