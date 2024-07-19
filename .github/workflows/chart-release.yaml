@@ -60,7 +60,6 @@ jobs:
       - uses: azure/setup-helm@v4
         with:
           version: '3.15.2'
-        id: install
       - name: Publish charts
         run: |
           set -ue
@@ -87,6 +86,7 @@ jobs:
           cat ${CHARTS_DIR}/Chart.yaml
           echo ------
           PACKAGE_DIR="."
+          helm dependency update ${{ needs.check-chart-released.outputs.release_name }}
           helm package ${CHARTS_DIR} -d ${PACKAGE_DIR}
           helm repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
 

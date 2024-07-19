@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.4.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.3...stack-v1.4.4) (2024-07-19)
+
+
+### Misc
+
+* specify chart ([#57](https://github.com/chanzuckerberg/argo-helm-charts/issues/57)) ([69ad843](https://github.com/chanzuckerberg/argo-helm-charts/commit/69ad8432c70aa09aad3793547a475136742605d0))
+
+## [1.4.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.2...stack-v1.4.3) (2024-07-19)
+
+
+### Misc
+
+* try without chart lock ([8083b0d](https://github.com/chanzuckerberg/argo-helm-charts/commit/8083b0d4bc0252b866b65e9083e1bfef22a04fa6))
+
+## [1.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.1...stack-v1.4.2) (2024-07-19)
+
+
+### Misc
+
+* update publisher ([3e6b601](https://github.com/chanzuckerberg/argo-helm-charts/commit/3e6b6019b3b3c08fd8c8404997f9020b127e13b3))
+
+## [1.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.0...stack-v1.4.1) (2024-07-19)
+
+
+### Misc
+
+* fix release - add helm dependency update ([#52](https://github.com/chanzuckerberg/argo-helm-charts/issues/52)) ([734b7a8](https://github.com/chanzuckerberg/argo-helm-charts/commit/734b7a80e096eb061f175b6cebefb706cdf03641))
+* include chart lock ([#54](https://github.com/chanzuckerberg/argo-helm-charts/issues/54)) ([6229a66](https://github.com/chanzuckerberg/argo-helm-charts/commit/6229a669675d2508d954cfb0638d99a9f09db149))
+
+## [1.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.3.0...stack-v1.4.0) (2024-07-19)
+
+
+### Features
+
+* make stack chart use argus-config as a subchart ([#50](https://github.com/chanzuckerberg/argo-helm-charts/issues/50)) ([67ee7df](https://github.com/chanzuckerberg/argo-helm-charts/commit/67ee7df9e1881416c3861721ba00b793366ffd03))
+
 ## [1.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.2.0...stack-v1.3.0) (2024-06-27)
 
 
