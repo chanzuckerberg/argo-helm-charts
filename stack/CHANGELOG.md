@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.4.8](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.7...stack-v1.4.8) (2024-07-19)
+
+
+### Bug Fixes
+
+* can't nest package dir ([f176358](https://github.com/chanzuckerberg/argo-helm-charts/commit/f1763584ef1ebcebf11ee020284b36fa3ae3d04e))
+
+## [1.4.7](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.6...stack-v1.4.7) (2024-07-19)
+
+
+### Misc
+
+* fix publish script ([0446bd9](https://github.com/chanzuckerberg/argo-helm-charts/commit/0446bd9e9a2deb3a993f9c7d17b045eaffc55ebd))
+
+## [1.4.6](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.5...stack-v1.4.6) (2024-07-19)
+
+
+### Misc
+
+* update publish locations ([21b0a37](https://github.com/chanzuckerberg/argo-helm-charts/commit/21b0a37ecacdf11ac193a17605322f513e94aee5))
+
 ## [1.4.5](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.4...stack-v1.4.5) (2024-07-19)
 
 
