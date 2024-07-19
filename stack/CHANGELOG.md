@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.3.0...stack-v1.4.0) (2024-07-19)
+
+
+### Features
+
+* make stack chart use argus-config as a subchart ([#50](https://github.com/chanzuckerberg/argo-helm-charts/issues/50)) ([67ee7df](https://github.com/chanzuckerberg/argo-helm-charts/commit/67ee7df9e1881416c3861721ba00b793366ffd03))
+
 ## [1.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.2.0...stack-v1.3.0) (2024-06-27)
 
 
