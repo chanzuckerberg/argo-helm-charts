@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.0.1...argus-config-v1.0.2) (2024-07-19)
+
+
+### Misc
+
+* bump argus-config ([#48](https://github.com/chanzuckerberg/argo-helm-charts/issues/48)) ([b156d0e](https://github.com/chanzuckerberg/argo-helm-charts/commit/b156d0e0a480d68c1c67ef0828d562849022f148))
+
 ## [1.0.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.0.0...argus-config-v1.0.1) (2024-07-19)
 
 
