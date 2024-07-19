@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.1...stack-v1.4.2) (2024-07-19)
+
+
+### Misc
+
+* update publisher ([3e6b601](https://github.com/chanzuckerberg/argo-helm-charts/commit/3e6b6019b3b3c08fd8c8404997f9020b127e13b3))
+
 ## [1.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.0...stack-v1.4.1) (2024-07-19)
 
 
