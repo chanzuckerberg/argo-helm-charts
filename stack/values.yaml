@@ -67,7 +67,6 @@ global:
     port: 80
 
   initContainers: []
-
   sidecars: []
 
   appContext:
