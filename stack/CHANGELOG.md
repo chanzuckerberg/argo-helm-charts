@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.5](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.4...stack-v1.4.5) (2024-07-19)
+
+
+### Bug Fixes
+
+* don't gitignore packaged helm chart ([71df9a1](https://github.com/chanzuckerberg/argo-helm-charts/commit/71df9a14c0de563edf8651caa511746819e21ad5))
+
 ## [1.4.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.3...stack-v1.4.4) (2024-07-19)
 
 
