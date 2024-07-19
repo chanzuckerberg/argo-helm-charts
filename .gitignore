@@ -1,2 +1,3 @@
 argus-config/test.yaml
 stack/test.yaml
+*.tgz
