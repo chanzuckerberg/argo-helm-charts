@@ -132,6 +132,7 @@ global:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+
   nodeSelector:
     kubernetes.io/arch: arm64
 

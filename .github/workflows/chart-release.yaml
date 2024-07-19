@@ -81,7 +81,7 @@ jobs:
           git config --global user.name "CZI Argus Helm Publisher Bot"
 
           echo ------
-          cat index.yaml
+          cat ${PACKAGE_DIR}/index.yaml
           echo ------
 
           git pull
