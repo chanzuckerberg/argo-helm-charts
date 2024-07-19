@@ -3,7 +3,7 @@ entries:
   argus-config:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-19T17:38:48.153392537Z"
+    created: "2024-07-19T19:50:53.091359874Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 4ce052af41c9c66fb2a96b6f8dd4e5be0237c381b81b947c3bc4231778cdda4d
     name: argus-config
@@ -14,7 +14,21 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-19T17:38:48.156735438Z"
+    created: "2024-07-19T19:50:53.09615856Z"
+    dependencies:
+    - name: argus-config
+      repository: https://chanzuckerberg.github.io/argo-helm-charts
+      version: 1.0.2
+    description: A Helm chart for Argus Stack
+    digest: 312146604e7590728d3a88b5cac771c94123c046348d64bde358aaee1a0666b0
+    name: stack
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/stack-1.4.4.tgz
+    version: 1.4.4
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-07-19T19:50:53.095267366Z"
     description: A Helm chart for Happy Stack
     digest: ee110618102c701946e6bb09b4fa4f6eb3b3959adce3bdf4428fd41a9f4b215f
     name: stack
@@ -24,7 +38,7 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-19T17:38:48.156047311Z"
+    created: "2024-07-19T19:50:53.094562655Z"
     description: A Helm chart for Happy Stack
     digest: 8b6ec66f9078ac1c677d072d985eab5a6a6bcdbab78b09bab71a61ab59eaf68f
     name: stack
@@ -34,7 +48,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-19T17:38:48.155382114Z"
+    created: "2024-07-19T19:50:53.093335477Z"
     description: A Helm chart for Happy Stack
     digest: e2ae1793c041325cf2d635c75197bcfdd09f5fd3443f34a8c9f0850a43e30a58
     name: stack
@@ -44,7 +58,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-19T17:38:48.154734692Z"
+    created: "2024-07-19T19:50:53.092690962Z"
     description: A Helm chart for Happy Stack
     digest: 940f2cbf5b42cf219771154aa398d6da0c48c58f97e9789326d522579a202420
     name: stack
@@ -54,7 +68,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-19T17:38:48.154087406Z"
+    created: "2024-07-19T19:50:53.092041673Z"
     description: A Helm chart for Happy Stack
     digest: 912e11610c23d133929f7088ccaf097cfed0441a80604d6ddb3b9f7eb9bad99a
     name: stack
@@ -82,4 +96,4 @@ entries:
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-19T17:38:48.153027792Z"
+generated: "2024-07-19T19:50:53.09098768Z"
