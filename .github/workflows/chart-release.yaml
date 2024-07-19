@@ -87,7 +87,7 @@ jobs:
           cat ${CHARTS_DIR}/Chart.yaml
           echo ------
           PACKAGE_DIR="."
-          helm dependency update ${PACKAGE_DIR}
+          helm dependency build
           helm package ${CHARTS_DIR} -d ${PACKAGE_DIR}
           helm repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
 
