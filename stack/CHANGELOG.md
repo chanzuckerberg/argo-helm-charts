@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.2...stack-v1.4.3) (2024-07-19)
+
+
+### Misc
+
+* try without chart lock ([8083b0d](https://github.com/chanzuckerberg/argo-helm-charts/commit/8083b0d4bc0252b866b65e9083e1bfef22a04fa6))
+
 ## [1.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.1...stack-v1.4.2) (2024-07-19)
 
 
