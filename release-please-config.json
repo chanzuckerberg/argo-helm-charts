@@ -20,6 +20,9 @@
     }
   ],
   "packages": {
+    "argus-config": {
+      "package-name": "argus-config"
+    },
     "stack": {
       "package-name": "stack"
     }
