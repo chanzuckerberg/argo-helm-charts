@@ -71,19 +71,17 @@ jobs:
           set -ue
           set -o pipefail
 
-          # the index.yaml file will be hosted by the github pages site
-          INDEX_DIR="${GITHUB_WORKSPACE}"
           # the location of the chart package
-          CHARTS_DIR="${GITHUB_WORKSPACE}/${{ needs.check-chart-released.outputs.release_name }}"
+          CHARTS_DIR="${{ needs.check-chart-released.outputs.release_name }}"
           # location of release to download the chart from
-          PACKAGE_DIR=artifacts/${{ needs.check-chart-released.outputs.release_name }}
+          PACKAGE_DIR=artifacts
           CHART_DOWNLOAD_URL="https://github.com/${{ github.repository }}/raw/${{ steps.branch.outputs.result }}/${PACKAGE_DIR}"
 
           git config --global user.email "czihelperbot@chanzuckerberg.com"
           git config --global user.name "CZI Argus Helm Publisher Bot"
 
           echo ------
-          cat ${INDEX_DIR}/index.yaml
+          cat index.yaml
           echo ------
 
           git pull
@@ -95,7 +93,7 @@ jobs:
 
           helm dependency update ${{ needs.check-chart-released.outputs.release_name }}
           helm package ${CHARTS_DIR} -d ${PACKAGE_DIR}
-          helm repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${INDEX_DIR}/index.yaml
+          helm repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${PACKAGE_DIR}/index.yaml
 
           git add -A
           git commit -m "chore: publish charts from ${{ github.repository }} ${{ steps.parse_tag.outputs.result }}"
