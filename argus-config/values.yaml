@@ -15,4 +15,3 @@ global:
 
   ingress:
     host: "foo.example.co"
-
