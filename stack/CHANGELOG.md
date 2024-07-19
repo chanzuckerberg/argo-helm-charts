@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.0...stack-v1.4.1) (2024-07-19)
+
+
+### Misc
+
+* fix release - add helm dependency update ([#52](https://github.com/chanzuckerberg/argo-helm-charts/issues/52)) ([734b7a8](https://github.com/chanzuckerberg/argo-helm-charts/commit/734b7a80e096eb061f175b6cebefb706cdf03641))
+* include chart lock ([#54](https://github.com/chanzuckerberg/argo-helm-charts/issues/54)) ([6229a66](https://github.com/chanzuckerberg/argo-helm-charts/commit/6229a669675d2508d954cfb0638d99a9f09db149))
+
 ## [1.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.3.0...stack-v1.4.0) (2024-07-19)
 
 
