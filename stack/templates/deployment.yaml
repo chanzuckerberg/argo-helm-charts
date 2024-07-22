@@ -19,6 +19,7 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -75,18 +76,23 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- include "service.configuration" . | nindent 10}}
+          {{- include "service.nonsensitiveEnvVars" (list $global.Values.global .Values) | nindent 10 }}
         {{- range $i, $container := .Values.sidecars }}
-        {{- with omit $container "envFrom" }}
+        {{- with omit $container "envFrom" "env" }}
         - {{- toYaml . | nindent 10 }}
           {{- include "service.configuration" $service | nindent 10}}
         {{- end }}
+        {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
         {{- end }}
       initContainers:
       {{- range $i, $container := .Values.initContainers }}
-      {{- with omit $container "envFrom" }}
+      {{- $imageDict := fromYaml (include "initContainer.image" (dict "Chart" $global.Chart "Values" $container)) }}
+      {{- $container = mergeOverwrite $container $imageDict }}
+      {{- with omit $container "envFrom" "env" }}
         - {{- toYaml . | nindent 10 }}
           {{- include "service.configuration" $service | nindent 10}}
       {{- end }}
+      {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       restartPolicy: {{ .Values.restartPolicy }}

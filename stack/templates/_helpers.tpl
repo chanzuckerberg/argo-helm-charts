@@ -28,7 +28,7 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{- define "service.fullname" -}}
-{{ include "stack.fullname" . }}-{{ include "service.name" . }}
+{{ include "stack.fullname" . | lower }}-{{ include "service.name" . | lower }}
 {{- end }}
 
 {{/*
@@ -83,28 +83,23 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-{{- define "service.configuration" -}}
-{{- if or (or (or (ne (trim .Values.appConfig.envSecretName) "") (ne (trim .Values.appConfig.envSecretName) "")) (ne (trim .Values.appConfig.envContextConfigMapName) "")) (ne (trim .Values.appConfig.stackContextConfigMapName) "") -}}
-envFrom:
-{{- if ne (trim .Values.appConfig.envSecretName) "" }}
-- secretRef:
-    name: {{ .Values.appConfig.envSecretName }}
-    optional: true
+{{- define "service.nonsensitiveEnvVars" -}}
+{{- $envs := list }}
+{{- range $i, $envHolder := . -}}
+{{ $envs = concat $envs (default (list) $envHolder.env) }}
+{{- end -}}
+{{- if ne (len $envs) 0 -}}
+env:
+{{ toYaml (uniq $envs) }}
+{{- else -}}
+env: []
 {{- end }}
-{{- if ne (trim .Values.appConfig.stackSecretName) "" }}
-- secretRef:
-    name: {{ .Values.appConfig.stackSecretName }}
-    optional: true
 {{- end }}
-{{- if ne (trim .Values.appConfig.envContextConfigMapName) "" }}
-- configMapRef:
-    name: {{ .Values.appConfig.envContextConfigMapName }}
-    optional: true
-{{- end }}
-{{- if ne (trim .Values.appConfig.stackContextConfigMapName) "" }}
-- configMapRef:
-    name: {{ .Values.appConfig.stackContextConfigMapName }}
-    optional: true
-{{- end }}
+
+{{- define "initContainer.image" -}}
+{{- if typeIs "string" .Values.image }}
+image: {{ .Values.image }}
+{{ else }}
+image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 {{- end }}
 {{- end }}
