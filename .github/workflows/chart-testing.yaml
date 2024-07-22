@@ -3,6 +3,7 @@ name: Lint and Test Charts
 on: pull_request
 
 jobs:
+
   lint-test:
     runs-on: ubuntu-latest
     steps:
@@ -15,6 +16,27 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           version: v3.14.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+  
+      - name: Validate chart template with default values
+        run: |
+          output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1)
+          if [[ $output -ne "error: no objects passed to apply" ]]; then
+            exit 1
+          fi
+
+      - name: Validate chart template with invalid values
+        run: |
+          output=$(helm template ./stack --values ./test-fixtures/values1.yaml | kubectl apply -f - --dry-run=client 2>&1)
+          if [[ $output -ne "Error: failed to parse ./test-fixtures/values1.yaml: error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type map[string]interface {}" ]]; then
+            exit 1
+          fi
+
+      - name: Validate chart template with valid values
+        run: |
+          helm template ./stack --values ./test-fixtures/values2.yaml | kubectl apply -f - --dry-run=client 2>&1
 
       - uses: actions/setup-python@v4
         with:
