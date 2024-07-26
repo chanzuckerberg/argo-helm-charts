@@ -3,8 +3,8 @@ templates:
   - deployment.yaml
 tests:
   - it: should work
-    # values:
-    #   - ../values.yaml
+    values:
+      - values.yaml
     asserts:
       - isKind:
         of: Deployment
