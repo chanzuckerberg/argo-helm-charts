@@ -7,15 +7,16 @@ tests:
       - values.yaml
     asserts:
       - isKind:
-        of: Deployment
-        not: true
-      - contains:
-        path: spec
-        content:
-          revisionHistoryLimit: 3
-      - contains:
-        path: kind
-        content: Deployment
+          of: Deployment
+      - isSubset:
+          path: spec
+          content:
+            revisionHistoryLimit: 3
+          any: true
+      - containsDocument:
+          apiVersion: apps/v1
+          kind: Deployment
+
       #   path: metadata.name
       #   pattern: -my-chart$
       # - equal:
