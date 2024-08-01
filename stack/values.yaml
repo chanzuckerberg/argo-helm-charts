@@ -169,6 +169,14 @@ global:
   env: []
   envFrom: []
 
+  persistence:
+    enabled: false
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    existingClaim: ""
+    mountPath: ""
 # Service overrides
 services:
   {}

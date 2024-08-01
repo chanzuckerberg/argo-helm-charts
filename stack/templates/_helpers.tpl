@@ -103,3 +103,11 @@ image: {{ .Values.image }}
 image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 {{- end }}
 {{- end }}
+
+{{- define "service.claimName" -}}
+{{- if and .Values.persistence.existingClaim }}
+    {{- printf "%s" (tpl .Values.persistence.existingClaim $) -}}
+{{- else -}}
+    {{- printf "%s" (include "service.fullname" .) -}}
+{{- end -}}
+{{- end -}}
