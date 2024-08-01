@@ -103,3 +103,11 @@ image: {{ .Values.image }}
 image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 {{- end }}
 {{- end }}
+
+{{- define "container.probe" -}}
+{{- if .tcpSocket -}}
+{{- toYaml (omit . "httpGet") }}
+{{- else }}
+{{- toYaml (omit . "tcpSocket") }}
+{{- end }}
+{{- end }}
