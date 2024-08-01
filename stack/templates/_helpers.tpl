@@ -104,6 +104,10 @@ image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.App
 {{- end }}
 {{- end }}
 
+{{/*
+The default values in this chart adds httpGet probes to the deployment.
+Container probes cannot have both httpGet and tcpSocket fields, so we use omit to remove one of them.
+*/}}
 {{- define "container.probe" -}}
 {{- if .tcpSocket -}}
 {{- toYaml (omit . "httpGet") }}
