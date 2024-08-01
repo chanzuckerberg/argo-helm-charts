@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.8...stack-v1.5.0) (2024-08-01)
+
+
+### Features
+
+* add support for tcp probes ([#66](https://github.com/chanzuckerberg/argo-helm-charts/issues/66)) ([7bda0ed](https://github.com/chanzuckerberg/argo-helm-charts/commit/7bda0ed0e1cdcc92f94e9d33441693529287183b))
+
 ## [1.4.8](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.7...stack-v1.4.8) (2024-07-19)
 
 
