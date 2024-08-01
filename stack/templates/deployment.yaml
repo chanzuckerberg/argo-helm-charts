@@ -78,7 +78,7 @@ spec:
               mountPath: {{ .Values.persistence.mountPath }}
             {{- end }}
             {{- if .Values.volumeMounts }}
-            {{- toYaml .Values.volumeMounts | nindent 8 }}
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
             {{- end }}
           {{- end }}
           {{- include "service.configuration" . | nindent 10}}
