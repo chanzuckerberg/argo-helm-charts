@@ -62,9 +62,31 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- if .Values.livenessProbe.tcpSocket}}
+              tcpSocket:
+                port: {{ .Values.livenessProbe.tcpSocket.port }}
+            {{ else }}
+              httpGet:
+                path: {{ .Values.livenessProbe.httpGet.path }}
+                port: {{ .Values.livenessProbe.httpGet.port }}
+              periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+              successThreshold: {{ .Values.livenessProbe.successThreshold }}
+              timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+              initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            {{- end }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- if .Values.readinessProbe.tcpSocket}}
+              tcpSocket:
+                port: {{ .Values.readinessProbe.tcpSocket.port }}
+            {{ else }}
+              httpGet:
+                path: {{ .Values.readinessProbe.httpGet.path }}
+                port: {{ .Values.readinessProbe.httpGet.port }}
+              periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+              successThreshold: {{ .Values.readinessProbe.successThreshold }}
+              timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+              initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            {{- end }}
           {{- if eq .Values.startupProbe.enabled true }}
           startupProbe:
             {{- toYaml (omit .Values.startupProbe "enabled") | nindent 12 }}
