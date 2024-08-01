@@ -62,12 +62,12 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- include "container.probe" .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- include "container.probe" .Values.readinessProbe | nindent 12 }}
           {{- if eq .Values.startupProbe.enabled true }}
           startupProbe:
-            {{- toYaml (omit .Values.startupProbe "enabled") | nindent 12 }}
+            {{- include "container.probe" (omit .Values.startupProbe "enabled") | nindent 12 }}
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
