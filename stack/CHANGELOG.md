@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.6.0...stack-v1.6.1) (2024-08-02)
+
+
+### Bug Fixes
+
+* release patch ([#71](https://github.com/chanzuckerberg/argo-helm-charts/issues/71)) ([fe7cc32](https://github.com/chanzuckerberg/argo-helm-charts/commit/fe7cc321d37a354d49377328d1f93fff94381222))
+
 ## [1.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.5.0...stack-v1.6.0) (2024-08-02)
 
 
