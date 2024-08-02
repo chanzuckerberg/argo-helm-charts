@@ -104,6 +104,15 @@ image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.App
 {{- end }}
 {{- end }}
 
+
+{{- define "service.claimName" -}}
+{{- if .Values.persistence.existingClaim }}
+    {{- printf "%s" (tpl .Values.persistence.existingClaim $) -}}
+{{- else -}}
+    {{- printf "%s" (include "service.fullname" .) -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 The default values in this chart adds httpGet probes to the deployment.
 Container probes cannot have both httpGet and tcpSocket fields, so we use omit to remove one of them.
@@ -115,3 +124,4 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 {{- toYaml (omit . "tcpSocket") }}
 {{- end }}
 {{- end }}
+
