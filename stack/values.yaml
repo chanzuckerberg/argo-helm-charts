@@ -171,10 +171,13 @@ global:
 
   persistence:
     enabled: false
-    storageClass: ""
-    accessModes:
-      - ReadWriteOnce
-    size: 8Gi
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      storageClassName: "default"
     existingClaim: ""
     mountPath: ""
 # Service overrides

@@ -73,7 +73,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- if or (and .Values.persistence.enabled .Values.persistence.mountPath) .Values.volumeMounts}}
           volumeMounts:
-            {{- if and .Values.persistence.enabled .Values.persistence.mountPath) }}
+            {{- if and .Values.persistence.enabled .Values.persistence.mountPath }}
             - name: data
               mountPath: {{ .Values.persistence.mountPath }}
             {{- end }}

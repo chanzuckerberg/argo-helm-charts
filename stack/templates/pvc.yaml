@@ -17,16 +17,7 @@ metadata:
   annotations:
     {{- include "stack.annotations" $service | nindent 4 }}
 spec:
-  accessModes:
-  {{- range .Values.persistence.accessModes }}
-    - {{ . | quote }}
-  {{- end }}
-  resources:
-    requests:
-      storage: {{ .Values.persistence.size | quote }}
-  {{- if .Values.persistence.storageClass }}
-  storageClassName:  {{ .Values.persistence.storageClass }}
-  {{- end }}
+   {{- toYaml .Values.persistence.pvc | nindent 2}}
 {{- end }}
 ---
 {{- end }}
