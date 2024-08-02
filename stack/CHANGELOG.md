@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.5.0...stack-v1.6.0) (2024-08-02)
+
+
+### Features
+
+* (CCIE-3082) add unit testing to GHA ([#64](https://github.com/chanzuckerberg/argo-helm-charts/issues/64)) ([8d332f7](https://github.com/chanzuckerberg/argo-helm-charts/commit/8d332f7e5eeadb9316d1e5842a99525baa9ee0b5))
+* add pvc creation support ([#67](https://github.com/chanzuckerberg/argo-helm-charts/issues/67)) ([2269fbd](https://github.com/chanzuckerberg/argo-helm-charts/commit/2269fbd76ffc71d254effa0435ab83865a1f8f7f))
+
 ## [1.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.4.8...stack-v1.5.0) (2024-08-01)
 
 
