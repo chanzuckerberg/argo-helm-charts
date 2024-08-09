@@ -1,4 +1,4 @@
-name: Release Charts
+name: Pre-release Charts
 
 on:
   pull_request:
