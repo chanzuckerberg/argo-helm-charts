@@ -57,3 +57,5 @@ jobs:
           version: ${{ github.event.pull_request.head.sha }}
           prerelease: true
           release_name: ${{ matrix.chart }}
+          github_app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          github_private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}

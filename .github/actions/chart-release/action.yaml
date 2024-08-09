@@ -12,6 +12,12 @@ inputs:
   release_name:
     description: 'The name of the chart being released'
     required: true
+  github_app_id:
+    description: 'The GitHub App ID'
+    required: true
+  github_private_key:
+    description: 'The GitHub App private key'
+    required: true
 
 runs:
   using: composite
@@ -26,8 +32,8 @@ runs:
       id: generate_token
       uses: tibdex/github-app-token@v2
       with:
-        app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-        private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+        app_id: ${{ inputs.github_app_id }}
+        private_key: ${{ inputs.github_private_key }}
     - name: Checkout
       uses: actions/checkout@v4
       with:

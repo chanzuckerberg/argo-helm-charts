@@ -53,3 +53,5 @@ jobs:
           version: ${{ steps.parse_tag.outputs.result }}
           prerelease: false
           release_name: ${{ needs.check-chart-released.outputs.release_name }}
+          github_app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+          github_private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
