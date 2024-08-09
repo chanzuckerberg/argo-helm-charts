@@ -1,0 +1,59 @@
+name: Release Charts
+
+on:
+  pull_request:
+    types: [ labeled, synchronize ]
+
+jobs:
+  get-changed-charts:
+    if: contains(github.event.pull_request.labels.*.name, 'prerelease')
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          initial-fetch-depth: '1'
+          list-files: json
+          filters: |
+            changed:
+              - added|modified: '**'
+      - uses: actions/github-script@v6
+        id: changedDirs
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require("path");
+            const changedFiles = ${{ steps.filter.outputs.changed_files }}
+            const changedDirs = changedFiles.map(f => path.dirname(f)).filter(dir => fs.existsSync(path.join(dir, 'Chart.yaml')));
+            const uniqueChangedDirs = [...new Set(changedDirs)];
+            console.log(`Found the following changed charts: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
+            core.setOutput("changedDirs", uniqueChangedDirs)
+    outputs:
+      changed_charts: ${{ steps.changedDirs.outputs.changedDirs }}
+  
+  prerelease:
+    runs-on: [ARM64, self-hosted, Linux]
+    needs:
+      - get-changed-charts
+    strategy:
+      matrix:
+        chart: ${{ fromJson(needs.get-changed-charts.outputs.changed_charts) }}
+    if: ${{ needs.get-changed-charts.outputs.changed_charts != '[]' }}
+    steps:
+      - name: Parse Tag
+        shell: bash
+        run: |
+          echo "-----------------------------------------------"
+          echo "Chart: ${{ matrix.chart }}"
+          echo "Version: ${{ github.event.pull_request.head.sha }}"
+
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      # - name: Chart Release
+      #   uses: ./.github/actions/chart-release
+      #   with:
+      #     version: ${{ github.event.pull_request.head.sha }}
+      #     prerelease: true
+      #     release_name: ${{ matrix.chart }}

@@ -45,56 +45,11 @@ jobs:
         with:
           result-encoding: string
           script: return context.ref.replace('refs/tags/', '')
-      - name: Branch
-        id: branch
-        uses: actions/github-script@v7
-        with:
-          result-encoding: string
-          script: return 'artifacts'
-      - name: Generate token
-        id: generate_token
-        uses: tibdex/github-app-token@v2
-        with:
-          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Chart Release
+        uses: ./.github/actions/chart-release
         with:
-          fetch-depth: 0
-          ref: ${{ steps.branch.outputs.result }}
-          token: ${{ steps.generate_token.outputs.token }}
-      - uses: azure/setup-helm@v4
-        with:
-          version: '3.15.2'
-      - name: Publish charts
-        run: |
-          set -ue
-          set -o pipefail
-
-          # the location of the chart package
-          CHARTS_DIR="${{ needs.check-chart-released.outputs.release_name }}"
-          # location of release to download the chart from
-          CHART_DOWNLOAD_URL="https://github.com/${{ github.repository }}/raw/${{ steps.branch.outputs.result }}"
-
-          git config --global user.email "czihelperbot@chanzuckerberg.com"
-          git config --global user.name "CZI Argus Helm Publisher Bot"
-
-          PACKAGE_DIR="."
-          echo ------
-          cat ${PACKAGE_DIR}/index.yaml
-          echo ------
-
-          git pull
-          git merge origin/main
-
-          echo ------
-          cat ${CHARTS_DIR}/Chart.yaml
-          echo ------
-
-          helm dependency update ${{ needs.check-chart-released.outputs.release_name }}
-          helm package ${CHARTS_DIR} -d ${PACKAGE_DIR}
-          helm repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${PACKAGE_DIR}/index.yaml
-
-          git add -A
-          git commit -m "chore: publish charts from ${{ github.repository }} ${{ steps.parse_tag.outputs.result }}"
-          git push
+          version: ${{ steps.parse_tag.outputs.result }}
+          prerelease: false
+          release_name: ${{ needs.check-chart-released.outputs.release_name }}
