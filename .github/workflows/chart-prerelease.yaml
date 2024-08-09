@@ -42,18 +42,18 @@ jobs:
         chart: ${{ fromJson(needs.get-changed-charts.outputs.changed_charts) }}
     if: ${{ needs.get-changed-charts.outputs.changed_charts != '[]' }}
     steps:
-      - name: Parse Tag
-        shell: bash
-        run: |
-          echo "-----------------------------------------------"
-          echo "Chart: ${{ matrix.chart }}"
-          echo "Version: ${{ github.event.pull_request.head.sha }}"
+      # - name: Parse Tag
+      #   shell: bash
+      #   run: |
+      #     echo "-----------------------------------------------"
+      #     echo "Chart: ${{ matrix.chart }}"
+      #     echo "Version: ${{ github.event.pull_request.head.sha }}"
 
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      # - name: Chart Release
-      #   uses: ./.github/actions/chart-release
-      #   with:
-      #     version: ${{ github.event.pull_request.head.sha }}
-      #     prerelease: true
-      #     release_name: ${{ matrix.chart }}
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Chart Release
+        uses: ./.github/actions/chart-release
+        with:
+          version: ${{ github.event.pull_request.head.sha }}
+          prerelease: true
+          release_name: ${{ matrix.chart }}
