@@ -5,8 +5,8 @@ on:
     types: [published]
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check-chart-released:
@@ -44,7 +44,12 @@ jobs:
         uses: actions/github-script@v7
         with:
           result-encoding: string
-          script: return context.ref.replace('refs/tags/', '')
+          script: |
+            if (!context.ref.startsWith('refs/tags/${{ needs.check-chart-released.outputs.release_name }}-v')) {
+              throw new Error(`Failed to parse version from tag: ${context.ref}`);
+            }
+            const version = context.ref.replace('refs/tags/${{ needs.check-chart-released.outputs.release_name }}-v', '')
+            return version
       - name: Checkout
         uses: actions/checkout@v4
       - name: Chart Release
