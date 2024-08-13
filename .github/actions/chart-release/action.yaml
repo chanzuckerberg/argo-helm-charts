@@ -54,36 +54,36 @@ runs:
             msg = `${msg} (prerelease)`;
           }
           return msg;
+    - name: Merge in main
+      shell: bash
+      run: |
+        git config --global user.email "czihelperbot@chanzuckerberg.com"
+        git config --global user.name "CZI Argus Helm Publisher Bot"
+        git pull
+        git merge origin/main
+    - name: Patch version
+      uses: mikefarah/yq@v4
+      with:
+        cmd: yq -i '.version = "${{ inputs.version }}"' ${{ inputs.release_name }}/Chart.yaml
     - name: Publish charts
       shell: bash
       run: |
         set -ue
         set -o pipefail
 
-        # the location of the chart package
-        CHARTS_DIR="${{ inputs.release_name }}"
-        # location of release to download the chart from
-        CHART_DOWNLOAD_URL="https://github.com/${{ github.repository }}/raw/${{ steps.branch.outputs.result }}"
-
-        git config --global user.email "czihelperbot@chanzuckerberg.com"
-        git config --global user.name "CZI Argus Helm Publisher Bot"
-
         PACKAGE_DIR="."
         echo ------
         cat ${PACKAGE_DIR}/index.yaml
         echo ------
 
-        git pull
-        git merge origin/main
-
         echo ------
-        cat ${CHARTS_DIR}/Chart.yaml
+        cat ${{ inputs.release_name }}/Chart.yaml
         echo ------
 
         helm dependency update ${{ inputs.release_name }}
-        helm package ${CHARTS_DIR} -d ${PACKAGE_DIR}
-        helm repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${PACKAGE_DIR}/index.yaml
+        helm package ${{ inputs.release_name }} -d ${PACKAGE_DIR}
+        helm repo index ${PACKAGE_DIR} --url "https://github.com/${{ github.repository }}/raw/${{ steps.branch.outputs.result }}" --merge ${PACKAGE_DIR}/index.yaml
 
         git add -A
-        git commit -m "chore: publish charts from ${{ github.repository }} ${{ inputs.version }}"
+        git commit -m "chore: publish ${{ inputs.release_name }} chart version ${{ inputs.version }} from ${{ github.repository }}"
         git push
