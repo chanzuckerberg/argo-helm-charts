@@ -105,6 +105,7 @@ tests:
             enabled: false
           replicaCount: 1
           livenessProbe:
+            timeoutSeconds: 10
             tcpSocket:
               port: 80
           readinessProbe:
@@ -120,7 +121,7 @@ tests:
             initialDelaySeconds: 30
             periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 1
+            timeoutSeconds: 10
       - equal:
           path: spec.template.spec.containers[0].readinessProbe
           value:
