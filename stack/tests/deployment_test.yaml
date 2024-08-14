@@ -35,6 +35,104 @@ tests:
           apiVersion: apps/v1
           kind: Deployment
 
+  - it: uses httpGet probe by default
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+  - it: uses exec probe when supplied
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            exec:
+              command: ["echo", "Hello World"]
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            exec:
+              command: ["echo", "Hello World"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+  - it: uses tcpSocket probe when supplied
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            tcpSocket:
+              port: 80
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+  - it: uses a combination of probes
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            timeoutSeconds: 10
+            tcpSocket:
+              port: 80
+          readinessProbe:
+            exec:
+              command: ["echo", "Hello World"]
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            failureThreshold: 3
+            exec:
+              command: ["echo", "Hello World"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+
       #   path: metadata.name
       #   pattern: -my-chart$
       # - equal:
