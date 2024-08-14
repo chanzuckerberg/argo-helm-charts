@@ -5,8 +5,9 @@ on:
     types: [published]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # make sure only one release is processed at a time
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   check-chart-released:

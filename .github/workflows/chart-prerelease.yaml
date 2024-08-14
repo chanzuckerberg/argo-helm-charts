@@ -38,6 +38,7 @@ jobs:
     needs:
       - get-changed-charts
     strategy:
+      max-parallel: 1
       matrix:
         chart: ${{ fromJson(needs.get-changed-charts.outputs.changed_charts) }}
     if: ${{ needs.get-changed-charts.outputs.changed_charts != '[]' }}
