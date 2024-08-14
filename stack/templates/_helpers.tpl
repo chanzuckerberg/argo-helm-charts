@@ -118,10 +118,10 @@ The default values in this chart adds httpGet probes to the deployment.
 Container probes cannot have both httpGet and tcpSocket fields, so we use omit to remove one of them.
 */}}
 {{- define "container.probe" -}}
-{{- if .tcpSocket -}}
+{{- if or .tcpSocket .exec -}}
 {{- toYaml (omit . "httpGet") }}
 {{- else }}
-{{- toYaml (omit . "tcpSocket") }}
+{{- toYaml . }}
 {{- end }}
 {{- end }}
 
