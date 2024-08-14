@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.6.1...stack-v1.7.0) (2024-08-14)
+
+
+### Features
+
+* add support for probes that exec a command ([#76](https://github.com/chanzuckerberg/argo-helm-charts/issues/76)) ([9ac7d63](https://github.com/chanzuckerberg/argo-helm-charts/commit/9ac7d636b609089ae7fac8a82522103e6d9dcf49))
+
 ## [1.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.6.0...stack-v1.6.1) (2024-08-02)
 
 
