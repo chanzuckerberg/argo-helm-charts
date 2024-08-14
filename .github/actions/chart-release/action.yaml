@@ -88,3 +88,5 @@ runs:
         git add -A
         git commit -m "chore: publish ${{ inputs.release_name }} chart version ${{ inputs.version }} from ${{ github.repository }}"
         git push
+    - name: Switch back to main branch
+      uses: actions/checkout@v4
