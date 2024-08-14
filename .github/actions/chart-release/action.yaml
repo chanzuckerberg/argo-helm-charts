@@ -61,10 +61,11 @@ runs:
         git config --global user.name "CZI Argus Helm Publisher Bot"
         git pull
         git merge origin/main
-    - name: Patch version
+    - name: Patch version (if prerelease)
+      if: ${{ inputs.prerelease == 'true' }}
       uses: mikefarah/yq@v4
       with:
-        cmd: yq -i '.version = "${{ inputs.version }}"' ${{ inputs.release_name }}/Chart.yaml
+        cmd: yq -i '.version += "-${{ inputs.version }}"' ${{ inputs.release_name }}/Chart.yaml
     - name: Publish charts
       shell: bash
       run: |
