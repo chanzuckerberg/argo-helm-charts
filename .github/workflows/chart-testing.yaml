@@ -50,6 +50,7 @@ jobs:
           helm dependency build ./stack
           helm install test ./stack --wait --values ./test-fixtures/values.yaml --debug --timeout 120s || true
           kubectl get pods -A
+          kubectl describe pods --all
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
