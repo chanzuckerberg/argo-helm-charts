@@ -2,4 +2,5 @@ services:
   service1:
     replicaCount: 1
 global:
-  nodeSelector: {}
+  nodeSelector:
+    kubernetes.io/arch: amd64
