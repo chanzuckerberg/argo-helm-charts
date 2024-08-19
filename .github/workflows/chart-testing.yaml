@@ -45,6 +45,7 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
+          helm dependency build ./stack
           helm install test ./stack --wait --values ./test-fixtures/values.yaml
 
       - name: Run chart-testing (install)
