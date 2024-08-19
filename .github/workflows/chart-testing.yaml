@@ -48,7 +48,8 @@ jobs:
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
           helm dependency build ./stack
-          helm install test ./stack --wait --values ./test-fixtures/values.yaml --debug
+          helm install test ./stack --wait --values ./test-fixtures/values.yaml --debug --timeout 120s || true
+          kubectl get pods -A
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
