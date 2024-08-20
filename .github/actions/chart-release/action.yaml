@@ -1,0 +1,92 @@
+name: Chart Release
+description: Release a Helm chart
+
+inputs:
+  version:
+    description: 'The version of the chart to release'
+    required: true
+  prerelease:
+    description: 'Whether the release is a prerelease'
+    required: false
+    default: "false"
+  release_name:
+    description: 'The name of the chart being released'
+    required: true
+  github_app_id:
+    description: 'The GitHub App ID'
+    required: true
+  github_private_key:
+    description: 'The GitHub App private key'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Branch
+      id: branch
+      uses: actions/github-script@v7
+      with:
+        result-encoding: string
+        script: return 'artifacts'
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v2
+      with:
+        app_id: ${{ inputs.github_app_id }}
+        private_key: ${{ inputs.github_private_key }}
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: ${{ steps.branch.outputs.result }}
+        token: ${{ steps.generate_token.outputs.token }}
+    - uses: azure/setup-helm@v4
+      with:
+        version: '3.15.2'
+    - name: Commit message
+      id: commit_message
+      uses: actions/github-script@v7
+      with:
+        result-encoding: string
+        script: |
+          let msg = 'chore: publish charts from ${{ github.repository }} ${{ inputs.version }}';
+          if ('${{ inputs.prerelease }}' == 'true') {
+            msg = `${msg} (prerelease)`;
+          }
+          return msg;
+    - name: Merge in main
+      shell: bash
+      run: |
+        git config --global user.email "czihelperbot@chanzuckerberg.com"
+        git config --global user.name "CZI Argus Helm Publisher Bot"
+        git pull
+        git merge origin/main
+    - name: Patch version (if prerelease)
+      if: ${{ inputs.prerelease == 'true' }}
+      uses: mikefarah/yq@v4
+      with:
+        cmd: yq -i '.version += "-${{ inputs.version }}"' ${{ inputs.release_name }}/Chart.yaml
+    - name: Publish charts
+      shell: bash
+      run: |
+        set -ue
+        set -o pipefail
+
+        PACKAGE_DIR="."
+        echo ------
+        cat ${PACKAGE_DIR}/index.yaml
+        echo ------
+
+        echo ------
+        cat ${{ inputs.release_name }}/Chart.yaml
+        echo ------
+
+        helm dependency update ${{ inputs.release_name }}
+        helm package ${{ inputs.release_name }} -d ${PACKAGE_DIR}
+        helm repo index ${PACKAGE_DIR} --url "https://github.com/${{ github.repository }}/raw/${{ steps.branch.outputs.result }}" --merge ${PACKAGE_DIR}/index.yaml
+
+        git add -A
+        git commit -m "chore: publish ${{ inputs.release_name }} chart version ${{ inputs.version }} from ${{ github.repository }}"
+        git push
+    - name: Switch back to main branch
+      uses: actions/checkout@v4
