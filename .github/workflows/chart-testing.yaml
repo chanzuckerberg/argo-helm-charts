@@ -50,6 +50,7 @@ jobs:
           helm dep update ./stack
           helm dependency build ./stack
           helm install test ./stack --wait --values ./test-fixtures/values.yaml --debug
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git
           helm unittest ./stack
 
       - name: Run chart-testing (install)
