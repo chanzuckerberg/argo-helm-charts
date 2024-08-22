@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.7.0...stack-v1.8.0) (2024-08-20)
+
+
+### Features
+
+* bump version of argus-config ([#81](https://github.com/chanzuckerberg/argo-helm-charts/issues/81)) ([05b025f](https://github.com/chanzuckerberg/argo-helm-charts/commit/05b025f94cc0bddf50321cf0c348476261960cd4))
+
 ## [1.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.6.1...stack-v1.7.0) (2024-08-14)
 
 
