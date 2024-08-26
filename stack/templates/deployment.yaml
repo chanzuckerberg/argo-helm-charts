@@ -92,7 +92,9 @@ spec:
         {{- end }}
       initContainers:
       {{- range $i, $container := .Values.initContainers }}
-      {{- $imageDict := fromYaml (include "initContainer.image" (dict "Chart" $global.Chart "Values" $container)) }}
+      {{- with (dict "Chart" $global.Chart "Values" $container) -}}
+      {{- $imageDict := fromYaml (include "image" .Values) }}
+      {{- end -}}
       {{- $container = mergeOverwrite $container $imageDict }}
       {{- with omit $container "envFrom" "env" }}
         - {{- toYaml . | nindent 10 }}

@@ -96,14 +96,13 @@ env: []
 {{- end }}
 {{- end }}
 
-{{- define "initContainer.image" -}}
-{{- if typeIs "string" .Values.image }}
-image: {{ .Values.image }}
+{{- define "image" -}}
+{{- if typeIs "string" .image }}
+image: {{ .image }}
 {{ else }}
-image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+image: "{{ .image.repository }}:{{ .image.tag | default .Chart.AppVersion }}"
 {{- end }}
 {{- end }}
-
 
 {{- define "service.claimName" -}}
 {{- if .Values.persistence.existingClaim }}
@@ -131,14 +130,6 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 {{- $secondLast := $splits | initial | last }}
 {{- printf "%s.%s" $secondLast $last -}}
 {{- end -}}
-
-{{- define "oidcProxy.image" -}}
-{{- if typeIs "string" .Values.global.oidcProxy.image }}
-image: {{ .Values.global.oidcProxy.image }}
-{{ else }}
-image: {{ .Values.global.oidcProxy.image.repository }}:{{ .Values.global.oidcProxy.image.tag }}
-{{- end }}
-{{- end }}
 
 {{- define "oidcProxy.name" -}}
 {{ include "stack.name" . }}-oidc-proxy
