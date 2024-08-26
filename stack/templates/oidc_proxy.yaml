@@ -41,6 +41,7 @@ spec:
           {{- include "oidcProxy.image" .  | nindent 10 }}
           envFrom:
             {{- include "oidcProxy.envFromArgusSecrets" . | nindent 10 }}
+            {{- include "oidcProxy.additionalSecrets" . | nindent 10 }}
           imagePullPolicy: IfNotPresent
           name:  {{ include "oidcProxy.name" . }}
           ports:
