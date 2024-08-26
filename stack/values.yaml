@@ -180,7 +180,22 @@ global:
       storageClassName: "default"
     existingClaim: ""
     mountPath: ""
-# Service overrides
+  # Service overrides
+  oidcProxy:
+    enabled: true
+    image:
+      repository: https://oauth2-proxy.github.io/manifests
+      tag: "7.7.9"
+    replicaCount: 2
+    # extraArgs:
+    #   key1: "{{add 1 1}}"
+    resources:
+      limits:
+        cpu: 2
+        memory: 4Gi
+      requests:
+        cpu: 2
+        memory: 4Gi
 services:
   {}
   # service1:
