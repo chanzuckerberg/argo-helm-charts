@@ -1,0 +1,90 @@
+{{- if .Values.global.oidcProxy.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "oidcProxy.name" . }}
+  labels:
+    {{- include "oidcProxy.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.global.oidcProxy.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "oidcProxy.selectorLabels" .  | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        {{- include "oidcProxy.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - args:
+            - --session-store-type=redis
+            - --http-address=0.0.0.0:{{ include "oidcProxy.port" . }}
+            - --provider=oidc
+            - --email-domain=*``
+            - --cookie-secure=true
+            - --set-authorization-header
+            - --set-xauthrequest
+            - --cookie-domain={{- include "baseDomain" . }}
+            - --whitelist-domain=.{{- include "baseDomain" . }}
+            - --skip-provider-button=true
+            - --pass-authorization-header=true
+            - --reverse-proxy
+            {{- range $key, $value := .Values.global.oidcProxy.extraArgs }}
+              {{- if not (kindIs "invalid" $value) }}
+            - --{{ $key }}={{ tpl ($value | toString) $ }}
+              {{- else -}}
+            - --{{ $key }}
+              {{- end -}}
+            {{- end -}}
+          {{- include "oidcProxy.image" .  | nindent 10 }}
+          envFrom:
+            {{- include "oidcProxy.envFromArgusSecrets" . | nindent 10 }}
+          imagePullPolicy: IfNotPresent
+          name:  {{ include "oidcProxy.name" . }}
+          ports:
+            - containerPort: {{ include "oidcProxy.port" . }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.global.oidcProxy.resources | nindent 12 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "oidcProxy.labels" . | nindent 4 }}
+  name: {{ include "oidcProxy.name" . }}
+spec:
+  ports:
+    - name: http
+      port: {{ include "oidcProxy.port" . }}
+      protocol: TCP
+      targetPort: {{ include "oidcProxy.port" . }}
+  selector:
+    {{- include "oidcProxy.selectorLabels" . | nindent 4 }}
+
+---
+{{- if .Values.global.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "oidcProxy.name" . }}
+  annotations:
+    external-dns.alpha.kubernetes.io/exclude: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: auth.{{- include "baseDomain" . }}
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "oidcProxy.name" . }}
+                port:
+                  number: {{ include "oidcProxy.port" . }}
+{{- end -}}
+{{- end -}}

@@ -125,3 +125,48 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 {{- end }}
 {{- end }}
 
+{{- define "baseDomain" -}}
+{{- $splits := (splitList "." .Values.global.ingress.host) }}
+{{- $last := $splits | last }}
+{{- $secondLast := $splits | initial | last }}
+{{- printf "%s.%s" $secondLast $last -}}
+{{- end -}}
+
+{{- define "oidcProxy.image" -}}
+{{- if typeIs "string" .Values.global.oidcProxy.image }}
+image: {{ .Values.global.oidcProxy.image }}
+{{ else }}
+image: {{ .Values.global.oidcProxy.image.repository }}:{{ .Values.global.oidcProxy.image.tag }}
+{{- end }}
+{{- end }}
+
+{{- define "oidcProxy.name" -}}
+{{ include "stack.name" . }}-oidc-proxy
+{{- end }}
+
+{{- define "oidcProxy.port" -}}
+{{ .Values.global.oidcProxy.port | default 4180 | int  }}
+{{- end }}
+
+{{- define "oidcProxy.labels" -}}
+{{- include "oidcProxy.selectorLabels" . }}
+k8s-app:  {{ include "oidcProxy.name" . }}
+{{- end }}
+
+{{- define "oidcProxy.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "oidcProxy.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{ define "oidcProxy.envFromArgusSecrets" -}}
+{{- if ne (trim .Values.global.appSecrets.envSecret.secretName) "" }}
+- secretRef:
+    name: {{ .Values.global.appSecrets.envSecret.secretName }}
+    optional: true
+{{- end }}
+{{- if ne (trim .Values.global.appSecrets.stackSecret.secretName) "" }}
+- secretRef:
+    name: {{ .Values.global.appSecrets.stackSecret.secretName }}
+    optional: true
+{{- end -}}
+{{- end -}}
