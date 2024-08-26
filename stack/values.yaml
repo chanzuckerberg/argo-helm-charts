@@ -180,7 +180,6 @@ global:
       storageClassName: "default"
     existingClaim: ""
     mountPath: ""
-  # Service overrides
   oidcProxy:
     enabled: true
     image:
@@ -196,6 +195,7 @@ global:
       requests:
         cpu: 2
         memory: 4Gi
+# Service overrides
 services:
   {}
   # service1:
