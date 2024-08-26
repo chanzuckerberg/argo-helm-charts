@@ -94,12 +94,12 @@ spec:
       {{- range $i, $container := .Values.initContainers }}
       {{- with (dict "Chart" $global.Chart "Values" $container) -}}
       {{- $imageDict := fromYaml (include "image" .Values) }}
-      {{- end -}}
       {{- $container = mergeOverwrite $container $imageDict }}
       {{- with omit $container "envFrom" "env" }}
         - {{- toYaml . | nindent 10 }}
           {{- include "service.configuration" $service | nindent 10}}
       {{- end }}
+      {{- end -}}
       {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
