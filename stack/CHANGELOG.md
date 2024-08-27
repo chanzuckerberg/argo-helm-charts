@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.3...stack-v1.9.4) (2024-08-27)
+
+
+### Bug Fixes
+
+* service URL needs to be in the long form ([#90](https://github.com/chanzuckerberg/argo-helm-charts/issues/90)) ([a6f022f](https://github.com/chanzuckerberg/argo-helm-charts/commit/a6f022f885593bef26b3e2d74173b6bf97614026))
+
 ## [1.9.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.2...stack-v1.9.3) (2024-08-27)
 
 
