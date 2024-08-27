@@ -168,8 +168,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}
 
-
 {{ define "oidcProxy.envFrom"}}
 {{- include "oidcProxy.envFromArgusSecrets" . }}
 {{- include "oidcProxy.additionalSecrets" . }}
+{{- end -}}
+
+{{- define "oidcProxy.nginxAuthAnnotations" -}}
+nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}:4180/oauth2/auth"
+nginx.ingress.kubernetes.io/auth-signin: "https://auth.{{- include "baseDomain" . }}/oauth2/start?rd=https://$host$escaped_request_uri"
+nginx.ingress.kubernetes.io/auth-response-headers: Authorization
 {{- end -}}

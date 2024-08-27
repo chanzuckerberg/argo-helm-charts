@@ -133,8 +133,27 @@ tests:
             successThreshold: 1
             timeoutSeconds: 1
 
-      #   path: metadata.name
-      #   pattern: -my-chart$
-      # - equal:
-      #   path: spec.template.spec.containers[0].image
-      #   value: nginx:latest
+  - it: adds nginx auth annotations when oidcProxy.enabled=true
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - isKind:
+          of: Deployment
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-url"]
+          value: "http://stack-oidc-proxy:4180/oauth2/auth"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-signin"]
+          value: "https://auth.chart-example.local/oauth2/start?rd=https://$host$escaped_request_uri"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
+          value: "Authorization"

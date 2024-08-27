@@ -1,0 +1,93 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stack-oidc-proxy
+  labels:
+    app.kubernetes.io/name: stack-oidc-proxy
+    app.kubernetes.io/instance: RELEASE-NAME
+    k8s-app:  stack-oidc-proxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: stack-oidc-proxy
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app.kubernetes.io/name: stack-oidc-proxy
+        app.kubernetes.io/instance: RELEASE-NAME
+        k8s-app:  stack-oidc-proxy
+    spec:
+      containers:
+        - args:
+            - --session-store-type=redis
+            - --http-address=0.0.0.0:4180
+            - --provider=oidc
+            - --email-domain=*``
+            - --cookie-secure=true
+            - --set-authorization-header
+            - --set-xauthrequest
+            - --cookie-domain=chart-example.local
+            - --whitelist-domain=.chart-example.local
+            - --skip-provider-button=true
+            - --pass-authorization-header=true
+            - --reverse-proxy
+          
+          image: https://oauth2-proxy.github.io/manifests:7.7.9
+          envFrom: []
+          imagePullPolicy: IfNotPresent
+          name:  stack-oidc-proxy
+          ports:
+            - containerPort: 4180
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 2
+              memory: 4Gi
+            requests:
+              cpu: 2
+              memory: 4Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: stack-oidc-proxy
+    app.kubernetes.io/instance: RELEASE-NAME
+    k8s-app:  stack-oidc-proxy
+  name: stack-oidc-proxy
+spec:
+  ports:
+    - name: http
+      port: 4180
+      protocol: TCP
+      targetPort: 4180
+  selector:
+    app.kubernetes.io/name: stack-oidc-proxy
+    app.kubernetes.io/instance: RELEASE-NAME
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stack-oidc-proxy
+  annotations:
+    external-dns.alpha.kubernetes.io/exclude: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: auth.chart-example.local
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: stack-oidc-proxy
+                port:
+                  number: 4180

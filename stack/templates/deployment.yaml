@@ -5,7 +5,8 @@
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
-{{- with $service -}}
+{{- with $service }}
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -14,7 +15,14 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- include "stack.annotations" $service | nindent 4 }}
+    {{- $nginxAuthAnnotations := dict}}
+    {{- if .Values.ingress.oidcProtected }}
+    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" $global )) }}
+    {{- end}}
+    {{- toYaml (merge 
+                (fromYaml (include "stack.annotations" $service )) 
+                ($nginxAuthAnnotations)
+      ) | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
