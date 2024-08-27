@@ -17,7 +17,15 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
-  {{- with merge .Values.ingress.annotations .Values.annotations }}
+  {{- $nginxAuthAnnotations := dict}}
+    {{- if .Values.ingress.oidcProtected }}
+    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" $global )) }}
+    {{- end}}
+    {{- with (merge 
+                (.Values.ingress.annotations)
+                (.Values.annotations) 
+                ($nginxAuthAnnotations)
+      ) }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}

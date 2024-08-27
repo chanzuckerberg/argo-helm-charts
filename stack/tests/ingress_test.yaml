@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test ingress
+templates:
+  - ingress.yaml
+tests:
+  - it: adds nginx auth annotations when oidcProxy.enabled=true
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-url"]
+          value: "http://release-name-stack-oidc-proxy:4180/oauth2/auth"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-signin"]
+          value: "https://auth.chart-example.local/oauth2/start?rd=https://$host$escaped_request_uri"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
+          value: "Authorization"
