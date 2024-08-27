@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.1...stack-v1.9.2) (2024-08-27)
+
+
+### Bug Fixes
+
+* use a cluster-wide domain name for auth subdomain ([#86](https://github.com/chanzuckerberg/argo-helm-charts/issues/86)) ([4b5b704](https://github.com/chanzuckerberg/argo-helm-charts/commit/4b5b704060700585262b6bfd02d5826c7ab2ab40))
+
 ## [1.9.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.0...stack-v1.9.1) (2024-08-27)
 
 
