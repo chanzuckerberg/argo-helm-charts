@@ -131,6 +131,10 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 {{- printf "%s.%s" $secondLast $last -}}
 {{- end -}}
 
+{{- define "clusterBaseDomain" -}}
+{{ splitList "." .Values.global.ingress.host | rest | join "." }} 
+{{- end -}}
+
 {{- define "oidcProxy.name" -}}
 {{ include "stack.fullname" . | lower }}-oidc-proxy
 {{- end }}
