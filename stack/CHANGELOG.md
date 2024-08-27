@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.2...stack-v1.9.3) (2024-08-27)
+
+
+### Bug Fixes
+
+* wrong domain name in the annotations for ingress ([#88](https://github.com/chanzuckerberg/argo-helm-charts/issues/88)) ([6112960](https://github.com/chanzuckerberg/argo-helm-charts/commit/61129600c119776476bee038ab4c1d41aae365eb))
+
 ## [1.9.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.1...stack-v1.9.2) (2024-08-27)
 
 
