@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.0...stack-v1.9.1) (2024-08-27)
+
+
+### Bug Fixes
+
+* image, authn headers, name ([#84](https://github.com/chanzuckerberg/argo-helm-charts/issues/84)) ([57eca81](https://github.com/chanzuckerberg/argo-helm-charts/commit/57eca812a1d378e1970a2ee1a1616efa72d6e19f))
+
 ## [1.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.8.0...stack-v1.9.0) (2024-08-27)
 
 
