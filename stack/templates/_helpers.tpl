@@ -100,7 +100,7 @@ env: []
 {{- if typeIs "string" .image }}
 image: {{ .image }}
 {{ else }}
-image: "{{ .image.repository }}:{{ .image.tag | default .Chart.AppVersion }}"
+image: {{ .image.repository }}:{{ .image.tag | default "latest" }}
 {{- end }}
 {{- end }}
 
@@ -163,5 +163,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{ define "oidcProxy.additionalSecrets" -}}
+{{ if gt (len .Values.global.oidcProxy.additionalSecrets) 0 }}
 {{ toYaml .Values.global.oidcProxy.additionalSecrets }}
+{{- end -}}
 {{- end -}}

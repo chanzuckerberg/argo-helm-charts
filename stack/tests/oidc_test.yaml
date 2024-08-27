@@ -9,9 +9,53 @@ tests:
         oidcProxy:
           enabled: false
     asserts:
-      - isNullOrEmpty:
-          path: metadata.name
+      - hasDocuments:
+          count: 0
   - it: is enabled by default
     asserts:
-      - isKind:
-          of: Deployment
+      - hasDocuments:
+          count: 3
+  - it: sets additionalSecrets in envFrom
+    set:
+      global:
+        oidcProxy:
+          additionalSecrets:
+            - secretRef:
+              name: blah1
+              optional: true
+            - secretRef:
+              name: blah2
+              optional: true
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].envFrom
+          count: 2
+  - it: combines additionalSecrets with argus secrets in envFrom
+    set:
+      global:
+        appSecrets:
+          envSecret:
+            secretName: blah3
+          stackSecret:
+            secretName: blah4
+        oidcProxy:
+          additionalSecrets:
+            - secretRef:
+              name: blah1
+              optional: true
+            - secretRef:
+              name: blah2
+              optional: true
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].envFrom
+          count: 4
+
+  - it: defaults to 0 envFrom object
+    asserts:
+      - documentIndex: -1
+        lengthEqual:
+          path: spec.template.spec.containers[0].envFrom
+          count: 0
