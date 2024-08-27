@@ -6,6 +6,8 @@ tests:
   - it: adds nginx auth annotations when oidcProxy.enabled=true
     set:
       global:
+        ingress:
+          host: "stack.play.dev.czi.team"
         oidcProxy:
           enabled: true
       services:
@@ -22,7 +24,7 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-signin"]
-          value: "https://auth.chart-example.local/oauth2/start?rd=https://$host$escaped_request_uri"
+          value: "https://auth.play.dev.czi.team/oauth2/start?rd=https://$host$escaped_request_uri"
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
