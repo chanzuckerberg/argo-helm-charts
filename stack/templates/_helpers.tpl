@@ -167,3 +167,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{ toYaml .Values.global.oidcProxy.additionalSecrets }}
 {{- end -}}
 {{- end -}}
+
+
+{{ define "oidcProxy.envFrom"}}
+{{- include "oidcProxy.envFromArgusSecrets" . }}
+{{- include "oidcProxy.additionalSecrets" . }}
+{{- end -}}

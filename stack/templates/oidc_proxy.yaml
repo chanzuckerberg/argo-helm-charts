@@ -39,9 +39,12 @@ spec:
               {{- end -}}
             {{- end -}}
           {{- include "image" .Values.global.oidcProxy  | nindent 10 }}
-          envFrom:
-            {{- include "oidcProxy.envFromArgusSecrets" . | nindent 12 }}
-            {{- include "oidcProxy.additionalSecrets" . | nindent 12 }}
+          {{- if gt (len (fromYamlArray (include "oidcProxy.envFrom" .))) 0 }}
+          envFrom: 
+          {{- include "oidcProxy.envFrom" . | nindent 12 }}
+          {{- else }}
+          envFrom: []
+          {{- end }}
           imagePullPolicy: IfNotPresent
           name:  {{ include "oidcProxy.name" . }}
           ports:
