@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.8.0...stack-v1.9.0) (2024-08-27)
+
+
+### Features
+
+* add oidc proxy deployment to stack helm chart ([#82](https://github.com/chanzuckerberg/argo-helm-charts/issues/82)) ([73ef475](https://github.com/chanzuckerberg/argo-helm-charts/commit/73ef4753b2325837a6d30747c065ce765b76ac76))
+
 ## [1.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.7.0...stack-v1.8.0) (2024-08-20)
 
 
