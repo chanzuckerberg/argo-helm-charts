@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: oidc proxy deployment
+templates:
+  - oidc_proxy.yaml
+tests:
+  - it: can be disabled with oidcProxy.enabled=false
+    set:
+      global:
+        oidcProxy:
+          enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: is enabled by default
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 0
+        containsDocument:
+          kind: Deployment
+          apiVersion: apps/v1
+          name: stack-oidc-proxy
+      - documentIndex: 1
+        containsDocument:
+          kind: Service
+          apiVersion: v1
+          name: stack-oidc-proxy
+      - documentIndex: 2
+        containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
+          name: stack-oidc-proxy
+  - it: sets additionalSecrets in envFrom
+    set:
+      global:
+        oidcProxy:
+          additionalSecrets:
+            - secretRef:
+              name: blah1
+              optional: true
+            - secretRef:
+              name: blah2
+              optional: true
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].envFrom
+          count: 2
+  - it: combines additionalSecrets with argus secrets in envFrom
+    set:
+      global:
+        appSecrets:
+          envSecret:
+            secretName: blah3
+          stackSecret:
+            secretName: blah4
+        oidcProxy:
+          additionalSecrets:
+            - secretRef:
+              name: blah1
+              optional: true
+            - secretRef:
+              name: blah2
+              optional: true
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].envFrom
+          count: 4
+  - it: defaults to 0 envFrom object
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].envFrom
+          value: []

@@ -118,6 +118,7 @@ global:
       - path: /
         pathType: Prefix
     rules: []
+    oidcProtected: false
     annotations:
       infra: "true"
       external-dns.alpha.kubernetes.io/exclude: "true"
@@ -180,6 +181,22 @@ global:
       storageClassName: "default"
     existingClaim: ""
     mountPath: ""
+  oidcProxy:
+    enabled: true
+    image:
+      repository: https://oauth2-proxy.github.io/manifests
+      tag: "7.7.9"
+    replicaCount: 2
+    additionalSecrets: []
+    # extraArgs:
+    #   key1: "{{add 1 1}}"
+    resources:
+      limits:
+        cpu: 2
+        memory: 4Gi
+      requests:
+        cpu: 2
+        memory: 4Gi
 # Service overrides
 services:
   {}
@@ -227,4 +244,3 @@ cronJobs:
   #     tag: "latest"
   #   command: ["command1", "command2"]
   #   args: ["arg1", "arg2"]
-# bump6
