@@ -22,7 +22,7 @@ spec:
             - --session-store-type=redis
             - --http-address=0.0.0.0:{{ include "oidcProxy.port" . }}
             - --provider=oidc
-            - --email-domain=*``
+            - --email-domain=*
             - --cookie-secure=true
             - --set-authorization-header
             - --set-xauthrequest
