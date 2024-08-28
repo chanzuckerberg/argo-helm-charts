@@ -80,6 +80,9 @@ global:
     stackSecret: # Stack level configuration secret
       secretName: ""
       secretKey: ""
+    clusterSecret: # Cluster level configuration secret
+      secretName: ""
+      secretKey: ""
 
   # Global annotations to add to all resources
   annotations: {}
