@@ -54,6 +54,8 @@ tests:
             secretName: blah3
           stackSecret:
             secretName: blah4
+          clusterSecret:
+            secretName: blah5
         oidcProxy:
           additionalSecrets:
             - secretRef:
@@ -66,7 +68,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].envFrom
-          count: 4
+          count: 5
   - it: defaults to 0 envFrom object
     asserts:
       - documentIndex: 0
