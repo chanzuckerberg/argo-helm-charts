@@ -118,6 +118,7 @@ global:
       - path: /
         pathType: Prefix
     rules: []
+    oidcProtected: false
     annotations:
       infra: "true"
       external-dns.alpha.kubernetes.io/exclude: "true"
@@ -169,6 +170,33 @@ global:
   env: []
   envFrom: []
 
+  persistence:
+    enabled: false
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      storageClassName: "default"
+    existingClaim: ""
+    mountPath: ""
+  oidcProxy:
+    enabled: true
+    image:
+      repository: quay.io/oauth2-proxy/oauth2-proxy
+      tag: v7.6.0
+    replicaCount: 2
+    additionalSecrets: []
+    # extraArgs:
+    #   key1: "{{add 1 1}}"
+    resources:
+      limits:
+        cpu: 2
+        memory: 4Gi
+      requests:
+        cpu: 2
+        memory: 4Gi
 # Service overrides
 services:
   {}
@@ -216,4 +244,3 @@ cronJobs:
   #     tag: "latest"
   #   command: ["command1", "command2"]
   #   args: ["arg1", "arg2"]
-# bump5

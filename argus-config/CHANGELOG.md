@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.0.2...argus-config-v1.1.0) (2024-08-20)
+
+
+### Features
+
+* fixed parsing private key ([#79](https://github.com/chanzuckerberg/argo-helm-charts/issues/79)) ([11c93be](https://github.com/chanzuckerberg/argo-helm-charts/commit/11c93be6661b61d8d16c624b97636af4522540ae))
+
 ## [1.0.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.0.1...argus-config-v1.0.2) (2024-07-19)
 
 

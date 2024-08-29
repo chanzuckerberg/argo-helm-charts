@@ -5,11 +5,11 @@
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
-{{- with $service }}
+{{- with $service -}}
 
----
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+kind: PersistentVolumeClaim
 apiVersion: v1
-kind: Service
 metadata:
   name: {{ include "service.fullname" . }}
   labels:
@@ -17,14 +17,8 @@ metadata:
   annotations:
     {{- include "stack.annotations" $service | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
-  selector:
-    {{- include "service.selectorLabels" . | nindent 4 }}
+   {{- toYaml .Values.persistence.pvc | nindent 2}}
+{{- end }}
 ---
 {{- end }}
 {{- end }}
