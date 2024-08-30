@@ -22,8 +22,6 @@ jobs:
   
       - name: Validate chart template with default values
         run: |
-          helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
-          helm dep update ./stack
           output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1)
           echo "debug"
           echo $output
