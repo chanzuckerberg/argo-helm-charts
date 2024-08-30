@@ -26,6 +26,7 @@ jobs:
           helm dep update ./stack
           helm dependency build ./stack
           output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1)
+          echo "debug"
           echo $output
           if [[ $output -ne "error: no objects passed to apply" ]]; then
             exit 1
