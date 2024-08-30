@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.4...stack-v1.10.0) (2024-08-30)
+
+
+### Features
+
+* create cluster secret references ([#92](https://github.com/chanzuckerberg/argo-helm-charts/issues/92)) ([205e427](https://github.com/chanzuckerberg/argo-helm-charts/commit/205e427911d35d6288b97d11abb1095f1dc04ce0))
+
 ## [1.9.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.3...stack-v1.9.4) (2024-08-27)
 
 

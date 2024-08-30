@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.1.0...argus-config-v1.2.0) (2024-08-30)
+
+
+### Features
+
+* create cluster secret references ([#92](https://github.com/chanzuckerberg/argo-helm-charts/issues/92)) ([205e427](https://github.com/chanzuckerberg/argo-helm-charts/commit/205e427911d35d6288b97d11abb1095f1dc04ce0))
+
 ## [1.1.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.0.2...argus-config-v1.1.0) (2024-08-20)
 
 

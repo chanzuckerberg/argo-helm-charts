@@ -164,6 +164,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
     name: {{ .Values.global.appSecrets.stackSecret.secretName }}
     optional: true
 {{- end -}}
+{{- if ne (trim .Values.global.appSecrets.clusterSecret.secretName) "" }}
+- secretRef:
+    name: {{ .Values.global.appSecrets.clusterSecret.secretName }}
+    optional: true
+{{- end -}}
 {{- end -}}
 
 {{ define "oidcProxy.additionalSecrets" -}}
