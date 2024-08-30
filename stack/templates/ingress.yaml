@@ -5,7 +5,8 @@
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
-{{- with $service -}}
+{{- with $service }}
+
 ---
 {{ if .Values.ingress.enabled }}
 {{- $fullName := include "service.fullname" . -}}
@@ -16,7 +17,15 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
-  {{- with merge .Values.ingress.annotations .Values.annotations }}
+  {{- $nginxAuthAnnotations := dict}}
+    {{- if .Values.ingress.oidcProtected }}
+    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" $global )) }}
+    {{- end}}
+    {{- with (merge 
+                (.Values.ingress.annotations)
+                (.Values.annotations) 
+                ($nginxAuthAnnotations)
+      ) }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}

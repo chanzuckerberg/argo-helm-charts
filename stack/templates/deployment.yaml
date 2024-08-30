@@ -5,7 +5,8 @@
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
-{{- with $service -}}
+{{- with $service }}
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -14,7 +15,14 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- include "stack.annotations" $service | nindent 4 }}
+    {{- $nginxAuthAnnotations := dict}}
+    {{- if .Values.ingress.oidcProtected }}
+    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" $global )) }}
+    {{- end}}
+    {{- toYaml (merge 
+                (fromYaml (include "stack.annotations" $service )) 
+                ($nginxAuthAnnotations)
+      ) | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -62,18 +70,24 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- include "container.probe" .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- include "container.probe" .Values.readinessProbe | nindent 12 }}
           {{- if eq .Values.startupProbe.enabled true }}
           startupProbe:
-            {{- toYaml (omit .Values.startupProbe "enabled") | nindent 12 }}
+            {{- include "container.probe" (omit .Values.startupProbe "enabled") | nindent 12 }}
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+          {{- if or (and .Values.persistence.enabled .Values.persistence.mountPath) .Values.volumeMounts}}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+            {{- if and .Values.persistence.enabled .Values.persistence.mountPath }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+            {{- if .Values.volumeMounts }}
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- include "service.configuration" . | nindent 10}}
           {{- include "service.nonsensitiveEnvVars" (list $global.Values.global .Values) | nindent 10 }}
@@ -86,7 +100,7 @@ spec:
         {{- end }}
       initContainers:
       {{- range $i, $container := .Values.initContainers }}
-      {{- $imageDict := fromYaml (include "initContainer.image" (dict "Chart" $global.Chart "Values" $container)) }}
+      {{- $imageDict := fromYaml (include "image" $container) }}
       {{- $container = mergeOverwrite $container $imageDict }}
       {{- with omit $container "envFrom" "env" }}
         - {{- toYaml . | nindent 10 }}
@@ -96,9 +110,16 @@ spec:
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       restartPolicy: {{ .Values.restartPolicy }}
-      {{- with .Values.volumes }}
+      {{- if or .Values.persistence.enabled .Values.volumes}}
       volumes:
-        {{- toYaml . | nindent 8 }}
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "service.claimName" . }}
+        {{- end }}
+        {{- if .Values.volumes }}
+        {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
