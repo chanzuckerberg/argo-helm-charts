@@ -1,10 +1,9 @@
-name: Lint and Test Charts
+name: Lint and Validate Charts
 
 on: pull_request
 
 jobs:
-
-  lint-test:
+  config:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,6 +27,18 @@ jobs:
         with:
           node_image: kindest/node:v1.30.2
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          check-latest: true
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+  template-validation:
+    needs: config
+    runs-on: ubuntu-latest
+    steps:
       - name: Validate chart template with default values
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
@@ -49,22 +60,18 @@ jobs:
         run: |
           helm template ./stack --values ./test-fixtures/values2.yaml | kubectl apply -f - --dry-run=client 2>&1
 
-      - name: Install helm on cluster
+      - name: Install stack chart on cluster
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
           helm dep update ./stack
           helm dependency build ./stack
           helm install test ./stack --wait --values ./test-fixtures/gha-cluster-values.yaml --debug
-          
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-          check-latest: true
 
-      - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.6.1
-
+  ct:
+    needs: config
+    runs-on: ubuntu-latest
+    steps:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
@@ -73,10 +80,6 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Run chart-testing (lint)
+      - name: Run chart-testing (lint and install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
-
-      - name: Run chart-testing (install)
-        if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --target-branch ${{ github.event.repository.default_branch }}
+        run: ct lint-and-install --target-branch ${{ github.event.repository.default_branch }}
