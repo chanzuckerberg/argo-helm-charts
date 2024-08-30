@@ -49,6 +49,14 @@ jobs:
         run: |
           helm template ./stack --values ./test-fixtures/values2.yaml | kubectl apply -f - --dry-run=client 2>&1
 
+      - name: Install helm on cluster
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
+          helm dep update ./stack
+          helm dependency build ./stack
+          helm install test ./stack --wait --values ./test-fixtures/gha-cluster-values.yaml --debug
+          
       - uses: actions/setup-python@v4
         with:
           python-version: '3.12'
