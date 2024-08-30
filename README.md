@@ -5,3 +5,6 @@
 ![unittest workflow](https://github.com/chanzuckerberg/argo-helm-charts/actions/workflows/unittest.yaml/badge.svg)
 ![unittest branch parameter gha-cluster-test](https://github.com/chanzuckerberg/argo-helm-charts/actions/workflows/unittest.yaml/badge.svg?branch=gha-cluster-test)
 ![unittest event parameter](https://github.com/chanzuckerberg/argo-helm-charts/actions/workflows/unittest.yaml/badge.svg?event=push)
+### Run tests locally
+1. `helm plugin install https://github.com/helm-unittest/helm-unittest.git`
+2. from the root: run `helm unittest stack`

@@ -10,6 +10,9 @@ global:
     stackSecret: # Stack level configuration secret
       secretName: ""
       secretKey: ""
+    clusterSecret: # cluster level configuration secret
+      secretName: ""
+      secretKey: ""
 
   deploymentStage: "staging"
 

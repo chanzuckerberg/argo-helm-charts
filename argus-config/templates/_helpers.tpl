@@ -15,6 +15,11 @@ envFrom:
     name: {{ .Values.appSecrets.stackSecret.secretName }}
     optional: true
 {{- end }}
+{{- if ne (trim .Values.appSecrets.clusterSecret.secretName) "" }}
+- secretRef:
+    name: {{ .Values.appSecrets.clusterSecret.secretName }}
+    optional: true
+{{- end }}
 {{- if ne (trim .Values.appContext.envContextConfigMapName) "" }}
 - configMapRef:
     name: {{ .Values.appContext.envContextConfigMapName }}

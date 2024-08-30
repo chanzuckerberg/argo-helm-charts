@@ -3,6 +3,7 @@ name: Lint and Test Charts
 on: pull_request
 
 jobs:
+
   lint-test:
     runs-on: ubuntu-latest
     steps:
@@ -16,6 +17,46 @@ jobs:
         with:
           version: v3.14.0
 
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: latest
+        id: install
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.9.0
+        with:
+          node_image: kindest/node:v1.30.2
+
+      - name: Validate chart template with default values
+        run: |
+          helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
+          helm dependency update ./stack
+          helm dependency build ./stack
+          output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
+          if [[ $output -ne "error: no objects passed to apply" ]]; then
+            exit 1
+          fi
+
+      - name: Validate chart template with invalid values
+        run: |
+          output=$(helm template ./stack --values ./test-fixtures/values1.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
+          if [[ $output -ne "Error: failed to parse ./test-fixtures/values1.yaml: error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type map[string]interface {}" ]]; then
+            exit 1
+          fi
+
+      - name: Validate chart template with valid values
+        run: |
+          helm template ./stack --values ./test-fixtures/values2.yaml | kubectl apply -f - --dry-run=client 2>&1
+
+      - name: Install helm on cluster
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
+          helm dep update ./stack
+          helm dependency build ./stack
+          helm install test ./stack --wait --values ./test-fixtures/gha-cluster-values.yaml --debug
+          
       - uses: actions/setup-python@v4
         with:
           python-version: '3.12'
@@ -27,7 +68,7 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          changed=$(ct list-changed --chart-dirs . --target-branch ${{ github.event.repository.default_branch }})
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
@@ -35,14 +76,6 @@ jobs:
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
         run: ct lint --target-branch ${{ github.event.repository.default_branch }}
-
-      - name: Create kind cluster
-        if: steps.list-changed.outputs.changed == 'true'
-        uses: helm/kind-action@v1.8.0
-
-      - name: Install helm on cluster
-        if: steps.list-changed.outputs.changed == 'true'
-        run : helm install test ./stack --wait --values ./test-fixtures/values.yaml
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
