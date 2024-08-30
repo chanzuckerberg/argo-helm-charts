@@ -25,13 +25,7 @@ jobs:
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
           helm dependency update ./stack
           helm dependency build ./stack
-          echo "debug1"
-          template=$(helm template ./stack --values ./test-fixtures/values.yaml)
-          echo "debug2"
-          echo "template: $template"
-          helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1
-          output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1)
-          echo $output
+          output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
           if [[ $output -ne "error: no objects passed to apply" ]]; then
             exit 1
           fi
