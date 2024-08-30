@@ -19,18 +19,15 @@ jobs:
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
-  
-      - name: Create kind cluster
-        uses: helm/kind-action@v1.9.0
-        with:
-          node_image: kindest/node:v1.30.2
 
       - name: Validate chart template with default values
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
           helm dependency update ./stack
           helm dependency build ./stack
+          echo "debug1"
           template=$(helm template ./stack --values ./test-fixtures/values.yaml)
+          echo "debug2"
           echo $template
           output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1)
           echo $output
