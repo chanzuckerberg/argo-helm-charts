@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.0...stack-v1.10.1) (2024-08-30)
+
+
+### Bug Fixes
+
+* update argus-config version in the stack chart ([#95](https://github.com/chanzuckerberg/argo-helm-charts/issues/95)) ([d4db7e5](https://github.com/chanzuckerberg/argo-helm-charts/commit/d4db7e51822d86d1d51f5964f07a6e247c2a8aeb))
+
 ## [1.10.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.4...stack-v1.10.0) (2024-08-30)
 
 
