@@ -96,14 +96,13 @@ env: []
 {{- end }}
 {{- end }}
 
-{{- define "initContainer.image" -}}
-{{- if typeIs "string" .Values.image }}
-image: {{ .Values.image }}
+{{- define "image" -}}
+{{- if typeIs "string" .image }}
+image: {{ .image }}
 {{ else }}
-image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+image: {{ .image.repository }}:{{ .image.tag | default "latest" }}
 {{- end }}
 {{- end }}
-
 
 {{- define "service.claimName" -}}
 {{- if .Values.persistence.existingClaim }}
@@ -125,3 +124,61 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 {{- end }}
 {{- end }}
 
+{{- define "baseDomain" -}}
+{{- $splits := (splitList "." .Values.global.ingress.host) }}
+{{- $last := $splits | last }}
+{{- $secondLast := $splits | initial | last }}
+{{- printf "%s.%s" $secondLast $last -}}
+{{- end -}}
+
+{{- define "clusterBaseDomain" -}}
+{{ splitList "." .Values.global.ingress.host | rest | join "." }} 
+{{- end -}}
+
+{{- define "oidcProxy.name" -}}
+{{ include "stack.fullname" . | lower }}-oidc-proxy
+{{- end }}
+
+{{- define "oidcProxy.port" -}}
+{{ .Values.global.oidcProxy.port | default 4180 | int  }}
+{{- end }}
+
+{{- define "oidcProxy.labels" -}}
+{{- include "oidcProxy.selectorLabels" . }}
+k8s-app:  {{ include "oidcProxy.name" . }}
+{{- end }}
+
+{{- define "oidcProxy.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "oidcProxy.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{ define "oidcProxy.envFromArgusSecrets" -}}
+{{- if ne (trim .Values.global.appSecrets.envSecret.secretName) "" }}
+- secretRef:
+    name: {{ .Values.global.appSecrets.envSecret.secretName }}
+    optional: true
+{{- end }}
+{{- if ne (trim .Values.global.appSecrets.stackSecret.secretName) "" }}
+- secretRef:
+    name: {{ .Values.global.appSecrets.stackSecret.secretName }}
+    optional: true
+{{- end -}}
+{{- end -}}
+
+{{ define "oidcProxy.additionalSecrets" -}}
+{{ if gt (len .Values.global.oidcProxy.additionalSecrets) 0 }}
+{{ toYaml .Values.global.oidcProxy.additionalSecrets }}
+{{- end -}}
+{{- end -}}
+
+{{ define "oidcProxy.envFrom"}}
+{{- include "oidcProxy.envFromArgusSecrets" . }}
+{{- include "oidcProxy.additionalSecrets" . }}
+{{- end -}}
+
+{{- define "oidcProxy.nginxAuthAnnotations" -}}
+nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
+nginx.ingress.kubernetes.io/auth-signin: "https://auth.{{- include "clusterBaseDomain" . }}/oauth2/start?rd=https://$host$escaped_request_uri"
+nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+{{- end -}}

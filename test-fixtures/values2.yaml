@@ -145,40 +145,24 @@ global:
   affinity: {}
 
   topologySpreadConstraints: []
-  oidcProxy:
-    enabled: false
 
 # Service overrides
-services: {}
-  # service1:
-  #   args: ["arg1", "arg2"]
-  #   command: ["command1", "command2"]
-  #   autoscaling:
-  #     enabled: true
-  #     minReplicas: 2
-  #     maxReplicas: 10
-  #     maxUnavailable: 1
-  #   replicaCount: 2
-  #   sidecars:
-  #     - name: sidecar1
-  #       image: "sidecar1:latest"
-  #     - name: sidecar2
-  #       image: "sidecar2:latest"
-  #   initContainers:
-  #     - name: initContainer1
-  #       image: "alpine:latest"
-  #       command: ["echo", "Hello World"]
-  # service2:
-  #   startupProbe:
-  #     enabled: true
-  #   autoscaling:
-  #     enabled: true
-  #     minReplicas: 2
-  #     maxReplicas: 10
-  #     maxUnavailable: 1
-  #   replicaCount: 2
-  #   sidecars:
-  #     - name: sidecar3
-  #       image: sidecar3:latest
-  #     - name: sidecar4
-  #       image: sidecar4:latest
+services:
+  service1:
+    args: ["arg1", "arg2"]
+    command: ["command1", "command2"]
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      maxUnavailable: 1
+    replicaCount: 2
+    sidecars:
+      - name: sidecar1
+        image: "sidecar1:latest"
+      - name: sidecar2
+        image: "sidecar2:latest"
+    initContainers:
+      - name: initContainer1
+        image: "alpine:latest"
+        command: ["echo", "Hello World"]
