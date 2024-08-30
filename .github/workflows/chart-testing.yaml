@@ -20,6 +20,12 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
   
+      - name: Create kind cluster
+        if: steps.list-changed.outputs.changed == 'true'
+        uses: helm/kind-action@v1.9.0
+        with:
+          node_image: kindest/node:v1.30.2
+
       - name: Validate chart template with default values
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
