@@ -32,7 +32,7 @@ jobs:
 
       - name: Validate chart template with invalid values
         run: |
-          output=$(helm template ./stack --values ./test-fixtures/values1.yaml | kubectl apply -f - --dry-run=client 2>&1)
+          output=$(helm template ./stack --values ./test-fixtures/values1.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
           if [[ $output -ne "Error: failed to parse ./test-fixtures/values1.yaml: error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type map[string]interface {}" ]]; then
             exit 1
           fi
