@@ -21,7 +21,6 @@ jobs:
         uses: azure/setup-kubectl@v3
   
       - name: Create kind cluster
-        if: steps.list-changed.outputs.changed == 'true'
         uses: helm/kind-action@v1.9.0
         with:
           node_image: kindest/node:v1.30.2
