@@ -29,6 +29,7 @@ jobs:
           template=$(helm template ./stack --values ./test-fixtures/values.yaml)
           echo "debug2"
           echo "template: $template"
+          helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1
           output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1)
           echo $output
           if [[ $output -ne "error: no objects passed to apply" ]]; then
