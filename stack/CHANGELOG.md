@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.9.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.3...stack-v1.9.4) (2024-08-27)
+
+
+### Bug Fixes
+
+* service URL needs to be in the long form ([#90](https://github.com/chanzuckerberg/argo-helm-charts/issues/90)) ([a6f022f](https://github.com/chanzuckerberg/argo-helm-charts/commit/a6f022f885593bef26b3e2d74173b6bf97614026))
+
+## [1.9.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.2...stack-v1.9.3) (2024-08-27)
+
+
+### Bug Fixes
+
+* wrong domain name in the annotations for ingress ([#88](https://github.com/chanzuckerberg/argo-helm-charts/issues/88)) ([6112960](https://github.com/chanzuckerberg/argo-helm-charts/commit/61129600c119776476bee038ab4c1d41aae365eb))
+
+## [1.9.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.1...stack-v1.9.2) (2024-08-27)
+
+
+### Bug Fixes
+
+* use a cluster-wide domain name for auth subdomain ([#86](https://github.com/chanzuckerberg/argo-helm-charts/issues/86)) ([4b5b704](https://github.com/chanzuckerberg/argo-helm-charts/commit/4b5b704060700585262b6bfd02d5826c7ab2ab40))
+
+## [1.9.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.9.0...stack-v1.9.1) (2024-08-27)
+
+
+### Bug Fixes
+
+* image, authn headers, name ([#84](https://github.com/chanzuckerberg/argo-helm-charts/issues/84)) ([57eca81](https://github.com/chanzuckerberg/argo-helm-charts/commit/57eca812a1d378e1970a2ee1a1616efa72d6e19f))
+
+## [1.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.8.0...stack-v1.9.0) (2024-08-27)
+
+
+### Features
+
+* add oidc proxy deployment to stack helm chart ([#82](https://github.com/chanzuckerberg/argo-helm-charts/issues/82)) ([73ef475](https://github.com/chanzuckerberg/argo-helm-charts/commit/73ef4753b2325837a6d30747c065ce765b76ac76))
+
+## [1.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.7.0...stack-v1.8.0) (2024-08-20)
+
+
+### Features
+
+* bump version of argus-config ([#81](https://github.com/chanzuckerberg/argo-helm-charts/issues/81)) ([05b025f](https://github.com/chanzuckerberg/argo-helm-charts/commit/05b025f94cc0bddf50321cf0c348476261960cd4))
+
 ## [1.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.6.1...stack-v1.7.0) (2024-08-14)
 
 

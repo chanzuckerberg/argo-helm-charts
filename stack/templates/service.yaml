@@ -5,7 +5,8 @@
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
-{{- with $service -}}
+{{- with $service }}
+
 ---
 apiVersion: v1
 kind: Service
