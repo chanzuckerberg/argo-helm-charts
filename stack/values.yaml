@@ -185,14 +185,16 @@ global:
     existingClaim: ""
     mountPath: ""
   oidcProxy:
-    enabled: true
+    enabled: false
     image:
       repository: quay.io/oauth2-proxy/oauth2-proxy
       tag: v7.6.0
     replicaCount: 2
     additionalSecrets: []
+    extraArgs: []
     # extraArgs:
-    #   key1: "{{add 1 1}}"
+    #   - --flag
+    #   - --another-flag=2
     resources:
       limits:
         cpu: 2

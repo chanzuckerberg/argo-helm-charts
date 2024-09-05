@@ -11,7 +11,11 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
-  - it: is enabled by default
+  - it: make the appropriate resources when enabled
+    set:
+      global:
+        oidcProxy:
+          enabled: true
     asserts:
       - hasDocuments:
           count: 3
@@ -30,10 +34,15 @@ tests:
           kind: Ingress
           apiVersion: networking.k8s.io/v1
           name: release-name-stack-oidc-proxy
+  - it: disabled by default
+    asserts:
+      - hasDocuments:
+          count: 0
   - it: sets additionalSecrets in envFrom
     set:
       global:
         oidcProxy:
+          enabled: true
           additionalSecrets:
             - secretRef:
               name: blah1
@@ -57,6 +66,7 @@ tests:
           clusterSecret:
             secretName: blah5
         oidcProxy:
+          enabled: true
           additionalSecrets:
             - secretRef:
               name: blah1
@@ -70,8 +80,33 @@ tests:
           path: spec.template.spec.containers[0].envFrom
           count: 5
   - it: defaults to 0 envFrom object
+    set:
+      global:
+        oidcProxy:
+          enabled: true
     asserts:
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].envFrom
           value: []
+  - it: sets extraArgs properly
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - "--skip-auth-route=/v1/api/docs"
+            - "--skip-auth-route=/v1/api/security/access_token"
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].args
+          count: 14
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[12]
+          value: "--skip-auth-route=/v1/api/docs"
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[13]
+          value: "--skip-auth-route=/v1/api/security/access_token"

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.2...stack-v1.10.3) (2024-09-05)
+
+
+### Bug Fixes
+
+* make extra args an array ([#102](https://github.com/chanzuckerberg/argo-helm-charts/issues/102)) ([8bb6668](https://github.com/chanzuckerberg/argo-helm-charts/commit/8bb66688cc5b643ee3abe53fb05dd2ca70fc543b))
+* unique domain names for oidcProxy per stack ([2f42b13](https://github.com/chanzuckerberg/argo-helm-charts/commit/2f42b136d8c2effd442ba0a3b85afdfeb422ac25))
+
 ## [1.10.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.1...stack-v1.10.2) (2024-09-05)
 
 
