@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.1...stack-v1.10.2) (2024-09-05)
+
+
+### Bug Fixes
+
+* bump argus-config to fix fight between helm and terraform ([#99](https://github.com/chanzuckerberg/argo-helm-charts/issues/99)) ([3254ffb](https://github.com/chanzuckerberg/argo-helm-charts/commit/3254ffbffb071b8f7f3b135af548b9faa5e056c0))
+
 ## [1.10.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.0...stack-v1.10.1) (2024-08-30)
 
 
