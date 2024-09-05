@@ -89,3 +89,24 @@ tests:
         equal:
           path: spec.template.spec.containers[0].envFrom
           value: []
+  - it: sets extraArgs properly
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - "--skip-auth-route=/v1/api/docs"
+            - "--skip-auth-route=/v1/api/security/access_token"
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].args
+          count: 14
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[12]
+          value: "--skip-auth-route=/v1/api/docs"
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[13]
+          value: "--skip-auth-route=/v1/api/security/access_token"

@@ -31,13 +31,9 @@ spec:
             - --skip-provider-button=true
             - --pass-authorization-header=true
             - --reverse-proxy
-            {{- range $key, $value := .Values.global.oidcProxy.extraArgs }}
-              {{- if not (kindIs "invalid" $value) }}
-            - --{{ $key }}={{ tpl ($value | toString) $ }}
-              {{- else -}}
-            - --{{ $key }}
-              {{- end -}}
-            {{- end -}}
+            {{- if gt (len .Values.global.oidcProxy.extraArgs) 0 }}
+            {{- toYaml .Values.global.oidcProxy.extraArgs | nindent 12}}
+            {{- end }}
           {{- include "image" .Values.global.oidcProxy  | nindent 10 }}
           {{- if gt (len (fromYamlArray (include "oidcProxy.envFrom" .))) 0 }}
           envFrom: 
