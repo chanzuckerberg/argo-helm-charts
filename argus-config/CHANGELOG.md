@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.0...argus-config-v1.2.1) (2024-09-05)
+
+
+### Bug Fixes
+
+* terraform and helm fighting over which values to use ([#97](https://github.com/chanzuckerberg/argo-helm-charts/issues/97)) ([0843dc2](https://github.com/chanzuckerberg/argo-helm-charts/commit/0843dc27a0a431385ba389382e84fd5864ed43fe))
+
 ## [1.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.1.0...argus-config-v1.2.0) (2024-08-30)
 
 
