@@ -25,5 +25,5 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: argus-config
-    version: 1.2.0
+    version: 1.2.1
     repository: https://chanzuckerberg.github.io/argo-helm-charts
