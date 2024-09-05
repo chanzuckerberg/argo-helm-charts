@@ -191,8 +191,10 @@ global:
       tag: v7.6.0
     replicaCount: 2
     additionalSecrets: []
+    extraArgs: []
     # extraArgs:
-    #   key1: "{{add 1 1}}"
+    #   - --flag
+    #   - --another-flag=2
     resources:
       limits:
         cpu: 2
