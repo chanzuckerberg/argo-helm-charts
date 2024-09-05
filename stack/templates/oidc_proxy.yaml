@@ -80,7 +80,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: auth.{{- include "clusterBaseDomain" . }}
+    - host: {{ include "oidcProxy.authDomain" . }}
       http:
         paths:
           - path: /oauth2

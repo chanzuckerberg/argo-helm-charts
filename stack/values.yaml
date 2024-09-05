@@ -185,7 +185,7 @@ global:
     existingClaim: ""
     mountPath: ""
   oidcProxy:
-    enabled: true
+    enabled: false
     image:
       repository: quay.io/oauth2-proxy/oauth2-proxy
       tag: v7.6.0
