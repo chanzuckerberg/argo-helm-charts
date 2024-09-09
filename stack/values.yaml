@@ -113,6 +113,8 @@ global:
     # runAsNonRoot: true
     # runAsUser: 1000
 
+  shareProcessNamespace: false
+
   ingress:
     enabled: true
     className: nginx
