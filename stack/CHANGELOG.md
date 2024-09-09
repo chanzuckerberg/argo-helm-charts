@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.3...stack-v1.11.0) (2024-09-09)
+
+
+### Features
+
+* Support shareProcessNamespace (defaults to false) ([#103](https://github.com/chanzuckerberg/argo-helm-charts/issues/103)) ([66853b0](https://github.com/chanzuckerberg/argo-helm-charts/commit/66853b0b79f57c4c168dcd73128d4fe47c30a284))
+
+
+### Misc
+
+* Increment chart version to 1.10.4 ([#105](https://github.com/chanzuckerberg/argo-helm-charts/issues/105)) ([a51d5ff](https://github.com/chanzuckerberg/argo-helm-charts/commit/a51d5ff5020b3a37bf82a5c8a4c91b8039dc6f22))
+
 ## [1.10.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.2...stack-v1.10.3) (2024-09-05)
 
 
