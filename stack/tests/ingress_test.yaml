@@ -28,4 +28,25 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
-          value: "Authorization"
+          value: "Authorization,X-Forwarded-Email"
+  - it: adds additional nginx auth headers when using additionalHeaders
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+          additionalHeaders:
+            - X-Forwarded-User
+            - blahblahblah
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
+          value: "Authorization,X-Forwarded-Email,X-Forwarded-User,blahblahblah"
