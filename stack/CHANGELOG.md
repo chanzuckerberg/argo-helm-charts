@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.11.1...stack-v1.12.0) (2024-09-13)
+
+
+### Features
+
+* by default include other idp helper headers ([#108](https://github.com/chanzuckerberg/argo-helm-charts/issues/108)) ([bbd7ef3](https://github.com/chanzuckerberg/argo-helm-charts/commit/bbd7ef3b3c5cecdf5e2634b7a2c65f2e74d90b14))
+
 ## [1.11.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.11.0...stack-v1.11.1) (2024-09-13)
 
 
