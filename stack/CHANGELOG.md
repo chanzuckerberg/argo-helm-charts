@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.12.0...stack-v1.13.0) (2024-09-13)
+
+
+### Features
+
+* copy values from X-Auth to X-Forward ([#110](https://github.com/chanzuckerberg/argo-helm-charts/issues/110)) ([d413771](https://github.com/chanzuckerberg/argo-helm-charts/commit/d413771b4c51585c6d2c601c175f9004f4fed722))
+
 ## [1.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.11.1...stack-v1.12.0) (2024-09-13)
 
 
