@@ -28,7 +28,7 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
-          value: "Authorization,X-Forwarded-Email"
+          value: "Authorization,X-Auth-Request-User,X-Auth-Request-Groups,X-Auth-Request-Email,X-Auth-Request-Preferred-Username"
   - it: adds additional nginx auth headers when using additionalHeaders
     set:
       global:
@@ -49,4 +49,4 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
-          value: "Authorization,X-Forwarded-Email,X-Forwarded-User,blahblahblah"
+          value: "Authorization,X-Auth-Request-User,X-Auth-Request-Groups,X-Auth-Request-Email,X-Auth-Request-Preferred-Username,X-Forwarded-User,blahblahblah"
