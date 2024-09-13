@@ -186,10 +186,37 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{ join "." (list (include "oidcProxy.name" .) (include "clusterBaseDomain" .)) }}
 {{- end -}}
 
+{{- define "oidcProxy.skipAuth" -}}
+{{- $id := printf "%s_%s"   (.method |lower) (.path | replace "/" "") }}
+{{ $id }}
+{{- end -}}
+
+{{- define "oidcProxy.skipAuthConfig" -}}
+{{- range  $k, $v := .Values.global.oidcProxy.skipAuth -}}
+{{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
+{{- $var_name := printf "%s_%s" "skip_auth" $id }}
+set {{ $var_name }} 1;
+
+if ( $request_uri !~ "{{$v.path}}" ) {
+    set {{ $var_name }}  0;
+}
+
+if ( $request_method != "{{$v.method}}" ) {
+    set {{ $var_name }}  0;
+}
+
+if ( {{ $var_name }} ) {
+    return 200;
+}
+{{- end -}}
+{{- end -}}
+
 {{- define "oidcProxy.nginxAuthAnnotations" -}}
 nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
 nginx.ingress.kubernetes.io/auth-signin: "https://{{- include "oidcProxy.authDomain" . }}/oauth2/start?rd=https://$host$escaped_request_uri"
 nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.global.oidcProxy.additionalHeaders) }}
+nginx.ingress.kubernetes.io/auth-snippet: |
+{{- include "oidcProxy.skipAuthConfig" . | nindent 4 }}
 nginx.ingress.kubernetes.io/configuration-snippet: |
     auth_request_set $email $upstream_http_x_auth_request_email;
     auth_request_set $user $upstream_http_x_auth_request_user;
