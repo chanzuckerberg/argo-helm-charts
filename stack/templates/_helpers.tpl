@@ -190,4 +190,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
 nginx.ingress.kubernetes.io/auth-signin: "https://{{- include "oidcProxy.authDomain" . }}/oauth2/start?rd=https://$host$escaped_request_uri"
 nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.global.oidcProxy.additionalHeaders) }}
+nginx.ingress.kubernetes.io/configuration-snippet: |
+    auth_request_set $email $upstream_http_x_auth_request_email;
+    auth_request_set $user $upstream_http_x_auth_request_user;
+    auth_request_set $groups $upstream_http_x_auth_request_groups;
+    auth_request_set $preferred_username $upstream_http_x_auth_request_preferred_username;
+
+    proxy_set_header X-Forwarded-Email $email;
+    proxy_set_header X-Forwarded-User $user;
+    proxy_set_header X-Forwarded-Groups $groups;
+    proxy_set_header X-Forwarded-Preferred-Username $preferred_username;
 {{- end -}}
