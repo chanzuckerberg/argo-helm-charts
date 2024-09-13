@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.11.0...stack-v1.11.1) (2024-09-13)
+
+
+### Bug Fixes
+
+* missing headers set by oauth2_proxy ([#106](https://github.com/chanzuckerberg/argo-helm-charts/issues/106)) ([36e1444](https://github.com/chanzuckerberg/argo-helm-charts/commit/36e14441caac3a0c3e57e7be5580e86ce1e7b874))
+
 ## [1.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.3...stack-v1.11.0) (2024-09-09)
 
 
