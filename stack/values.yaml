@@ -193,6 +193,7 @@ global:
       tag: v7.6.0
     replicaCount: 2
     additionalSecrets: []
+    additionalHeaders: []
     extraArgs: []
     # extraArgs:
     #   - --flag

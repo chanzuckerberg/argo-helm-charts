@@ -189,5 +189,5 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "oidcProxy.nginxAuthAnnotations" -}}
 nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
 nginx.ingress.kubernetes.io/auth-signin: "https://{{- include "oidcProxy.authDomain" . }}/oauth2/start?rd=https://$host$escaped_request_uri"
-nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Forwarded-Email") .Values.global.oidcProxy.additionalHeaders) }}
 {{- end -}}
