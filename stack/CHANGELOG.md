@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.13.0...stack-v1.14.0) (2024-09-13)
+
+
+### Features
+
+* skipAuth values ([3fe70ae](https://github.com/chanzuckerberg/argo-helm-charts/commit/3fe70ae4f08cf9af78509c1646b5a072198d4ad7))
+
 ## [1.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.12.0...stack-v1.13.0) (2024-09-13)
 
 
