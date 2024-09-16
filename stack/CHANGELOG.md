@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.14.0...stack-v1.15.0) (2024-09-16)
+
+
+### Features
+
+* make the method a regex match ([#113](https://github.com/chanzuckerberg/argo-helm-charts/issues/113)) ([a03150f](https://github.com/chanzuckerberg/argo-helm-charts/commit/a03150fb9ce11a76e1e219957d091d47d31d0dc3))
+
 ## [1.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.13.0...stack-v1.14.0) (2024-09-13)
 
 
