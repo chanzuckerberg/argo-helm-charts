@@ -77,7 +77,7 @@ tests:
                 set skip_auth_get_healthz  0;
             }
 
-            if ( $request_method != "GET" ) {
+            if ( $request_method !~ "GET" ) {
                 set skip_auth_get_healthz  0;
             }
 

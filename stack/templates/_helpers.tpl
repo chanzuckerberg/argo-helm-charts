@@ -201,7 +201,7 @@ if ( $request_uri !~ "{{$v.path}}" ) {
     set {{ $var_name }}  0;
 }
 
-if ( $request_method != "{{$v.method}}" ) {
+if ( $request_method !~ "{{$v.method}}" ) {
     set {{ $var_name }}  0;
 }
 
