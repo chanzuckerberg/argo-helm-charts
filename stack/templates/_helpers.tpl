@@ -186,14 +186,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{ join "." (list (include "oidcProxy.name" .) (include "clusterBaseDomain" .)) }}
 {{- end -}}
 
-{{- define "oidcProxy.skipAuth" -}}
-{{- $id := printf "%s_%s"   (.method |lower) (.path | replace "/" "") }}
-{{ $id }}
-{{- end -}}
-
 {{- define "oidcProxy.skipAuthConfig" -}}
 {{- range  $k, $v := .Values.global.oidcProxy.skipAuth -}}
 {{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
+{{- $id := regexReplaceAll "\\W+" $id "_" -}}
 {{- $var_name := printf "%s_%s" "skip_auth" $id }}
 set {{ $var_name }} 1;
 

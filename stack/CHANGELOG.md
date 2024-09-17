@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.15.0...stack-v1.16.0) (2024-09-17)
+
+
+### Features
+
+* don't use nonchars in variable name ([#115](https://github.com/chanzuckerberg/argo-helm-charts/issues/115)) ([ac47ece](https://github.com/chanzuckerberg/argo-helm-charts/commit/ac47ece75fdb79c3d16cc447aa4fea8875944be3))
+
 ## [1.15.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.14.0...stack-v1.15.0) (2024-09-16)
 
 
