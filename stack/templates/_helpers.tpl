@@ -223,4 +223,6 @@ nginx.ingress.kubernetes.io/configuration-snippet: |
     proxy_set_header X-Forwarded-User $user;
     proxy_set_header X-Forwarded-Groups $groups;
     proxy_set_header X-Forwarded-Preferred-Username $preferred_username;
+    proxy_set_header Authorization $http_authorization;
+    proxy_pass_header Authorization;
 {{- end -}}
