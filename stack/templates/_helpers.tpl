@@ -191,17 +191,17 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
 {{- $id := regexReplaceAll "\\W+" $id "_" -}}
 {{- $var_name := printf "%s_%s" "skip_auth" $id }}
-set {{ $var_name }} 1;
+set ${{ $var_name }} 1;
 
 if ( $request_uri !~ "{{$v.path}}" ) {
-    set {{ $var_name }}  0;
+    set ${{ $var_name }}  0;
 }
 
 if ( $request_method !~ "{{$v.method}}" ) {
-    set {{ $var_name }}  0;
+    set ${{ $var_name }}  0;
 }
 
-if ( {{ $var_name }} ) {
+if ( ${{ $var_name }} ) {
     return 200;
 }
 {{- end -}}
