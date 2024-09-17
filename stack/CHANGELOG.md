@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.1...stack-v1.16.2) (2024-09-17)
+
+
+### Bug Fixes
+
+* forward auth headers ([#119](https://github.com/chanzuckerberg/argo-helm-charts/issues/119)) ([341a5ff](https://github.com/chanzuckerberg/argo-helm-charts/commit/341a5ff7b46cd8083161542a5a1930d013cdabf3))
+
 ## [1.16.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.0...stack-v1.16.1) (2024-09-17)
 
 
