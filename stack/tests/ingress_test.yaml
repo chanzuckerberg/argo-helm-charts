@@ -60,6 +60,8 @@ tests:
           skipAuth:
             - path: /healthz
               method: GET
+            - path: /api/*
+              method: "*"
       services:
         service1:
           ingress:
@@ -82,5 +84,18 @@ tests:
             }
 
             if ( skip_auth_get_healthz ) {
+                return 200;
+            }
+            set skip_auth___api_ 1;
+
+            if ( $request_uri !~ "/api/*" ) {
+                set skip_auth___api_  0;
+            }
+
+            if ( $request_method !~ "*" ) {
+                set skip_auth___api_  0;
+            }
+
+            if ( skip_auth___api_ ) {
                 return 200;
             }
