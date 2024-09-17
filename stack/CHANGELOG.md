@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.0...stack-v1.16.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* need a dollar sign for the variable name ([#117](https://github.com/chanzuckerberg/argo-helm-charts/issues/117)) ([abf5c26](https://github.com/chanzuckerberg/argo-helm-charts/commit/abf5c26b7681a44bb7f082bde30fad595caaaf36))
+
 ## [1.16.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.15.0...stack-v1.16.0) (2024-09-17)
 
 
