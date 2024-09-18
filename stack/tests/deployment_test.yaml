@@ -133,3 +133,27 @@ tests:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
+  - it: uses supplied initContainer image string value
+    set:
+      services:
+        service1:
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "alpine:latest"
+  - it: formats supplied initContainer image tag and repo
+    set:
+      services:
+        service1:
+          initContainers:
+            - name: initContainer1
+              image:
+                repository: "node"
+                tag: "20.0.0"
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "node:20.0.0"
