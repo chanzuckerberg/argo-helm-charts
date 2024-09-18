@@ -193,6 +193,12 @@ global:
       tag: v7.6.0
     replicaCount: 2
     additionalSecrets: []
+    additionalHeaders: []
+    skipAuth: []
+    # skipAuth:
+    #   - path: "/healthz"
+    #     method: GET
+
     extraArgs: []
     # extraArgs:
     #   - --flag

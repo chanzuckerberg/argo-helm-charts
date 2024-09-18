@@ -1,5 +1,61 @@
 # Changelog
 
+## [1.16.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.1...stack-v1.16.2) (2024-09-17)
+
+
+### Bug Fixes
+
+* forward auth headers ([#119](https://github.com/chanzuckerberg/argo-helm-charts/issues/119)) ([341a5ff](https://github.com/chanzuckerberg/argo-helm-charts/commit/341a5ff7b46cd8083161542a5a1930d013cdabf3))
+
+## [1.16.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.0...stack-v1.16.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* need a dollar sign for the variable name ([#117](https://github.com/chanzuckerberg/argo-helm-charts/issues/117)) ([abf5c26](https://github.com/chanzuckerberg/argo-helm-charts/commit/abf5c26b7681a44bb7f082bde30fad595caaaf36))
+
+## [1.16.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.15.0...stack-v1.16.0) (2024-09-17)
+
+
+### Features
+
+* don't use nonchars in variable name ([#115](https://github.com/chanzuckerberg/argo-helm-charts/issues/115)) ([ac47ece](https://github.com/chanzuckerberg/argo-helm-charts/commit/ac47ece75fdb79c3d16cc447aa4fea8875944be3))
+
+## [1.15.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.14.0...stack-v1.15.0) (2024-09-16)
+
+
+### Features
+
+* make the method a regex match ([#113](https://github.com/chanzuckerberg/argo-helm-charts/issues/113)) ([a03150f](https://github.com/chanzuckerberg/argo-helm-charts/commit/a03150fb9ce11a76e1e219957d091d47d31d0dc3))
+
+## [1.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.13.0...stack-v1.14.0) (2024-09-13)
+
+
+### Features
+
+* skipAuth values ([3fe70ae](https://github.com/chanzuckerberg/argo-helm-charts/commit/3fe70ae4f08cf9af78509c1646b5a072198d4ad7))
+
+## [1.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.12.0...stack-v1.13.0) (2024-09-13)
+
+
+### Features
+
+* copy values from X-Auth to X-Forward ([#110](https://github.com/chanzuckerberg/argo-helm-charts/issues/110)) ([d413771](https://github.com/chanzuckerberg/argo-helm-charts/commit/d413771b4c51585c6d2c601c175f9004f4fed722))
+
+## [1.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.11.1...stack-v1.12.0) (2024-09-13)
+
+
+### Features
+
+* by default include other idp helper headers ([#108](https://github.com/chanzuckerberg/argo-helm-charts/issues/108)) ([bbd7ef3](https://github.com/chanzuckerberg/argo-helm-charts/commit/bbd7ef3b3c5cecdf5e2634b7a2c65f2e74d90b14))
+
+## [1.11.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.11.0...stack-v1.11.1) (2024-09-13)
+
+
+### Bug Fixes
+
+* missing headers set by oauth2_proxy ([#106](https://github.com/chanzuckerberg/argo-helm-charts/issues/106)) ([36e1444](https://github.com/chanzuckerberg/argo-helm-charts/commit/36e14441caac3a0c3e57e7be5580e86ce1e7b874))
+
 ## [1.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.10.3...stack-v1.11.0) (2024-09-09)
 
 

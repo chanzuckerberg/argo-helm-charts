@@ -28,4 +28,74 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
-          value: "Authorization"
+          value: "Authorization,X-Auth-Request-User,X-Auth-Request-Groups,X-Auth-Request-Email,X-Auth-Request-Preferred-Username"
+  - it: adds additional nginx auth headers when using additionalHeaders
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+          additionalHeaders:
+            - X-Forwarded-User
+            - blahblahblah
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
+          value: "Authorization,X-Auth-Request-User,X-Auth-Request-Groups,X-Auth-Request-Email,X-Auth-Request-Preferred-Username,X-Forwarded-User,blahblahblah"
+  - it: adds auth-snippet with using skipAuth
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+          skipAuth:
+            - path: /healthz
+              method: GET
+            - path: /api/*
+              method: "*"
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-snippet"]
+          value: |
+            set $skip_auth_get_healthz 1;
+
+            if ( $request_uri !~ "/healthz" ) {
+                set $skip_auth_get_healthz  0;
+            }
+
+            if ( $request_method !~ "GET" ) {
+                set $skip_auth_get_healthz  0;
+            }
+
+            if ( $skip_auth_get_healthz ) {
+                return 200;
+            }
+            set $skip_auth___api_ 1;
+
+            if ( $request_uri !~ "/api/*" ) {
+                set $skip_auth___api_  0;
+            }
+
+            if ( $request_method !~ "*" ) {
+                set $skip_auth___api_  0;
+            }
+
+            if ( $skip_auth___api_ ) {
+                return 200;
+            }
