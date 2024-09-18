@@ -13,13 +13,13 @@ metadata:
   name: {{ include "service.fullname" . }}
 spec:
   schedule: "{{ .Values.schedule }}"
+  {{- if .Values.concurrencyPolicy }}
+  concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+  {{- end }}
   jobTemplate:
     spec:
       template:
         spec:
-          {{- if .Values.concurrencyPolicy }}
-          concurrencyPolicy: {{ .Values.concurrencyPolicy }}
-          {{- end }}
           serviceAccountName: {{ include "service.serviceAccountName" . }}
           containers:
           - name: {{ include "service.fullname" . }}

@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test cronjobs
+templates:
+  - cronjob.yaml
+tests:
+  - it: should work
+    set:
+      cronJobs:
+        job1:
+          concurrencyPolicy: Forbid
+          schedule: "*/3 * * * *"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+    asserts:
+      - containsDocument:
+          apiVersion: batch/v1
+          kind: CronJob
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: "my-repo:sha-mytag"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command
+          value: ["hello-world"]
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].args
+          value: ["arg1", "arg2"]
+      - equal:
+          path: spec.schedule
+          value: "*/3 * * * *"
+      - equal:
+          path: spec.concurrencyPolicy
+          value: Forbid
