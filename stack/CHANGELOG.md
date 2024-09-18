@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.2...stack-v1.16.3) (2024-09-18)
+
+
+### Bug Fixes
+
+* move concurrencyPolicy to correct part of spec ([#121](https://github.com/chanzuckerberg/argo-helm-charts/issues/121)) ([cf712a7](https://github.com/chanzuckerberg/argo-helm-charts/commit/cf712a746ddeb11b80a34dbc1da48225fb452e15))
+
 ## [1.16.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.1...stack-v1.16.2) (2024-09-17)
 
 
