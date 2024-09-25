@@ -157,3 +157,30 @@ tests:
       - equal:
           path: spec.template.spec.initContainers[0].image
           value: "node:20.0.0"
+  - it: overwrites the name
+    set:
+      global:
+        fullnameOverride: "overwrittenfull"
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "sidecar1:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+    asserts:
+      - equal:
+          path: metadata.name
+          value: "overwrittenfull-service1"

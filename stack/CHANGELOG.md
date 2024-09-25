@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.3...stack-v1.16.4) (2024-09-25)
+
+
+### Bug Fixes
+
+* fullname override to work ([#123](https://github.com/chanzuckerberg/argo-helm-charts/issues/123)) ([3fbc2bf](https://github.com/chanzuckerberg/argo-helm-charts/commit/3fbc2bf12b7d880cf14230a27e7a72d75f8ef933))
+
 ## [1.16.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.2...stack-v1.16.3) (2024-09-18)
 
 
