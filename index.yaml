@@ -1,24 +1,38 @@
 apiVersion: v1
 entries:
   stack:
-    - apiVersion: v2
-      appVersion: 1.16.0
-      created: "2024-06-26T10:50:31.342193-07:00"
-      description: A Helm chart for Happy Stack
-      digest: 70ae6db964351b4adc241a3ea36477818b21584fa2b96392c995cc88063a5ba0
-      name: stack
-      type: application
-      urls:
-        - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-1.0.0.tgz
-      version: 1.0.0
-    - apiVersion: v2
-      appVersion: 1.16.0
-      created: "2024-06-26T10:50:31.341349-07:00"
-      description: A Helm chart for Happy Stack
-      digest: aae6085a4c5e5e8648c9059fb3b8a66699bbf844b552e04ff390bf4dcd609f75
-      name: stack
-      type: application
-      urls:
-        - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-0.1.0.tgz
-      version: 0.1.0
-generated: "2024-06-26T10:50:31.337779-07:00"
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-09-27T15:32:34.664954-07:00"
+    dependencies:
+    - name: argus-config
+      repository: https://chanzuckerberg.github.io/argo-helm-charts
+      version: 1.2.1
+    description: A Helm chart for Argus Stack
+    digest: e34a73d5f16fc2e029572c08ee58dd99bb117002916d7bdc86c065497c2e33e9
+    name: stack
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/raw/refs/heads/CCIE-3374-test-and-document-the-logout-feature-of-oidc-proxy/stack-1.16.4.tgz/stack-1.16.4.tgz
+    version: 1.16.4
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-06-26T10:50:31.342193-07:00"
+    description: A Helm chart for Happy Stack
+    digest: 70ae6db964351b4adc241a3ea36477818b21584fa2b96392c995cc88063a5ba0
+    name: stack
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-06-26T10:50:31.341349-07:00"
+    description: A Helm chart for Happy Stack
+    digest: aae6085a4c5e5e8648c9059fb3b8a66699bbf844b552e04ff390bf4dcd609f75
+    name: stack
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-09-27T15:32:34.663633-07:00"
