@@ -125,14 +125,14 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 {{- end }}
 
 {{- define "baseDomain" -}}
-{{- $splits := (splitList "." .Values.global.ingress.host) }}
+{{- $splits := (splitList "." .Values.ingress.host) }}
 {{- $last := $splits | last }}
 {{- $secondLast := $splits | initial | last }}
 {{- printf "%s.%s" $secondLast $last -}}
 {{- end -}}
 
 {{- define "clusterBaseDomain" -}}
-{{ splitList "." .Values.global.ingress.host | rest | join "." }} 
+{{ splitList "." .Values.ingress.host | rest | join "." }} 
 {{- end -}}
 
 {{- define "oidcProxy.name" -}}
@@ -140,7 +140,7 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 {{- end }}
 
 {{- define "oidcProxy.port" -}}
-{{ .Values.global.oidcProxy.port | default 4180 | int  }}
+{{ .Values.oidcProxy.port | default 4180 | int  }}
 {{- end }}
 
 {{- define "oidcProxy.labels" -}}
@@ -154,26 +154,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{ define "oidcProxy.envFromArgusSecrets" -}}
-{{- if ne (trim .Values.global.appSecrets.envSecret.secretName) "" }}
-- secretRef:
-    name: {{ .Values.global.appSecrets.envSecret.secretName }}
-    optional: true
-{{- end }}
-{{- if ne (trim .Values.global.appSecrets.stackSecret.secretName) "" }}
-- secretRef:
-    name: {{ .Values.global.appSecrets.stackSecret.secretName }}
-    optional: true
-{{- end -}}
-{{- if ne (trim .Values.global.appSecrets.clusterSecret.secretName) "" }}
-- secretRef:
-    name: {{ .Values.global.appSecrets.clusterSecret.secretName }}
-    optional: true
-{{- end -}}
+{{- include "service.configuration" . -}}
 {{- end -}}
 
 {{ define "oidcProxy.additionalSecrets" -}}
-{{ if gt (len .Values.global.oidcProxy.additionalSecrets) 0 }}
-{{ toYaml .Values.global.oidcProxy.additionalSecrets }}
+{{ if gt (len .Values.oidcProxy.additionalSecrets) 0 }}
+{{ toYaml .Values.oidcProxy.additionalSecrets }}
 {{- end -}}
 {{- end -}}
 
@@ -183,11 +169,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{- define "oidcProxy.authDomain" -}}
-{{ join "." (list (include "oidcProxy.name" .) (include "clusterBaseDomain" .)) }}
+{{ .Values.ingress.host }}
 {{- end -}}
 
 {{- define "oidcProxy.skipAuthConfig" -}}
-{{- range  $k, $v := .Values.global.oidcProxy.skipAuth -}}
+{{- range  $k, $v := .Values.oidcProxy.skipAuth -}}
 {{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
 {{- $id := regexReplaceAll "\\W+" $id "_" -}}
 {{- $var_name := printf "%s_%s" "skip_auth" $id }}
@@ -210,7 +196,7 @@ if ( ${{ $var_name }} ) {
 {{- define "oidcProxy.nginxAuthAnnotations" -}}
 nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
 nginx.ingress.kubernetes.io/auth-signin: "https://{{- include "oidcProxy.authDomain" . }}/oauth2/start?rd=https://$host$escaped_request_uri"
-nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.global.oidcProxy.additionalHeaders) }}
+nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.oidcProxy.additionalHeaders) }}
 nginx.ingress.kubernetes.io/auth-snippet: |
 {{- include "oidcProxy.skipAuthConfig" . | nindent 4 }}
 nginx.ingress.kubernetes.io/configuration-snippet: |

@@ -24,7 +24,7 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-signin"]
-          value: "https://release-name-stack-oidc-proxy.play.dev.czi.team/oauth2/start?rd=https://$host$escaped_request_uri"
+          value: "https://stack.play.dev.czi.team/oauth2/start?rd=https://$host$escaped_request_uri"
       - documentIndex: 0
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
