@@ -1,4 +1,8 @@
-{{- if .Values.global.oidcProxy.enabled }}
+{{ $global := . }}
+{{ $globalValues := .Values.global }}
+{{ $scope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $globalValues}}
+{{ with $scope }}
+{{- if .Values.oidcProxy.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +10,7 @@ metadata:
   labels:
     {{- include "oidcProxy.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.global.oidcProxy.replicaCount }}
+  replicas: {{ .Values.oidcProxy.replicaCount }}
   selector:
     matchLabels:
       {{- include "oidcProxy.selectorLabels" .  | nindent 6 }}
@@ -31,15 +35,14 @@ spec:
             - --skip-provider-button=true
             - --pass-authorization-header=true
             - --reverse-proxy
-            {{- if gt (len .Values.global.oidcProxy.extraArgs) 0 }}
-            {{- toYaml .Values.global.oidcProxy.extraArgs | nindent 12}}
+            {{- if gt (len .Values.oidcProxy.extraArgs) 0 }}
+            {{- toYaml .Values.oidcProxy.extraArgs | nindent 12}}
             {{- end }}
-          {{- include "image" .Values.global.oidcProxy  | nindent 10 }}
+          {{- include "image" .Values.oidcProxy  | nindent 10 }}
           {{- if gt (len (fromYamlArray (include "oidcProxy.envFrom" .))) 0 }}
-          envFrom: 
-          {{- include "oidcProxy.envFrom" . | nindent 12 }}
+          {{- include "oidcProxy.envFrom" . | nindent 10 }}
           {{- else }}
-          envFrom: []
+          envFrom: [] # empty
           {{- end }}
           imagePullPolicy: IfNotPresent
           name:  {{ include "oidcProxy.name" . }}
@@ -47,7 +50,7 @@ spec:
             - containerPort: {{ include "oidcProxy.port" . }}
               protocol: TCP
           resources:
-            {{- toYaml .Values.global.oidcProxy.resources | nindent 12 }}
+            {{- toYaml .Values.oidcProxy.resources | nindent 12 }}
 
 ---
 apiVersion: v1
@@ -66,7 +69,7 @@ spec:
     {{- include "oidcProxy.selectorLabels" . | nindent 4 }}
 
 ---
-{{- if .Values.global.ingress.enabled }}
+{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -86,5 +89,6 @@ spec:
                 name: {{ include "oidcProxy.name" . }}
                 port:
                   number: {{ include "oidcProxy.port" . }}
+{{- end -}}
 {{- end -}}
 {{- end -}}

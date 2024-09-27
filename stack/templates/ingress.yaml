@@ -19,7 +19,7 @@ metadata:
     {{- include "service.labels" . | nindent 4 }}
   {{- $nginxAuthAnnotations := dict}}
     {{- if .Values.ingress.oidcProtected }}
-    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" $global )) }}
+    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" . )) }}
     {{- end}}
     {{- with (merge 
                 (.Values.ingress.annotations)
