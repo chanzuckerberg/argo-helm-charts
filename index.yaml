@@ -14,7 +14,7 @@ entries:
       type: application
       urls:
         - https://github.com/chanzuckerberg/argo-helm-charts/raw/refs/heads/CCIE-3374-test-and-document-the-logout-feature-of-oidc-proxy/stack-1.16.4.tgz
-      version: 1.16.4
+      version: 1.16.5
     - apiVersion: v2
       appVersion: 1.16.0
       created: "2024-06-26T10:50:31.342193-07:00"
