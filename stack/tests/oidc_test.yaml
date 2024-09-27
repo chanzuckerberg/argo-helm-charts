@@ -108,14 +108,18 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 14
+          count: 15
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].args[12]
-          value: "--skip-auth-route=/v1/api/docs"
+          value: "--skip-jwt-bearer-tokens"
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].args[13]
+          value: "--skip-auth-route=/v1/api/docs"
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[14]
           value: "--skip-auth-route=/v1/api/security/access_token"
   - it: overwrites the name
     set:

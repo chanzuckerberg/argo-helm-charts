@@ -35,6 +35,7 @@ spec:
             - --skip-provider-button=true
             - --pass-authorization-header=true
             - --reverse-proxy
+            - --skip-jwt-bearer-tokens
             {{- if gt (len .Values.oidcProxy.extraArgs) 0 }}
             {{- toYaml .Values.oidcProxy.extraArgs | nindent 12}}
             {{- end }}
