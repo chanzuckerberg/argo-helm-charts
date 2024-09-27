@@ -3,7 +3,21 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-09-27T16:03:01.670092-07:00"
+    created: "2024-09-27T16:05:29.008539-07:00"
+    dependencies:
+    - name: argus-config
+      repository: https://chanzuckerberg.github.io/argo-helm-charts
+      version: 1.2.1
+    description: A Helm chart for Argus Stack
+    digest: 6af0419c982b7af13110ea611c6a72766465d99c6b64003d4cd11b39465a251b
+    name: stack
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/raw/refs/heads/CCIE-3374-test-and-document-the-logout-feature-of-oidc-proxy/stack-1.16.7.tgz
+    version: 1.16.7
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-09-27T16:05:29.00532-07:00"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -17,7 +31,7 @@ entries:
     version: 1.16.6
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-09-27T16:03:01.669342-07:00"
+    created: "2024-09-27T16:05:29.004169-07:00"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -31,7 +45,7 @@ entries:
     version: 1.16.5
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-09-27T16:03:01.668245-07:00"
+    created: "2024-09-27T16:05:29.003072-07:00"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -63,4 +77,4 @@ entries:
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/main/stack-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-27T16:03:01.667025-07:00"
+generated: "2024-09-27T16:05:29.001846-07:00"
