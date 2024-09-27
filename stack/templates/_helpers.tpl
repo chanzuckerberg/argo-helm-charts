@@ -159,7 +159,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{ define "oidcProxy.additionalSecrets" -}}
 {{ if gt (len .Values.oidcProxy.additionalSecrets) 0 }}
-# yaml yaml yaml
 {{ toYaml .Values.oidcProxy.additionalSecrets }}
 {{- end -}}
 {{- end -}}

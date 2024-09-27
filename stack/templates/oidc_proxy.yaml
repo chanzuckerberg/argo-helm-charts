@@ -42,7 +42,7 @@ spec:
           {{- if gt (len (fromYamlArray (include "oidcProxy.envFrom" .))) 0 }}
           {{- include "oidcProxy.envFrom" . | nindent 10 }}
           {{- else }}
-          envFrom: [] # empty
+          envFrom: []
           {{- end }}
           imagePullPolicy: IfNotPresent
           name:  {{ include "oidcProxy.name" . }}
