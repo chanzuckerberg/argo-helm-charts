@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.17.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.4...stack-v1.17.0) (2024-09-27)
+
+
+### Features
+
+* add --skip-jwt-bearer-tokens by default ([#125](https://github.com/chanzuckerberg/argo-helm-charts/issues/125)) ([3b63e52](https://github.com/chanzuckerberg/argo-helm-charts/commit/3b63e52222285426b9c58ff79899083d9557c12f))
+
+
+### Bug Fixes
+
+* oidc proxy fullname override ([#126](https://github.com/chanzuckerberg/argo-helm-charts/issues/126)) ([4e18948](https://github.com/chanzuckerberg/argo-helm-charts/commit/4e1894846e8ca6539fdd2b761e11e745deb0ee17))
+
 ## [1.16.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.3...stack-v1.16.4) (2024-09-25)
 
 
