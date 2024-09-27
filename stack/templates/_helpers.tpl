@@ -15,10 +15,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "stack.fullname" -}}
-{{- if .fullnameOverride }}
-{{- .fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .nameOverride }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -186,26 +186,22 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{ join "." (list (include "oidcProxy.name" .) (include "clusterBaseDomain" .)) }}
 {{- end -}}
 
-{{- define "oidcProxy.skipAuth" -}}
-{{- $id := printf "%s_%s"   (.method |lower) (.path | replace "/" "") }}
-{{ $id }}
-{{- end -}}
-
 {{- define "oidcProxy.skipAuthConfig" -}}
 {{- range  $k, $v := .Values.global.oidcProxy.skipAuth -}}
 {{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
+{{- $id := regexReplaceAll "\\W+" $id "_" -}}
 {{- $var_name := printf "%s_%s" "skip_auth" $id }}
-set {{ $var_name }} 1;
+set ${{ $var_name }} 1;
 
 if ( $request_uri !~ "{{$v.path}}" ) {
-    set {{ $var_name }}  0;
+    set ${{ $var_name }}  0;
 }
 
 if ( $request_method !~ "{{$v.method}}" ) {
-    set {{ $var_name }}  0;
+    set ${{ $var_name }}  0;
 }
 
-if ( {{ $var_name }} ) {
+if ( ${{ $var_name }} ) {
     return 200;
 }
 {{- end -}}
@@ -227,4 +223,6 @@ nginx.ingress.kubernetes.io/configuration-snippet: |
     proxy_set_header X-Forwarded-User $user;
     proxy_set_header X-Forwarded-Groups $groups;
     proxy_set_header X-Forwarded-Preferred-Username $preferred_username;
+    proxy_set_header Authorization $http_authorization;
+    proxy_pass_header Authorization;
 {{- end -}}

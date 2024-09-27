@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.16.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.3...stack-v1.16.4) (2024-09-25)
+
+
+### Bug Fixes
+
+* fullname override to work ([#123](https://github.com/chanzuckerberg/argo-helm-charts/issues/123)) ([3fbc2bf](https://github.com/chanzuckerberg/argo-helm-charts/commit/3fbc2bf12b7d880cf14230a27e7a72d75f8ef933))
+
+## [1.16.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.2...stack-v1.16.3) (2024-09-18)
+
+
+### Bug Fixes
+
+* move concurrencyPolicy to correct part of spec ([#121](https://github.com/chanzuckerberg/argo-helm-charts/issues/121)) ([cf712a7](https://github.com/chanzuckerberg/argo-helm-charts/commit/cf712a746ddeb11b80a34dbc1da48225fb452e15))
+
+## [1.16.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.1...stack-v1.16.2) (2024-09-17)
+
+
+### Bug Fixes
+
+* forward auth headers ([#119](https://github.com/chanzuckerberg/argo-helm-charts/issues/119)) ([341a5ff](https://github.com/chanzuckerberg/argo-helm-charts/commit/341a5ff7b46cd8083161542a5a1930d013cdabf3))
+
+## [1.16.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.0...stack-v1.16.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* need a dollar sign for the variable name ([#117](https://github.com/chanzuckerberg/argo-helm-charts/issues/117)) ([abf5c26](https://github.com/chanzuckerberg/argo-helm-charts/commit/abf5c26b7681a44bb7f082bde30fad595caaaf36))
+
+## [1.16.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.15.0...stack-v1.16.0) (2024-09-17)
+
+
+### Features
+
+* don't use nonchars in variable name ([#115](https://github.com/chanzuckerberg/argo-helm-charts/issues/115)) ([ac47ece](https://github.com/chanzuckerberg/argo-helm-charts/commit/ac47ece75fdb79c3d16cc447aa4fea8875944be3))
+
+## [1.15.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.14.0...stack-v1.15.0) (2024-09-16)
+
+
+### Features
+
+* make the method a regex match ([#113](https://github.com/chanzuckerberg/argo-helm-charts/issues/113)) ([a03150f](https://github.com/chanzuckerberg/argo-helm-charts/commit/a03150fb9ce11a76e1e219957d091d47d31d0dc3))
+
 ## [1.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.13.0...stack-v1.14.0) (2024-09-13)
 
 

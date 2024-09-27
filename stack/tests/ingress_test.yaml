@@ -60,6 +60,8 @@ tests:
           skipAuth:
             - path: /healthz
               method: GET
+            - path: /api/*
+              method: "*"
       services:
         service1:
           ingress:
@@ -71,16 +73,29 @@ tests:
         equal:
           path: metadata.annotations["nginx.ingress.kubernetes.io/auth-snippet"]
           value: |
-            set skip_auth_get_healthz 1;
+            set $skip_auth_get_healthz 1;
 
             if ( $request_uri !~ "/healthz" ) {
-                set skip_auth_get_healthz  0;
+                set $skip_auth_get_healthz  0;
             }
 
             if ( $request_method !~ "GET" ) {
-                set skip_auth_get_healthz  0;
+                set $skip_auth_get_healthz  0;
             }
 
-            if ( skip_auth_get_healthz ) {
+            if ( $skip_auth_get_healthz ) {
+                return 200;
+            }
+            set $skip_auth___api_ 1;
+
+            if ( $request_uri !~ "/api/*" ) {
+                set $skip_auth___api_  0;
+            }
+
+            if ( $request_method !~ "*" ) {
+                set $skip_auth___api_  0;
+            }
+
+            if ( $skip_auth___api_ ) {
                 return 200;
             }
