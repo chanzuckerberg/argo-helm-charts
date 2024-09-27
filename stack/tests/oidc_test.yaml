@@ -41,6 +41,13 @@ tests:
   - it: sets additionalSecrets in envFrom
     set:
       global:
+        appSecrets:
+          envSecret:
+            secretName: blah3
+          stackSecret:
+            secretName: blah4
+          clusterSecret:
+            secretName: blah5
         oidcProxy:
           enabled: true
           additionalSecrets:
@@ -54,7 +61,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].envFrom
-          count: 2
+          count: 5
   - it: combines additionalSecrets with argus secrets in envFrom
     set:
       global:
@@ -110,3 +117,48 @@ tests:
         equal:
           path: spec.template.spec.containers[0].args[13]
           value: "--skip-auth-route=/v1/api/security/access_token"
+  - it: overwrites the name
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+        fullnameOverride: "overwrittenfull"
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "sidecar1:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+    asserts:
+      - equal:
+          path: metadata.name
+          value: "overwrittenfull-oidc-proxy"
+  - it: oidc proxy ingress matches the ingress host domain
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.rules[0].host
+          value: stack.play.dev.czi.team
