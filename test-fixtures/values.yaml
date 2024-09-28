@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+services:
+  service1:
+    replicaCount: 1
+=======
 # Service defaults
 global:
   replicaCount: 1
@@ -182,3 +187,4 @@ services: {}
   #       image: sidecar3:latest
   #     - name: sidecar4
   #       image: sidecar4:latest
+>>>>>>> 205e427911d35d6288b97d11abb1095f1dc04ce0
