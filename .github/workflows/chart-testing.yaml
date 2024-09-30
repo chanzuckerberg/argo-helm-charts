@@ -7,7 +7,7 @@ jobs:
   lint-test:
     strategy:
       matrix:
-        k8s_ver: [v1.28.9, v1.29.8, v1.30.4, v1.31.0]
+        k8s_ver: [v1.29.8, v1.30.4, v1.31.0]
         helm_ver: [v3.14.0, v3.15.4, v3.16.1]
 
     runs-on: ubuntu-latest
