@@ -85,3 +85,11 @@ jobs:
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --target-branch ${{ github.event.repository.default_branch }}
+
+  # job to aggregate lint-test matrix job completion
+  matrix-complete:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: complete
+        run: echo "Done!"
