@@ -27,6 +27,14 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 
+
+{{- define "certManagerAnnotations" -}}
+cert-manager.io/cluster-issuer: letsencrypt-prod
+cert-manager.io/private-key-algorithm: RSA
+cert-manager.io/private-key-size: '4096'
+{{- end -}}
+
+
 {{- define "service.fullname" -}}
 {{ include "stack.fullname" . | lower }}-{{ include "service.name" . | lower }}
 {{- end }}
