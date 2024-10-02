@@ -5,6 +5,11 @@ on: pull_request
 jobs:
 
   lint-test:
+    strategy:
+      matrix:
+        k8s_ver: [v1.29.8, v1.30.4, v1.31.0]
+        helm_ver: [v3.13.2, v3.15.4, v3.16.1]
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,7 +20,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.14.0
+          version: ${{ matrix.helm_ver }}
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
@@ -26,7 +31,7 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1.9.0
         with:
-          node_image: kindest/node:v1.30.2
+          node_image: kindest/node:${{ matrix.k8s_ver }}
 
       - name: Validate chart template with default values
         run: |
@@ -80,3 +85,11 @@ jobs:
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --target-branch ${{ github.event.repository.default_branch }}
+
+  # job to aggregate lint-test matrix job completion
+  matrix-complete:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: complete
+        run: echo "Done!"
