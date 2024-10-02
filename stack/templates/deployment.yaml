@@ -15,13 +15,8 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- $nginxAuthAnnotations := dict}}
-    {{- if .Values.ingress.oidcProtected }}
-    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" . )) }}
-    {{- end}}
     {{- toYaml (merge 
                 (fromYaml (include "stack.annotations" $service )) 
-                ($nginxAuthAnnotations)
       ) | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
