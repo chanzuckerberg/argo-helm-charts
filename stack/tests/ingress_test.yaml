@@ -99,3 +99,65 @@ tests:
             if ( $skip_auth___api_ ) {
                 return 200;
             }
+  - it: adds adds certManager annotations
+    set:
+      global:
+        ingress:
+          host: stack.play.dev.czi.team
+        oidcProxy:
+          enabled: true
+          skipAuth:
+            - path: /healthz
+              method: GET
+            - path: /api/*
+              method: "*"
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+            rules:
+              - host: cellxgene.cziscience.com
+              - host: api.cellxgene.cziscience.com
+    asserts:
+      - isKind:
+          of: Ingress
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt-prod
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["cert-manager.io/private-key-algorithm"]
+          value: RSA
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["cert-manager.io/private-key-size"]
+          value: "4096"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "false"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/target"]
+          value: "*.play.dev.czi.team"
+      - documentIndex: 0
+        contains:
+          path: spec.tls[0].hosts
+          content: stack.play.dev.czi.team
+      - documentIndex: 0
+        contains:
+          path: spec.tls[0].hosts
+          content: api.cellxgene.cziscience.com
+      - documentIndex: 0
+        contains:
+          path: spec.tls[0].hosts
+          content: cellxgene.cziscience.com
+      - documentIndex: 0
+        equal:
+          path: spec.tls[0].secretName
+          value: stack-play-dev-czi-team-tls-secret
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.tls[0].hosts
+          count: 3
