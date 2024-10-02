@@ -160,9 +160,13 @@ tests:
   - it: overwrites the name
     set:
       global:
+        oidcProxy:
+          enable: true
         fullnameOverride: "overwrittenfull"
       services:
         service1:
+          ingress:
+            oidcProtected: true
           args: ["arg1", "arg2"]
           command: ["command1", "command2"]
           autoscaling:
