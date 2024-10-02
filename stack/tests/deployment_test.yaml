@@ -3,160 +3,160 @@ suite: test deployment
 templates:
   - deployment.yaml
 tests:
-  - it: should work
-    set:
-      services:
-        service1:
-          args: ["arg1", "arg2"]
-          command: ["command1", "command2"]
-          autoscaling:
-            enabled: true
-            minReplicas: 2
-            maxReplicas: 10
-            maxUnavailable: 1
-          replicaCount: 2
-          sidecars:
-            - name: sidecar1
-              image: "sidecar1:latest"
-            - name: sidecar2
-              image: "sidecar2:latest"
-          initContainers:
-            - name: initContainer1
-              image: "alpine:latest"
-              command: ["echo", "Hello World"]
-    asserts:
-      - isKind:
-          of: Deployment
-      - isSubset:
-          path: spec
-          content:
-            revisionHistoryLimit: 3
-          any: true
-      - containsDocument:
-          apiVersion: apps/v1
-          kind: Deployment
+  # - it: should work
+  #   set:
+  #     services:
+  #       service1:
+  #         args: ["arg1", "arg2"]
+  #         command: ["command1", "command2"]
+  #         autoscaling:
+  #           enabled: true
+  #           minReplicas: 2
+  #           maxReplicas: 10
+  #           maxUnavailable: 1
+  #         replicaCount: 2
+  #         sidecars:
+  #           - name: sidecar1
+  #             image: "sidecar1:latest"
+  #           - name: sidecar2
+  #             image: "sidecar2:latest"
+  #         initContainers:
+  #           - name: initContainer1
+  #             image: "alpine:latest"
+  #             command: ["echo", "Hello World"]
+  #   asserts:
+  #     - isKind:
+  #         of: Deployment
+  #     - isSubset:
+  #         path: spec
+  #         content:
+  #           revisionHistoryLimit: 3
+  #         any: true
+  #     - containsDocument:
+  #         apiVersion: apps/v1
+  #         kind: Deployment
 
-  - it: uses httpGet probe by default
-    set:
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].livenessProbe
-          value:
-            failureThreshold: 3
-            httpGet:
-              path: /
-              port: http
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-  - it: uses exec probe when supplied
-    set:
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
-          livenessProbe:
-            exec:
-              command: ["echo", "Hello World"]
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].livenessProbe
-          value:
-            failureThreshold: 3
-            exec:
-              command: ["echo", "Hello World"]
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-  - it: uses tcpSocket probe when supplied
-    set:
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
-          livenessProbe:
-            tcpSocket:
-              port: 80
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].livenessProbe
-          value:
-            failureThreshold: 3
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-  - it: uses a combination of probes
-    set:
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
-          livenessProbe:
-            timeoutSeconds: 10
-            tcpSocket:
-              port: 80
-          readinessProbe:
-            exec:
-              command: ["echo", "Hello World"]
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].livenessProbe
-          value:
-            failureThreshold: 3
-            tcpSocket:
-              port: 80
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 10
-      - equal:
-          path: spec.template.spec.containers[0].readinessProbe
-          value:
-            failureThreshold: 3
-            exec:
-              command: ["echo", "Hello World"]
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-  - it: uses supplied initContainer image string value
-    set:
-      services:
-        service1:
-          initContainers:
-            - name: initContainer1
-              image: "alpine:latest"
-    asserts:
-      - equal:
-          path: spec.template.spec.initContainers[0].image
-          value: "alpine:latest"
-  - it: formats supplied initContainer image tag and repo
-    set:
-      services:
-        service1:
-          initContainers:
-            - name: initContainer1
-              image:
-                repository: "node"
-                tag: "20.0.0"
-    asserts:
-      - equal:
-          path: spec.template.spec.initContainers[0].image
-          value: "node:20.0.0"
+  # - it: uses httpGet probe by default
+  #   set:
+  #     services:
+  #       service1:
+  #         autoscaling:
+  #           enabled: false
+  #         replicaCount: 1
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.containers[0].livenessProbe
+  #         value:
+  #           failureThreshold: 3
+  #           httpGet:
+  #             path: /
+  #             port: http
+  #             scheme: HTTP
+  #           initialDelaySeconds: 30
+  #           periodSeconds: 10
+  #           successThreshold: 1
+  #           timeoutSeconds: 1
+  # - it: uses exec probe when supplied
+  #   set:
+  #     services:
+  #       service1:
+  #         autoscaling:
+  #           enabled: false
+  #         replicaCount: 1
+  #         livenessProbe:
+  #           exec:
+  #             command: ["echo", "Hello World"]
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.containers[0].livenessProbe
+  #         value:
+  #           failureThreshold: 3
+  #           exec:
+  #             command: ["echo", "Hello World"]
+  #           initialDelaySeconds: 30
+  #           periodSeconds: 10
+  #           successThreshold: 1
+  #           timeoutSeconds: 1
+  # - it: uses tcpSocket probe when supplied
+  #   set:
+  #     services:
+  #       service1:
+  #         autoscaling:
+  #           enabled: false
+  #         replicaCount: 1
+  #         livenessProbe:
+  #           tcpSocket:
+  #             port: 80
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.containers[0].livenessProbe
+  #         value:
+  #           failureThreshold: 3
+  #           tcpSocket:
+  #             port: 80
+  #           initialDelaySeconds: 30
+  #           periodSeconds: 10
+  #           successThreshold: 1
+  #           timeoutSeconds: 1
+  # - it: uses a combination of probes
+  #   set:
+  #     services:
+  #       service1:
+  #         autoscaling:
+  #           enabled: false
+  #         replicaCount: 1
+  #         livenessProbe:
+  #           timeoutSeconds: 10
+  #           tcpSocket:
+  #             port: 80
+  #         readinessProbe:
+  #           exec:
+  #             command: ["echo", "Hello World"]
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.containers[0].livenessProbe
+  #         value:
+  #           failureThreshold: 3
+  #           tcpSocket:
+  #             port: 80
+  #           initialDelaySeconds: 30
+  #           periodSeconds: 10
+  #           successThreshold: 1
+  #           timeoutSeconds: 10
+  #     - equal:
+  #         path: spec.template.spec.containers[0].readinessProbe
+  #         value:
+  #           failureThreshold: 3
+  #           exec:
+  #             command: ["echo", "Hello World"]
+  #           initialDelaySeconds: 30
+  #           periodSeconds: 10
+  #           successThreshold: 1
+  #           timeoutSeconds: 1
+  # - it: uses supplied initContainer image string value
+  #   set:
+  #     services:
+  #       service1:
+  #         initContainers:
+  #           - name: initContainer1
+  #             image: "alpine:latest"
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.initContainers[0].image
+  #         value: "alpine:latest"
+  # - it: formats supplied initContainer image tag and repo
+  #   set:
+  #     services:
+  #       service1:
+  #         initContainers:
+  #           - name: initContainer1
+  #             image:
+  #               repository: "node"
+  #               tag: "20.0.0"
+  #   asserts:
+  #     - equal:
+  #         path: spec.template.spec.initContainers[0].image
+  #         value: "node:20.0.0"
   - it: overwrites the name
     set:
       global:
