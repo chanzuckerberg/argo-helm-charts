@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.18.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.17.0...stack-v1.18.0) (2024-10-02)
+
+
+### Features
+
+* use certmanager rather than self-signed TLS certificate ([#129](https://github.com/chanzuckerberg/argo-helm-charts/issues/129)) ([9b9445d](https://github.com/chanzuckerberg/argo-helm-charts/commit/9b9445d576cb8ee452905ecc2284f01f27953866))
+
+
+### Misc
+
+* readd back in the tests I commented out ([#131](https://github.com/chanzuckerberg/argo-helm-charts/issues/131)) ([fb59e19](https://github.com/chanzuckerberg/argo-helm-charts/commit/fb59e191329fb0898cff995fbc8cb8283ff35de0))
+
 ## [1.17.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.16.4...stack-v1.17.0) (2024-09-27)
 
 
