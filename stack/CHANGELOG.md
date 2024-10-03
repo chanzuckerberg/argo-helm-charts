@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.18.0...stack-v1.19.0) (2024-10-03)
+
+
+### Features
+
+* allow volumes and volume mounts in oidc proxy ([#132](https://github.com/chanzuckerberg/argo-helm-charts/issues/132)) ([5c03a5a](https://github.com/chanzuckerberg/argo-helm-charts/commit/5c03a5ac5fe0f0b6353bd4356bb1ca98dff60044))
+
 ## [1.18.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.17.0...stack-v1.18.0) (2024-10-02)
 
 
