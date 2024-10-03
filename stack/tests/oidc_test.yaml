@@ -166,3 +166,43 @@ tests:
         equal:
           path: spec.rules[0].host
           value: stack.play.dev.czi.team
+  - it: oidc proxy has volumes mounted
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+          volumeMounts:
+            - name: oauth2-proxy-sign-in-template
+              mountPath: /templates/oauth2-proxy/sign_in.html
+              subPath: sign_in.html
+          volumes:
+            - name: oauth2-proxy-sign-in-template
+              configMap:
+                name: oauth2-proxy-sign-in-template
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].mountPath
+          value: /templates/oauth2-proxy/sign_in.html
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].name
+          value: oauth2-proxy-sign-in-template
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].subPath
+          value: sign_in.html
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].volumes[0].name
+          value: oauth2-proxy-sign-in-template
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].volumes[0].configMap.name
+          value: oauth2-proxy-sign-in-template
