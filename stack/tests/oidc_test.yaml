@@ -177,10 +177,10 @@ tests:
             - name: oauth2-proxy-sign-in-template
               mountPath: /templates/oauth2-proxy/sign_in.html
               subPath: sign_in.html
-          volumes:
-            - name: oauth2-proxy-sign-in-template
-              configMap:
-                name: oauth2-proxy-sign-in-template
+        volumes:
+          - name: oauth2-proxy-sign-in-template
+            configMap:
+              name: oauth2-proxy-sign-in-template
       services:
         service1:
           ingress:
@@ -200,9 +200,9 @@ tests:
           value: sign_in.html
       - documentIndex: 0
         equal:
-          path: spec.template.spec.containers[0].volumes[0].name
+          path: spec.template.spec.volumes[0].name
           value: oauth2-proxy-sign-in-template
       - documentIndex: 0
         equal:
-          path: spec.template.spec.containers[0].volumes[0].configMap.name
+          path: spec.template.spec.volumes[0].configMap.name
           value: oauth2-proxy-sign-in-template

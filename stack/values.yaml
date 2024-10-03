@@ -192,7 +192,6 @@ global:
     replicaCount: 2
     additionalSecrets: []
     additionalHeaders: []
-    volumes: []
     volumeMounts: []
     skipAuth: []
     # skipAuth:
