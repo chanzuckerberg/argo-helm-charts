@@ -192,6 +192,7 @@ global:
     replicaCount: 2
     additionalSecrets: []
     additionalHeaders: []
+    volumeMounts: []
     skipAuth: []
     # skipAuth:
     #   - path: "/healthz"
