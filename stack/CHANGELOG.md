@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.20.0...stack-v1.20.1) (2024-10-04)
+
+
+### Bug Fixes
+
+* allow overwritting ingress annotations ([#136](https://github.com/chanzuckerberg/argo-helm-charts/issues/136)) ([29c8c30](https://github.com/chanzuckerberg/argo-helm-charts/commit/29c8c3093627ff90a81746c9d22596ef9baaaaa3))
+
 ## [1.20.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.19.0...stack-v1.20.0) (2024-10-04)
 
 
