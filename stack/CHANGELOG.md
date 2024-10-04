@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.19.0...stack-v1.20.0) (2024-10-04)
+
+
+### Features
+
+* add new annotations to oidc-proxy ([#134](https://github.com/chanzuckerberg/argo-helm-charts/issues/134)) ([0ff11ab](https://github.com/chanzuckerberg/argo-helm-charts/commit/0ff11ab50a588506bd280e9c6072375561e571cd))
+
 ## [1.19.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.18.0...stack-v1.19.0) (2024-10-03)
 
 
