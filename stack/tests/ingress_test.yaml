@@ -104,6 +104,8 @@ tests:
       global:
         ingress:
           host: stack.play.dev.czi.team
+          annotations:
+            nginx.ingress.kubernetes.io/auth-signin: "https://upward-crappie.dev-vcp.dev.czi.team/oauth2/sign_in?rd=https://$host$escaped_request_uri"
         oidcProxy:
           enabled: true
           skipAuth:

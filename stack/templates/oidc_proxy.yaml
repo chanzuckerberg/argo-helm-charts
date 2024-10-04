@@ -97,9 +97,9 @@ metadata:
   annotations:
   {{- with (mergeOverwrite 
               (dict)
+              ($certManagerAnnotations)
               (.Values.annotations)
               (.Values.oidcProxy.annotations)
-              ($certManagerAnnotations)
       ) -}}
     {{ toYaml . | nindent 4 }}
   {{- end }}
