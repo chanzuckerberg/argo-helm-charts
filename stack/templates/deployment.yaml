@@ -15,7 +15,8 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml (merge 
+    {{- toYaml (mergeOverwrite 
+                (dict)
                 (fromYaml (include "stack.annotations" $service )) 
       ) | nindent 4 }}
 spec:

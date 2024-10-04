@@ -206,3 +206,78 @@ tests:
         equal:
           path: spec.template.spec.volumes[0].configMap.name
           value: oauth2-proxy-sign-in-template
+  - it: oidc CRDs get annotations
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        annotations:
+          test1: test1
+        podAnnotations:
+          test2: test2
+        oidcProxy:
+          enabled: true
+          annotations:
+            test3: test3
+          volumeMounts:
+            - name: oauth2-proxy-sign-in-template
+              mountPath: /templates/oauth2-proxy/sign_in.html
+              subPath: sign_in.html
+        volumes:
+          - name: oauth2-proxy-sign-in-template
+            configMap:
+              name: oauth2-proxy-sign-in-template
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - documentIndex: 0
+        containsDocument:
+          kind: Deployment
+          apiVersion: apps/v1
+          name: release-name-stack-oidc-proxy
+      - documentIndex: 0
+        equal:
+          path: spec.template.metadata.annotations.test1
+          value: test1
+      - documentIndex: 0
+        equal:
+          path: spec.template.metadata.annotations.test2
+          value: test2
+      - documentIndex: 0
+        equal:
+          path: spec.template.metadata.annotations.test3
+          value: test3
+      - documentIndex: 1
+        containsDocument:
+          kind: Service
+          apiVersion: v1
+          name: release-name-stack-oidc-proxy
+      - documentIndex: 1
+        equal:
+          path: .metadata.annotations.test1
+          value: test1
+      - documentIndex: 1
+        notExists:
+          path: .metadata.annotations.test2
+      - documentIndex: 1
+        equal:
+          path: .metadata.annotations.test3
+          value: test3
+      - documentIndex: 2
+        containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
+          name: release-name-stack-oidc-proxy
+      - documentIndex: 2
+        equal:
+          path: .metadata.annotations.test1
+          value: test1
+      - documentIndex: 2
+        notExists:
+          path: .metadata.annotations.test2
+      - documentIndex: 2
+        equal:
+          path: .metadata.annotations.test3
+          value: test3

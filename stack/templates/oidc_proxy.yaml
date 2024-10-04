@@ -17,7 +17,14 @@ spec:
   template:
     metadata:
       annotations:
-        linkerd.io/inject: enabled
+        {{- with (mergeOverwrite 
+                    (dict)
+                    (.Values.annotations)
+                    (.Values.podAnnotations)  
+                    (.Values.oidcProxy.annotations)
+        ) }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
         {{- include "oidcProxy.labels" . | nindent 8 }}
     spec:
@@ -60,6 +67,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+  {{- with (mergeOverwrite 
+              (dict)
+              (.Values.annotations)
+              (.Values.oidcProxy.annotations)
+        ) }}
+        {{- toYaml . | nindent 4 }}
+        {{- end }}
   labels:
     {{- include "oidcProxy.labels" . | nindent 4 }}
   name: {{ include "oidcProxy.name" . }}
@@ -80,8 +95,11 @@ metadata:
   name: {{ include "oidcProxy.name" . }}
   {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
   annotations:
-  {{- with (merge 
-                ($certManagerAnnotations)
+  {{- with (mergeOverwrite 
+              (dict)
+              (.Values.annotations)
+              (.Values.oidcProxy.annotations)
+              ($certManagerAnnotations)
       ) -}}
     {{ toYaml . | nindent 4 }}
   {{- end }}
