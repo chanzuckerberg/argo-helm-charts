@@ -23,9 +23,10 @@ metadata:
     {{- end}}
     {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
   annotations:
-    {{- with (merge 
-                (.Values.ingress.annotations)
+    {{- with (mergeOverwrite 
+                (dict)
                 (.Values.annotations) 
+                (.Values.ingress.annotations)
                 ($certManagerAnnotations)
                 ($nginxAuthAnnotations)
       ) }}
