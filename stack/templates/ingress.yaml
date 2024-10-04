@@ -25,10 +25,10 @@ metadata:
   annotations:
     {{- with (mergeOverwrite 
                 (dict)
+                ($nginxAuthAnnotations)
+                ($certManagerAnnotations)
                 (.Values.annotations) 
                 (.Values.ingress.annotations)
-                ($certManagerAnnotations)
-                ($nginxAuthAnnotations)
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
