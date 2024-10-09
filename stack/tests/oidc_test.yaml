@@ -281,3 +281,84 @@ tests:
         equal:
           path: .metadata.annotations.test3
           value: test3
+  - it: should have multiple ingress rules for the stack hosts
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+          rules:
+            - host: "stack2.com"
+        oidcProxy:
+          enabled: true
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+            rules:
+              - host: "service1.stack2.com"
+        service2:
+          ingress:
+            oidcProtected: true
+            rules:
+              - host: "service2.stack2.com"
+        service3:
+          ingress:
+            oidcProtected: true
+        service4:
+          ingress:
+            oidcProtected: false
+            rules:
+              - host: "service4.stack2.com"
+    asserts:
+      - documentIndex: 2
+        containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
+          name: release-name-stack-oidc-proxy
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[0].host
+          value: stack.play.dev.czi.team
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[1].host
+          value: service1.stack2.com
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[2].host
+          value: service2.stack2.com
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[3].host
+          value: stack2.com
+      - documentIndex: 2
+        notExists:
+          path: .spec.rules[4]
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].args
+          count: 19
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --whitelist-domain=service1.stack2.com
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --cookie-domain=service1.stack2.com
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --whitelist-domain=service2.stack2.com
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --cookie-domain=service2.stack2.com
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --whitelist-domain=stack2.com
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --cookie-domain=stack2.com
