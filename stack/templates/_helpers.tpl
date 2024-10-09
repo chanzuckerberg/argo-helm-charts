@@ -205,7 +205,7 @@ if ( ${{ $var_name }} ) {
 
 {{- define "oidcProxy.nginxAuthAnnotations" -}}
 nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
-nginx.ingress.kubernetes.io/auth-signin: "https://{{- include "oidcProxy.authDomain" . }}/oauth2/start?rd=https://$host$escaped_request_uri"
+nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/sign_in?rd=https://$host$escaped_request_uri"
 nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.oidcProxy.additionalHeaders) }}
 nginx.ingress.kubernetes.io/auth-snippet: |
 {{- include "oidcProxy.skipAuthConfig" . | nindent 4 }}

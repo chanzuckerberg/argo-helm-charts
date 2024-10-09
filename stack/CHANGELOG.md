@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.20.1...stack-v1.20.2) (2024-10-09)
+
+
+### Bug Fixes
+
+* add additional hosts to the oidc proxy ingress ([#139](https://github.com/chanzuckerberg/argo-helm-charts/issues/139)) ([846d837](https://github.com/chanzuckerberg/argo-helm-charts/commit/846d837be438d96f14b12f8bacd6ccbb1ddadf0c))
+
 ## [1.20.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.20.0...stack-v1.20.1) (2024-10-04)
 
 
