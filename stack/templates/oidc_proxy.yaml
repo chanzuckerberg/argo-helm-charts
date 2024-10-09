@@ -1,4 +1,20 @@
 {{ $global := . }}
+{{- $allHosts := list -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+
+  {{- with $values -}}
+  {{- if .ingress.oidcProtected -}}
+  {{ range $i, $rule := .ingress.rules }}
+  {{- $allHosts = append $allHosts $rule.host }}
+  {{- end -}}
+  {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 {{ $globalValues := .Values.global }}
 {{ $scope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $globalValues}}
 {{ with $scope }}
@@ -116,6 +132,19 @@ spec:
                 name: {{ include "oidcProxy.name" . }}
                 port:
                   number: {{ include "oidcProxy.port" . }}
+    {{- $scope := . }}
+    {{- range $i, $host := $allHosts }}
+    - host: {{ $host }}
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "oidcProxy.name" $scope }}
+                port:
+                  number: {{ include "oidcProxy.port" $scope }}
+    {{- end }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
