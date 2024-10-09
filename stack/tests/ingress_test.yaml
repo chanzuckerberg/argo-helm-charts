@@ -142,7 +142,7 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/target"]
-          value: "*.play.dev.czi.team"
+          value: "access.play.dev.czi.team"
       - documentIndex: 0
         contains:
           path: spec.tls[0].hosts
