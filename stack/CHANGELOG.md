@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.20.2...stack-v2.0.0) (2024-10-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* route traffic to NLB instead of ALB ([#138](https://github.com/chanzuckerberg/argo-helm-charts/issues/138))
+
+### Features
+
+* route traffic to NLB instead of ALB ([#138](https://github.com/chanzuckerberg/argo-helm-charts/issues/138)) ([650c2d7](https://github.com/chanzuckerberg/argo-helm-charts/commit/650c2d72eb7131827486886ff0389c6ddc2d6d06))
+
 ## [1.20.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.20.1...stack-v1.20.2) (2024-10-09)
 
 
