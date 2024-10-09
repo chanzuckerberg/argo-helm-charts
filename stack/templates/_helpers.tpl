@@ -33,7 +33,7 @@ cert-manager.io/cluster-issuer: letsencrypt-prod
 cert-manager.io/private-key-algorithm: RSA
 cert-manager.io/private-key-size: '4096'
 external-dns.alpha.kubernetes.io/exclude: "false"
-external-dns.alpha.kubernetes.io/target: "*.{{ include "clusterBaseDomain" . }}"
+external-dns.alpha.kubernetes.io/target: "access.{{ include "clusterBaseDomain" . }}"
 {{- end -}}
 
 
