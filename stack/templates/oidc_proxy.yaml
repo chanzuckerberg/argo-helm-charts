@@ -59,6 +59,10 @@ spec:
             - --pass-authorization-header=true
             - --reverse-proxy
             - --skip-jwt-bearer-tokens
+            {{- range $allHosts -}}
+            {{- printf "- --whitelist-domain=%s" . | nindent 12 -}}
+            {{- printf "- --cookie-domain=%s" . | nindent 12 -}}
+            {{- end -}}
             {{- if gt (len .Values.oidcProxy.extraArgs) 0 }}
             {{- toYaml .Values.oidcProxy.extraArgs | nindent 12}}
             {{- end }}

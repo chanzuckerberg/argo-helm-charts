@@ -334,3 +334,31 @@ tests:
       - documentIndex: 2
         notExists:
           path: .spec.rules[4]
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].args
+          count: 19
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[18]
+          value: --cookie-domain=stack2.com
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[17]
+          value: --whitelist-domain=stack2.com
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[16]
+          value: --cookie-domain=service2.stack2.com
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[15]
+          value: --whitelist-domain=service2.stack2.com
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[14]
+          value: --cookie-domain=service1.stack2.com
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args[13]
+          value: --whitelist-domain=service1.stack2.com
