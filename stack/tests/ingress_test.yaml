@@ -125,7 +125,7 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["cert-manager.io/cluster-issuer"]
-          value: letsencrypt-prod-dns
+          value: letsencrypt-prod
       - documentIndex: 0
         equal:
           path: metadata.annotations["cert-manager.io/private-key-algorithm"]
