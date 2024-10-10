@@ -183,7 +183,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{- define "oidcProxy.skipAuthConfig" -}}
-{{- range  $k, $v := .Values.oidcProxy.skipAuth -}}
+{{- $letsEncryptVerifySkip := (dict "path" "/.well-known/*" "method" "GET") -}}
+{{- range  $k, $v := append .Values.oidcProxy.skipAuth $letsEncryptVerifySkip -}}
 {{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
 {{- $id := regexReplaceAll "\\W+" $id "_" -}}
 {{- $var_name := printf "%s_%s" "skip_auth" $id }}
