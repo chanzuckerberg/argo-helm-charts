@@ -29,7 +29,7 @@ If release name contains chart name it will be used as a full name.
 
 
 {{- define "certManagerAnnotations" -}}
-cert-manager.io/cluster-issuer: letsencrypt-prod
+cert-manager.io/cluster-issuer: letsencrypt-prod-dns
 cert-manager.io/private-key-algorithm: RSA
 cert-manager.io/private-key-size: '4096'
 external-dns.alpha.kubernetes.io/exclude: "false"
