@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.0.0...stack-v2.1.0) (2024-10-10)
+
+
+### Features
+
+* share wildcard certificate for czi.team domains ([#142](https://github.com/chanzuckerberg/argo-helm-charts/issues/142)) ([d9915eb](https://github.com/chanzuckerberg/argo-helm-charts/commit/d9915eb2b41dbe1e52a6afe9cc944ad59776a8d3))
+
 ## [2.0.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v1.20.2...stack-v2.0.0) (2024-10-09)
 
 
