@@ -125,7 +125,7 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["cert-manager.io/cluster-issuer"]
-          value: letsencrypt-prod
+          value: letsencrypt-prod-dns
       - documentIndex: 0
         equal:
           path: metadata.annotations["cert-manager.io/private-key-algorithm"]
@@ -155,9 +155,8 @@ tests:
           path: spec.tls[0].hosts
           content: cellxgene.cziscience.com
       - documentIndex: 0
-        equal:
+        notExists:
           path: spec.tls[0].secretName
-          value: letsencrypt-prod-dns-cluster-wildcard
       - documentIndex: 0
         notContains:
           path: spec.tls[1].hosts
