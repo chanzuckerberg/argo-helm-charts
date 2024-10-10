@@ -71,7 +71,6 @@ spec:
   tls:
     - hosts:
       - {{ $service.Values.ingress.host  }}
-      secretName: letsencrypt-prod-dns-cluster-wildcard
     {{- range .Values.ingress.tls }}
     - hosts:
         {{- range .hosts }}
