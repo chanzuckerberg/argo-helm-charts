@@ -102,6 +102,7 @@ tests:
   - it: adds adds certManager annotations
     set:
       global:
+        fullnameOverride: missing-otter
         ingress:
           host: stack.play.dev.czi.team
         oidcProxy:
@@ -146,18 +147,38 @@ tests:
           path: spec.tls[0].hosts
           content: stack.play.dev.czi.team
       - documentIndex: 0
-        contains:
+        notContains:
           path: spec.tls[0].hosts
           content: api.cellxgene.cziscience.com
       - documentIndex: 0
-        contains:
+        notContains:
           path: spec.tls[0].hosts
           content: cellxgene.cziscience.com
       - documentIndex: 0
         equal:
           path: spec.tls[0].secretName
-          value: stack-play-dev-czi-team-tls-secret
+          value: letsencrypt-prod-dns-cluster-wildcard
+      - documentIndex: 0
+        notContains:
+          path: spec.tls[1].hosts
+          content: stack.play.dev.czi.team
+      - documentIndex: 0
+        contains:
+          path: spec.tls[1].hosts
+          content: api.cellxgene.cziscience.com
+      - documentIndex: 0
+        contains:
+          path: spec.tls[1].hosts
+          content: cellxgene.cziscience.com
+      - documentIndex: 0
+        equal:
+          path: spec.tls[1].secretName
+          value: custom-hosts-missing-otter-tls-secret
       - documentIndex: 0
         lengthEqual:
           path: spec.tls[0].hosts
-          count: 3
+          count: 1
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.tls[1].hosts
+          count: 2
