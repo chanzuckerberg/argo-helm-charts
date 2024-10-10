@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.1.0...stack-v2.1.1) (2024-10-10)
+
+
+### Bug Fixes
+
+* issue with letsencrypt rate limits ([#144](https://github.com/chanzuckerberg/argo-helm-charts/issues/144)) ([f2aeb81](https://github.com/chanzuckerberg/argo-helm-charts/commit/f2aeb81b37318cc58d3e14f138d2cb06ee687e47))
+
 ## [2.1.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.0.0...stack-v2.1.0) (2024-10-10)
 
 
