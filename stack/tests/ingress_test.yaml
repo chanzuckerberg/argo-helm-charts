@@ -99,6 +99,19 @@ tests:
             if ( $skip_auth___api_ ) {
                 return 200;
             }
+            set $skip_auth_get__well_known_ 1;
+
+            if ( $request_uri !~ "/.well-known/*" ) {
+                set $skip_auth_get__well_known_  0;
+            }
+
+            if ( $request_method !~ "GET" ) {
+                set $skip_auth_get__well_known_  0;
+            }
+
+            if ( $skip_auth_get__well_known_ ) {
+                return 200;
+            }
   - it: adds adds certManager annotations
     set:
       global:
@@ -125,7 +138,7 @@ tests:
       - documentIndex: 0
         equal:
           path: metadata.annotations["cert-manager.io/cluster-issuer"]
-          value: letsencrypt-prod-dns
+          value: letsencrypt-prod
       - documentIndex: 0
         equal:
           path: metadata.annotations["cert-manager.io/private-key-algorithm"]

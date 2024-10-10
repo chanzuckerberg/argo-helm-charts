@@ -29,7 +29,7 @@ If release name contains chart name it will be used as a full name.
 
 
 {{- define "certManagerAnnotations" -}}
-cert-manager.io/cluster-issuer: letsencrypt-prod-dns
+cert-manager.io/cluster-issuer: letsencrypt-prod
 cert-manager.io/private-key-algorithm: RSA
 cert-manager.io/private-key-size: '4096'
 external-dns.alpha.kubernetes.io/exclude: "false"
@@ -183,7 +183,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{- define "oidcProxy.skipAuthConfig" -}}
-{{- range  $k, $v := .Values.oidcProxy.skipAuth -}}
+{{- $letsEncryptVerifySkip := (dict "path" "/.well-known/*" "method" "GET") -}}
+{{- range  $k, $v := append .Values.oidcProxy.skipAuth $letsEncryptVerifySkip -}}
 {{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
 {{- $id := regexReplaceAll "\\W+" $id "_" -}}
 {{- $var_name := printf "%s_%s" "skip_auth" $id }}
