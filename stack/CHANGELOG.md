@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.1.1...stack-v2.1.2) (2024-10-10)
+
+
+### Bug Fixes
+
+* for custom hosts use the http solver ([#146](https://github.com/chanzuckerberg/argo-helm-charts/issues/146)) ([e987c7a](https://github.com/chanzuckerberg/argo-helm-charts/commit/e987c7a62d5f5d9fd8722278acb185d39ba3aead))
+* skip auth for letsencrypt verification ([#148](https://github.com/chanzuckerberg/argo-helm-charts/issues/148)) ([e51902e](https://github.com/chanzuckerberg/argo-helm-charts/commit/e51902ed292839392e38e5dbbe1fabbcdc9412ae))
+
 ## [2.1.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.1.0...stack-v2.1.1) (2024-10-10)
 
 
