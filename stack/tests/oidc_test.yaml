@@ -101,26 +101,39 @@ tests:
       global:
         oidcProxy:
           enabled: true
+          skipAuth:
+            - method: GET
+              path: "/v1/api/docs2"
+            - method: POST
+              path: "/v1/api/docs3"
           extraArgs:
             - "--skip-auth-route=/v1/api/docs"
             - "--skip-auth-route=/v1/api/security/access_token"
     asserts:
       - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=GET=/v1/api/docs2"
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=POST=/v1/api/docs3"
+      - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 15
+          count: 17
       - documentIndex: 0
-        equal:
-          path: spec.template.spec.containers[0].args[12]
-          value: "--skip-jwt-bearer-tokens"
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-jwt-bearer-tokens"
       - documentIndex: 0
-        equal:
-          path: spec.template.spec.containers[0].args[13]
-          value: "--skip-auth-route=/v1/api/docs"
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=/v1/api/docs"
       - documentIndex: 0
-        equal:
-          path: spec.template.spec.containers[0].args[14]
-          value: "--skip-auth-route=/v1/api/security/access_token"
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=/v1/api/security/access_token"
   - it: overwrites the name
     set:
       global:

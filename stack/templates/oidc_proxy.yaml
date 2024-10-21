@@ -59,6 +59,9 @@ spec:
             - --pass-authorization-header=true
             - --reverse-proxy
             - --skip-jwt-bearer-tokens
+            {{- range .Values.oidcProxy.skipAuth }}
+            - --skip-auth-route={{ .method }}={{ .path }}
+            {{- end -}}
             {{- range $allHosts -}}
             {{- printf "- --whitelist-domain=%s" . | nindent 12 -}}
             {{- printf "- --cookie-domain=%s" . | nindent 12 -}}
