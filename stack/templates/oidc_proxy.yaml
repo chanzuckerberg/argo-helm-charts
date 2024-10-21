@@ -1,5 +1,6 @@
 {{ $global := . }}
 {{- $allHosts := list -}}
+{{- $allOIDCProtectedServces := list -}}
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -8,9 +9,16 @@
 
   {{- with $values -}}
   {{- if .ingress.oidcProtected -}}
+
+  {{- $allOIDCProtectedServces = append 
+    $allOIDCProtectedServces 
+    (printf "http://%s.%s.svc.cluster.local:%d" $serviceName $global.Release.Namespace ($values.service.port | int)) 
+  -}}
+
   {{ range $i, $rule := .ingress.rules }}
   {{- $allHosts = append $allHosts $rule.host }}
   {{- end -}}
+
   {{- end -}}
   {{- end -}}
 {{- end -}}
@@ -59,13 +67,20 @@ spec:
             - --pass-authorization-header=true
             - --reverse-proxy
             - --skip-jwt-bearer-tokens
+
+            {{- range $allOIDCProtectedServces }}
+            - --upstream={{ . }}
+            {{ end -}}
+
             {{- range .Values.oidcProxy.skipAuth }}
+            # for backwards compatibility, could also just be provided using extraArgs
             {{ if contains "*" .method }}
             - --skip-auth-route={{ .path }}
             {{- else -}}
             - --skip-auth-route={{ .method }}={{ .path }}
             {{- end -}}
             {{- end -}}
+
             {{- range $allHosts -}}
             {{- printf "- --whitelist-domain=%s" . | nindent 12 -}}
             {{- printf "- --cookie-domain=%s" . | nindent 12 -}}

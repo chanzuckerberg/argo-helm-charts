@@ -106,7 +106,7 @@ tests:
               path: "/v1/api/docs2"
             - method: POST
               path: "/v1/api/docs3"
-            - path: "/v1/api/llm/*"
+            - path: "/v1/api/llm/.*"
               method: ".*"
           extraArgs:
             - "--skip-auth-route=/v1/api/docs"
@@ -127,7 +127,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 19
+          count: 18
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
@@ -188,6 +188,8 @@ tests:
   - it: oidc proxy has volumes mounted
     set:
       global:
+        service:
+          port: 2222
         ingress:
           host: "stack.play.dev.czi.team"
         oidcProxy:
@@ -202,6 +204,11 @@ tests:
               name: oauth2-proxy-sign-in-template
       services:
         service1:
+          service:
+            port: 4123
+          ingress:
+            oidcProtected: true
+        service2:
           ingress:
             oidcProtected: true
     asserts:
@@ -209,6 +216,14 @@ tests:
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].mountPath
           value: /templates/oauth2-proxy/sign_in.html
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream=http://service1.NAMESPACE.svc.cluster.local:4123
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream=http://service2.NAMESPACE.svc.cluster.local:2222
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].name
@@ -356,7 +371,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 19
+          count: 22
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
