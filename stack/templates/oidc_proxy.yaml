@@ -60,7 +60,11 @@ spec:
             - --reverse-proxy
             - --skip-jwt-bearer-tokens
             {{- range .Values.oidcProxy.skipAuth }}
+            {{ if contains "*" .method }}
+            - --skip-auth-route={{ .path }}
+            {{- else -}}
             - --skip-auth-route={{ .method }}={{ .path }}
+            {{- end -}}
             {{- end -}}
             {{- range $allHosts -}}
             {{- printf "- --whitelist-domain=%s" . | nindent 12 -}}

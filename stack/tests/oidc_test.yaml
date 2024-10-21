@@ -106,10 +106,16 @@ tests:
               path: "/v1/api/docs2"
             - method: POST
               path: "/v1/api/docs3"
+            - path: "/v1/api/llm/*"
+              method: ".*"
           extraArgs:
             - "--skip-auth-route=/v1/api/docs"
             - "--skip-auth-route=/v1/api/security/access_token"
     asserts:
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=/v1/api/llm/.*"
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
@@ -121,7 +127,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 17
+          count: 19
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
