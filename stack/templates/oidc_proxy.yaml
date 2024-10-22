@@ -9,11 +9,12 @@
 
   {{- with $values -}}
   {{- if .ingress.oidcProtected -}}
-
-  {{- $allOIDCProtectedServces = append 
-    $allOIDCProtectedServces 
-    (printf "http://%s.%s.svc.cluster.local:%d" $serviceName $global.Release.Namespace ($values.service.port | int)) 
-  -}}
+    {{ range $i, $path := .ingress.paths }}
+      {{- $allOIDCProtectedServces = append 
+        $allOIDCProtectedServces 
+        (printf "http://%s.%s.svc.cluster.local:%d%s" $serviceName $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+      -}}
+    {{- end -}}
 
   {{ range $i, $rule := .ingress.rules }}
   {{- $allHosts = append $allHosts $rule.host }}
@@ -70,7 +71,7 @@ spec:
 
             {{- range $allOIDCProtectedServces }}
             - --upstream={{ . }}
-            {{ end -}}
+            {{- end -}}
 
             {{- range .Values.oidcProxy.skipAuth }}
             # for backwards compatibility, could also just be provided using extraArgs

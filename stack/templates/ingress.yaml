@@ -45,15 +45,19 @@ spec:
             {{- end }}
             backend:
               service:
+                {{- if $service.Values.ingress.oidcProtected }}
+                name: {{ include "oidcProxy.name" $service }}
+                {{ else -}}
                 name: {{ $fullName }}
+                {{- end -}}
                 port:
                   number: {{ $svcPort }}
           {{- end }}
-    {{ $customHosts := list}}
-    {{ range $i, $rule := .Values.ingress.rules }}
+    {{- $customHosts := list -}}
+    {{- range $i, $rule := .Values.ingress.rules -}}
     {{- $ruleValues := mergeOverwrite (dict "host" $service.Values.ingress.host "paths" $service.Values.ingress.paths) $rule -}}
     {{ $customHosts = append $customHosts $ruleValues.host }}
-    - host: {{ $ruleValues.host | quote }}
+    - host: {{ $ruleValues.host }}
       http:
         paths:
           {{- range $ruleValues.paths }} 
@@ -65,9 +69,9 @@ spec:
               service:
                 name: {{ $fullName }}
                 port:
-                  number: {{ $svcPort }}
-          {{- end }}
-    {{ end }}
+                  number: {{ $svcPort | int}}
+          {{ end -}}
+    {{- end }}
   tls:
     - hosts:
       - {{ $service.Values.ingress.host  }}
