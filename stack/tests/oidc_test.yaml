@@ -18,7 +18,7 @@ tests:
           enabled: true
     asserts:
       - hasDocuments:
-          count: 2
+          count: 3
       - documentIndex: 0
         containsDocument:
           kind: Deployment
@@ -28,6 +28,11 @@ tests:
         containsDocument:
           kind: Service
           apiVersion: v1
+          name: release-name-stack-oidc-proxy
+      - documentIndex: 2
+        containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
           name: release-name-stack-oidc-proxy
   - it: disabled by default
     asserts:

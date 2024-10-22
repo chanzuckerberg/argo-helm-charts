@@ -131,5 +131,48 @@ spec:
     {{- include "oidcProxy.selectorLabels" . | nindent 4 }}
 
 ---
+
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "oidcProxy.name" . }}
+  {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
+  annotations:
+  {{- with (mergeOverwrite 
+              (dict)
+              ($certManagerAnnotations)
+              (.Values.annotations)
+              (.Values.oidcProxy.annotations)
+      ) -}}
+    {{ toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ include "oidcProxy.authDomain" . }}
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "oidcProxy.name" . }}
+                port:
+                  number: {{ include "oidcProxy.port" . }}
+    {{- $scope := . }}
+    {{- range $i, $host := $allHosts }}
+    - host: {{ $host }}
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "oidcProxy.name" $scope }}
+                port:
+                  number: {{ include "oidcProxy.port" $scope }}
+    {{- end }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
