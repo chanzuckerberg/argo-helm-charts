@@ -181,11 +181,3 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "oidcProxy.authDomain" -}}
 {{ .Values.ingress.host }}
 {{- end -}}
-
-{{- define "oidcProxy.skipAuthConfig" -}}
-
-{{- end -}}
-
-{{- define "oidcProxy.nginxAuthAnnotations" -}}
-
-{{- end -}}
