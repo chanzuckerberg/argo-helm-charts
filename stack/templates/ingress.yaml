@@ -1,4 +1,4 @@
-{{ $global := . }}
+{{- $global := . -}}
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -7,10 +7,10 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 
+{{- if .Values.ingress.enabled -}}
 ---
-{{ if .Values.ingress.enabled }}
-{{- $fullName := include "service.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
+{{ $fullName := include "service.fullname" . -}}
+{{ $svcPort := .Values.service.port -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -42,9 +42,9 @@ spec:
               service:
                 {{- if $service.Values.ingress.oidcProtected }}
                 name: {{ include "oidcProxy.name" $service }}
-                {{ else -}}
+                {{- else }}
                 name: {{ $fullName }}
-                {{- end -}}
+                {{- end }}
                 port:
                   number: {{ $svcPort | int}}
           {{- end }}
@@ -64,9 +64,9 @@ spec:
               service:
                 {{- if $service.Values.ingress.oidcProtected }}
                 name: {{ include "oidcProxy.name" $service }}
-                {{ else -}}
+                {{- else }}
                 name: {{ $fullName }}
-                {{- end -}}
+                {{- end }}
                 port:
                   number: {{ $svcPort | int}}
           {{ end -}}
@@ -86,8 +86,7 @@ spec:
       {{- toYaml $customHosts | nindent 6 }}
       {{- $secretName := printf "%s-%s-%s" "custom-hosts" (include "stack.fullname" .) "tls-secret" }}
       secretName: {{  regexReplaceAll "[^a-zA-Z0-9-]" $secretName "-" }}
-    {{- end -}}
-{{- end }}
----
+    {{ end }}
+{{ end }}
 {{- end }}
 {{- end }}

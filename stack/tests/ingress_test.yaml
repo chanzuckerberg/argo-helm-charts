@@ -73,6 +73,9 @@ tests:
             rules:
               - host: cellxgene.cziscience.com
               - host: api.cellxgene.cziscience.com
+        unprotected-service:
+          ingress:
+            oidcProtected: false
     asserts:
       - isKind:
           of: Ingress
@@ -135,3 +138,19 @@ tests:
         lengthEqual:
           path: spec.tls[1].hosts
           count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: missing-otter-oidc-proxy
+      - documentIndex: 0
+        equal:
+          path: spec.rules[1].http.paths[0].backend.service.name
+          value: missing-otter-oidc-proxy
+      - documentIndex: 0
+        equal:
+          path: spec.rules[2].http.paths[0].backend.service.name
+          value: missing-otter-oidc-proxy
+      - documentIndex: 1
+        equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: missing-otter-unprotected-service

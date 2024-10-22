@@ -147,7 +147,7 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 
 {{- define "oidcProxy.name" -}}
 {{ include "stack.fullname" . | lower }}-oidc-proxy
-{{- end }}
+{{- end -}}
 
 {{- define "oidcProxy.port" -}}
 {{ .Values.oidcProxy.port | default 4180 | int  }}
