@@ -5,6 +5,11 @@
 {{- define "service.configuration" -}}
 {{- if or (or (or (or (ne (trim .Values.appSecrets.envSecret.secretName) "") (ne (trim .Values.appSecrets.envSecret.secretName) "")) (ne (trim .Values.appContext.envContextConfigMapName) "")) (ne (trim .Values.appContext.stackContextConfigMapName) "")) .Values.envFrom -}}
 envFrom:
+{{- if ne (trim .Values.appSecrets.clusterSecret.secretName) "" }}
+- secretRef:
+    name: {{ .Values.appSecrets.clusterSecret.secretName }}
+    optional: true
+{{- end }}
 {{- if ne (trim .Values.appSecrets.envSecret.secretName) "" }}
 - secretRef:
     name: {{ .Values.appSecrets.envSecret.secretName }}
@@ -13,11 +18,6 @@ envFrom:
 {{- if ne (trim .Values.appSecrets.stackSecret.secretName) "" }}
 - secretRef:
     name: {{ .Values.appSecrets.stackSecret.secretName }}
-    optional: true
-{{- end }}
-{{- if ne (trim .Values.appSecrets.clusterSecret.secretName) "" }}
-- secretRef:
-    name: {{ .Values.appSecrets.clusterSecret.secretName }}
     optional: true
 {{- end }}
 {{- if ne (trim .Values.appContext.envContextConfigMapName) "" }}
