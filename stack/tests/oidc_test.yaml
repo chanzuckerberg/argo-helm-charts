@@ -169,6 +169,22 @@ tests:
       - equal:
           path: metadata.name
           value: "overwrittenfull-oidc-proxy"
+  - it: oidc proxy ingress matches the ingress host domain
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.rules[0].host
+          value: stack.play.dev.czi.team
   - it: oidc proxy has volumes mounted
     set:
       global:
@@ -289,6 +305,22 @@ tests:
         equal:
           path: .metadata.annotations.test3
           value: test3
+      - documentIndex: 2
+        containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
+          name: release-name-stack-oidc-proxy
+      - documentIndex: 2
+        equal:
+          path: .metadata.annotations.test1
+          value: test1
+      - documentIndex: 2
+        notExists:
+          path: .metadata.annotations.test2
+      - documentIndex: 2
+        equal:
+          path: .metadata.annotations.test3
+          value: test3
   - it: should have multiple ingress rules for the stack hosts
     set:
       global:
@@ -327,6 +359,30 @@ tests:
             rules:
               - host: "service4.stack2.com"
     asserts:
+      - documentIndex: 2
+        containsDocument:
+          kind: Ingress
+          apiVersion: networking.k8s.io/v1
+          name: release-name-stack-oidc-proxy
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[0].host
+          value: stack.play.dev.czi.team
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[1].host
+          value: service1.stack2.com
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[2].host
+          value: service2.stack2.com
+      - documentIndex: 2
+        equal:
+          path: .spec.rules[3].host
+          value: stack2.com
+      - documentIndex: 2
+        notExists:
+          path: .spec.rules[4]
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
