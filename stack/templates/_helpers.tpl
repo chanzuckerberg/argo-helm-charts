@@ -205,21 +205,21 @@ if ( ${{ $var_name }} ) {
 {{- end -}}
 
 {{- define "oidcProxy.nginxAuthAnnotations" -}}
-nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
-nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/sign_in?rd=https://$host$escaped_request_uri"
-nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.oidcProxy.additionalHeaders) }}
-nginx.ingress.kubernetes.io/auth-snippet: |
-{{- include "oidcProxy.skipAuthConfig" . | nindent 4 }}
-nginx.ingress.kubernetes.io/configuration-snippet: |
-    auth_request_set $email $upstream_http_x_auth_request_email;
-    auth_request_set $user $upstream_http_x_auth_request_user;
-    auth_request_set $groups $upstream_http_x_auth_request_groups;
-    auth_request_set $preferred_username $upstream_http_x_auth_request_preferred_username;
+# nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
+# nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/sign_in?rd=https://$host$escaped_request_uri"
+# nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.oidcProxy.additionalHeaders) }}
+# nginx.ingress.kubernetes.io/auth-snippet: |
+# {{- include "oidcProxy.skipAuthConfig" . | nindent 4 }}
+# nginx.ingress.kubernetes.io/configuration-snippet: |
+# auth_request_set $email $upstream_http_x_auth_request_email;
+# auth_request_set $user $upstream_http_x_auth_request_user;
+# auth_request_set $groups $upstream_http_x_auth_request_groups;
+# auth_request_set $preferred_username $upstream_http_x_auth_request_preferred_username;
 
-    proxy_set_header X-Forwarded-Email $email;
-    proxy_set_header X-Forwarded-User $user;
-    proxy_set_header X-Forwarded-Groups $groups;
-    proxy_set_header X-Forwarded-Preferred-Username $preferred_username;
-    proxy_set_header Authorization $http_authorization;
-    proxy_pass_header Authorization;
+# proxy_set_header X-Forwarded-Email $email;
+# proxy_set_header X-Forwarded-User $user;
+# proxy_set_header X-Forwarded-Groups $groups;
+# proxy_set_header X-Forwarded-Preferred-Username $preferred_username;
+# proxy_set_header Authorization $http_authorization;
+# proxy_pass_header Authorization;
 {{- end -}}
