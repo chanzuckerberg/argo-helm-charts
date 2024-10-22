@@ -17,15 +17,10 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
-  {{- $nginxAuthAnnotations := dict}}
-    {{- if .Values.ingress.oidcProtected }}
-    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" . )) -}}
-    {{- end}}
     {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
   annotations:
     {{- with (mergeOverwrite 
                 (dict)
-                ($nginxAuthAnnotations)
                 ($certManagerAnnotations)
                 (.Values.annotations) 
                 (.Values.ingress.annotations)
@@ -51,7 +46,7 @@ spec:
                 name: {{ $fullName }}
                 {{- end -}}
                 port:
-                  number: {{ $svcPort }}
+                  number: {{ $svcPort | int}}
           {{- end }}
     {{- $customHosts := list -}}
     {{- range $i, $rule := .Values.ingress.rules -}}
@@ -67,7 +62,11 @@ spec:
             {{- end }}
             backend:
               service:
+                {{- if $service.Values.ingress.oidcProtected }}
+                name: {{ include "oidcProxy.name" $service }}
+                {{ else -}}
                 name: {{ $fullName }}
+                {{- end -}}
                 port:
                   number: {{ $svcPort | int}}
           {{ end -}}
