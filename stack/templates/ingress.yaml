@@ -42,11 +42,13 @@ spec:
               service:
                 {{- if $service.Values.ingress.oidcProtected }}
                 name: {{ include "oidcProxy.name" $service }}
+                port:
+                  number:  {{ include "oidcProxy.port" . }}
                 {{- else }}
                 name: {{ $fullName }}
-                {{- end }}
                 port:
                   number: {{ $svcPort | int}}
+                {{- end }}
           {{- end }}
     {{- $customHosts := list -}}
     {{- range $i, $rule := .Values.ingress.rules -}}
@@ -64,11 +66,13 @@ spec:
               service:
                 {{- if $service.Values.ingress.oidcProtected }}
                 name: {{ include "oidcProxy.name" $service }}
+                port:
+                  number:  {{ include "oidcProxy.port" . }}
                 {{- else }}
                 name: {{ $fullName }}
-                {{- end }}
                 port:
                   number: {{ $svcPort | int}}
+                {{- end }}
           {{ end -}}
     {{- end }}
   tls:
