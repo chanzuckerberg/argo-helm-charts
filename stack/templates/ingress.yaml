@@ -43,7 +43,7 @@ spec:
                 {{- if $service.Values.ingress.oidcProtected }}
                 name: {{ include "oidcProxy.name" $service }}
                 port:
-                  number:  {{ include "oidcProxy.port" . }}
+                  number:  {{ include "oidcProxy.port" $service }}
                 {{- else }}
                 name: {{ $fullName }}
                 port:
