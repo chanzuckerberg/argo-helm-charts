@@ -127,7 +127,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 18
+          count: 17
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
@@ -386,7 +386,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 22
+          count: 21
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
