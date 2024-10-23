@@ -225,11 +225,11 @@ tests:
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: --upstream=http://service1.NAMESPACE.svc.cluster.local:4123/test1
+          content: --upstream=http://release-name-stack-service1.NAMESPACE.svc.cluster.local:4123/test1
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: --upstream=http://service2.NAMESPACE.svc.cluster.local:2222/test2
+          content: --upstream=http://release-name-stack-service2.NAMESPACE.svc.cluster.local:2222/test2
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].name
