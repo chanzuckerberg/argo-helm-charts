@@ -61,7 +61,6 @@ spec:
             - --provider=oidc
             - --email-domain=*
             - --cookie-secure=true
-            - --set-authorization-header
             - --set-xauthrequest
             - --cookie-domain={{- include "baseDomain" . }}
             - --whitelist-domain=.{{- include "baseDomain" . }}
