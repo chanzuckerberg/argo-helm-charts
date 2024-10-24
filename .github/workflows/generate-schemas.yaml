@@ -1,0 +1,51 @@
+name: Charts Update CI
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  update_schema_and_readme:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          initial-fetch-depth: '1'
+          list-files: json
+          filters: |
+            changed:
+              - added|modified: '**'
+      - uses: actions/github-script@v7
+        id: changed_charts
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require("path");
+            const changedFiles = ${{ steps.filter.outputs.changed_files }}
+            const changedDirs = changedFiles.map(f => path.dirname(f)).filter(dir => fs.existsSync(path.join(dir, 'Chart.yaml')));
+            const uniqueChangedDirs = [...new Set(changedDirs)];
+            console.log(`Found the following changed charts: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
+            core.setOutput('changed_chart_dirs', uniqueChangedDirs)
+            core.setOutput('changed_chart_dirs_bash', uniqueChangedDirs.join(' '));
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install readme-generator-for-helm
+        run: npm install -g @bitnami/readme-generator-for-helm
+      - name: Update Readme
+        run: |
+          for chart in ${{ steps.changed_charts.outputs.changed_chart_dirs_bash }}
+          do
+            echo "Updating README.md for ${chart}"
+            readme-generator --values ${chart}/values.yaml --readme ${chart}/README.md --schema ${chart}/values.schema.json
+          done
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: -A
+          message: 'chore: Update README/Schema for changed charts'

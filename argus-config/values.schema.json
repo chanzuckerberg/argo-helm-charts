@@ -1,0 +1,91 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "global": {
+            "type": "object",
+            "properties": {
+                "appContext": {
+                    "type": "object",
+                    "properties": {
+                        "envContextConfigMapName": {
+                            "type": "string",
+                            "description": "App environment level configuration configmap name",
+                            "default": ""
+                        },
+                        "stackContextConfigMapName": {
+                            "type": "string",
+                            "description": "Stack level configuration configmap name",
+                            "default": ""
+                        }
+                    }
+                },
+                "appSecrets": {
+                    "type": "object",
+                    "properties": {
+                        "envSecret": {
+                            "type": "object",
+                            "properties": {
+                                "secretName": {
+                                    "type": "string",
+                                    "description": "Environment-level Kube secret name to write External Secrets to",
+                                    "default": ""
+                                },
+                                "secretKey": {
+                                    "type": "string",
+                                    "description": "Environment-level secret key to map External Secrets from",
+                                    "default": ""
+                                }
+                            }
+                        },
+                        "stackSecret": {
+                            "type": "object",
+                            "properties": {
+                                "secretName": {
+                                    "type": "string",
+                                    "description": "Stack-level Kube secret name to write External Secrets to",
+                                    "default": ""
+                                },
+                                "secretKey": {
+                                    "type": "string",
+                                    "description": "Stack-level secret key to map External Secrets from",
+                                    "default": ""
+                                }
+                            }
+                        },
+                        "clusterSecret": {
+                            "type": "object",
+                            "properties": {
+                                "secretName": {
+                                    "type": "string",
+                                    "description": "Cluster-level Kube secret name to write External Secrets to",
+                                    "default": ""
+                                },
+                                "secretKey": {
+                                    "type": "string",
+                                    "description": "Cluster-level secret key to map External Secrets from",
+                                    "default": ""
+                                }
+                            }
+                        }
+                    }
+                },
+                "deploymentStage": {
+                    "type": "string",
+                    "description": "Deployment stage (eg: rdev, staging, prod)",
+                    "default": "staging"
+                },
+                "ingress": {
+                    "type": "object",
+                    "properties": {
+                        "host": {
+                            "type": "string",
+                            "description": "Ingress host",
+                            "default": "foo.example.co"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
