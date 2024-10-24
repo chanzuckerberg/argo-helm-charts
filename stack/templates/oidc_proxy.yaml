@@ -84,7 +84,7 @@ spec:
 
             {{ $cookiePrefix := list }}
             {{ range .Values.oidcProxy.extraArgs }}
-            {{ if (contains "--cookie-domain" . ) }}
+            {{ if (hasPrefix "--cookie-domain" . ) }}
               {{ $cookiePrefix = append $cookiePrefix . }}
             {{ end }}
             {{ end }} 
