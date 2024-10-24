@@ -1,4 +1,4 @@
-{{ $global := . }}
+{{- $global := . -}}
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -7,25 +7,18 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 
+{{- if .Values.ingress.enabled -}}
 ---
-{{ if .Values.ingress.enabled }}
-{{- $fullName := include "service.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ include "service.fullname" .  }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
-  {{- $nginxAuthAnnotations := dict}}
-    {{- if .Values.ingress.oidcProtected }}
-    {{- $nginxAuthAnnotations = (fromYaml (include "oidcProxy.nginxAuthAnnotations" . )) -}}
-    {{- end}}
     {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
   annotations:
     {{- with (mergeOverwrite 
                 (dict)
-                ($nginxAuthAnnotations)
                 ($certManagerAnnotations)
                 (.Values.annotations) 
                 (.Values.ingress.annotations)
@@ -45,15 +38,13 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ $fullName }}
-                port:
-                  number: {{ $svcPort }}
+                {{- include "service.backend" $service | nindent 16}}
           {{- end }}
-    {{ $customHosts := list}}
-    {{ range $i, $rule := .Values.ingress.rules }}
+    {{- $customHosts := list -}}
+    {{- range $i, $rule := .Values.ingress.rules -}}
     {{- $ruleValues := mergeOverwrite (dict "host" $service.Values.ingress.host "paths" $service.Values.ingress.paths) $rule -}}
     {{ $customHosts = append $customHosts $ruleValues.host }}
-    - host: {{ $ruleValues.host | quote }}
+    - host: {{ $ruleValues.host }}
       http:
         paths:
           {{- range $ruleValues.paths }} 
@@ -63,11 +54,9 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ $fullName }}
-                port:
-                  number: {{ $svcPort }}
-          {{- end }}
-    {{ end }}
+                {{- (include "service.backend" $service) | nindent 16 -}}
+          {{ end -}}
+    {{- end }}
   tls:
     - hosts:
       - {{ $service.Values.ingress.host  }}
@@ -83,8 +72,7 @@ spec:
       {{- toYaml $customHosts | nindent 6 }}
       {{- $secretName := printf "%s-%s-%s" "custom-hosts" (include "stack.fullname" .) "tls-secret" }}
       secretName: {{  regexReplaceAll "[^a-zA-Z0-9-]" $secretName "-" }}
-    {{- end -}}
-{{- end }}
----
+    {{ end }}
+{{ end }}
 {{- end }}
 {{- end }}
