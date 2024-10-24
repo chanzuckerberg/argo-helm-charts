@@ -1,4 +1,4 @@
-name: Pre-release Charts
+name: Charts Update CI
 
 on:
   - pull_request
@@ -31,7 +31,6 @@ jobs:
             core.setOutput('changed_chart_dirs_bash', uniqueChangedDirs.join(' '));
       
       - name: Install readme-generator-for-helm
-        if: steps.changed_charts.outputs.changed_chart_dirs_bash != ''
         run: npm install -g @bitnami/readme-generator-for-helm
       - name: Update Readme
         run: |
