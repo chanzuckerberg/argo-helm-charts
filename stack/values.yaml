@@ -8,8 +8,11 @@ global:
 
   # Settings for the primary container
   image:
+    ## @param global.image.repository Image repository
     repository: nginx
+    ## @param global.image.pullPolicy Image pull policy
     pullPolicy: IfNotPresent
+    ## @param global.image.tag Image tag
     tag: "latest"
 
   args: []
