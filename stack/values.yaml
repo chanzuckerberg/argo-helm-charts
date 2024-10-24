@@ -15,9 +15,12 @@ global:
     ## @param global.image.tag Image tag
     tag: "latest"
 
-  args: []
+  ## @param global.command Command to run in the primary container
   command: []
+  ## @param global.args Arguments to pass to the command in the primary container
+  args: []
 
+  ## @param global.imagePullSecrets Image pull secrets
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
