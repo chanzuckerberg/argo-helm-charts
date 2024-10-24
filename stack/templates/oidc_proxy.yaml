@@ -93,7 +93,7 @@ spec:
 
             {{ if eq (len $cookiePrefix) 0 }}
             # if a user provides a cookie-domain flag, we want to use that instead of the 
-            # default cookie
+            # default cookie-domain
             {{- printf "- --cookie-domain=%s" . | nindent 12 -}}
             {{ end }}
             
