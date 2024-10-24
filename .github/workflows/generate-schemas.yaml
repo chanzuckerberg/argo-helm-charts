@@ -1,7 +1,9 @@
 name: Charts Update CI
 
 on:
-  - pull_request
+  push:
+    branches:
+      - '!main'
 
 jobs:
   update_schema_and_readme:
