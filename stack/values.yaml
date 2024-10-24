@@ -1,3 +1,4 @@
+## @section Global parameters
 # Service defaults
 global:
   ## @param global.deploymentStage Deployment stage (eg: rdev, staging, prod)
@@ -22,97 +23,154 @@ global:
 
   ## @param global.imagePullSecrets Image pull secrets
   imagePullSecrets: []
+  ## @param global.nameOverride Name to prefix the K8s resources with, combined with the stack name prefix
   nameOverride: ""
+  ## @param global.fullnameOverride Name to prefix the K8s resources with, replaces the stack name prefix
   fullnameOverride: ""
 
+  ## @param global.dnsPolicy DNS policy for the pod
   dnsPolicy: ClusterFirst
+  ## @param global.restartPolicy Restart policy for the pod
   restartPolicy: Always
 
   # Probes for the primary container
+  ## @param global.livenessProbe Liveness probe configuration
   livenessProbe:
+    ## @param global.livenessProbe.failureThreshold Number of failures before the probe is considered failed
     failureThreshold: 3
+    ## @param global.livenessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
     httpGet:
+      ## @param global.livenessProbe.httpGet.path Path to probe
       path: /
+      ## @param global.livenessProbe.httpGet.port Port to probe
       port: http
+      ## @param global.livenessProbe.httpGet.scheme Scheme to use
       scheme: HTTP
+    ## @param global.livenessProbe.periodSeconds How often to perform the probe
     periodSeconds: 10
+    ## @param global.livenessProbe.successThreshold Number of successes before the probe is considered successful
     successThreshold: 1
+    ## @param global.livenessProbe.timeoutSeconds Timeout for the probe
     timeoutSeconds: 1
+    ## @param global.livenessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
     initialDelaySeconds: 30
+  
+  ## @param global.readinessProbe Readiness probe configuration
   readinessProbe:
+    ## @param global.readinessProbe.failureThreshold Number of failures before the probe is considered failed
     failureThreshold: 3
+    ## @param global.readinessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
     httpGet:
+      ## @param global.readinessProbe.httpGet.path Path to probe
       path: /
+      ## @param global.readinessProbe.httpGet.port Port to probe
       port: http
+      ## @param global.readinessProbe.httpGet.scheme Scheme to use
       scheme: HTTP
+    ## @param global.readinessProbe.periodSeconds How often to perform the probe
     periodSeconds: 10
+    ## @param global.readinessProbe.successThreshold Number of successes before the probe is considered successful
     successThreshold: 1
+    ## @param global.readinessProbe.timeoutSeconds Timeout for the probe
     timeoutSeconds: 1
+    ## @param global.readinessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
     initialDelaySeconds: 30
+  
+  ## @param global.startupProbe Startup probe configuration
   startupProbe:
+    ## @param global.startupProbe.enabled Enable the startup probe
     enabled: false
+    ## @param global.startupProbe.failureThreshold Number of failures before the probe is considered failed
     failureThreshold: 3
+    ## @param global.startupProbe.successThreshold Number of successes before the probe is considered successful
     successThreshold: 1
+    ## @param global.startupProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
     initialDelaySeconds: 0
+    ## @param global.startupProbe.timeoutSeconds Timeout for the probe
     timeoutSeconds: 1
+    ## @param global.startupProbe.periodSeconds How often to perform the probe
     periodSeconds: 10
+    ## @param global.startupProbe.exec Probe configuration (httpGet & tcpSocket are also available)
     exec:
       command:
         - ps
         - "-ef"
 
+  ## @param global.progressDeadlineSeconds the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
   progressDeadlineSeconds: 600
 
+  ## Resource requests and limits for the primary container
   resources:
     limits:
+      ## @param global.resources.limits.cpu CPU limit
       cpu: "1"
+      ## @param global.resources.limits.memory Memory limit
       memory: "1Gi"
     requests:
+      ## @param global.resources.requests.cpu CPU request
       cpu: "100m"
+      ## @param global.resources.requests.memory Memory request
       memory: "128Mi"
 
+  ## Service configuration
   service:
+    ## @param global.service.type Service type
     type: ClusterIP
+    ## @param global.service.port Service port
     port: 80
 
+  ## @param global.initContainers List of init containers
   initContainers: []
+  ## @param global.sidecars List of sidecars
   sidecars: []
 
+  # App context (provided by Argus API)
   appContext:
-    envContextConfigMapName: "" # App environment level configuration configmap name
-    stackContextConfigMapName: "" # Stack level configuration configmap name
+    ## @param global.appContext.envContextConfigMapName App environment level configuration configmap name
+    envContextConfigMapName: ""
+    ## @param global.appContext.stackContextConfigMapName Stack level configuration configmap name
+    stackContextConfigMapName: ""
 
+  # App secrets (provided by Argus API)
   appSecrets:
-    envSecret: # App environment level configuration secret
+    envSecret:
+      ## @param global.appSecret.envSecret.secretName Environment-level Kube secret name to write External Secrets to
       secretName: ""
+      ## @param global.appSecret.envSecret.secretKey Environment-level secret key to map External Secrets from
       secretKey: ""
-    stackSecret: # Stack level configuration secret
+    stackSecret:
+      ## @param global.appSecret.stackSecret.secretName Stack-level Kube secret name to write External Secrets to
       secretName: ""
+      ## @param global.appSecret.stackSecret.secretKey Stack-level secret key to map External Secrets from
       secretKey: ""
-    clusterSecret: # Cluster level configuration secret
+    clusterSecret:
+      ## @param global.appSecret.clusterSecret.secretName Cluster-level Kube secret name to write External Secrets to
       secretName: ""
+      ## @param global.appSecret.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
       secretKey: ""
 
-  # Global annotations to add to all resources
+  ## @param global.annotations Global annotations to add to all resources
   annotations: {}
-  # Labels to add to pods
+  ## @param global.podLabels Global labels to add to all pods
   podLabels: {}
 
+  # Service account configuration
   serviceAccount:
-    # Specifies whether a service account should be created
+    ## @param global.serviceAccount.create Specifies whether a service account should be created
     create: false
-    # Automatically mount a ServiceAccount's API credentials?
+    ## @param global.serviceAccount.automount Specifies whether to automatically mount a ServiceAccount's API credentials
     automount: true
-    # Annotations to add to the service account
+    ## @param global.serviceAccount.annotations Annotations to add to the service account
     annotations: {}
-    # The name of the service account to use.
-    # If not set and create is true, a name is generated using the fullname template
+    ## @param global.serviceAccount.name Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
     name: ""
 
+  ## @param global.podSecurityContext Pod security context
   podSecurityContext:
     {}
     # fsGroup: 2000
 
+  ## @param global.securityContext Security context
   securityContext:
     {}
     # capabilities:
@@ -122,30 +180,49 @@ global:
     # runAsNonRoot: true
     # runAsUser: 1000
 
+  ## @param global.shareProcessNamespace Share process namespace
   shareProcessNamespace: false
 
   ingress:
+    ## @param global.ingress.enabled Enable ingress
     enabled: true
+    ## @param global.ingress.className Ingress class name
     className: nginx
+    ## @param global.ingress.host Ingress host
     host: chart-example.local
+    ## @param global.ingress.paths List of ingress paths
     paths:
-      - path: /
+      - ## @param global.ingress.paths.path Ingress path
+        path: /
+        ## @param global.ingress.paths.pathType Ingress path type
         pathType: Prefix
+    ## @param global.ingress.rules List of ingress rules
     rules: []
+    ## @param global.ingress.oidcProtected Enable OIDC protection
     oidcProtected: false
     annotations:
+      ## @param global.ingress.annotations.infra Infra annotation
       infra: "true"
+      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-connect-timeout Nginx ingress proxy connect timeout
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-send-timeout Nginx ingress proxy send timeout
       nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-read-timeout Nginx ingress proxy read timeout
       nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/affinity Nginx ingress affinity
       nginx.ingress.kubernetes.io/affinity: "cookie"
+      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/session-cookie-name Nginx ingress session cookie name
       nginx.ingress.kubernetes.io/session-cookie-name: "argus_sticky_session"
+      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/session-cookie-max-age Nginx ingress session cookie max age
       nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
+    ## @param global.ingress.tls List of ingress TLS configurations
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+  
   nodeSelector:
+    ## @param global.nodeSelector Node selector
     kubernetes.io/arch: arm64
 
   # Annotations to add to pods
@@ -153,73 +230,106 @@ global:
     linkerd.io/inject: enabled
     config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
 
+  # Autoscaling configuration
   autoscaling:
+    ## @param global.autoscaling.enabled Enable autoscaling
     enabled: true
+    ## @param global.autoscaling.minReplicas Minimum number of replicas
     minReplicas: 1
+    ## @param global.autoscaling.maxReplicas Maximum number of replicas
     maxReplicas: 10
+    ## @param global.autoscaling.targetCPUUtilizationPercentage Target CPU utilization percentage
     targetCPUUtilizationPercentage: 80
+    ## @param global.autoscaling.targetMemoryUtilizationPercentage Target memory utilization percentage
     targetMemoryUtilizationPercentage: 80
 
-  # Additional volumes on the output Deployment definition.
+  ## @param global.volumes Additional volumes on the output Deployment definition
   volumes: []
   # - name: foo
   #   secret:
   #     secretName: mysecret
   #     optional: false
 
-  # Additional volumeMounts on the output Deployment definition.
+  ## @param global.volumeMounts Additional volume mounts on the output Deployment definition
   volumeMounts: []
   # - name: foo
   #   mountPath: "/etc/foo"
   #   readOnly: true
 
+  ## @param global.tolerations Tolerations for the pod
   tolerations: []
 
+  ## @param global.affinity Affinity for the pod
   affinity: {}
 
+  ## @param global.topologySpreadConstraints Topology spread constraints for the pod
   topologySpreadConstraints: []
 
+  ## @param global.env Nonsensitive environment variables
   env: []
+  ## @param global.envFrom Environment variables from configmaps or secrets
   envFrom: []
 
   persistence:
+    ## @param global.persistence.enabled Enable persistence
     enabled: false
     pvc:
+      ## @param global.persistence.pvc.accessModes Access modes
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
+          ## @param global.persistence.pvc.resources.requests.storage Storage resource request
           storage: 8Gi
+      ## @param global.persistence.pvc.storageClassName Storage class name
       storageClassName: "default"
+    ## @param global.persistence.existingClaim Existing PVC name
     existingClaim: ""
+    ## @param global.persistence.mountPath Mount path for the PVC
     mountPath: ""
+
   oidcProxy:
+    ## @param global.oidcProxy.enabled Enable OIDC proxy
     enabled: false
     image:
+      ## @param global.oidcProxy.image.repository Image repository
       repository: quay.io/oauth2-proxy/oauth2-proxy
+      ## @param global.oidcProxy.image.pullPolicy Image pull policy
       tag: v7.6.0
+    ## @param global.oidcProxy.replicaCount Number of replicas
     replicaCount: 2
+    ## @params global.oidcProxy.additionalSecrets Additional secrets to mount
     additionalSecrets: []
+    ## @params global.oidcProxy.additionalHeaders Additional headers to add
     additionalHeaders: []
+    ## @params global.oidcProxy.annotations Annotations to add to the OIDC proxy
     annotations: {}
+    ## @params global.oidcProxy.volumeMounts Volume mounts for the OIDC proxy
     volumeMounts: []
+    ## @params global.oidcProxy.skipAuth Paths to skip authentication
     skipAuth: []
     # skipAuth:
     #   - path: "/healthz"
     #     method: GET
 
+    ## @params global.oidcProxy.extraArgs Extra arguments to pass to the OIDC proxy
     extraArgs: []
     # extraArgs:
     #   - --flag
     #   - --another-flag=2
     resources:
       limits:
+        ## @param global.oidcProxy.resources.limits.cpu CPU limit
         cpu: 2
+        ## @param global.oidcProxy.resources.limits.memory Memory limit
         memory: 4Gi
       requests:
+        ## @param global.oidcProxy.resources.requests.cpu CPU request
         cpu: 2
+        ## @param global.oidcProxy.resources.requests.memory Memory request
         memory: 4Gi
-# Service overrides
+
+## @param services Services to deploy, all values in the above global section are inherited by the services and each service can override them
 services:
   {}
   # service1:
@@ -255,6 +365,7 @@ services:
   #     - name: sidecar4
   #       image: sidecar4:latest
 
+## @param cronJobs Cron jobs to deploy, all values in the above global section are inherited by the cron jobs and each cron job can override them
 cronJobs:
   {}
   # cronJob1:
