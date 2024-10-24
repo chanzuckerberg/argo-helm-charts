@@ -411,3 +411,54 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: --cookie-domain=stack2.com
+  - it: should allow for overwriting the cookie-domain flag
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - "--cookie-domain=someparent.domain"
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: "/service1"
+                pathType: Prefix
+            rules:
+              - host: "app1.someparent.domain"
+        service2:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: "/service2"
+                pathType: Prefix
+            rules:
+              - host: "app2.someparent.domain"
+    asserts:
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --whitelist-domain=app1.someparent.domain
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --whitelist-domain=app2.someparent.domain
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --whitelist-domain=.czi.team
+      - documentIndex: 0
+        notContains:
+          path: spec.template.spec.containers[0].args
+          content: --cookie-domain=app1.someparent.domain
+      - documentIndex: 0
+        notContains:
+          path: spec.template.spec.containers[0].args
+          content: --cookie-domain=app2.someparent.domain
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --cookie-domain=someparent.domain
