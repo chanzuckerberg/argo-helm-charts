@@ -2,9 +2,8 @@ name: Charts Update CI
 
 on:
   push:
-    branches:
-      - '*'
-      - '!main'
+    branches-ignore:
+      - main
 
 jobs:
   update_schema_and_readme:
