@@ -34,11 +34,11 @@ global:
   restartPolicy: Always
 
   # Probes for the primary container
-  ## @param global.livenessProbe Liveness probe configuration
+  ## @section global.livenessProbe Liveness probe configuration
   livenessProbe:
     ## @param global.livenessProbe.failureThreshold Number of failures before the probe is considered failed
     failureThreshold: 3
-    ## @param global.livenessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
+    ## @section global.livenessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
     httpGet:
       ## @param global.livenessProbe.httpGet.path Path to probe
       path: /
@@ -55,11 +55,11 @@ global:
     ## @param global.livenessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
     initialDelaySeconds: 30
   
-  ## @param global.readinessProbe Readiness probe configuration
+  ## @section global.readinessProbe Readiness probe configuration
   readinessProbe:
     ## @param global.readinessProbe.failureThreshold Number of failures before the probe is considered failed
     failureThreshold: 3
-    ## @param global.readinessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
+    ## @section global.readinessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
     httpGet:
       ## @param global.readinessProbe.httpGet.path Path to probe
       path: /
@@ -76,7 +76,7 @@ global:
     ## @param global.readinessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
     initialDelaySeconds: 30
   
-  ## @param global.startupProbe Startup probe configuration
+  ## @section global.startupProbe Startup probe configuration
   startupProbe:
     ## @param global.startupProbe.enabled Enable the startup probe
     enabled: false
@@ -90,8 +90,9 @@ global:
     timeoutSeconds: 1
     ## @param global.startupProbe.periodSeconds How often to perform the probe
     periodSeconds: 10
-    ## @param global.startupProbe.exec Probe configuration (httpGet & tcpSocket are also available)
+    ## Probe configuration (httpGet & tcpSocket are also available)
     exec:
+      ## @param global.startupProbe.exec.command Command to run in the probe
       command:
         - ps
         - "-ef"
@@ -124,29 +125,29 @@ global:
   ## @param global.sidecars List of sidecars
   sidecars: []
 
-  # App context (provided by Argus API)
+  ## @skip App context (provided by Argus API)
   appContext:
-    ## @param global.appContext.envContextConfigMapName App environment level configuration configmap name
+    ## @skip global.appContext.envContextConfigMapName App environment level configuration configmap name
     envContextConfigMapName: ""
-    ## @param global.appContext.stackContextConfigMapName Stack level configuration configmap name
+    ## @skip global.appContext.stackContextConfigMapName Stack level configuration configmap name
     stackContextConfigMapName: ""
 
-  # App secrets (provided by Argus API)
+  ## @skip App secrets (provided by Argus API)
   appSecrets:
     envSecret:
-      ## @param global.appSecret.envSecret.secretName Environment-level Kube secret name to write External Secrets to
+      ## @skip global.appSecrets.envSecret.secretName Environment-level Kube secret name to write External Secrets to
       secretName: ""
-      ## @param global.appSecret.envSecret.secretKey Environment-level secret key to map External Secrets from
+      ## @skip global.appSecrets.envSecret.secretKey Environment-level secret key to map External Secrets from
       secretKey: ""
     stackSecret:
-      ## @param global.appSecret.stackSecret.secretName Stack-level Kube secret name to write External Secrets to
+      ## @skip global.appSecrets.stackSecret.secretName Stack-level Kube secret name to write External Secrets to
       secretName: ""
-      ## @param global.appSecret.stackSecret.secretKey Stack-level secret key to map External Secrets from
+      ## @skip global.appSecrets.stackSecret.secretKey Stack-level secret key to map External Secrets from
       secretKey: ""
     clusterSecret:
-      ## @param global.appSecret.clusterSecret.secretName Cluster-level Kube secret name to write External Secrets to
+      ## @skip global.appSecrets.clusterSecret.secretName Cluster-level Kube secret name to write External Secrets to
       secretName: ""
-      ## @param global.appSecret.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
+      ## @skip global.appSecrets.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
       secretKey: ""
 
   ## @param global.annotations Global annotations to add to all resources
@@ -183,6 +184,7 @@ global:
   ## @param global.shareProcessNamespace Share process namespace
   shareProcessNamespace: false
 
+  ## @section global.ingress Ingress configuration
   ingress:
     ## @param global.ingress.enabled Enable ingress
     enabled: true
@@ -190,11 +192,12 @@ global:
     className: nginx
     ## @param global.ingress.host Ingress host
     host: chart-example.local
-    ## @param global.ingress.paths List of ingress paths
+    ## @section global.ingress.paths List of ingress paths
     paths:
-      - ## @param global.ingress.paths.path Ingress path
+      - 
+        ## @param global.ingress.paths[0].path Ingress path
         path: /
-        ## @param global.ingress.paths.pathType Ingress path type
+        ## @param global.ingress.paths[0].pathType Ingress path type
         pathType: Prefix
     ## @param global.ingress.rules List of ingress rules
     rules: []
@@ -222,12 +225,14 @@ global:
     #      - chart-example.local
   
   nodeSelector:
-    ## @param global.nodeSelector Node selector
+    ## @param global.nodeSelector.kubernetes.io/arch Node selector for architecture
     kubernetes.io/arch: arm64
 
   # Annotations to add to pods
   podAnnotations:
+    ## @param global.podAnnotations.linkerd.io/inject Linkerd injection annotation
     linkerd.io/inject: enabled
+    ## @param global.podAnnotations.config.linkerd.io/skip-outbound-ports Linkerd skip outbound ports annotation
     config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
 
   # Autoscaling configuration
@@ -294,25 +299,25 @@ global:
     image:
       ## @param global.oidcProxy.image.repository Image repository
       repository: quay.io/oauth2-proxy/oauth2-proxy
-      ## @param global.oidcProxy.image.pullPolicy Image pull policy
+      ## @param global.oidcProxy.image.tag Image tag
       tag: v7.6.0
     ## @param global.oidcProxy.replicaCount Number of replicas
     replicaCount: 2
-    ## @params global.oidcProxy.additionalSecrets Additional secrets to mount
+    ## @param global.oidcProxy.additionalSecrets Additional secrets to mount
     additionalSecrets: []
-    ## @params global.oidcProxy.additionalHeaders Additional headers to add
+    ## @param global.oidcProxy.additionalHeaders Additional headers to add
     additionalHeaders: []
-    ## @params global.oidcProxy.annotations Annotations to add to the OIDC proxy
+    ## @param global.oidcProxy.annotations Annotations to add to the OIDC proxy
     annotations: {}
-    ## @params global.oidcProxy.volumeMounts Volume mounts for the OIDC proxy
+    ## @param global.oidcProxy.volumeMounts Volume mounts for the OIDC proxy
     volumeMounts: []
-    ## @params global.oidcProxy.skipAuth Paths to skip authentication
+    ## @param global.oidcProxy.skipAuth Paths to skip authentication
     skipAuth: []
     # skipAuth:
     #   - path: "/healthz"
     #     method: GET
 
-    ## @params global.oidcProxy.extraArgs Extra arguments to pass to the OIDC proxy
+    ## @param global.oidcProxy.extraArgs Extra arguments to pass to the OIDC proxy
     extraArgs: []
     # extraArgs:
     #   - --flag
