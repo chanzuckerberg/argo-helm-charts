@@ -2,6 +2,8 @@
 global:
   ## @param global.deploymentStage Deployment stage (eg: rdev, staging, prod)
   deploymentStage: ""
+
+  ## @param global.replicaCount Number of replicas
   replicaCount: 1
 
   # Settings for the primary container
