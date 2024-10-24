@@ -3,11 +3,24 @@ Expand the name of the chart.
 */}}
 {{- define "stack.name" -}}
 {{- default .Chart.Name .nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
 
 {{- define "service.name" -}}
 {{- .Values.name | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
+
+{{- define "service.backend" -}}
+{{- if .Values.ingress.oidcProtected -}}
+name: {{ include "oidcProxy.name" . }}
+port:
+    number:  {{ include "oidcProxy.port" .}}
+{{- else }}
+name: {{ include "service.fullname" . }}
+port:
+    number: {{  .Values.service.port | int}}
+{{- end -}}
+{{- end -}}
+
 
 {{/*
 Create a default fully qualified app name.
