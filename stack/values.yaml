@@ -1,5 +1,6 @@
 # Service defaults
 global:
+  ## @param global.deploymentStage Deployment stage (eg: rdev, staging, prod)
   deploymentStage: ""
   replicaCount: 1
 
@@ -257,4 +258,3 @@ cronJobs:
   #     tag: "latest"
   #   command: ["command1", "command2"]
   #   args: ["arg1", "arg2"]
-
