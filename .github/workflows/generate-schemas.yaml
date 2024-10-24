@@ -30,6 +30,9 @@ jobs:
             core.setOutput('changed_chart_dirs', uniqueChangedDirs)
             core.setOutput('changed_chart_dirs_bash', uniqueChangedDirs.join(' '));
       
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: Install readme-generator-for-helm
         run: npm install -g @bitnami/readme-generator-for-helm
       - name: Update Readme
