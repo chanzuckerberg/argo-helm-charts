@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.1...argus-config-v1.2.2) (2024-10-24)
+
+
+### Bug Fixes
+
+* allow env/stack secrets to override cluster-wide secrets ([#151](https://github.com/chanzuckerberg/argo-helm-charts/issues/151)) ([788fa09](https://github.com/chanzuckerberg/argo-helm-charts/commit/788fa09bcee21e04581c462c074ec41972e518b5))
+
 ## [1.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.0...argus-config-v1.2.1) (2024-09-05)
 
 
