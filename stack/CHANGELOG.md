@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.1.2...stack-v2.1.3) (2024-10-24)
+
+
+### Bug Fixes
+
+* bump argus-config dep ([#154](https://github.com/chanzuckerberg/argo-helm-charts/issues/154)) ([59cd79b](https://github.com/chanzuckerberg/argo-helm-charts/commit/59cd79b5a5af3ca27027a5f4c8a59357a4f33360))
+
 ## [2.1.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.1.1...stack-v2.1.2) (2024-10-10)
 
 
