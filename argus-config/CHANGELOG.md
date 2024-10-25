@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.2...argus-config-v1.2.3) (2024-10-25)
+
+
+### Misc
+
+* generate readme/schemas for changes charts ([#156](https://github.com/chanzuckerberg/argo-helm-charts/issues/156)) ([fb8c9ad](https://github.com/chanzuckerberg/argo-helm-charts/commit/fb8c9adfeaac1c24f6374a0d62bb7d070649c56d))
+
 ## [1.2.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.1...argus-config-v1.2.2) (2024-10-24)
 
 
