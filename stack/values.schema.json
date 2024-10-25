@@ -466,9 +466,20 @@
                 },
                 "env": {
                     "type": "array",
-                    "description": "Nonsensitive environment variables",
-                    "default": [],
-                    "items": {}
+                    "description": "Environment variable name",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Environment variable name"
+                            },
+                            "value": {
+                                "type": "string",
+                                "description": "Environment variable value"
+                            }
+                        }
+                    }
                 },
                 "envFrom": {
                     "type": "array",

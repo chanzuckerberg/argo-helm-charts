@@ -270,8 +270,12 @@ global:
   ## @param global.topologySpreadConstraints Topology spread constraints for the pod
   topologySpreadConstraints: []
 
-  ## @param global.env Nonsensitive environment variables
-  env: []
+  env:
+    -
+      ## @param global.env[0].name Environment variable name
+      name: __ARGUS
+      ## @param global.env[0].value Environment variable value
+      value: "true"
   ## @param global.envFrom Environment variables from configmaps or secrets
   envFrom: []
 
