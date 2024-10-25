@@ -1,20 +1,34 @@
+## @section Global parameters
 global:
+  ## @section App context (provided by Argus API)
   appContext:
-    envContextConfigMapName: "argus-env-context.test" # App environment level configuration configmap name
-    stackContextConfigMapName: "argus-stack-context.test" # Stack level configuration configmap name
+    ## @param global.appContext.envContextConfigMapName App environment level configuration configmap name
+    envContextConfigMapName: ""
+    ## @param global.appContext.stackContextConfigMapName Stack level configuration configmap name
+    stackContextConfigMapName: ""
 
+  ## @section App secrets (provided by Argus API)
   appSecrets:
-    envSecret: # App environment level configuration secret
-      secretName: "foo"
-      secretKey: "bar"
-    stackSecret: # Stack level configuration secret
+    envSecret:
+      ## @param global.appSecrets.envSecret.secretName Environment-level Kube secret name to write External Secrets to
       secretName: ""
+      ## @param global.appSecrets.envSecret.secretKey Environment-level secret key to map External Secrets from
       secretKey: ""
-    clusterSecret: # cluster level configuration secret
+    stackSecret:
+      ## @param global.appSecrets.stackSecret.secretName Stack-level Kube secret name to write External Secrets to
       secretName: ""
+      ## @param global.appSecrets.stackSecret.secretKey Stack-level secret key to map External Secrets from
       secretKey: ""
+    clusterSecret:
+      ## @param global.appSecrets.clusterSecret.secretName Cluster-level Kube secret name to write External Secrets to
+      secretName: ""
+      ## @param global.appSecrets.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
+      secretKey: "" 
 
+  ## @param global.deploymentStage Deployment stage (eg: rdev, staging, prod)
   deploymentStage: "staging"
 
+  ## @section global.ingress Ingress configuration
   ingress:
+    ## @param global.ingress.host Ingress host
     host: "foo.example.co"
