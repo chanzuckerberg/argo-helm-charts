@@ -13,7 +13,7 @@
     {{ range $i, $path := .ingress.paths }}
       {{- $allOIDCProtectedServces = append 
         $allOIDCProtectedServces 
-        (printf "http://%s.%s.svc.cluster.local:%d%s" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+        (printf "http://%s.%s.svc.cluster.local:%d%s/" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
       -}}
     {{- end -}}
 
