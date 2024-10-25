@@ -125,7 +125,6 @@ global:
     rules: []
     oidcProtected: false
     annotations:
-      infra: "true"
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
