@@ -204,8 +204,6 @@ global:
     ## @param global.ingress.oidcProtected Enable OIDC protection
     oidcProtected: false
     annotations:
-      ## @param global.ingress.annotations.infra Infra annotation
-      infra: "true"
       ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-connect-timeout Nginx ingress proxy connect timeout
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
       ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-send-timeout Nginx ingress proxy send timeout

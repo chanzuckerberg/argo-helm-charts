@@ -3,11 +3,24 @@ Expand the name of the chart.
 */}}
 {{- define "stack.name" -}}
 {{- default .Chart.Name .nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
 
 {{- define "service.name" -}}
 {{- .Values.name | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
+
+{{- define "service.backend" -}}
+{{- if .Values.ingress.oidcProtected -}}
+name: {{ include "oidcProxy.name" . }}
+port:
+    number:  {{ include "oidcProxy.port" .}}
+{{- else }}
+name: {{ include "service.fullname" . }}
+port:
+    number: {{  .Values.service.port | int}}
+{{- end -}}
+{{- end -}}
+
 
 {{/*
 Create a default fully qualified app name.
@@ -147,7 +160,7 @@ Container probes cannot have both httpGet and tcpSocket fields, so we use omit t
 
 {{- define "oidcProxy.name" -}}
 {{ include "stack.fullname" . | lower }}-oidc-proxy
-{{- end }}
+{{- end -}}
 
 {{- define "oidcProxy.port" -}}
 {{ .Values.oidcProxy.port | default 4180 | int  }}
@@ -180,46 +193,4 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "oidcProxy.authDomain" -}}
 {{ .Values.ingress.host }}
-{{- end -}}
-
-{{- define "oidcProxy.skipAuthConfig" -}}
-{{- $letsEncryptVerifySkip := (dict "path" "/.well-known/*" "method" "GET") -}}
-{{- range  $k, $v := append .Values.oidcProxy.skipAuth $letsEncryptVerifySkip -}}
-{{- $id := printf "%s_%s" ($v.method |lower) ($v.path | replace "/" "")}}
-{{- $id := regexReplaceAll "\\W+" $id "_" -}}
-{{- $var_name := printf "%s_%s" "skip_auth" $id }}
-set ${{ $var_name }} 1;
-
-if ( $request_uri !~ "{{$v.path}}" ) {
-    set ${{ $var_name }}  0;
-}
-
-if ( $request_method !~ "{{$v.method}}" ) {
-    set ${{ $var_name }}  0;
-}
-
-if ( ${{ $var_name }} ) {
-    return 200;
-}
-{{- end -}}
-{{- end -}}
-
-{{- define "oidcProxy.nginxAuthAnnotations" -}}
-nginx.ingress.kubernetes.io/auth-url: "http://{{ include "oidcProxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local:4180/oauth2/auth"
-nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/sign_in?rd=https://$host$escaped_request_uri"
-nginx.ingress.kubernetes.io/auth-response-headers: {{join "," (concat (list "Authorization" "X-Auth-Request-User" "X-Auth-Request-Groups" "X-Auth-Request-Email" "X-Auth-Request-Preferred-Username") .Values.oidcProxy.additionalHeaders) }}
-nginx.ingress.kubernetes.io/auth-snippet: |
-{{- include "oidcProxy.skipAuthConfig" . | nindent 4 }}
-nginx.ingress.kubernetes.io/configuration-snippet: |
-    auth_request_set $email $upstream_http_x_auth_request_email;
-    auth_request_set $user $upstream_http_x_auth_request_user;
-    auth_request_set $groups $upstream_http_x_auth_request_groups;
-    auth_request_set $preferred_username $upstream_http_x_auth_request_preferred_username;
-
-    proxy_set_header X-Forwarded-Email $email;
-    proxy_set_header X-Forwarded-User $user;
-    proxy_set_header X-Forwarded-Groups $groups;
-    proxy_set_header X-Forwarded-Preferred-Username $preferred_username;
-    proxy_set_header Authorization $http_authorization;
-    proxy_pass_header Authorization;
 {{- end -}}

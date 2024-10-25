@@ -1,5 +1,6 @@
 {{ $global := . }}
 {{- $allHosts := list -}}
+{{- $allOIDCProtectedServces := list -}}
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -7,10 +8,26 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
 
   {{- with $values -}}
+  {{ $serviceScope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" .}}
   {{- if .ingress.oidcProtected -}}
+    {{ range $i, $path := .ingress.paths }}
+      {{- if (eq $path.pathType "Exact") -}}
+      {{- $allOIDCProtectedServces = append 
+        $allOIDCProtectedServces 
+        (printf "http://%s.%s.svc.cluster.local:%d%s" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+      -}}
+      {{- else -}}
+      {{- $allOIDCProtectedServces = append 
+        $allOIDCProtectedServces 
+        (printf "http://%s.%s.svc.cluster.local:%d%s/" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+      -}}
+      {{- end -}}
+    {{- end -}}
+
   {{ range $i, $rule := .ingress.rules }}
   {{- $allHosts = append $allHosts $rule.host }}
   {{- end -}}
+
   {{- end -}}
   {{- end -}}
 {{- end -}}
@@ -51,7 +68,6 @@ spec:
             - --provider=oidc
             - --email-domain=*
             - --cookie-secure=true
-            - --set-authorization-header
             - --set-xauthrequest
             - --cookie-domain={{- include "baseDomain" . }}
             - --whitelist-domain=.{{- include "baseDomain" . }}
@@ -59,9 +75,35 @@ spec:
             - --pass-authorization-header=true
             - --reverse-proxy
             - --skip-jwt-bearer-tokens
+
+            {{- range $allOIDCProtectedServces }}
+            - --upstream={{ . }}
+            {{- end -}}
+
+            {{- range .Values.oidcProxy.skipAuth }}
+            {{ if contains "*" .method }}
+            # for backwards compatibility, could also just be provided using extraArgs
+            - --skip-auth-route={{ .path }}
+            {{- else -}}
+            - --skip-auth-route={{ .method }}={{ .path }}
+            {{- end -}}
+            {{- end -}}
+
+            {{ $cookiePrefix := list }}
+            {{ range .Values.oidcProxy.extraArgs }}
+            {{ if (hasPrefix "--cookie-domain" . ) }}
+              {{ $cookiePrefix = append $cookiePrefix . }}
+            {{ end }}
+            {{ end }} 
             {{- range $allHosts -}}
             {{- printf "- --whitelist-domain=%s" . | nindent 12 -}}
+
+            {{ if eq (len $cookiePrefix) 0 }}
+            # if a user provides a cookie-domain flag, we want to use that instead of the 
+            # default cookie-domain
             {{- printf "- --cookie-domain=%s" . | nindent 12 -}}
+            {{ end }}
+            
             {{- end -}}
             {{- if gt (len .Values.oidcProxy.extraArgs) 0 }}
             {{- toYaml .Values.oidcProxy.extraArgs | nindent 12}}
@@ -108,6 +150,7 @@ spec:
     {{- include "oidcProxy.selectorLabels" . | nindent 4 }}
 
 ---
+
 {{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
