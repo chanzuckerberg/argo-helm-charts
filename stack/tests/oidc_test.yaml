@@ -216,7 +216,13 @@ tests:
             oidcProtected: true
             paths:
               - path: /test2
-                pathType: Prefix
+                pathType: Exact
+        service3:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: /test3
+                pathType: ImplementationSpecific
     asserts:
       - documentIndex: 0
         equal:
@@ -225,11 +231,15 @@ tests:
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: --upstream=http://release-name-stack-service1.NAMESPACE.svc.cluster.local:4123/test1
+          content: --upstream=http://release-name-stack-service1.NAMESPACE.svc.cluster.local:4123/test1/
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
           content: --upstream=http://release-name-stack-service2.NAMESPACE.svc.cluster.local:2222/test2
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream=http://release-name-stack-service3.NAMESPACE.svc.cluster.local:2222/test3/
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].name
@@ -434,7 +444,7 @@ tests:
             oidcProtected: true
             paths:
               - path: "/service2"
-                pathType: Prefix
+                pathType: Exact
             rules:
               - host: "app2.someparent.domain"
     asserts:

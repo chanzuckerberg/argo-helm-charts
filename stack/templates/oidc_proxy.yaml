@@ -11,10 +11,17 @@
   {{ $serviceScope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" .}}
   {{- if .ingress.oidcProtected -}}
     {{ range $i, $path := .ingress.paths }}
+      {{- if (eq $path.pathType "Exact") -}}
       {{- $allOIDCProtectedServces = append 
         $allOIDCProtectedServces 
         (printf "http://%s.%s.svc.cluster.local:%d%s" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
       -}}
+      {{- else -}}
+      {{- $allOIDCProtectedServces = append 
+        $allOIDCProtectedServces 
+        (printf "http://%s.%s.svc.cluster.local:%d%s/" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+      -}}
+      {{- end -}}
     {{- end -}}
 
   {{ range $i, $rule := .ingress.rules }}
