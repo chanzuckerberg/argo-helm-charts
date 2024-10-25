@@ -127,7 +127,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 18
+          count: 17
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
@@ -208,9 +208,15 @@ tests:
             port: 4123
           ingress:
             oidcProtected: true
+            paths:
+              - path: /test1
+                pathType: Prefix
         service2:
           ingress:
             oidcProtected: true
+            paths:
+              - path: /test2
+                pathType: Prefix
     asserts:
       - documentIndex: 0
         equal:
@@ -219,11 +225,11 @@ tests:
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: --upstream=http://service1.NAMESPACE.svc.cluster.local:4123
+          content: --upstream=http://release-name-stack-service1.NAMESPACE.svc.cluster.local:4123/test1
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: --upstream=http://service2.NAMESPACE.svc.cluster.local:2222
+          content: --upstream=http://release-name-stack-service2.NAMESPACE.svc.cluster.local:2222/test2
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].name
@@ -328,15 +334,24 @@ tests:
         service1:
           ingress:
             oidcProtected: true
+            paths:
+              - path: "/service1"
+                pathType: Prefix
             rules:
               - host: "service1.stack2.com"
         service2:
           ingress:
             oidcProtected: true
+            paths:
+              - path: "/service2"
+                pathType: Prefix
             rules:
               - host: "service2.stack2.com"
         service3:
           ingress:
+            paths:
+              - path: "/service3"
+                pathType: Prefix
             oidcProtected: true
         service4:
           ingress:
@@ -371,7 +386,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 22
+          count: 21
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args

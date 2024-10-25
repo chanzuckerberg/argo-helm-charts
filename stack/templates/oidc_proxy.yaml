@@ -8,12 +8,14 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
 
   {{- with $values -}}
+  {{ $serviceScope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" .}}
   {{- if .ingress.oidcProtected -}}
-
-  {{- $allOIDCProtectedServces = append 
-    $allOIDCProtectedServces 
-    (printf "http://%s.%s.svc.cluster.local:%d" $serviceName $global.Release.Namespace ($values.service.port | int)) 
-  -}}
+    {{ range $i, $path := .ingress.paths }}
+      {{- $allOIDCProtectedServces = append 
+        $allOIDCProtectedServces 
+        (printf "http://%s.%s.svc.cluster.local:%d%s" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+      -}}
+    {{- end -}}
 
   {{ range $i, $rule := .ingress.rules }}
   {{- $allHosts = append $allHosts $rule.host }}
@@ -59,7 +61,6 @@ spec:
             - --provider=oidc
             - --email-domain=*
             - --cookie-secure=true
-            - --set-authorization-header
             - --set-xauthrequest
             - --cookie-domain={{- include "baseDomain" . }}
             - --whitelist-domain=.{{- include "baseDomain" . }}
@@ -70,7 +71,7 @@ spec:
 
             {{- range $allOIDCProtectedServces }}
             - --upstream={{ . }}
-            {{ end -}}
+            {{- end -}}
 
             {{- range .Values.oidcProxy.skipAuth }}
             # for backwards compatibility, could also just be provided using extraArgs
@@ -130,6 +131,7 @@ spec:
     {{- include "oidcProxy.selectorLabels" . | nindent 4 }}
 
 ---
+
 {{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress

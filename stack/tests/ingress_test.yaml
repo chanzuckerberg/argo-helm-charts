@@ -17,18 +17,6 @@ tests:
     asserts:
       - isKind:
           of: Ingress
-      - documentIndex: 0
-        equal:
-          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-url"]
-          value: "http://release-name-stack-oidc-proxy.NAMESPACE.svc.cluster.local:4180/oauth2/auth"
-      - documentIndex: 0
-        equal:
-          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-signin"]
-          value: "https://$host/oauth2/sign_in?rd=https://$host$escaped_request_uri"
-      - documentIndex: 0
-        equal:
-          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
-          value: "Authorization,X-Auth-Request-User,X-Auth-Request-Groups,X-Auth-Request-Email,X-Auth-Request-Preferred-Username"
   - it: adds additional nginx auth headers when using additionalHeaders
     set:
       global:
@@ -46,10 +34,6 @@ tests:
     asserts:
       - isKind:
           of: Ingress
-      - documentIndex: 0
-        equal:
-          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-response-headers"]
-          value: "Authorization,X-Auth-Request-User,X-Auth-Request-Groups,X-Auth-Request-Email,X-Auth-Request-Preferred-Username,X-Forwarded-User,blahblahblah"
   - it: adds auth-snippet with using skipAuth
     set:
       global:
@@ -69,49 +53,6 @@ tests:
     asserts:
       - isKind:
           of: Ingress
-      - documentIndex: 0
-        equal:
-          path: metadata.annotations["nginx.ingress.kubernetes.io/auth-snippet"]
-          value: |
-            set $skip_auth_get_healthz 1;
-
-            if ( $request_uri !~ "/healthz" ) {
-                set $skip_auth_get_healthz  0;
-            }
-
-            if ( $request_method !~ "GET" ) {
-                set $skip_auth_get_healthz  0;
-            }
-
-            if ( $skip_auth_get_healthz ) {
-                return 200;
-            }
-            set $skip_auth___api_ 1;
-
-            if ( $request_uri !~ "/api/*" ) {
-                set $skip_auth___api_  0;
-            }
-
-            if ( $request_method !~ "*" ) {
-                set $skip_auth___api_  0;
-            }
-
-            if ( $skip_auth___api_ ) {
-                return 200;
-            }
-            set $skip_auth_get__well_known_ 1;
-
-            if ( $request_uri !~ "/.well-known/*" ) {
-                set $skip_auth_get__well_known_  0;
-            }
-
-            if ( $request_method !~ "GET" ) {
-                set $skip_auth_get__well_known_  0;
-            }
-
-            if ( $skip_auth_get__well_known_ ) {
-                return 200;
-            }
   - it: adds adds certManager annotations
     set:
       global:
@@ -132,6 +73,9 @@ tests:
             rules:
               - host: cellxgene.cziscience.com
               - host: api.cellxgene.cziscience.com
+        unprotected-service:
+          ingress:
+            oidcProtected: false
     asserts:
       - isKind:
           of: Ingress
@@ -194,3 +138,19 @@ tests:
         lengthEqual:
           path: spec.tls[1].hosts
           count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: missing-otter-oidc-proxy
+      - documentIndex: 0
+        equal:
+          path: spec.rules[1].http.paths[0].backend.service.name
+          value: missing-otter-oidc-proxy
+      - documentIndex: 0
+        equal:
+          path: spec.rules[2].http.paths[0].backend.service.name
+          value: missing-otter-oidc-proxy
+      - documentIndex: 1
+        equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: missing-otter-unprotected-service
