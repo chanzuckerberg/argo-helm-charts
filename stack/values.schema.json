@@ -387,16 +387,6 @@
                             "description": "Enable OIDC protection",
                             "default": false
                         },
-                        "annotations": {
-                            "type": "object",
-                            "properties": {
-                                "infra": {
-                                    "type": "string",
-                                    "description": "Infra annotation",
-                                    "default": "true"
-                                }
-                            }
-                        },
                         "tls": {
                             "type": "array",
                             "description": "List of ingress TLS configurations",
