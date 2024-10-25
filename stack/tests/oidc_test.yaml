@@ -101,26 +101,45 @@ tests:
       global:
         oidcProxy:
           enabled: true
+          skipAuth:
+            - method: GET
+              path: "/v1/api/docs2"
+            - method: POST
+              path: "/v1/api/docs3"
+            - path: "/v1/api/llm/.*"
+              method: ".*"
           extraArgs:
             - "--skip-auth-route=/v1/api/docs"
             - "--skip-auth-route=/v1/api/security/access_token"
     asserts:
       - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=/v1/api/llm/.*"
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=GET=/v1/api/docs2"
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=POST=/v1/api/docs3"
+      - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 15
+          count: 17
       - documentIndex: 0
-        equal:
-          path: spec.template.spec.containers[0].args[12]
-          value: "--skip-jwt-bearer-tokens"
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-jwt-bearer-tokens"
       - documentIndex: 0
-        equal:
-          path: spec.template.spec.containers[0].args[13]
-          value: "--skip-auth-route=/v1/api/docs"
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=/v1/api/docs"
       - documentIndex: 0
-        equal:
-          path: spec.template.spec.containers[0].args[14]
-          value: "--skip-auth-route=/v1/api/security/access_token"
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=/v1/api/security/access_token"
   - it: overwrites the name
     set:
       global:
@@ -169,6 +188,8 @@ tests:
   - it: oidc proxy has volumes mounted
     set:
       global:
+        service:
+          port: 2222
         ingress:
           host: "stack.play.dev.czi.team"
         oidcProxy:
@@ -183,13 +204,32 @@ tests:
               name: oauth2-proxy-sign-in-template
       services:
         service1:
+          service:
+            port: 4123
           ingress:
             oidcProtected: true
+            paths:
+              - path: /test1
+                pathType: Prefix
+        service2:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: /test2
+                pathType: Prefix
     asserts:
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].mountPath
           value: /templates/oauth2-proxy/sign_in.html
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream=http://release-name-stack-service1.NAMESPACE.svc.cluster.local:4123/test1
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream=http://release-name-stack-service2.NAMESPACE.svc.cluster.local:2222/test2
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].name
@@ -294,15 +334,24 @@ tests:
         service1:
           ingress:
             oidcProtected: true
+            paths:
+              - path: "/service1"
+                pathType: Prefix
             rules:
               - host: "service1.stack2.com"
         service2:
           ingress:
             oidcProtected: true
+            paths:
+              - path: "/service2"
+                pathType: Prefix
             rules:
               - host: "service2.stack2.com"
         service3:
           ingress:
+            paths:
+              - path: "/service3"
+                pathType: Prefix
             oidcProtected: true
         service4:
           ingress:
@@ -337,7 +386,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 19
+          count: 21
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
