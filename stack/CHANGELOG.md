@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.0...stack-v2.2.1) (2024-10-25)
+
+
+### Bug Fixes
+
+* trailing slash on upstreams ([#159](https://github.com/chanzuckerberg/argo-helm-charts/issues/159)) ([ed0ef29](https://github.com/chanzuckerberg/argo-helm-charts/commit/ed0ef29f6725c9d47191aadb5945539b56b184e5))
+
 ## [2.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.1.3...stack-v2.2.0) (2024-10-25)
 
 
