@@ -14,12 +14,20 @@
       {{- if (eq $path.pathType "Exact") -}}
       {{- $allOIDCProtectedServces = append 
         $allOIDCProtectedServces 
-        (printf "http://%s.%s.svc.cluster.local:%d%s" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+        (printf "http://%s.%s.svc.cluster.local:%d%s" 
+          (include "service.fullname" $serviceScope) 
+          $global.Release.Namespace 
+          ($values.service.port | int) 
+          ($path.path)) 
       -}}
       {{- else -}}
       {{- $allOIDCProtectedServces = append 
         $allOIDCProtectedServces 
-        (printf "http://%s.%s.svc.cluster.local:%d%s/" (include "service.fullname" $serviceScope) $global.Release.Namespace ($values.service.port | int) ($path.path)) 
+        (printf "http://%s.%s.svc.cluster.local:%d%s" 
+          (include "service.fullname" $serviceScope) 
+          $global.Release.Namespace 
+          ($values.service.port | int)
+          (printf "%s/" $path.path | replace "//" "/"))
       -}}
       {{- end -}}
     {{- end -}}
