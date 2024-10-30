@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.2...stack-v2.2.3) (2024-10-30)
+
+
+### Bug Fixes
+
+* double slash when users add a trailing slash ([#162](https://github.com/chanzuckerberg/argo-helm-charts/issues/162)) ([36a2999](https://github.com/chanzuckerberg/argo-helm-charts/commit/36a29993e83579740b4f1c35f54c2432e4e5aad9))
+
 ## [2.2.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.1...stack-v2.2.2) (2024-10-25)
 
 
