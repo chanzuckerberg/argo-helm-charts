@@ -223,6 +223,14 @@ tests:
             paths:
               - path: /test3
                 pathType: ImplementationSpecific
+        service4:
+          service:
+            port: 4123
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: /
+                pathType: Prefix
     asserts:
       - documentIndex: 0
         equal:
@@ -240,6 +248,10 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: --upstream=http://release-name-stack-service3.NAMESPACE.svc.cluster.local:2222/test3/
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream=http://release-name-stack-service4.NAMESPACE.svc.cluster.local:4123/
       - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].volumeMounts[0].name
