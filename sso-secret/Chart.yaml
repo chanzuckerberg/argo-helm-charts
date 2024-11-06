@@ -1,0 +1,9 @@
+apiVersion: v2
+name: sso-secret
+description: A Helm chart to create an SSO secret
+
+type: application
+
+version: 0.0.1
+
+appVersion: "0.0.1"
