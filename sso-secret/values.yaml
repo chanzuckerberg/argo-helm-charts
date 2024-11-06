@@ -1,3 +1,8 @@
+## Name of the cluster to configure the sso secret for
 clusterName: my-cluster
+
+## Name of the secret to create (both external secret and kubernetes secret resources)
 secretName: my-sso-secret
+
+## Name of the application to configure the sso secret for
 applicationName: my-app
