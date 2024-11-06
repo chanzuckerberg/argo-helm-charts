@@ -1,0 +1,3 @@
+clusterName: my-cluster
+secretName: my-sso-secret
+applicationName: my-app
