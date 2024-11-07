@@ -1,0 +1,46 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "clusterRole": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Cluster Role name to create",
+                    "default": "czi-argo-workflows-server-cluster-template"
+                },
+                "rules": {
+                    "type": "array",
+                    "description": "ApiGroups API groups to apply the rules to",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "apiGroups": {
+                                "type": "array",
+                                "description": "ApiGroups API groups to apply the rules to",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "resources": {
+                                "type": "array",
+                                "description": "Resources to apply the rules to",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "verbs": {
+                                "type": "array",
+                                "description": "Verbs to apply the rules to",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
