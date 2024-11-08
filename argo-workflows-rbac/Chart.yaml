@@ -1,0 +1,9 @@
+apiVersion: v2
+name: argo-workflows-rbac
+description: A Helm chart for creating an Argo Workflows rbac resources to allow access to workflow templates.
+
+type: application
+
+version: 0.0.1
+
+appVersion: "0.0.1"

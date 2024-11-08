@@ -1,0 +1,21 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "clusterName": {
+            "type": "string",
+            "description": "Name of the cluster to configure the sso secret for",
+            "default": "my-cluster"
+        },
+        "secretName": {
+            "type": "string",
+            "description": "Name of the secret to create (both external secret and kubernetes secret resources)",
+            "default": "my-sso-secret"
+        },
+        "applicationName": {
+            "type": "string",
+            "description": "Name of the application to configure the sso secret for",
+            "default": "my-app"
+        }
+    }
+}
