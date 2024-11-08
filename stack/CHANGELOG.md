@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.3...stack-v2.2.4) (2024-11-08)
+
+
+### Bug Fixes
+
+* issue where oidc proxy is configured on disabled ingresses ([#166](https://github.com/chanzuckerberg/argo-helm-charts/issues/166)) ([cdea455](https://github.com/chanzuckerberg/argo-helm-charts/commit/cdea455b79990892f4c3710b5108fd4e17788df6))
+
 ## [2.2.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.2...stack-v2.2.3) (2024-10-30)
 
 
