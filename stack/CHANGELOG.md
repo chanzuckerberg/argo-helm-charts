@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.4...stack-v2.3.0) (2024-11-08)
+
+
+### Features
+
+* allow image tag to be specified separately for sidecars ([#169](https://github.com/chanzuckerberg/argo-helm-charts/issues/169)) ([18144a3](https://github.com/chanzuckerberg/argo-helm-charts/commit/18144a3f952286c27766e6fb17632c2c0d7cdf5d))
+
+
+### Misc
+
+* add test for disabled ingress upstream ([#168](https://github.com/chanzuckerberg/argo-helm-charts/issues/168)) ([e08816b](https://github.com/chanzuckerberg/argo-helm-charts/commit/e08816bc9679e38f203455860a0026ff571650dd))
+
 ## [2.2.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.3...stack-v2.2.4) (2024-11-08)
 
 
