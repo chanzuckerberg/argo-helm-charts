@@ -89,6 +89,8 @@ spec:
           {{- include "service.configuration" . | nindent 10}}
           {{- include "service.nonsensitiveEnvVars" (list $global.Values.global .Values) | nindent 10 }}
         {{- range $i, $container := .Values.sidecars }}
+        {{- $imageDict := fromYaml (include "image" $container) }}
+        {{- $container = mergeOverwrite $container $imageDict }}
         {{- with omit $container "envFrom" "env" }}
         - {{- toYaml . | nindent 10 }}
           {{- include "service.configuration" $service | nindent 10}}
