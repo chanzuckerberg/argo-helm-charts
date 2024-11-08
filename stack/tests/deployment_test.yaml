@@ -166,18 +166,24 @@ tests:
               image: "alpine:latest"
     asserts:
       - equal:
+          path: spec.template.spec.containers[0].image
+          value: "nginx:latest"
+      - equal:
           path: spec.template.spec.containers[1].image
           value: "alpine:latest"
-  - it: formats supplied initContainer image tag and repo
+  - it: formats supplied sidecar image tag and repo
     set:
       services:
         service1:
-          sidecar:
-            - name: sidecar1
+          sidecars:
+            - name: sidecar2
               image:
                 repository: "node"
                 tag: "20.0.0"
     asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "nginx:latest"
       - equal:
           path: spec.template.spec.containers[1].image
           value: "node:20.0.0"
