@@ -9,7 +9,7 @@
 
   {{- with $values -}}
   {{ $serviceScope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" .}}
-  {{- if .ingress.oidcProtected -}}
+  {{- if and .ingress.oidcProtected .ingress.enabled -}}
     {{ range $i, $path := .ingress.paths }}
       {{- if (eq $path.pathType "Exact") -}}
       {{- $allOIDCProtectedServces = append 
