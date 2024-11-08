@@ -231,6 +231,15 @@ tests:
             paths:
               - path: /
                 pathType: Prefix
+        service5:
+          service:
+            port: 4123
+          ingress:
+            enabled: false
+            oidcProtected: true
+            paths:
+              - path: /test5
+                pathType: Prefix
     asserts:
       - documentIndex: 0
         equal:
@@ -240,6 +249,10 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: --upstream=http://release-name-stack-service1.NAMESPACE.svc.cluster.local:4123/test1/
+      - documentIndex: 0
+        notContains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream=http://release-name-stack-service5.NAMESPACE.svc.cluster.local:4123/test5/
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
