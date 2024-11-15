@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test HorizontalPodAutoscaler
+templates:
+  - hpa.yaml
+tests:
+  - it: should work
+    set:
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2 # this should be ignored when autoscaling is enabled
+    asserts:
+      - containsDocument:
+          apiVersion: autoscaling/v2
+          kind: HorizontalPodAutoscaler
+      - equal:
+          path: spec.minReplicas
+          value: 2
+      - equal:
+          path: spec.maxReplicas
+          value: 10
