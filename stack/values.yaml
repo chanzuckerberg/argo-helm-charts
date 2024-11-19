@@ -318,7 +318,8 @@ global:
     # skipAuth:
     #   - path: "/healthz"
     #     method: GET
-
+    ## @param global.oidcProxy.cookieRefresh Refresh tokens and cookies after this period
+    cookieRefresh: "59m"
     ## @param global.oidcProxy.extraArgs Extra arguments to pass to the OIDC proxy
     extraArgs: []
     # extraArgs:

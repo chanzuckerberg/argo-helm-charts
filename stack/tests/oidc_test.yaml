@@ -101,6 +101,7 @@ tests:
       global:
         oidcProxy:
           enabled: true
+          cookieRefresh: 1h23m45s
           skipAuth:
             - method: GET
               path: "/v1/api/docs2"
@@ -127,7 +128,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 17
+          count: 18
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
@@ -140,6 +141,10 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: "--skip-auth-route=/v1/api/security/access_token"
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--cookie-refresh=1h23m45s"
   - it: overwrites the name
     set:
       global:
@@ -421,7 +426,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 21
+          count: 22
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
