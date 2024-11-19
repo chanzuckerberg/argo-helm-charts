@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+# nudge
 suite: oidc proxy deployment
 templates:
   - oidc_proxy.yaml
