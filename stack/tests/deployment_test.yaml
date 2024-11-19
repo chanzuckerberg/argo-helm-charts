@@ -31,10 +31,31 @@ tests:
           path: spec
           content:
             revisionHistoryLimit: 3
-          any: true
       - containsDocument:
           apiVersion: apps/v1
           kind: Deployment
+
+  - it: sets replicas when autoscaling is disabled
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 2
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 2
+  - it: does not set replicas when autoscaling is enabled
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: true
+          replicaCount: 2
+    asserts:
+      - notExists:
+          path: spec.replicas
 
   - it: uses httpGet probe by default
     set:
