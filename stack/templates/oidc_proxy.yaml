@@ -83,6 +83,7 @@ spec:
             - --pass-authorization-header=true
             - --reverse-proxy
             - --skip-jwt-bearer-tokens
+            - --cookie-refresh={{ .Values.oidcProxy.cookieRefresh }}
 
             {{- range $allOIDCProtectedServces }}
             - --upstream={{ . }}
