@@ -589,6 +589,11 @@
                             "default": [],
                             "items": {}
                         },
+                        "cookieRefresh": {
+                            "type": "string",
+                            "description": "Refresh tokens and cookies after this period",
+                            "default": "59m"
+                        },
                         "extraArgs": {
                             "type": "array",
                             "description": "Extra arguments to pass to the OIDC proxy",
