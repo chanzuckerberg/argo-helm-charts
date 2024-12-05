@@ -558,7 +558,7 @@
                         "replicaCount": {
                             "type": "number",
                             "description": "Number of replicas",
-                            "default": 2
+                            "default": 3
                         },
                         "additionalSecrets": {
                             "type": "array",

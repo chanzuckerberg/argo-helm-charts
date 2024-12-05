@@ -503,3 +503,39 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: --cookie-domain=someparent.domain
+  - it: should set the topolgy constraints
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: "/service1"
+                pathType: Prefix
+            rules:
+              - host: "app1.someparent.domain"
+        service2:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: "/service2"
+                pathType: Exact
+            rules:
+              - host: "app2.someparent.domain"
+    asserts:
+      - documentIndex: 0
+        exists:
+          path: spec.template.spec.containers[0].topologySpreadConstraints
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].topologySpreadConstraints
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].topologySpreadConstraints[0].topologyKey
+          value: topology.kubernetes.io/zone
