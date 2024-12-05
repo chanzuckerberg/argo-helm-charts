@@ -304,7 +304,7 @@ global:
       ## @param global.oidcProxy.image.tag Image tag
       tag: v7.6.0
     ## @param global.oidcProxy.replicaCount Number of replicas
-    replicaCount: 2
+    replicaCount: 3
     ## @param global.oidcProxy.additionalSecrets Additional secrets to mount
     additionalSecrets: []
     ## @param global.oidcProxy.additionalHeaders Additional headers to add
