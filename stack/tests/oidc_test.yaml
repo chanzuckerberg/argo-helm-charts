@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+# nudge
 suite: oidc proxy deployment
 templates:
   - oidc_proxy.yaml
@@ -101,6 +102,7 @@ tests:
       global:
         oidcProxy:
           enabled: true
+          cookieRefresh: 1h23m45s
           skipAuth:
             - method: GET
               path: "/v1/api/docs2"
@@ -127,7 +129,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 17
+          count: 18
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
@@ -140,6 +142,10 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: "--skip-auth-route=/v1/api/security/access_token"
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--cookie-refresh=1h23m45s"
   - it: overwrites the name
     set:
       global:
@@ -421,7 +427,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
-          count: 21
+          count: 22
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
@@ -497,3 +503,39 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: --cookie-domain=someparent.domain
+  - it: should set the topolgy constraints
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+        oidcProxy:
+          enabled: true
+      services:
+        service1:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: "/service1"
+                pathType: Prefix
+            rules:
+              - host: "app1.someparent.domain"
+        service2:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: "/service2"
+                pathType: Exact
+            rules:
+              - host: "app2.someparent.domain"
+    asserts:
+      - documentIndex: 0
+        exists:
+          path: spec.template.spec.containers[0].topologySpreadConstraints
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].topologySpreadConstraints
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].topologySpreadConstraints[0].topologyKey
+          value: topology.kubernetes.io/zone

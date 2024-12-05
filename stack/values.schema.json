@@ -558,7 +558,7 @@
                         "replicaCount": {
                             "type": "number",
                             "description": "Number of replicas",
-                            "default": 2
+                            "default": 3
                         },
                         "additionalSecrets": {
                             "type": "array",
@@ -588,6 +588,11 @@
                             "description": "Paths to skip authentication",
                             "default": [],
                             "items": {}
+                        },
+                        "cookieRefresh": {
+                            "type": "string",
+                            "description": "Refresh tokens and cookies after this period",
+                            "default": "59m"
                         },
                         "extraArgs": {
                             "type": "array",

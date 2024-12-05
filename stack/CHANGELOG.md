@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.3.0...stack-v2.4.0) (2024-12-05)
+
+
+### Features
+
+* create topology constraints for OIDC proxy ([#175](https://github.com/chanzuckerberg/argo-helm-charts/issues/175)) ([8f44d4d](https://github.com/chanzuckerberg/argo-helm-charts/commit/8f44d4df8ae84a7d6edeac8c2f8cfa80661f760e))
+* have OAuth2 Proxy refresh the access token before it expires ([#173](https://github.com/chanzuckerberg/argo-helm-charts/issues/173)) ([81188df](https://github.com/chanzuckerberg/argo-helm-charts/commit/81188df2c1c946ba7640b3d3f4ca510c8798bad1))
+
+
+### Misc
+
+* add tests for HPA ([#171](https://github.com/chanzuckerberg/argo-helm-charts/issues/171)) ([cdbd064](https://github.com/chanzuckerberg/argo-helm-charts/commit/cdbd064a1372d4351b97658aa636f83c0d8b4482))
+
 ## [2.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.2.4...stack-v2.3.0) (2024-11-08)
 
 
