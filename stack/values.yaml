@@ -54,7 +54,7 @@ global:
     timeoutSeconds: 1
     ## @param global.livenessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
     initialDelaySeconds: 30
-
+  
   ## @section global.readinessProbe Readiness probe configuration
   readinessProbe:
     ## @param global.readinessProbe.failureThreshold Number of failures before the probe is considered failed
@@ -75,7 +75,7 @@ global:
     timeoutSeconds: 1
     ## @param global.readinessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
     initialDelaySeconds: 30
-
+  
   ## @section global.startupProbe Startup probe configuration
   startupProbe:
     ## @param global.startupProbe.enabled Enable the startup probe
@@ -194,7 +194,8 @@ global:
     host: chart-example.local
     ## @section global.ingress.paths List of ingress paths
     paths:
-      - ## @param global.ingress.paths[0].path Ingress path
+      - 
+        ## @param global.ingress.paths[0].path Ingress path
         path: /
         ## @param global.ingress.paths[0].pathType Ingress path type
         pathType: Prefix
@@ -220,7 +221,7 @@ global:
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-
+  
   nodeSelector:
     ## @param global.nodeSelector.kubernetes.io/arch Node selector for architecture
     kubernetes.io/arch: arm64
@@ -268,7 +269,8 @@ global:
   topologySpreadConstraints: []
 
   env:
-    - ## @param global.env[0].name Environment variable name
+    -
+      ## @param global.env[0].name Environment variable name
       name: __ARGUS
       ## @param global.env[0].value Environment variable value
       value: "true"
@@ -316,8 +318,7 @@ global:
     # skipAuth:
     #   - path: "/healthz"
     #     method: GET
-    ## @param global.oidcProxy.cookieRefresh Refresh tokens and cookies after this period
-    cookieRefresh: "59m"
+
     ## @param global.oidcProxy.extraArgs Extra arguments to pass to the OIDC proxy
     extraArgs: []
     # extraArgs:
