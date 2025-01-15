@@ -343,6 +343,8 @@ services:
   # service1:
   #   args: ["arg1", "arg2"]
   #   command: ["command1", "command2"]
+  #   serviceAccount:
+  #     create: true
   #   autoscaling:
   #     enabled: true
   #     minReplicas: 2
@@ -379,6 +381,8 @@ cronJobs:
   # cronJob1:
   #   concurrencyPolicy: Forbid
   #   schedule: "* * * * *"
+  #   serviceAccount:
+  #     create: true
   #   image:
   #     repository: nginx
   #     pullPolicy: IfNotPresent
