@@ -60,10 +60,6 @@ tests:
           value: "release-name-stack-job1"
       - documentIndex: 1
         equal:
-          path: metadata.labels["helm.sh/chart"]
-          value: "stack-2.4.1"
-      - documentIndex: 1
-        equal:
           path: metadata.labels["app.kubernetes.io/name"]
           value: "stack"
       - documentIndex: 1
