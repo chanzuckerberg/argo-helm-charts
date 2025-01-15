@@ -132,13 +132,13 @@ spec:
             {{- toYaml .Values.oidcProxy.resources | nindent 12 }}
           volumeMounts:
             {{- toYaml .Values.oidcProxy.volumeMounts| nindent 12 }}
-          topologySpreadConstraints:
-          - maxSkew: 2
-            topologyKey: topology.kubernetes.io/zone
-            whenUnsatisfiable: ScheduleAnyway
-            labelSelector:
-              matchLabels:
-                {{- include "oidcProxy.selectorLabels" . | nindent 16 }}      
+      topologySpreadConstraints:
+      - maxSkew: 2
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            {{- include "oidcProxy.selectorLabels" . | nindent 16 }}      
       volumes:
         {{- toYaml .Values.volumes | nindent 12 }}
 ---
