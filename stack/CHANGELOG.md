@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.4.1...stack-v2.5.0) (2025-01-15)
+
+
+### Features
+
+* enabled creating service account for cronjob ([#176](https://github.com/chanzuckerberg/argo-helm-charts/issues/176)) ([ed82e35](https://github.com/chanzuckerberg/argo-helm-charts/commit/ed82e35d8dc366920b2c391bdcc85d5a4d42f217))
+
+
+### Misc
+
+* fix unit test for release ([#180](https://github.com/chanzuckerberg/argo-helm-charts/issues/180)) ([57a5a7a](https://github.com/chanzuckerberg/argo-helm-charts/commit/57a5a7a53cf906cf4e87931f801d8d15eea2e77e))
+
 ## [2.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.4.0...stack-v2.4.1) (2025-01-15)
 
 
