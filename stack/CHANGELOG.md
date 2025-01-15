@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.4.0...stack-v2.4.1) (2025-01-15)
+
+
+### Bug Fixes
+
+* wrong indent layer for oidc topology constraint ([#177](https://github.com/chanzuckerberg/argo-helm-charts/issues/177)) ([ebddef2](https://github.com/chanzuckerberg/argo-helm-charts/commit/ebddef201ff1870e3827c59a316542ac413954d1))
+
 ## [2.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.3.0...stack-v2.4.0) (2024-12-05)
 
 
