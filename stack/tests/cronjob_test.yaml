@@ -61,7 +61,7 @@ tests:
       - documentIndex: 1
         equal:
           path: metadata.labels["helm.sh/chart"]
-          value: "stack-2.4.0"
+          value: "stack-2.4.1"
       - documentIndex: 1
         equal:
           path: metadata.labels["app.kubernetes.io/name"]
