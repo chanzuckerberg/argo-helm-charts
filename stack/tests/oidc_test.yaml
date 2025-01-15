@@ -530,12 +530,12 @@ tests:
     asserts:
       - documentIndex: 0
         exists:
-          path: spec.template.spec.containers[0].topologySpreadConstraints
+          path: spec.template.spec.topologySpreadConstraints
       - documentIndex: 0
         lengthEqual:
-          path: spec.template.spec.containers[0].topologySpreadConstraints
+          path: spec.template.spec.topologySpreadConstraints
           count: 1
       - documentIndex: 0
         equal:
-          path: spec.template.spec.containers[0].topologySpreadConstraints[0].topologyKey
+          path: spec.template.spec.topologySpreadConstraints[0].topologyKey
           value: topology.kubernetes.io/zone
