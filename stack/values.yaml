@@ -274,6 +274,7 @@ global:
       name: __ARGUS
       ## @param global.env[0].value Environment variable value
       value: "true"
+
   ## @param global.envFrom Environment variables from configmaps or secrets
   envFrom: []
 
