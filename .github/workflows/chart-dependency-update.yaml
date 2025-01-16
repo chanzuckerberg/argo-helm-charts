@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - main
+      - artifacts
 
 jobs:
   update_chart_locks:
