@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.1...stack-v2.5.2) (2025-01-16)
+
+
+### Bug Fixes
+
+* sync chart.lock ([#184](https://github.com/chanzuckerberg/argo-helm-charts/issues/184)) ([2242ee4](https://github.com/chanzuckerberg/argo-helm-charts/commit/2242ee45649c5c937e9addbb06deafc1df50f2cf))
+
 ## [2.5.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.0...stack-v2.5.1) (2025-01-16)
 
 
