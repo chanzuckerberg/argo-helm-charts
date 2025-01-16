@@ -32,6 +32,9 @@ jobs:
             core.setOutput('changed_chart_dirs', uniqueChangedDirs)
             core.setOutput('changed_chart_dirs_bash', uniqueChangedDirs.join(' '));
 
+      - uses: azure/setup-helm@v4
+        with:
+          version: '3.15.2'
       - name: Update Chart.lock
         run: |
           for chart in ${{ steps.changed_charts.outputs.changed_chart_dirs_bash }}
