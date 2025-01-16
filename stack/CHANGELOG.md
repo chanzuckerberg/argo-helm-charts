@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.5.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.1...stack-v2.5.2) (2025-01-16)
+
+
+### Bug Fixes
+
+* sync chart.lock ([#184](https://github.com/chanzuckerberg/argo-helm-charts/issues/184)) ([2242ee4](https://github.com/chanzuckerberg/argo-helm-charts/commit/2242ee45649c5c937e9addbb06deafc1df50f2cf))
+
+## [2.5.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.0...stack-v2.5.1) (2025-01-16)
+
+
+### Bug Fixes
+
+* bump argus dependency ([#181](https://github.com/chanzuckerberg/argo-helm-charts/issues/181)) ([f3de9ce](https://github.com/chanzuckerberg/argo-helm-charts/commit/f3de9ce5adc8800500da9d6977905adb7fb9a163))
+
+## [2.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.4.1...stack-v2.5.0) (2025-01-15)
+
+
+### Features
+
+* enabled creating service account for cronjob ([#176](https://github.com/chanzuckerberg/argo-helm-charts/issues/176)) ([ed82e35](https://github.com/chanzuckerberg/argo-helm-charts/commit/ed82e35d8dc366920b2c391bdcc85d5a4d42f217))
+
+
+### Misc
+
+* fix unit test for release ([#180](https://github.com/chanzuckerberg/argo-helm-charts/issues/180)) ([57a5a7a](https://github.com/chanzuckerberg/argo-helm-charts/commit/57a5a7a53cf906cf4e87931f801d8d15eea2e77e))
+
 ## [2.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.4.0...stack-v2.4.1) (2025-01-15)
 
 
