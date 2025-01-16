@@ -95,6 +95,7 @@ jobs:
           helm package ${CHARTS_DIR} -d ${PACKAGE_DIR}
           helm repo index ${PACKAGE_DIR} --url ${CHART_DOWNLOAD_URL} --merge ${PACKAGE_DIR}/index.yaml
 
+          git diff
           git add -A
           git commit -m "chore: publish charts from ${{ github.repository }} ${{ steps.parse_tag.outputs.result }}"
           git push
