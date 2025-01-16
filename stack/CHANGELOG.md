@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.0...stack-v2.5.1) (2025-01-16)
+
+
+### Bug Fixes
+
+* bump argus dependency ([#181](https://github.com/chanzuckerberg/argo-helm-charts/issues/181)) ([f3de9ce](https://github.com/chanzuckerberg/argo-helm-charts/commit/f3de9ce5adc8800500da9d6977905adb7fb9a163))
+
 ## [2.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.4.1...stack-v2.5.0) (2025-01-15)
 
 
