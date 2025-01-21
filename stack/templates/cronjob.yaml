@@ -55,7 +55,7 @@ metadata:
             .Values.annotations
             .Values.serviceAccount.annotations
   }}
-annotations:
+  annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
