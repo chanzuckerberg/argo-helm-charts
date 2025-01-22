@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.2...stack-v2.5.3) (2025-01-22)
+
+
+### Bug Fixes
+
+* fixed whitespace for adding annotations ([#187](https://github.com/chanzuckerberg/argo-helm-charts/issues/187)) ([848ac28](https://github.com/chanzuckerberg/argo-helm-charts/commit/848ac288b6a0d274a087a87e5f304db07d8614d3))
+
 ## [2.5.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.1...stack-v2.5.2) (2025-01-16)
 
 
