@@ -11,9 +11,19 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml (mergeOverwrite
+                (dict)
+                (fromYaml (include "stack.annotations" $job ))
+      ) | nindent 4 }}
 spec:
   {{- if .Values.activeDeadlineSeconds }}
   activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
+  {{- end }}
+  {{- if .Values.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
   {{- end }}
   {{- if .Values.backoffLimit }}
   backoffLimit: {{ .Values.backoffLimit }}
@@ -104,7 +114,11 @@ spec:
       {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $job.Values $container) | nindent 10 }}
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- if eq .Values.restartPolicy "Always" }}
+      restartPolicy: OnFailure
+      {{- else }}
       restartPolicy: {{ .Values.restartPolicy }}
+      {{- end }}
       {{- if or .Values.persistence.enabled .Values.volumes}}
       volumes:
         {{- if .Values.persistence.enabled }}
