@@ -7,7 +7,7 @@ on:
 
 jobs:
   update_schema_and_readme:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Checkout
         uses: actions/checkout@v4

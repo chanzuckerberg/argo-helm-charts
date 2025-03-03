@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.3...stack-v2.6.0) (2025-03-03)
+
+
+### Features
+
+* add support for k8s jobs to stack helm chart ([#190](https://github.com/chanzuckerberg/argo-helm-charts/issues/190)) ([2a396e0](https://github.com/chanzuckerberg/argo-helm-charts/commit/2a396e0078d5e481d149dc266318c2160a2f686a))
+
 ## [2.5.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.2...stack-v2.5.3) (2025-01-22)
 
 

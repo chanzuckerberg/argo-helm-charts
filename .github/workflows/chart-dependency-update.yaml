@@ -8,7 +8,7 @@ on:
 
 jobs:
   update_chart_locks:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Generate token
         id: generate_token

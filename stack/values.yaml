@@ -390,3 +390,21 @@ cronJobs:
   #     tag: "latest"
   #   command: ["command1", "command2"]
   #   args: ["arg1", "arg2"]
+
+## @param jobs Jobs to deploy, all values in the above global section are inherited by the jobs and each job can override them
+jobs:
+  {}
+  # job1:
+  #   activeDeadlineSeconds: 300
+  #   backoffLimit: 2
+  #   completions: 5
+  #   parallelism: 3
+  #   serviceAccount:
+  #     create: true
+  #     annotations:
+  #       "eks.amazonaws.com/role-arn": some-role
+  #   image:
+  #     repository: my-repo
+  #     tag: sha-mytag
+  #   command: ["hello-world"]
+  #   args: ["arg1", "arg2"]

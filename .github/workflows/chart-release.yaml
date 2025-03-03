@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   check-chart-released:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
     if: ${{ needs.check-chart-released.outputs.chart_released == 'true' }}
     needs:
       - check-chart-released
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - name: Parse Tag
         id: parse_tag
