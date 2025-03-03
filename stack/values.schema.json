@@ -648,6 +648,11 @@
             "type": "object",
             "description": "Cron jobs to deploy, all values in the above global section are inherited by the cron jobs and each cron job can override them",
             "default": {}
+        },
+        "jobs": {
+            "type": "object",
+            "description": "Jobs to deploy, all values in the above global section are inherited by the jobs and each job can override them",
+            "default": {}
         }
     }
 }
