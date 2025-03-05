@@ -24,4 +24,6 @@ Suppose you want to test some local changes of the stack helm chart in the `argu
   - This should include your changes to `.infra/rdev/Chart.yaml`, the newly created `.infra/rdev/Chart.lock`, and the `.infra/rdev/charts/stack-<X.Y.Z>.tgz` file
 1. Create a PR in the `argus-example-app` repository and create a stack in Argus using the `stack` label on the PR
 
+[Here is an example of the changes](https://github.com/chanzuckerberg/argus-example-app/pull/159/commits/3685595e8e7d31a49077de173a678817ac96de65)
+
 NOTE: Do not merge `.infra/rdev/Chart.lock` or `.infra/rdev/charts/stack-<X.Y.Z>.tgz` into the main branch. These files should only be used for testing purposes.
