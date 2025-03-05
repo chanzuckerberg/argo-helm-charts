@@ -13,7 +13,7 @@ The `stack` chart is the standard chart for used when deploying an Argus applica
 
 ### Testing an un-published chart in Argus
 
-You can test a chart that has not been published.
+You can create a stack from a chart that has not been published.
 
 Suppose you want to test some local changes of the stack helm chart in the `argus-example-app`. To do so you would:
 
