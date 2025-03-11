@@ -37,6 +37,15 @@ spec:
               {{- toYaml .Values.resources | nindent 14 }}
             {{- include "service.configuration" . | nindent 12 }}
             {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $cronJob.Values) | nindent 12 }}
+          {{- range $i, $container := .Values.sidecars }}
+          {{- $imageDict := fromYaml (include "image" $container) }}
+          {{- $container = mergeOverwrite $container $imageDict }}
+          {{- with omit $container "envFrom" "env" }}
+          - {{- toYaml . | nindent 12 }}
+            {{- include "service.configuration" $cronJob | nindent 12}}
+          {{- end }}
+          {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $cronJob.Values $container) | nindent 12 }}
+          {{- end }}
           restartPolicy: OnFailure
           {{- with .Values.nodeSelector }}
           nodeSelector:
