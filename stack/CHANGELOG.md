@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.6.0...stack-v2.6.1) (2025-03-11)
+
+
+### Bug Fixes
+
+* enable sidecar in cronjob ([#194](https://github.com/chanzuckerberg/argo-helm-charts/issues/194)) ([63b6782](https://github.com/chanzuckerberg/argo-helm-charts/commit/63b6782fe9da226ac48101933cf1f9d10f2c06c1))
+
 ## [2.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.5.3...stack-v2.6.0) (2025-03-03)
 
 

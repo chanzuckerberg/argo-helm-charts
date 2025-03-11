@@ -18,6 +18,42 @@ tests:
             tag: sha-mytag
           command: ["hello-world"]
           args: ["arg1", "arg2"]
+          sidecars:
+          - name: event-receiver
+            image:
+              repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/argus/core/api/test-event-receiver/event-receiver
+              tag: sgtstgs
+            ports:
+              - containerPort: 3000
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /
+                port: 3000
+                scheme: HTTP
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 1
+            readinessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /
+                port: 3000
+                scheme: HTTP
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 1
+            resources:
+              limits:
+                cpu: "1"
+                memory: "512Mi"
+              requests:
+                cpu: "100m"
+                memory: "128Mi"
+
     asserts:
       - hasDocuments:
           count: 2
@@ -51,6 +87,18 @@ tests:
         equal:
           path: spec.concurrencyPolicy
           value: Forbid
+      - documentIndex: 0
+        lengthEqual:
+          path:  spec.jobTemplate.spec.template.spec.containers
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[1].image
+          value: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/argus/core/api/test-event-receiver/event-receiver:sgtstgs
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[1].name
+          value: event-receiver
       - documentIndex: 1
         containsDocument:
           apiVersion: v1
