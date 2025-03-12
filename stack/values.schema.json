@@ -90,9 +90,9 @@
                                     "default": "/"
                                 },
                                 "port": {
-                                    "type": "string",
+                                    "type": "number",
                                     "description": "Port to probe",
-                                    "default": "http"
+                                    "default": 3000
                                 },
                                 "scheme": {
                                     "type": "string",
