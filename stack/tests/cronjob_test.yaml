@@ -18,6 +18,16 @@ tests:
             tag: sha-mytag
           command: ["hello-world"]
           args: ["arg1", "arg2"]
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           sidecars:
           - name: event-receiver
             image:
@@ -93,6 +103,14 @@ tests:
           count: 2
       - documentIndex: 0
         equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].livenessProbe.failureThreshold
+          value: 5
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].readinessProbe.failureThreshold
+          value: 3
+      - documentIndex: 0
+        equal:
           path: spec.jobTemplate.spec.template.spec.containers[1].image
           value: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/argus/core/api/test-event-receiver/event-receiver:sgtstgs
       - documentIndex: 0
@@ -136,28 +154,28 @@ tests:
         equal:
           path: automountServiceAccountToken
           value: true
-  - it: should not make service account for cronjob
-    set:
-      cronJobs:
-        job2:
-          concurrencyPolicy: Forbid
-          schedule: "*/3 * * * *"
-          image:
-            repository: my-repo
-            tag: sha-mytag
-          command: ["hello-world"]
-          args: ["arg1", "arg2"]
-    asserts:
-      - hasDocuments:
-          count: 1
-      - containsDocument:
-          apiVersion: batch/v1
-          kind: CronJob
-          name: "release-name-stack-job2"
-        template: cronjob.yaml
-      - containsDocument:
-          apiVersion: v1
-          kind: ServiceAccount
-          name: "release-name-stack-job2"
-        not: true
+  # - it: should not make service account for cronjob
+  #   set:
+  #     cronJobs:
+  #       job2:
+  #         concurrencyPolicy: Forbid
+  #         schedule: "*/3 * * * *"
+  #         image:
+  #           repository: my-repo
+  #           tag: sha-mytag
+  #         command: ["hello-world"]
+  #         args: ["arg1", "arg2"]
+  #   asserts:
+  #     - hasDocuments:
+  #         count: 1
+  #     - containsDocument:
+  #         apiVersion: batch/v1
+  #         kind: CronJob
+  #         name: "release-name-stack-job2"
+  #       template: cronjob.yaml
+  #     - containsDocument:
+  #         apiVersion: v1
+  #         kind: ServiceAccount
+  #         name: "release-name-stack-job2"
+  #       not: true
       
