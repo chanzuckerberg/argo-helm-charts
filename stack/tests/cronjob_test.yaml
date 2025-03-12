@@ -18,6 +18,16 @@ tests:
             tag: sha-mytag
           command: ["hello-world"]
           args: ["arg1", "arg2"]
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           sidecars:
           - name: event-receiver
             image:
@@ -91,6 +101,14 @@ tests:
         lengthEqual:
           path:  spec.jobTemplate.spec.template.spec.containers
           count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].livenessProbe.failureThreshold
+          value: 5
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].readinessProbe.failureThreshold
+          value: 3
       - documentIndex: 0
         equal:
           path: spec.jobTemplate.spec.template.spec.containers[1].image
