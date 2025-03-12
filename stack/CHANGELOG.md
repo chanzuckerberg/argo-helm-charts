@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.6.1...stack-v2.7.0) (2025-03-12)
+
+
+### Features
+
+* enable readiness and liveness probe in cronjob yaml ([#196](https://github.com/chanzuckerberg/argo-helm-charts/issues/196)) ([073972a](https://github.com/chanzuckerberg/argo-helm-charts/commit/073972aa780d135b25de7abfbb782b8baaef795b))
+
 ## [2.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.6.0...stack-v2.6.1) (2025-03-11)
 
 
