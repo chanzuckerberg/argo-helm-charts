@@ -42,7 +42,7 @@ jobs:
           for chart in ${{ steps.changed_charts.outputs.changed_chart_dirs_bash }}
           do
             echo "Updating README.md for ${chart}"
-            readme-generator --values ${chart}/values.yaml --readme ${chart}/README.md --schema ${chart}/values.schema.json
+            readme-generator --values ${chart}/values.yaml --readme ${chart}/README.md --schema ${chart}/values.schema.json --config readme-generator-config.json
           done
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
