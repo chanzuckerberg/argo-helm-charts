@@ -32,7 +32,7 @@ A Helm chart for deploying an Argus stack.
 | Name                                       | Description                                                                           | Value  |
 | ------------------------------------------ | ------------------------------------------------------------------------------------- | ------ |
 | `global.livenessProbe.httpGet.path`        | Path to probe                                                                         | `/`    |
-| `global.livenessProbe.httpGet.port`        | Port to probe                                                                         | `3000` |
+| `global.livenessProbe.httpGet.port`        | Port to probe                                                                         | `http` |
 | `global.livenessProbe.httpGet.scheme`      | Scheme to use                                                                         | `HTTP` |
 | `global.livenessProbe.periodSeconds`       | How often to perform the probe                                                        | `10`   |
 | `global.livenessProbe.successThreshold`    | Number of successes before the probe is considered successful                         | `1`    |

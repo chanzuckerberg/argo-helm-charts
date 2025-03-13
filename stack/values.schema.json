@@ -90,9 +90,9 @@
                                     "default": "/"
                                 },
                                 "port": {
-                                    "type": "number",
+                                    "type": "string",
                                     "description": "Port to probe",
-                                    "default": 3000
+                                    "default": "http"
                                 },
                                 "scheme": {
                                     "type": "string",
@@ -607,9 +607,9 @@
                                     "type": "object",
                                     "properties": {
                                         "cpu": {
-                                            "type": "number",
+                                            "type": "string",
                                             "description": "CPU limit",
-                                            "default": 2
+                                            "default": "2"
                                         },
                                         "memory": {
                                             "type": "string",

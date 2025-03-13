@@ -42,7 +42,7 @@ global:
     httpGet:
       ## @param global.livenessProbe.httpGet.path Path to probe
       path: /
-      ## @param global.livenessProbe.httpGet.port [string,number] Port to probe
+      ## @param global.livenessProbe.httpGet.port Port to probe
       port: http
       ## @param global.livenessProbe.httpGet.scheme Scheme to use
       scheme: HTTP
@@ -329,7 +329,7 @@ global:
     resources:
       limits:
         ## @param global.oidcProxy.resources.limits.cpu CPU limit
-        cpu: 2
+        cpu: "2"
         ## @param global.oidcProxy.resources.limits.memory Memory limit
         memory: 4Gi
       requests:
