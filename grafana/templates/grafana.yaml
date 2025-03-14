@@ -30,7 +30,7 @@ spec:
       client_secret: $__file{/etc/secrets/client-secret}
       role_attribute_path: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'"
     server:
-      root_url: "https://grafana.grafana.com"
+      root_url: "https://grafana.{{ .Values.baseDomain | b64enc }}"
   deployment:
     spec:
       replicas: {{ .Values.replicas }}
@@ -69,7 +69,7 @@ spec:
                       number: 80
       tls:
         - hosts:
-            - "grafana.grafana.com"
+            - "grafana.{{ .Values.baseDomain | b64enc }}"
     metadata:
       annotations:
         external-dns.alpha.kubernetes.io/exclude: "false"
