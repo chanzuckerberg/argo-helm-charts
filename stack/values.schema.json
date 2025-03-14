@@ -648,6 +648,7 @@
               "type": "object"
             },
             "requests": {
+              "description": "Resource requests",
               "properties": {
                 "cpu": {
                   "description": "CPU request",
