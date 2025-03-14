@@ -17,6 +17,8 @@ jobs:
           private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
       - uses: dorny/paths-filter@v3
         id: filter
         with:

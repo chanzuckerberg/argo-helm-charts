@@ -23,7 +23,7 @@
       "description": "Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs",
       "properties": {
         "affinity": {
-          "description": "Affinity for the pod",
+          "description": "Affinity for the",
           "properties": {},
           "type": "object"
         },

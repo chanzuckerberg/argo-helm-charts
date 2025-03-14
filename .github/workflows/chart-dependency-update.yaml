@@ -11,11 +11,11 @@ jobs:
     runs-on: ARM64
     steps:
       - name: Generate token
+        uses: actions/create-github-app-token@v1
         id: generate_token
-        uses: tibdex/github-app-token@v2
         with:
-          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+          app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
+          private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
