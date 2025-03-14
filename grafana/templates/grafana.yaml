@@ -1,9 +1,13 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
-  name: grafana
+  name: {{ .Values.grafanaName }}
   labels:
     app: grafana
+  annotations:
+    {{- if .Values.grafanaAnnotations }}
+    {{- toYaml .Values.grafanaAnnotations | nindent 4 }}
+    {{- end }}
 spec:
   config:
     log:
@@ -30,7 +34,7 @@ spec:
       client_secret: $__file{/etc/secrets/client-secret}
       role_attribute_path: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'"
     server:
-      root_url: "https://grafana.{{ .Values.baseDomain | b64enc }}"
+      root_url: "https://grafana.{{ .Values.baseDomain }}"
   deployment:
     spec:
       replicas: {{ .Values.replicas }}
@@ -57,7 +61,7 @@ spec:
     spec:
       ingressClassName: nginx
       rules:
-        - host: "grafana.{{ .Values.baseDomain | b64enc }}"
+        - host: "grafana.{{ .Values.baseDomain }}"
           http:
             paths:
               - path: /
@@ -69,7 +73,7 @@ spec:
                       number: 80
       tls:
         - hosts:
-            - "grafana.{{ .Values.baseDomain | b64enc }}"
+            - "grafana.{{ .Values.baseDomain }}"
     metadata:
       annotations:
         external-dns.alpha.kubernetes.io/exclude: "false"
