@@ -1,0 +1,18 @@
+clusterName: ""
+baseDomain: ""
+grafanaName: "grafana"
+replicas: 3
+secretStoreRef: "aws-secretsmanager"
+roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'"
+grafanaAnnotations: {}
+grafanaSubdomain: "grafana"
+datasources:
+  loki:
+    enabled: true
+    url: "http://loki.loki.svc:3100/"
+  prometheus:
+    enabled: true
+    url: "http://loki-stack-prometheus-server"
+  tempo:
+    enabled: true
+    url: "http://tempo.loki.svc:3100"
