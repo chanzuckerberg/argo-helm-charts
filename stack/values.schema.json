@@ -811,7 +811,8 @@
       "patternProperties": {
         "^.*$": {
           "$ref": "#/properties/global",
-          "type": "object"
+          "type": "object",
+          "unevaluatedProperties": false
         }
       },
       "properties": {},
