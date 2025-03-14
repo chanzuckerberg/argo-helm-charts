@@ -18,6 +18,9 @@ spec:
       viewers_can_edit: "true"
     auth:
       disable_login_form: "true"
+    security:
+      admin_user: root
+      admin_password: secret
     auth.basic:
       enabled: "false"
     auth.anonymous:
