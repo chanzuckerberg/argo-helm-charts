@@ -30,7 +30,6 @@ spec:
       auth_url: https://czi-prod.okta.com/oauth2/v1/authorize
       token_url: https://czi-prod.okta.com/oauth2/v1/token
       api_url: https://czi-prod.okta.com/oauth2/v1/userinfo
-
       role_attribute_path: {{ .Values.roleAttributePath }}
     server:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
