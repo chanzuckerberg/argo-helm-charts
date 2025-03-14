@@ -60,7 +60,7 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   resources: # @schema description: Resource requests and limits for the primary container
     limits: # @schema description: Resource limits
-      cpu: "1" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
+      cpu: 1 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
       memory: "1Gi" # @schema description: Memory limit
     requests:
       cpu: "100m" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
