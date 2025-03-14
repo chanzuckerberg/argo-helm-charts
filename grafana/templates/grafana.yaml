@@ -34,7 +34,7 @@ spec:
       client_secret: $__file{/etc/secrets/client-secret}
       role_attribute_path: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'"
     server:
-      root_url: "https://grafana.{{ .Values.baseDomain }}"
+      root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
   deployment:
     spec:
       replicas: {{ .Values.replicas }}
@@ -61,7 +61,7 @@ spec:
     spec:
       ingressClassName: nginx
       rules:
-        - host: "grafana.{{ .Values.baseDomain }}"
+        - host: "{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
           http:
             paths:
               - path: /
@@ -73,11 +73,11 @@ spec:
                       number: 80
       tls:
         - hosts:
-            - "grafana.{{ .Values.baseDomain }}"
+            - "{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
     metadata:
       annotations:
         external-dns.alpha.kubernetes.io/exclude: "false"
-        external-dns.alpha.kubernetes.io/target: access.grafana.com
+        external-dns.alpha.kubernetes.io/target: access.{{ .Values.baseDomain }}
         infra: "true"
         nginx.ingress.kubernetes.io/affinity: cookie
         nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
