@@ -40,6 +40,11 @@ jobs:
             core.setOutput('changed_chart_dirs', uniqueChangedDirs)
             core.setOutput('changed_chart_dirs_bash', uniqueChangedDirs.join(' '));
       
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: |
+          pip install json-schema-for-humans
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
@@ -52,7 +57,12 @@ jobs:
           for chart in ${{ steps.changed_charts.outputs.changed_chart_dirs_bash }}
           do
             echo "Updating values.schema.json for ${chart}"
-            helm schema -input ${chart}/values.yaml -output ${chart}/values.schema.json -indent 2 -schemaRoot.id argo.helm.charts/${chart} -schemaRoot.title "${chart} helm chart" -schemaRoot.additionalProperties false
+
+            # Generate schema
+            helm schema -input ${chart}/values.yaml -output ${chart}/values.schema.json -indent 2 -schemaRoot.id argo.helm.charts/${chart} -schemaRoot.title ${chart} -schemaRoot.additionalProperties false
+
+            # Generate README
+            generate-schema-doc ${chart}/values.schema.json ${chart}/README.md --config template_name=md --config show_toc=false
           done
 
       - name: Commit changes
