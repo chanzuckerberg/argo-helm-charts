@@ -1,13 +1,9 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
-  name: {{ .Values.grafanaName }}
+  name: grafana
   labels:
     app: grafana
-  annotations:
-    {{- if .Values.grafanaAnnotations }}
-    {{- toYaml .Values.grafanaAnnotations | nindent 4 }}
-    {{- end }}
 spec:
   config:
     log:
@@ -32,7 +28,7 @@ spec:
       api_url: https://czi-prod.okta.com/oauth2/v1/userinfo
       client_id: $__file{/etc/secrets/client-id}
       client_secret: $__file{/etc/secrets/client-secret}
-      role_attribute_path: {{ .Values.roleAttributePath }}
+      role_attribute_path: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'"
     server:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
   deployment:
