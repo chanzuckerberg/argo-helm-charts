@@ -57,7 +57,7 @@ spec:
     spec:
       ingressClassName: nginx
       rules:
-        - host: "grafana.grafana.com"
+        - host: "grafana.{{ .Values.baseDomain | b64enc }}"
           http:
             paths:
               - path: /
