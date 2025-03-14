@@ -33,7 +33,7 @@ spec:
       root_url: "https://grafana.grafana.com"
   deployment:
     spec:
-      replicas: 3
+      replicas: {{ .Values.replicas }}
       template:
         spec:
           volumes:
