@@ -1,7 +1,7 @@
 clusterName: ""
 baseDomain: ""
 grafanaName: "grafana"
-replicas: 3
+replicas: 1
 secretStoreRef: "aws-secretsmanager"
 roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'"
 grafanaAnnotations: {}
