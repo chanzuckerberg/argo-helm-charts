@@ -1,10 +1,5 @@
-## @section Global parameters
+clusterName: my-cluster # @schema description: Name of the cluster to configure the sso secret for
 
-## @param clusterName Name of the cluster to configure the sso secret for
-clusterName: my-cluster
+secretName: my-sso-secret # @schema description: Name of the secret to create (both external secret and kubernetes secret resources)
 
-## @param secretName Name of the secret to create (both external secret and kubernetes secret resources)
-secretName: my-sso-secret
-
-## @param applicationName Name of the application to configure the sso secret for
-applicationName: my-app
+applicationName: my-app # @schema description: Name of the application to configure the sso secret for

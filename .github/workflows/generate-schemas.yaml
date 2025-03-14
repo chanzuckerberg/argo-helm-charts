@@ -32,17 +32,29 @@ jobs:
             core.setOutput('changed_chart_dirs', uniqueChangedDirs)
             core.setOutput('changed_chart_dirs_bash', uniqueChangedDirs.join(' '));
       
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install readme-generator-for-helm
-        run: npm install -g @bitnami/readme-generator-for-helm
-      - name: Update Readme
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+      # - name: Install readme-generator-for-helm
+      #   run: npm install -g @bitnami/readme-generator-for-helm
+      # - name: Update Readme
+      #   run: |
+      #     for chart in ${{ steps.changed_charts.outputs.changed_chart_dirs_bash }}
+      #     do
+      #       echo "Updating README.md for ${chart}"
+      #       readme-generator --values ${chart}/values.yaml --readme ${chart}/README.md --schema ${chart}/values.schema.json
+      #     done
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+      - name: Install helm schema plugin
+        run: |
+          helm plugin install https://github.com/losisin/helm-values-schema-json.git
+      - name: Update values.schema.json
         run: |
           for chart in ${{ steps.changed_charts.outputs.changed_chart_dirs_bash }}
           do
-            echo "Updating README.md for ${chart}"
-            readme-generator --values ${chart}/values.yaml --readme ${chart}/README.md --schema ${chart}/values.schema.json
+            echo "Updating values.schema.json for ${chart}"
+            helm schema -input ${chart}/values.yaml -output ${chart}/values.schema.json -indent 2 -schemaRoot.id argo.helm.charts/${chart} -schemaRoot.title "${chart} helm chart" -schemaRoot.additionalProperties false
           done
       - name: Commit changes
         uses: EndBug/add-and-commit@v9

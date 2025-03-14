@@ -1,4 +1,5 @@
 argus-config/test.yaml
 stack/test.yaml
 **/charts/*.tgz
-.debug/** 
+**/.debug/** 
+**/.DS_Store
