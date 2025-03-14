@@ -1,3 +1,4 @@
+argus-config: {} # @schema description: Allows values for the argus-config Helm chart
 global: # @schema description: Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
   deploymentStage: "" # @schema description: Deployment stage
 
