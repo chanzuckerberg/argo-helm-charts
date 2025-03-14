@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.grafanaName }}
   labels:
     app: grafana
+    name: {{ .Values.grafanaName }}
   annotations:
     {{- if .Values.grafanaAnnotations }}
     {{- toYaml .Values.grafanaAnnotations | nindent 4 }}
