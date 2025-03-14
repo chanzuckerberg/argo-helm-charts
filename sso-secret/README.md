@@ -42,4 +42,3 @@
 **Description:** Name of the secret to create (both external secret and kubernetes secret resources)
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2025-03-14 at 19:49:08 +0000
