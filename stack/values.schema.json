@@ -3,6 +3,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "argus-config": {
+      "description": "Allows values for the argus-config Helm chart",
+      "properties": {},
+      "type": "object"
+    },
     "cronJobs": {
       "description": "Cron jobs to deploy",
       "patternProperties": {
