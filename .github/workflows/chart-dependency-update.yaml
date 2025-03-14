@@ -35,7 +35,7 @@ jobs:
             const fs = require('fs');
             const path = require("path");
             const changedFiles = ${{ steps.filter.outputs.changed_files }}
-            const changedDirs = changedFiles.map(f => path.dirname(f)).filter(dir => fs.existsSync(path.join(dir, 'Chart.yaml')));
+            const changedDirs = changedFiles.map(f => path.dirname(f)).filter(dir => fs.existsSync(path.join(dir, 'Chart.lock')));
             const uniqueChangedDirs = [...new Set(changedDirs)];
             console.log(`Found the following changed charts: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
             core.setOutput('changed_chart_dirs', uniqueChangedDirs)
