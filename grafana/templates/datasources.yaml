@@ -55,7 +55,7 @@ spec:
     type: tempo
     uid: tempo
     access: proxy
-    url: "{{ .Values.datasources.tempo.url }}"}"
+    url: "{{ .Values.datasources.tempo.url }}"
     basicAuth: false
     editable: true
 {{ end }}
