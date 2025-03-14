@@ -16,6 +16,6 @@
       "type": "string"
     }
   },
-  "title": "sso-secret helm chart",
+  "title": "sso-secret",
   "type": "object"
 }

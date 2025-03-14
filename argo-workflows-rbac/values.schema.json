@@ -42,6 +42,6 @@
       "type": "object"
     }
   },
-  "title": "argo-workflows-rbac helm chart",
+  "title": "argo-workflows-rbac",
   "type": "object"
 }

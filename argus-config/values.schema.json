@@ -83,6 +83,6 @@
       "type": "object"
     }
   },
-  "title": "argus-config helm chart",
+  "title": "argus-config",
   "type": "object"
 }
