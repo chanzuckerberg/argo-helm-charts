@@ -204,4 +204,4 @@
 **Description:** Ingress host
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2025-03-14 at 19:47:22 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2025-03-14 at 19:47:59 +0000

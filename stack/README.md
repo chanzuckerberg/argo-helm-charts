@@ -8061,4 +8061,4 @@ Must be one of:
 | **Tuple validation** | N/A                |
 
 ----------------------------------------------------------------------------------------------------------------------------
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2025-03-14 at 19:47:23 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2025-03-14 at 19:48:00 +0000
