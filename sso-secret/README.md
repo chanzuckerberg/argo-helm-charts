@@ -1,13 +1,44 @@
-# SSO secret helm chart
+# sso-secret
 
-A Helm chart for creating an SSO secret (via an External Secret).
+**Title:** sso-secret
 
-## Parameters
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
-### Global parameters
+| Property                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                   |
+| -------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------- |
+| - [applicationName](#applicationName ) | No      | string | No         | -          | Name of the application to configure the sso secret for                             |
+| - [clusterName](#clusterName )         | No      | string | No         | -          | Name of the cluster to configure the sso secret for                                 |
+| - [secretName](#secretName )           | No      | string | No         | -          | Name of the secret to create (both external secret and kubernetes secret resources) |
 
-| Name              | Description                                                                         | Value           |
-| ----------------- | ----------------------------------------------------------------------------------- | --------------- |
-| `clusterName`     | Name of the cluster to configure the sso secret for                                 | `my-cluster`    |
-| `secretName`      | Name of the secret to create (both external secret and kubernetes secret resources) | `my-sso-secret` |
-| `applicationName` | Name of the application to configure the sso secret for                             | `my-app`        |
+## <a name="applicationName"></a>1. Property `sso-secret > applicationName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the application to configure the sso secret for
+
+## <a name="clusterName"></a>2. Property `sso-secret > clusterName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the cluster to configure the sso secret for
+
+## <a name="secretName"></a>3. Property `sso-secret > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the secret to create (both external secret and kubernetes secret resources)
+
+----------------------------------------------------------------------------------------------------------------------------

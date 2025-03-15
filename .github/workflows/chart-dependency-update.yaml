@@ -11,11 +11,11 @@ jobs:
     runs-on: ARM64
     steps:
       - name: Generate token
+        uses: actions/create-github-app-token@v1
         id: generate_token
-        uses: tibdex/github-app-token@v2
         with:
-          app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
-          private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+          app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
+          private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -35,7 +35,7 @@ jobs:
             const fs = require('fs');
             const path = require("path");
             const changedFiles = ${{ steps.filter.outputs.changed_files }}
-            const changedDirs = changedFiles.map(f => path.dirname(f)).filter(dir => fs.existsSync(path.join(dir, 'Chart.yaml')));
+            const changedDirs = changedFiles.map(f => path.dirname(f)).filter(dir => fs.existsSync(path.join(dir, 'Chart.lock')));
             const uniqueChangedDirs = [...new Set(changedDirs)];
             console.log(`Found the following changed charts: ${JSON.stringify(uniqueChangedDirs, null, 2)}\n OG: ${JSON.stringify(changedFiles, null, 2)} `)
             core.setOutput('changed_chart_dirs', uniqueChangedDirs)
