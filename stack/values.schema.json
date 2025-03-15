@@ -1,658 +1,824 @@
 {
-    "title": "Chart Values",
-    "type": "object",
-    "properties": {
-        "global": {
-            "type": "object",
+  "$id": "argo.helm.charts/stack",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "argus-config": {
+      "description": "Allows values for the argus-config Helm chart",
+      "properties": {},
+      "type": "object"
+    },
+    "cronJobs": {
+      "description": "Cron jobs to deploy",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object"
+        }
+      },
+      "properties": {},
+      "type": "object"
+    },
+    "global": {
+      "description": "Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs",
+      "properties": {
+        "affinity": {
+          "description": "Affinity for the pod",
+          "properties": {},
+          "type": "object"
+        },
+        "annotations": {
+          "description": "Global annotations to add to all resources",
+          "properties": {},
+          "type": "object"
+        },
+        "appContext": {
+          "properties": {
+            "envContextConfigMapName": {
+              "type": "string"
+            },
+            "stackContextConfigMapName": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "appSecrets": {
+          "properties": {
+            "clusterSecret": {
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "envSecret": {
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "stackSecret": {
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "args": {
+          "description": "Arguments to pass to the command in the primary container",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array"
+          ]
+        },
+        "autoscaling": {
+          "description": "Autoscaling configuration",
+          "properties": {
+            "enabled": {
+              "description": "Enable autoscaling",
+              "type": "boolean"
+            },
+            "maxReplicas": {
+              "description": "Maximum number of replicas",
+              "type": "integer"
+            },
+            "minReplicas": {
+              "description": "Minimum number of replicas",
+              "type": "integer"
+            },
+            "targetCPUUtilizationPercentage": {
+              "description": "Target CPU utilization percentage",
+              "type": "integer"
+            },
+            "targetMemoryUtilizationPercentage": {
+              "description": "Target memory utilization percentage",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "command": {
+          "description": "Command to run in the primary container",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array"
+          ]
+        },
+        "deploymentStage": {
+          "description": "Deployment stage",
+          "type": "string"
+        },
+        "dnsPolicy": {
+          "description": "DNS policy for the pod",
+          "enum": [
+            "ClusterFirst",
+            "Default",
+            "None"
+          ],
+          "type": "string"
+        },
+        "env": {
+          "items": {
             "properties": {
-                "deploymentStage": {
-                    "type": "string",
-                    "description": "Deployment stage (eg: rdev, staging, prod)",
-                    "default": ""
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": [
+            "array"
+          ]
+        },
+        "envFrom": {
+          "description": "Environment variables from configmaps or secrets",
+          "items": {
+            "properties": {
+              "configMapRef": {
+                "type": "object"
+              },
+              "prefix": {
+                "type": "string"
+              },
+              "secretRef": {
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "type": [
+            "array"
+          ]
+        },
+        "fullnameOverride": {
+          "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
+          "type": "string"
+        },
+        "image": {
+          "properties": {
+            "pullPolicy": {
+              "description": "Image pull policy",
+              "enum": [
+                "Always",
+                "IfNotPresent",
+                "Never"
+              ],
+              "type": "string"
+            },
+            "repository": {
+              "description": "Image repository",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Image tag",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "imagePullSecrets": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array"
+          ]
+        },
+        "ingress": {
+          "description": "Ingress configuration",
+          "properties": {
+            "annotations": {
+              "properties": {
+                "nginx.ingress.kubernetes.io/affinity": {
+                  "type": "string"
                 },
-                "replicaCount": {
-                    "type": "number",
-                    "description": "Number of replicas",
-                    "default": 1
+                "nginx.ingress.kubernetes.io/proxy-connect-timeout": {
+                  "type": "string"
                 },
-                "image": {
-                    "type": "object",
-                    "properties": {
-                        "repository": {
-                            "type": "string",
-                            "description": "Image repository",
-                            "default": "nginx"
-                        },
-                        "pullPolicy": {
-                            "type": "string",
-                            "description": "Image pull policy",
-                            "default": "IfNotPresent"
-                        },
-                        "tag": {
-                            "type": "string",
-                            "description": "Image tag",
-                            "default": "latest"
-                        }
+                "nginx.ingress.kubernetes.io/proxy-read-timeout": {
+                  "type": "string"
+                },
+                "nginx.ingress.kubernetes.io/proxy-send-timeout": {
+                  "type": "string"
+                },
+                "nginx.ingress.kubernetes.io/session-cookie-max-age": {
+                  "type": "string"
+                },
+                "nginx.ingress.kubernetes.io/session-cookie-name": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "className": {
+              "description": "Ingress class name",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable ingress",
+              "type": "boolean"
+            },
+            "host": {
+              "description": "Ingress host",
+              "type": "string"
+            },
+            "oidcProtected": {
+              "description": "Enable OIDC protection",
+              "type": "boolean"
+            },
+            "paths": {
+              "description": "List of ingress paths",
+              "items": {
+                "properties": {
+                  "path": {
+                    "description": "Ingress path",
+                    "type": "string"
+                  },
+                  "pathType": {
+                    "description": "Ingress path type",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "rules": {
+              "description": "List of ingress rules",
+              "type": "array"
+            },
+            "tls": {
+              "description": "List of ingress TLS configurations",
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "initContainers": {
+          "description": "List of init containers",
+          "type": [
+            "array"
+          ]
+        },
+        "livenessProbe": {
+          "description": "Liveness probe configuration",
+          "properties": {
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": [
+                "number"
+              ]
+            },
+            "httpGet": {
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "properties": {
+                "path": {
+                  "description": "Path to probe",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port to probe",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
                     }
+                  ]
                 },
-                "command": {
-                    "type": "array",
-                    "description": "Command to run in the primary container",
-                    "default": [],
-                    "items": {}
+                "scheme": {
+                  "description": "Scheme to use",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": [
+                "number"
+              ]
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": [
+                "number"
+              ]
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": [
+                "number"
+              ]
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": [
+                "number"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "nameOverride": {
+          "description": "Name to prefix the K8s resources with, combined with the stack name prefix",
+          "type": "string"
+        },
+        "nodeSelector": {
+          "properties": {
+            "kubernetes.io/arch": {
+              "description": "Node selector for architecture",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "oidcProxy": {
+          "properties": {
+            "additionalHeaders": {
+              "description": "Additional headers to add",
+              "type": "array"
+            },
+            "additionalSecrets": {
+              "description": "Additional secrets to mount",
+              "type": "array"
+            },
+            "annotations": {
+              "description": "Annotations to add to the OIDC proxy",
+              "properties": {},
+              "type": [
+                "object"
+              ]
+            },
+            "cookieRefresh": {
+              "description": "Refresh tokens and cookies after this period",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable OIDC proxy",
+              "type": "boolean"
+            },
+            "extraArgs": {
+              "description": "Extra arguments to pass to the OIDC proxy",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array"
+              ]
+            },
+            "image": {
+              "properties": {
+                "repository": {
+                  "description": "Image repository",
+                  "type": "string"
                 },
-                "args": {
-                    "type": "array",
-                    "description": "Arguments to pass to the command in the primary container",
-                    "default": [],
-                    "items": {}
-                },
-                "imagePullSecrets": {
-                    "type": "array",
-                    "description": "Image pull secrets",
-                    "default": [],
-                    "items": {}
-                },
-                "nameOverride": {
-                    "type": "string",
-                    "description": "Name to prefix the K8s resources with, combined with the stack name prefix",
-                    "default": ""
-                },
-                "fullnameOverride": {
-                    "type": "string",
-                    "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
-                    "default": ""
-                },
-                "dnsPolicy": {
-                    "type": "string",
-                    "description": "DNS policy for the pod",
-                    "default": "ClusterFirst"
-                },
-                "restartPolicy": {
-                    "type": "string",
-                    "description": "Restart policy for the pod",
-                    "default": "Always"
-                },
-                "livenessProbe": {
-                    "type": "object",
-                    "properties": {
-                        "failureThreshold": {
-                            "type": "number",
-                            "description": "Number of failures before the probe is considered failed",
-                            "default": 3
+                "tag": {
+                  "description": "Image tag",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "replicaCount": {
+              "description": "Number of replicas",
+              "type": "integer"
+            },
+            "resources": {
+              "properties": {
+                "limits": {
+                  "properties": {
+                    "cpu": {
+                      "description": "CPU limit",
+                      "oneOf": [
+                        {
+                          "type": "string"
                         },
-                        "httpGet": {
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "type": "string",
-                                    "description": "Path to probe",
-                                    "default": "/"
-                                },
-                                "port": {
-                                    "type": "string",
-                                    "description": "Port to probe",
-                                    "default": "http"
-                                },
-                                "scheme": {
-                                    "type": "string",
-                                    "description": "Scheme to use",
-                                    "default": "HTTP"
-                                }
-                            }
-                        },
-                        "periodSeconds": {
-                            "type": "number",
-                            "description": "How often to perform the probe",
-                            "default": 10
-                        },
-                        "successThreshold": {
-                            "type": "number",
-                            "description": "Number of successes before the probe is considered successful",
-                            "default": 1
-                        },
-                        "timeoutSeconds": {
-                            "type": "number",
-                            "description": "Timeout for the probe",
-                            "default": 1
-                        },
-                        "initialDelaySeconds": {
-                            "type": "number",
-                            "description": "Number of seconds after the container has started before the probe is first initiated",
-                            "default": 30
+                        {
+                          "type": "number"
                         }
+                      ]
+                    },
+                    "memory": {
+                      "description": "Memory limit",
+                      "type": "string"
                     }
+                  },
+                  "type": "object"
                 },
-                "readinessProbe": {
-                    "type": "object",
-                    "properties": {
-                        "failureThreshold": {
-                            "type": "number",
-                            "description": "Number of failures before the probe is considered failed",
-                            "default": 3
+                "requests": {
+                  "properties": {
+                    "cpu": {
+                      "description": "CPU request",
+                      "oneOf": [
+                        {
+                          "type": "string"
                         },
-                        "httpGet": {
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "type": "string",
-                                    "description": "Path to probe",
-                                    "default": "/"
-                                },
-                                "port": {
-                                    "type": "string",
-                                    "description": "Port to probe",
-                                    "default": "http"
-                                },
-                                "scheme": {
-                                    "type": "string",
-                                    "description": "Scheme to use",
-                                    "default": "HTTP"
-                                }
-                            }
-                        },
-                        "periodSeconds": {
-                            "type": "number",
-                            "description": "How often to perform the probe",
-                            "default": 10
-                        },
-                        "successThreshold": {
-                            "type": "number",
-                            "description": "Number of successes before the probe is considered successful",
-                            "default": 1
-                        },
-                        "timeoutSeconds": {
-                            "type": "number",
-                            "description": "Timeout for the probe",
-                            "default": 1
-                        },
-                        "initialDelaySeconds": {
-                            "type": "number",
-                            "description": "Number of seconds after the container has started before the probe is first initiated",
-                            "default": 30
+                        {
+                          "type": "number"
                         }
+                      ]
+                    },
+                    "memory": {
+                      "description": "Memory request",
+                      "type": "string"
                     }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "skipAuth": {
+              "description": "Paths to skip authentication",
+              "items": {
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
                 },
-                "startupProbe": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Enable the startup probe",
-                            "default": false
-                        },
-                        "failureThreshold": {
-                            "type": "number",
-                            "description": "Number of failures before the probe is considered failed",
-                            "default": 3
-                        },
-                        "successThreshold": {
-                            "type": "number",
-                            "description": "Number of successes before the probe is considered successful",
-                            "default": 1
-                        },
-                        "initialDelaySeconds": {
-                            "type": "number",
-                            "description": "Number of seconds after the container has started before the probe is first initiated",
-                            "default": 0
-                        },
-                        "timeoutSeconds": {
-                            "type": "number",
-                            "description": "Timeout for the probe",
-                            "default": 1
-                        },
-                        "periodSeconds": {
-                            "type": "number",
-                            "description": "How often to perform the probe",
-                            "default": 10
-                        },
-                        "exec": {
-                            "type": "object",
-                            "properties": {
-                                "command": {
-                                    "type": "array",
-                                    "description": "Command to run in the probe",
-                                    "default": [
-                                        "ps",
-                                        "-ef"
-                                    ],
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "progressDeadlineSeconds": {
-                    "type": "number",
-                    "description": "the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled",
-                    "default": 600
+                "type": "object"
+              },
+              "type": [
+                "array"
+              ]
+            },
+            "volumeMounts": {
+              "description": "Volume mounts for the OIDC proxy",
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "persistence": {
+          "properties": {
+            "enabled": {
+              "description": "Enable persistence",
+              "type": "boolean"
+            },
+            "existingClaim": {
+              "description": "Existing PVC name",
+              "type": "string"
+            },
+            "mountPath": {
+              "description": "Mount path for the PVC",
+              "type": "string"
+            },
+            "pvc": {
+              "properties": {
+                "accessModes": {
+                  "description": "Access modes",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array"
+                  ]
                 },
                 "resources": {
-                    "type": "object",
-                    "properties": {
-                        "limits": {
-                            "type": "object",
-                            "properties": {
-                                "cpu": {
-                                    "type": "string",
-                                    "description": "CPU limit",
-                                    "default": "1"
-                                },
-                                "memory": {
-                                    "type": "string",
-                                    "description": "Memory limit",
-                                    "default": "1Gi"
-                                }
-                            }
-                        },
-                        "requests": {
-                            "type": "object",
-                            "properties": {
-                                "cpu": {
-                                    "type": "string",
-                                    "description": "CPU request",
-                                    "default": "100m"
-                                },
-                                "memory": {
-                                    "type": "string",
-                                    "description": "Memory request",
-                                    "default": "128Mi"
-                                }
-                            }
+                  "properties": {
+                    "requests": {
+                      "description": "PVC resource requests",
+                      "properties": {
+                        "storage": {
+                          "description": "Storage resource request",
+                          "type": "string"
                         }
+                      },
+                      "type": "object"
                     }
+                  },
+                  "type": "object"
                 },
-                "service": {
-                    "type": "object",
-                    "properties": {
-                        "type": {
-                            "type": "string",
-                            "description": "Service type",
-                            "default": "ClusterIP"
-                        },
-                        "port": {
-                            "type": "number",
-                            "description": "Service port",
-                            "default": 80
-                        }
-                    }
-                },
-                "initContainers": {
-                    "type": "array",
-                    "description": "List of init containers",
-                    "default": [],
-                    "items": {}
-                },
-                "sidecars": {
-                    "type": "array",
-                    "description": "List of sidecars",
-                    "default": [],
-                    "items": {}
-                },
-                "annotations": {
-                    "type": "object",
-                    "description": "Global annotations to add to all resources",
-                    "default": {}
-                },
-                "podLabels": {
-                    "type": "object",
-                    "description": "Global labels to add to all pods",
-                    "default": {}
-                },
-                "serviceAccount": {
-                    "type": "object",
-                    "properties": {
-                        "create": {
-                            "type": "boolean",
-                            "description": "Specifies whether a service account should be created",
-                            "default": false
-                        },
-                        "automount": {
-                            "type": "boolean",
-                            "description": "Specifies whether to automatically mount a ServiceAccount's API credentials",
-                            "default": true
-                        },
-                        "annotations": {
-                            "type": "object",
-                            "description": "Annotations to add to the service account",
-                            "default": {}
-                        },
-                        "name": {
-                            "type": "string",
-                            "description": "Name of the service account to use (if not set and create is true, a name is generated using the fullname template)",
-                            "default": ""
-                        }
-                    }
-                },
-                "podSecurityContext": {
-                    "type": "object",
-                    "description": "Pod security context",
-                    "default": {}
-                },
-                "securityContext": {
-                    "type": "object",
-                    "description": "Security context",
-                    "default": {}
-                },
-                "shareProcessNamespace": {
-                    "type": "boolean",
-                    "description": "Share process namespace",
-                    "default": false
-                },
-                "ingress": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Enable ingress",
-                            "default": true
-                        },
-                        "className": {
-                            "type": "string",
-                            "description": "Ingress class name",
-                            "default": "nginx"
-                        },
-                        "host": {
-                            "type": "string",
-                            "description": "Ingress host",
-                            "default": "chart-example.local"
-                        },
-                        "paths": {
-                            "type": "array",
-                            "description": "Ingress path",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "path": {
-                                        "type": "string",
-                                        "description": "Ingress path"
-                                    },
-                                    "pathType": {
-                                        "type": "string",
-                                        "description": "Ingress path type"
-                                    }
-                                }
-                            }
-                        },
-                        "rules": {
-                            "type": "array",
-                            "description": "List of ingress rules",
-                            "default": [],
-                            "items": {}
-                        },
-                        "oidcProtected": {
-                            "type": "boolean",
-                            "description": "Enable OIDC protection",
-                            "default": false
-                        },
-                        "tls": {
-                            "type": "array",
-                            "description": "List of ingress TLS configurations",
-                            "default": [],
-                            "items": {}
-                        }
-                    }
-                },
-                "autoscaling": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Enable autoscaling",
-                            "default": true
-                        },
-                        "minReplicas": {
-                            "type": "number",
-                            "description": "Minimum number of replicas",
-                            "default": 1
-                        },
-                        "maxReplicas": {
-                            "type": "number",
-                            "description": "Maximum number of replicas",
-                            "default": 10
-                        },
-                        "targetCPUUtilizationPercentage": {
-                            "type": "number",
-                            "description": "Target CPU utilization percentage",
-                            "default": 80
-                        },
-                        "targetMemoryUtilizationPercentage": {
-                            "type": "number",
-                            "description": "Target memory utilization percentage",
-                            "default": 80
-                        }
-                    }
-                },
-                "volumes": {
-                    "type": "array",
-                    "description": "Additional volumes on the output Deployment definition",
-                    "default": [],
-                    "items": {}
-                },
-                "volumeMounts": {
-                    "type": "array",
-                    "description": "Additional volume mounts on the output Deployment definition",
-                    "default": [],
-                    "items": {}
-                },
-                "tolerations": {
-                    "type": "array",
-                    "description": "Tolerations for the pod",
-                    "default": [],
-                    "items": {}
-                },
-                "affinity": {
-                    "type": "object",
-                    "description": "Affinity for the pod",
-                    "default": {}
-                },
-                "topologySpreadConstraints": {
-                    "type": "array",
-                    "description": "Topology spread constraints for the pod",
-                    "default": [],
-                    "items": {}
-                },
-                "env": {
-                    "type": "array",
-                    "description": "Environment variable name",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "type": "string",
-                                "description": "Environment variable name"
-                            },
-                            "value": {
-                                "type": "string",
-                                "description": "Environment variable value"
-                            }
-                        }
-                    }
-                },
-                "envFrom": {
-                    "type": "array",
-                    "description": "Environment variables from configmaps or secrets",
-                    "default": [],
-                    "items": {}
-                },
-                "persistence": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Enable persistence",
-                            "default": false
-                        },
-                        "pvc": {
-                            "type": "object",
-                            "properties": {
-                                "accessModes": {
-                                    "type": "array",
-                                    "description": "Access modes",
-                                    "default": [
-                                        "ReadWriteOnce"
-                                    ],
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                },
-                                "resources": {
-                                    "type": "object",
-                                    "properties": {
-                                        "requests": {
-                                            "type": "object",
-                                            "properties": {
-                                                "storage": {
-                                                    "type": "string",
-                                                    "description": "Storage resource request",
-                                                    "default": "8Gi"
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "storageClassName": {
-                                    "type": "string",
-                                    "description": "Storage class name",
-                                    "default": "default"
-                                }
-                            }
-                        },
-                        "existingClaim": {
-                            "type": "string",
-                            "description": "Existing PVC name",
-                            "default": ""
-                        },
-                        "mountPath": {
-                            "type": "string",
-                            "description": "Mount path for the PVC",
-                            "default": ""
-                        }
-                    }
-                },
-                "oidcProxy": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean",
-                            "description": "Enable OIDC proxy",
-                            "default": false
-                        },
-                        "image": {
-                            "type": "object",
-                            "properties": {
-                                "repository": {
-                                    "type": "string",
-                                    "description": "Image repository",
-                                    "default": "quay.io/oauth2-proxy/oauth2-proxy"
-                                },
-                                "tag": {
-                                    "type": "string",
-                                    "description": "Image tag",
-                                    "default": "v7.6.0"
-                                }
-                            }
-                        },
-                        "replicaCount": {
-                            "type": "number",
-                            "description": "Number of replicas",
-                            "default": 3
-                        },
-                        "additionalSecrets": {
-                            "type": "array",
-                            "description": "Additional secrets to mount",
-                            "default": [],
-                            "items": {}
-                        },
-                        "additionalHeaders": {
-                            "type": "array",
-                            "description": "Additional headers to add",
-                            "default": [],
-                            "items": {}
-                        },
-                        "annotations": {
-                            "type": "object",
-                            "description": "Annotations to add to the OIDC proxy",
-                            "default": {}
-                        },
-                        "volumeMounts": {
-                            "type": "array",
-                            "description": "Volume mounts for the OIDC proxy",
-                            "default": [],
-                            "items": {}
-                        },
-                        "skipAuth": {
-                            "type": "array",
-                            "description": "Paths to skip authentication",
-                            "default": [],
-                            "items": {}
-                        },
-                        "cookieRefresh": {
-                            "type": "string",
-                            "description": "Refresh tokens and cookies after this period",
-                            "default": "59m"
-                        },
-                        "extraArgs": {
-                            "type": "array",
-                            "description": "Extra arguments to pass to the OIDC proxy",
-                            "default": [],
-                            "items": {}
-                        },
-                        "resources": {
-                            "type": "object",
-                            "properties": {
-                                "limits": {
-                                    "type": "object",
-                                    "properties": {
-                                        "cpu": {
-                                            "type": "number",
-                                            "description": "CPU limit",
-                                            "default": 2
-                                        },
-                                        "memory": {
-                                            "type": "string",
-                                            "description": "Memory limit",
-                                            "default": "4Gi"
-                                        }
-                                    }
-                                },
-                                "requests": {
-                                    "type": "object",
-                                    "properties": {
-                                        "cpu": {
-                                            "type": "number",
-                                            "description": "CPU request",
-                                            "default": 2
-                                        },
-                                        "memory": {
-                                            "type": "string",
-                                            "description": "Memory request",
-                                            "default": "4Gi"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                "storageClassName": {
+                  "description": "Storage class name",
+                  "type": "string"
                 }
+              },
+              "type": "object"
             }
+          },
+          "type": "object"
         },
-        "services": {
-            "type": "object",
-            "description": "Services to deploy, all values in the above global section are inherited by the services and each service can override them",
-            "default": {}
+        "podAnnotations": {
+          "description": "Annotations to add to pods",
+          "properties": {
+            "config.linkerd.io/skip-outbound-ports": {
+              "description": "Linkerd skip outbound ports annotation",
+              "type": "string"
+            },
+            "linkerd.io/inject": {
+              "description": "Linkerd injection annotation",
+              "type": "string"
+            }
+          },
+          "type": [
+            "object"
+          ]
         },
-        "cronJobs": {
-            "type": "object",
-            "description": "Cron jobs to deploy, all values in the above global section are inherited by the cron jobs and each cron job can override them",
-            "default": {}
+        "podLabels": {
+          "description": "Global labels to add to all pods",
+          "properties": {},
+          "type": "object"
         },
-        "jobs": {
-            "type": "object",
-            "description": "Jobs to deploy, all values in the above global section are inherited by the jobs and each job can override them",
-            "default": {}
+        "podSecurityContext": {
+          "description": "Pod security context",
+          "properties": {},
+          "type": "object"
+        },
+        "progressDeadlineSeconds": {
+          "description": "the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled",
+          "type": "integer"
+        },
+        "readinessProbe": {
+          "description": "Readiness probe configuration",
+          "properties": {
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": [
+                "number"
+              ]
+            },
+            "httpGet": {
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "properties": {
+                "path": {
+                  "description": "Path to probe",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port to probe",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "scheme": {
+                  "description": "Scheme to use",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": [
+                "number"
+              ]
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": [
+                "number"
+              ]
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": [
+                "number"
+              ]
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": [
+                "number"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "replicaCount": {
+          "description": "Number of replicas",
+          "type": "integer"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the primary container",
+          "properties": {
+            "limits": {
+              "description": "Resource limits",
+              "properties": {
+                "cpu": {
+                  "description": "CPU limit",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "memory": {
+                  "description": "Memory limit",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "requests": {
+              "description": "Resource requests",
+              "properties": {
+                "cpu": {
+                  "description": "CPU request",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "memory": {
+                  "description": "Memory request",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "restartPolicy": {
+          "description": "Restart policy for the pod",
+          "enum": [
+            "Always",
+            "OnFailure",
+            "Never"
+          ],
+          "type": "string"
+        },
+        "securityContext": {
+          "description": "Security context",
+          "properties": {},
+          "type": "object"
+        },
+        "service": {
+          "description": "Service configuration",
+          "properties": {
+            "port": {
+              "description": "Service port",
+              "type": [
+                "number"
+              ]
+            },
+            "type": {
+              "description": "Service type",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "serviceAccount": {
+          "description": "Service account configuration",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to the service account",
+              "properties": {},
+              "type": "object"
+            },
+            "automount": {
+              "description": "Specifies whether to automatically mount a ServiceAccount's API credentials",
+              "type": "boolean"
+            },
+            "create": {
+              "description": "Specifies whether a service account should be created",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "Name of the service account to use (if not set and create is true, a name is generated using the fullname template)",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "shareProcessNamespace": {
+          "description": "Share process namespace",
+          "type": "boolean"
+        },
+        "sidecars": {
+          "description": "List of sidecars",
+          "type": [
+            "array"
+          ]
+        },
+        "startupProbe": {
+          "description": "Startup probe configuration",
+          "properties": {
+            "enabled": {
+              "description": "Enable the startup probe",
+              "type": "boolean"
+            },
+            "exec": {
+              "description": "Exec probe configuration",
+              "properties": {
+                "command": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": "integer"
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": "integer"
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": "integer"
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "tolerations": {
+          "description": "Tolerations for the pod",
+          "type": "array"
+        },
+        "topologySpreadConstraints": {
+          "description": "Topology spread constraints for the pod",
+          "type": "array"
+        },
+        "volumeMounts": {
+          "description": "Additional volume mounts on the output Deployment definition",
+          "type": "array"
+        },
+        "volumes": {
+          "description": "Additional volumes on the output Deployment definition",
+          "type": "array"
         }
+      },
+      "type": "object"
+    },
+    "jobs": {
+      "description": "Jobs to deploy",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object"
+        }
+      },
+      "properties": {},
+      "type": "object"
+    },
+    "services": {
+      "description": "Services to deploy",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object",
+          "unevaluatedProperties": false
+        }
+      },
+      "properties": {},
+      "type": "object"
     }
+  },
+  "title": "stack",
+  "type": "object"
 }

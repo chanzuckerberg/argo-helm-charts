@@ -1,46 +1,47 @@
 {
-    "title": "Chart Values",
-    "type": "object",
-    "properties": {
-        "clusterRole": {
-            "type": "object",
+  "$id": "argo.helm.charts/argo-workflows-rbac",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "clusterRole": {
+      "properties": {
+        "name": {
+          "description": "Cluster Role name to create",
+          "type": "string"
+        },
+        "rules": {
+          "items": {
             "properties": {
-                "name": {
-                    "type": "string",
-                    "description": "Cluster Role name to create",
-                    "default": "czi-argo-workflows-server-cluster-template"
+              "apiGroups": {
+                "description": "API groups to apply the rules to",
+                "items": {
+                  "type": "string"
                 },
-                "rules": {
-                    "type": "array",
-                    "description": "ApiGroups API groups to apply the rules to",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "apiGroups": {
-                                "type": "array",
-                                "description": "ApiGroups API groups to apply the rules to",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "resources": {
-                                "type": "array",
-                                "description": "Resources to apply the rules to",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "verbs": {
-                                "type": "array",
-                                "description": "Verbs to apply the rules to",
-                                "items": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                "type": "array"
+              },
+              "resources": {
+                "description": "Resources to apply the rules to",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "verbs": {
+                "description": "Verbs to apply the rules to",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
         }
+      },
+      "type": "object"
     }
+  },
+  "title": "argo-workflows-rbac",
+  "type": "object"
 }

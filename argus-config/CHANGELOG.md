@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.3...argus-config-v1.3.0) (2025-03-15)
+
+
+### Features
+
+* use more flexible tool for generating helm values schema ([#200](https://github.com/chanzuckerberg/argo-helm-charts/issues/200)) ([2a16bda](https://github.com/chanzuckerberg/argo-helm-charts/commit/2a16bda9cef52c527b23dfa57518fd09b75d1b9f))
+
 ## [1.2.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.2...argus-config-v1.2.3) (2024-10-25)
 
 

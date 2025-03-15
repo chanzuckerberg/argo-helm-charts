@@ -1,15 +1,11 @@
 clusterRole:
-## @param clusterRole.name Cluster Role name to create
-  name: czi-argo-workflows-server-cluster-template
+  name: czi-argo-workflows-server-cluster-template # @schema description: Cluster Role name to create
   rules:
-## @param clusterRole.rules[0].apiGroups ApiGroups API groups to apply the rules to
-  - apiGroups:
+  - apiGroups: # @schema description: API groups to apply the rules to
     - argoproj.io
-## @param clusterRole.rules[0].resources Resources to apply the rules to
-    resources:
+    resources: # @schema description: Resources to apply the rules to
     - clusterworkflowtemplates
-## @param clusterRole.rules[0].verbs Verbs to apply the rules to
-    verbs:
+    verbs: # @schema description: Verbs to apply the rules to
     - get
     - list
     - watch

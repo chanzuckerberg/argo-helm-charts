@@ -1,129 +1,77 @@
-## @section Global parameters
-# Service defaults
-global:
-  ## @param global.deploymentStage Deployment stage (eg: rdev, staging, prod)
-  deploymentStage: ""
+argus-config: {} # @schema description: Allows values for the argus-config Helm chart
+global: # @schema description: Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
+  deploymentStage: "" # @schema description: Deployment stage
 
-  ## @param global.replicaCount Number of replicas
-  replicaCount: 1
+  replicaCount: 1 # @schema description: Number of replicas
 
   # Settings for the primary container
   image:
-    ## @param global.image.repository Image repository
-    repository: nginx
-    ## @param global.image.pullPolicy Image pull policy
-    pullPolicy: IfNotPresent
-    ## @param global.image.tag Image tag
-    tag: "latest"
+    repository: nginx # @schema description: Image repository
+    pullPolicy: IfNotPresent # @schema enum: [Always, IfNotPresent, Never]; description: Image pull policy
+    tag: "latest" # @schema description: Image tag
 
-  ## @param global.command Command to run in the primary container
-  command: []
-  ## @param global.args Arguments to pass to the command in the primary container
-  args: []
+  command: [] # @schema type: array; item: string; description: Command to run in the primary container
+  args: [] # @schema type: array; item: string; description: Arguments to pass to the command in the primary container
 
-  ## @param global.imagePullSecrets Image pull secrets
-  imagePullSecrets: []
-  ## @param global.nameOverride Name to prefix the K8s resources with, combined with the stack name prefix
-  nameOverride: ""
-  ## @param global.fullnameOverride Name to prefix the K8s resources with, replaces the stack name prefix
-  fullnameOverride: ""
+  imagePullSecrets: [] # @schema type: array; item: string
+  nameOverride: "" # @schema description: Name to prefix the K8s resources with, combined with the stack name prefix
+  fullnameOverride: "" # @schema description: Name to prefix the K8s resources with, replaces the stack name prefix
 
-  ## @param global.dnsPolicy DNS policy for the pod
-  dnsPolicy: ClusterFirst
-  ## @param global.restartPolicy Restart policy for the pod
-  restartPolicy: Always
+  dnsPolicy: ClusterFirst # @schema enum: [ClusterFirst, Default, None]; description: DNS policy for the pod
+  restartPolicy: Always # @schema enum: [Always, OnFailure, Never]; description: Restart policy for the pod
 
   # Probes for the primary container
-  ## @section global.livenessProbe Liveness probe configuration
-  livenessProbe:
-    ## @param global.livenessProbe.failureThreshold Number of failures before the probe is considered failed
-    failureThreshold: 3
-    ## @section global.livenessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
-    httpGet:
-      ## @param global.livenessProbe.httpGet.path Path to probe
-      path: /
-      ## @param global.livenessProbe.httpGet.port Port to probe
-      port: http
-      ## @param global.livenessProbe.httpGet.scheme Scheme to use
-      scheme: HTTP
-    ## @param global.livenessProbe.periodSeconds How often to perform the probe
-    periodSeconds: 10
-    ## @param global.livenessProbe.successThreshold Number of successes before the probe is considered successful
-    successThreshold: 1
-    ## @param global.livenessProbe.timeoutSeconds Timeout for the probe
-    timeoutSeconds: 1
-    ## @param global.livenessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
-    initialDelaySeconds: 30
+  livenessProbe: # @schema description: Liveness probe configuration
+    failureThreshold: 3 # @schema type: number; description: Number of failures before the probe is considered failed
+    httpGet: # @schema description: HTTP probe configuration (exec & tcpSocket are also available)
+      path: / # @schema description: Path to probe
+      port: http # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: Port to probe
+      scheme: HTTP # @schema description: Scheme to use
+    periodSeconds: 10 # @schema type: number; description: How often to perform the probe
+    successThreshold: 1 # @schema type: number; description: Number of successes before the probe is considered successful
+    timeoutSeconds: 1 # @schema type: number; description: Timeout for the probe
+    initialDelaySeconds: 30 # @schema type: number; description: Number of seconds after the container has started before the probe is first initiated
   
-  ## @section global.readinessProbe Readiness probe configuration
-  readinessProbe:
-    ## @param global.readinessProbe.failureThreshold Number of failures before the probe is considered failed
-    failureThreshold: 3
-    ## @section global.readinessProbe.httpGet HTTP probe configuration (exec & tcpSocket are also available)
-    httpGet:
-      ## @param global.readinessProbe.httpGet.path Path to probe
-      path: /
-      ## @param global.readinessProbe.httpGet.port Port to probe
-      port: http
-      ## @param global.readinessProbe.httpGet.scheme Scheme to use
-      scheme: HTTP
-    ## @param global.readinessProbe.periodSeconds How often to perform the probe
-    periodSeconds: 10
-    ## @param global.readinessProbe.successThreshold Number of successes before the probe is considered successful
-    successThreshold: 1
-    ## @param global.readinessProbe.timeoutSeconds Timeout for the probe
-    timeoutSeconds: 1
-    ## @param global.readinessProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
-    initialDelaySeconds: 30
+  readinessProbe: # @schema description: Readiness probe configuration
+    failureThreshold: 3 # @schema type: number; description: Number of failures before the probe is considered failed
+    httpGet: # @schema description: HTTP probe configuration (exec & tcpSocket are also available)
+      path: / # @schema description: Path to probe
+      port: http # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: Port to probe
+      scheme: HTTP # @schema description: Scheme to use
+    periodSeconds: 10 # @schema type: number; description: How often to perform the probe
+    successThreshold: 1 # @schema type: number; description: Number of successes before the probe is considered successful
+    timeoutSeconds: 1 # @schema type: number; description: Timeout for the probe
+    initialDelaySeconds: 30 # @schema type: number; description: Number of seconds after the container has started before the probe is first initiated
   
-  ## @section global.startupProbe Startup probe configuration
-  startupProbe:
-    ## @param global.startupProbe.enabled Enable the startup probe
-    enabled: false
-    ## @param global.startupProbe.failureThreshold Number of failures before the probe is considered failed
-    failureThreshold: 3
-    ## @param global.startupProbe.successThreshold Number of successes before the probe is considered successful
-    successThreshold: 1
-    ## @param global.startupProbe.initialDelaySeconds Number of seconds after the container has started before the probe is first initiated
-    initialDelaySeconds: 0
-    ## @param global.startupProbe.timeoutSeconds Timeout for the probe
-    timeoutSeconds: 1
-    ## @param global.startupProbe.periodSeconds How often to perform the probe
-    periodSeconds: 10
+  startupProbe: # @schema description: Startup probe configuration
+    enabled: false # @schema description: Enable the startup probe
+    failureThreshold: 3 # @schema description: Number of failures before the probe is considered failed
+    successThreshold: 1 # @schema description: Number of successes before the probe is considered successful
+    initialDelaySeconds: 0 # @schema description: Number of seconds after the container has started before the probe is first initiated
+    timeoutSeconds: 1 # @schema description: Timeout for the probe
+    periodSeconds: 10 # @schema description: How often to perform the probe
     ## Probe configuration (httpGet & tcpSocket are also available)
-    exec:
-      ## @param global.startupProbe.exec.command Command to run in the probe
-      command:
+    exec: # @schema description: Exec probe configuration
+      command: 
         - ps
         - "-ef"
 
-  ## @param global.progressDeadlineSeconds the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
-  progressDeadlineSeconds: 600
+  progressDeadlineSeconds: 600 # @schema description: the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-  ## Resource requests and limits for the primary container
-  resources:
-    limits:
-      ## @param global.resources.limits.cpu CPU limit
-      cpu: "1"
-      ## @param global.resources.limits.memory Memory limit
-      memory: "1Gi"
-    requests:
-      ## @param global.resources.requests.cpu CPU request
-      cpu: "100m"
-      ## @param global.resources.requests.memory Memory request
-      memory: "128Mi"
+  resources: # @schema description: Resource requests and limits for the primary container
+    limits: # @schema description: Resource limits
+      cpu: "1" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
+      memory: "1Gi" # @schema description: Memory limit
+    requests: # @schema description: Resource requests
+      cpu: "100m" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
+      memory: "128Mi" # @schema description: Memory request
 
-  ## Service configuration
-  service:
-    ## @param global.service.type Service type
-    type: ClusterIP
-    ## @param global.service.port Service port
-    port: 80
+  service: # @schema description: Service configuration
+    type: ClusterIP # @schema description: Service type
+    port: 80 # @schema type: number; description: Service port
 
-  ## @param global.initContainers List of init containers
-  initContainers: []
-  ## @param global.sidecars List of sidecars
-  sidecars: []
+  initContainers: [] # @schema type: array; description: List of init containers
+  sidecars: [] # @schema type: array; description: List of sidecars
 
   ## @skip App context (provided by Argus API)
   appContext:
@@ -150,29 +98,20 @@ global:
       ## @skip global.appSecrets.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
       secretKey: ""
 
-  ## @param global.annotations Global annotations to add to all resources
-  annotations: {}
-  ## @param global.podLabels Global labels to add to all pods
-  podLabels: {}
+  annotations: {} # @schema description: Global annotations to add to all resources
+  podLabels: {} # @schema description: Global labels to add to all pods
 
-  # Service account configuration
-  serviceAccount:
-    ## @param global.serviceAccount.create Specifies whether a service account should be created
-    create: false
-    ## @param global.serviceAccount.automount Specifies whether to automatically mount a ServiceAccount's API credentials
-    automount: true
-    ## @param global.serviceAccount.annotations Annotations to add to the service account
-    annotations: {}
-    ## @param global.serviceAccount.name Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
-    name: ""
+  serviceAccount: # @schema description: Service account configuration
+    create: false # @schema description: Specifies whether a service account should be created
+    automount: true # @schema description: Specifies whether to automatically mount a ServiceAccount's API credentials
+    annotations: {} # @schema description: Annotations to add to the service account
+    name: "" # @schema description: Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-  ## @param global.podSecurityContext Pod security context
-  podSecurityContext:
+  podSecurityContext: # @schema description: Pod security context
     {}
     # fsGroup: 2000
 
-  ## @param global.securityContext Security context
-  securityContext:
+  securityContext: # @schema description: Security context
     {}
     # capabilities:
     #   drop:
@@ -181,165 +120,105 @@ global:
     # runAsNonRoot: true
     # runAsUser: 1000
 
-  ## @param global.shareProcessNamespace Share process namespace
-  shareProcessNamespace: false
+  shareProcessNamespace: false # @schema description: Share process namespace
 
-  ## @section global.ingress Ingress configuration
-  ingress:
-    ## @param global.ingress.enabled Enable ingress
-    enabled: true
-    ## @param global.ingress.className Ingress class name
-    className: nginx
-    ## @param global.ingress.host Ingress host
-    host: chart-example.local
-    ## @section global.ingress.paths List of ingress paths
-    paths:
+  ingress: # @schema description: Ingress configuration
+    enabled: true # @schema description: Enable ingress
+    className: nginx # @schema description: Ingress class name
+    host: chart-example.local # @schema description: Ingress host
+    paths: # @schema description: List of ingress paths
       - 
-        ## @param global.ingress.paths[0].path Ingress path
-        path: /
-        ## @param global.ingress.paths[0].pathType Ingress path type
-        pathType: Prefix
-    ## @param global.ingress.rules List of ingress rules
-    rules: []
-    ## @param global.ingress.oidcProtected Enable OIDC protection
-    oidcProtected: false
+        path: / # @schema description: Ingress path
+        pathType: Prefix # @schema description: Ingress path type
+    rules: [] # @schema description: List of ingress rules
+    oidcProtected: false # @schema description: Enable OIDC protection
     annotations:
-      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-connect-timeout Nginx ingress proxy connect timeout
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
-      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-send-timeout Nginx ingress proxy send timeout
       nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
-      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/proxy-read-timeout Nginx ingress proxy read timeout
       nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
-      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/affinity Nginx ingress affinity
       nginx.ingress.kubernetes.io/affinity: "cookie"
-      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/session-cookie-name Nginx ingress session cookie name
       nginx.ingress.kubernetes.io/session-cookie-name: "argus_sticky_session"
-      ## @param global.ingress.annotations.nginx.ingress.kubernetes.io/session-cookie-max-age Nginx ingress session cookie max age
       nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
-    ## @param global.ingress.tls List of ingress TLS configurations
-    tls: []
+    tls: [] # @schema description: List of ingress TLS configurations
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
   
   nodeSelector:
-    ## @param global.nodeSelector.kubernetes.io/arch Node selector for architecture
-    kubernetes.io/arch: arm64
+    kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
 
-  # Annotations to add to pods
-  podAnnotations:
-    ## @param global.podAnnotations.linkerd.io/inject Linkerd injection annotation
-    linkerd.io/inject: enabled
-    ## @param global.podAnnotations.config.linkerd.io/skip-outbound-ports Linkerd skip outbound ports annotation
-    config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
+  podAnnotations: # @schema type: object; description: Annotations to add to pods
+    linkerd.io/inject: enabled # @schema description: Linkerd injection annotation
+    config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465 # @schema description: Linkerd skip outbound ports annotation
 
-  # Autoscaling configuration
-  autoscaling:
-    ## @param global.autoscaling.enabled Enable autoscaling
-    enabled: true
-    ## @param global.autoscaling.minReplicas Minimum number of replicas
-    minReplicas: 1
-    ## @param global.autoscaling.maxReplicas Maximum number of replicas
-    maxReplicas: 10
-    ## @param global.autoscaling.targetCPUUtilizationPercentage Target CPU utilization percentage
-    targetCPUUtilizationPercentage: 80
-    ## @param global.autoscaling.targetMemoryUtilizationPercentage Target memory utilization percentage
-    targetMemoryUtilizationPercentage: 80
+  autoscaling: # @schema description: Autoscaling configuration
+    enabled: true # @schema description: Enable autoscaling
+    minReplicas: 1 # @schema description: Minimum number of replicas
+    maxReplicas: 10 # @schema description: Maximum number of replicas
+    targetCPUUtilizationPercentage: 80 # @schema description: Target CPU utilization percentage
+    targetMemoryUtilizationPercentage: 80 # @schema description: Target memory utilization percentage
 
-  ## @param global.volumes Additional volumes on the output Deployment definition
-  volumes: []
+  volumes: [] # @schema description: Additional volumes on the output Deployment definition
   # - name: foo
   #   secret:
   #     secretName: mysecret
   #     optional: false
 
-  ## @param global.volumeMounts Additional volume mounts on the output Deployment definition
-  volumeMounts: []
+  volumeMounts: [] # @schema description: Additional volume mounts on the output Deployment definition
   # - name: foo
   #   mountPath: "/etc/foo"
   #   readOnly: true
 
-  ## @param global.tolerations Tolerations for the pod
-  tolerations: []
+  tolerations: [] # @schema description: Tolerations for the pod
 
-  ## @param global.affinity Affinity for the pod
-  affinity: {}
+  affinity: {} # @schema description: Affinity for the pod
 
-  ## @param global.topologySpreadConstraints Topology spread constraints for the pod
-  topologySpreadConstraints: []
+  topologySpreadConstraints: [] # @schema description: Topology spread constraints for the pod
 
-  env:
-    -
-      ## @param global.env[0].name Environment variable name
-      name: __ARGUS
-      ## @param global.env[0].value Environment variable value
-      value: "true"
+  env: [] # @schema type: array; item: object; itemProperties: {"name": {"type": "string"}, "value": {"type": "string"}}
 
-  ## @param global.envFrom Environment variables from configmaps or secrets
-  envFrom: []
+  envFrom: [] # @schema type: array; item: object; itemProperties: {"configMapRef": {"type": "object"}, "secretRef": {"type": "object"}, "prefix": {"type": "string"}}; description: Environment variables from configmaps or secrets
 
   persistence:
-    ## @param global.persistence.enabled Enable persistence
-    enabled: false
+    enabled: false # @schema description: Enable persistence
     pvc:
-      ## @param global.persistence.pvc.accessModes Access modes
-      accessModes:
+      accessModes: # @schema type: array; item: string; description: Access modes
         - ReadWriteOnce
       resources:
-        requests:
-          ## @param global.persistence.pvc.resources.requests.storage Storage resource request
-          storage: 8Gi
-      ## @param global.persistence.pvc.storageClassName Storage class name
-      storageClassName: "default"
-    ## @param global.persistence.existingClaim Existing PVC name
-    existingClaim: ""
-    ## @param global.persistence.mountPath Mount path for the PVC
-    mountPath: ""
+        requests: # @schema description: PVC resource requests
+          storage: 8Gi # @schema description: Storage resource request
+      storageClassName: "default" # @schema description: Storage class name
+    existingClaim: "" # @schema description: Existing PVC name
+    mountPath: "" # @schema description: Mount path for the PVC
 
   oidcProxy:
-    ## @param global.oidcProxy.enabled Enable OIDC proxy
-    enabled: false
+    enabled: false # @schema description: Enable OIDC proxy
     image:
-      ## @param global.oidcProxy.image.repository Image repository
-      repository: quay.io/oauth2-proxy/oauth2-proxy
-      ## @param global.oidcProxy.image.tag Image tag
-      tag: v7.6.0
-    ## @param global.oidcProxy.replicaCount Number of replicas
-    replicaCount: 3
-    ## @param global.oidcProxy.additionalSecrets Additional secrets to mount
-    additionalSecrets: []
-    ## @param global.oidcProxy.additionalHeaders Additional headers to add
-    additionalHeaders: []
-    ## @param global.oidcProxy.annotations Annotations to add to the OIDC proxy
-    annotations: {}
-    ## @param global.oidcProxy.volumeMounts Volume mounts for the OIDC proxy
-    volumeMounts: []
-    ## @param global.oidcProxy.skipAuth Paths to skip authentication
-    skipAuth: []
+      repository: quay.io/oauth2-proxy/oauth2-proxy # @schema description: Image repository
+      tag: v7.6.0 # @schema description: Image tag
+    replicaCount: 3 # @schema description: Number of replicas
+    additionalSecrets: [] # @schema description: Additional secrets to mount
+    additionalHeaders: [] # @schema description: Additional headers to add
+    annotations: {} # @schema type: object; description: Annotations to add to the OIDC proxy
+    volumeMounts: [] # @schema description: Volume mounts for the OIDC proxy
+    skipAuth: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "method": {"type": "string"}}; description: Paths to skip authentication
     # skipAuth:
     #   - path: "/healthz"
     #     method: GET
-    ## @param global.oidcProxy.cookieRefresh Refresh tokens and cookies after this period
-    cookieRefresh: "59m"
-    ## @param global.oidcProxy.extraArgs Extra arguments to pass to the OIDC proxy
-    extraArgs: []
+    cookieRefresh: "59m" # @schema description: Refresh tokens and cookies after this period
+    extraArgs: [] # @schema type: array; item: string; description: Extra arguments to pass to the OIDC proxy
     # extraArgs:
     #   - --flag
     #   - --another-flag=2
     resources:
       limits:
-        ## @param global.oidcProxy.resources.limits.cpu CPU limit
-        cpu: 2
-        ## @param global.oidcProxy.resources.limits.memory Memory limit
-        memory: 4Gi
+        cpu: "2" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
+        memory: 4Gi # @schema description: Memory limit
       requests:
-        ## @param global.oidcProxy.resources.requests.cpu CPU request
-        cpu: 2
-        ## @param global.oidcProxy.resources.requests.memory Memory request
-        memory: 4Gi
+        cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
+        memory: 4Gi # @schema description: Memory request
 
-## @param services Services to deploy, all values in the above global section are inherited by the services and each service can override them
-services:
+services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
   {}
   # service1:
   #   args: ["arg1", "arg2"]
@@ -376,8 +255,7 @@ services:
   #     - name: sidecar4
   #       image: sidecar4:latest
 
-## @param cronJobs Cron jobs to deploy, all values in the above global section are inherited by the cron jobs and each cron job can override them
-cronJobs:
+cronJobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object" } }; description: Cron jobs to deploy
   {}
   # cronJob1:
   #   concurrencyPolicy: Forbid
@@ -391,8 +269,7 @@ cronJobs:
   #   command: ["command1", "command2"]
   #   args: ["arg1", "arg2"]
 
-## @param jobs Jobs to deploy, all values in the above global section are inherited by the jobs and each job can override them
-jobs:
+jobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object" } }; description: Jobs to deploy
   {}
   # job1:
   #   activeDeadlineSeconds: 300
