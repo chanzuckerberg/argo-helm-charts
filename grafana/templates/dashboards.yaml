@@ -1,0 +1,370 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-loki-kubernetes-logs
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "Loki Dashboards"
+  datasources:
+    - inputName: "DS_LOKI"
+      datasourceName: "Loki"
+  grafanaCom:
+    id: 15141
+    revision: 1
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-loki-logs-apps
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "Loki Dashboards"
+  datasources:
+    - inputName: "DS_LOKI"
+      datasourceName: "Loki"
+  grafanaCom:
+    id: 13639
+    revision: 2
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-loki-argus-logs
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "Loki Dashboards"
+  datasources:
+    - inputName: "DS_LOKI"
+      datasourceName: "Loki"
+  url: https://chanzuckerberg.github.io/argus/grafana/loki-stack.json
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-addons-prometheus
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 19105
+    revision: 3
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-nginx
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  url: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-nginx-request-handling-performance
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  url: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-api-server
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 15761
+    revision: 17
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-core-dns
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 15762
+    revision: 18
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-namespaces
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 15758
+    revision: 34
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-nodes
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 15759
+    revision: 29
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-pods
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 15760
+    revision: 28
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-global-view
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 15757
+    revision: 37
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-pvcs
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 13646
+    revision: 2
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-prometheus-stats
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 2
+    revision: 2
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-node-exporter
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 1860
+    revision: 36
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-kube-state-metrics
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 13332
+    revision: 12
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-cert-manager
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 11001
+    revision: 1
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-cluster-monitoring
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 315
+    revision: 3
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-linkerd
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  grafanaCom:
+    id: 15486
+    revision: 3
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-k8s-kubernetes-health
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  url: "https://chanzuckerberg.github.io/argus/grafana/kubernetes-health.json"
