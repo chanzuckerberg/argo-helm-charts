@@ -20,7 +20,7 @@ datasources: # @schema description: List of datasources to configure for the Gra
     url: "http://loki.loki.svc:3100/" # @schema description: URL of the Loki datasource.
   prometheus: # @schema description: Prometheus datasource configuration.
     enabled: true # @schema description: Enable the Prometheus datasource.
-    url: "http://loki-stack-prometheus-server" # @schema description: URL of the Prometheus datasource.
+    url: "http://loki-stack-prometheus-server.loki.svc" # @schema description: URL of the Prometheus datasource.
   tempo: # @schema description: Tempo datasource configuration.
     enabled: true # @schema description: Enable the Tempo datasource.
     url: "http://tempo.loki.svc:3100" # @schema description: URL of the Tempo datasource.
