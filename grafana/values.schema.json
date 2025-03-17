@@ -1,0 +1,72 @@
+{
+  "$id": "argo.helm.charts/grafana",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseDomain": {
+      "type": "string"
+    },
+    "clusterName": {
+      "type": "string"
+    },
+    "datasources": {
+      "properties": {
+        "loki": {
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "prometheus": {
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "tempo": {
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "grafanaAnnotations": {
+      "properties": {},
+      "type": "object"
+    },
+    "grafanaName": {
+      "type": "string"
+    },
+    "grafanaSubdomain": {
+      "type": "string"
+    },
+    "replicas": {
+      "type": "integer"
+    },
+    "roleAttributePath": {
+      "type": "string"
+    },
+    "secretStoreRef": {
+      "type": "string"
+    }
+  },
+  "title": "grafana",
+  "type": "object"
+}
