@@ -9,8 +9,16 @@ jobs:
   update_schema_and_readme:
     runs-on: ARM64
     steps:
+      - name: Generate token
+        uses: actions/create-github-app-token@v1
+        id: generate_token
+        with:
+          app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
+          private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -32,18 +40,31 @@ jobs:
             core.setOutput('changed_chart_dirs', uniqueChangedDirs)
             core.setOutput('changed_chart_dirs_bash', uniqueChangedDirs.join(' '));
       
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: '20'
-      - name: Install readme-generator-for-helm
-        run: npm install -g @bitnami/readme-generator-for-helm
-      - name: Update Readme
+          python-version: '3.x'
+      - run: |
+          pip install json-schema-for-humans
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: '3.15.2'
+      - name: Install helm schema plugin
+        run: |
+          helm plugin install https://github.com/losisin/helm-values-schema-json.git
+      - name: Update values.schema.json
         run: |
           for chart in ${{ steps.changed_charts.outputs.changed_chart_dirs_bash }}
           do
-            echo "Updating README.md for ${chart}"
-            readme-generator --values ${chart}/values.yaml --readme ${chart}/README.md --schema ${chart}/values.schema.json
+            echo "Updating values.schema.json for ${chart}"
+
+            # Generate schema
+            helm schema -input ${chart}/values.yaml -output ${chart}/values.schema.json -indent 2 -schemaRoot.id argo.helm.charts/${chart} -schemaRoot.title ${chart} -schemaRoot.additionalProperties false
+
+            # Generate README
+            generate-schema-doc ${chart}/values.schema.json ${chart}/README.md --config template_name=md --config show_toc=false --config with_footer=false
           done
+
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:

@@ -1,34 +1,20 @@
-## @section Global parameters
-global:
-  ## @section App context (provided by Argus API)
-  appContext:
-    ## @param global.appContext.envContextConfigMapName App environment level configuration configmap name
-    envContextConfigMapName: ""
-    ## @param global.appContext.stackContextConfigMapName Stack level configuration configmap name
-    stackContextConfigMapName: ""
+global: # @schema description: Global parameters
+  appContext: # @schema description: App context (provided by Argus API)
+    envContextConfigMapName: "" # @schema description: Environment level configuration configmap name
+    stackContextConfigMapName: "" # @schema description: Stack level configuration configmap name
 
-  ## @section App secrets (provided by Argus API)
-  appSecrets:
-    envSecret:
-      ## @param global.appSecrets.envSecret.secretName Environment-level Kube secret name to write External Secrets to
-      secretName: ""
-      ## @param global.appSecrets.envSecret.secretKey Environment-level secret key to map External Secrets from
-      secretKey: ""
+  appSecrets: # @schema description: App secrets (provided by Argus API)
+    envSecret: 
+      secretName: "" # @schema description: Environment-level Kube secret name to write External Secrets to
+      secretKey: "" # @schema description: Environment-level secret key to map External Secrets from
     stackSecret:
-      ## @param global.appSecrets.stackSecret.secretName Stack-level Kube secret name to write External Secrets to
-      secretName: ""
-      ## @param global.appSecrets.stackSecret.secretKey Stack-level secret key to map External Secrets from
-      secretKey: ""
+      secretName: "" # @schema description: Stack-level Kube secret name to write External Secrets to
+      secretKey: "" # @schema description: Stack-level secret key to map External Secrets from
     clusterSecret:
-      ## @param global.appSecrets.clusterSecret.secretName Cluster-level Kube secret name to write External Secrets to
-      secretName: ""
-      ## @param global.appSecrets.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
-      secretKey: "" 
+      secretName: "" # @schema description: Cluster-level Kube secret name to write External Secrets to
+      secretKey: "" # @schema description: Cluster-level secret key to map External Secrets from
 
-  ## @param global.deploymentStage Deployment stage (eg: rdev, staging, prod)
-  deploymentStage: "staging"
+  deploymentStage: "staging" # @schema description: Deployment stage
 
-  ## @section global.ingress Ingress configuration
-  ingress:
-    ## @param global.ingress.host Ingress host
-    host: "foo.example.co"
+  ingress: # @schema description: Ingress configuration
+    host: "foo.example.co" # @schema description: Ingress host

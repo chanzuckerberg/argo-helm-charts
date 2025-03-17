@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.8.0...stack-v2.9.0) (2025-03-15)
+
+
+### Features
+
+* use new argus-config chart in stack chart ([#203](https://github.com/chanzuckerberg/argo-helm-charts/issues/203)) ([43d32b7](https://github.com/chanzuckerberg/argo-helm-charts/commit/43d32b7df16be508fefa0ec55f42595a3b43dba2))
+
+## [2.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.7.0...stack-v2.8.0) (2025-03-15)
+
+
+### Features
+
+* use more flexible tool for generating helm values schema ([#200](https://github.com/chanzuckerberg/argo-helm-charts/issues/200)) ([2a16bda](https://github.com/chanzuckerberg/argo-helm-charts/commit/2a16bda9cef52c527b23dfa57518fd09b75d1b9f))
+
 ## [2.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.6.1...stack-v2.7.0) (2025-03-12)
 
 
