@@ -202,6 +202,10 @@ must respect the following conditions
 
 **Description:** Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.
 
+| Restrictions |        |
+| ------------ | ------ |
+| **Maximum**  | &le; 1 |
+
 ## <a name="roleAttributePath"></a>8. Property `grafana > roleAttributePath`
 
 |              |          |

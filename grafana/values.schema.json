@@ -78,6 +78,7 @@
     },
     "replicas": {
       "description": "Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.",
+      "maximum": 1,
       "type": "integer"
     },
     "roleAttributePath": {
