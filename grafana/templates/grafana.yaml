@@ -33,7 +33,7 @@ spec:
       api_url: https://czi-prod.okta.com/oauth2/v1/userinfo
       client_id: $__file{/etc/secrets/client-id}
       client_secret: $__file{/etc/secrets/client-secret}
-      role_attribute_path: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'"
+      role_attribute_path: {{ .Values.roleAttributePath | quote }}
     server:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
   deployment:
