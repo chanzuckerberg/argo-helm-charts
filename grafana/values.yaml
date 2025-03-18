@@ -1,6 +1,6 @@
-clusterName: "" # @schema description: Name of the cluster to configure the platform Grafana for. This value is required.
+clusterName: "" # @schema description: Name of the cluster to configure the platform Grafana for. This value is required.; required: true
 
-baseDomain: "" ## @schema description: Base domain for cluster ingresses (e.g. dev-core-platform.dev.czi.team). This value is required.
+baseDomain: "" ## @schema description: Base domain for cluster ingresses (e.g. dev-core-platform.dev.czi.team). This value is required.; required: true
 
 grafanaName: "grafana" # @schema description: Name of the Grafana instance to create.
 
