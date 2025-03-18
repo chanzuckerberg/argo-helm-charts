@@ -90,6 +90,10 @@
       "type": "string"
     }
   },
+  "required": [
+    "clusterName",
+    "baseDomain"
+  ],
   "title": "grafana",
   "type": "object"
 }
