@@ -10,7 +10,7 @@ secretStoreRef: "aws-secretsmanager" # @schema description: Name of the secret s
 
 roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'" # @schema description: JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-grafanaAnnotations: {} # @schema description: Annotations to add to the Grafana instance.
+grafanaAnnotations: {} # @schema description: Annotations to add to the Grafana instance.; patternProperties: { "^.*$": { "type": "string" } }
 
 grafanaSubdomain: "grafana" # @schema description: Subdomain to use for the Grafana instance.
 
