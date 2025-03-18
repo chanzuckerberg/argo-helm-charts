@@ -364,6 +364,7 @@ spec:
   instanceSelector:
     matchLabels:
       name: {{ .Values.grafanaName }}
+  folder: "k8s Dashboards"
   datasources:
     - inputName: "DS_PROMETHEUS"
       datasourceName: "Prometheus"
