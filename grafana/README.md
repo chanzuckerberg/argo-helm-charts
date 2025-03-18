@@ -161,6 +161,20 @@
 
 **Description:** Annotations to add to the Grafana instance.
 
+| Property                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#grafanaAnnotations_pattern1 ) | Yes     | string | No         | -          | -                 |
+
+### <a name="grafanaAnnotations_pattern1"></a>4.1. Pattern Property `grafana > grafanaAnnotations > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
 ## <a name="grafanaName"></a>5. Property `grafana > grafanaName`
 
 |              |          |

@@ -60,6 +60,11 @@
     },
     "grafanaAnnotations": {
       "description": "Annotations to add to the Grafana instance.",
+      "patternProperties": {
+        "^.*$": {
+          "type": "string"
+        }
+      },
       "properties": {},
       "type": "object"
     },
