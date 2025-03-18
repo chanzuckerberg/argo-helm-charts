@@ -4,7 +4,7 @@ baseDomain: "" ## @schema description: Base domain for cluster ingresses (e.g. d
 
 grafanaName: "grafana" # @schema description: Name of the Grafana instance to create.
 
-replicas: 1 # @schema description: Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity. 
+replicas: 1 # @schema description: Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.; maximum: 1 
 
 secretStoreRef: "aws-secretsmanager" # @schema description: Name of the secret store to use for external secrets.
 
