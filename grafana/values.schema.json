@@ -76,7 +76,7 @@
       "type": "integer"
     },
     "roleAttributePath": {
-      "description": "roleAttributePath JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .",
+      "description": "JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .",
       "type": "string"
     },
     "secretStoreRef": {
