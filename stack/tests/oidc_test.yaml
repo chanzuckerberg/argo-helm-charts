@@ -62,7 +62,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].envFrom
-          count: 4
+          count: 5
   - it: combines additionalSecrets with argus secrets in envFrom
     set:
       global:
@@ -86,7 +86,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].envFrom
-          count: 4
+          count: 5
   - it: defaults to 0 envFrom object
     set:
       global:
