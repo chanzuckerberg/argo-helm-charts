@@ -1,0 +1,48 @@
+suite: test datasources.yaml
+templates:
+  - datasources.yaml
+
+tests:
+  - it: should render a GrafanaDatasource resource
+    asserts:
+      - hasDocuments:
+          count: 3
+      - isKind:
+          of: GrafanaDatasource
+
+  - it: should contain metadata
+    asserts:
+      - isNotEmpty:
+          path: metadata.name
+
+  - it: should have valid metadata
+    asserts:
+      - isNotEmpty:
+          path: metadata.namespace
+      - isNotEmpty:
+          path: spec
+
+  - it: should have a resync period
+    asserts:
+      - isNotEmpty:
+          path: spec.resyncPeriod
+
+  - it: should have an instance selector
+    asserts:
+      - isNotEmpty:
+          path: spec.instanceSelector.matchLabels.name
+
+  - it: should have a name
+    asserts:
+      - isNotEmpty:
+          path: spec.datasource.name
+
+  - it: should have a type
+    asserts:
+      - isNotEmpty:
+          path: spec.datasource.type
+
+  - it: should have a url
+    asserts:
+      - isNotEmpty:
+          path: spec.datasource.url
