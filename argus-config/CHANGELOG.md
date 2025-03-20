@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.3.0...argus-config-v1.4.0) (2025-03-20)
+
+
+### Features
+
+* Grafana chart (deploys Grafana using Grafana Operator) ([#201](https://github.com/chanzuckerberg/argo-helm-charts/issues/201)) ([7e7e4c4](https://github.com/chanzuckerberg/argo-helm-charts/commit/7e7e4c457ffe97a952fdfcd2ac0376a2b9c94cd3))
+
 ## [1.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.2.3...argus-config-v1.3.0) (2025-03-15)
 
 
