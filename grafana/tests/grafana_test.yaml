@@ -1,0 +1,131 @@
+suite: test grafana.yaml
+templates:
+  - grafana.yaml
+
+tests:
+  - it: should render a Grafana resource
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Grafana
+
+  - it: should have config
+    asserts:
+      - isNotEmpty:
+          path: spec.config
+
+  - it: should have an okta auth config
+    asserts:
+      - isNotEmpty:
+          path: spec.config.auth.okta
+  
+  - it: should have a number of replicas specified
+    asserts:
+      - isNotEmpty:
+          path: spec.deployment.spec.replicas
+
+  - it: should contain metadata
+    asserts:
+      - isNotEmpty:
+          path: metadata.name
+      - isNotEmpty:
+          path: metadata.labels.app
+      - isNotEmpty:
+          path: metadata.labels.name
+
+  - it: should have valid log settings
+    asserts:
+      - equal:
+          path: spec.config.log.mode
+          value: console
+      - equal:
+          path: spec.config.log.level
+          value: debug
+
+  - it: should render auth configuration if enabled
+    set:
+      grafanaAnnotations: {}
+      roleAttributePath: "custom_role_path"
+    asserts:
+      - isNotEmpty:
+          path: spec.config.auth
+      - isNotEmpty:
+          path: spec.config.auth.basic
+      - isNotEmpty:
+          path: spec.config.auth.anonymous
+      - isNotEmpty:
+          path: spec.config.auth.okta
+
+  - it: should have a valid deployment configuration
+    asserts:
+      - isNotEmpty:
+          path: spec.deployment.spec.template.spec.volumes
+      - equal:
+          path: spec.deployment.spec.template.spec.volumes[0].secret.secretName
+          value: grafana-sso-secret
+      - isNotEmpty:
+          path: spec.deployment.spec.template.spec.containers[0].volumeMounts
+
+  - it: should configure ingress correctly
+    asserts:
+      - equal:
+          path: spec.ingress.spec.ingressClassName
+          value: nginx
+      - isNotEmpty:
+          path: spec.ingress.spec.rules
+      - isNotEmpty:
+          path: spec.ingress.spec.tls
+
+  - it: should configure ingress TLS correctly
+    set:
+      grafanaSubdomain: "grafana"
+      baseDomain: "example.com"
+    asserts:
+      - isNotEmpty:
+          path: spec.ingress.spec.tls
+      - equal:
+          path: spec.ingress.spec.tls[0].hosts[0]
+          value: "grafana.example.com"
+
+  - it: should configure service correctly
+    asserts:
+      - equal:
+          path: spec.service.spec.ports[0].port
+          value: 80
+      - equal:
+          path: spec.service.spec.ports[0].targetPort
+          value: 3000
+
+  - it: should include custom metadata annotations if provided
+    set:
+      grafanaAnnotations:
+        example-annotation: "custom-value"
+    asserts:
+      - isNotEmpty:
+          path: metadata.annotations
+      - equal:
+          path: metadata.annotations.example-annotation
+          value: "custom-value"
+  
+  - it: should correctly set the server root URL
+    set:
+      grafanaSubdomain: "grafana"
+      baseDomain: "example.com"
+    asserts:
+      - equal:
+          path: spec.config.server.root_url
+          value: "https://grafana.example.com"
+
+  - it: should include volume mounts for secrets
+    asserts:
+      - isNotEmpty:
+          path: spec.deployment.spec.template.spec.volumes
+      - equal:
+          path: spec.deployment.spec.template.spec.volumes[0].secret.secretName
+          value: grafana-sso-secret
+      - isNotEmpty:
+          path: spec.deployment.spec.template.spec.containers[0].volumeMounts
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].volumeMounts[0].mountPath
+          value: /etc/secrets

@@ -1,0 +1,33 @@
+suite: test folders.yaml
+templates:
+  - folders.yaml
+
+tests:
+  - it: should render a GrafanaFolder resource
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: GrafanaFolder
+
+  - it: should contain metadata
+    asserts:
+      - isNotEmpty:
+          path: metadata.name
+
+  - it: should have valid metadata
+    asserts:
+      - isNotEmpty:
+          path: metadata.namespace
+      - isNotEmpty:
+          path: spec
+  
+  - it: should have a title
+    asserts:
+      - isNotEmpty:
+          path: spec.title
+
+  - it: should have an instance selector
+    asserts:
+      - isNotEmpty:
+          path: spec.instanceSelector.matchLabels.name

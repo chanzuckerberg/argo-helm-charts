@@ -1,0 +1,99 @@
+{
+  "$id": "argo.helm.charts/grafana",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseDomain": {
+      "type": "string"
+    },
+    "clusterName": {
+      "description": "Name of the cluster to configure the platform Grafana for. This value is required.",
+      "type": "string"
+    },
+    "datasources": {
+      "description": "List of datasources to configure for the Grafana instance.",
+      "properties": {
+        "loki": {
+          "description": "Loki datasource configuration.",
+          "properties": {
+            "enabled": {
+              "description": "Enable the Loki datasource.",
+              "type": "boolean"
+            },
+            "url": {
+              "description": "URL of the Loki datasource.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "prometheus": {
+          "description": "Prometheus datasource configuration.",
+          "properties": {
+            "enabled": {
+              "description": "Enable the Prometheus datasource.",
+              "type": "boolean"
+            },
+            "url": {
+              "description": "URL of the Prometheus datasource.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "tempo": {
+          "description": "Tempo datasource configuration.",
+          "properties": {
+            "enabled": {
+              "description": "Enable the Tempo datasource.",
+              "type": "boolean"
+            },
+            "url": {
+              "description": "URL of the Tempo datasource.",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "grafanaAnnotations": {
+      "description": "Annotations to add to the Grafana instance.",
+      "patternProperties": {
+        "^.*$": {
+          "type": "string"
+        }
+      },
+      "properties": {},
+      "type": "object"
+    },
+    "grafanaName": {
+      "description": "Name of the Grafana instance to create.",
+      "type": "string"
+    },
+    "grafanaSubdomain": {
+      "description": "Subdomain to use for the Grafana instance.",
+      "type": "string"
+    },
+    "replicas": {
+      "description": "Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.",
+      "maximum": 1,
+      "type": "integer"
+    },
+    "roleAttributePath": {
+      "description": "JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .",
+      "type": "string"
+    },
+    "secretStoreRef": {
+      "description": "Name of the secret store to use for external secrets.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "clusterName",
+    "baseDomain"
+  ],
+  "title": "grafana",
+  "type": "object"
+}

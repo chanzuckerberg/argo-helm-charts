@@ -1,0 +1,64 @@
+{{ if .Values.datasources.loki.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: {{ .Values.grafanaName }}-loki-datasource
+  labels:
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  datasource:
+    name: Loki
+    type: loki
+    url: "{{ .Values.datasources.loki.url }}"
+    access: proxy
+    isDefault: true
+    jsonData:
+      manageAlerts: false
+---
+{{ end }}
+{{ if .Values.datasources.prometheus.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: {{ .Values.grafanaName }}-prometheus-datasource
+  labels:
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  datasource:
+    name: Prometheus
+    type: prometheus
+    url: "{{ .Values.datasources.prometheus.url }}"
+    access: proxy
+    basicAuth: false
+    uid: prometheus
+---
+{{ end }}
+{{ if .Values.datasources.tempo.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: {{ .Values.grafanaName }}-tempo-datasource
+  labels:
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  datasource:
+    name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: "{{ .Values.datasources.tempo.url }}"
+    basicAuth: false
+    editable: true
+{{ end }}

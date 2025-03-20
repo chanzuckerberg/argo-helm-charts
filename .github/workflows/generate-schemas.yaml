@@ -59,7 +59,7 @@ jobs:
             echo "Updating values.schema.json for ${chart}"
 
             # Generate schema
-            helm schema -input ${chart}/values.yaml -output ${chart}/values.schema.json -indent 2 -schemaRoot.id argo.helm.charts/${chart} -schemaRoot.title ${chart} -schemaRoot.additionalProperties false
+            cd ${chart} && make update-schema; cd -
 
             # Generate README
             generate-schema-doc ${chart}/values.schema.json ${chart}/README.md --config template_name=md --config show_toc=false --config with_footer=false
