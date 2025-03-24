@@ -14,5 +14,10 @@ data:
   {{- if .deploymentStage }}
   __ARGUS_DEPLOYMENT_STAGE: {{ .deploymentStage }}
   {{- end }}
+  {{- if ne .argoBuildEnv nil }}
+  {{- if .argoBuildEnv.appName }}
+  __ARGUS_APP_NAME: {{ .argoBuildEnv.appName }}
+  {{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}
