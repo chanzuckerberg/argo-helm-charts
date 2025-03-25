@@ -14,5 +14,31 @@ data:
   {{- if .deploymentStage }}
   __ARGUS_DEPLOYMENT_STAGE: {{ .deploymentStage }}
   {{- end }}
+  {{- if ne .argoBuildEnv nil }}
+  {{- if .argoBuildEnv.appName }}
+  __ARGUS_APP_NAME: {{ .argoBuildEnv.appName }}
+  {{- end }}
+  {{- if .argoBuildEnv.appNamespace }}
+  __ARGUS_APP_NAMESPACE: {{ .argoBuildEnv.appNamespace }}
+  {{- end }}
+  {{- if .argoBuildEnv.appRevision }}
+  __ARGUS_APP_REVISION: {{ .argoBuildEnv.appRevision }}
+  {{- end }}
+  {{- if .argoBuildEnv.appRevisionShort }}
+  __ARGUS_APP_REVISION_SHORT: {{ .argoBuildEnv.appRevisionShort }}
+  {{- end }}
+  {{- if .argoBuildEnv.appRevisionShort8 }}
+  __ARGUS_APP_REVISION_SHORT_8: {{ .argoBuildEnv.appRevisionShort8 }}
+  {{- end }}
+  {{- if .argoBuildEnv.appSourcePath }}
+  __ARGUS_APP_SOURCE_8: {{ .argoBuildEnv.appSourcePath }}
+  {{- end }}
+  {{- if .argoBuildEnv.appSourceRepoUrl }}
+  __ARGUS_APP_SOURCE_REPO_URL: {{ .argoBuildEnv.appSourceRepoUrl }}
+  {{- end }}
+  {{- if .argoBuildEnv.appSourceTargetRevision }}
+  __ARGUS_APP_SOURCE_TARGET_REVISION: {{ .argoBuildEnv.appSourceTargetRevision }}
+  {{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}
