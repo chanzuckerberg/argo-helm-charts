@@ -65,6 +65,44 @@
           },
           "type": "object"
         },
+        "argoBuildEnv": {
+          "description": "Argo built-in environment parameters",
+          "properties": {
+            "appName": {
+              "description": "equivalant to ARGOCD_APP_NAME",
+              "type": "string"
+            },
+            "appNamespace": {
+              "description": "equivalant to ARGOCD_APP_NAMESPACE",
+              "type": "string"
+            },
+            "appRevision": {
+              "description": "equivalant to ARGOCD_APP_REVISION",
+              "type": "string"
+            },
+            "appRevisionShort": {
+              "description": "equivalant to ARGOCD_APP_REVISION_SHORT",
+              "type": "string"
+            },
+            "appRevisionShort8": {
+              "description": "equivalant to ARGOCD_APP_REVISION_SHORT_8",
+              "type": "string"
+            },
+            "appSourcePath": {
+              "description": "equivalant to ARGOCD_APP_SOURCE_PATH",
+              "type": "string"
+            },
+            "appSourceRepoUrl": {
+              "description": "equivalant to ARGOCD_APP_SOURCE_REPO_URL",
+              "type": "string"
+            },
+            "appSourceTargetRevision": {
+              "description": "equivalant to ARGOCD_APP_SOURCE_REPO_URL",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
         "deploymentStage": {
           "description": "Deployment stage",
           "type": "string"

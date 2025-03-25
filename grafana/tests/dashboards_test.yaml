@@ -1,0 +1,38 @@
+suite: test dashboards.yaml
+templates:
+  - dashboards.yaml
+
+tests:
+  - it: should render a GrafanaDashboard resource
+    asserts:
+      - hasDocuments:
+          count: 20
+      - isKind:
+          of: GrafanaDashboard
+
+  - it: should contain metadata
+    asserts:
+      - isNotEmpty:
+          path: metadata.name
+
+  - it: should have valid metadata
+    asserts:
+      - isNotEmpty:
+          path: metadata.namespace
+      - isNotEmpty:
+          path: spec
+  
+  - it: should have datasources
+    asserts:
+      - isNotEmpty:
+          path: spec.datasources
+
+  - it: should have a folder
+    asserts:
+      - isNotEmpty:
+          path: spec.folder
+
+  - it: should have an instance selector
+    asserts:
+      - isNotEmpty:
+          path: spec.instanceSelector.matchLabels.name
