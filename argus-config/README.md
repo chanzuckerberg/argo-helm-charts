@@ -22,12 +22,13 @@
 
 **Description:** Global parameters
 
-| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description                   |
-| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------- |
-| - [appContext](#global_appContext )           | No      | object | No         | -          | App context (provided by Argus API) |
-| - [appSecrets](#global_appSecrets )           | No      | object | No         | -          | App secrets (provided by Argus API) |
-| - [deploymentStage](#global_deploymentStage ) | No      | string | No         | -          | Deployment stage                    |
-| - [ingress](#global_ingress )                 | No      | object | No         | -          | Ingress configuration               |
+| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description                    |
+| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------ |
+| - [appContext](#global_appContext )           | No      | object | No         | -          | App context (provided by Argus API)  |
+| - [appSecrets](#global_appSecrets )           | No      | object | No         | -          | App secrets (provided by Argus API)  |
+| - [argoBuildEnv](#global_argoBuildEnv )       | No      | object | No         | -          | Argo built-in environment parameters |
+| - [deploymentStage](#global_deploymentStage ) | No      | string | No         | -          | Deployment stage                     |
+| - [ingress](#global_ingress )                 | No      | object | No         | -          | Ingress configuration                |
 
 ### <a name="global_appContext"></a>1.1. Property `argus-config > global > appContext`
 
@@ -171,7 +172,100 @@
 
 **Description:** Stack-level Kube secret name to write External Secrets to
 
-### <a name="global_deploymentStage"></a>1.3. Property `argus-config > global > deploymentStage`
+### <a name="global_argoBuildEnv"></a>1.3. Property `argus-config > global > argoBuildEnv`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Argo built-in environment parameters
+
+| Property                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                         |
+| -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------- |
+| - [appName](#global_argoBuildEnv_appName )                                 | No      | string | No         | -          | equivalant to ARGOCD_APP_NAME             |
+| - [appNamespace](#global_argoBuildEnv_appNamespace )                       | No      | string | No         | -          | equivalant to ARGOCD_APP_NAMESPACE        |
+| - [appRevision](#global_argoBuildEnv_appRevision )                         | No      | string | No         | -          | equivalant to ARGOCD_APP_REVISION         |
+| - [appRevisionShort](#global_argoBuildEnv_appRevisionShort )               | No      | string | No         | -          | equivalant to ARGOCD_APP_REVISION_SHORT   |
+| - [appRevisionShort8](#global_argoBuildEnv_appRevisionShort8 )             | No      | string | No         | -          | equivalant to ARGOCD_APP_REVISION_SHORT_8 |
+| - [appSourcePath](#global_argoBuildEnv_appSourcePath )                     | No      | string | No         | -          | equivalant to ARGOCD_APP_SOURCE_PATH      |
+| - [appSourceRepoUrl](#global_argoBuildEnv_appSourceRepoUrl )               | No      | string | No         | -          | equivalant to ARGOCD_APP_SOURCE_REPO_URL  |
+| - [appSourceTargetRevision](#global_argoBuildEnv_appSourceTargetRevision ) | No      | string | No         | -          | equivalant to ARGOCD_APP_SOURCE_REPO_URL  |
+
+#### <a name="global_argoBuildEnv_appName"></a>1.3.1. Property `argus-config > global > argoBuildEnv > appName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_NAME
+
+#### <a name="global_argoBuildEnv_appNamespace"></a>1.3.2. Property `argus-config > global > argoBuildEnv > appNamespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_NAMESPACE
+
+#### <a name="global_argoBuildEnv_appRevision"></a>1.3.3. Property `argus-config > global > argoBuildEnv > appRevision`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_REVISION
+
+#### <a name="global_argoBuildEnv_appRevisionShort"></a>1.3.4. Property `argus-config > global > argoBuildEnv > appRevisionShort`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_REVISION_SHORT
+
+#### <a name="global_argoBuildEnv_appRevisionShort8"></a>1.3.5. Property `argus-config > global > argoBuildEnv > appRevisionShort8`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_REVISION_SHORT_8
+
+#### <a name="global_argoBuildEnv_appSourcePath"></a>1.3.6. Property `argus-config > global > argoBuildEnv > appSourcePath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_SOURCE_PATH
+
+#### <a name="global_argoBuildEnv_appSourceRepoUrl"></a>1.3.7. Property `argus-config > global > argoBuildEnv > appSourceRepoUrl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_SOURCE_REPO_URL
+
+#### <a name="global_argoBuildEnv_appSourceTargetRevision"></a>1.3.8. Property `argus-config > global > argoBuildEnv > appSourceTargetRevision`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** equivalant to ARGOCD_APP_SOURCE_REPO_URL
+
+### <a name="global_deploymentStage"></a>1.4. Property `argus-config > global > deploymentStage`
 
 |              |          |
 | ------------ | -------- |
@@ -180,7 +274,7 @@
 
 **Description:** Deployment stage
 
-### <a name="global_ingress"></a>1.4. Property `argus-config > global > ingress`
+### <a name="global_ingress"></a>1.5. Property `argus-config > global > ingress`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -194,7 +288,7 @@
 | ------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [host](#global_ingress_host ) | No      | string | No         | -          | Ingress host      |
 
-#### <a name="global_ingress_host"></a>1.4.1. Property `argus-config > global > ingress > host`
+#### <a name="global_ingress_host"></a>1.5.1. Property `argus-config > global > ingress > host`
 
 |              |          |
 | ------------ | -------- |
