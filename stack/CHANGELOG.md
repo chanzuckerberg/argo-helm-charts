@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.9.0...stack-v2.10.0) (2025-03-25)
+
+
+### Features
+
+* Grafana chart (deploys Grafana using Grafana Operator) ([#201](https://github.com/chanzuckerberg/argo-helm-charts/issues/201)) ([7e7e4c4](https://github.com/chanzuckerberg/argo-helm-charts/commit/7e7e4c457ffe97a952fdfcd2ac0376a2b9c94cd3))
+
 ## [2.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.8.0...stack-v2.9.0) (2025-03-15)
 
 
