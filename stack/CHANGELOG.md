@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.10.1...stack-v2.10.2) (2025-03-26)
+
+
+### Bug Fixes
+
+* bumped argus config chart ([#212](https://github.com/chanzuckerberg/argo-helm-charts/issues/212)) ([0dbb576](https://github.com/chanzuckerberg/argo-helm-charts/commit/0dbb576c8cc9df0a0de9f91a17ab27028364b7dd))
+
 ## [2.10.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.10.0...stack-v2.10.1) (2025-03-25)
 
 
