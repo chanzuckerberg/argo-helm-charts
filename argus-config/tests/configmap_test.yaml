@@ -43,7 +43,7 @@ tests:
             __ARGUS_APP_REVISION: testSHAAAAAAAAA
             __ARGUS_APP_REVISION_SHORT: testSHA
             __ARGUS_APP_REVISION_SHORT_8: testSHA8
-            __ARGUS_APP_SOURCE_8: .
+            __ARGUS_APP_SOURCE_PATH: .
             __ARGUS_APP_SOURCE_REPO_URL: http://github.com/chanzuckerberg/repo
             __ARGUS_APP_SOURCE_TARGET_REVISION: main
   
