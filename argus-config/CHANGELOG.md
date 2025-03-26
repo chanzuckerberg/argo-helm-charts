@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.0...argus-config-v1.4.1) (2025-03-26)
+
+
+### Bug Fixes
+
+* fixed typo in argus config chart ([#210](https://github.com/chanzuckerberg/argo-helm-charts/issues/210)) ([1cb5e12](https://github.com/chanzuckerberg/argo-helm-charts/commit/1cb5e1254ea873353d3d62db774fb3a2be3dd211))
+
 ## [1.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.3.0...argus-config-v1.4.0) (2025-03-25)
 
 
