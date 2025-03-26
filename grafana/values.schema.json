@@ -58,6 +58,10 @@
       },
       "type": "object"
     },
+    "enabled": {
+      "description": "Enable the Grafana instance.",
+      "type": "boolean"
+    },
     "grafanaAnnotations": {
       "description": "Annotations to add to the Grafana instance.",
       "patternProperties": {

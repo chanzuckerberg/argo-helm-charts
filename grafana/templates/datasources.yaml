@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 {{ if .Values.datasources.loki.enabled }}
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
@@ -61,4 +62,5 @@ spec:
     url: "{{ .Values.datasources.tempo.url }}"
     basicAuth: false
     editable: true
+{{ end }}
 {{ end }}

@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
@@ -86,3 +87,4 @@ spec:
         nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
         nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
         nginx.ingress.kubernetes.io/session-cookie-name: grafana_sticky_session
+{{ end }}

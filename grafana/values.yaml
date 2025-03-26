@@ -1,3 +1,5 @@
+enabled: true # @schema description: Enable the Grafana instance.
+
 clusterName: "" # @schema description: Name of the cluster to configure the platform Grafana for. This value is required.; required: true
 
 baseDomain: "" ## @schema description: Base domain for cluster ingresses (e.g. dev-core-platform.dev.czi.team). This value is required.; required: true
