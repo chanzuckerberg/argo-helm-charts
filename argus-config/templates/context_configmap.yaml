@@ -28,7 +28,7 @@ data:
   __ARGUS_APP_REVISION_SHORT: {{ .argoBuildEnv.appRevisionShort }}
   {{- end }}
   {{- if .argoBuildEnv.appRevisionShort8 }}
-  __ARGUS_APP_REVISION_SHORT: {{ .argoBuildEnv.appRevisionShort8 }}
+  __ARGUS_APP_REVISION_SHORT_8: {{ .argoBuildEnv.appRevisionShort8 }}
   {{- end }}
   {{- if .argoBuildEnv.appSourcePath }}
   __ARGUS_APP_SOURCE_PATH: {{ .argoBuildEnv.appSourcePath }}
