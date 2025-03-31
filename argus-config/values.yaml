@@ -18,3 +18,17 @@ global: # @schema description: Global parameters
 
   ingress: # @schema description: Ingress configuration
     host: "foo.example.co" # @schema description: Ingress host
+
+  argoBuildEnv: # @schema description: Argo built-in environment parameters
+    appName: "" # @schema description: equivalant to ARGOCD_APP_NAME
+    appNamespace: "" # @schema description: equivalant to ARGOCD_APP_NAMESPACE
+    appRevision: "" # @schema description: equivalant to ARGOCD_APP_REVISION
+    appRevisionShort: "" # @schema description: equivalant to ARGOCD_APP_REVISION_SHORT
+    appRevisionShort8: "" # @schema description: equivalant to ARGOCD_APP_REVISION_SHORT_8
+    appSourcePath: "" # @schema description: equivalant to ARGOCD_APP_SOURCE_PATH
+    appSourceRepoUrl: "" # @schema description: equivalant to ARGOCD_APP_SOURCE_REPO_URL
+    appSourceTargetRevision: "" # @schema description: equivalant to ARGOCD_APP_SOURCE_REPO_URL
+
+
+
+

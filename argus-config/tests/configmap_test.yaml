@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test config map generation
+templates:
+  - context_configmap.yaml
+tests:
+  - it: Argus config map should have Argo Build Environment
+    set:
+      global:
+        appContext:
+          envContextConfigMapName: "testEnvContextConfigMap"
+          stackContextConfigMapName: "testStackContextConfigMap"
+        ingress:
+          host: "stack.play.dev.czi.team"
+        argoBuildEnv:
+          appName: "argoAppName"
+          appNamespace: "argoCD"
+          appRevision: "testSHAAAAAAAAA"
+          appRevisionShort: "testSHA"
+          appRevisionShort8: "testSHA8"
+          appSourcePath: "."
+          appSourceRepoUrl: "http://github.com/chanzuckerberg/repo"
+          appSourceTargetRevision: "main"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+      - equal:
+          path: metadata.name
+          value: testStackContextConfigMap
+      - equal:
+          path: data
+          value: 
+            __ARGUS_STACK_NAME: RELEASE-NAME
+            __ARGUS_STACK_INGRESS_HOST: stack.play.dev.czi.team
+            __ARGUS_DEPLOYMENT_STAGE: staging
+            __ARGUS_APP_NAME: argoAppName
+            __ARGUS_APP_NAMESPACE: argoCD
+            __ARGUS_APP_REVISION: testSHAAAAAAAAA
+            __ARGUS_APP_REVISION_SHORT: testSHA
+            __ARGUS_APP_REVISION_SHORT_8: testSHA8
+            __ARGUS_APP_SOURCE_PATH: .
+            __ARGUS_APP_SOURCE_REPO_URL: http://github.com/chanzuckerberg/repo
+            __ARGUS_APP_SOURCE_TARGET_REVISION: main
+  
+  - it: Argus config map should build even if not we don't pass in Argo Build Environment
+    set:
+      global:
+        appContext:
+          envContextConfigMapName: "testEnvContextConfigMap"
+          stackContextConfigMapName: "testStackContextConfigMap"
+        ingress:
+          host: "stack.play.dev.czi.team"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+      - equal:
+          path: metadata.name
+          value: testStackContextConfigMap
+      - equal:
+          path: data
+          value: 
+            __ARGUS_STACK_NAME: RELEASE-NAME
+            __ARGUS_STACK_INGRESS_HOST: stack.play.dev.czi.team
+            __ARGUS_DEPLOYMENT_STAGE: staging
+      
