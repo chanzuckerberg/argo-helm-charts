@@ -3,3 +3,5 @@ clusterName: my-cluster # @schema description: Name of the cluster to configure 
 secretName: my-sso-secret # @schema description: Name of the secret to create (both external secret and kubernetes secret resources)
 
 applicationName: my-app # @schema description: Name of the application to configure the sso secret for
+
+secretStoreRef: aws-secretsmanager # @schema description: Name of the secret store to use for external secrets.
