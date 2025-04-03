@@ -1,4 +1,5 @@
 {
   "stack": "2.10.2",
-  "argus-config": "1.4.1"
+  "argus-config": "1.4.1",
+  "secret-store": "0.1.0"
 }
