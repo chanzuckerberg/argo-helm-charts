@@ -14,6 +14,10 @@
     "secretName": {
       "description": "Name of the secret to create (both external secret and kubernetes secret resources)",
       "type": "string"
+    },
+    "secretStoreRef": {
+      "description": "Name of the secret store to use for external secrets.",
+      "type": "string"
     }
   },
   "title": "sso-secret",
