@@ -25,6 +25,12 @@
     },
     "stack": {
       "package-name": "stack"
+    },
+    "grafana": {
+      "package-name": "grafana"
+    },
+    "sso-secret": {
+      "package-name": "sso-secret"
     }
   }
 }
