@@ -4,4 +4,4 @@ metadata:
   name: {{ .Values.projectName}}
   namespace: {{ .Values.namespace }}
 spec:
-  {{ toYaml .Values.project.spec | indent 2 }}
+  {{ toYaml .Values.spec | indent 2 }}
