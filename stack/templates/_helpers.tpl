@@ -138,10 +138,6 @@ image: {{ .image.repository }}:{{ .image.tag | default "latest" }}
 {{- end }}
 {{- end }}
 
-{{- define "initContainer.name" -}}
-{{- .name | trunc 63 | trimSuffix "-" }}
-{{- end -}}
-
 {{- define "service.claimName" -}}
 {{- if .Values.persistence.existingClaim }}
     {{- printf "%s" (tpl .Values.persistence.existingClaim $) -}}
