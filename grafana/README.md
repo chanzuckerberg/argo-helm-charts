@@ -13,6 +13,7 @@
 | + [baseDomain](#baseDomain )                 | No      | string  | No         | -          | -                                                                                                                                                                                    |
 | + [clusterName](#clusterName )               | No      | string  | No         | -          | Name of the cluster to configure the platform Grafana for. This value is required.                                                                                                   |
 | - [datasources](#datasources )               | No      | object  | No         | -          | List of datasources to configure for the Grafana instance.                                                                                                                           |
+| - [enabled](#enabled )                       | No      | boolean | No         | -          | Enable the Grafana instance.                                                                                                                                                         |
 | - [grafanaAnnotations](#grafanaAnnotations ) | No      | object  | No         | -          | Annotations to add to the Grafana instance.                                                                                                                                          |
 | - [grafanaName](#grafanaName )               | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
 | - [grafanaSubdomain](#grafanaSubdomain )     | No      | string  | No         | -          | Subdomain to use for the Grafana instance.                                                                                                                                           |
@@ -151,7 +152,16 @@
 
 **Description:** URL of the Tempo datasource.
 
-## <a name="grafanaAnnotations"></a>4. Property `grafana > grafanaAnnotations`
+## <a name="enabled"></a>4. Property `grafana > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable the Grafana instance.
+
+## <a name="grafanaAnnotations"></a>5. Property `grafana > grafanaAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -165,7 +175,7 @@
 | --------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#grafanaAnnotations_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-### <a name="grafanaAnnotations_pattern1"></a>4.1. Pattern Property `grafana > grafanaAnnotations > ^.*$`
+### <a name="grafanaAnnotations_pattern1"></a>5.1. Pattern Property `grafana > grafanaAnnotations > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -175,7 +185,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="grafanaName"></a>5. Property `grafana > grafanaName`
+## <a name="grafanaName"></a>6. Property `grafana > grafanaName`
 
 |              |          |
 | ------------ | -------- |
@@ -184,7 +194,7 @@ must respect the following conditions
 
 **Description:** Name of the Grafana instance to create.
 
-## <a name="grafanaSubdomain"></a>6. Property `grafana > grafanaSubdomain`
+## <a name="grafanaSubdomain"></a>7. Property `grafana > grafanaSubdomain`
 
 |              |          |
 | ------------ | -------- |
@@ -193,7 +203,7 @@ must respect the following conditions
 
 **Description:** Subdomain to use for the Grafana instance.
 
-## <a name="replicas"></a>7. Property `grafana > replicas`
+## <a name="replicas"></a>8. Property `grafana > replicas`
 
 |              |           |
 | ------------ | --------- |
@@ -206,7 +216,7 @@ must respect the following conditions
 | ------------ | ------ |
 | **Maximum**  | &le; 1 |
 
-## <a name="roleAttributePath"></a>8. Property `grafana > roleAttributePath`
+## <a name="roleAttributePath"></a>9. Property `grafana > roleAttributePath`
 
 |              |          |
 | ------------ | -------- |
@@ -215,7 +225,7 @@ must respect the following conditions
 
 **Description:** JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-## <a name="secretStoreRef"></a>9. Property `grafana > secretStoreRef`
+## <a name="secretStoreRef"></a>10. Property `grafana > secretStoreRef`
 
 |              |          |
 | ------------ | -------- |

@@ -1,0 +1,7 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .Values.projectName}}
+  namespace: {{ .Values.namespace }}
+spec:
+  {{ toYaml .Values.project.spec | indent 2 }}

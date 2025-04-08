@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
@@ -369,3 +370,4 @@ spec:
     - inputName: "DS_PROMETHEUS"
       datasourceName: "Prometheus"
   url: "https://chanzuckerberg.github.io/argus/grafana/kubernetes-health.json"
+{{ end }}
