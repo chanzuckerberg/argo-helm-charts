@@ -31,6 +31,9 @@
     },
     "sso-secret": {
       "package-name": "sso-secret"
+    },
+    "argo-project": {
+      "package-name": "argo-project"
     }
   }
 }

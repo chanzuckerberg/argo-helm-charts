@@ -1,0 +1,54 @@
+{
+  "$id": "argo.helm.charts/argo-project",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "namespace": {
+      "type": "string"
+    },
+    "projectName": {
+      "type": "string"
+    },
+    "spec": {
+      "properties": {
+        "clusterResourceWhitelist": {
+          "items": {
+            "properties": {
+              "group": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "destinations": {
+          "items": {
+            "properties": {
+              "namespace": {
+                "type": "string"
+              },
+              "server": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "sourceRepos": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "title": "argo-project",
+  "type": "object"
+}
