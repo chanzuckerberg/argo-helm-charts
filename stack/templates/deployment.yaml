@@ -99,12 +99,18 @@ spec:
         {{- end }}
       initContainers:
       {{- range $i, $container := .Values.initContainers }}
-      {{- $imageDict := fromYaml (include "image" $container) }}
-      {{- $container = mergeOverwrite $container $imageDict }}
-      {{- with omit $container "envFrom" "env" }}
-        - {{- toYaml . | nindent 10 }}
-          {{- include "service.configuration" $service | nindent 10}}
-      {{- end }}
+      {{- $imageDict := fromYaml (include "image" $container) -}}
+      {{- $container = mergeOverwrite $container $imageDict -}}
+      {{- with omit $container "envFrom" "env" "serviceAccount"}}
+        - {{- toYaml . | nindent 10 -}}
+          {{- include "service.configuration" $service | nindent 10 -}}
+      {{- end -}}
+      {{- if .serviceAccount -}}
+      {{ $ctx := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $container }}
+      {{- with $ctx -}}
+      {{- toYaml (dict "serviceAccountName" (include "container.serviceAccountName" . )) |nindent 10 -}}
+      {{- end -}}
+      {{- end -}}
       {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
