@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argo-project-v1.0.0...argo-project-v1.0.1) (2025-04-08)
+
+
+### Bug Fixes
+
+* wrong values ([#219](https://github.com/chanzuckerberg/argo-helm-charts/issues/219)) ([9604535](https://github.com/chanzuckerberg/argo-helm-charts/commit/96045352a4c19da1bc2e4356428568f6417fefb3))
+
 ## 1.0.0 (2025-04-08)
 
 
