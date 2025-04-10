@@ -45,7 +45,7 @@ spec:
           volumes:
             - name: secrets
               secret:
-                secretName: grafana-sso-secret
+                secretName: {{ .Values.grafanaName }}-sso-secret
                 defaultMode: 0444
           containers:
             - name: grafana
