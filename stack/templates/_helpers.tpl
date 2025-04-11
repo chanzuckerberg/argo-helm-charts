@@ -106,6 +106,17 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "container.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+{{- printf "%s-%s" (include "stack.fullname" .| lower) .Values.name -}}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
 {{- define "service.nonsensitiveEnvVars" -}}
 {{- $envs := list }}
 {{- range $i, $envHolder := . -}}
