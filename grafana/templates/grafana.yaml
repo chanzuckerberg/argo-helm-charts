@@ -45,7 +45,7 @@ spec:
           volumes:
             - name: secrets
               secret:
-                secretName: grafana-sso-secret
+                secretName: {{ .Values.grafanaName }}-sso-secret
                 defaultMode: 0444
           containers:
             - name: grafana
@@ -70,7 +70,7 @@ spec:
                 pathType: Prefix
                 backend:
                   service:
-                    name: grafana-service
+                    name: {{ .Values.grafanaName }}-service
                     port:
                       number: 80
       tls:
