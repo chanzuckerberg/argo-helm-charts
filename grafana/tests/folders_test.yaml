@@ -17,11 +17,19 @@ tests:
 
   - it: should have valid metadata
     asserts:
-      - isNotEmpty:
-          path: metadata.namespace
-      - isNotEmpty:
+      - documentIndex: 0
+        isNotEmpty:
+          path: metadata.name
+      - documentIndex: 0
+        isNotEmpty:
           path: spec
-  
+      - documentIndex: 1
+        isNotEmpty:
+          path: metadata.name
+      - documentIndex: 1
+        isNotEmpty:
+          path: spec
+
   - it: should have a title
     asserts:
       - isNotEmpty:

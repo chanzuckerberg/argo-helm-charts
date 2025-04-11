@@ -43,6 +43,10 @@ spec:
       template:
         spec:
           volumes:
+            - name: cluster-wide-secrets
+              secret:
+                secretName: argus-cluster-secret.{{ .Values.clusterName }}
+                defaultMode: 0444
             - name: secrets
               secret:
                 secretName: {{ .Values.grafanaName }}-sso-secret
@@ -52,6 +56,9 @@ spec:
               volumeMounts:
                 - name: secrets
                   mountPath: /etc/secrets
+                  readOnly: true
+                - name: cluster-wide-secrets
+                  mountPath: /etc/cluster-wide-secrets
                   readOnly: true
   service:
     spec:
