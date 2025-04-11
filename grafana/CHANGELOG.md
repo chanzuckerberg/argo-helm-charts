@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.2.0...grafana-v0.3.0) (2025-04-11)
+
+
+### Features
+
+* Support multiple grafanas in the same namespace ([#221](https://github.com/chanzuckerberg/argo-helm-charts/issues/221)) ([1198849](https://github.com/chanzuckerberg/argo-helm-charts/commit/119884942da8504bb34a5f927eba7934e152f3f6))
+
 ## [0.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.1.0...grafana-v0.2.0) (2025-04-08)
 
 
