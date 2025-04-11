@@ -19,7 +19,7 @@ tests:
   - it: should have an okta auth config
     asserts:
       - isNotEmpty:
-          path: spec.config.auth.okta
+          path: spec.config["auth.okta"]
 
   - it: should have a number of replicas specified
     asserts:
@@ -52,11 +52,11 @@ tests:
       - isNotEmpty:
           path: spec.config.auth
       - isNotEmpty:
-          path: spec.config.auth.basic
+          path: spec.config["auth.basic"]
       - isNotEmpty:
-          path: spec.config.auth.anonymous
+          path: spec.config["auth.anonymous"]
       - isNotEmpty:
-          path: spec.config.auth.okta
+          path: spec.config["auth.okta"]
 
   - it: should have a valid deployment configuration
     set:
