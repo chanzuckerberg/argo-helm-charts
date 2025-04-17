@@ -141,13 +141,18 @@ tests:
     set:
       env:
         FOO: bar
+        BAR: baz
     asserts:
-      - equal:
-          path: spec.deployment.spec.template.spec.containers[0].env[0].name
-          value: "FOO"
-      - equal:
-          path: spec.deployment.spec.template.spec.containers[0].env[0].value
-          value: "bar"
+      - contains:
+          path: spec.deployment.spec.template.spec.containers[0].env
+          content:
+            name: "FOO"
+            value: "bar"
+      - contains:
+          path: spec.deployment.spec.template.spec.containers[0].env
+          content:
+            name: "BAR"
+            value: "baz"
 
   - it: should not render env section when .Values.env is an empty object
     set:
