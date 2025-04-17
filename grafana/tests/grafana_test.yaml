@@ -149,3 +149,10 @@ tests:
           path: spec.deployment.spec.template.spec.containers[0].env[0].value
           value: "bar"
 
+  - it: should not render env section when .Values.env is an empty object
+    set:
+      env: {}
+    asserts:
+      - notExists:
+          path: spec.deployment.spec.template.spec.containers[0].env
+
