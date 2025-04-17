@@ -16,6 +16,8 @@ grafanaAnnotations: {} # @schema description: Annotations to add to the Grafana 
 
 grafanaSubdomain: "grafana" # @schema description: Subdomain to use for the Grafana instance.
 
+env: {} # @schema description: Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.; patternProperties: { "^.*$": { "type": "string" } }
+
 datasources: # @schema description: List of datasources to configure for the Grafana instance.
   loki: # @schema description: Loki datasource configuration.
     enabled: true # @schema description: Enable the Loki datasource.

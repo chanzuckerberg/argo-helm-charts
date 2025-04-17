@@ -49,6 +49,7 @@ spec:
                 defaultMode: 0444
           containers:
             - name: grafana
+              env: {{- toYaml .Values.env | nindent 16 }}
               volumeMounts:
                 - name: secrets
                   mountPath: /etc/secrets
