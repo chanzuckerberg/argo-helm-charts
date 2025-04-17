@@ -49,7 +49,7 @@ spec:
                 defaultMode: 0444
           containers:
             - name: grafana
-              {{- if .Values.env }}
+              {{- if gt (len .Values.env) 0 }}
               env:
                 {{- range $key, $value := .Values.env }}
                 - name: {{ $key | quote }}
