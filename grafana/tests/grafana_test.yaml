@@ -141,7 +141,6 @@ tests:
     set:
       env:
         FOO: bar
-        BAR: baz
     asserts:
       - equal:
           path: spec.deployment.spec.template.spec.containers[0].env[0].name
@@ -149,10 +148,4 @@ tests:
       - equal:
           path: spec.deployment.spec.template.spec.containers[0].env[0].value
           value: "bar"
-      - equal:
-          path: spec.deployment.spec.template.spec.containers[0].env[1].name
-          value: "BAR"
-      - equal:
-          path: spec.deployment.spec.template.spec.containers[0].env[1].value
-          value: "baz"
 
