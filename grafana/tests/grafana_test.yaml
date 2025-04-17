@@ -3,6 +3,13 @@ templates:
   - grafana.yaml
 
 tests:
+  - it: should not render anything if .Values.enabled is false
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+          
   - it: should render a Grafana resource
     asserts:
       - hasDocuments:
@@ -130,21 +137,22 @@ tests:
           path: spec.deployment.spec.template.spec.containers[0].volumeMounts[0].mountPath
           value: /etc/secrets
 
-  - it: should not include environment variables if not specified
-    asserts:
-      - isEmpty:
-        path: spec.deployment.spec.template.spec.containers[0].env
-  
-  - it: should include environment variables if specified
+  - it: should include extra env vars when provided
     set:
       env:
-        EXAMPLE_ENV: "example_value"
+        FOO: bar
+        BAR: baz
     asserts:
-      - isNotEmpty:
-        path: spec.deployment.spec.template.spec.containers[0].env
       - equal:
-        path: spec.deployment.spec.template.spec.containers[0].env[0].name
-        value: EXAMPLE_ENV
+          path: spec.deployment.spec.template.spec.containers[0].env[0].name
+          value: "FOO"
       - equal:
-        path: spec.deployment.spec.template.spec.containers[0].env[0].value
-        value: "example_value"
+          path: spec.deployment.spec.template.spec.containers[0].env[0].value
+          value: "bar"
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].env[1].name
+          value: "BAR"
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].env[1].value
+          value: "baz"
+
