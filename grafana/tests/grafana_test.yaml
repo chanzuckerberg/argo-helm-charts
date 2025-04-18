@@ -3,6 +3,13 @@ templates:
   - grafana.yaml
 
 tests:
+  - it: should not render anything if .Values.enabled is false
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+          
   - it: should render a Grafana resource
     asserts:
       - hasDocuments:
@@ -129,3 +136,28 @@ tests:
       - equal:
           path: spec.deployment.spec.template.spec.containers[0].volumeMounts[0].mountPath
           value: /etc/secrets
+
+  - it: should include extra env vars when provided
+    set:
+      env:
+        FOO: bar
+        BAR: baz
+    asserts:
+      - contains:
+          path: spec.deployment.spec.template.spec.containers[0].env
+          content:
+            name: "FOO"
+            value: "bar"
+      - contains:
+          path: spec.deployment.spec.template.spec.containers[0].env
+          content:
+            name: "BAR"
+            value: "baz"
+
+  - it: should not render env section when .Values.env is an empty object
+    set:
+      env: {}
+    asserts:
+      - notExists:
+          path: spec.deployment.spec.template.spec.containers[0].env
+
