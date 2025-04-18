@@ -10,7 +10,7 @@ replicas: 1 # @schema description: Number of Grafana replicas to create. When gr
 
 secretStoreRef: "aws-secretsmanager" # @schema description: Name of the secret store to use for external secrets.
 
-roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || contains(groups[*], 'team-pep-dev-core-platform-argus-obs.Admin') && 'Admin' || 'Viewer'" # @schema description: JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
+roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || 'Viewer'" # @schema description: JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
 grafanaAnnotations: {} # @schema description: Annotations to add to the Grafana instance.; patternProperties: { "^.*$": { "type": "string" } }
 
