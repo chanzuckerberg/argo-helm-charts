@@ -7,37 +7,37 @@ apiVersion: v1
 metadata:
   name: {{ .appContext.stackContextConfigMapName }}
 data:
-  __ARGUS_STACK_NAME: {{ $global.Release.Name }}
+  __ARGUS_STACK_NAME: {{ $global.Release.Name | quote }}
   {{- if and (ne .ingress nil) .ingress.host }}
-  __ARGUS_STACK_INGRESS_HOST: {{ .ingress.host }}
+  __ARGUS_STACK_INGRESS_HOST: {{ .ingress.host | quote }}
   {{- end }}
   {{- if .deploymentStage }}
-  __ARGUS_DEPLOYMENT_STAGE: {{ .deploymentStage }}
+  __ARGUS_DEPLOYMENT_STAGE: {{ .deploymentStage | quote }}
   {{- end }}
   {{- if ne .argoBuildEnv nil }}
   {{- if .argoBuildEnv.appName }}
-  __ARGUS_APP_NAME: {{ .argoBuildEnv.appName }}
+  __ARGUS_APP_NAME: {{ .argoBuildEnv.appName | quote }}
   {{- end }}
   {{- if .argoBuildEnv.appNamespace }}
-  __ARGUS_APP_NAMESPACE: {{ .argoBuildEnv.appNamespace }}
+  __ARGUS_APP_NAMESPACE: {{ .argoBuildEnv.appNamespace | quote }}
   {{- end }}
   {{- if .argoBuildEnv.appRevision }}
-  __ARGUS_APP_REVISION: {{ .argoBuildEnv.appRevision }}
+  __ARGUS_APP_REVISION: {{ .argoBuildEnv.appRevision | quote }}
   {{- end }}
   {{- if .argoBuildEnv.appRevisionShort }}
-  __ARGUS_APP_REVISION_SHORT: {{ .argoBuildEnv.appRevisionShort }}
+  __ARGUS_APP_REVISION_SHORT: {{ .argoBuildEnv.appRevisionShort | quote }}
   {{- end }}
   {{- if .argoBuildEnv.appRevisionShort8 }}
-  __ARGUS_APP_REVISION_SHORT_8: {{ .argoBuildEnv.appRevisionShort8 }}
+  __ARGUS_APP_REVISION_SHORT_8: {{ .argoBuildEnv.appRevisionShort8 | quote }}
   {{- end }}
   {{- if .argoBuildEnv.appSourcePath }}
-  __ARGUS_APP_SOURCE_PATH: {{ .argoBuildEnv.appSourcePath }}
+  __ARGUS_APP_SOURCE_PATH: {{ .argoBuildEnv.appSourcePath | quote }}
   {{- end }}
   {{- if .argoBuildEnv.appSourceRepoUrl }}
-  __ARGUS_APP_SOURCE_REPO_URL: {{ .argoBuildEnv.appSourceRepoUrl }}
+  __ARGUS_APP_SOURCE_REPO_URL: {{ .argoBuildEnv.appSourceRepoUrl | quote }}
   {{- end }}
   {{- if .argoBuildEnv.appSourceTargetRevision }}
-  __ARGUS_APP_SOURCE_TARGET_REVISION: {{ .argoBuildEnv.appSourceTargetRevision }}
+  __ARGUS_APP_SOURCE_TARGET_REVISION: {{ .argoBuildEnv.appSourceTargetRevision | quote }}
   {{- end }}
   {{- end }}
 {{- end }}

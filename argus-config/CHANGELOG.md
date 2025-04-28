@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.1...argus-config-v1.4.2) (2025-04-28)
+
+
+### Bug Fixes
+
+* quote the argus context values ([#227](https://github.com/chanzuckerberg/argo-helm-charts/issues/227)) ([eeba31e](https://github.com/chanzuckerberg/argo-helm-charts/commit/eeba31ebb93d116e0e8dc7a9e72f089947bee1c0))
+
 ## [1.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.0...argus-config-v1.4.1) (2025-03-26)
 
 

@@ -62,6 +62,16 @@
       "description": "Enable the Grafana instance.",
       "type": "boolean"
     },
+    "env": {
+      "description": "Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.",
+      "patternProperties": {
+        "^.*$": {
+          "type": "string"
+        }
+      },
+      "properties": {},
+      "type": "object"
+    },
     "grafanaAnnotations": {
       "description": "Annotations to add to the Grafana instance.",
       "patternProperties": {
