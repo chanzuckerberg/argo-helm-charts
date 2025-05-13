@@ -72,6 +72,10 @@
       "properties": {},
       "type": "object"
     },
+    "extraSecretVolumes": {
+      "description": "List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:",
+      "type": "array"
+    },
     "grafanaAnnotations": {
       "description": "Annotations to add to the Grafana instance.",
       "patternProperties": {

@@ -47,6 +47,7 @@ spec:
               secret:
                 secretName: {{ .Values.grafanaName }}-sso-secret
                 defaultMode: 0444
+            {{- toYaml .Values.extraSecretVolumes | nindent 12 }}
           containers:
             - name: grafana
               {{- if gt (len .Values.env) 0 }}
@@ -60,6 +61,11 @@ spec:
                 - name: secrets
                   mountPath: /etc/secrets
                   readOnly: true
+                {{- range $extraVolume := .Values.extraSecretVolumes }}
+                - name: {{ $extraVolume.name }}
+                  mountPath: {{ printf "/etc/%s" $extraVolume.name }}
+                  readOnly: true
+                {{- end }}
   service:
     spec:
       ports:
