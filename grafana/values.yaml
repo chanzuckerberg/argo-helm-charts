@@ -37,7 +37,7 @@ extraSecretVolumes: [] # @schema description: List of extra secret volumes to mo
 
   #   OR
 
-  # name: <name>
-  # configMap:
-  #   configMapName: <some-name>
-  #   defaultMode: 0444
+  # - name: <name>
+  #   configMap:
+  #     configMapName: <some-name>
+  #     defaultMode: 0444
