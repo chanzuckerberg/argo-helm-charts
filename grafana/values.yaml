@@ -33,11 +33,11 @@ extraSecretVolumes: [] # @schema description: List of extra secret volumes to mo
   # - name: slack-webhook-secret
   #   secret:
   #     secretName: slack-webhook-secret
-  #     defaultMode: "0444"
+  #     defaultMode: 0444
 
   #   OR
 
   # name: <name>
   # configMap:
   #   configMapName: <some-name>
-  #   defaultMode: "0444"
+  #   defaultMode: 0444

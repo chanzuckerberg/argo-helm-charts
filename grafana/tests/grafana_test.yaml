@@ -167,7 +167,7 @@ tests:
         - name: slack-webhook-secret
           secret:
             secretName: slack-webhook-secret
-            defaultMode: "0444"
+            defaultMode: 0444
     asserts:
       - equal:
           path: spec.deployment.spec.template.spec.volumes
@@ -179,7 +179,7 @@ tests:
             - name: slack-webhook-secret
               secret:
                 secretName: slack-webhook-secret
-                defaultMode: "0444"
+                defaultMode: 0444
       - equal:
           path: spec.deployment.spec.template.spec.containers[0].volumeMounts
           value:
