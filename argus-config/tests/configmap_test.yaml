@@ -16,7 +16,7 @@ tests:
           appNamespace: "argoCD"
           appRevision: "testSHAAAAAAAAA"
           appRevisionShort: "testSHA"
-          appRevisionShort8: "testSHA8"
+          appRevisionShort8: 12345678
           appSourcePath: "."
           appSourceRepoUrl: "http://github.com/chanzuckerberg/repo"
           appSourceTargetRevision: "main"
