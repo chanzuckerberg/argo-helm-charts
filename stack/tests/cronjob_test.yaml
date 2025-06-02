@@ -158,6 +158,7 @@ tests:
     set:
       cronJobs:
         job2:
+          enable: true
           concurrencyPolicy: Forbid
           schedule: "*/3 * * * *"
           image:
@@ -178,4 +179,18 @@ tests:
           kind: ServiceAccount
           name: "release-name-stack-job2"
         not: true
-      
+  - it: should not create cronjob when enable is false
+    set:
+      cronJobs:
+        disabled-job:
+          enable: false
+          concurrencyPolicy: Forbid
+          schedule: "*/3 * * * *"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+    asserts:
+      - hasDocuments:
+          count: 0
