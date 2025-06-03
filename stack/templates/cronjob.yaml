@@ -1,12 +1,12 @@
 {{ $global := . }}
 {{ range $cronJobName, $cronJobValues := .Values.cronJobs }}
-  {{- if $cronJobValues.enable | default true }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $cronJobName -}}
   {{- $values := mergeOverwrite $values $cronJobValues -}}
   {{- $cronJob := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $cronJob -}}
+{{- if eq (include "service.isCronJobEnabled" .) "true" }}
 ---
 apiVersion: batch/v1
 kind: CronJob

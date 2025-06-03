@@ -258,7 +258,6 @@ services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global",
 cronJobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object" } }; description: Cron jobs to deploy
   {}
   # cronJob1:
-  #   enable: true
   #   concurrencyPolicy: Forbid
   #   schedule: "* * * * *"
   #   serviceAccount:
