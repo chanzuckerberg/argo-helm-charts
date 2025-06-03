@@ -158,7 +158,7 @@ tests:
     set:
       cronJobs:
         job2:
-          enable: true
+          enabled: true
           concurrencyPolicy: Forbid
           schedule: "*/3 * * * *"
           image:
@@ -183,7 +183,7 @@ tests:
     set:
       cronJobs:
         disabled-job:
-          enable: false
+          enabled: false
           concurrencyPolicy: Forbid
           schedule: "*/3 * * * *"
           image:

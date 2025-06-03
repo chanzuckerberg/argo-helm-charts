@@ -106,9 +106,9 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-{{- define "service.isCronJobEnabled" -}}
-{{- if hasKey .Values "enable" -}}
-{{- .Values.enable -}}
+{{- define "cronjob.isEnabled" -}}
+{{- if hasKey .Values "enabled" -}}
+{{- .Values.enabled -}}
 {{- else -}}
 true
 {{- end -}}
