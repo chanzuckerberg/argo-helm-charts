@@ -10,7 +10,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "service.fullname" . }}
+  name: {{ include "service.fullname" . }}  
+  annotations:
+    karpenter.sh/do-not-disrupt: "true"
 spec:
   schedule: "{{ .Values.schedule }}"
   {{- if .Values.concurrencyPolicy }}
