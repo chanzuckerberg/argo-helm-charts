@@ -12,8 +12,21 @@
       "description": "Cron jobs to deploy",
       "patternProperties": {
         "^.*$": {
-          "$ref": "#/properties/global",
-          "type": "object"
+          "allOf": [
+            {
+              "$ref": "#/properties/global"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "enable": {
+                  "description": "Whether to enable the cronjob",
+                  "type": "boolean",
+                  "default": true
+                }
+              }
+            }
+          ]        
         }
       },
       "properties": {},
