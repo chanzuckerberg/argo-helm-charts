@@ -197,7 +197,7 @@ tests:
   - it: should create cronjob when enable is not specified
     set:
       cronJobs:
-        disabled-job:
+        default-enabled-job:
           concurrencyPolicy: Forbid
           schedule: "*/3 * * * *"
           image:
