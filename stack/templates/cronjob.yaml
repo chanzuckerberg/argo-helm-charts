@@ -77,3 +77,4 @@ automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
 {{- end }}
 {{- end }}
 {{- end }}
+{{- end }}
