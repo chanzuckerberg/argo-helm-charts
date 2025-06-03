@@ -7,7 +7,6 @@ tests:
     set:
       cronJobs:
         job1:
-          enable: true
           concurrencyPolicy: Forbid
           schedule: "*/3 * * * *"
           serviceAccount:
@@ -195,17 +194,3 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
-  - it: should create cronjob when enable is not specified
-    set:
-      cronJobs:
-        disabled-job:
-          concurrencyPolicy: Forbid
-          schedule: "*/3 * * * *"
-          image:
-            repository: my-repo
-            tag: sha-mytag
-          command: ["hello-world"]
-          args: ["arg1", "arg2"]
-    asserts:
-      - hasDocuments:
-          count: 1

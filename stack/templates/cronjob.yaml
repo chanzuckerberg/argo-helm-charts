@@ -1,6 +1,5 @@
 {{ $global := . }}
 {{ range $cronJobName, $cronJobValues := .Values.cronJobs }}
-  {{- if or (not (hasKey $cronJobValues "enable")) $cronJobValues.enable }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $cronJobName -}}
