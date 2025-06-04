@@ -6,6 +6,7 @@
   {{- $values := mergeOverwrite $values $cronJobValues -}}
   {{- $cronJob := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $cronJob -}}
+{{- if eq (include "cronjob.isEnabled" .) "true" }}
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -75,6 +76,7 @@ metadata:
   {{- end }}
 automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

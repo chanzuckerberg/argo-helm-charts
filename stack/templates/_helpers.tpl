@@ -106,6 +106,14 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
+{{- define "cronjob.isEnabled" -}}
+{{- if hasKey .Values "enabled" -}}
+{{- .Values.enabled -}}
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
+
 {{- define "service.nonsensitiveEnvVars" -}}
 {{- $envs := list }}
 {{- range $i, $envHolder := . -}}
