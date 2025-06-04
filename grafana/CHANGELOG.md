@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.3.0...grafana-v0.4.0) (2025-06-04)
+
+
+### Features
+
+* allow specifying extra volume mounts ([#230](https://github.com/chanzuckerberg/argo-helm-charts/issues/230)) ([e0f7821](https://github.com/chanzuckerberg/argo-helm-charts/commit/e0f782110047000e6dab2527ada3b09e3eeae045))
+* Migrate and update CZI dashboards into the chart itself ([#233](https://github.com/chanzuckerberg/argo-helm-charts/issues/233)) ([0bac583](https://github.com/chanzuckerberg/argo-helm-charts/commit/0bac583e7e6ffa72fcd73f38d3afc63984e5be0b))
+
+
+### Bug Fixes
+
+* use integer for defaultMode ([#232](https://github.com/chanzuckerberg/argo-helm-charts/issues/232)) ([27b8f69](https://github.com/chanzuckerberg/argo-helm-charts/commit/27b8f69dc7be77a434a598f7ebdaf26768a8c61b))
+
 ## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.2.0...grafana-v0.3.0) (2025-04-28)
 
 

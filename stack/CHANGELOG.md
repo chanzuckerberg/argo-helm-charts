@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.10.3...stack-v2.11.0) (2025-06-04)
+
+
+### Features
+
+* Adding support for enable field in cronJobs ([#235](https://github.com/chanzuckerberg/argo-helm-charts/issues/235)) ([a9cd6d6](https://github.com/chanzuckerberg/argo-helm-charts/commit/a9cd6d6634313717c971d583236fe975a9856248))
+
+
+### Misc
+
+* Preventing cron job disruption from karpenter ([#236](https://github.com/chanzuckerberg/argo-helm-charts/issues/236)) ([c2c293e](https://github.com/chanzuckerberg/argo-helm-charts/commit/c2c293e418bb6e41446299615578590e41dab79f))
+
 ## [2.10.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.10.2...stack-v2.10.3) (2025-04-29)
 
 
