@@ -161,3 +161,49 @@ tests:
       - notExists:
           path: spec.deployment.spec.template.spec.containers[0].env
 
+  - it: should include extra secret volumes when provided
+    set:
+      extraSecretVolumes:
+        - name: slack-webhook-secret
+          secret:
+            secretName: slack-webhook-secret
+            defaultMode: 0444
+    asserts:
+      - equal:
+          path: spec.deployment.spec.template.spec.volumes
+          value:
+            - name: secrets
+              secret:
+                secretName: grafana-sso-secret
+                defaultMode: 0444
+            - name: slack-webhook-secret
+              secret:
+                secretName: slack-webhook-secret
+                defaultMode: 0444
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].volumeMounts
+          value:
+            - name: secrets
+              mountPath: /etc/secrets
+              readOnly: true
+            - name: slack-webhook-secret
+              mountPath: /etc/slack-webhook-secret
+              readOnly: true
+
+  - it: should not include extra secret volumes when not provided
+    set:
+      extraSecretVolumes: []
+    asserts:
+      - equal:
+          path: spec.deployment.spec.template.spec.volumes
+          value:
+            - name: secrets
+              secret:
+                secretName: grafana-sso-secret
+                defaultMode: 0444
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].volumeMounts
+          value:
+            - name: secrets
+              mountPath: /etc/secrets
+              readOnly: true

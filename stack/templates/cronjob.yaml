@@ -6,11 +6,14 @@
   {{- $values := mergeOverwrite $values $cronJobValues -}}
   {{- $cronJob := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $cronJob -}}
+{{- if eq (include "cronjob.isEnabled" .) "true" }}
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "service.fullname" . }}
+  name: {{ include "service.fullname" . }}  
+  annotations:
+    karpenter.sh/do-not-disrupt: "true"
 spec:
   schedule: "{{ .Values.schedule }}"
   {{- if .Values.concurrencyPolicy }}
@@ -73,6 +76,7 @@ metadata:
   {{- end }}
 automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

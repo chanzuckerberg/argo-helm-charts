@@ -49,10 +49,8 @@ spec:
     matchLabels:
       name: {{ .Values.grafanaName }}
   folder: "Loki Dashboards"
-  datasources:
-    - inputName: "DS_LOKI"
-      datasourceName: "Loki"
-  url: https://chanzuckerberg.github.io/argus/grafana/loki-stack.json
+  json: >
+{{ .Files.Get "dashboards/loki-stack.json" | indent 4 }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -366,8 +364,6 @@ spec:
     matchLabels:
       name: {{ .Values.grafanaName }}
   folder: "k8s Dashboards"
-  datasources:
-    - inputName: "DS_PROMETHEUS"
-      datasourceName: "Prometheus"
-  url: "https://chanzuckerberg.github.io/argus/grafana/kubernetes-health.json"
+  json: >
+{{ .Files.Get "dashboards/kubernetes-health.json" | indent 4 }}
 {{ end }}
