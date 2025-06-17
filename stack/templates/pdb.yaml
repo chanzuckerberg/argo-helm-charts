@@ -6,7 +6,6 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service -}}
-{{- if .Values.autoscaling.enabled }}
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -15,10 +14,13 @@ metadata:
   labels:
   {{- include "service.labels" . | nindent 4 }}
 spec:
+  {{- if .Values.autoscaling.enabled }}
   maxUnavailable: {{ .Values.autoscaling.maxUnavailable | default 1 }}
+  {{- else }}
+  maxUnavailable: 1
+  {{- end }}
   selector:
     matchLabels:
     {{- include "service.selectorLabels" . | nindent 6 }}
-{{- end }}
 {{- end }}
 {{- end }}
