@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test PodDisruptionBudget
+templates:
+  - pdb.yaml
+tests:
+  - it: should create a PodDisruptionBudget using maxUnavailable from autoscaling
+    set:
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 3
+          replicaCount: 2
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          name: release-name-stack-service1
+      - documentIndex: 0
+        equal:
+          path: spec.maxUnavailable
+          value: 3
+  - it: should create a PodDisruptionBudget using maxUnavailable of 1 when autoscaling is disabled
+    set:
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: false
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 3
+          replicaCount: 2
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          name: release-name-stack-service1
+      - documentIndex: 0
+        equal:
+          path: spec.maxUnavailable
+          value: 1
