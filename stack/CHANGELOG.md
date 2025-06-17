@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.11.0...stack-v2.12.0) (2025-06-17)
+
+
+### Features
+
+* create PodDisruptionBudget even when autoscaling is off ([#237](https://github.com/chanzuckerberg/argo-helm-charts/issues/237)) ([91e6604](https://github.com/chanzuckerberg/argo-helm-charts/commit/91e660426639a42dab6ffec632e354c856ef199e))
+
 ## [2.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.10.3...stack-v2.11.0) (2025-06-04)
 
 
