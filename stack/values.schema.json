@@ -125,6 +125,15 @@
             "array"
           ]
         },
+        "deploymentKind": {
+          "description": "Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).",
+          "type": "string",
+          "enum": [
+            "Deployment",
+            "Rollout"
+          ],
+          "default": "Deployment"
+        },
         "deploymentStage": {
           "description": "Deployment stage",
           "type": "string"
@@ -679,6 +688,54 @@
             "Never"
           ],
           "type": "string"
+        },
+        "rollout": {
+          "description": "Argo Rollouts specific configuration, only applicable when deploymentKind is 'Rollout'.",
+          "type": "object",
+          "properties": {
+            "strategy": {
+              "type": "object",
+              "properties": {
+                "blueGreen": {
+                  "type": "object",
+                  "properties": {
+                    "activeService": {
+                      "type": "string"
+                    },
+                    "previewService": {
+                      "type": "string"
+                    },
+                    "autoPromotionEnabled": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "prePromotionAnalysis": {
+                      "type": "object",
+                      "properties": {
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "canary": {
+                  "type": "object",
+                  "properties": {
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         "securityContext": {
           "description": "Security context",
