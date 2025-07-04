@@ -1790,7 +1790,6 @@ Must be one of:
 | - [activeService](#cronJobs_pattern1_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -          | -                 |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -          | -                 |
 | - [autoPromotionEnabled](#cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -          | -                 |
-| - [postInboundTraffic](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic )     | No      | object  | No         | -          | -                 |
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | -          | -                 |
 
 ###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>2.1.31.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
@@ -1815,46 +1814,7 @@ Must be one of:
 | **Required** | No        |
 | **Default**  | `false`   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic"></a>2.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [steps](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps ) | No      | array of object | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps"></a>2.1.31.1.1.4.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic > steps`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                             | Description |
-| ------------------------------------------------------------------------------------------- | ----------- |
-| [steps items](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps_items) | -           |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps_items"></a>2.1.31.1.1.4.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic > steps > steps items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>2.1.31.1.1.5. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>2.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1866,7 +1826,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [steps](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps ) | No      | array of object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>2.1.31.1.1.5.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>2.1.31.1.1.4.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1885,7 +1845,7 @@ Must be one of:
 | --------------------------------------------------------------------------------------------- | ----------- |
 | [steps items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>2.1.31.1.1.5.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>2.1.31.1.1.4.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3983,7 +3943,6 @@ Must be one of:
 | - [activeService](#global_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -          | -                 |
 | - [previewService](#global_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -          | -                 |
 | - [autoPromotionEnabled](#global_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -          | -                 |
-| - [postInboundTraffic](#global_rollout_strategy_blueGreen_postInboundTraffic )     | No      | object  | No         | -          | -                 |
 | - [prePromotionAnalysis](#global_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | -          | -                 |
 
 ###### <a name="global_rollout_strategy_blueGreen_activeService"></a>3.31.1.1.1. Property `stack > global > rollout > strategy > blueGreen > activeService`
@@ -4008,46 +3967,7 @@ Must be one of:
 | **Required** | No        |
 | **Default**  | `false`   |
 
-###### <a name="global_rollout_strategy_blueGreen_postInboundTraffic"></a>3.31.1.1.4. Property `stack > global > rollout > strategy > blueGreen > postInboundTraffic`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [steps](#global_rollout_strategy_blueGreen_postInboundTraffic_steps ) | No      | array of object | No         | -          | -                 |
-
-###### <a name="global_rollout_strategy_blueGreen_postInboundTraffic_steps"></a>3.31.1.1.4.1. Property `stack > global > rollout > strategy > blueGreen > postInboundTraffic > steps`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                  | Description |
-| -------------------------------------------------------------------------------- | ----------- |
-| [steps items](#global_rollout_strategy_blueGreen_postInboundTraffic_steps_items) | -           |
-
-###### <a name="global_rollout_strategy_blueGreen_postInboundTraffic_steps_items"></a>3.31.1.1.4.1.1. stack > global > rollout > strategy > blueGreen > postInboundTraffic > steps > steps items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-###### <a name="global_rollout_strategy_blueGreen_prePromotionAnalysis"></a>3.31.1.1.5. Property `stack > global > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="global_rollout_strategy_blueGreen_prePromotionAnalysis"></a>3.31.1.1.4. Property `stack > global > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4059,7 +3979,7 @@ Must be one of:
 | ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [steps](#global_rollout_strategy_blueGreen_prePromotionAnalysis_steps ) | No      | array of object | No         | -          | -                 |
 
-###### <a name="global_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>3.31.1.1.5.1. Property `stack > global > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
+###### <a name="global_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>3.31.1.1.4.1. Property `stack > global > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4078,7 +3998,7 @@ Must be one of:
 | ---------------------------------------------------------------------------------- | ----------- |
 | [steps items](#global_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items) | -           |
 
-###### <a name="global_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>3.31.1.1.5.1.1. stack > global > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
+###### <a name="global_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>3.31.1.1.4.1.1. stack > global > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6194,7 +6114,6 @@ Must be one of:
 | - [activeService](#cronJobs_pattern1_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -          | -                 |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -          | -                 |
 | - [autoPromotionEnabled](#cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -          | -                 |
-| - [postInboundTraffic](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic )     | No      | object  | No         | -          | -                 |
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | -          | -                 |
 
 ###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>4.1.31.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
@@ -6219,46 +6138,7 @@ Must be one of:
 | **Required** | No        |
 | **Default**  | `false`   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic"></a>4.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [steps](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps ) | No      | array of object | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps"></a>4.1.31.1.1.4.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic > steps`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                             | Description |
-| ------------------------------------------------------------------------------------------- | ----------- |
-| [steps items](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps_items) | -           |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps_items"></a>4.1.31.1.1.4.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic > steps > steps items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>4.1.31.1.1.5. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>4.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6270,7 +6150,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [steps](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps ) | No      | array of object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>4.1.31.1.1.5.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>4.1.31.1.1.4.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6289,7 +6169,7 @@ Must be one of:
 | --------------------------------------------------------------------------------------------- | ----------- |
 | [steps items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>4.1.31.1.1.5.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>4.1.31.1.1.4.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8405,7 +8285,6 @@ Must be one of:
 | - [activeService](#cronJobs_pattern1_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -          | -                 |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -          | -                 |
 | - [autoPromotionEnabled](#cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -          | -                 |
-| - [postInboundTraffic](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic )     | No      | object  | No         | -          | -                 |
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | -          | -                 |
 
 ###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>5.1.31.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
@@ -8430,46 +8309,7 @@ Must be one of:
 | **Required** | No        |
 | **Default**  | `false`   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic"></a>5.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [steps](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps ) | No      | array of object | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps"></a>5.1.31.1.1.4.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic > steps`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                             | Description |
-| ------------------------------------------------------------------------------------------- | ----------- |
-| [steps items](#cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps_items) | -           |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_postInboundTraffic_steps_items"></a>5.1.31.1.1.4.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > postInboundTraffic > steps > steps items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>5.1.31.1.1.5. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>5.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8481,7 +8321,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [steps](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps ) | No      | array of object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>5.1.31.1.1.5.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps"></a>5.1.31.1.1.4.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8500,7 +8340,7 @@ Must be one of:
 | --------------------------------------------------------------------------------------------- | ----------- |
 | [steps items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>5.1.31.1.1.5.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_steps_items"></a>5.1.31.1.1.4.1.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > steps > steps items
 
 |                           |                  |
 | ------------------------- | ---------------- |
