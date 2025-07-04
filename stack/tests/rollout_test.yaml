@@ -1,0 +1,457 @@
+suite: test rollout
+templates:
+  - rollout.yaml
+tests:
+  - it: should work and render a Rollout
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "alpine:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+          service:
+            port: 3000
+    asserts:
+      - isKind:
+          of: Rollout
+      - containsDocument:
+          apiVersion: argoproj.io/v1alpha1
+          kind: Rollout
+      - isSubset:
+          path: spec
+          content:
+            revisionHistoryLimit: 3
+            replicas: 2
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].protocol
+          value: TCP
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "your-app:latest"
+# revisionHistoryLimit: 3 (or any non-zero value):
+# Enables Rollback: This setting ensures that Kubernetes (and by extension, Argo Rollouts) keeps a specified number of older, stable versions (ReplicaSets) of your application available in the cluster. If a new deployment has issues, you can quickly revert to a previous, known-good state without needing to rebuild or redeploy the older image.
+# Resource Management: Without this limit, Kubernetes would store every single past version of your application, which can clutter your cluster and consume unnecessary resources over time. Setting a limit like 3 provides a balance: enough history for quick rollbacks, but not so much that it clogs your cluster.
+
+# replicas should always be set:
+# Base Count for Rollout: The replicas field in a Rollout's specification (spec.replicas) defines the initial and desired base number of pods the Rollout controller should maintain for your application.
+# HPA Baseline: Even when using a Horizontal Pod Autoscaler (HPA), the HPA targets and modifies the Rollout's spec.replicas field. The HPA uses this field as its baseline for scaling operations. If spec.replicas were omitted, the HPA would lack a fundamental value to operate from, and the Rollout controller wouldn't know how many pods to maintain initially.
+  - it: sets replicas when autoscaling is disabled
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          autoscaling:
+            enabled: false
+          replicaCount: 2
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 2
+
+  - it: should set replicas when autoscaling is enabled
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" }
+          autoscaling:
+            enabled: true
+          replicaCount: 2
+          service: {}
+    asserts:
+      - isKind:
+          of: Rollout
+      - equal:
+          path: spec.replicas
+          value: 2 # Rollout still sets spec.replicas even with autoscaling
+
+  - it: uses httpGet probe by default
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+
+  - it: uses exec probe when supplied
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            exec:
+              command: ["echo", "Hello World"]
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            exec:
+              command: ["echo", "Hello World"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+
+  - it: uses tcpSocket probe when supplied
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            tcpSocket:
+              port: 80
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+
+  - it: uses a combination of probes
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            timeoutSeconds: 10
+            tcpSocket:
+              port: 80
+          readinessProbe:
+            exec:
+              command: ["echo", "Hello World"]
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            failureThreshold: 3
+            exec:
+              command: ["echo", "Hello World"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+
+  - it: uses supplied initContainer image string value
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "alpine:latest"
+
+  - it: formats supplied initContainer image tag and repo
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          initContainers:
+            - name: initContainer1
+              image:
+                repository: "node"
+                tag: "20.0.0"
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "node:20.0.0"
+
+  - it: uses supplied sidecar image string value
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          sidecars:
+            - name: sidecar1
+              image: "alpine:latest"
+          image: # Main container image (needed if sidecars are present)
+            repository: "nginx"
+            tag: "latest"
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "nginx:latest"
+      - equal:
+          path: spec.template.spec.containers[1].image
+          value: "alpine:latest"
+
+  - it: formats supplied sidecar image tag and repo
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          sidecars:
+            - name: sidecar2
+              image:
+                repository: "node"
+                tag: "20.0.0"
+          image: # Main container image (needed if sidecars are present)
+            repository: "nginx"
+            tag: "latest"
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "nginx:latest"
+      - equal:
+          path: spec.template.spec.containers[1].image
+          value: "node:20.0.0"
+
+  - it: overwrites the name
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+        oidcProxy:
+          enable: true
+        fullnameOverride: "overwrittenfull"
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          ingress:
+            oidcProtected: true
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "sidecar1:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+          service:
+            port: 3000
+    asserts:
+      - equal:
+          path: metadata.name
+          value: "overwrittenfull-service1"
+
+  - it: configures blueGreen strategy with autoPromotionEnabled=false
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          strategy:
+            blueGreen:
+              activeService: "my-active-service"
+              previewService: "my-preview-service"
+              autoPromotionEnabled: false
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          service:
+            port: 3000
+    asserts:
+      - isKind:
+          of: Rollout
+      - equal:
+          path: spec.strategy.blueGreen.activeService
+          value: "my-active-service"
+      - equal:
+          path: spec.strategy.blueGreen.previewService
+          value: "my-preview-service"
+      - equal:
+          path: spec.strategy.blueGreen.autoPromotionEnabled
+          value: false
+
+  - it: includes postInboundTraffic pause step if defined
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          strategy:
+            blueGreen:
+              activeService: "my-active-service"
+              previewService: "my-preview-service"
+              autoPromotionEnabled: false
+              postInboundTraffic:
+                steps:
+                  - pause: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" }
+          service:
+            port: 3000
+    asserts:
+      - isKind:
+          of: Rollout
+      - equal:
+          path: spec.strategy.blueGreen.postInboundTraffic
+          value:
+            steps:
+              - pause: {}
+
+  - it: includes prePromotionAnalysis pause step if defined
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          strategy:
+            blueGreen:
+              activeService: "my-active-service"
+              previewService: "my-preview-service"
+              autoPromotionEnabled: false
+              prePromotionAnalysis:
+                steps:
+                  - pause: {}
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          service:
+            port: 3000
+    asserts:
+      - isKind:
+          of: Rollout
+      - equal:
+          path: spec.strategy.blueGreen.prePromotionAnalysis
+          value:
+            steps:
+              - pause: {}
+
+  - it: applies nodeSelector from global values
+    set:
+      global:
+        deploymentKind: Rollout
+        nodeSelector:
+          kubernetes.io/arch: amd64
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" } 
+          service:
+            port: 3000
+    asserts:
+      - isKind:
+          of: Rollout
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/arch: amd64
+
+  # # Test that the rollout.yaml template does NOT render if deploymentKind is not "Rollout"
+  # # This test should assert that NO document is rendered from rollout.yaml
+  - it: does not generate rollout if deploymentKind is not Rollout
+    set:
+      global:
+        deploymentKind: Deployment # Explicitly set to Deployment
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" }
+          service:
+            port: 3000
+    asserts:
+      - hasDocuments: # Checks if the template produced any documents
+          count: 0

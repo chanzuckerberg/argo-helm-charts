@@ -709,6 +709,17 @@
                       "type": "boolean",
                       "default": false
                     },
+                    "postInboundTraffic": {
+                      "type": "object",
+                      "properties": {
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
                     "prePromotionAnalysis": {
                       "type": "object",
                       "properties": {
