@@ -89,7 +89,8 @@ spec:
           {{- end }}
           {{- include "service.configuration" . | nindent 10}}
           {{- include "service.nonsensitiveEnvVars" (list $global.Values.global .Values) | nindent 10 }}
-        {{- range $i, $container := .Values.sidecars | default list }}
+        {{- if .Values.sidecars }}
+        {{- range $i, $container := .Values.sidecars }}
         {{- $imageDict := fromYaml (include "image" $container) }}
         {{- $container = mergeOverwrite $container $imageDict }}
         {{- with omit $container "envFrom" "env" }}
@@ -98,8 +99,10 @@ spec:
         {{- end }}
         {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
         {{- end }}
+        {{- end }}
+      {{if .Values.initContainers }}
       initContainers:
-      {{- range $i, $container := .Values.initContainers | default list}}
+      {{- range $i, $container := .Values.initContainers }}
       {{- $imageDict := fromYaml (include "image" $container) }}
       {{- $container = mergeOverwrite $container $imageDict }}
       {{- with omit $container "envFrom" "env" }}
@@ -108,6 +111,7 @@ spec:
       {{- end }}
       {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
       {{- end }}
+      {{end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       restartPolicy: {{ .Values.restartPolicy }}
       {{- if or .Values.persistence.enabled .Values.volumes}}
