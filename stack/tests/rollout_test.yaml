@@ -368,33 +368,6 @@ tests:
           path: spec.strategy.blueGreen.autoPromotionEnabled
           value: false
 
-  - it: includes postInboundTraffic pause step if defined
-    set:
-      global:
-        deploymentKind: Rollout
-        rollout:
-          strategy:
-            blueGreen:
-              activeService: "my-active-service"
-              previewService: "my-preview-service"
-              autoPromotionEnabled: false
-              postInboundTraffic:
-                steps:
-                  - pause: {}
-      services:
-        service1:
-          image: { repository: "your-app", tag: "latest" }
-          service:
-            port: 3000
-    asserts:
-      - isKind:
-          of: Rollout
-      - equal:
-          path: spec.strategy.blueGreen.postInboundTraffic
-          value:
-            steps:
-              - pause: {}
-
   - it: includes prePromotionAnalysis pause step if defined
     set:
       global:
@@ -406,8 +379,11 @@ tests:
               previewService: "my-preview-service"
               autoPromotionEnabled: false
               prePromotionAnalysis:
-                steps:
-                  - pause: {}
+                templates:
+                  - templateName: success-rate
+                args:
+                  - name: service-name
+                    value: guestbook-svc.default.svc.cluster.local
       services:
         service1:
           image: { repository: "your-app", tag: "latest" } 
@@ -419,8 +395,11 @@ tests:
       - equal:
           path: spec.strategy.blueGreen.prePromotionAnalysis
           value:
-            steps:
-              - pause: {}
+            templates:
+              - templateName: success-rate
+            args:
+              - name: service-name
+                value: guestbook-svc.default.svc.cluster.local
 
   - it: applies nodeSelector from global values
     set:
