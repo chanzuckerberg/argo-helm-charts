@@ -89,7 +89,7 @@ spec:
           {{- end }}
           {{- include "service.configuration" . | nindent 10}}
           {{- include "service.nonsensitiveEnvVars" (list $global.Values.global .Values) | nindent 10 }}
-        {{- range $i, $container := .Values.sidecars }}
+        {{- range $i, $container := .Values.sidecars | default list }}
         {{- $imageDict := fromYaml (include "image" $container) }}
         {{- $container = mergeOverwrite $container $imageDict }}
         {{- with omit $container "envFrom" "env" }}
@@ -99,7 +99,7 @@ spec:
         {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
         {{- end }}
       initContainers:
-      {{- range $i, $container := .Values.initContainers }}
+      {{- range $i, $container := .Values.initContainers | default list}}
       {{- $imageDict := fromYaml (include "image" $container) }}
       {{- $container = mergeOverwrite $container $imageDict }}
       {{- with omit $container "envFrom" "env" }}
