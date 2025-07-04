@@ -156,7 +156,7 @@ spec:
     {{- $rolloutStrategy = default dict (get $rolloutStrategy "strategy") }}
     {{- $blueGreenStrategy := default dict (get $rolloutStrategy "blueGreen") }}
     blueGreen:
-      activeService: {{ default (printf "%s-activeService" (include "service.fullname" .)) $blueGreenStrategy.activeService }}
+      activeService: {{ default (printf "%s-service" (include "service.fullname" .)) $blueGreenStrategy.activeService }}
       previewService: {{ default (printf "%s-previewService" (include "service.fullname" .)) $blueGreenStrategy.previewService }}
       autoPromotionEnabled: {{ default false $blueGreenStrategy.autoPromotionEnabled }}
       {{- with $blueGreenStrategy.postInboundTraffic }}
