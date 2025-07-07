@@ -1,0 +1,201 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test analysis template
+templates:
+  - analysis_template.yaml
+tests:
+  - it: should generate an AnalysisTemplate with a basic metric
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          analysisTemplate:
+            enabled: true
+            metrics:
+              - name: success-rate
+                interval: "1m"
+                count: 1
+                successCondition: "result.data.result[0].value[1] > 0.9"
+                failureCondition: "result.data.result[0].value[1] < 0.6"
+                provider:
+                  prometheus:
+                    address: http://prometheus.monitoring.svc.cluster.local:9090
+                    query: |
+                      sum(irate(container_cpu_usage_seconds_total{namespace="default"}[1m]))
+    asserts:
+      - isKind:
+          of: AnalysisTemplate
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-stack-analysis
+      - equal:
+          path: spec.metrics[0].name
+          value: success-rate
+      - equal:
+          path: spec.metrics[0].interval
+          value: 1m
+      - equal:
+          path: spec.metrics[0].successCondition
+          value: "result.data.result[0].value[1] > 0.9"
+      - equal:
+          path: spec.metrics[0].failureCondition
+          value: "result.data.result[0].value[1] < 0.6"
+      - equal:
+          path: spec.metrics[0].provider.prometheus.address
+          value: http://prometheus.monitoring.svc.cluster.local:9090
+      - equal:
+          path: spec.metrics[0].provider.prometheus.query
+          value: 'sum(irate(container_cpu_usage_seconds_total{namespace="default"}[1m])) '
+
+  - it: allows overriding the AnalysisTemplate name
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          analysisTemplate:
+            enabled: true
+            name: my-custom-analysis-template-name
+            metrics:
+              - name: dummy-metric
+                provider:
+                  web:
+                    url: http://example.com
+    asserts:
+      - isKind:
+          of: AnalysisTemplate
+      - equal:
+          path: metadata.name
+          value: my-custom-analysis-template-name
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: "stack"
+      - equal:
+          path: metadata.labels["helm.sh/chart"]
+          value: "stack-2.12.0"
+  
+  - it: includes initialDelay and timeout if defined
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          analysisTemplate:
+            enabled: true
+            metrics:
+              - name: delay-metric
+                initialDelay: "10s" # Test initialDelay
+                timeout: "2m" # Test timeout
+                provider:
+                  job:
+                    spec:
+                      template:
+                        spec:
+                          containers:
+                            - name: test
+                              image: busybox
+                          restartPolicy: Never
+    asserts:
+      - isKind:
+          of: AnalysisTemplate
+      - equal:
+          path: spec.metrics[0].initialDelay
+          value: 10s
+      - equal:
+          path: spec.metrics[0].timeout
+          value: 2m
+
+  - it: does not generate AnalysisTemplate if disabled
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          analysisTemplate:
+            enabled: false
+            metrics:
+              - name: dummy
+                provider:
+                  web:
+                    url: http://dummy.com
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: includes analysis arguments if defined
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          analysisTemplate:
+            enabled: true
+            metrics:
+              - name: arg-metric
+                provider:
+                  web:
+                    url: http://example.com/{{args.my-arg}}
+            args:
+              - name: service-name
+                value: guestbook-svc.default.svc.cluster.local
+              - name: metric-path
+                value: "/metrics"
+    asserts:
+      - isKind:
+          of: AnalysisTemplate
+      - equal:
+          path: spec.args[0].name
+          value: service-name
+      - equal:
+          path: spec.args[1].name
+          value: metric-path
+
+  - it: supports multiple metrics with different providers
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          analysisTemplate:
+            enabled: true
+            metrics:
+              - name: web-check
+                interval: "1s"
+                successCondition: "true"
+                provider:
+                  web:
+                    url: http://web-service.default.svc.cluster.local/health
+                    jsonPath: "$.status"
+              - name: job-check
+                interval: "5s"
+                provider:
+                  job:
+                    spec:
+                      template:
+                        spec:
+                          containers:
+                            - name: check
+                              image: busybox
+                              command: ["echo", "job ran"]
+                          restartPolicy: Never
+              - name: prometheus-check
+                interval: "10s"
+                provider:
+                  prometheus:
+                    address: http://prom.svc.cluster.local
+                    query: "rate(my_metric[5m])"
+    asserts:
+      - isKind:
+          of: AnalysisTemplate
+      - equal:
+          path: spec.metrics[0].name
+          value: web-check
+      - equal:
+          path: spec.metrics[0].provider.web.url
+          value: http://web-service.default.svc.cluster.local/health
+      - equal:
+          path: spec.metrics[1].name
+          value: job-check
+      - equal:
+          path: spec.metrics[1].provider.job.spec.template.spec.containers[0].image
+          value: busybox
+      - equal:
+          path: spec.metrics[2].name
+          value: prometheus-check
+      - equal:
+          path: spec.metrics[2].provider.prometheus.query
+          value: "rate(my_metric[5m])"

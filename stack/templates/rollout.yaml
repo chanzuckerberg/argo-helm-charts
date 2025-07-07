@@ -152,8 +152,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
   strategy:
-    {{- $rolloutStrategy := default dict (get (default dict $global.Values.global) "rollout") }}
-    {{- $rolloutStrategy = default dict (get $rolloutStrategy "strategy") }}
+    {{- $rollout := default dict (get (default dict $global.Values.global) "rollout") }}
+    {{- $rolloutStrategy := default dict (get $rollout "strategy") }}
+    {{- $rolloutAnalysisRunMetadata := default dict (get $rollout "analysisRunMetadata") }}
     {{- $blueGreenStrategy := default dict (get $rolloutStrategy "blueGreen") }}
     blueGreen:
       activeService: {{ default (include "service.fullname" .) $blueGreenStrategy.activeService }}
@@ -165,7 +166,18 @@ spec:
       {{- end }}
       {{- with $blueGreenStrategy.prePromotionAnalysis }}
       prePromotionAnalysis:
-        {{- toYaml . | nindent 8 }}
+        templates:
+        {{- range .templates }}
+          - templateName: {{ .templateName }}
+        {{- end }}
+        {{- if .args }}
+        args:
+        {{- toYaml .args | nindent 12 }}
+        {{- end }}
+        {{- with $rolloutAnalysisRunMetadata }}
+        analysisRunMetadata:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- end }}
 ---
 {{- end }}

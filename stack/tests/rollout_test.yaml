@@ -434,3 +434,47 @@ tests:
     asserts:
       - hasDocuments: # Checks if the template produced any documents
           count: 0
+  
+  - it: includes analysisRunMetadata for prePromotionAnalysis
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout:
+          analysisTemplate:
+            enabled: true
+            metrics:
+              - name: dummy-metric
+                provider: { web: { url: "http://example.com" } }
+          strategy:
+            blueGreen:
+              autoPromotionEnabled: false
+              prePromotionAnalysis:
+                templates:
+                  - templateName: my-analysis-template 
+          analysisRunMetadata:
+            labels:
+              env: test
+              team: backend
+            annotations:
+              jira.com/ticket: AR-123
+              build.id: "12345"
+      services:
+        service1:
+          image: { repository: "your-app", tag: "latest" }
+          service:
+            port: 3000
+    asserts:
+      - isKind:
+          of: Rollout
+      - equal:
+          path: spec.strategy.blueGreen.prePromotionAnalysis.analysisRunMetadata.labels.env
+          value: test
+      - equal:
+          path: spec.strategy.blueGreen.prePromotionAnalysis.analysisRunMetadata.labels.team
+          value: backend
+      - equal:
+          path: spec.strategy.blueGreen.prePromotionAnalysis.analysisRunMetadata.annotations["jira.com/ticket"]
+          value: AR-123
+      - equal:
+          path: spec.strategy.blueGreen.prePromotionAnalysis.analysisRunMetadata.annotations["build.id"]
+          value: "12345"

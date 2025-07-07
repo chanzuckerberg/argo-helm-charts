@@ -1,0 +1,37 @@
+{{- if default false .Values.global.rollout.analysisTemplate.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ default (printf "%s-%s-analysis" .Release.Name .Chart.Name) .Values.global.rollout.analysisTemplate.name }}
+  labels:
+    {{- include "stack.labels" . | nindent 4 }}
+spec:
+  args:
+    {{- range .Values.global.rollout.analysisTemplate.args }}
+    - name: {{ .name }}
+    {{- end }}
+  metrics:
+  {{- range .Values.global.rollout.analysisTemplate.metrics }}
+  - name: {{ .name }}
+    {{- if .interval }}
+    interval: {{ .interval }}
+    {{- end }}
+    {{- if .count }}
+    count: {{ .count }}
+    {{- end }}
+    {{- if .initialDelay }}
+    initialDelay: {{ .initialDelay }}
+    {{- end }}
+    {{- if .timeout }}
+    timeout: {{ .timeout }}
+    {{- end }}
+    {{- if .successCondition }}
+    successCondition: {{ .successCondition | quote }}
+    {{- end }}
+    {{- if .failureCondition }}
+    failureCondition: {{ .failureCondition | quote }}
+    {{- end }}
+    provider:
+      {{- toYaml .provider | nindent 8 }}
+  {{- end }}
+{{- end }} 
