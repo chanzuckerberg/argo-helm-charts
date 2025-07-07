@@ -170,10 +170,13 @@ spec:
         {{- range .templates }}
           - templateName: {{ .templateName }}
         {{- end }}
+        {{- $templateArgs := list }}
         {{- if .args }}
-        args:
-        {{- toYaml .args | nindent 12 }}
+        {{- $templateArgs = concat $templateArgs .args }}
         {{- end }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-name" "value" (include "service.fullname" $service ))) }}
+        args:
+        {{- toYaml $templateArgs | nindent 12 }} 
         {{- with $rolloutAnalysisRunMetadata }}
         analysisRunMetadata:
         {{- toYaml . | nindent 10 }}

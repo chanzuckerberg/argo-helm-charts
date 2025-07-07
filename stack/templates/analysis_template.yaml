@@ -7,9 +7,10 @@ metadata:
     {{- include "stack.labels" . | nindent 4 }}
 spec:
   args:
-    {{- range .Values.global.rollout.analysisTemplate.args }}
+    {{- range .Values.global.rollout.analysisTemplate.args | default list }}
     - name: {{ .name }}
     {{- end }}
+    - name: target-service-name
   metrics:
   {{- range .Values.global.rollout.analysisTemplate.metrics }}
   - name: {{ .name }}
@@ -34,4 +35,16 @@ spec:
     provider:
       {{- toYaml .provider | nindent 8 }}
   {{- end }}
+  - name: http-success-rate
+    interval: "10s"
+    count: 1
+    successCondition: "result.data.result[0].value[1] > 0.99"
+    failureCondition: "result.data.result[0].value[1] < 0.90"
+    provider:
+      prometheus:
+        address: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
+        query: |
+          sum(rate(nginx_ingress_controller_requests{status=~"2..", service="{{ `{{ args.target-service-name }}` }}"}[5m]))
+          /
+          sum(rate(nginx_ingress_controller_requests{service="{{ `{{ args.target-service-name }}` }}"}[5m]))
 {{- end }} 

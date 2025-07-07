@@ -3,7 +3,7 @@ suite: test analysis template
 templates:
   - analysis_template.yaml
 tests:
-  - it: should generate an AnalysisTemplate with a basic metric
+  - it: should generate an AnalysisTemplate with default metric
     set:
       global:
         deploymentKind: Rollout
@@ -11,16 +11,18 @@ tests:
           analysisTemplate:
             enabled: true
             metrics:
-              - name: success-rate
-                interval: "1m"
-                count: 1
-                successCondition: "result.data.result[0].value[1] > 0.9"
-                failureCondition: "result.data.result[0].value[1] < 0.6"
+              - name: job-check
+                interval: "5s"
                 provider:
-                  prometheus:
-                    address: http://prometheus.monitoring.svc.cluster.local:9090
-                    query: |
-                      sum(irate(container_cpu_usage_seconds_total{namespace="default"}[1m]))
+                  job:
+                    spec:
+                      template:
+                        spec:
+                          containers:
+                            - name: check
+                              image: busybox
+                              command: ["echo", "job ran"]
+                          restartPolicy: Never
     asserts:
       - isKind:
           of: AnalysisTemplate
@@ -29,22 +31,25 @@ tests:
           value: RELEASE-NAME-stack-analysis
       - equal:
           path: spec.metrics[0].name
-          value: success-rate
+          value: job-check
       - equal:
           path: spec.metrics[0].interval
-          value: 1m
+          value: 5s
       - equal:
-          path: spec.metrics[0].successCondition
-          value: "result.data.result[0].value[1] > 0.9"
+          path: spec.metrics[1].name
+          value: http-success-rate
       - equal:
-          path: spec.metrics[0].failureCondition
-          value: "result.data.result[0].value[1] < 0.6"
+          path: spec.metrics[1].successCondition
+          value: "result.data.result[0].value[1] > 0.99"
       - equal:
-          path: spec.metrics[0].provider.prometheus.address
-          value: http://prometheus.monitoring.svc.cluster.local:9090
+          path: spec.metrics[1].failureCondition
+          value: "result.data.result[0].value[1] < 0.90"
       - equal:
-          path: spec.metrics[0].provider.prometheus.query
-          value: 'sum(irate(container_cpu_usage_seconds_total{namespace="default"}[1m])) '
+          path: spec.metrics[1].provider.prometheus.address
+          value: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
+      - equal:
+          path: spec.metrics[1].provider.prometheus.query
+          value: "sum(rate(nginx_ingress_controller_requests{status=~\"2..\", service=\"{{ args.target-service-name }}\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{service=\"{{ args.target-service-name }}\"}[5m])) "
 
   - it: allows overriding the AnalysisTemplate name
     set:
@@ -172,12 +177,7 @@ tests:
                               image: busybox
                               command: ["echo", "job ran"]
                           restartPolicy: Never
-              - name: prometheus-check
-                interval: "10s"
-                provider:
-                  prometheus:
-                    address: http://prom.svc.cluster.local
-                    query: "rate(my_metric[5m])"
+
     asserts:
       - isKind:
           of: AnalysisTemplate
@@ -195,7 +195,7 @@ tests:
           value: busybox
       - equal:
           path: spec.metrics[2].name
-          value: prometheus-check
+          value: http-success-rate
       - equal:
           path: spec.metrics[2].provider.prometheus.query
-          value: "rate(my_metric[5m])"
+          value: "sum(rate(nginx_ingress_controller_requests{status=~\"2..\", service=\"{{ args.target-service-name }}\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{service=\"{{ args.target-service-name }}\"}[5m])) "

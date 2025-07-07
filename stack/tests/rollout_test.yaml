@@ -368,7 +368,7 @@ tests:
           path: spec.strategy.blueGreen.autoPromotionEnabled
           value: false
 
-  - it: includes prePromotionAnalysis pause step if defined
+  - it: includes prePromotionAnalysis if defined
     set:
       global:
         deploymentKind: Rollout
@@ -382,7 +382,7 @@ tests:
                 templates:
                   - templateName: success-rate
                 args:
-                  - name: service-name
+                  - name: prometheus-service
                     value: guestbook-svc.default.svc.cluster.local
       services:
         service1:
@@ -398,8 +398,10 @@ tests:
             templates:
               - templateName: success-rate
             args:
-              - name: service-name
+              - name: prometheus-service
                 value: guestbook-svc.default.svc.cluster.local
+              - name: target-service-name
+                value: release-name-stack-service1
 
   - it: applies nodeSelector from global values
     set:
@@ -425,14 +427,14 @@ tests:
   - it: does not generate rollout if deploymentKind is not Rollout
     set:
       global:
-        deploymentKind: Deployment # Explicitly set to Deployment
+        deploymentKind: Deployment
       services:
         service1:
           image: { repository: "your-app", tag: "latest" }
           service:
             port: 3000
     asserts:
-      - hasDocuments: # Checks if the template produced any documents
+      - hasDocuments:
           count: 0
   
   - it: includes analysisRunMetadata for prePromotionAnalysis
