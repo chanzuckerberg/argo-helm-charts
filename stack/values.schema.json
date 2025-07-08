@@ -834,6 +834,11 @@
                       "provider"
                     ]
                   }
+                },
+                "enableDefaultMetrics": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Enable default metrics for the AnalysisTemplate."
                 }
               },
               "required": [

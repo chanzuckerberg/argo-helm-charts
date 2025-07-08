@@ -402,6 +402,8 @@ tests:
                 value: guestbook-svc.default.svc.cluster.local
               - name: target-service-name
                 value: release-name-stack-service1
+              - name: target-service-namespace
+                value: NAMESPACE
 
   - it: applies nodeSelector from global values
     set:

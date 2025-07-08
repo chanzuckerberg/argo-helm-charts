@@ -175,6 +175,7 @@ spec:
         {{- $templateArgs = concat $templateArgs .args }}
         {{- end }}
         {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-name" "value" (include "service.fullname" $service ))) }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-namespace" "value" $global.Release.Namespace )) }}
         args:
         {{- toYaml $templateArgs | nindent 12 }} 
         {{- with $rolloutAnalysisRunMetadata }}
