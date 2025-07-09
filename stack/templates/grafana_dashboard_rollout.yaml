@@ -1,0 +1,153 @@
+{{- $global := . }}
+{{- $rolloutGlobalValues := default dict (get (default dict $global.Values.global) "rollout") }}
+{{- $grafanaDashboardConfig := default dict (get $rolloutGlobalValues "grafanaDashboard") }}
+{{- if $grafanaDashboardConfig.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ default (printf "%s-%s-rollout-dashboard" .Release.Name .Chart.Name) $grafanaDashboardConfig.name }}
+  labels:
+    {{- include "stack.labels" . | nindent 4 }}
+spec:
+  folder: {{ default "Rollouts" $grafanaDashboardConfig.folder }}
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      name: "grafana"
+  json: >-
+    {
+    "annotations": {
+        "list": [
+        {
+            "builtIn": 1,
+            "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+        }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 25,
+    "links": [],
+    "panels": [
+        {
+        "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+        },
+        "fieldConfig": {
+            "defaults": {
+            "color": {
+                "mode": "palette-classic"
+            },
+            "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                "group": "A",
+                "mode": "none"
+                },
+                "thresholdsStyle": {
+                "mode": "off"
+                }
+            },
+            "mappings": [],
+            "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                {
+                    "color": "green",
+                    "value": null
+                },
+                {
+                    "color": "red",
+                    "value": 80
+                }
+                ]
+            }
+            },
+            "overrides": []
+        },
+        "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 0
+        },
+        "id": 1,
+        "options": {
+            "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+            },
+            "tooltip": {
+            "mode": "single",
+            "sort": "none"
+            }
+        },
+        "pluginVersion": "11.3.0",
+        "targets": [
+            {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "expr": "",
+            "range": true,
+            "refId": "A"
+            }
+        ],
+        "title": "Empty",
+        "type": "timeseries"
+        }
+    ],
+    "preload": false,
+    "schemaVersion": 40,
+    "tags": [],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Dummy Dashboard",
+    "uid": "aerd35mufcikge",
+    "version": 2,
+    "weekStart": ""
+    }
+{{- end }}
