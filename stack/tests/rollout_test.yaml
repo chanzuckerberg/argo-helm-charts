@@ -404,6 +404,8 @@ tests:
                 value: release-name-stack-service1
               - name: target-service-namespace
                 value: NAMESPACE
+              - name: preview-service-name
+                value: my-preview-service
 
   - it: applies nodeSelector from global values
     set:

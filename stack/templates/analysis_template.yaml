@@ -46,7 +46,7 @@ spec:
       prometheus:
         address: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
         query: |
-          sum(rate(nginx_ingress_controller_requests{status=~"2..|3..", service="{{ `{{ args.target-service-name }}` }}"}[1h]))/sum(rate(nginx_ingress_controller_requests{service="{{ `{{ args.target-service-name }}` }}"}[1h]))
+          sum(rate(nginx_ingress_controller_requests{status=~"2..|3..", service="{{ `{{ args.target-service-name }}` }}"}[5m]))/sum(rate(nginx_ingress_controller_requests{service="{{ `{{ args.target-service-name }}` }}"}[5m]))
   - name: http-latency
     interval: "1m"
     count: 1
@@ -56,7 +56,7 @@ spec:
       prometheus:
         address: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
         query: |
-           histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status=~"2..|3..", service="{{ `{{ args.target-service-name }}` }}"}[1h])) by (le))
+           histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status=~"2..|3..", service="{{ `{{ args.target-service-name }}` }}"}[5m])) by (le))
   - name: cpu-utilization
     interval: "1m"
     count: 1
@@ -67,6 +67,6 @@ spec:
         address: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
         query: |
           {{ $targetPodRegex := printf "{{ args.target-service-name }}-.*" }}
-          sum(rate(container_cpu_usage_seconds_total{namespace="{{`{{ args.target-service-namespace }}`}}", pod=~"{{ $targetPodRegex }}"}[1h])) / sum(kube_pod_container_resource_limits{resource="cpu", unit="core", namespace="{{`{{ args.target-service-namespace }}` }}", pod=~"{{ $targetPodRegex }}"})
+          sum(rate(container_cpu_usage_seconds_total{namespace="{{`{{ args.target-service-namespace }}`}}", pod=~"{{ $targetPodRegex }}"}[5m])) / sum(kube_pod_container_resource_limits{resource="cpu", unit="core", namespace="{{`{{ args.target-service-namespace }}` }}", pod=~"{{ $targetPodRegex }}"})
   {{- end }}
 {{- end }}

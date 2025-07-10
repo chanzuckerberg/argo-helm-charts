@@ -77,7 +77,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rollout_info{namespace=\"{{ .targetServiceNamespace }}\",name=~\"{{ .serviceName }}-.*\"}",
+          "expr": "rollout_info{namespace=\"$namespace\",name=\"$serviceName\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -158,7 +158,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rollout_info_replicas_desired{namespace=\"{{ .targetServiceNamespace }}\",name=~\"{{ .serviceName }}-.*\"}",
+          "expr": "rollout_info_replicas_desired{namespace=\"$namespace\",name=\"$serviceName\"}",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -226,7 +226,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rollout_info_replicas_available{namespace=\"{{ .targetServiceNamespace }}\",name=~\"{{ .serviceName }}-.*\"}",
+          "expr": "rollout_info_replicas_available{namespace=\"$namespace\",name=\"$serviceName\"}",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -295,7 +295,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rollout_info_replicas_unavailable{namespace=\"{{ .targetServiceNamespace }}\",name=~\"{{ .serviceName }}-.*\"}",
+          "expr": "rollout_info_replicas_unavailable{namespace=\"$namespace\",name=\"$serviceName\"}",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -335,7 +335,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(nginx_ingress_controller_requests{status=~\"2..|3..\", namespace=\"{{ .targetServiceNamespace }}\"}[1h]))/sum(rate(nginx_ingress_controller_requests{namespace=\"{{ .targetServiceNamespace }}\"}[1h]))",
+          "expr": "sum(rate(nginx_ingress_controller_requests{status=~\"2..|3..\", namespace=\"$namespace\",service=\"$serviceName\"}[5m]))/sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\",service=\"$serviceName\"}[5m]))",
           "legendFormat": "Success Rate",
           "refId": "A"
         }
@@ -357,7 +357,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status=~\"2..|3..\", namespace=\"{{ .targetServiceNamespace }}\"}[1h])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status=~\"2..|3..\", namespace=\"$namespace\",service=\"$serviceName\"}[5m])) by (le))",
           "legendFormat": "99th Percentile Latency",
           "refId": "A"
         }
@@ -457,7 +457,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\"}[$__rate_interval])) by (container)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$serviceName-.*\"}[$__rate_interval])) by (container)",
           "interval": "30",
           "legendFormat": {{ printf "{{%s}}" "container" | quote }},
           "range": true,
@@ -562,7 +562,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\"}) by (container)",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"$serviceName-.*\"}) by (container)",
           "interval": "30",
           "legendFormat": {{ printf "{{%s}}" "container" | quote }},
           "range": true,
@@ -643,7 +643,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(container_network_receive_bytes_total{namespace=\"$namespace\"}[$__rate_interval]))",
+          "expr": "sum(rate(container_network_receive_bytes_total{namespace=\"$namespace\", pod=~\"$serviceName-.*\"}[$__rate_interval]))",
           "interval": "30s",
           "legendFormat": "Received",
           "range": true,
@@ -656,7 +656,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "- sum(rate(container_network_transmit_bytes_total{namespace=\"$namespace\"}[$__rate_interval]))",
+          "expr": "- sum(rate(container_network_transmit_bytes_total{namespace=\"$namespace\", pod=~\"$serviceName-.*\"}[$__rate_interval]))",
           "interval": "30s",
           "legendFormat": "Transmitted",
           "range": true,

@@ -155,10 +155,12 @@ spec:
     {{- $rollout := default dict (get (default dict $global.Values.global) "rollout") }}
     {{- $rolloutStrategy := default dict (get $rollout "strategy") }}
     {{- $rolloutAnalysisRunMetadata := default dict (get $rollout "analysisRunMetadata") }}
+    {{- $rolloutEnabledK6LoadTest := default dict (get $rollout "enabledK6LoadTest") }}
     {{- $blueGreenStrategy := default dict (get $rolloutStrategy "blueGreen") }}
+    {{- $previewSeviceName := default (printf "%s-preview" (include "service.fullname" .)) $blueGreenStrategy.previewService }}
     blueGreen:
       activeService: {{ default (include "service.fullname" .) $blueGreenStrategy.activeService }}
-      previewService: {{ default (printf "%s-preview" (include "service.fullname" .)) $blueGreenStrategy.previewService }}
+      previewService: {{ $previewSeviceName }}
       autoPromotionEnabled: {{ default false $blueGreenStrategy.autoPromotionEnabled }}
       {{- with $blueGreenStrategy.postInboundTraffic }}
       postInboundTraffic:
@@ -170,12 +172,16 @@ spec:
         {{- range .templates }}
           - templateName: {{ .templateName }}
         {{- end }}
+        {{- if $rolloutEnabledK6LoadTest }}
+          - templateName: {{ (printf "%s-%s-k6-preview-load-test" $global.Release.Name $global.Chart.Name) }}
+        {{- end }}
         {{- $templateArgs := list }}
         {{- if .args }}
         {{- $templateArgs = concat $templateArgs .args }}
         {{- end }}
         {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-name" "value" (include "service.fullname" $service ))) }}
         {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-namespace" "value" $global.Release.Namespace )) }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "preview-service-name" "value" $previewSeviceName)) }}
         args:
         {{- toYaml $templateArgs | nindent 12 }} 
         {{- with $rolloutAnalysisRunMetadata }}

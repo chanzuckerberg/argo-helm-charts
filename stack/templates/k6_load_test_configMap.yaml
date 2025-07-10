@@ -1,0 +1,37 @@
+{{- if ne .Values.global.rollout.analysisTemplate.enabledK6LoadTest false}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ (printf "%s-%s-k6-test-script" .Release.Name .Chart.Name) }}
+  labels: {{- include "stack.labels" . | nindent 4 }}
+data:
+  test.js: |
+    import http from 'k6/http';
+    import { sleep, check } from 'k6';
+
+    const TARGET_URL = __ENV.TARGET_URL || 'http://localhost:3000/';
+
+    export const options = {
+      stages: [
+        { duration: '30s', target: 20 },  // Ramp up to 20 VUs (Virtual Users) over 30 seconds
+        { duration: '2m', target: 50 },   // Sustain 50 VUs for 2 minutes (peak load)
+        { duration: '30s', target: 0 },   // Ramp down to 0 VUs over 30 seconds (test completion)
+      ],
+      thresholds: {
+        http_req_duration: ['p(95)<100'], // 95% of HTTP requests must complete in under 100ms
+        http_req_failed: ['rate<0.01'],   // The rate of failed (non-2xx) HTTP requests must be less than 1%
+        checks: ['rate>0.99'],            // 99% of `check` assertions (like 'is status 200') must pass
+      },
+      summaryTrendStats: ['min', 'max', 'avg', 'med', 'p(90)', 'p(95)', 'p(99)'],
+    };
+
+    export default function () {
+      const res = http.get(TARGET_URL);
+
+      check(res, {
+        'is status 200': (r) => r.status === 200,
+      });
+
+      sleep(2);
+    }
+{{- end }}

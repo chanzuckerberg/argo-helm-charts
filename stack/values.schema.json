@@ -839,6 +839,11 @@
                   "type": "boolean",
                   "default": true,
                   "description": "Enable default metrics for the AnalysisTemplate."
+                },
+                "enabledK6LoadTest": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Enable K6 load testing for the AnalysisTemplate."
                 }
               },
               "required": [

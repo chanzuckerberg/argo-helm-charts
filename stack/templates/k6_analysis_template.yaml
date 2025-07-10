@@ -1,0 +1,52 @@
+{{- if ne .Values.global.rollout.analysisTemplate.enabledK6LoadTest false}}
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ (printf "%s-%s-k6-preview-load-test" .Release.Name .Chart.Name) }}
+  labels:
+    {{- include "stack.labels" . | nindent 4 }}
+spec:
+  args:
+    {{- range .Values.global.rollout.analysisTemplate.args | default list }}
+    - name: {{ .name }}
+    {{- end }}
+    - name: target-service-name
+    - name: target-service-namespace
+    - name: preview-service-name
+  metrics:
+    - name: k6-load-test-run
+      interval: 1m
+      initialDelay: 10s
+      count: 1
+      successCondition: "result.jobStatus == 'finished' && result.testRunStatus == 'succeeded'"
+      failureCondition: "result.jobStatus == 'failed' || result.jobStatus == 'error' || result.testRunStatus == 'failed'"
+      provider:
+        job:
+          spec:
+            backoffLimit: 1
+            template:
+              spec:
+                containers:
+                  - name: k6-runner
+                    image: grafana/k6:latest
+                    command: ["k6", "run", "/etc/k6-scripts/test.js"]
+                    env:
+                      - name: TARGET_URL
+                        value: "http://{{ `{{ args.preview-service-name }}` }}.{{ `{{ args.target-service-namespace }}` }}.svc.cluster.local:3000/"
+                    volumeMounts:
+                      - name: k6-script-volume
+                        mountPath: /etc/k6-scripts
+                        readOnly: true
+                    resources:
+                      requests:
+                        cpu: 100m
+                        memory: 100Mi
+                      limits:
+                        cpu: 500m
+                        memory: 500Mi
+                volumes:
+                  - name: k6-script-volume
+                    configMap:
+                      name: {{ (printf "%s-%s-k6-test-script" .Release.Name .Chart.Name) }}
+                restartPolicy: Never
+{{- end }}
