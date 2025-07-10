@@ -1950,6 +1950,7 @@ Must be one of:
 | - [name](#cronJobs_pattern1_rollout_analysisTemplate_name )                                 | No      | string          | No         | -          | Override the name of the generated AnalysisTemplate. Defaults to '{{ .Release.Name }}-{{ .Chart.Name }}-analysis'. |
 | + [metrics](#cronJobs_pattern1_rollout_analysisTemplate_metrics )                           | No      | array of object | No         | -          | List of metrics for the AnalysisTemplate. Each metric defines how to collect and evaluate data.                    |
 | - [enableDefaultMetrics](#cronJobs_pattern1_rollout_analysisTemplate_enableDefaultMetrics ) | No      | boolean         | No         | -          | Enable default metrics for the AnalysisTemplate.                                                                   |
+| - [enabledK6LoadTest](#cronJobs_pattern1_rollout_analysisTemplate_enabledK6LoadTest )       | No      | boolean         | No         | -          | Enable K6 load testing for the AnalysisTemplate.                                                                   |
 
 ###### <a name="cronJobs_pattern1_rollout_analysisTemplate_enabled"></a>2.1.31.3.1. Property `stack > cronJobs > ^.*$ > rollout > analysisTemplate > enabled`
 
@@ -2216,6 +2217,16 @@ Must be one of:
 | **Default**  | `true`    |
 
 **Description:** Enable default metrics for the AnalysisTemplate.
+
+###### <a name="cronJobs_pattern1_rollout_analysisTemplate_enabledK6LoadTest"></a>2.1.31.3.5. Property `stack > cronJobs > ^.*$ > rollout > analysisTemplate > enabledK6LoadTest`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Enable K6 load testing for the AnalysisTemplate.
 
 ##### <a name="cronJobs_pattern1_rollout_grafanaDashboard"></a>2.1.31.4. Property `stack > cronJobs > ^.*$ > rollout > grafanaDashboard`
 
@@ -4472,6 +4483,7 @@ Must be one of:
 | - [name](#global_rollout_analysisTemplate_name )                                 | No      | string          | No         | -          | Override the name of the generated AnalysisTemplate. Defaults to '{{ .Release.Name }}-{{ .Chart.Name }}-analysis'. |
 | + [metrics](#global_rollout_analysisTemplate_metrics )                           | No      | array of object | No         | -          | List of metrics for the AnalysisTemplate. Each metric defines how to collect and evaluate data.                    |
 | - [enableDefaultMetrics](#global_rollout_analysisTemplate_enableDefaultMetrics ) | No      | boolean         | No         | -          | Enable default metrics for the AnalysisTemplate.                                                                   |
+| - [enabledK6LoadTest](#global_rollout_analysisTemplate_enabledK6LoadTest )       | No      | boolean         | No         | -          | Enable K6 load testing for the AnalysisTemplate.                                                                   |
 
 ##### <a name="global_rollout_analysisTemplate_enabled"></a>3.31.3.1. Property `stack > global > rollout > analysisTemplate > enabled`
 
@@ -4684,6 +4696,16 @@ Must be one of:
 | **Default**  | `true`    |
 
 **Description:** Enable default metrics for the AnalysisTemplate.
+
+##### <a name="global_rollout_analysisTemplate_enabledK6LoadTest"></a>3.31.3.5. Property `stack > global > rollout > analysisTemplate > enabledK6LoadTest`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Enable K6 load testing for the AnalysisTemplate.
 
 #### <a name="global_rollout_grafanaDashboard"></a>3.31.4. Property `stack > global > rollout > grafanaDashboard`
 
@@ -6958,6 +6980,7 @@ Must be one of:
 | - [name](#cronJobs_pattern1_rollout_analysisTemplate_name )                                 | No      | string          | No         | -          | Override the name of the generated AnalysisTemplate. Defaults to '{{ .Release.Name }}-{{ .Chart.Name }}-analysis'. |
 | + [metrics](#cronJobs_pattern1_rollout_analysisTemplate_metrics )                           | No      | array of object | No         | -          | List of metrics for the AnalysisTemplate. Each metric defines how to collect and evaluate data.                    |
 | - [enableDefaultMetrics](#cronJobs_pattern1_rollout_analysisTemplate_enableDefaultMetrics ) | No      | boolean         | No         | -          | Enable default metrics for the AnalysisTemplate.                                                                   |
+| - [enabledK6LoadTest](#cronJobs_pattern1_rollout_analysisTemplate_enabledK6LoadTest )       | No      | boolean         | No         | -          | Enable K6 load testing for the AnalysisTemplate.                                                                   |
 
 ###### <a name="cronJobs_pattern1_rollout_analysisTemplate_enabled"></a>4.1.31.3.1. Property `stack > cronJobs > ^.*$ > rollout > analysisTemplate > enabled`
 
@@ -7224,6 +7247,16 @@ Must be one of:
 | **Default**  | `true`    |
 
 **Description:** Enable default metrics for the AnalysisTemplate.
+
+###### <a name="cronJobs_pattern1_rollout_analysisTemplate_enabledK6LoadTest"></a>4.1.31.3.5. Property `stack > cronJobs > ^.*$ > rollout > analysisTemplate > enabledK6LoadTest`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Enable K6 load testing for the AnalysisTemplate.
 
 ##### <a name="cronJobs_pattern1_rollout_grafanaDashboard"></a>4.1.31.4. Property `stack > cronJobs > ^.*$ > rollout > grafanaDashboard`
 
@@ -9498,6 +9531,7 @@ Must be one of:
 | - [name](#cronJobs_pattern1_rollout_analysisTemplate_name )                                 | No      | string          | No         | -          | Override the name of the generated AnalysisTemplate. Defaults to '{{ .Release.Name }}-{{ .Chart.Name }}-analysis'. |
 | + [metrics](#cronJobs_pattern1_rollout_analysisTemplate_metrics )                           | No      | array of object | No         | -          | List of metrics for the AnalysisTemplate. Each metric defines how to collect and evaluate data.                    |
 | - [enableDefaultMetrics](#cronJobs_pattern1_rollout_analysisTemplate_enableDefaultMetrics ) | No      | boolean         | No         | -          | Enable default metrics for the AnalysisTemplate.                                                                   |
+| - [enabledK6LoadTest](#cronJobs_pattern1_rollout_analysisTemplate_enabledK6LoadTest )       | No      | boolean         | No         | -          | Enable K6 load testing for the AnalysisTemplate.                                                                   |
 
 ###### <a name="cronJobs_pattern1_rollout_analysisTemplate_enabled"></a>5.1.31.3.1. Property `stack > cronJobs > ^.*$ > rollout > analysisTemplate > enabled`
 
@@ -9764,6 +9798,16 @@ Must be one of:
 | **Default**  | `true`    |
 
 **Description:** Enable default metrics for the AnalysisTemplate.
+
+###### <a name="cronJobs_pattern1_rollout_analysisTemplate_enabledK6LoadTest"></a>5.1.31.3.5. Property `stack > cronJobs > ^.*$ > rollout > analysisTemplate > enabledK6LoadTest`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** Enable K6 load testing for the AnalysisTemplate.
 
 ##### <a name="cronJobs_pattern1_rollout_grafanaDashboard"></a>5.1.31.4. Property `stack > cronJobs > ^.*$ > rollout > grafanaDashboard`
 
