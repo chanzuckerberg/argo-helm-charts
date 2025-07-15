@@ -239,3 +239,53 @@ tests:
       - equal:
           path: metadata.name
           value: "overwrittenfull-service1"
+  
+  - it: uses ports if provided and autofill name or protocol with default value if left empty
+    set:
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          service:
+            ports:
+              - name: http
+                containerPort: 8080
+              - name: metrics
+                containerPort: 9090
+                protocol: TCP
+    asserts:
+      - lengthEqual:
+          path:  spec.template.spec.containers[0].ports
+          count: 2
+      - equal:
+          path: spec.template.spec.containers[0].ports[0]
+          value: 
+            name: http
+            containerPort: 8080
+            protocol: TCP
+      - equal:
+          path: spec.template.spec.containers[0].ports[1]
+          value:
+            name: metrics
+            containerPort: 9090
+            protocol: TCP
+  
+  - it: uses port if ports not provided (legacy behavior for backward compatibility)
+    set:
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          service:
+            port: 3000
+
+    asserts:
+      - lengthEqual:
+          path:  spec.template.spec.containers[0].ports
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].ports[0]
+          value: 
+            name: http
+            containerPort: 3000
+            protocol: TCP

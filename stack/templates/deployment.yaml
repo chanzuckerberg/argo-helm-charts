@@ -63,9 +63,17 @@ spec:
             {{- toYaml .Values.command | nindent 12 }}
           {{- end }}
           ports:
+            {{- if .Values.service.ports }}
+            {{- range .Values.service.ports }}
+            - name: {{ .name | default "http" }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol | default "TCP" }}
+            {{- end }}
+            {{- else if .Values.service.port }}
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            {{- end }}
           livenessProbe:
             {{- include "container.probe" .Values.livenessProbe | nindent 12 }}
           readinessProbe:
