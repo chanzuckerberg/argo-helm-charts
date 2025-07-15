@@ -311,33 +311,6 @@
                     }
                   ]
                 },
-                "ports": {
-                  "description": "List of service ports",
-                  "items": {
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "containerPort": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "number"
-                          }
-                        ]
-                      },
-                      "protocol": {
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": [
-                    "array"
-                  ]
-                },
                 "scheme": {
                   "description": "Scheme to use",
                   "type": "string"
@@ -719,6 +692,33 @@
               "description": "Service port",
               "type": [
                 "number"
+              ]
+            },
+            "ports": {
+              "description": "List of service ports",
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "containerPort": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  },
+                  "protocol": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "type": [
+                "array"
               ]
             },
             "type": {

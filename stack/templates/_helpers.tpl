@@ -21,6 +21,21 @@ port:
 {{- end -}}
 {{- end -}}
 
+{{- define "service.ports" -}}
+ports:
+{{- if .Values.service.ports }}
+{{- range .Values.service.ports }}
+  - name: {{ .name | default "http" }}
+    containerPort: {{ .containerPort }}
+    protocol: {{ .protocol | default "TCP" }}
+{{- end }}
+{{- else if .Values.service.port }}
+  - name: http
+    containerPort: {{ .Values.service.port }}
+    protocol: TCP
+{{- end }}
+{{- end -}}
+
 
 {{/*
 Create a default fully qualified app name.
