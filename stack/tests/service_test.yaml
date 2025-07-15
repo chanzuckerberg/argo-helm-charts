@@ -14,11 +14,10 @@ tests:
           args: ["arg1", "arg2"]
           service:
             ports:
-              - name: http
-                containerPort: 8080
+              - containerPort: 8080
+                protocol: TCP
               - name: metrics
                 containerPort: 9090
-                protocol: TCP
             
     asserts:
       - lengthEqual:
@@ -37,7 +36,7 @@ tests:
             name: metrics
             port: 9090
             protocol: TCP
-            targetPort: http
+            targetPort: metrics
   
   - it: uses port if ports not provided (legacy behavior for backward compatibility)
     set:

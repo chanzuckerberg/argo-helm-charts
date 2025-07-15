@@ -24,13 +24,13 @@ spec:
     - name: {{ .name | default "http" }}
       port: {{ .containerPort }}
       protocol: {{ .protocol | default "TCP" }}
-      targetPort: http
+      targetPort: {{ .name | default "http" }}
   {{- end }}
   {{- else }}
     - name: http
       port: {{ .Values.service.port }}
       protocol: TCP
-      targetPort: http
+      targetPort: {{ .name | default "http" }}
   {{- end }}
   selector:
     {{- include "service.selectorLabels" . | nindent 4 }}
