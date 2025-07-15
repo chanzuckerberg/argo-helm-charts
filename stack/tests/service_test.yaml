@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test service
+templates:
+  - service.yaml
+tests:
+  - it: uses ports if provided and autofill name or protocol with default value if left empty
+    set:
+      services:
+        service1:
+          image:
+            repository: test-ports
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+          service:
+            ports:
+              - name: http
+                containerPort: 8080
+              - name: metrics
+                containerPort: 9090
+                protocol: TCP
+            
+    asserts:
+      - lengthEqual:
+          path:  spec.ports
+          count: 2
+      - equal:
+          path: spec.ports[0]
+          value: 
+            name: http
+            port: 8080
+            protocol: TCP
+            targetPort: http
+      - equal:
+          path: spec.ports[1]
+          value:
+            name: metrics
+            port: 9090
+            protocol: TCP
+            targetPort: http
+  
+  - it: uses port if ports not provided (legacy behavior for backward compatibility)
+    set:
+      services:
+        service2:
+          image:
+            repository: test-ports
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+          service:
+            port: 3000
+
+    asserts:
+      - lengthEqual:
+          path:  spec.ports
+          count: 1
+      - equal:
+          path: spec.ports[0]
+          value: 
+            name: http
+            port: 3000
+            protocol: TCP
+            targetPort: http
+  
+  - it: ensure there would be default port 80 if no ports or port is provided
+    set:
+      services:
+        service3:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+
+    asserts:
+      - lengthEqual:
+          path:  spec.ports
+          count: 1
+      - equal:
+          path: spec.ports[0]
+          value: 
+            name: http
+            port: 80
+            protocol: TCP
+            targetPort: http
