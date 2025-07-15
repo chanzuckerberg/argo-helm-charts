@@ -62,7 +62,7 @@ spec:
           command:
             {{- toYaml .Values.command | nindent 12 }}
           {{- end }}
-          {{ include "service.ports" . | nindent 10 }}
+          {{- include "service.ports" . | nindent 10 }}
           livenessProbe:
             {{- include "container.probe" .Values.livenessProbe | nindent 12 }}
           readinessProbe:

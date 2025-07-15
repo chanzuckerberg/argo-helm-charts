@@ -18,11 +18,7 @@ metadata:
     {{- include "stack.annotations" $service | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+  {{- include "service.ports" . | nindent 10 }}
   selector:
     {{- include "service.selectorLabels" . | nindent 4 }}
 ---

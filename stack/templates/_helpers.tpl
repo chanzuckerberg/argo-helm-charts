@@ -29,7 +29,7 @@ ports:
     containerPort: {{ .containerPort }}
     protocol: {{ .protocol | default "TCP" }}
 {{- end }}
-{{- else if .Values.service.port }}
+{{- else }}
   - name: http
     containerPort: {{ .Values.service.port }}
     protocol: TCP

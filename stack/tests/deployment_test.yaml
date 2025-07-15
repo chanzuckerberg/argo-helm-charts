@@ -289,3 +289,21 @@ tests:
             name: http
             containerPort: 3000
             protocol: TCP
+  
+  - it: ensure there would be default port 80 if no ports or port is provided
+    set:
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+
+    asserts:
+      - lengthEqual:
+          path:  spec.template.spec.containers[0].ports
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].ports[0]
+          value: 
+            name: http
+            containerPort: 80
+            protocol: TCP
