@@ -406,6 +406,9 @@ tests:
                 value: NAMESPACE
               - name: preview-service-name
                 value: my-preview-service
+              - name: preview-rs-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
 
   - it: applies nodeSelector from global values
     set:

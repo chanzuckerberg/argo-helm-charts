@@ -17,7 +17,6 @@ metadata:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
     {{- $rolloutAnnotations := default dict (get (default dict $global.Values.global.rollout) "annotations") }}
-
     {{- toYaml (mergeOverwrite
                 (dict)
                 (fromYaml (include "stack.annotations" $service ))
@@ -182,6 +181,7 @@ spec:
         {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-name" "value" (include "service.fullname" $service ))) }}
         {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-namespace" "value" $global.Release.Namespace )) }}
         {{- $templateArgs = concat $templateArgs (list (dict "name" "preview-service-name" "value" $previewSeviceName)) }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "preview-rs-hash" "valueFrom" (dict "podTemplateHashValue" "Latest"))) }}
         args:
         {{- toYaml $templateArgs | nindent 12 }} 
         {{- with $rolloutAnalysisRunMetadata }}

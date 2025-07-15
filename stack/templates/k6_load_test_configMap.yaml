@@ -13,8 +13,8 @@ data:
 
     export const options = {
       stages: [
-        { duration: '30s', target: 20 },  // Ramp up to 20 VUs (Virtual Users) over 30 seconds
-        { duration: '2m', target: 50 },   // Sustain 50 VUs for 2 minutes (peak load)
+        { duration: '15s', target: 50 },  // Ramp up to 50 VUs (Virtual Users) over 15 seconds
+        { duration: '5m', target: 300 },   // Sustain 300 VUs for 5 minutes (peak load)
         { duration: '30s', target: 0 },   // Ramp down to 0 VUs over 30 seconds (test completion)
       ],
       thresholds: {
@@ -32,6 +32,6 @@ data:
         'is status 200': (r) => r.status === 200,
       });
 
-      sleep(2);
+      sleep(0.5);
     }
 {{- end }}
