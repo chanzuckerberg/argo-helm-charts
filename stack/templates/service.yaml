@@ -19,10 +19,19 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+  {{- if .Values.service.ports }}
+  {{- range .Values.service.ports }}
+    - name: {{ .name | default "http" }}
+      port: {{ .containerPort }}
+      protocol: {{ .protocol | default "TCP" }}
+      targetPort: {{ .name | default "http" }}
+  {{- end }}
+  {{- else }}
+    - name: http
+      port: {{ .Values.service.port }}
       protocol: TCP
-      name: http
+      targetPort: {{ .name | default "http" }}
+  {{- end }}
   selector:
     {{- include "service.selectorLabels" . | nindent 4 }}
 ---

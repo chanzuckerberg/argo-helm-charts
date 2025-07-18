@@ -120,3 +120,78 @@ tests:
           kind: ServiceAccount
           name: "release-name-stack-job2"
         not: true
+  
+  - it: uses ports if provided and autofill name or protocol with default value if left empty
+    set:
+      jobs:
+        job1:
+          image:
+            repository: test-ports
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+          service:
+            ports:
+              - name: http
+                containerPort: 8080
+              - name: metrics
+                containerPort: 9090
+                protocol: TCP
+            
+    asserts:
+      - lengthEqual:
+          path:  spec.template.spec.containers[0].ports
+          count: 2
+      - equal:
+          path: spec.template.spec.containers[0].ports[0]
+          value: 
+            name: http
+            containerPort: 8080
+            protocol: TCP
+      - equal:
+          path: spec.template.spec.containers[0].ports[1]
+          value:
+            name: metrics
+            containerPort: 9090
+            protocol: TCP
+  
+  - it: uses port if ports not provided (legacy behavior for backward compatibility)
+    set:
+      jobs:
+        job2:
+          image:
+            repository: test-ports
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+          service:
+            port: 3000
+
+    asserts:
+      - lengthEqual:
+          path:  spec.template.spec.containers[0].ports
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].ports[0]
+          value: 
+            name: http
+            containerPort: 3000
+            protocol: TCP
+  
+  - it: ensure there would be default port 80 if no ports or port is provided
+    set:
+      jobs:
+        job1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+
+    asserts:
+      - lengthEqual:
+          path:  spec.template.spec.containers[0].ports
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].ports[0]
+          value: 
+            name: http
+            containerPort: 80
+            protocol: TCP
