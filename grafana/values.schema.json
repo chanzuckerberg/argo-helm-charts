@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "argo.helm.charts/",
-  "title": "--no-additional-properties",
+  "$id": "argo.helm.charts/grafana",
+  "title": "grafana",
   "type": "object",
   "required": [
     "clusterName"
@@ -30,7 +30,8 @@
               "description": "URL of the Loki datasource.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "prometheus": {
           "description": "Prometheus datasource configuration.",
@@ -44,7 +45,8 @@
               "description": "URL of the Prometheus datasource.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "tempo": {
           "description": "Tempo datasource configuration.",
@@ -58,9 +60,11 @@
               "description": "URL of the Tempo datasource.",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
     "enabled": {
       "description": "Enable the Grafana instance.",
@@ -73,7 +77,8 @@
         "^.*$": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "extraSecretVolumes": {
       "description": "List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:",
@@ -86,7 +91,8 @@
         "^.*$": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "grafanaBaseImage": {
       "description": "Base image for the Grafana instance.",
@@ -113,5 +119,6 @@
       "description": "Name of the secret store to use for external secrets.",
       "type": "string"
     }
-  }
+  },
+  "additionalProperties": false
 }
