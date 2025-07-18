@@ -1,4 +1,7 @@
 
 .PHONY: update-schema
+
+CHART_NAME := $(shell basename $(PWD))
+
 update-schema:
-	helm schema -input values.yaml -indent 2 -schemaRoot.id argo.helm.charts/$${PWD##*/} -schemaRoot.title $${PWD##*/} -schemaRoot.additionalProperties false
+	helm schema --values values.yaml --indent 2 --no-additional-properties --schema-root.id argo.helm.charts/$(CHART_NAME) --schema-root.title $(CHART_NAME)

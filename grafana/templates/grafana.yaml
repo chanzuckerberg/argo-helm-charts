@@ -11,6 +11,7 @@ metadata:
     {{- toYaml .Values.grafanaAnnotations | nindent 4 }}
     {{- end }}
 spec:
+  baseImage: {{ .Values.grafanaBaseImage }}
   config:
     log:
       mode: console

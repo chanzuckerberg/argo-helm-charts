@@ -10,13 +10,14 @@
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                    |
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| + [baseDomain](#baseDomain )                 | No      | string  | No         | -          | -                                                                                                                                                                                    |
+| - [baseDomain](#baseDomain )                 | No      | string  | No         | -          | -                                                                                                                                                                                    |
 | + [clusterName](#clusterName )               | No      | string  | No         | -          | Name of the cluster to configure the platform Grafana for. This value is required.                                                                                                   |
 | - [datasources](#datasources )               | No      | object  | No         | -          | List of datasources to configure for the Grafana instance.                                                                                                                           |
 | - [enabled](#enabled )                       | No      | boolean | No         | -          | Enable the Grafana instance.                                                                                                                                                         |
 | - [env](#env )                               | No      | object  | No         | -          | Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.                                                              |
 | - [extraSecretVolumes](#extraSecretVolumes ) | No      | array   | No         | -          | List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:                                                                   |
 | - [grafanaAnnotations](#grafanaAnnotations ) | No      | object  | No         | -          | Annotations to add to the Grafana instance.                                                                                                                                          |
+| - [grafanaBaseImage](#grafanaBaseImage )     | No      | string  | No         | -          | Base image for the Grafana instance.                                                                                                                                                 |
 | - [grafanaName](#grafanaName )               | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
 | - [grafanaSubdomain](#grafanaSubdomain )     | No      | string  | No         | -          | Subdomain to use for the Grafana instance.                                                                                                                                           |
 | - [replicas](#replicas )                     | No      | integer | No         | -          | Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.                                        |
@@ -28,7 +29,7 @@
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
-| **Required** | Yes      |
+| **Required** | No       |
 
 ## <a name="clusterName"></a>2. Property `grafana > clusterName`
 
@@ -41,11 +42,11 @@
 
 ## <a name="datasources"></a>3. Property `grafana > datasources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** List of datasources to configure for the Grafana instance.
 
@@ -57,11 +58,11 @@
 
 ### <a name="datasources_loki"></a>3.1. Property `grafana > datasources > loki`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Loki datasource configuration.
 
@@ -90,11 +91,11 @@
 
 ### <a name="datasources_prometheus"></a>3.2. Property `grafana > datasources > prometheus`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Prometheus datasource configuration.
 
@@ -123,11 +124,11 @@
 
 ### <a name="datasources_tempo"></a>3.3. Property `grafana > datasources > tempo`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Tempo datasource configuration.
 
@@ -165,11 +166,11 @@
 
 ## <a name="env"></a>5. Property `grafana > env`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.
 
@@ -206,11 +207,11 @@ must respect the following conditions
 
 ## <a name="grafanaAnnotations"></a>7. Property `grafana > grafanaAnnotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Annotations to add to the Grafana instance.
 
@@ -228,7 +229,16 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="grafanaName"></a>8. Property `grafana > grafanaName`
+## <a name="grafanaBaseImage"></a>8. Property `grafana > grafanaBaseImage`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Base image for the Grafana instance.
+
+## <a name="grafanaName"></a>9. Property `grafana > grafanaName`
 
 |              |          |
 | ------------ | -------- |
@@ -237,7 +247,7 @@ must respect the following conditions
 
 **Description:** Name of the Grafana instance to create.
 
-## <a name="grafanaSubdomain"></a>9. Property `grafana > grafanaSubdomain`
+## <a name="grafanaSubdomain"></a>10. Property `grafana > grafanaSubdomain`
 
 |              |          |
 | ------------ | -------- |
@@ -246,7 +256,7 @@ must respect the following conditions
 
 **Description:** Subdomain to use for the Grafana instance.
 
-## <a name="replicas"></a>10. Property `grafana > replicas`
+## <a name="replicas"></a>11. Property `grafana > replicas`
 
 |              |           |
 | ------------ | --------- |
@@ -259,7 +269,7 @@ must respect the following conditions
 | ------------ | ------ |
 | **Maximum**  | &le; 1 |
 
-## <a name="roleAttributePath"></a>11. Property `grafana > roleAttributePath`
+## <a name="roleAttributePath"></a>12. Property `grafana > roleAttributePath`
 
 |              |          |
 | ------------ | -------- |
@@ -268,7 +278,7 @@ must respect the following conditions
 
 **Description:** JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-## <a name="secretStoreRef"></a>12. Property `grafana > secretStoreRef`
+## <a name="secretStoreRef"></a>13. Property `grafana > secretStoreRef`
 
 |              |          |
 | ------------ | -------- |
