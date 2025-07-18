@@ -11,7 +11,6 @@ metadata:
     {{- toYaml .Values.grafanaAnnotations | nindent 4 }}
     {{- end }}
 spec:
-  baseImage: {{ .Values.grafanaBaseImage }}
   config:
     log:
       mode: console
@@ -53,6 +52,7 @@ spec:
             {{- end }}
           containers:
             - name: grafana
+              image: {{ .Values.grafanaBaseImage }}
               {{- if gt (len .Values.env) 0 }}
               env:
                 {{- range $key, $value := .Values.env }}
