@@ -118,6 +118,22 @@
     "secretStoreRef": {
       "description": "Name of the secret store to use for external secrets.",
       "type": "string"
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "description": "Annotations to add to the service account.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

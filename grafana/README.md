@@ -23,6 +23,7 @@
 | - [replicas](#replicas )                     | No      | integer | No         | -          | Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.                                        |
 | - [roleAttributePath](#roleAttributePath )   | No      | string  | No         | -          | JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ . |
 | - [secretStoreRef](#secretStoreRef )         | No      | string  | No         | -          | Name of the secret store to use for external secrets.                                                                                                                                |
+| - [serviceAccount](#serviceAccount )         | No      | object  | No         | -          | -                                                                                                                                                                                    |
 
 ## <a name="baseDomain"></a>1. Property `grafana > baseDomain`
 
@@ -286,5 +287,41 @@ must respect the following conditions
 | **Required** | No       |
 
 **Description:** Name of the secret store to use for external secrets.
+
+## <a name="serviceAccount"></a>14. Property `grafana > serviceAccount`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description                          |
+| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
+| - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | Annotations to add to the service account. |
+
+### <a name="serviceAccount_annotations"></a>14.1. Property `grafana > serviceAccount > annotations`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Annotations to add to the service account.
+
+| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#serviceAccount_annotations_pattern1 ) | Yes     | string | No         | -          | -                 |
+
+#### <a name="serviceAccount_annotations_pattern1"></a>14.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------

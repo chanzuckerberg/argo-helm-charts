@@ -43,3 +43,6 @@ extraSecretVolumes: [] # @schema description: List of extra secret volumes to mo
   #   configMap:
   #     configMapName: <some-name>
   #     defaultMode: 0444
+
+serviceAccount:
+  annotations: {} # @schema description: Annotations to add to the service account.; patternProperties: { "^.*$": { "type": "string" } }
