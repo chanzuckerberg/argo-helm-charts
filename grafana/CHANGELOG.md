@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.4.0...grafana-v0.5.0) (2025-07-21)
+
+
+### Features
+
+* Enable Grafana version selection through Grafana Operator ([#242](https://github.com/chanzuckerberg/argo-helm-charts/issues/242)) ([5b0f5d2](https://github.com/chanzuckerberg/argo-helm-charts/commit/5b0f5d2f10449b84b9829e6a490ebf2faf400a1f))
+* ServiceAccount for grafana annotations ([#245](https://github.com/chanzuckerberg/argo-helm-charts/issues/245)) ([1c8a848](https://github.com/chanzuckerberg/argo-helm-charts/commit/1c8a84866917ea2b143a8709cf92fcbe221ac3ce))
+
+
+### Bug Fixes
+
+* Specify grafana image on a container (baseImage is not supported) ([#244](https://github.com/chanzuckerberg/argo-helm-charts/issues/244)) ([2f634a1](https://github.com/chanzuckerberg/argo-helm-charts/commit/2f634a1b2d8f5c6f86cd89255a5afd574bdb677c))
+
 ## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.3.0...grafana-v0.4.0) (2025-06-04)
 
 
