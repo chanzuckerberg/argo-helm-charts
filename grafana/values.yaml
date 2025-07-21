@@ -1,5 +1,7 @@
 enabled: true # @schema description: Enable the Grafana instance.
 
+grafanaBaseImage: "docker.io/grafana/grafana:11.3.0" # @schema description: Base image for the Grafana instance.
+
 clusterName: "" # @schema description: Name of the cluster to configure the platform Grafana for. This value is required.; required: true
 
 baseDomain: "" ## @schema description: Base domain for cluster ingresses (e.g. dev-core-platform.dev.czi.team). This value is required.; required: true
@@ -41,3 +43,6 @@ extraSecretVolumes: [] # @schema description: List of extra secret volumes to mo
   #   configMap:
   #     configMapName: <some-name>
   #     defaultMode: 0444
+
+serviceAccount:
+  annotations: {} # @schema description: Annotations to add to the service account.; patternProperties: { "^.*$": { "type": "string" } }

@@ -1,7 +1,11 @@
 {
-  "$id": "argo.helm.charts/grafana",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "additionalProperties": false,
+  "$id": "argo.helm.charts/grafana",
+  "title": "grafana",
+  "type": "object",
+  "required": [
+    "clusterName"
+  ],
   "properties": {
     "baseDomain": {
       "type": "string"
@@ -12,9 +16,11 @@
     },
     "datasources": {
       "description": "List of datasources to configure for the Grafana instance.",
+      "type": "object",
       "properties": {
         "loki": {
           "description": "Loki datasource configuration.",
+          "type": "object",
           "properties": {
             "enabled": {
               "description": "Enable the Loki datasource.",
@@ -25,10 +31,11 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "additionalProperties": false
         },
         "prometheus": {
           "description": "Prometheus datasource configuration.",
+          "type": "object",
           "properties": {
             "enabled": {
               "description": "Enable the Prometheus datasource.",
@@ -39,10 +46,11 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "additionalProperties": false
         },
         "tempo": {
           "description": "Tempo datasource configuration.",
+          "type": "object",
           "properties": {
             "enabled": {
               "description": "Enable the Tempo datasource.",
@@ -53,10 +61,10 @@
               "type": "string"
             }
           },
-          "type": "object"
+          "additionalProperties": false
         }
       },
-      "type": "object"
+      "additionalProperties": false
     },
     "enabled": {
       "description": "Enable the Grafana instance.",
@@ -64,13 +72,13 @@
     },
     "env": {
       "description": "Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.",
+      "type": "object",
       "patternProperties": {
         "^.*$": {
           "type": "string"
         }
       },
-      "properties": {},
-      "type": "object"
+      "additionalProperties": false
     },
     "extraSecretVolumes": {
       "description": "List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:",
@@ -78,13 +86,17 @@
     },
     "grafanaAnnotations": {
       "description": "Annotations to add to the Grafana instance.",
+      "type": "object",
       "patternProperties": {
         "^.*$": {
           "type": "string"
         }
       },
-      "properties": {},
-      "type": "object"
+      "additionalProperties": false
+    },
+    "grafanaBaseImage": {
+      "description": "Base image for the Grafana instance.",
+      "type": "string"
     },
     "grafanaName": {
       "description": "Name of the Grafana instance to create.",
@@ -96,8 +108,8 @@
     },
     "replicas": {
       "description": "Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.",
-      "maximum": 1,
-      "type": "integer"
+      "type": "integer",
+      "maximum": 1
     },
     "roleAttributePath": {
       "description": "JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .",
@@ -106,12 +118,23 @@
     "secretStoreRef": {
       "description": "Name of the secret store to use for external secrets.",
       "type": "string"
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "description": "Annotations to add to the service account.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "required": [
-    "clusterName",
-    "baseDomain"
-  ],
-  "title": "grafana",
-  "type": "object"
+  "additionalProperties": false
 }
