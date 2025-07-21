@@ -14,11 +14,11 @@
 
 ## <a name="global"></a>1. Property `argus-config > global`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Global parameters
 
@@ -32,11 +32,11 @@
 
 ### <a name="global_appContext"></a>1.1. Property `argus-config > global > appContext`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** App context (provided by Argus API)
 
@@ -65,11 +65,11 @@
 
 ### <a name="global_appSecrets"></a>1.2. Property `argus-config > global > appSecrets`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** App secrets (provided by Argus API)
 
@@ -81,11 +81,11 @@
 
 #### <a name="global_appSecrets_clusterSecret"></a>1.2.1. Property `argus-config > global > appSecrets > clusterSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                           |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------- |
@@ -112,11 +112,11 @@
 
 #### <a name="global_appSecrets_envSecret"></a>1.2.2. Property `argus-config > global > appSecrets > envSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
 | -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
@@ -143,11 +143,11 @@
 
 #### <a name="global_appSecrets_stackSecret"></a>1.2.3. Property `argus-config > global > appSecrets > stackSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                         |
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------- |
@@ -174,11 +174,11 @@
 
 ### <a name="global_argoBuildEnv"></a>1.3. Property `argus-config > global > argoBuildEnv`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Argo built-in environment parameters
 
@@ -276,11 +276,11 @@
 
 ### <a name="global_ingress"></a>1.5. Property `argus-config > global > ingress`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Ingress configuration
 

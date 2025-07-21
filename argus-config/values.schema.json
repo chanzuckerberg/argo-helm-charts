@@ -20,7 +20,8 @@
               "description": "Stack level configuration configmap name",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "appSecrets": {
           "description": "App secrets (provided by Argus API)",
@@ -37,7 +38,8 @@
                   "description": "Cluster-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "envSecret": {
               "type": "object",
@@ -50,7 +52,8 @@
                   "description": "Environment-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             },
             "stackSecret": {
               "type": "object",
@@ -63,9 +66,11 @@
                   "description": "Stack-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          }
+          },
+          "additionalProperties": false
         },
         "argoBuildEnv": {
           "description": "Argo built-in environment parameters",
@@ -103,7 +108,8 @@
               "description": "equivalant to ARGOCD_APP_SOURCE_REPO_URL",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "deploymentStage": {
           "description": "Deployment stage",
@@ -117,9 +123,11 @@
               "description": "Ingress host",
               "type": "string"
             }
-          }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
