@@ -1754,10 +1754,11 @@ Must be one of:
 
 **Description:** Service configuration
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
-| - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
+| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description     |
+| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------- |
+| - [port](#cronJobs_pattern1_service_port )   | No      | number          | No         | -          | Service port          |
+| - [ports](#cronJobs_pattern1_service_ports ) | No      | array of object | No         | -          | List of service ports |
+| - [type](#cronJobs_pattern1_service_type )   | No      | string          | No         | -          | Service type          |
 
 ##### <a name="cronJobs_pattern1_service_port"></a>2.1.31.1. Property `stack > cronJobs > ^.*$ > service > port`
 
@@ -1768,7 +1769,83 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>2.1.31.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_ports"></a>2.1.31.2. Property `stack > cronJobs > ^.*$ > service > ports`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of service ports
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                       | Description |
+| ----------------------------------------------------- | ----------- |
+| [ports items](#cronJobs_pattern1_service_ports_items) | -           |
+
+###### <a name="cronJobs_pattern1_service_ports_items"></a>2.1.31.2.1. stack > cronJobs > ^.*$ > service > ports > ports items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_service_ports_items_name )                   | No      | string      | No         | -          | -                 |
+| - [containerPort](#cronJobs_pattern1_service_ports_items_containerPort ) | No      | Combination | No         | -          | -                 |
+| - [protocol](#cronJobs_pattern1_service_ports_items_protocol )           | No      | string      | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_service_ports_items_name"></a>2.1.31.2.1.1. Property `stack > cronJobs > ^.*$ > service > ports > ports items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort"></a>2.1.31.2.1.2. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| One of(Option)                                                          |
+| ----------------------------------------------------------------------- |
+| [item 0](#cronJobs_pattern1_service_ports_items_containerPort_oneOf_i0) |
+| [item 1](#cronJobs_pattern1_service_ports_items_containerPort_oneOf_i1) |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort_oneOf_i0"></a>2.1.31.2.1.2.1. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort > oneOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort_oneOf_i1"></a>2.1.31.2.1.2.2. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort > oneOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_protocol"></a>2.1.31.2.1.3. Property `stack > cronJobs > ^.*$ > service > ports > ports items > protocol`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_service_type"></a>2.1.31.3. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -3749,10 +3826,11 @@ Must be one of:
 
 **Description:** Service configuration
 
-| Property                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [port](#global_service_port ) | No      | number | No         | -          | Service port      |
-| - [type](#global_service_type ) | No      | string | No         | -          | Service type      |
+| Property                          | Pattern | Type            | Deprecated | Definition | Title/Description     |
+| --------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------- |
+| - [port](#global_service_port )   | No      | number          | No         | -          | Service port          |
+| - [ports](#global_service_ports ) | No      | array of object | No         | -          | List of service ports |
+| - [type](#global_service_type )   | No      | string          | No         | -          | Service type          |
 
 #### <a name="global_service_port"></a>3.31.1. Property `stack > global > service > port`
 
@@ -3763,7 +3841,83 @@ Must be one of:
 
 **Description:** Service port
 
-#### <a name="global_service_type"></a>3.31.2. Property `stack > global > service > type`
+#### <a name="global_service_ports"></a>3.31.2. Property `stack > global > service > ports`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of service ports
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be            | Description |
+| ------------------------------------------ | ----------- |
+| [ports items](#global_service_ports_items) | -           |
+
+##### <a name="global_service_ports_items"></a>3.31.2.1. stack > global > service > ports > ports items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [name](#global_service_ports_items_name )                   | No      | string      | No         | -          | -                 |
+| - [containerPort](#global_service_ports_items_containerPort ) | No      | Combination | No         | -          | -                 |
+| - [protocol](#global_service_ports_items_protocol )           | No      | string      | No         | -          | -                 |
+
+###### <a name="global_service_ports_items_name"></a>3.31.2.1.1. Property `stack > global > service > ports > ports items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_service_ports_items_containerPort"></a>3.31.2.1.2. Property `stack > global > service > ports > ports items > containerPort`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| One of(Option)                                               |
+| ------------------------------------------------------------ |
+| [item 0](#global_service_ports_items_containerPort_oneOf_i0) |
+| [item 1](#global_service_ports_items_containerPort_oneOf_i1) |
+
+###### <a name="global_service_ports_items_containerPort_oneOf_i0"></a>3.31.2.1.2.1. Property `stack > global > service > ports > ports items > containerPort > oneOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_service_ports_items_containerPort_oneOf_i1"></a>3.31.2.1.2.2. Property `stack > global > service > ports > ports items > containerPort > oneOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="global_service_ports_items_protocol"></a>3.31.2.1.3. Property `stack > global > service > ports > ports items > protocol`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="global_service_type"></a>3.31.3. Property `stack > global > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -5762,10 +5916,11 @@ Must be one of:
 
 **Description:** Service configuration
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
-| - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
+| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description     |
+| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------- |
+| - [port](#cronJobs_pattern1_service_port )   | No      | number          | No         | -          | Service port          |
+| - [ports](#cronJobs_pattern1_service_ports ) | No      | array of object | No         | -          | List of service ports |
+| - [type](#cronJobs_pattern1_service_type )   | No      | string          | No         | -          | Service type          |
 
 ##### <a name="cronJobs_pattern1_service_port"></a>4.1.31.1. Property `stack > cronJobs > ^.*$ > service > port`
 
@@ -5776,7 +5931,83 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>4.1.31.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_ports"></a>4.1.31.2. Property `stack > cronJobs > ^.*$ > service > ports`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of service ports
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                       | Description |
+| ----------------------------------------------------- | ----------- |
+| [ports items](#cronJobs_pattern1_service_ports_items) | -           |
+
+###### <a name="cronJobs_pattern1_service_ports_items"></a>4.1.31.2.1. stack > cronJobs > ^.*$ > service > ports > ports items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_service_ports_items_name )                   | No      | string      | No         | -          | -                 |
+| - [containerPort](#cronJobs_pattern1_service_ports_items_containerPort ) | No      | Combination | No         | -          | -                 |
+| - [protocol](#cronJobs_pattern1_service_ports_items_protocol )           | No      | string      | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_service_ports_items_name"></a>4.1.31.2.1.1. Property `stack > cronJobs > ^.*$ > service > ports > ports items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort"></a>4.1.31.2.1.2. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| One of(Option)                                                          |
+| ----------------------------------------------------------------------- |
+| [item 0](#cronJobs_pattern1_service_ports_items_containerPort_oneOf_i0) |
+| [item 1](#cronJobs_pattern1_service_ports_items_containerPort_oneOf_i1) |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort_oneOf_i0"></a>4.1.31.2.1.2.1. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort > oneOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort_oneOf_i1"></a>4.1.31.2.1.2.2. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort > oneOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_protocol"></a>4.1.31.2.1.3. Property `stack > cronJobs > ^.*$ > service > ports > ports items > protocol`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_service_type"></a>4.1.31.3. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -7775,10 +8006,11 @@ Must be one of:
 
 **Description:** Service configuration
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
-| - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
+| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description     |
+| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------- |
+| - [port](#cronJobs_pattern1_service_port )   | No      | number          | No         | -          | Service port          |
+| - [ports](#cronJobs_pattern1_service_ports ) | No      | array of object | No         | -          | List of service ports |
+| - [type](#cronJobs_pattern1_service_type )   | No      | string          | No         | -          | Service type          |
 
 ##### <a name="cronJobs_pattern1_service_port"></a>5.1.31.1. Property `stack > cronJobs > ^.*$ > service > port`
 
@@ -7789,7 +8021,83 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>5.1.31.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_ports"></a>5.1.31.2. Property `stack > cronJobs > ^.*$ > service > ports`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of service ports
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                       | Description |
+| ----------------------------------------------------- | ----------- |
+| [ports items](#cronJobs_pattern1_service_ports_items) | -           |
+
+###### <a name="cronJobs_pattern1_service_ports_items"></a>5.1.31.2.1. stack > cronJobs > ^.*$ > service > ports > ports items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_service_ports_items_name )                   | No      | string      | No         | -          | -                 |
+| - [containerPort](#cronJobs_pattern1_service_ports_items_containerPort ) | No      | Combination | No         | -          | -                 |
+| - [protocol](#cronJobs_pattern1_service_ports_items_protocol )           | No      | string      | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_service_ports_items_name"></a>5.1.31.2.1.1. Property `stack > cronJobs > ^.*$ > service > ports > ports items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort"></a>5.1.31.2.1.2. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| One of(Option)                                                          |
+| ----------------------------------------------------------------------- |
+| [item 0](#cronJobs_pattern1_service_ports_items_containerPort_oneOf_i0) |
+| [item 1](#cronJobs_pattern1_service_ports_items_containerPort_oneOf_i1) |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort_oneOf_i0"></a>5.1.31.2.1.2.1. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort > oneOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_containerPort_oneOf_i1"></a>5.1.31.2.1.2.2. Property `stack > cronJobs > ^.*$ > service > ports > ports items > containerPort > oneOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_service_ports_items_protocol"></a>5.1.31.2.1.3. Property `stack > cronJobs > ^.*$ > service > ports > ports items > protocol`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_service_type"></a>5.1.31.3. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
