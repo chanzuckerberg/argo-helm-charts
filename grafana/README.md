@@ -51,13 +51,47 @@
 
 **Description:** List of datasources to configure for the Grafana instance.
 
-| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description                    |
-| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------ |
-| - [loki](#datasources_loki )             | No      | object | No         | -          | Loki datasource configuration.       |
-| - [prometheus](#datasources_prometheus ) | No      | object | No         | -          | Prometheus datasource configuration. |
-| - [tempo](#datasources_tempo )           | No      | object | No         | -          | Tempo datasource configuration.      |
+| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                   |
+| ---------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------- |
+| - [aps](#datasources_aps )               | No      | object | No         | -          | Amazon Managed Prometheus datasource configuration. |
+| - [loki](#datasources_loki )             | No      | object | No         | -          | Loki datasource configuration.                      |
+| - [prometheus](#datasources_prometheus ) | No      | object | No         | -          | Prometheus datasource configuration.                |
+| - [tempo](#datasources_tempo )           | No      | object | No         | -          | Tempo datasource configuration.                     |
 
-### <a name="datasources_loki"></a>3.1. Property `grafana > datasources > loki`
+### <a name="datasources_aps"></a>3.1. Property `grafana > datasources > aps`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Amazon Managed Prometheus datasource configuration.
+
+| Property                               | Pattern | Type    | Deprecated | Definition | Title/Description                                |
+| -------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------ |
+| - [enabled](#datasources_aps_enabled ) | No      | boolean | No         | -          | Enable the Amazon Managed Prometheus datasource. |
+| - [url](#datasources_aps_url )         | No      | string  | No         | -          | URL of the Amazon Managed Prometheus datasource. |
+
+#### <a name="datasources_aps_enabled"></a>3.1.1. Property `grafana > datasources > aps > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable the Amazon Managed Prometheus datasource.
+
+#### <a name="datasources_aps_url"></a>3.1.2. Property `grafana > datasources > aps > url`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** URL of the Amazon Managed Prometheus datasource.
+
+### <a name="datasources_loki"></a>3.2. Property `grafana > datasources > loki`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -72,7 +106,7 @@
 | - [enabled](#datasources_loki_enabled ) | No      | boolean | No         | -          | Enable the Loki datasource. |
 | - [url](#datasources_loki_url )         | No      | string  | No         | -          | URL of the Loki datasource. |
 
-#### <a name="datasources_loki_enabled"></a>3.1.1. Property `grafana > datasources > loki > enabled`
+#### <a name="datasources_loki_enabled"></a>3.2.1. Property `grafana > datasources > loki > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -81,7 +115,7 @@
 
 **Description:** Enable the Loki datasource.
 
-#### <a name="datasources_loki_url"></a>3.1.2. Property `grafana > datasources > loki > url`
+#### <a name="datasources_loki_url"></a>3.2.2. Property `grafana > datasources > loki > url`
 
 |              |          |
 | ------------ | -------- |
@@ -90,7 +124,7 @@
 
 **Description:** URL of the Loki datasource.
 
-### <a name="datasources_prometheus"></a>3.2. Property `grafana > datasources > prometheus`
+### <a name="datasources_prometheus"></a>3.3. Property `grafana > datasources > prometheus`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -105,7 +139,7 @@
 | - [enabled](#datasources_prometheus_enabled ) | No      | boolean | No         | -          | Enable the Prometheus datasource. |
 | - [url](#datasources_prometheus_url )         | No      | string  | No         | -          | URL of the Prometheus datasource. |
 
-#### <a name="datasources_prometheus_enabled"></a>3.2.1. Property `grafana > datasources > prometheus > enabled`
+#### <a name="datasources_prometheus_enabled"></a>3.3.1. Property `grafana > datasources > prometheus > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -114,7 +148,7 @@
 
 **Description:** Enable the Prometheus datasource.
 
-#### <a name="datasources_prometheus_url"></a>3.2.2. Property `grafana > datasources > prometheus > url`
+#### <a name="datasources_prometheus_url"></a>3.3.2. Property `grafana > datasources > prometheus > url`
 
 |              |          |
 | ------------ | -------- |
@@ -123,7 +157,7 @@
 
 **Description:** URL of the Prometheus datasource.
 
-### <a name="datasources_tempo"></a>3.3. Property `grafana > datasources > tempo`
+### <a name="datasources_tempo"></a>3.4. Property `grafana > datasources > tempo`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -138,7 +172,7 @@
 | - [enabled](#datasources_tempo_enabled ) | No      | boolean | No         | -          | Enable the Tempo datasource. |
 | - [url](#datasources_tempo_url )         | No      | string  | No         | -          | URL of the Tempo datasource. |
 
-#### <a name="datasources_tempo_enabled"></a>3.3.1. Property `grafana > datasources > tempo > enabled`
+#### <a name="datasources_tempo_enabled"></a>3.4.1. Property `grafana > datasources > tempo > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -147,7 +181,7 @@
 
 **Description:** Enable the Tempo datasource.
 
-#### <a name="datasources_tempo_url"></a>3.3.2. Property `grafana > datasources > tempo > url`
+#### <a name="datasources_tempo_url"></a>3.4.2. Property `grafana > datasources > tempo > url`
 
 |              |          |
 | ------------ | -------- |
