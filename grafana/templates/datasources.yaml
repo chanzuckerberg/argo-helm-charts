@@ -62,5 +62,28 @@ spec:
     url: "{{ .Values.datasources.tempo.url }}"
     basicAuth: false
     editable: true
+---
+{{ end }}
+{{ if .Values.datasources.aps.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: {{ .Values.grafanaName }}-aps-datasource
+  labels:
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  datasource:
+    name: APS
+    type: prometheus
+    url: "{{ .Values.datasources.aps.url }}"
+    access: proxy
+    jsonData:
+      sigv4AuthType: default
+      sigv4Region: {{ .Values.datasources.aps.region }}
+      sigv4Auth: true
 {{ end }}
 {{ end }}
