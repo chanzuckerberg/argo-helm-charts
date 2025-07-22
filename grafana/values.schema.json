@@ -18,6 +18,21 @@
       "description": "List of datasources to configure for the Grafana instance.",
       "type": "object",
       "properties": {
+        "aps": {
+          "description": "Amazon Managed Prometheus datasource configuration.",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable the Amazon Managed Prometheus datasource.",
+              "type": "boolean"
+            },
+            "url": {
+              "description": "URL of the Amazon Managed Prometheus datasource.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "loki": {
           "description": "Loki datasource configuration.",
           "type": "object",
