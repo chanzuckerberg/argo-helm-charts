@@ -51,6 +51,45 @@ tests:
           path: metadata.name
           value: restarter
 
+  - it: should have correct labels on all RBAC resources for ArgoCD tracking
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: restarter-rbac
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: restarter-rbac
+      - documentIndex: 2
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - documentIndex: 2
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - documentIndex: 2
+        equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: restarter-rbac
+
   - it: should create Role with correct metadata and permissions
     asserts:
       - documentIndex: 1

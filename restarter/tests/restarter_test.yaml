@@ -32,6 +32,37 @@ tests:
           path: kind
           value: CronJob
 
+  - it: should have correct labels for ArgoCD tracking
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/version"]
+
+  - it: should have correct jobTemplate labels for ArgoCD tracking
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/component"]
+          value: restarter-job
+      - isNotEmpty:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/version"]
+
   - it: should use default schedule
     asserts:
       - equal:
