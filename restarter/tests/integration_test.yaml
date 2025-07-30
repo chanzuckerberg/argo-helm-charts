@@ -108,25 +108,53 @@ tests:
 
   - it: should maintain security best practices
     asserts:
-      - documentIndex: 1
+        - documentIndex: 1
+          equal:
+            path: rules[0].verbs
+            value: ["get", "patch"]
+          template: rbac.yaml
+        - documentIndex: 1
+          equal:
+            path: rules[0].resources
+            value: ["deployments"]
+          template: rbac.yaml
+        - documentIndex: 1
+          equal:
+            path: rules[0].apiGroups
+            value: ["apps"]
+          template: rbac.yaml
+        - documentIndex: 0
+          equal:
+            path: spec.jobTemplate.spec.template.spec.restartPolicy
+            value: OnFailure
+          template: restarter.yaml
+
+  - it: should have consistent ArgoCD labels across all resources
+    asserts:
+      - documentIndex: 0
         equal:
-          path: rules[0].verbs
-          value: ["get", "patch"]
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
         template: rbac.yaml
       - documentIndex: 1
         equal:
-          path: rules[0].resources
-          value: ["deployments"]
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
         template: rbac.yaml
-      - documentIndex: 1
+      - documentIndex: 2
         equal:
-          path: rules[0].apiGroups
-          value: ["apps"]
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
         template: rbac.yaml
       - documentIndex: 0
         equal:
-          path: spec.jobTemplate.spec.template.spec.restartPolicy
-          value: OnFailure
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+        template: restarter.yaml
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
         template: restarter.yaml
 
   - it: should handle edge case values gracefully
