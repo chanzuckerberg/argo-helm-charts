@@ -1,0 +1,11 @@
+enabled: true # @schema description: Enable the restarter.
+
+schedule: "0 11 * * *" # @schema description: Cron schedule for the restarter job. This is set to run at 3 AM PST (11 AM UTC).
+
+target:
+  deployment: deployment # @schema description: The name of the deployment to restart.
+  namespace: default # @schema description: The namespace of the deployment to restart.
+
+runner:
+  image: bitnami/kubectl:latest # @schema description: The Docker image to use for the restarter job.
+  

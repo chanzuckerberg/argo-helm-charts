@@ -1,0 +1,172 @@
+suite: test restarter integration
+templates:
+  - restarter.yaml
+  - rbac.yaml
+tests:
+  - it: should create all resources by default
+    asserts:
+      - template: rbac.yaml
+        hasDocuments:
+          count: 3
+      - template: restarter.yaml
+        hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: ServiceAccount
+        template: rbac.yaml
+      - documentIndex: 1
+        isKind:
+          of: Role
+        template: rbac.yaml
+      - documentIndex: 2
+        isKind:
+          of: RoleBinding
+        template: rbac.yaml
+      - documentIndex: 0
+        isKind:
+          of: CronJob
+        template: restarter.yaml
+
+  - it: should not create any resources when enabled is false
+    set:
+      enabled: false
+    asserts:
+      - template: rbac.yaml
+        hasDocuments:
+          count: 0
+      - template: restarter.yaml
+        hasDocuments:
+          count: 0
+
+  - it: should have consistent naming across resources
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: restarter
+        template: rbac.yaml
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: restarter-role
+        template: rbac.yaml
+      - documentIndex: 2
+        equal:
+          path: metadata.name
+          value: restarter-binding
+        template: rbac.yaml
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: restarter
+        template: restarter.yaml
+
+  - it: should reference correct ServiceAccount in CronJob
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.serviceAccountName
+          value: restarter
+        template: restarter.yaml
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: restarter
+        template: rbac.yaml
+
+  - it: should work with all custom values
+    set:
+      schedule: "0 3 * * 1-5"
+      runner:
+        image: "custom-kubectl:v1.28"
+      target:
+        deployment: "web-app"
+        namespace: "production"
+    asserts:
+      - template: rbac.yaml
+        hasDocuments:
+          count: 3
+      - template: restarter.yaml
+        hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.schedule
+          value: "0 3 * * 1-5"
+        template: restarter.yaml
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: "custom-kubectl:v1.28"
+        template: restarter.yaml
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/web-app -n production"
+        template: restarter.yaml
+
+  - it: should maintain security best practices
+    asserts:
+      - documentIndex: 1
+        equal:
+          path: rules[0].verbs
+          value: ["get", "patch"]
+        template: rbac.yaml
+      - documentIndex: 1
+        equal:
+          path: rules[0].resources
+          value: ["deployments"]
+        template: rbac.yaml
+      - documentIndex: 1
+        equal:
+          path: rules[0].apiGroups
+          value: ["apps"]
+        template: rbac.yaml
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.restartPolicy
+          value: OnFailure
+        template: restarter.yaml
+
+  - it: should handle edge case values gracefully
+    set:
+      schedule: "*/15 * * * *"
+      target:
+        deployment: "my-app-2024"
+        namespace: "team-alpha-beta"
+      runner:
+        image: "registry.k8s.io/kubectl:v1.28.0"
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.schedule
+          value: "*/15 * * * *"
+        template: restarter.yaml
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/my-app-2024 -n team-alpha-beta"
+        template: restarter.yaml
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: "registry.k8s.io/kubectl:v1.28.0"
+        template: restarter.yaml
+
+  - it: should work when enabled is explicitly set to true
+    set:
+      enabled: true
+      schedule: "0 1 * * *"
+    asserts:
+      - template: rbac.yaml
+        hasDocuments:
+          count: 3
+      - template: restarter.yaml
+        hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.schedule
+          value: "0 1 * * *"
+        template: restarter.yaml

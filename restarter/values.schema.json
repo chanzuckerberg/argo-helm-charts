@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/restarter",
+  "title": "restarter",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "description": "Enable the restarter.",
+      "type": "boolean"
+    },
+    "runner": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "description": "The Docker image to use for the restarter job.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schedule": {
+      "description": "Cron schedule for the restarter job. This is set to run at 3 AM PST (11 AM UTC).",
+      "type": "string"
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "deployment": {
+          "description": "The name of the deployment to restart.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "The namespace of the deployment to restart.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
