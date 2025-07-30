@@ -13,7 +13,12 @@ tests:
           kind: CronJob
           name: restarter
 
-
+  - it: should not create CronJob when enabled is false
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
 
   - it: should have correct metadata
     asserts:
@@ -135,3 +140,29 @@ tests:
       - equal:
           path: spec.jobTemplate.spec.template.spec.serviceAccountName
           value: restarter
+
+  - it: should create CronJob when enabled is explicitly true
+    set:
+      enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: CronJob
+
+  - it: should create CronJob with enabled true and custom values
+    set:
+      enabled: true
+      schedule: "0 */4 * * *"
+      target:
+        deployment: "test-app"
+        namespace: "test"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.schedule
+          value: "0 */4 * * *"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/test-app -n test"

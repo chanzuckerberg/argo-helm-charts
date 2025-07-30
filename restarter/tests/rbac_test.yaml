@@ -16,7 +16,28 @@ tests:
         isKind:
           of: RoleBinding
 
+  - it: should create all RBAC resources when enabled is explicitly true
+    set:
+      enabled: true
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 0
+        isKind:
+          of: ServiceAccount
+      - documentIndex: 1
+        isKind:
+          of: Role
+      - documentIndex: 2
+        isKind:
+          of: RoleBinding
 
+  - it: should not create RBAC resources when enabled is false
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
 
   - it: should create ServiceAccount with correct metadata
     asserts:

@@ -28,6 +28,17 @@ tests:
           of: CronJob
         template: restarter.yaml
 
+  - it: should not create any resources when enabled is false
+    set:
+      enabled: false
+    asserts:
+      - template: rbac.yaml
+        hasDocuments:
+          count: 0
+      - template: restarter.yaml
+        hasDocuments:
+          count: 0
+
   - it: should have consistent naming across resources
     asserts:
       - documentIndex: 0
@@ -141,4 +152,21 @@ tests:
         equal:
           path: spec.jobTemplate.spec.template.spec.containers[0].image
           value: "registry.k8s.io/kubectl:v1.28.0"
+        template: restarter.yaml
+
+  - it: should work when enabled is explicitly set to true
+    set:
+      enabled: true
+      schedule: "0 1 * * *"
+    asserts:
+      - template: rbac.yaml
+        hasDocuments:
+          count: 3
+      - template: restarter.yaml
+        hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.schedule
+          value: "0 1 * * *"
         template: restarter.yaml
