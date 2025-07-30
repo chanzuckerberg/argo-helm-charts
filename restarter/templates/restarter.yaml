@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restarter
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: restarter
+          containers:
+          - name: restarter
+            image: {{ .Values.runner.image | quote }}
+            command:
+            - /bin/sh
+            - -c
+            - kubectl rollout restart deployment/{{ .Values.target.deployment }} -n {{ .Values.target.namespace }}
+          restartPolicy: OnFailure
