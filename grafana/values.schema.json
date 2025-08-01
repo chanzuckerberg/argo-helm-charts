@@ -84,6 +84,22 @@
       "description": "List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:",
       "type": "array"
     },
+    "grafana.ini": {
+      "type": "object",
+      "properties": {
+        "security": {
+          "type": "object",
+          "properties": {
+            "allow_embedding": {
+              "description": "Allow embedding of Grafana dashboards in other applications.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "grafanaAnnotations": {
       "description": "Annotations to add to the Grafana instance.",
       "type": "object",
@@ -128,24 +144,6 @@
           "patternProperties": {
             "^.*$": {
               "type": "string"
-            }
-          },
-          "additionalProperties": false
-        }
-      },
-      "additionalProperties": false
-    },
-    "grafana.ini": {
-      "description": "Configuration for the Grafana instance. This is a map of sections and keys, where each section is a map of key-value pairs.",
-      "type": "object",
-      "properties": {
-        "security": {
-          "description": "Security settings for Grafana.",
-          "type": "object",
-          "properties": {
-            "allow_embedding": {
-              "description": "Allow embedding of Grafana dashboards in other applications.",
-              "type": "boolean"
             }
           },
           "additionalProperties": false
