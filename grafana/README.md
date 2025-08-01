@@ -10,13 +10,13 @@
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                    |
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [allow_embedding](#allow_embedding )       | No      | boolean | No         | -          | Allow embedding of Grafana dashboards in other applications.                                                                                                                         |
 | - [baseDomain](#baseDomain )                 | No      | string  | No         | -          | -                                                                                                                                                                                    |
 | + [clusterName](#clusterName )               | No      | string  | No         | -          | Name of the cluster to configure the platform Grafana for. This value is required.                                                                                                   |
 | - [datasources](#datasources )               | No      | object  | No         | -          | List of datasources to configure for the Grafana instance.                                                                                                                           |
 | - [enabled](#enabled )                       | No      | boolean | No         | -          | Enable the Grafana instance.                                                                                                                                                         |
 | - [env](#env )                               | No      | object  | No         | -          | Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.                                                              |
 | - [extraSecretVolumes](#extraSecretVolumes ) | No      | array   | No         | -          | List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:                                                                   |
-| - [grafana](#grafana )                       | No      | object  | No         | -          | -                                                                                                                                                                                    |
 | - [grafanaAnnotations](#grafanaAnnotations ) | No      | object  | No         | -          | Annotations to add to the Grafana instance.                                                                                                                                          |
 | - [grafanaBaseImage](#grafanaBaseImage )     | No      | string  | No         | -          | Base image for the Grafana instance.                                                                                                                                                 |
 | - [grafanaName](#grafanaName )               | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
@@ -26,14 +26,23 @@
 | - [secretStoreRef](#secretStoreRef )         | No      | string  | No         | -          | Name of the secret store to use for external secrets.                                                                                                                                |
 | - [serviceAccount](#serviceAccount )         | No      | object  | No         | -          | -                                                                                                                                                                                    |
 
-## <a name="baseDomain"></a>1. Property `grafana > baseDomain`
+## <a name="allow_embedding"></a>1. Property `grafana > allow_embedding`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Allow embedding of Grafana dashboards in other applications.
+
+## <a name="baseDomain"></a>2. Property `grafana > baseDomain`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="clusterName"></a>2. Property `grafana > clusterName`
+## <a name="clusterName"></a>3. Property `grafana > clusterName`
 
 |              |          |
 | ------------ | -------- |
@@ -42,7 +51,7 @@
 
 **Description:** Name of the cluster to configure the platform Grafana for. This value is required.
 
-## <a name="datasources"></a>3. Property `grafana > datasources`
+## <a name="datasources"></a>4. Property `grafana > datasources`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -58,7 +67,7 @@
 | - [prometheus](#datasources_prometheus ) | No      | object | No         | -          | Prometheus datasource configuration. |
 | - [tempo](#datasources_tempo )           | No      | object | No         | -          | Tempo datasource configuration.      |
 
-### <a name="datasources_loki"></a>3.1. Property `grafana > datasources > loki`
+### <a name="datasources_loki"></a>4.1. Property `grafana > datasources > loki`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -73,7 +82,7 @@
 | - [enabled](#datasources_loki_enabled ) | No      | boolean | No         | -          | Enable the Loki datasource. |
 | - [url](#datasources_loki_url )         | No      | string  | No         | -          | URL of the Loki datasource. |
 
-#### <a name="datasources_loki_enabled"></a>3.1.1. Property `grafana > datasources > loki > enabled`
+#### <a name="datasources_loki_enabled"></a>4.1.1. Property `grafana > datasources > loki > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -82,7 +91,7 @@
 
 **Description:** Enable the Loki datasource.
 
-#### <a name="datasources_loki_url"></a>3.1.2. Property `grafana > datasources > loki > url`
+#### <a name="datasources_loki_url"></a>4.1.2. Property `grafana > datasources > loki > url`
 
 |              |          |
 | ------------ | -------- |
@@ -91,7 +100,7 @@
 
 **Description:** URL of the Loki datasource.
 
-### <a name="datasources_prometheus"></a>3.2. Property `grafana > datasources > prometheus`
+### <a name="datasources_prometheus"></a>4.2. Property `grafana > datasources > prometheus`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -106,7 +115,7 @@
 | - [enabled](#datasources_prometheus_enabled ) | No      | boolean | No         | -          | Enable the Prometheus datasource. |
 | - [url](#datasources_prometheus_url )         | No      | string  | No         | -          | URL of the Prometheus datasource. |
 
-#### <a name="datasources_prometheus_enabled"></a>3.2.1. Property `grafana > datasources > prometheus > enabled`
+#### <a name="datasources_prometheus_enabled"></a>4.2.1. Property `grafana > datasources > prometheus > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -115,7 +124,7 @@
 
 **Description:** Enable the Prometheus datasource.
 
-#### <a name="datasources_prometheus_url"></a>3.2.2. Property `grafana > datasources > prometheus > url`
+#### <a name="datasources_prometheus_url"></a>4.2.2. Property `grafana > datasources > prometheus > url`
 
 |              |          |
 | ------------ | -------- |
@@ -124,7 +133,7 @@
 
 **Description:** URL of the Prometheus datasource.
 
-### <a name="datasources_tempo"></a>3.3. Property `grafana > datasources > tempo`
+### <a name="datasources_tempo"></a>4.3. Property `grafana > datasources > tempo`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -139,7 +148,7 @@
 | - [enabled](#datasources_tempo_enabled ) | No      | boolean | No         | -          | Enable the Tempo datasource. |
 | - [url](#datasources_tempo_url )         | No      | string  | No         | -          | URL of the Tempo datasource. |
 
-#### <a name="datasources_tempo_enabled"></a>3.3.1. Property `grafana > datasources > tempo > enabled`
+#### <a name="datasources_tempo_enabled"></a>4.3.1. Property `grafana > datasources > tempo > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -148,7 +157,7 @@
 
 **Description:** Enable the Tempo datasource.
 
-#### <a name="datasources_tempo_url"></a>3.3.2. Property `grafana > datasources > tempo > url`
+#### <a name="datasources_tempo_url"></a>4.3.2. Property `grafana > datasources > tempo > url`
 
 |              |          |
 | ------------ | -------- |
@@ -157,7 +166,7 @@
 
 **Description:** URL of the Tempo datasource.
 
-## <a name="enabled"></a>4. Property `grafana > enabled`
+## <a name="enabled"></a>5. Property `grafana > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -166,7 +175,7 @@
 
 **Description:** Enable the Grafana instance.
 
-## <a name="env"></a>5. Property `grafana > env`
+## <a name="env"></a>6. Property `grafana > env`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -180,7 +189,7 @@
 | ------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#env_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-### <a name="env_pattern1"></a>5.1. Pattern Property `grafana > env > ^.*$`
+### <a name="env_pattern1"></a>6.1. Pattern Property `grafana > env > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -190,7 +199,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="extraSecretVolumes"></a>6. Property `grafana > extraSecretVolumes`
+## <a name="extraSecretVolumes"></a>7. Property `grafana > extraSecretVolumes`
 
 |              |         |
 | ------------ | ------- |
@@ -206,51 +215,6 @@ must respect the following conditions
 | **Items unicity**    | False              |
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
-
-## <a name="grafana"></a>7. Property `grafana > grafana`
-
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
-
-| Property               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [ini](#grafana_ini ) | No      | object | No         | -          | -                 |
-
-### <a name="grafana_ini"></a>7.1. Property `grafana > grafana > ini`
-
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
-
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [security](#grafana_ini_security ) | No      | object | No         | -          | -                 |
-
-#### <a name="grafana_ini_security"></a>7.1.1. Property `grafana > grafana > ini > security`
-
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
-
-| Property                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                            |
-| ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------ |
-| - [allow_embedding](#grafana_ini_security_allow_embedding ) | No      | boolean | No         | -          | Allow embedding of Grafana dashboards in other applications. |
-
-##### <a name="grafana_ini_security_allow_embedding"></a>7.1.1.1. Property `grafana > grafana > ini > security > allow_embedding`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Allow embedding of Grafana dashboards in other applications.
 
 ## <a name="grafanaAnnotations"></a>8. Property `grafana > grafanaAnnotations`
 
