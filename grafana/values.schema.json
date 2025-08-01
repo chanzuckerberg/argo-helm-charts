@@ -134,6 +134,24 @@
         }
       },
       "additionalProperties": false
+    },
+    "grafana.ini": {
+      "description": "Configuration for the Grafana instance. This is a map of sections and keys, where each section is a map of key-value pairs.",
+      "type": "object",
+      "properties": {
+        "security": {
+          "description": "Security settings for Grafana.",
+          "type": "object",
+          "properties": {
+            "allow_embedding": {
+              "description": "Allow embedding of Grafana dashboards in other applications.",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
