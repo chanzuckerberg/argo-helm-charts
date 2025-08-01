@@ -16,7 +16,7 @@
 | - [enabled](#enabled )                       | No      | boolean | No         | -          | Enable the Grafana instance.                                                                                                                                                         |
 | - [env](#env )                               | No      | object  | No         | -          | Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.                                                              |
 | - [extraSecretVolumes](#extraSecretVolumes ) | No      | array   | No         | -          | List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:                                                                   |
-| - [grafana.ini](#grafanaini )                | No      | object  | No         | -          | -                                                                                                                                                                                    |
+| - [grafana](#grafana )                       | No      | object  | No         | -          | -                                                                                                                                                                                    |
 | - [grafanaAnnotations](#grafanaAnnotations ) | No      | object  | No         | -          | Annotations to add to the Grafana instance.                                                                                                                                          |
 | - [grafanaBaseImage](#grafanaBaseImage )     | No      | string  | No         | -          | Base image for the Grafana instance.                                                                                                                                                 |
 | - [grafanaName](#grafanaName )               | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
@@ -207,7 +207,7 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-## <a name="grafanaini"></a>7. Property `grafana > grafana.ini`
+## <a name="grafana"></a>7. Property `grafana > grafana`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -215,11 +215,11 @@ must respect the following conditions
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [security](#grafanaini_security ) | No      | object | No         | -          | -                 |
+| Property               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [ini](#grafana_ini ) | No      | object | No         | -          | -                 |
 
-### <a name="grafanaini_security"></a>7.1. Property `grafana > grafana.ini > security`
+### <a name="grafana_ini"></a>7.1. Property `grafana > grafana > ini`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -227,16 +227,28 @@ must respect the following conditions
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                            |
-| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------ |
-| - [allow_embedding](#grafanaini_security_allow_embedding ) | No      | string | No         | -          | Allow embedding of Grafana dashboards in other applications. |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [security](#grafana_ini_security ) | No      | object | No         | -          | -                 |
 
-#### <a name="grafanaini_security_allow_embedding"></a>7.1.1. Property `grafana > grafana.ini > security > allow_embedding`
+#### <a name="grafana_ini_security"></a>7.1.1. Property `grafana > grafana > ini > security`
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                            |
+| ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------ |
+| - [allow_embedding](#grafana_ini_security_allow_embedding ) | No      | boolean | No         | -          | Allow embedding of Grafana dashboards in other applications. |
+
+##### <a name="grafana_ini_security_allow_embedding"></a>7.1.1.1. Property `grafana > grafana > ini > security > allow_embedding`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
 
 **Description:** Allow embedding of Grafana dashboards in other applications.
 
