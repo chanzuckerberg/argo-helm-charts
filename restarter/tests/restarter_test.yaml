@@ -1,0 +1,199 @@
+suite: test restarter cronjob
+templates:
+  - restarter.yaml
+tests:
+  - it: should create CronJob when enabled is true (default)
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: CronJob
+      - containsDocument:
+          apiVersion: batch/v1
+          kind: CronJob
+          name: restarter
+
+  - it: should not create CronJob when enabled is false
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have correct metadata
+    asserts:
+      - equal:
+          path: metadata.name
+          value: restarter
+      - equal:
+          path: apiVersion
+          value: batch/v1
+      - equal:
+          path: kind
+          value: CronJob
+
+  - it: should have correct labels for ArgoCD tracking
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+      - isNotEmpty:
+          path: metadata.labels["app.kubernetes.io/version"]
+
+  - it: should have correct jobTemplate labels for ArgoCD tracking
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/component"]
+          value: restarter-job
+      - isNotEmpty:
+          path: spec.jobTemplate.spec.template.metadata.labels["app.kubernetes.io/version"]
+
+  - it: should use default schedule
+    asserts:
+      - equal:
+          path: spec.schedule
+          value: "0 11 * * *"
+
+  - it: should use custom schedule when provided
+    set:
+      schedule: "0 */6 * * *"
+    asserts:
+      - equal:
+          path: spec.schedule
+          value: "0 */6 * * *"
+
+  - it: should use default runner image
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: "bitnami/kubectl:latest"
+
+  - it: should use custom runner image when provided
+    set:
+      runner:
+        image: "custom/kubectl:v1.28"
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: "custom/kubectl:v1.28"
+
+  - it: should use correct service account
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.serviceAccountName
+          value: restarter
+
+  - it: should have correct container configuration
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].name
+          value: restarter
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[0]
+          value: "/bin/sh"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[1]
+          value: "-c"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.restartPolicy
+          value: OnFailure
+
+  - it: should target default deployment and namespace
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/deployment -n default"
+
+  - it: should target custom deployment and namespace when provided
+    set:
+      target:
+        deployment: "my-app"
+        namespace: "production"
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/my-app -n production"
+
+  - it: should handle special characters in deployment name
+    set:
+      target:
+        deployment: "my-app-v2"
+        namespace: "staging-env"
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/my-app-v2 -n staging-env"
+
+  - it: should have proper job template structure
+    asserts:
+      - isNotEmpty:
+          path: spec.jobTemplate
+      - isNotEmpty:
+          path: spec.jobTemplate.spec
+      - isNotEmpty:
+          path: spec.jobTemplate.spec.template
+      - isNotEmpty:
+          path: spec.jobTemplate.spec.template.spec
+
+  - it: should use correct container configuration with all values set
+    set:
+      schedule: "0 2 * * 1"
+      runner:
+        image: "kubectl:alpine"
+      target:
+        deployment: "api-service"
+        namespace: "api"
+    asserts:
+      - equal:
+          path: spec.schedule
+          value: "0 2 * * 1"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: "kubectl:alpine"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/api-service -n api"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.serviceAccountName
+          value: restarter
+
+  - it: should create CronJob when enabled is explicitly true
+    set:
+      enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: CronJob
+
+  - it: should create CronJob with enabled true and custom values
+    set:
+      enabled: true
+      schedule: "0 */4 * * *"
+      target:
+        deployment: "test-app"
+        namespace: "test"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.schedule
+          value: "0 */4 * * *"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command[2]
+          value: "kubectl rollout restart deployment/test-app -n test"

@@ -1,0 +1,200 @@
+suite: test restarter RBAC
+templates:
+  - rbac.yaml
+tests:
+  - it: should create all RBAC resources when enabled is true (default)
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 0
+        isKind:
+          of: ServiceAccount
+      - documentIndex: 1
+        isKind:
+          of: Role
+      - documentIndex: 2
+        isKind:
+          of: RoleBinding
+
+  - it: should create all RBAC resources when enabled is explicitly true
+    set:
+      enabled: true
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 0
+        isKind:
+          of: ServiceAccount
+      - documentIndex: 1
+        isKind:
+          of: Role
+      - documentIndex: 2
+        isKind:
+          of: RoleBinding
+
+  - it: should not create RBAC resources when enabled is false
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create ServiceAccount with correct metadata
+    asserts:
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: v1
+          kind: ServiceAccount
+          name: restarter
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: restarter
+
+  - it: should have correct labels on all RBAC resources for ArgoCD tracking
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: restarter-rbac
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: restarter-rbac
+      - documentIndex: 2
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: restarter
+      - documentIndex: 2
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - documentIndex: 2
+        equal:
+          path: metadata.labels["app.kubernetes.io/component"]
+          value: restarter-rbac
+
+  - it: should create Role with correct metadata and permissions
+    asserts:
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          name: restarter-role
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: restarter-role
+
+  - it: should have correct Role permissions for deployment restart
+    asserts:
+      - documentIndex: 1
+        equal:
+          path: rules[0].apiGroups
+          value: ["apps"]
+      - documentIndex: 1
+        equal:
+          path: rules[0].resources
+          value: ["deployments"]
+      - documentIndex: 1
+        equal:
+          path: rules[0].verbs
+          value: ["get", "patch"]
+
+  - it: should create RoleBinding with correct metadata
+    asserts:
+      - documentIndex: 2
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          name: restarter-binding
+      - documentIndex: 2
+        equal:
+          path: metadata.name
+          value: restarter-binding
+
+  - it: should bind ServiceAccount to Role correctly
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: subjects[0].kind
+          value: ServiceAccount
+      - documentIndex: 2
+        equal:
+          path: subjects[0].name
+          value: restarter
+      - documentIndex: 2
+        equal:
+          path: roleRef.kind
+          value: Role
+      - documentIndex: 2
+        equal:
+          path: roleRef.name
+          value: restarter-role
+      - documentIndex: 2
+        equal:
+          path: roleRef.apiGroup
+          value: rbac.authorization.k8s.io
+
+  - it: should have minimal required permissions only
+    asserts:
+      - documentIndex: 1
+        lengthEqual:
+          path: rules
+          count: 1
+      - documentIndex: 1
+        lengthEqual:
+          path: rules[0].apiGroups
+          count: 1
+      - documentIndex: 1
+        lengthEqual:
+          path: rules[0].resources
+          count: 1
+      - documentIndex: 1
+        lengthEqual:
+          path: rules[0].verbs
+          count: 2
+
+  - it: should have correct API versions
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: apiVersion
+          value: v1
+      - documentIndex: 1
+        equal:
+          path: apiVersion
+          value: rbac.authorization.k8s.io/v1
+      - documentIndex: 2
+        equal:
+          path: apiVersion
+          value: rbac.authorization.k8s.io/v1
+
+  - it: should create resources in correct order
+    asserts:
+      - documentIndex: 0
+        isKind:
+          of: ServiceAccount
+      - documentIndex: 1
+        isKind:
+          of: Role
+      - documentIndex: 2
+        isKind:
+          of: RoleBinding
+
