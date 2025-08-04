@@ -43,6 +43,11 @@ spec:
       role_attribute_path: {{ .Values.roleAttributePath | quote }}
     server:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
+    {{- if .Values.allow_embedding }}
+    grafana.ini:
+      security:
+        allow_embedding: {{ .Values.allow_embedding | default "false" | quote }}
+    {{- end }}
   deployment:
     spec:
       replicas: {{ .Values.replicas }}

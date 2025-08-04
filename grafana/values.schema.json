@@ -7,6 +7,10 @@
     "clusterName"
   ],
   "properties": {
+    "allow_embedding": {
+      "description": "Allow embedding of Grafana dashboards in other applications.",
+      "type": "boolean"
+    },
     "baseDomain": {
       "type": "string"
     },
