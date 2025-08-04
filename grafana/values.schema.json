@@ -9,7 +9,7 @@
   "properties": {
     "allow_embedding": {
       "description": "Allow embedding of Grafana dashboards in other applications.",
-      "type": "string"
+      "type": "boolean"
     },
     "baseDomain": {
       "type": "string"
