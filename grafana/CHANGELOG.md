@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.5.0...grafana-v0.6.0) (2025-08-04)
+
+
+### Features
+
+* Allow_embedding for grafana helm chart ([#249](https://github.com/chanzuckerberg/argo-helm-charts/issues/249)) ([42d724e](https://github.com/chanzuckerberg/argo-helm-charts/commit/42d724eaa0a21797d517b05b643f06884d892c92))
+
 ## [0.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.4.0...grafana-v0.5.0) (2025-07-21)
 
 
