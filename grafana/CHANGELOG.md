@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.3...grafana-v0.6.4) (2025-08-05)
+
+
+### Bug Fixes
+
+* Remove grafana.ini key ([#258](https://github.com/chanzuckerberg/argo-helm-charts/issues/258)) ([b6870df](https://github.com/chanzuckerberg/argo-helm-charts/commit/b6870dff85cb84da3b4d89bffebb16616cca5a2a))
+
 ## [0.6.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.2...grafana-v0.6.3) (2025-08-05)
 
 
