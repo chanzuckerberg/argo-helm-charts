@@ -23,6 +23,15 @@ metadata:
                 (.Values.annotations) 
                 (.Values.ingress.annotations)
       ) }}
+      nginx.ingress.kubernetes.io/configuration-snippet: |-
+        {{- range $k, $v := .Values.ingress.blockCountries }}
+        if ($geoip2_country_code = {{ $v }}) {
+          return 451;
+        }
+        {{- end }}
+        if ($geoip_enabled) {
+          proxy_set_header X-Country-Code $geoip2_country_code;
+        }
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
