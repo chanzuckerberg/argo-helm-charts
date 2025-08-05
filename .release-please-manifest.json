@@ -2,6 +2,6 @@
   "stack": "2.12.0",
   "argus-config": "1.4.2",
   "sso-secret": "0.2.0",
-  "grafana": "0.6.2",
+  "grafana": "0.6.3",
   "argo-project": "1.0.1"
 }
