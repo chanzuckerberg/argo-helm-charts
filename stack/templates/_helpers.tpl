@@ -202,8 +202,3 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "oidcProxy.authDomain" -}}
 {{ .Values.ingress.host }}
 {{- end -}}
-
-
-{{- define "blockCountries" -}}
-{{ default .Values.ingress.blockCountries  }}
-{{- end }}

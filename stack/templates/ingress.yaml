@@ -24,7 +24,7 @@ metadata:
                 (.Values.ingress.annotations)
       ) }}
       nginx.ingress.kubernetes.io/configuration-snippet: |-
-        {{- range $k, $v := (include "blockCountries" .) }}
+        {{- range $k, $v := .Values.ingress.blockCountries }}
         if ($geoip2_country_code = {{ $v }}) {
           return 451;
         }
