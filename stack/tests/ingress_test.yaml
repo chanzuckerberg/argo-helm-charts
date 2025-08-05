@@ -154,3 +154,25 @@ tests:
         equal:
           path: spec.rules[0].http.paths[0].backend.service.name
           value: missing-otter-unprotected-service
+  - it: adds a configuration snippet
+    set:
+      global:
+        replicaCount: 5
+        autoscaling:
+          enabled: false
+        service:
+          port: 3000
+        env:
+          - name: GLOBAL_TEST_ENV_VAR
+            value: global-something-something
+        ingress:
+          host: "stack.play.dev.czi.team"
+          blockCountries: []
+      services:
+        service1:
+          ingress:
+            oidcProtected: false
+            blockCountries: []
+    asserts:
+      - isKind:
+          of: Ingress

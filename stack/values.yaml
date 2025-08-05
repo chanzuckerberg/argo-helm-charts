@@ -140,10 +140,10 @@ global: # @schema description: Global configuration for the stack - this serves 
       nginx.ingress.kubernetes.io/session-cookie-name: "argus_sticky_session"
       nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
     tls: [] # @schema description: List of ingress TLS configurations
-    blockCountries: [] # @schema type: array; item: string; description: Country codes of countries to block from accessing the service
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+    blockCountries: [] # @schema type: array; item: string; description: Country codes of countries to block from accessing the service
   
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture

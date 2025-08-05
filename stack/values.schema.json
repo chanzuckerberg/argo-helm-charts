@@ -234,6 +234,10 @@
               },
               "type": "object"
             },
+            "blockCountries": {
+              "description": "list of 2-letter country codes to block if the geo ip module is used",
+              "type": "array"
+            },
             "className": {
               "description": "Ingress class name",
               "type": "string"
