@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.1...grafana-v0.6.2) (2025-08-05)
+
+
+### Bug Fixes
+
+* Remove if statement for allow_embedding ([#254](https://github.com/chanzuckerberg/argo-helm-charts/issues/254)) ([da5eedc](https://github.com/chanzuckerberg/argo-helm-charts/commit/da5eedcf1e294cf78dd3296a0a70b34501c3fcee))
+
+## [0.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.0...grafana-v0.6.1) (2025-08-04)
+
+
+### Bug Fixes
+
+* Change allow_embedding to be of type string ([#251](https://github.com/chanzuckerberg/argo-helm-charts/issues/251)) ([21d4921](https://github.com/chanzuckerberg/argo-helm-charts/commit/21d492112e0cba5dcd261012188820d0df9907fe))
+
 ## [0.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.5.0...grafana-v0.6.0) (2025-08-04)
 
 
