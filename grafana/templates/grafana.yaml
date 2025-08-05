@@ -44,7 +44,7 @@ spec:
     server:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
     grafana.ini:
-      security:
+      security: |
         allow_embedding: {{ .Values.allow_embedding | default "false" | quote }}
   deployment:
     spec:
