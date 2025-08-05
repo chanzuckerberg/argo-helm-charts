@@ -45,7 +45,7 @@ spec:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
     grafana.ini:
       security: |
-        allow_embedding: {{ .Values.allow_embedding | default "false" | quote }}
+        allow_embedding = {{ .Values.allow_embedding | default "false" | quote }}
   deployment:
     spec:
       replicas: {{ .Values.replicas }}
