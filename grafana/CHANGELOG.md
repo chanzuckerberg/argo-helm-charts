@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.2...grafana-v0.6.3) (2025-08-05)
+
+
+### Bug Fixes
+
+* formatting for grafana helm ([#256](https://github.com/chanzuckerberg/argo-helm-charts/issues/256)) ([515ada3](https://github.com/chanzuckerberg/argo-helm-charts/commit/515ada3147be434ff8fe87b22032b0debe39527b))
+
 ## [0.6.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.1...grafana-v0.6.2) (2025-08-05)
 
 
