@@ -47,4 +47,6 @@ extraSecretVolumes: [] # @schema description: List of extra secret volumes to mo
 serviceAccount:
   annotations: {} # @schema description: Annotations to add to the service account.; patternProperties: { "^.*$": { "type": "string" } }
 
-allow_embedding: "false" # @schema description: Allow embedding of Grafana dashboards in other applications.
+allowEmbedding: "false" # @schema description: Allow embedding of Grafana dashboards in other applications.
+
+maxRequestBodySize: "10MB" # @schema description: Maximum request body size for Grafana. This is useful for large uploads, such as importing dashboards or uploading files.

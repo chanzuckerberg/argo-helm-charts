@@ -7,8 +7,12 @@
     "clusterName"
   ],
   "properties": {
-    "allow_embedding": {
+    "allowEmbedding": {
       "description": "Allow embedding of Grafana dashboards in other applications.",
+      "type": "string"
+    },
+    "maxRequestBodySize": {
+      "description": "Maximum request body size for Grafana. This is useful for large uploads, such as importing dashboards or uploading files.",
       "type": "string"
     },
     "baseDomain": {

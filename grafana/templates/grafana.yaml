@@ -18,6 +18,8 @@ spec:
         {{- toYaml .Values.serviceAccount.annotations | nindent 8 }}
   {{- end }}
   config:
+    http:
+      max_request_body_size: {{ .Values.maxRequestBodySize | default "10MB" | quote }}
     log:
       mode: console
       level: debug
@@ -44,7 +46,7 @@ spec:
     server:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
     security:
-      allow_embedding: {{ .Values.allow_embedding | default "false" | quote }}
+      allow_embedding: {{ .Values.allowEmbedding | default "false" | quote }}
   deployment:
     spec:
       replicas: {{ .Values.replicas }}
