@@ -10,7 +10,7 @@
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                    |
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [allow_embedding](#allow_embedding )       | No      | string  | No         | -          | Allow embedding of Grafana dashboards in other applications.                                                                                                                         |
+| - [allowEmbedding](#allowEmbedding )         | No      | string  | No         | -          | Allow embedding of Grafana dashboards in other applications.                                                                                                                         |
 | - [baseDomain](#baseDomain )                 | No      | string  | No         | -          | -                                                                                                                                                                                    |
 | + [clusterName](#clusterName )               | No      | string  | No         | -          | Name of the cluster to configure the platform Grafana for. This value is required.                                                                                                   |
 | - [datasources](#datasources )               | No      | object  | No         | -          | List of datasources to configure for the Grafana instance.                                                                                                                           |
@@ -21,12 +21,13 @@
 | - [grafanaBaseImage](#grafanaBaseImage )     | No      | string  | No         | -          | Base image for the Grafana instance.                                                                                                                                                 |
 | - [grafanaName](#grafanaName )               | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
 | - [grafanaSubdomain](#grafanaSubdomain )     | No      | string  | No         | -          | Subdomain to use for the Grafana instance.                                                                                                                                           |
+| - [maxRequestBodySize](#maxRequestBodySize ) | No      | string  | No         | -          | Maximum request body size for Grafana. This is useful for large uploads, such as importing dashboards or uploading files.                                                            |
 | - [replicas](#replicas )                     | No      | integer | No         | -          | Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.                                        |
 | - [roleAttributePath](#roleAttributePath )   | No      | string  | No         | -          | JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ . |
 | - [secretStoreRef](#secretStoreRef )         | No      | string  | No         | -          | Name of the secret store to use for external secrets.                                                                                                                                |
 | - [serviceAccount](#serviceAccount )         | No      | object  | No         | -          | -                                                                                                                                                                                    |
 
-## <a name="allow_embedding"></a>1. Property `grafana > allow_embedding`
+## <a name="allowEmbedding"></a>1. Property `grafana > allowEmbedding`
 
 |              |          |
 | ------------ | -------- |
@@ -267,7 +268,16 @@ must respect the following conditions
 
 **Description:** Subdomain to use for the Grafana instance.
 
-## <a name="replicas"></a>12. Property `grafana > replicas`
+## <a name="maxRequestBodySize"></a>12. Property `grafana > maxRequestBodySize`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Maximum request body size for Grafana. This is useful for large uploads, such as importing dashboards or uploading files.
+
+## <a name="replicas"></a>13. Property `grafana > replicas`
 
 |              |           |
 | ------------ | --------- |
@@ -280,7 +290,7 @@ must respect the following conditions
 | ------------ | ------ |
 | **Maximum**  | &le; 1 |
 
-## <a name="roleAttributePath"></a>13. Property `grafana > roleAttributePath`
+## <a name="roleAttributePath"></a>14. Property `grafana > roleAttributePath`
 
 |              |          |
 | ------------ | -------- |
@@ -289,7 +299,7 @@ must respect the following conditions
 
 **Description:** JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-## <a name="secretStoreRef"></a>14. Property `grafana > secretStoreRef`
+## <a name="secretStoreRef"></a>15. Property `grafana > secretStoreRef`
 
 |              |          |
 | ------------ | -------- |
@@ -298,7 +308,7 @@ must respect the following conditions
 
 **Description:** Name of the secret store to use for external secrets.
 
-## <a name="serviceAccount"></a>15. Property `grafana > serviceAccount`
+## <a name="serviceAccount"></a>16. Property `grafana > serviceAccount`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -310,7 +320,7 @@ must respect the following conditions
 | --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | Annotations to add to the service account. |
 
-### <a name="serviceAccount_annotations"></a>15.1. Property `grafana > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>16.1. Property `grafana > serviceAccount > annotations`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -324,7 +334,7 @@ must respect the following conditions
 | ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#serviceAccount_annotations_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="serviceAccount_annotations_pattern1"></a>15.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
+#### <a name="serviceAccount_annotations_pattern1"></a>16.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions

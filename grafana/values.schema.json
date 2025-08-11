@@ -11,10 +11,6 @@
       "description": "Allow embedding of Grafana dashboards in other applications.",
       "type": "string"
     },
-    "maxRequestBodySize": {
-      "description": "Maximum request body size for Grafana. This is useful for large uploads, such as importing dashboards or uploading files.",
-      "type": "string"
-    },
     "baseDomain": {
       "type": "string"
     },
@@ -112,6 +108,10 @@
     },
     "grafanaSubdomain": {
       "description": "Subdomain to use for the Grafana instance.",
+      "type": "string"
+    },
+    "maxRequestBodySize": {
+      "description": "Maximum request body size for Grafana. This is useful for large uploads, such as importing dashboards or uploading files.",
       "type": "string"
     },
     "replicas": {
