@@ -78,9 +78,10 @@
 
 **Description:** CloudWatch datasource configuration.
 
-| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description                 |
-| --------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------- |
-| - [enabled](#datasources_cloudwatch_enabled ) | No      | boolean | No         | -          | Enable the CloudWatch datasource. |
+| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description                         |
+| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------- |
+| - [enabled](#datasources_cloudwatch_enabled ) | No      | boolean | No         | -          | Enable the CloudWatch datasource.         |
+| - [region](#datasources_cloudwatch_region )   | No      | string  | No         | -          | AWS region for the CloudWatch datasource. |
 
 #### <a name="datasources_cloudwatch_enabled"></a>4.1.1. Property `grafana > datasources > cloudwatch > enabled`
 
@@ -90,6 +91,15 @@
 | **Required** | No        |
 
 **Description:** Enable the CloudWatch datasource.
+
+#### <a name="datasources_cloudwatch_region"></a>4.1.2. Property `grafana > datasources > cloudwatch > region`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS region for the CloudWatch datasource.
 
 ### <a name="datasources_loki"></a>4.2. Property `grafana > datasources > loki`
 

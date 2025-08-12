@@ -29,6 +29,10 @@
             "enabled": {
               "description": "Enable the CloudWatch datasource.",
               "type": "boolean"
+            },
+            "region": {
+              "description": "AWS region for the CloudWatch datasource.",
+              "type": "string"
             }
           },
           "additionalProperties": false
