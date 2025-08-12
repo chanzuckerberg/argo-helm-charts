@@ -22,6 +22,17 @@
       "description": "List of datasources to configure for the Grafana instance.",
       "type": "object",
       "properties": {
+        "cloudwatch": {
+          "description": "CloudWatch datasource configuration.",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable the CloudWatch datasource.",
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
         "loki": {
           "description": "Loki datasource configuration.",
           "type": "object",
