@@ -67,7 +67,7 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
-  name: {{ .Values.grafanaName }}-cloudwatch`-datasource
+  name: {{ .Values.grafanaName }}-cloudwatch-datasource
   labels:
     grafana_name: {{ .Values.grafanaName }}
 spec:
@@ -80,7 +80,7 @@ spec:
     type: cloudwatch
     uid: cloudwatch
     access: proxy
-    url: "{{ .Values.datasources.cloudwatch.url }}"
+    url: http://cloudwatch-datasource # Placeholder URL, adjust as necessary
     basicAuth: false
     editable: true
 {{ end }}
