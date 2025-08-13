@@ -63,11 +63,45 @@
 
 | Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description                    |
 | ---------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------ |
+| - [cloudwatch](#datasources_cloudwatch ) | No      | object | No         | -          | CloudWatch datasource configuration. |
 | - [loki](#datasources_loki )             | No      | object | No         | -          | Loki datasource configuration.       |
 | - [prometheus](#datasources_prometheus ) | No      | object | No         | -          | Prometheus datasource configuration. |
 | - [tempo](#datasources_tempo )           | No      | object | No         | -          | Tempo datasource configuration.      |
 
-### <a name="datasources_loki"></a>4.1. Property `grafana > datasources > loki`
+### <a name="datasources_cloudwatch"></a>4.1. Property `grafana > datasources > cloudwatch`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** CloudWatch datasource configuration.
+
+| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description                         |
+| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------- |
+| - [enabled](#datasources_cloudwatch_enabled ) | No      | boolean | No         | -          | Enable the CloudWatch datasource.         |
+| - [region](#datasources_cloudwatch_region )   | No      | string  | No         | -          | AWS region for the CloudWatch datasource. |
+
+#### <a name="datasources_cloudwatch_enabled"></a>4.1.1. Property `grafana > datasources > cloudwatch > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable the CloudWatch datasource.
+
+#### <a name="datasources_cloudwatch_region"></a>4.1.2. Property `grafana > datasources > cloudwatch > region`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS region for the CloudWatch datasource.
+
+### <a name="datasources_loki"></a>4.2. Property `grafana > datasources > loki`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -82,7 +116,7 @@
 | - [enabled](#datasources_loki_enabled ) | No      | boolean | No         | -          | Enable the Loki datasource. |
 | - [url](#datasources_loki_url )         | No      | string  | No         | -          | URL of the Loki datasource. |
 
-#### <a name="datasources_loki_enabled"></a>4.1.1. Property `grafana > datasources > loki > enabled`
+#### <a name="datasources_loki_enabled"></a>4.2.1. Property `grafana > datasources > loki > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -91,7 +125,7 @@
 
 **Description:** Enable the Loki datasource.
 
-#### <a name="datasources_loki_url"></a>4.1.2. Property `grafana > datasources > loki > url`
+#### <a name="datasources_loki_url"></a>4.2.2. Property `grafana > datasources > loki > url`
 
 |              |          |
 | ------------ | -------- |
@@ -100,7 +134,7 @@
 
 **Description:** URL of the Loki datasource.
 
-### <a name="datasources_prometheus"></a>4.2. Property `grafana > datasources > prometheus`
+### <a name="datasources_prometheus"></a>4.3. Property `grafana > datasources > prometheus`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -115,7 +149,7 @@
 | - [enabled](#datasources_prometheus_enabled ) | No      | boolean | No         | -          | Enable the Prometheus datasource. |
 | - [url](#datasources_prometheus_url )         | No      | string  | No         | -          | URL of the Prometheus datasource. |
 
-#### <a name="datasources_prometheus_enabled"></a>4.2.1. Property `grafana > datasources > prometheus > enabled`
+#### <a name="datasources_prometheus_enabled"></a>4.3.1. Property `grafana > datasources > prometheus > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -124,7 +158,7 @@
 
 **Description:** Enable the Prometheus datasource.
 
-#### <a name="datasources_prometheus_url"></a>4.2.2. Property `grafana > datasources > prometheus > url`
+#### <a name="datasources_prometheus_url"></a>4.3.2. Property `grafana > datasources > prometheus > url`
 
 |              |          |
 | ------------ | -------- |
@@ -133,7 +167,7 @@
 
 **Description:** URL of the Prometheus datasource.
 
-### <a name="datasources_tempo"></a>4.3. Property `grafana > datasources > tempo`
+### <a name="datasources_tempo"></a>4.4. Property `grafana > datasources > tempo`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -148,7 +182,7 @@
 | - [enabled](#datasources_tempo_enabled ) | No      | boolean | No         | -          | Enable the Tempo datasource. |
 | - [url](#datasources_tempo_url )         | No      | string  | No         | -          | URL of the Tempo datasource. |
 
-#### <a name="datasources_tempo_enabled"></a>4.3.1. Property `grafana > datasources > tempo > enabled`
+#### <a name="datasources_tempo_enabled"></a>4.4.1. Property `grafana > datasources > tempo > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -157,7 +191,7 @@
 
 **Description:** Enable the Tempo datasource.
 
-#### <a name="datasources_tempo_url"></a>4.3.2. Property `grafana > datasources > tempo > url`
+#### <a name="datasources_tempo_url"></a>4.4.2. Property `grafana > datasources > tempo > url`
 
 |              |          |
 | ------------ | -------- |

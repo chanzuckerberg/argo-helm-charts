@@ -6,7 +6,7 @@ tests:
   - it: should render a GrafanaDatasource resource
     asserts:
       - hasDocuments:
-          count: 3
+          count: 4
       - isKind:
           of: GrafanaDatasource
 

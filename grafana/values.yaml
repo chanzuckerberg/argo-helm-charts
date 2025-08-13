@@ -30,6 +30,9 @@ datasources: # @schema description: List of datasources to configure for the Gra
   tempo: # @schema description: Tempo datasource configuration.
     enabled: true # @schema description: Enable the Tempo datasource.
     url: "http://tempo.loki.svc:3100" # @schema description: URL of the Tempo datasource.
+  cloudwatch: # @schema description: CloudWatch datasource configuration.
+    enabled: true # @schema description: Enable the CloudWatch datasource.
+    region: "us-west-2" # @schema description: AWS region for the CloudWatch datasource.
 
 extraSecretVolumes: [] # @schema description: List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:
   # - name: slack-webhook-secret
