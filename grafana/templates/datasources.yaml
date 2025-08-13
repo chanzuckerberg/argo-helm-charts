@@ -81,7 +81,6 @@ spec:
     type: cloudwatch
     uid: cloudwatch
     access: proxy
-    url: http://cloudwatch-datasource # CloudWatch datasource is a native plugin that is built directly into Grafana. It uses the underlying AWS SDK to make API calls to the AWS CloudWatch service
     basicAuth: false
     editable: true
     jsonData:
