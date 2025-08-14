@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/loki-monitoring",
+  "title": "loki-monitoring",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "description": "Enable the loki-monitoring chart.",
+      "type": "boolean"
+    },
+    "folder": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Grafana folder name for Loki dashboards.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Grafana folder title for Loki dashboards.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "loki": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name used for dashboard/folder resources.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Namespace where Loki runs; used in dashboard PromQL queries.",
+          "type": "string"
+        },
+        "uid": {
+          "description": "Grafana dashboard UID.",
+          "type": "string"
+        },
+        "dashboardTitle": {
+          "description": "Grafana dashboard title.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "grafana": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Grafana instance label used by GrafanaDashboard selector.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "contactPoint": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable Grafana contact point for Loki alerts.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Name of the contact point.",
+          "type": "string"
+        },
+        "slack": {
+          "type": "object",
+          "properties": {
+            "secretName": {
+              "description": "Name of the secret containing the Slack webhook URL.",
+              "type": "string"
+            },
+            "secretKey": {
+              "description": "Key in the secret containing the Slack webhook URL.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "notificationPolicy": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable Grafana notification policy for Loki alerts.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Name of the notification policy.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "alertRuleGroup": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable Grafana alert rule group for Loki alerts.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Name of the alert rule group.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title of the alert rule group.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

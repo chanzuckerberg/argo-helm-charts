@@ -1,0 +1,30 @@
+enabled: true # @schema description: Enable the loki-monitoring chart.
+
+# Loki and Grafana settings used by dashboard and folder templates
+loki:
+  name: loki # @schema description: Name used for dashboard/folder resources.
+  namespace: loki # @schema description: Namespace where Loki runs; used in dashboard PromQL queries.
+  uid: loki # @schema description: Grafana dashboard UID.
+  dashboardTitle: Loki Monitoring # @schema description: Grafana dashboard title.
+grafana:
+  name: grafana # @schema description: Grafana instance label used by GrafanaDashboard selector.
+
+folder:
+  name: loki # @schema description: Grafana folder name for Loki dashboards.
+  title: Loki # @schema description: Grafana folder title for Loki dashboards.
+
+contactPoint:
+  enabled: true # @schema description: Enable Grafana contact point for Loki alerts.
+  name: org-infra-eng-alerts # @schema description: Name of the contact point.
+  slack:
+    secretName: slack-webhook-secret # @schema description: Name of the secret containing the Slack webhook URL.
+    secretKey: slack-webhook-url # @schema description: Key in the secret containing the Slack webhook URL.
+
+notificationPolicy:
+  enabled: true # @schema description: Enable Grafana notification policy for Loki alerts.
+  name: notification-policy # @schema description: Name of the notification policy.
+
+alertRuleGroup:
+  enabled: true # @schema description: Enable Grafana alert rule group for Loki alerts.
+  name: loki-alerts # @schema description: Name of the alert rule group.
+  title: Loki Alerts # @schema description: Title of the alert rule group.
