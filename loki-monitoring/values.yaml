@@ -3,7 +3,7 @@ enabled: true # @schema description: Enable the loki-monitoring chart.
 # Loki and Grafana settings used by dashboard and folder templates
 loki:
   name: loki # @schema description: Name used for dashboard/folder resources.
-  namespace: loki # @schema description: Namespace where Loki runs; used in dashboard PromQL queries.
+  namespace: loki # @schema description: Namespace where Loki runs, used in dashboard PromQL queries.
   uid: loki # @schema description: Grafana dashboard UID.
   dashboardTitle: Loki Monitoring # @schema description: Grafana dashboard title.
 grafana:
