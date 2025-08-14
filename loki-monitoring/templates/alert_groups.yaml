@@ -1,0 +1,17 @@
+{{ if .Values.enabled }}
+{{ if .Values.alertRuleGroup.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: {{.Values.alertRuleGroup.name}}
+spec:
+  folderRef: {{.Values.folder.name}}
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      app: {{.Values.grafana.name}}
+  interval: 5m
+  name: {{.Values.alertRuleGroup.title}}
+  rules: [] # TODO: Rules will be added here
+{{ end }}
+{{ end }}

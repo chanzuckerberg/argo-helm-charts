@@ -1,0 +1,37 @@
+suite: test grafana notification policy
+templates:
+  - templates/notification_policy.yaml
+tests:
+  - it: renders GrafanaNotificationPolicy when enabled
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaNotificationPolicy
+      - equal:
+          path: metadata.name
+          value: notification-policy
+      - equal:
+          path: spec.route.receiver
+          value: org-infra-eng-alerts
+  - it: reflects overridden receiver and name
+    set:
+      notificationPolicy:
+        name: np2
+      contactPoint:
+        name: alerts2
+    asserts:
+      - equal:
+          path: metadata.name
+          value: np2
+      - equal:
+          path: spec.route.receiver
+          value: alerts2
+  - it: does not render when either toggle is disabled
+    set:
+      enabled: true
+      notificationPolicy:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0

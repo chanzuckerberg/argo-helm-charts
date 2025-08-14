@@ -1,0 +1,15 @@
+{{ if .Values.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{.Values.loki.name}}-monitoring
+spec:
+  folderRef: {{.Values.folder.name}}
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      app: {{.Values.grafana.name}}
+  json: >
+{{ tpl (.Files.Get "dashboards/loki-monitoring-dashboard.json") . | indent 4 }}
+{{ end }}

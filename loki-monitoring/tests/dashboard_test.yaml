@@ -1,0 +1,56 @@
+suite: test loki dashboard
+templates:
+  - templates/dashboard.yaml
+tests:
+  - it: renders GrafanaDashboard when enabled
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaDashboard
+      - equal:
+          path: metadata.name
+          value: loki-monitoring
+      - equal:
+          path: spec.instanceSelector.matchLabels.app
+          value: grafana
+      - equal:
+          path: spec.folderRef
+          value: loki
+      - matchRegex:
+          path: spec.json
+          pattern: 'namespace=\\"loki\\"'
+      - matchRegex:
+          path: spec.json
+          pattern: '"title": "Loki Monitoring"'
+      - matchRegex:
+          path: spec.json
+          pattern: '"uid": "loki"'
+  - it: does not render when chart disabled
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: reflects overridden values in dashboard JSON and selector
+    set:
+      grafana:
+        name: grafana-override
+      loki:
+        namespace: custom-ns
+        uid: custom-uid
+        dashboardTitle: Custom Title
+    asserts:
+      - equal:
+          path: spec.instanceSelector.matchLabels.app
+          value: grafana-override
+      - matchRegex:
+          path: spec.json
+          pattern: 'namespace=\\"custom-ns\\"'
+      - matchRegex:
+          path: spec.json
+          pattern: '"title": "Custom Title"'
+      - matchRegex:
+          path: spec.json
+          pattern: '"uid": "custom-uid"'
