@@ -1,0 +1,106 @@
+suite: test alert groups namespace configuration
+templates:
+  - templates/alert_groups.yaml
+tests:
+  - it: uses default loki namespace when not overridden
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - matchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - matchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - matchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="loki"'
+  
+  - it: properly renders cw-loki namespace in all alert rules
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+  
+  - it: completely replaces old namespace references with cw-loki
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - notMatchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="loki"'
+  
+  - it: handles special characters in namespace names correctly
+    set:
+      loki:
+        namespace: "cw-loki-staging"
+    asserts:
+      - matchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="cw-loki-staging"'
+      - matchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="cw-loki-staging"'
+      - matchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="cw-loki-staging"'
+      - matchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="cw-loki-staging"'
+  
+  - it: maintains alert rule structure and metadata when changing namespace
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - equal:
+          path: spec.rules[0].title
+          value: Loki Error Spike
+      - equal:
+          path: spec.rules[1].title
+          value: Loki LogQL Latency Spike
+      - equal:
+          path: spec.rules[2].title
+          value: Statefulset pods unavailable
+      - equal:
+          path: spec.rules[3].title
+          value: Deployment pods unavailable
+      - equal:
+          path: spec.rules[0].uid
+          value: aev0cykoq1m2od
+      - equal:
+          path: spec.rules[1].uid
+          value: cev0decuulh4wd
+      - equal:
+          path: spec.rules[2].uid
+          value: cev3mcuwlz6dcc
+      - equal:
+          path: spec.rules[3].uid
+          value: bev3mo5h2ihogf

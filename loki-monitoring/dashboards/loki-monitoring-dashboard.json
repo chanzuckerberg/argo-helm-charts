@@ -324,7 +324,7 @@
               "uid": "prometheus"
             },
             "editorMode": "code",
-            "expr": "histogram_quantile(0.95, sum(rate(loki_request_duration_seconds_bucket[5m])) by (le,route))",
+            "expr": "histogram_quantile(0.95, sum(rate(loki_request_duration_seconds_bucket{namespace=\"{{ .Values.loki.namespace }}\"}[5m])) by (le,route))",
             "legendFormat": "__auto",
             "range": true,
             "refId": "A"
@@ -422,7 +422,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "sum by(app_kubernetes_io_part_of) (kube_deployment_status_replicas_unavailable{namespace=\"{{ .Values.loki.namespace }}\"} > 0)",
+            "expr": "sum by(deployment) (kube_deployment_status_replicas_unavailable{namespace=\"{{ .Values.loki.namespace }}\"})",
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "legendFormat": "__auto",
@@ -523,7 +523,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "sum by(statefulset) (kube_statefulset_status_replicas_ready{namespace=\"{{ .Values.loki.namespace }}\"}) != (sum by(statefulset) (kube_statefulset_status_replicas{namespace=\"{{ .Values.loki.namespace }}\"}))",
+            "expr": "sum by(statefulset) (kube_statefulset_status_replicas_ready{namespace=\"{{ .Values.loki.namespace }}\"}) - (sum by(statefulset) (kube_statefulset_status_replicas{namespace=\"{{ .Values.loki.namespace }}\"}))",
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "legendFormat": "__auto",
