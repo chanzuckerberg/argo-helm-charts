@@ -28,3 +28,39 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+  - it: reflects cw-loki namespace in all PromQL queries
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+  - it: does not contain old loki namespace in queries when using cw-loki
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - notMatchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="loki"'
