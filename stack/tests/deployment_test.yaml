@@ -34,7 +34,6 @@ tests:
       - containsDocument:
           apiVersion: apps/v1
           kind: Deployment
-
   - it: sets replicas when autoscaling is disabled
     set:
       services:
@@ -56,7 +55,6 @@ tests:
     asserts:
       - notExists:
           path: spec.replicas
-
   - it: uses httpGet probe by default
     set:
       services:

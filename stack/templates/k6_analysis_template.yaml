@@ -1,0 +1,112 @@
+{{- if ne .Values.global.rollout.analysisTemplate.enabledK6LoadTest false}}
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ (printf "%s-%s-k6-preview-load-test" .Release.Name .Chart.Name) }}
+  labels:
+    {{- include "stack.labels" . | nindent 4 }}
+spec:
+  args:
+    {{- range .Values.global.rollout.analysisTemplate.args | default list }}
+    - name: {{ .name }}
+    {{- end }}
+    - name: target-service-name
+    - name: target-service-namespace
+    - name: preview-service-name
+    - name: preview-rs-hash
+  metrics:
+    - name: k6-load-test-run
+      interval: 2m
+      initialDelay: 0s
+      count: 1
+      successCondition: "result.jobStatus == 'finished' && result.testRunStatus == 'succeeded'"
+      failureCondition: "result.jobStatus == 'failed' || result.jobStatus == 'error' || result.testRunStatus == 'failed'"
+      provider:
+        job:
+          spec:
+            backoffLimit: 1
+            template:
+              spec:
+                containers:
+                  - name: k6-runner
+                    image: grafana/k6:latest
+                    command: ["k6", "run", "/etc/k6-scripts/test.js"]
+                    env:
+                      - name: TARGET_URL
+                        value: "http://{{ `{{ args.preview-service-name }}` }}.{{ `{{ args.target-service-namespace }}` }}.svc.cluster.local:3000/"
+                    volumeMounts:
+                      - name: k6-script-volume
+                        mountPath: /etc/k6-scripts
+                        readOnly: true
+                    resources:
+                      requests:
+                        cpu: 100m
+                        memory: 100Mi
+                      limits:
+                        cpu: 500m
+                        memory: 500Mi
+                volumes:
+                  - name: k6-script-volume
+                    configMap:
+                      name: {{ (printf "%s-%s-k6-test-script" .Release.Name .Chart.Name) }}
+                restartPolicy: Never
+    - name: linkerd-preview-success-rate
+      interval: 30s
+      count: 5
+      initialDelay: 1m30s
+      failureCondition: "result[0] < 0.95"
+      successCondition: "result[0] >= 0.99"
+      provider:
+        prometheus:
+          address: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
+          query: |
+            sum(rate(response_total{
+              direction="inbound",
+              classification="success",
+              namespace="{{ `{{ args.target-service-namespace }}` }}",
+              authority="{{ `{{ args.preview-service-name }}` }}.{{ `{{ args.target-service-namespace }}` }}.svc.cluster.local:3000"
+            }[15m]))
+            /
+            sum(rate(response_total{
+              direction="inbound",
+              namespace="{{ `{{ args.target-service-namespace }}` }}",
+              authority="{{ `{{ args.preview-service-name }}` }}.{{ `{{ args.target-service-namespace }}` }}.svc.cluster.local:3000"
+            }[15m]))
+    - name: linkerd-preview-latency
+      interval: 30s
+      count: 5
+      initialDelay: 1m30s
+      failureCondition: "result[0] > 70"
+      successCondition: "result[0] <= 60"
+      provider:
+        prometheus:
+          address: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
+          query: |
+            histogram_quantile(0.99, sum(rate(response_latency_ms_bucket{
+              direction="inbound",
+              namespace="{{ `{{ args.target-service-namespace }}` }}",
+              authority="{{ `{{ args.preview-service-name }}` }}.{{ `{{ args.target-service-namespace }}` }}.svc.cluster.local:3000"
+            }[15m])) by (le))
+    - name: preview-memory-utilization
+      interval: 30s
+      count: 5
+      initialDelay: 1m30s
+      failureCondition: "result[0] > 0.9"
+      successCondition: "result[0] < 0.8"
+      provider:
+        prometheus:
+          address: http://loki-stack-prometheus-server.loki.svc.cluster.local:80
+          query: |
+            sum(container_memory_working_set_bytes{
+              namespace="{{ `{{ args.target-service-namespace }}` }}",
+              pod=~".*-{{ `{{ args.preview-rs-hash}}` }}-.*",
+              container="stack"
+            })
+            /
+            sum(kube_pod_container_resource_limits{
+              resource="memory", unit="byte",
+              namespace="{{ `{{ args.target-service-namespace }}` }}",
+              pod=~".*-{{ `{{ args.preview-rs-hash }}` }}-.*",
+              container="stack"
+            })
+{{- end }}
