@@ -125,6 +125,7 @@ spec:
     execErrState: OK
     annotations: {}
     labels: {}
+    for: 5m
     isPaused: false
   - uid: cev3mcuwlz6dcc
     title: Statefulset pods unavailable
@@ -176,6 +177,7 @@ spec:
     execErrState: OK
     annotations: {}
     labels: {}
+    for: 5m
     isPaused: false
   - uid: bev3mo5h2ihogf
     title: Deployment pods unavailable
