@@ -21,6 +21,7 @@ metadata:
                 (dict)
                 (fromYaml (include "stack.annotations" $service ))
                 (default dict $rolloutAnnotations) 
+                (dict "argocd.argoproj.io/sync-options" "ServerSideApply=false")
     ) | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}

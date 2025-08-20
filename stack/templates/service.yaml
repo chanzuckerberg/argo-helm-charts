@@ -35,7 +35,7 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- include "stack.annotations" $service | nindent 4 }}
+    argocd.argoproj.io/sync-options: ServerSideApply=false
 spec:
   type: {{ .Values.service.type }}
   ports:
