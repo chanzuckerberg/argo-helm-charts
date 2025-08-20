@@ -1,0 +1,20 @@
+# Default values for argo-events.
+eventsources: # @schema description: List of eventsources to configure for Argo Events
+  webhook: # @schema description: Webhook event source configuration.
+    - endpoint: /example # @schema description: REST API endpoint
+      method: POST # @schema description: the desired action to be performed for a given resource.
+      port: 12000 # @schema description: the port on which HTTP server is listening for incoming events.
+      url: /example # @schema description: the url of the server
+  aws-sqs: # @schema description: SQS event source configuration.
+    - region: us-east-1 # @schema description: AWS region
+      queue: my-queue # @schema description: AWS SQS queue to listen to for messages
+      waitTimeSeconds: 20 # @schema description: The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.
+      # accessKey: # @schema description: Access key for AWS SQS
+      #   key: accesskey # @schema description: Key for the access key
+      #   name: aws-secret # @schema description: Name of the secret containing the access key
+      # secretKey: # @schema description: Secret key for AWS SQS
+      #   key: secretkey # @schema description: Key for the secret key
+      #   name: aws-secret # @schema description: Name of the secret containing the secret key
+      # roleARN: # @schema description: Role ARN for AWS SQS
+      #   key: rolearn # @schema description: Key for the Role ARN
+      #   name: aws-secret # @schema description: Name of the secret containing the Role ARN
