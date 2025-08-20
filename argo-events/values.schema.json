@@ -5,7 +5,8 @@
   "type": "object",
   "properties": {
     "eventsources": {
-      "description": "List of eventsources to configure for Argo Events",
+      "title": "Argo Events Values",
+      "description": "Values to configure Argo Events",
       "type": "object",
       "properties": {
         "aws-sqs": {
@@ -31,30 +32,11 @@
           }
         },
         "webhook": {
-          "description": "Webhook event source configuration.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "endpoint": {
-                "description": "REST API endpoint",
-                "type": "string"
-              },
-              "method": {
-                "description": "the desired action to be performed for a given resource.",
-                "type": "string"
-              },
-              "port": {
-                "description": "the port on which HTTP server is listening for incoming events.",
-                "type": "integer"
-              },
-              "url": {
-                "description": "the url of the server",
-                "type": "string"
-              }
-            },
-            "additionalProperties": false
-          }
+          "title": "Event Sources Configuration",
+          "description": "Configure various event sources for Argo Events",
+          "$ref": "https://raw.githubusercontent.com/argoproj/argo-events/master/api/jsonschema/schema.json#/io.argoproj.events.v1alpha1.EventSource",
+          "type": "object",
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

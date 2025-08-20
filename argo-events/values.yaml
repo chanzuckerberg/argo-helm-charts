@@ -1,17 +1,13 @@
 # Default values for argo-events.
+
 # @schema title: Argo Events Values
 # @schema description: Values to configure Argo Events
 # @schema type: object
 eventsources:
-# @schema title: Event Sources Configuration
-  # @schema description: Configure various event sources for Argo Events.
-  # @schema type: object
-  # @schema patternProperties: { "^.*$": {"properties": {"endpoint": {"type": "string"}, "method": {"type": "string", "enum": ["GET", "POST", "PUT", "DELETE"]}, "port": {"type": ["integer", "string"]}}}, "type": "object" }
-  webhook:
-    endpoint: /example 
-    method: POST
-    port: 12000
-    url: /example
+  # @schema title: Event Sources Configuration
+  # @schema description: Configure various event sources for Argo Events
+  # @schema $ref: https://raw.githubusercontent.com/argoproj/argo-events/master/api/jsonschema/schema.json#/io.argoproj.events.v1alpha1.EventSource
+  webhook: {}
   aws-sqs: # @schema description: SQS event source configuration.
     - region: us-east-1 # @schema description: AWS region
       queue: my-queue # @schema description: AWS SQS queue to listen to for messages
