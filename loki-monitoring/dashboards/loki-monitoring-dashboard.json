@@ -330,7 +330,7 @@
             "refId": "A"
           }
         ],
-        "title": "API Request Duration",
+        "title": "API Request Duration (p95)",
         "type": "timeseries"
       },
       {
