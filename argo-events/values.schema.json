@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/argo-events",
+  "title": "argo-events",
+  "type": "object",
+  "properties": {
+    "eventsources": {
+      "description": "List of eventsources to configure for Argo Events",
+      "type": "object",
+      "properties": {
+        "aws-sqs": {
+          "description": "SQS event source configuration.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "queue": {
+                "description": "AWS SQS queue to listen to for messages",
+                "type": "string"
+              },
+              "region": {
+                "description": "AWS region",
+                "type": "string"
+              },
+              "waitTimeSeconds": {
+                "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.",
+                "type": "integer"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "webhook": {
+          "description": "Webhook event source configuration.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "endpoint": {
+                "description": "REST API endpoint",
+                "type": "string"
+              },
+              "method": {
+                "description": "the desired action to be performed for a given resource.",
+                "type": "string"
+              },
+              "port": {
+                "description": "the port on which HTTP server is listening for incoming events.",
+                "type": "integer"
+              },
+              "url": {
+                "description": "the url of the server",
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
