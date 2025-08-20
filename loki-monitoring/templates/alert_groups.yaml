@@ -231,7 +231,5 @@ spec:
     annotations: {}
     labels: {}
     isPaused: false
-    notification_settings:
-      receiver: grafana-default-email
 {{ end }}
 {{ end }}
