@@ -1,10 +1,32 @@
 # Default values for argo-events.
-eventsources: # @schema description: List of eventsources to configure for Argo Events
-  webhook: # @schema description: Webhook event source configuration.
-    - endpoint: /example # @schema description: REST API endpoint
-      method: POST # @schema description: the desired action to be performed for a given resource.
-      port: 12000 # @schema description: the port on which HTTP server is listening for incoming events.
-      url: /example # @schema description: the url of the server
+# @schema title: Argo Events Values
+# @schema description: Values to configure Argo Events
+# @schema type: object
+eventsources:
+# @schema title: Event Sources Configuration
+  # @schema description: Configure various event sources for Argo Events.
+  # @schema type: object
+  # @schema patternProperties:
+  # @schema - pattern: "^.*$"
+  # @schema   - description: "A webhook event source instance."
+  # @schema   - type: object
+  # @schema   - required: ["endpoint", "method", "port"]
+  # @schema   - properties:
+  # @schema     - endpoint:
+  # @schema       - description: "The HTTP endpoint for the webhook."
+  # @schema       - type: string
+  # @schema     - method:
+  # @schema       - description: "The HTTP method for the webhook."
+  # @schema       - type: string
+  # @schema       - enum: ["GET", "POST", "PUT", "DELETE"]
+  # @schema     - port:
+  # @schema       - description: "The port on which the webhook listens."
+  # @schema       - type: [integer, string]
+  webhook:
+    endpoint: /example # @schema description: REST API endpoint
+    method: POST # @schema description: the desired action to be performed for a given resource.
+    port: 12000 # @schema description: the port on which HTTP server is listening for incoming events.
+    url: /example # @schema description: the url of the server
   aws-sqs: # @schema description: SQS event source configuration.
     - region: us-east-1 # @schema description: AWS region
       queue: my-queue # @schema description: AWS SQS queue to listen to for messages
