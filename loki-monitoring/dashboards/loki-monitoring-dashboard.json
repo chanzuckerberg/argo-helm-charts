@@ -224,7 +224,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "code",
-            "expr": "sum by(status_code, route) ( rate(loki_request_duration_seconds_count{namespace=\"{{ .Values.loki.namespace }}\", method!=\"gRPC\", status_code=~\"5..\"}[5m]))",
+            "expr": "sum by(status_code, route) (rate(loki_request_duration_seconds_count{namespace=\"{{ .Values.loki.namespace }}\", method!=\"gRPC\", status_code=~\"5..\"}[5m]))",
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "legendFormat": "__auto",
