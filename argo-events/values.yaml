@@ -1,23 +1,14 @@
 # Default values for argo-events.
 
-# @schema title: Argo Events Values
-# @schema description: Values to configure Argo Events
 # @schema type: object
+# @schema title: Event Sources Configuration
+# @schema description: Configure various event sources for Argo Events
 eventsources:
-  # @schema title: Event Sources Configuration
-  # @schema description: Configure various event sources for Argo Events
-  # @schema $ref: https://raw.githubusercontent.com/argoproj/argo-events/master/api/jsonschema/schema.json#/io.argoproj.events.v1alpha1.EventSource
+  # @schema description: an HTTP based EventSource
+  # @schema type: object
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"method": {"type": "string", "description": "HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)"}, "port": {"type": "string", "description": "Port on which the webhook server will listen"}, "endpoint": {"type": "string", "description": "URL path where the webhook will receive events"}}, "required": ["method", "port", "endpoint"]}}}
   webhook: {}
-  aws-sqs: # @schema description: SQS event source configuration.
-    - region: us-east-1 # @schema description: AWS region
-      queue: my-queue # @schema description: AWS SQS queue to listen to for messages
-      waitTimeSeconds: 20 # @schema description: The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.
-      # accessKey: # @schema description: Access key for AWS SQS
-      #   key: accesskey # @schema description: Key for the access key
-      #   name: aws-secret # @schema description: Name of the secret containing the access key
-      # secretKey: # @schema description: Secret key for AWS SQS
-      #   key: secretkey # @schema description: Key for the secret key
-      #   name: aws-secret # @schema description: Name of the secret containing the secret key
-      # roleARN: # @schema description: Role ARN for AWS SQS
-      #   key: rolearn # @schema description: Key for the Role ARN
-      #   name: aws-secret # @schema description: Name of the secret containing the Role ARN
+  # @schema description: SQS event source configuration.
+  # @schema type: object
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"region": {"type": "string", "description": "AWS region"}, "queue": {"type": "string", "description": "AWS SQS queue to listen to for messages"}, "waitTimeSeconds": {"type": "integer", "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning."}}, "required": ["region", "queue", "waitTimeSeconds"]}}}
+  aws-sqs: {}
