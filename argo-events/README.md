@@ -24,10 +24,11 @@
 
 **Description:** Configure various event sources for Argo Events
 
-| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description               |
-| ----------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------- |
-| - [awsSqs](#eventsources_awsSqs )   | No      | object | No         | -          | SQS event source configuration. |
-| - [webhook](#eventsources_webhook ) | No      | object | No         | -          | an HTTP based EventSource       |
+| Property                                                  | Pattern | Type    | Deprecated | Definition | Title/Description               |
+| --------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------- |
+| - [awsSqs](#eventsources_awsSqs )                         | No      | object  | No         | -          | SQS event source configuration. |
+| - [isMixedEventSource](#eventsources_isMixedEventSource ) | No      | boolean | No         | -          | mixed event sources             |
+| - [webhook](#eventsources_webhook )                       | No      | object  | No         | -          | an HTTP based EventSource       |
 
 ### <a name="eventsources_awsSqs"></a>1.1. Property `argo-events > eventsources > awsSqs`
 
@@ -87,7 +88,17 @@ must respect the following conditions
 
 **Description:** The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.
 
-### <a name="eventsources_webhook"></a>1.2. Property `argo-events > eventsources > webhook`
+### <a name="eventsources_isMixedEventSource"></a>1.2. Property `argo-events > eventsources > isMixedEventSource`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+| **Default**  | `false`   |
+
+**Description:** mixed event sources
+
+### <a name="eventsources_webhook"></a>1.3. Property `argo-events > eventsources > webhook`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -101,7 +112,7 @@ must respect the following conditions
 | ----------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#eventsources_webhook_pattern1 ) | Yes     | object | No         | -          | -                 |
 
-#### <a name="eventsources_webhook_pattern1"></a>1.2.1. Pattern Property `argo-events > eventsources > webhook > ^.*$`
+#### <a name="eventsources_webhook_pattern1"></a>1.3.1. Pattern Property `argo-events > eventsources > webhook > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -118,7 +129,7 @@ must respect the following conditions
 | + [method](#eventsources_webhook_pattern1_method )     | No      | string | No         | -          | HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS) |
 | + [port](#eventsources_webhook_pattern1_port )         | No      | string | No         | -          | Port on which the webhook server will listen                                       |
 
-##### <a name="eventsources_webhook_pattern1_endpoint"></a>1.2.1.1. Property `argo-events > eventsources > webhook > ^.*$ > endpoint`
+##### <a name="eventsources_webhook_pattern1_endpoint"></a>1.3.1.1. Property `argo-events > eventsources > webhook > ^.*$ > endpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -127,7 +138,7 @@ must respect the following conditions
 
 **Description:** URL path where the webhook will receive events
 
-##### <a name="eventsources_webhook_pattern1_method"></a>1.2.1.2. Property `argo-events > eventsources > webhook > ^.*$ > method`
+##### <a name="eventsources_webhook_pattern1_method"></a>1.3.1.2. Property `argo-events > eventsources > webhook > ^.*$ > method`
 
 |              |          |
 | ------------ | -------- |
@@ -136,7 +147,7 @@ must respect the following conditions
 
 **Description:** HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)
 
-##### <a name="eventsources_webhook_pattern1_port"></a>1.2.1.3. Property `argo-events > eventsources > webhook > ^.*$ > port`
+##### <a name="eventsources_webhook_pattern1_port"></a>1.3.1.3. Property `argo-events > eventsources > webhook > ^.*$ > port`
 
 |              |          |
 | ------------ | -------- |
