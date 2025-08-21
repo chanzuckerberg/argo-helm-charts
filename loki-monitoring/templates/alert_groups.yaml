@@ -29,7 +29,7 @@ spec:
           editorMode: code
           expr: |-
               sum(
-                increase(loki_request_duration_seconds_count{
+                rate(loki_request_duration_seconds_count{
                   namespace="{{ .Values.loki.namespace }}",
                   status_code=~"5..",
                   method!="gRPC"
@@ -48,7 +48,7 @@ spec:
           conditions:
               - evaluator:
                   params:
-                      - 0
+                      - 1
                   type: gt
                 operator:
                   type: and
