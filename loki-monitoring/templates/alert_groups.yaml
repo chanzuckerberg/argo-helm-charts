@@ -32,9 +32,11 @@ spec:
                 rate(loki_request_duration_seconds_count{
                   namespace="{{ .Values.loki.namespace }}",
                   status_code=~"5..",
+                  route!="ready",
                   method!="gRPC"
                 }[5m])
-              )
+              ) /
+              sum(rate(loki_request_duration_seconds_count{namespace="{{ .Values.loki.namespace }}", method!="gRPC", route!="ready"}[5m]))
           hide: false
           instant: true
           intervalMs: 1000
@@ -48,7 +50,7 @@ spec:
           conditions:
               - evaluator:
                   params:
-                      - 1
+                      - 0.05
                   type: gt
                 operator:
                   type: and
