@@ -632,13 +632,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(loki_logql_querystats_bytes_processed_per_seconds_bucket{namespace=\"{{ .Values.loki.namespace }}\"}[5m])) by (le,type))",
+          "expr": "sum by(app_kubernetes_io_component) (changes(process_start_time_seconds{namespace=\"{{ .Values.loki.namespace }}\"}[15m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "LogQL Processed Bytes",
+      "title": "Process Restarts",
       "type": "timeseries"
     },
     {
