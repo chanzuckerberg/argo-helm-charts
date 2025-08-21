@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/argo-events",
+  "title": "argo-events",
+  "type": "object",
+  "properties": {
+    "eventsources": {
+      "title": "Event Sources Configuration",
+      "description": "Configure various event sources for Argo Events",
+      "type": "object",
+      "properties": {
+        "awsSqs": {
+          "description": "SQS event source configuration.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "required": [
+                "region",
+                "queue",
+                "waitTimeSeconds"
+              ],
+              "properties": {
+                "queue": {
+                  "description": "AWS SQS queue to listen to for messages",
+                  "type": "string"
+                },
+                "region": {
+                  "description": "AWS region",
+                  "type": "string"
+                },
+                "waitTimeSeconds": {
+                  "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.",
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "isMixedEventSource": {
+          "description": "mixed event sources",
+          "default": false,
+          "type": "boolean"
+        },
+        "webhook": {
+          "description": "an HTTP based EventSource",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "required": [
+                "method",
+                "port",
+                "endpoint"
+              ],
+              "properties": {
+                "endpoint": {
+                  "description": "URL path where the webhook will receive events",
+                  "type": "string"
+                },
+                "method": {
+                  "description": "HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port on which the webhook server will listen",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
