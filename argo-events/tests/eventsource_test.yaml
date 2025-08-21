@@ -74,3 +74,109 @@ tests:
               port: 13000
               endpoint: example2
               method: GET
+
+  - it: should render a sqs eventsource resource
+    set:
+      eventsources:
+        
+        awsSqs:
+          example:
+            region: "us-east-1"
+            queue: "my-queue"
+            waitTimeSeconds: 20
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: aws-sqs
+      - equal:
+          path: spec.sqs
+          value:
+            example:
+              region: us-east-1
+              queue: my-queue
+              waitTimeSeconds: 20
+  - it: should render a sqs eventsource resource with multiple sqs listeners
+    set:
+      eventsources:
+        awsSqs:
+          example:
+            region: "us-east-1"
+            queue: "my-queue"
+            waitTimeSeconds: 20
+          example2:
+            region: "us-west-2"
+            queue: "my-queue-2"
+            waitTimeSeconds: 30
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: aws-sqs
+      - equal:
+          path: spec.sqs
+          value:
+            example:
+              region: us-east-1
+              queue: my-queue
+              waitTimeSeconds: 20
+            example2:
+              region: us-west-2
+              queue: my-queue-2
+              waitTimeSeconds: 30
+
+  - it: should render two eventsource resources with sqs and webhook kind
+    set:
+      eventsources:
+        webhook:
+          example:
+            endpoint: "example"
+            method: "POST"
+            port: "12000"
+        awsSqs:
+          example:
+            region: "us-east-1"
+            queue: "my-queue"
+            waitTimeSeconds: 20
+
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        isKind:
+          of: EventSource
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: webhook
+      - documentIndex: 0
+        equal:
+          path: spec.webhook
+          value:
+            example:
+              port: 12000
+              endpoint: example
+              method: POST
+      - documentIndex: 1
+        isKind:
+          of: EventSource
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: aws-sqs
+      - documentIndex: 1
+        equal:
+          path: spec.sqs
+          value:
+            example:
+              region: us-east-1
+              queue: my-queue
+              waitTimeSeconds: 20
