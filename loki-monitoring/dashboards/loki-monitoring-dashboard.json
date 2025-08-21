@@ -535,13 +535,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(loki_logql_querystats_latency_seconds_bucket{namespace=\"{{ .Values.loki.namespace }}\"}[5m])) by (le,type))",
+          "expr": "histogram_quantile(0.95, sum by(le) (rate(loki_request_duration_seconds_bucket{namespace=\"{{ .Values.loki.namespace }}\"}[5m])))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "LogQL Latency",
+      "title": "Loki API Request Latency (p95)",
       "type": "timeseries"
     },
     {
