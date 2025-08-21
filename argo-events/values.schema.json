@@ -9,7 +9,7 @@
       "description": "Configure various event sources for Argo Events",
       "type": "object",
       "properties": {
-        "aws-sqs": {
+        "awsSqs": {
           "description": "SQS event source configuration.",
           "type": "object",
           "patternProperties": {

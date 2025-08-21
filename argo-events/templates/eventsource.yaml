@@ -6,44 +6,16 @@ metadata:
 spec:
   service:
     ports:
-      {{ range $webhookName, $webhookValue := .Values.eventsources.webhook }}
+      {{- range $webhookName, $webhookValue := .Values.eventsources.webhook }}
       - port: {{ $webhookValue.port | default "12000" }}
         targetPort: {{ $webhookValue.port | default "12000" }}
-     {{ end }}
+     {{- end }}
   webhook:
     # event-source can run multiple HTTP servers. Simply define a unique port to start a new HTTP server
-    {{ range $webhookName, $webhookValue := .Values.eventsources.webhook }}
-      {{ printf "%s-%d" "webhook" $webhookName }}:
+    {{- range $webhookName, $webhookValue := .Values.eventsources.webhook }}
+      {{ $webhookName }}:
         port: {{ $webhookValue.port | default "12000" }}
         endpoint: {{ $webhookValue.endpoint | default "/example" }}
         method: {{ $webhookValue.method | default "POST" }}
-     {{ end }}
+     {{- end }}
 {{- end }}
----
-{{ if .Values.eventsources.aws-sqs }}
-apiVersion: argoproj.io/v1alpha1
-kind: EventSource
-metadata:
-  name: aws-sqs
-spec:
-  sqs:
-    {{ range $queueName, $queueValue := .Values.eventsources.aws-sqs }}
-      {{ printf "%s-%d" "aws-sqs" $queueName }}:
-        region: {{ $queueValue.region | default "us-west-2" }}
-        queue: {{ $queueValue.queue | default "sqs-queue" }}
-        # MUST BE > 0 AND <= 20
-        waitTimeSeconds: {{ $queueValue.waitTimeSeconds | default 20 }}
-        jsonBody: true
-        {{ if $queueValue.accessKey }}
-        accessKey:
-          key: {{ $queueValue.accessKey.key }}
-          name: {{ $queueValue.accessKey.name }}
-        {{ end }}
-        {{ if $queueValue.secretKey }}
-        secretKey:
-          key: {{ $queueValue.secretKey.key }}
-          name: {{ $queueValue.secretKey.name }}
-     {{ end }}
-{{- end }}
----
-

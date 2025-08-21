@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test eventsource.yaml
+templates:
+  - eventsource.yaml
+
+tests:
+  - it: should render a webhook eventsource resource
+    set:
+      eventsources:
+        webhook:
+          example:
+            endpoint: "example"
+            method: "POST"
+            port: "12000"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: webhook
+      - equal:
+          path: spec.service
+          value:
+            ports:
+              - port: 12000
+                targetPort: 12000
+      - equal:
+          path: spec.webhook
+          value:
+            example:
+              port: 12000
+              endpoint: example
+              method: POST
+  - it: should render one webhook eventsource resource but with multiple ports
+    set:
+      eventsources:
+        webhook:
+          example:
+            endpoint: "example"
+            method: "POST"
+            port: "12000"
+          example2:
+            endpoint: "example2"
+            method: "GET"
+            port: "13000"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: webhook
+      - equal:
+          path: spec.service
+          value:
+            ports:
+              - port: 12000
+                targetPort: 12000
+              - port: 13000
+                targetPort: 13000
+      - equal:
+          path: spec.webhook
+          value:
+            example:
+              port: 12000
+              endpoint: example
+              method: POST
+            example2:
+              port: 13000
+              endpoint: example2
+              method: GET
