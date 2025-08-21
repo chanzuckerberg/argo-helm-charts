@@ -431,7 +431,7 @@
           "useBackend": false
         }
       ],
-      "title": "Successful Loki Write Ready Rates",
+      "title": "Failed Loki Write Health Check Rates",
       "type": "timeseries"
     },
     {
