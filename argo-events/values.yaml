@@ -4,6 +4,10 @@
 # @schema title: Event Sources Configuration
 # @schema description: Configure various event sources for Argo Events
 eventsources:
+  # @schema description: mixed event sources
+  # @schema type: boolean
+  # @schema default: false
+  isMixedEventSource: false
   # @schema description: an HTTP based EventSource
   # @schema type: object
   # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"method": {"type": "string", "description": "HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)"}, "port": {"type": "string", "description": "Port on which the webhook server will listen"}, "endpoint": {"type": "string", "description": "URL path where the webhook will receive events"}}, "required": ["method", "port", "endpoint"]}}}

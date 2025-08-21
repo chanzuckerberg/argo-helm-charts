@@ -33,11 +33,13 @@
                   "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.",
                   "type": "integer"
                 }
-              },
-              "additionalProperties": false
+              }
             }
-          },
-          "additionalProperties": false
+          }
+        },
+        "isMixedEventSource": {
+          "description": "mixed event sources",
+          "type": "boolean"
         },
         "webhook": {
           "description": "an HTTP based EventSource",
@@ -63,15 +65,11 @@
                   "description": "Port on which the webhook server will listen",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             }
-          },
-          "additionalProperties": false
+          }
         }
-      },
-      "additionalProperties": false
+      }
     }
-  },
-  "additionalProperties": false
+  }
 }

@@ -1,9 +1,9 @@
-{{ if .Values.eventsources.webhook }}
 apiVersion: argoproj.io/v1alpha1
 kind: EventSource
 metadata:
-  name: webhook
+  name: {{ include "argo-events.eventsource.name" .Values.eventsources }}
 spec:
+  {{- if .Values.eventsources.webhook }}
   service:
     ports:
       {{- range $webhookName, $webhookValue := .Values.eventsources.webhook }}
@@ -18,20 +18,13 @@ spec:
         endpoint: {{ $webhookValue.endpoint | default "/example" }}
         method: {{ $webhookValue.method | default "POST" }}
      {{- end }}
-{{- end }}
----
-{{ if .Values.eventsources.awsSqs }}
-apiVersion: argoproj.io/v1alpha1
-kind: EventSource
-metadata:
-  name: aws-sqs
-spec:
+  {{- end }}
+  {{- if .Values.eventsources.awsSqs }}
   sqs:
-    # event-source can run multiple SQS listeners. Simply define a unique queue name to start a new SQS listener
     {{- range $sqsName, $sqsValue := .Values.eventsources.awsSqs }}
       {{ $sqsName }}:
         region: {{ $sqsValue.region | default "us-east-1" }}
         queue: {{ $sqsValue.queue | default "my-queue" }}
         waitTimeSeconds: {{ $sqsValue.waitTimeSeconds | default 20 }}
     {{- end }}
-{{- end }}
+  {{- end }}
