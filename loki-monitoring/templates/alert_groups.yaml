@@ -48,7 +48,7 @@ spec:
           conditions:
               - evaluator:
                   params:
-                      - 0
+                      - 1
                   type: gt
                 operator:
                   type: and
