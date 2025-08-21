@@ -88,7 +88,7 @@ spec:
               uid: prometheus
           disableTextWrap: false
           editorMode: builder
-          expr: histogram_quantile(0.95, sum by(le, type) (rate(loki_logql_querystats_latency_seconds_bucket{namespace="{{ .Values.loki.namespace }}", type="metric"}[5m])))
+          expr: histogram_quantile(0.95, sum by(le) (rate(loki_request_duration_seconds_bucket{namespace="{{ .Values.loki.namespace }}"}[5m])))
           fullMetaSearch: false
           includeNullMetadata: true
           instant: true
@@ -104,7 +104,7 @@ spec:
           conditions:
               - evaluator:
                   params:
-                      - 1
+                      - 0.5
                   type: gt
                 operator:
                   type: and
@@ -232,6 +232,62 @@ spec:
     for: 5m
     annotations: {}
     labels: {}
+    isPaused: false
+  - uid: devpdq5mu1mv4a
+    title: Loki Process Restarts Spiking
+    condition: C
+    data:
+      - refId: A
+        relativeTimeRange:
+          from: 600
+          to: 0
+        datasourceUid: prometheus
+        model:
+          datasource:
+              type: prometheus
+              uid: prometheus
+          disableTextWrap: false
+          editorMode: code
+          expr: sum by(app_kubernetes_io_component) (changes(process_start_time_seconds{namespace="{{ .Values.loki.namespace }}"}[15m]))
+          fullMetaSearch: false
+          includeNullMetadata: true
+          instant: true
+          intervalMs: 1000
+          legendFormat: __auto
+          maxDataPoints: 43200
+          range: false
+          refId: A
+          useBackend: false
+      - refId: C
+        datasourceUid: __expr__
+        model:
+          conditions:
+              - evaluator:
+                  params:
+                      - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                      - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+          datasource:
+              type: __expr__
+              uid: __expr__
+          expression: A
+          intervalMs: 1000
+          maxDataPoints: 43200
+          refId: C
+          type: threshold
+    noDataState: OK
+    execErrState: OK
+    annotations: {}
+    labels: {}
+    for: 5m
     isPaused: false
 {{ end }}
 {{ end }}
