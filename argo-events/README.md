@@ -26,11 +26,11 @@
 
 | Property                                                  | Pattern | Type    | Deprecated | Definition | Title/Description               |
 | --------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------- |
-| - [awsSqs](#eventsources_awsSqs )                         | No      | object  | No         | -          | SQS event source configuration. |
+| - [aws-sqs](#eventsources_aws-sqs )                       | No      | object  | No         | -          | SQS event source configuration. |
 | - [isMixedEventSource](#eventsources_isMixedEventSource ) | No      | boolean | No         | -          | mixed event sources             |
 | - [webhook](#eventsources_webhook )                       | No      | object  | No         | -          | an HTTP based EventSource       |
 
-### <a name="eventsources_awsSqs"></a>1.1. Property `argo-events > eventsources > awsSqs`
+### <a name="eventsources_aws-sqs"></a>1.1. Property `argo-events > eventsources > aws-sqs`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -40,11 +40,11 @@
 
 **Description:** SQS event source configuration.
 
-| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [^.*$](#eventsources_awsSqs_pattern1 ) | Yes     | object | No         | -          | -                 |
+| Property                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#eventsources_aws-sqs_pattern1 ) | Yes     | object | No         | -          | -                 |
 
-#### <a name="eventsources_awsSqs_pattern1"></a>1.1.1. Pattern Property `argo-events > eventsources > awsSqs > ^.*$`
+#### <a name="eventsources_aws-sqs_pattern1"></a>1.1.1. Pattern Property `argo-events > eventsources > aws-sqs > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -55,13 +55,13 @@ must respect the following conditions
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                         |
-| ------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------- |
-| + [queue](#eventsources_awsSqs_pattern1_queue )                     | No      | string  | No         | -          | AWS SQS queue to listen to for messages                                                                   |
-| + [region](#eventsources_awsSqs_pattern1_region )                   | No      | string  | No         | -          | AWS region                                                                                                |
-| + [waitTimeSeconds](#eventsources_awsSqs_pattern1_waitTimeSeconds ) | No      | integer | No         | -          | The duration (in seconds) for which the call waits for a message to arrive in the queue before returning. |
+| Property                                                             | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                         |
+| -------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------- |
+| + [queue](#eventsources_aws-sqs_pattern1_queue )                     | No      | string  | No         | -          | AWS SQS queue to listen to for messages                                                                   |
+| + [region](#eventsources_aws-sqs_pattern1_region )                   | No      | string  | No         | -          | AWS region                                                                                                |
+| + [waitTimeSeconds](#eventsources_aws-sqs_pattern1_waitTimeSeconds ) | No      | integer | No         | -          | The duration (in seconds) for which the call waits for a message to arrive in the queue before returning. |
 
-##### <a name="eventsources_awsSqs_pattern1_queue"></a>1.1.1.1. Property `argo-events > eventsources > awsSqs > ^.*$ > queue`
+##### <a name="eventsources_aws-sqs_pattern1_queue"></a>1.1.1.1. Property `argo-events > eventsources > aws-sqs > ^.*$ > queue`
 
 |              |          |
 | ------------ | -------- |
@@ -70,7 +70,7 @@ must respect the following conditions
 
 **Description:** AWS SQS queue to listen to for messages
 
-##### <a name="eventsources_awsSqs_pattern1_region"></a>1.1.1.2. Property `argo-events > eventsources > awsSqs > ^.*$ > region`
+##### <a name="eventsources_aws-sqs_pattern1_region"></a>1.1.1.2. Property `argo-events > eventsources > aws-sqs > ^.*$ > region`
 
 |              |          |
 | ------------ | -------- |
@@ -79,7 +79,7 @@ must respect the following conditions
 
 **Description:** AWS region
 
-##### <a name="eventsources_awsSqs_pattern1_waitTimeSeconds"></a>1.1.1.3. Property `argo-events > eventsources > awsSqs > ^.*$ > waitTimeSeconds`
+##### <a name="eventsources_aws-sqs_pattern1_waitTimeSeconds"></a>1.1.1.3. Property `argo-events > eventsources > aws-sqs > ^.*$ > waitTimeSeconds`
 
 |              |           |
 | ------------ | --------- |
