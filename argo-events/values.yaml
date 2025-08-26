@@ -15,4 +15,4 @@ eventsources:
   # @schema description: SQS event source configuration.
   # @schema type: object
   # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"region": {"type": "string", "description": "AWS region"}, "queue": {"type": "string", "description": "AWS SQS queue to listen to for messages"}, "waitTimeSeconds": {"type": "integer", "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning."}}, "required": ["region", "queue", "waitTimeSeconds"]}}}
-  awsSqs: {}
+  aws-sqs: {}

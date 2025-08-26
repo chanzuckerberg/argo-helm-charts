@@ -1,3 +1,4 @@
+{{- include "argo-events.eventsource.validateHaStrategy" . -}}
 apiVersion: argoproj.io/v1alpha1
 kind: EventSource
 metadata:
@@ -19,9 +20,9 @@ spec:
         method: {{ $webhookValue.method | default "POST" }}
      {{- end }}
   {{- end }}
-  {{- if .Values.eventsources.awsSqs }}
+  {{- if get .Values.eventsources "aws-sqs" }}
   sqs:
-    {{- range $sqsName, $sqsValue := .Values.eventsources.awsSqs }}
+    {{- range $sqsName, $sqsValue := get .Values.eventsources "aws-sqs" }}
       {{ $sqsName }}:
         region: {{ $sqsValue.region | default "us-east-1" }}
         queue: {{ $sqsValue.queue | default "my-queue" }}

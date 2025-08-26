@@ -78,7 +78,7 @@ tests:
   - it: should render a sqs eventsource resource
     set:
       eventsources:
-        awsSqs:
+        aws-sqs:
           example:
             region: "us-east-1"
             queue: "my-queue"
@@ -102,7 +102,7 @@ tests:
   - it: should render a sqs eventsource resource with multiple sqs listeners
     set:
       eventsources:
-        awsSqs:
+        aws-sqs:
           example:
             region: "us-east-1"
             queue: "my-queue"
@@ -141,7 +141,7 @@ tests:
             endpoint: "example"
             method: "POST"
             port: "12000"
-        awsSqs:
+        aws-sqs:
           example:
             region: "us-east-1"
             queue: "my-queue"
