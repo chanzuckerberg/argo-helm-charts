@@ -37,3 +37,36 @@ https://argoproj.github.io/argo-events/eventsources/ha/
 {{- fail "Validation Error: You cannot mix Active-Active EventSource types with Active-Passive types within the same EventSource. Please configure a separate EventSource for each type." }}
 {{- end }}
 {{- end }}
+
+{{/*
+Get EventBus Type
+*/}}
+{{- define "argo-events.eventbus.busType" -}}
+{{- $busType := "" -}}
+{{- if .Values.eventbus.jetstream }}
+{{- $busType = "jetstream" -}}
+{{- else if .Values.eventbus.kafka }}
+{{- $busType = "kafka" -}}
+{{- end }}
+{{- if $busType -}}
+{{- $busType -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- define "argo-events.jetstream.optionalFields" -}}
+{{- $jetstreamValues := .Values.eventbus.jetstream -}}
+{{- $optionalFields := list "persistence" "affinity" "tolerations" "streamConfig" "metricsExporter" "nodeSelector" }}
+{{- range $optionalFields -}}
+  {{- $value := get $jetstreamValues . -}}
+  {{- if $value -}}
+    {{- if eq . "streamConfig" -}}
+{{- . | nindent 4 -}}: |
+      {{- $value | nindent 6 -}}
+    {{- else -}}
+{{- . | nindent 4 -}}:
+      {{- toYaml $value | nindent 6 -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

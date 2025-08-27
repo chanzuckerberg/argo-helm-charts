@@ -16,3 +16,27 @@ eventsources:
   # @schema type: object
   # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"region": {"type": "string", "description": "AWS region"}, "queue": {"type": "string", "description": "AWS SQS queue to listen to for messages"}, "waitTimeSeconds": {"type": "integer", "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning."}}, "required": ["region", "queue", "waitTimeSeconds"]}}}
   aws-sqs: {}
+# @schema type: object
+# @schema title: Event Bus Configuration
+# @schema description: Configure various event bus for Argo Events
+eventbus:
+  # @schema description: JetStream event bus configuration.
+  # @schema type: object
+  # @schema additionalProperties:true
+  jetstream: 
+    # @schema description: JetStream version, such as "2.7.3".
+    # @schema type: string
+    version: latest
+    # @schema description: JetStream StatefulSet size.
+    # @schema type: integer
+    replicas: 1
+  # @schema description: Kafka event bus configuration.
+  # @schema type: object
+  # @schema additionalProperties:true
+  kafka:
+    # @schema description: URL to kafka cluster, multiple URLs separated by comma.
+    # @schema type: string
+    url: ""
+    # @schema description: Topic name, defaults to {namespace_name}-{eventbus_name}.
+    # @schema type: string
+    topic: ""

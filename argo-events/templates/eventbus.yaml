@@ -1,0 +1,18 @@
+{{- $busType := include "argo-events.eventbus.busType" . -}}
+{{- if $busType }}
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: default
+spec:
+  {{- if eq $busType "jetstream" }}
+  jetstream:
+    replicas: {{ .Values.eventbus.jetstream.replicas | default 1 }}
+    version: {{ .Values.eventbus.jetstream.version }}
+    {{- include "argo-events.jetstream.optionalFields" . }}
+  {{- else if eq $busType "kafka" }}
+  kafka:
+    topic: {{ .Values.eventbus.kafka.topic }}
+    url: {{ .Values.eventbus.kafka.url }}
+  {{- end }}
+{{- end }}
