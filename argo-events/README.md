@@ -40,29 +40,9 @@
 
 **Description:** JetStream event bus configuration.
 
-| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                   |
-| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------- |
-| - [replicas](#eventbus_jetstream_replicas )     | No      | integer | No         | -          | JetStream StatefulSet size.         |
-| - [version](#eventbus_jetstream_version )       | No      | string  | No         | -          | JetStream version, such as "2.7.3". |
-| - [](#eventbus_jetstream_additionalProperties ) | No      | object  | No         | -          | -                                   |
-
-#### <a name="eventbus_jetstream_replicas"></a>1.1.1. Property `argo-events > eventbus > jetstream > replicas`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
-
-**Description:** JetStream StatefulSet size.
-
-#### <a name="eventbus_jetstream_version"></a>1.1.2. Property `argo-events > eventbus > jetstream > version`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JetStream version, such as "2.7.3".
+| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#eventbus_jetstream_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ### <a name="eventbus_kafka"></a>1.2. Property `argo-events > eventbus > kafka`
 
@@ -74,29 +54,9 @@
 
 **Description:** Kafka event bus configuration.
 
-| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                         |
-| ------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------- |
-| - [topic](#eventbus_kafka_topic )           | No      | string | No         | -          | Topic name, defaults to {namespace_name}-{eventbus_name}. |
-| - [url](#eventbus_kafka_url )               | No      | string | No         | -          | URL to kafka cluster, multiple URLs separated by comma.   |
-| - [](#eventbus_kafka_additionalProperties ) | No      | object | No         | -          | -                                                         |
-
-#### <a name="eventbus_kafka_topic"></a>1.2.1. Property `argo-events > eventbus > kafka > topic`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Topic name, defaults to {namespace_name}-{eventbus_name}.
-
-#### <a name="eventbus_kafka_url"></a>1.2.2. Property `argo-events > eventbus > kafka > url`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** URL to kafka cluster, multiple URLs separated by comma.
+| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#eventbus_kafka_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ## <a name="eventsources"></a>2. Property `argo-events > eventsources`
 
