@@ -12,7 +12,6 @@ spec:
     {{- include "argo-events.jetstream.optionalFields" . }}
   {{- else if eq $busType "kafka" }}
   kafka:
-    topic: {{ .Values.eventbus.kafka.topic }}
     url: {{ .Values.eventbus.kafka.url }}
   {{- end }}
 {{- end }}

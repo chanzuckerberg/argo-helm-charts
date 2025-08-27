@@ -67,8 +67,10 @@ https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.JetStreamBus
     {{- if or (eq . "settings") (eq . "streamConfig") -}}
 {{- . | nindent 4 -}}: |
       {{- $value | nindent 6 -}}
+    {{- else if eq . "maxPayload" -}}
+{{- . | nindent 4 -}}: "{{ $value }}"
     {{- else if or (eq . "maxPayload") (eq . "priority") (eq . "priorityClassName") (eq . "serviceAccountName") -}}
-{{- . | nindent 4 -}}: {{ $value  }}
+{{- . | nindent 4 -}}:  {{ $value }}
     {{- else -}}
 {{- . | nindent 4 -}}:
       {{- toYaml $value | nindent 6 -}}

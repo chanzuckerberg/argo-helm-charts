@@ -102,9 +102,66 @@ tests:
             server_name: "my-nats"
           startArgs:
             - "-D"
-
     asserts:
       - hasDocuments:
           count: 1
       - isKind:
           of: EventBus
+      - equal:
+          path: spec.jetstream.version
+          value: "2.7.3"
+      - equal:
+          path: spec.jetstream.persistence.volumeSize
+          value: "1Gi"
+      - equal:
+          path: spec.jetstream.persistence.storageClassName
+          value: "my-storage-class"
+      - equal:
+          path: spec.jetstream.streamConfig
+          value: |
+            replicas: 1
+            maxBytes: 1024
+      - equal:
+          path: spec.jetstream.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
+          value: "kubernetes.io/os"
+      - equal:
+          path: spec.jetstream.tolerations[0].key
+          value: "my-key"
+      - equal:
+          path: spec.jetstream.metricsExporter.enabled
+          value: true
+      - equal:
+          path: spec.jetstream.containerTemplate.resources.limits.cpu
+          value: "100m"
+      - equal:
+          path: spec.jetstream.imagePullSecrets[0].name
+          value: "my-secret"
+      - equal:
+          path: spec.jetstream.maxPayload
+          value: "2048"
+      - equal:
+          path: spec.jetstream.metadata.annotations.my-annotation
+          value: "test-annotation"
+      - equal:
+          path: spec.jetstream.priority
+          value: 100
+      - equal:
+          path: spec.jetstream.priorityClassName
+          value: "high-priority"
+      - equal:
+          path: spec.jetstream.reloaderContainerTemplate.resources.limits.cpu
+          value: "50m"
+      - equal:
+          path: spec.jetstream.securityContext.runAsNonRoot
+          value: true
+      - equal:
+          path: spec.jetstream.serviceAccountName
+          value: "my-sa"
+      - equal:
+          path: spec.jetstream.settings
+          value: |
+            server_name: "my-nats"
+      - equal:
+          path: spec.jetstream.startArgs
+          value:
+            - "-D"
