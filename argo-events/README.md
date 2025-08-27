@@ -10,9 +10,95 @@
 
 | Property                         | Pattern | Type   | Deprecated | Definition | Title/Description           |
 | -------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------- |
+| - [eventbus](#eventbus )         | No      | object | No         | -          | Event Bus Configuration     |
 | - [eventsources](#eventsources ) | No      | object | No         | -          | Event Sources Configuration |
 
-## <a name="eventsources"></a>1. Property `argo-events > eventsources`
+## <a name="eventbus"></a>1. Property `argo-events > eventbus`
+
+**Title:** Event Bus Configuration
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Configure various event bus for Argo Events
+
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description                  |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------- |
+| - [jetstream](#eventbus_jetstream ) | No      | object | No         | -          | JetStream event bus configuration. |
+| - [kafka](#eventbus_kafka )         | No      | object | No         | -          | Kafka event bus configuration.     |
+
+### <a name="eventbus_jetstream"></a>1.1. Property `argo-events > eventbus > jetstream`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** JetStream event bus configuration.
+
+| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                   |
+| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------- |
+| - [replicas](#eventbus_jetstream_replicas )     | No      | integer | No         | -          | JetStream StatefulSet size.         |
+| - [version](#eventbus_jetstream_version )       | No      | string  | No         | -          | JetStream version, such as "2.7.3". |
+| - [](#eventbus_jetstream_additionalProperties ) | No      | object  | No         | -          | -                                   |
+
+#### <a name="eventbus_jetstream_replicas"></a>1.1.1. Property `argo-events > eventbus > jetstream > replicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** JetStream StatefulSet size.
+
+#### <a name="eventbus_jetstream_version"></a>1.1.2. Property `argo-events > eventbus > jetstream > version`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** JetStream version, such as "2.7.3".
+
+### <a name="eventbus_kafka"></a>1.2. Property `argo-events > eventbus > kafka`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Kafka event bus configuration.
+
+| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                         |
+| ------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------- |
+| - [topic](#eventbus_kafka_topic )           | No      | string | No         | -          | Topic name, defaults to {namespace_name}-{eventbus_name}. |
+| - [url](#eventbus_kafka_url )               | No      | string | No         | -          | URL to kafka cluster, multiple URLs separated by comma.   |
+| - [](#eventbus_kafka_additionalProperties ) | No      | object | No         | -          | -                                                         |
+
+#### <a name="eventbus_kafka_topic"></a>1.2.1. Property `argo-events > eventbus > kafka > topic`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Topic name, defaults to {namespace_name}-{eventbus_name}.
+
+#### <a name="eventbus_kafka_url"></a>1.2.2. Property `argo-events > eventbus > kafka > url`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** URL to kafka cluster, multiple URLs separated by comma.
+
+## <a name="eventsources"></a>2. Property `argo-events > eventsources`
 
 **Title:** Event Sources Configuration
 
@@ -30,7 +116,7 @@
 | - [isMixedEventSource](#eventsources_isMixedEventSource ) | No      | boolean | No         | -          | mixed event sources             |
 | - [webhook](#eventsources_webhook )                       | No      | object  | No         | -          | an HTTP based EventSource       |
 
-### <a name="eventsources_aws-sqs"></a>1.1. Property `argo-events > eventsources > aws-sqs`
+### <a name="eventsources_aws-sqs"></a>2.1. Property `argo-events > eventsources > aws-sqs`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -44,7 +130,7 @@
 | ----------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#eventsources_aws-sqs_pattern1 ) | Yes     | object | No         | -          | -                 |
 
-#### <a name="eventsources_aws-sqs_pattern1"></a>1.1.1. Pattern Property `argo-events > eventsources > aws-sqs > ^.*$`
+#### <a name="eventsources_aws-sqs_pattern1"></a>2.1.1. Pattern Property `argo-events > eventsources > aws-sqs > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -61,7 +147,7 @@ must respect the following conditions
 | + [region](#eventsources_aws-sqs_pattern1_region )                   | No      | string  | No         | -          | AWS region                                                                                                |
 | + [waitTimeSeconds](#eventsources_aws-sqs_pattern1_waitTimeSeconds ) | No      | integer | No         | -          | The duration (in seconds) for which the call waits for a message to arrive in the queue before returning. |
 
-##### <a name="eventsources_aws-sqs_pattern1_queue"></a>1.1.1.1. Property `argo-events > eventsources > aws-sqs > ^.*$ > queue`
+##### <a name="eventsources_aws-sqs_pattern1_queue"></a>2.1.1.1. Property `argo-events > eventsources > aws-sqs > ^.*$ > queue`
 
 |              |          |
 | ------------ | -------- |
@@ -70,7 +156,7 @@ must respect the following conditions
 
 **Description:** AWS SQS queue to listen to for messages
 
-##### <a name="eventsources_aws-sqs_pattern1_region"></a>1.1.1.2. Property `argo-events > eventsources > aws-sqs > ^.*$ > region`
+##### <a name="eventsources_aws-sqs_pattern1_region"></a>2.1.1.2. Property `argo-events > eventsources > aws-sqs > ^.*$ > region`
 
 |              |          |
 | ------------ | -------- |
@@ -79,7 +165,7 @@ must respect the following conditions
 
 **Description:** AWS region
 
-##### <a name="eventsources_aws-sqs_pattern1_waitTimeSeconds"></a>1.1.1.3. Property `argo-events > eventsources > aws-sqs > ^.*$ > waitTimeSeconds`
+##### <a name="eventsources_aws-sqs_pattern1_waitTimeSeconds"></a>2.1.1.3. Property `argo-events > eventsources > aws-sqs > ^.*$ > waitTimeSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -88,7 +174,7 @@ must respect the following conditions
 
 **Description:** The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.
 
-### <a name="eventsources_isMixedEventSource"></a>1.2. Property `argo-events > eventsources > isMixedEventSource`
+### <a name="eventsources_isMixedEventSource"></a>2.2. Property `argo-events > eventsources > isMixedEventSource`
 
 |              |           |
 | ------------ | --------- |
@@ -98,7 +184,7 @@ must respect the following conditions
 
 **Description:** mixed event sources
 
-### <a name="eventsources_webhook"></a>1.3. Property `argo-events > eventsources > webhook`
+### <a name="eventsources_webhook"></a>2.3. Property `argo-events > eventsources > webhook`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -112,7 +198,7 @@ must respect the following conditions
 | ----------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#eventsources_webhook_pattern1 ) | Yes     | object | No         | -          | -                 |
 
-#### <a name="eventsources_webhook_pattern1"></a>1.3.1. Pattern Property `argo-events > eventsources > webhook > ^.*$`
+#### <a name="eventsources_webhook_pattern1"></a>2.3.1. Pattern Property `argo-events > eventsources > webhook > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -129,7 +215,7 @@ must respect the following conditions
 | + [method](#eventsources_webhook_pattern1_method )     | No      | string | No         | -          | HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS) |
 | + [port](#eventsources_webhook_pattern1_port )         | No      | string | No         | -          | Port on which the webhook server will listen                                       |
 
-##### <a name="eventsources_webhook_pattern1_endpoint"></a>1.3.1.1. Property `argo-events > eventsources > webhook > ^.*$ > endpoint`
+##### <a name="eventsources_webhook_pattern1_endpoint"></a>2.3.1.1. Property `argo-events > eventsources > webhook > ^.*$ > endpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -138,7 +224,7 @@ must respect the following conditions
 
 **Description:** URL path where the webhook will receive events
 
-##### <a name="eventsources_webhook_pattern1_method"></a>1.3.1.2. Property `argo-events > eventsources > webhook > ^.*$ > method`
+##### <a name="eventsources_webhook_pattern1_method"></a>2.3.1.2. Property `argo-events > eventsources > webhook > ^.*$ > method`
 
 |              |          |
 | ------------ | -------- |
@@ -147,7 +233,7 @@ must respect the following conditions
 
 **Description:** HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)
 
-##### <a name="eventsources_webhook_pattern1_port"></a>1.3.1.3. Property `argo-events > eventsources > webhook > ^.*$ > port`
+##### <a name="eventsources_webhook_pattern1_port"></a>2.3.1.3. Property `argo-events > eventsources > webhook > ^.*$ > port`
 
 |              |          |
 | ------------ | -------- |
