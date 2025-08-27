@@ -50,3 +50,61 @@ tests:
             streamConfig: |
               replicas: 1
             version: 2.7.3
+  - it: should render a jetstream event bus with all optional fields
+    set:
+      eventbus:
+        jetstream:
+          version: "2.7.3"
+          persistence:
+            volumeSize: 1Gi
+            storageClassName: "my-storage-class"
+          streamConfig: |
+            replicas: 1
+            maxBytes: 1024
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                    - linux
+          tolerations:
+            - key: "my-key"
+              operator: "Equal"
+              value: "my-value"
+              effect: "NoSchedule"
+          metricsExporter:
+            enabled: true
+          nodeSelector:
+            beta.kubernetes.io/os: linux
+          containerTemplate:
+            resources:
+              limits:
+                cpu: 100m
+          imagePullSecrets:
+            - name: "my-secret"
+          maxPayload: 2048
+          metadata:
+            annotations:
+              my-annotation: "test-annotation"
+          priority: 100
+          priorityClassName: "high-priority"
+          reloaderContainerTemplate:
+            resources:
+              limits:
+                cpu: 50m
+          securityContext:
+            runAsNonRoot: true
+          serviceAccountName: "my-sa"
+          settings: |
+            server_name: "my-nats"
+          startArgs:
+            - "-D"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventBus

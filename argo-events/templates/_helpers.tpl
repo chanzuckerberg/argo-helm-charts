@@ -54,15 +54,21 @@ Get EventBus Type
 {{- end -}}
 
 
+{{/*
+Renders optional fields for the JetStream EventBus based on the provided values.
+https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.JetStreamBus
+*/}}
 {{- define "argo-events.jetstream.optionalFields" -}}
 {{- $jetstreamValues := .Values.eventbus.jetstream -}}
-{{- $optionalFields := list "persistence" "affinity" "tolerations" "streamConfig" "metricsExporter" "nodeSelector" }}
-{{- range $optionalFields -}}
+{{- $optionalFieldsList := list "persistence" "affinity" "tolerations" "metricsExporter" "nodeSelector" "priority" "priorityClassName" "securityContext" "serviceAccountName" "startArgs" "settings" "streamConfig" "containerTemplate" "imagePullSecrets" "maxPayload" "metadata" "reloaderContainerTemplate" }}
+{{- range $optionalFieldsList -}}
   {{- $value := get $jetstreamValues . -}}
   {{- if $value -}}
-    {{- if eq . "streamConfig" -}}
+    {{- if or (eq . "settings") (eq . "streamConfig") -}}
 {{- . | nindent 4 -}}: |
       {{- $value | nindent 6 -}}
+    {{- else if or (eq . "maxPayload") (eq . "priority") (eq . "priorityClassName") (eq . "serviceAccountName") -}}
+{{- . | nindent 4 -}}: {{ $value  }}
     {{- else -}}
 {{- . | nindent 4 -}}:
       {{- toYaml $value | nindent 6 -}}
