@@ -69,7 +69,7 @@ https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.JetStreamBus
       {{- $value | nindent 6 -}}
     {{- else if eq . "maxPayload" -}}
 {{- . | nindent 4 -}}: "{{ $value }}"
-    {{- else if or (eq . "maxPayload") (eq . "priority") (eq . "priorityClassName") (eq . "serviceAccountName") -}}
+    {{- else if or (eq . "priority") (eq . "priorityClassName") (eq . "serviceAccountName") -}}
 {{- . | nindent 4 -}}:  {{ $value }}
     {{- else -}}
 {{- . | nindent 4 -}}:
@@ -78,3 +78,29 @@ https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.JetStreamBus
   {{- end -}}
 {{- end -}}
 {{- end -}}
+
+
+{{- define "argo-events.kafka.version" -}}
+{{- if .version -}}
+{{- .version -}}
+{{- else -}}
+"latest"
+{{- end -}}
+{{- end -}}
+
+{{/*
+Renders optional fields for the Kafka EventBus based on the provided values.
+https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.KafkaBus
+*/}}
+{{- define "argo-events.kafka.optionalFields" -}}
+{{- $kafkaValues := .Values.eventbus.kafka -}}
+{{- $optionalFieldsList := list "sasl" "tls" "consumerGroup" }}
+{{- range $optionalFieldsList -}}
+  {{- $value := get $kafkaValues . -}}
+  {{- if $value -}}
+{{- . | nindent 4 -}}:
+      {{- toYaml $value | nindent 6 -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+

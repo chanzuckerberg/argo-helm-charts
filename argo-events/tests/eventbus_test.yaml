@@ -165,3 +165,77 @@ tests:
           path: spec.jetstream.startArgs
           value:
             - "-D"
+             
+  - it: should render a kafka event bus
+    set:
+      eventbus:
+        kafka:
+          url: my-kafka:9092
+          topic: my-topic
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventBus
+      - equal:
+          path: spec.kafka
+          value:
+            url: my-kafka:9092
+            topic: my-topic
+            version: 3.7.0
+
+  - it: should render a kafka event with topic when topic is not set
+    set:
+      eventbus:
+        kafka:
+          url: my-kafka:9092
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventBus
+      - equal:
+          path: spec.kafka
+          value:
+            url: my-kafka:9092
+            topic: NAMESPACE-kafka-eventbus
+            version: 3.7.0
+  
+  - it: should render when optional kakfa field is provided
+    set:
+      eventbus:
+        kafka:
+          url: model-iguana-11813-us1-kafka.upstash.io:9092
+          topic: argo-kafka-eventbus
+          version: 3.7.0
+          tls:
+            insecureSkipVerify: true
+          sasl: 
+            mechanism: SCRAM-SHA-256 
+            userSecret: 
+              name: kafka-secret
+              key: username
+            passwordSecret: 
+              name: kafka-secret
+              key: password
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventBus
+      - equal:
+          path: spec.kafka
+          value:
+            version: 3.7.0
+            url: model-iguana-11813-us1-kafka.upstash.io:9092
+            topic: argo-kafka-eventbus
+            sasl:
+              mechanism: SCRAM-SHA-256
+              passwordSecret:
+                key: password
+                name: kafka-secret
+              userSecret:
+                key: username
+                name: kafka-secret
+            tls:
+              insecureSkipVerify: true

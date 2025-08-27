@@ -12,31 +12,11 @@
         "jetstream": {
           "description": "JetStream event bus configuration.",
           "type": "object",
-          "properties": {
-            "replicas": {
-              "description": "JetStream StatefulSet size.",
-              "type": "integer"
-            },
-            "version": {
-              "description": "JetStream version, such as \"2.7.3\".",
-              "type": "string"
-            }
-          },
           "additionalProperties": true
         },
         "kafka": {
           "description": "Kafka event bus configuration.",
           "type": "object",
-          "properties": {
-            "topic": {
-              "description": "Topic name, defaults to {namespace_name}-{eventbus_name}.",
-              "type": "string"
-            },
-            "url": {
-              "description": "URL to kafka cluster, multiple URLs separated by comma.",
-              "type": "string"
-            }
-          },
           "additionalProperties": true
         }
       },

@@ -7,11 +7,14 @@ metadata:
 spec:
   {{- if eq $busType "jetstream" }}
   jetstream:
+    version: {{ .Values.eventbus.jetstream.version | default "latest" }}
     replicas: {{ .Values.eventbus.jetstream.replicas | default 1 }}
-    version: {{ .Values.eventbus.jetstream.version }}
     {{- include "argo-events.jetstream.optionalFields" . }}
   {{- else if eq $busType "kafka" }}
   kafka:
-    url: {{ .Values.eventbus.kafka.url }}
+    url: {{ .Values.eventbus.kafka.url | default "" }}
+    topic: {{ .Values.eventbus.kafka.topic | default (printf "%s-%s" .Release.Namespace "kafka-eventbus") }}
+    version: {{ .Values.eventbus.jetstream.version | default "3.7.0" }}
+    {{- include "argo-events.kafka.optionalFields" . }}
   {{- end }}
 {{- end }}

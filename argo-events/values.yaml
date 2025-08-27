@@ -23,20 +23,8 @@ eventbus:
   # @schema description: JetStream event bus configuration.
   # @schema type: object
   # @schema additionalProperties:true
-  jetstream: 
-    # @schema description: JetStream version, such as "2.7.3".
-    # @schema type: string
-    version: latest
-    # @schema description: JetStream StatefulSet size.
-    # @schema type: integer
-    replicas: 1
+  jetstream: {}
   # @schema description: Kafka event bus configuration.
   # @schema type: object
   # @schema additionalProperties:true
-  kafka:
-    # @schema description: URL to kafka cluster, multiple URLs separated by comma.
-    # @schema type: string
-    url: ""
-    # @schema description: Topic name, defaults to {namespace_name}-{eventbus_name}.
-    # @schema type: string
-    topic: ""
+  kafka: {}
