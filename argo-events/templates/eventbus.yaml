@@ -16,5 +16,8 @@ spec:
     topic: {{ .Values.eventbus.kafka.topic | default (printf "%s-%s" .Release.Namespace "kafka-eventbus") }}
     version: {{ .Values.eventbus.jetstream.version | default "3.7.0" }}
     {{- include "argo-events.kafka.optionalFields" . }}
+  {{- else if eq $busType "nats" }}
+  nats:
+    {{- include "argo-events.nats.optionalFields" . }}
   {{- end }}
 {{- end }}

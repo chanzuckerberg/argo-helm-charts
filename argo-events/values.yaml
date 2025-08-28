@@ -20,6 +20,10 @@ eventsources:
 # @schema title: Event Bus Configuration
 # @schema description: Configure various event bus for Argo Events
 eventbus:
+  # @schema description: NATs event bus configuration.
+  # @schema type: object
+  # @schema additionalProperties:true
+  nats: {}
   # @schema description: JetStream event bus configuration.
   # @schema type: object
   # @schema additionalProperties:true

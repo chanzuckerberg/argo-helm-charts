@@ -47,6 +47,8 @@ Get EventBus Type
 {{- $busType = "jetstream" -}}
 {{- else if .Values.eventbus.kafka }}
 {{- $busType = "kafka" -}}
+{{- else if .Values.eventbus.nats -}}
+{{- $busType = "nats" -}}
 {{- end }}
 {{- if $busType -}}
 {{- $busType -}}
@@ -104,3 +106,18 @@ https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.KafkaBus
 {{- end -}}
 {{- end -}}
 
+{{/*
+Renders optional fields for the NATs EventBus based on the provided values.
+https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.NATSBus
+*/}}
+{{- define "argo-events.nats.optionalFields" -}}
+{{- $natsValues := .Values.eventbus.nats -}}
+{{- $optionalFieldsList := list "native" "exotic" }}
+{{- range $optionalFieldsList -}}
+  {{- $value := get $natsValues . -}}
+  {{- if $value -}}
+{{- . | nindent 4 -}}:
+      {{- toYaml $value | nindent 6 -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

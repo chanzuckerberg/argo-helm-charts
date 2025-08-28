@@ -18,6 +18,11 @@
           "description": "Kafka event bus configuration.",
           "type": "object",
           "additionalProperties": true
+        },
+        "nats": {
+          "description": "NATs event bus configuration.",
+          "type": "object",
+          "additionalProperties": true
         }
       },
       "additionalProperties": false

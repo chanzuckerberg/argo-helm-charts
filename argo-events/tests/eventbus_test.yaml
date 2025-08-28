@@ -4,7 +4,7 @@ templates:
   - eventbus.yaml
 
 tests:
-  - it: should render an event bus resource
+  - it: should render an jetstream event bus resource
     set:
       eventbus:
         jetstream:
@@ -23,7 +23,7 @@ tests:
           value:
             replicas: 1
             version: "2.7.3"
-  - it: should render an event bus resource with additional properties like persistent strategy or streamConfig
+  - it: should render an jetstream event bus resource with additional properties like persistent strategy or streamConfig
     set:
       eventbus:
         jetstream:
@@ -50,6 +50,7 @@ tests:
             streamConfig: |
               replicas: 1
             version: 2.7.3
+  
   - it: should render a jetstream event bus with all optional fields
     set:
       eventbus:
@@ -239,3 +240,24 @@ tests:
                 name: kafka-secret
             tls:
               insecureSkipVerify: true
+  
+  - it: should render an Nats event bus resource
+    set:
+      eventbus:
+        nats:
+          native:
+            replica: 1
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventBus
+      - equal:
+          path: metadata.name
+          value: default
+      - equal:
+          path: spec.nats
+          value:
+            native:
+              replica: 1
