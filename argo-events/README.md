@@ -29,6 +29,7 @@
 | ----------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------- |
 | - [jetstream](#eventbus_jetstream ) | No      | object | No         | -          | JetStream event bus configuration. |
 | - [kafka](#eventbus_kafka )         | No      | object | No         | -          | Kafka event bus configuration.     |
+| - [nats](#eventbus_nats )           | No      | object | No         | -          | NATs event bus configuration.      |
 
 ### <a name="eventbus_jetstream"></a>1.1. Property `argo-events > eventbus > jetstream`
 
@@ -57,6 +58,20 @@
 | Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#eventbus_kafka_additionalProperties ) | No      | object | No         | -          | -                 |
+
+### <a name="eventbus_nats"></a>1.3. Property `argo-events > eventbus > nats`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** NATs event bus configuration.
+
+| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#eventbus_nats_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ## <a name="eventsources"></a>2. Property `argo-events > eventsources`
 
