@@ -8,10 +8,11 @@
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                         | Pattern | Type   | Deprecated | Definition | Title/Description           |
-| -------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------- |
-| - [eventbus](#eventbus )         | No      | object | No         | -          | Event Bus Configuration     |
-| - [eventsources](#eventsources ) | No      | object | No         | -          | Event Sources Configuration |
+| Property                         | Pattern | Type           | Deprecated | Definition | Title/Description                          |
+| -------------------------------- | ------- | -------------- | ---------- | ---------- | ------------------------------------------ |
+| - [eventbus](#eventbus )         | No      | object         | No         | -          | Event Bus Configuration                    |
+| - [eventsources](#eventsources ) | No      | object         | No         | -          | Event Sources Configuration                |
+| - [global](#global )             | No      | object or null | No         | -          | Global values shared between all subcharts |
 
 ## <a name="eventbus"></a>1. Property `argo-events > eventbus`
 
@@ -33,33 +34,71 @@
 
 ### <a name="eventbus_jetstream"></a>1.1. Property `argo-events > eventbus > jetstream`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** JetStream event bus configuration.
 
-| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#eventbus_jetstream_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#eventbus_jetstream_pattern1 ) | Yes     | object | No         | -          | -                 |
+
+#### <a name="eventbus_jetstream_pattern1"></a>1.1.1. Pattern Property `argo-events > eventbus > jetstream > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                  |
+| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------- |
+| - [replicas](#eventbus_jetstream_pattern1_replicas )     | No      | integer | No         | -          | JetStream StatefulSet size         |
+| - [version](#eventbus_jetstream_pattern1_version )       | No      | string  | No         | -          | JetStream version, such as “2.7.3” |
+| - [](#eventbus_jetstream_pattern1_additionalProperties ) | No      | object  | No         | -          | -                                  |
+
+##### <a name="eventbus_jetstream_pattern1_replicas"></a>1.1.1.1. Property `argo-events > eventbus > jetstream > ^.*$ > replicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** JetStream StatefulSet size
+
+##### <a name="eventbus_jetstream_pattern1_version"></a>1.1.1.2. Property `argo-events > eventbus > jetstream > ^.*$ > version`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** JetStream version, such as “2.7.3”
 
 ### <a name="eventbus_kafka"></a>1.2. Property `argo-events > eventbus > kafka`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Kafka event bus configuration.
 
-| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#eventbus_kafka_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#eventbus_kafka_pattern1 ) | Yes     | object | No         | -          | -                 |
 
-### <a name="eventbus_nats"></a>1.3. Property `argo-events > eventbus > nats`
+#### <a name="eventbus_kafka_pattern1"></a>1.2.1. Pattern Property `argo-events > eventbus > kafka > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -67,11 +106,77 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                      |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------ |
+| - [url](#eventbus_kafka_pattern1_url )               | No      | string | No         | -          | URL to kafka cluster, multiple URLs separated by comma |
+| - [](#eventbus_kafka_pattern1_additionalProperties ) | No      | object | No         | -          | -                                                      |
+
+##### <a name="eventbus_kafka_pattern1_url"></a>1.2.1.1. Property `argo-events > eventbus > kafka > ^.*$ > url`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** URL to kafka cluster, multiple URLs separated by comma
+
+### <a name="eventbus_nats"></a>1.3. Property `argo-events > eventbus > nats`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
 **Description:** NATs event bus configuration.
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#eventbus_nats_additionalProperties ) | No      | object | No         | -          | -                 |
+| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#eventbus_nats_pattern1 ) | Yes     | object | No         | -          | -                 |
+
+#### <a name="eventbus_nats_pattern1"></a>1.3.1. Pattern Property `argo-events > eventbus > nats > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description                              |
+| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------- |
+| - [exotic](#eventbus_nats_pattern1_exotic ) | No      | object | No         | -          | Exotic holds an exotic NATS config             |
+| - [native](#eventbus_nats_pattern1_native ) | No      | object | No         | -          | Native means to bring up a native NATS service |
+
+##### <a name="eventbus_nats_pattern1_exotic"></a>1.3.1.1. Property `argo-events > eventbus > nats > ^.*$ > exotic`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Exotic holds an exotic NATS config
+
+| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#eventbus_nats_pattern1_exotic_additionalProperties ) | No      | object | No         | -          | -                 |
+
+##### <a name="eventbus_nats_pattern1_native"></a>1.3.1.2. Property `argo-events > eventbus > nats > ^.*$ > native`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Native means to bring up a native NATS service
+
+| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#eventbus_nats_pattern1_native_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ## <a name="eventsources"></a>2. Property `argo-events > eventsources`
 
@@ -216,5 +321,14 @@ must respect the following conditions
 | **Required** | Yes      |
 
 **Description:** Port on which the webhook server will listen
+
+## <a name="global"></a>3. Property `argo-events > global`
+
+|              |                  |
+| ------------ | ---------------- |
+| **Type**     | `object or null` |
+| **Required** | No               |
+
+**Description:** Global values shared between all subcharts
 
 ----------------------------------------------------------------------------------------------------------------------------
