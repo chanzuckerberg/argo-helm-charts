@@ -39,29 +39,11 @@ https://argoproj.github.io/argo-events/eventsources/ha/
 {{- end }}
 
 {{/*
-Get EventBus Type
-*/}}
-{{- define "argo-events.eventbus.busType" -}}
-{{- $busType := "" -}}
-{{- if .Values.eventbus.jetstream }}
-{{- $busType = "jetstream" -}}
-{{- else if .Values.eventbus.kafka }}
-{{- $busType = "kafka" -}}
-{{- else if .Values.eventbus.nats -}}
-{{- $busType = "nats" -}}
-{{- end }}
-{{- if $busType -}}
-{{- $busType -}}
-{{- end -}}
-{{- end -}}
-
-
-{{/*
 Renders optional fields for the JetStream EventBus based on the provided values.
 https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.JetStreamBus
 */}}
 {{- define "argo-events.jetstream.optionalFields" -}}
-{{- $jetstreamValues := .Values.eventbus.jetstream -}}
+{{- $jetstreamValues := . -}}
 {{- $optionalFieldsList := list "persistence" "affinity" "tolerations" "metricsExporter" "nodeSelector" "priority" "priorityClassName" "securityContext" "serviceAccountName" "startArgs" "settings" "streamConfig" "containerTemplate" "imagePullSecrets" "maxPayload" "metadata" "reloaderContainerTemplate" }}
 {{- range $optionalFieldsList -}}
   {{- $value := get $jetstreamValues . -}}
@@ -81,21 +63,12 @@ https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.JetStreamBus
 {{- end -}}
 {{- end -}}
 
-
-{{- define "argo-events.kafka.version" -}}
-{{- if .version -}}
-{{- .version -}}
-{{- else -}}
-"latest"
-{{- end -}}
-{{- end -}}
-
 {{/*
 Renders optional fields for the Kafka EventBus based on the provided values.
 https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.KafkaBus
 */}}
 {{- define "argo-events.kafka.optionalFields" -}}
-{{- $kafkaValues := .Values.eventbus.kafka -}}
+{{- $kafkaValues := . -}}
 {{- $optionalFieldsList := list "sasl" "tls" "consumerGroup" }}
 {{- range $optionalFieldsList -}}
   {{- $value := get $kafkaValues . -}}
@@ -111,7 +84,7 @@ Renders optional fields for the NATs EventBus based on the provided values.
 https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.NATSBus
 */}}
 {{- define "argo-events.nats.optionalFields" -}}
-{{- $natsValues := .Values.eventbus.nats -}}
+{{- $natsValues := . -}}
 {{- $optionalFieldsList := list "native" "exotic" }}
 {{- range $optionalFieldsList -}}
   {{- $value := get $natsValues . -}}

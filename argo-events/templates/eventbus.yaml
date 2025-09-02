@@ -1,23 +1,41 @@
-{{- $busType := include "argo-events.eventbus.busType" . -}}
-{{- if $busType }}
+{{- if .Values.eventbus.jetstream }}
+{{- range $name, $instance := .Values.eventbus.jetstream }}
 apiVersion: argoproj.io/v1alpha1
 kind: EventBus
 metadata:
-  name: default
+  name: {{ $name | default "default"  }}
 spec:
-  {{- if eq $busType "jetstream" }}
   jetstream:
-    version: {{ .Values.eventbus.jetstream.version | default "latest" }}
-    replicas: {{ .Values.eventbus.jetstream.replicas | default 1 }}
-    {{- include "argo-events.jetstream.optionalFields" . }}
-  {{- else if eq $busType "kafka" }}
+    version: {{ $instance.version | default "latest" }}
+    replicas: {{ $instance.replicas | default 1 }}
+    {{- include "argo-events.jetstream.optionalFields" $instance }}
+---
+{{- end }}
+{{- end }}
+{{- if .Values.eventbus.kafka }}
+{{- range $name, $instance := .Values.eventbus.kafka }}
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: {{ $name }}
+spec:
   kafka:
-    url: {{ .Values.eventbus.kafka.url | default "" }}
-    topic: {{ .Values.eventbus.kafka.topic | default (printf "%s-%s" .Release.Namespace "kafka-eventbus") }}
-    version: {{ .Values.eventbus.jetstream.version | default "3.7.0" }}
-    {{- include "argo-events.kafka.optionalFields" . }}
-  {{- else if eq $busType "nats" }}
+    url: {{ $instance.url | default "" }}
+    topic: {{ $instance.topic | default (printf "%s-%s" $.Release.Namespace "kafka-eventbus") }}
+    version: {{ $instance.version | default "3.7.0" }}
+    {{- include "argo-events.kafka.optionalFields" $instance }}
+---
+{{- end }}
+{{- end }}
+{{- if .Values.eventbus.nats }}
+{{- range $name, $instance := .Values.eventbus.nats }}
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: {{ $name }}
+spec:
   nats:
-    {{- include "argo-events.nats.optionalFields" . }}
-  {{- end }}
+    {{- include "argo-events.nats.optionalFields" $instance }}
+---
+{{- end }}
 {{- end }}

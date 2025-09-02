@@ -8,7 +8,9 @@ tests:
     set:
       eventbus:
         jetstream:
-          version: 2.7.3
+          default:
+            version: 2.7.3
+            replicas: 1
 
     asserts:
       - hasDocuments:
@@ -23,15 +25,17 @@ tests:
           value:
             replicas: 1
             version: "2.7.3"
+  
   - it: should render an jetstream event bus resource with additional properties like persistent strategy or streamConfig
     set:
       eventbus:
         jetstream:
-          version: 2.7.3
-          persistence:
-            volumeSize: 0.5Gi
-          streamConfig: |
-            replicas: 1
+          special:
+            version: 2.7.3
+            persistence:
+              volumeSize: 0.5Gi
+            streamConfig: |
+              replicas: 1
 
     asserts:
       - hasDocuments:
@@ -40,7 +44,7 @@ tests:
           of: EventBus
       - equal:
           path: metadata.name
-          value: default
+          value: special
       - equal:
           path: spec.jetstream
           value:
@@ -55,54 +59,55 @@ tests:
     set:
       eventbus:
         jetstream:
-          version: "2.7.3"
-          persistence:
-            volumeSize: 1Gi
-            storageClassName: "my-storage-class"
-          streamConfig: |
-            replicas: 1
-            maxBytes: 1024
-          affinity:
-            nodeAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                  - key: kubernetes.io/os
-                    operator: In
-                    values:
-                    - linux
-          tolerations:
-            - key: "my-key"
-              operator: "Equal"
-              value: "my-value"
-              effect: "NoSchedule"
-          metricsExporter:
-            enabled: true
-          nodeSelector:
-            beta.kubernetes.io/os: linux
-          containerTemplate:
-            resources:
-              limits:
-                cpu: 100m
-          imagePullSecrets:
-            - name: "my-secret"
-          maxPayload: 2048
-          metadata:
-            annotations:
-              my-annotation: "test-annotation"
-          priority: 100
-          priorityClassName: "high-priority"
-          reloaderContainerTemplate:
-            resources:
-              limits:
-                cpu: 50m
-          securityContext:
-            runAsNonRoot: true
-          serviceAccountName: "my-sa"
-          settings: |
-            server_name: "my-nats"
-          startArgs:
-            - "-D"
+          full:
+            version: "2.7.3"
+            persistence:
+              volumeSize: 1Gi
+              storageClassName: "my-storage-class"
+            streamConfig: |
+              replicas: 1
+              maxBytes: 1024
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                    - key: kubernetes.io/os
+                      operator: In
+                      values:
+                      - linux
+            tolerations:
+              - key: "my-key"
+                operator: "Equal"
+                value: "my-value"
+                effect: "NoSchedule"
+            metricsExporter:
+              enabled: true
+            nodeSelector:
+              beta.kubernetes.io/os: linux
+            containerTemplate:
+              resources:
+                limits:
+                  cpu: 100m
+            imagePullSecrets:
+              - name: "my-secret"
+            maxPayload: 2048
+            metadata:
+              annotations:
+                my-annotation: "test-annotation"
+            priority: 100
+            priorityClassName: "high-priority"
+            reloaderContainerTemplate:
+              resources:
+                limits:
+                  cpu: 50m
+            securityContext:
+              runAsNonRoot: true
+            serviceAccountName: "my-sa"
+            settings: |
+              server_name: "my-nats"
+            startArgs:
+              - "-D"
     asserts:
       - hasDocuments:
           count: 1
@@ -166,13 +171,51 @@ tests:
           path: spec.jetstream.startArgs
           value:
             - "-D"
-             
+  
+  - it: should render two jetstream event bus resources
+    set:
+      eventbus:
+        jetstream:
+          default:
+            version: 2.7.3
+            replicas: 1
+          additional:
+            version: 2.7.3
+            replicas: 2
+
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: EventBus
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: additional
+      - documentIndex: 0
+        equal:
+          path: spec.jetstream
+          value:
+            replicas: 2
+            version: "2.7.3"  
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: default
+      - documentIndex: 1
+        equal:
+          path: spec.jetstream
+          value:
+            replicas: 1
+            version: "2.7.3"  
+         
   - it: should render a kafka event bus
     set:
       eventbus:
         kafka:
-          url: my-kafka:9092
-          topic: my-topic
+          default:
+            url: my-kafka:9092
+            topic: my-topic
     asserts:
       - hasDocuments:
           count: 1
@@ -189,7 +232,8 @@ tests:
     set:
       eventbus:
         kafka:
-          url: my-kafka:9092
+          additional:
+            url: my-kafka:9092
     asserts:
       - hasDocuments:
           count: 1
@@ -206,19 +250,20 @@ tests:
     set:
       eventbus:
         kafka:
-          url: model-iguana-11813-us1-kafka.upstash.io:9092
-          topic: argo-kafka-eventbus
-          version: 3.7.0
-          tls:
-            insecureSkipVerify: true
-          sasl: 
-            mechanism: SCRAM-SHA-256 
-            userSecret: 
-              name: kafka-secret
-              key: username
-            passwordSecret: 
-              name: kafka-secret
-              key: password
+          default:
+            url: model-iguana-11813-us1-kafka.upstash.io:9092
+            topic: argo-kafka-eventbus
+            version: 3.7.0
+            tls:
+              insecureSkipVerify: true
+            sasl: 
+              mechanism: SCRAM-SHA-256 
+              userSecret: 
+                name: kafka-secret
+                key: username
+              passwordSecret: 
+                name: kafka-secret
+                key: password
     asserts:
       - hasDocuments:
           count: 1
@@ -241,12 +286,48 @@ tests:
             tls:
               insecureSkipVerify: true
   
+  - it: should render two kafka event bus
+    set:
+      eventbus:
+        kafka:
+          default:
+            url: my-kafka:9092
+            topic: my-topic
+          additional:
+            url: my-kafka:9093
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        isKind:
+          of:
+            EventBus
+      - documentIndex: 0
+        equal:
+          path: spec.kafka
+          value:
+            url: my-kafka:9093
+            topic: NAMESPACE-kafka-eventbus
+            version: 3.7.0
+      - documentIndex: 1
+        isKind:
+          of:
+            EventBus
+      - documentIndex: 1
+        equal:
+          path: spec.kafka
+          value:
+            url: my-kafka:9092
+            topic: my-topic
+            version: 3.7.0
+  
   - it: should render an Nats event bus resource
     set:
       eventbus:
         nats:
-          native:
-            replica: 1
+          default:
+            native:
+              replica: 1
 
     asserts:
       - hasDocuments:

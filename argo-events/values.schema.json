@@ -12,17 +12,63 @@
         "jetstream": {
           "description": "JetStream event bus configuration.",
           "type": "object",
-          "additionalProperties": true
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "replicas": {
+                  "description": "JetStream StatefulSet size",
+                  "type": "integer"
+                },
+                "version": {
+                  "description": "JetStream version, such as “2.7.3”",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
         },
         "kafka": {
           "description": "Kafka event bus configuration.",
           "type": "object",
-          "additionalProperties": true
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "URL to kafka cluster, multiple URLs separated by comma",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
         },
         "nats": {
           "description": "NATs event bus configuration.",
           "type": "object",
-          "additionalProperties": true
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "exotic": {
+                  "description": "Exotic holds an exotic NATS config",
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "native": {
+                  "description": "Native means to bring up a native NATS service",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

@@ -22,13 +22,13 @@ eventsources:
 eventbus:
   # @schema description: NATs event bus configuration.
   # @schema type: object
-  # @schema additionalProperties:true
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"exotic": {"type": "object", "description": "Exotic holds an exotic NATS config","additionalProperties": true}, "native": {"type": "object", "description": "Native means to bring up a native NATS service","additionalProperties": true}}}}}
   nats: {}
   # @schema description: JetStream event bus configuration.
   # @schema type: object
-  # @schema additionalProperties:true
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"version": {"type": "string", "description": "JetStream version, such as “2.7.3”"}, "replicas": {"type": "integer", "description": "JetStream StatefulSet size"}}, "additionalProperties": true}}}
   jetstream: {}
   # @schema description: Kafka event bus configuration.
   # @schema type: object
-  # @schema additionalProperties:true
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"url": {"type": "string", "description": "URL to kafka cluster, multiple URLs separated by comma"}},"additionalProperties": true}}
   kafka: {}
