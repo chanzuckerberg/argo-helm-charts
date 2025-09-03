@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test sensor.yaml
+templates:
+  - sensor.yaml
+
+tests:
+  - it: should render an sensor resource with mixed filters
+    set:
+      sensors:
+        webhook:
+          dependencies:
+            - name: test-dep
+              eventSourceName: webhook
+              eventName: example
+              filters:
+                time:
+                  start: "02:30:00"
+                  stop: "04:30:00"
+                context:
+                  source: webhook
+                  subject: example
+                  datacontenttype: application/json
+                script: |-
+                  if event.body.a == "b" and event.body.d.e == "z" then return true else return false end
+                exprLogicalOperator: "or"
+                exprs: 
+                  - expr: a == "b" || c == 10 
+                    fields:
+                      - name: a
+                        path: a
+                      - name: c
+                        path: c
+                  - expr: e == false
+                    fields:
+                      - name: e
+                        path: d.e
+                data:
+                  - path: "a"
+                    type: "bool"
+                    value:
+                      - "true"
+                  - path: "b.c"
+                    type: "number"
+                    value:
+                      - "3.14"
+                  - path: "b.d"
+                    type: "string"
+                    value:
+                      - "hello,world"
+                      - "hello, world"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Sensor
+      - equal:
+          path: metadata.name
+          value: webhook
+      - equal:
+          path: spec.dependencies[0].filters.time
+          value:
+            start: "02:30:00"
+            stop: "04:30:00"
+      - equal:
+          path: spec.dependencies[0].filters.context
+          value:
+            datacontenttype: application/json
+            source: webhook
+            subject: example
+      - equal:
+          path: spec.dependencies[0].filters.exprLogicalOperator
+          value: "or"
+      - equal:
+          path: spec.dependencies[0].filters.exprs
+          value:
+            - expr: a == "b" || c == 10
+              fields:
+              - name: a
+                path: a
+              - name: c
+                path: c
+            - expr: e == false
+              fields:
+              - name: e
+                path: d.e
+      - equal:
+          path: spec.dependencies[0].filters.data
+          value:
+            - path: "a"
+              type: "bool"
+              value:
+                - "true"
+            - path: "b.c"
+              type: "number"
+              value:
+                - "3.14"
+            - path: "b.d"
+              type: "string"
+              value:
+                - "hello,world"
+                - "hello, world"
+  

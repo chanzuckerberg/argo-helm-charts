@@ -32,3 +32,9 @@ eventbus:
   # @schema type: object
   # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"url": {"type": "string", "description": "URL to kafka cluster, multiple URLs separated by comma"}},"additionalProperties": true}}
   kafka: {}
+
+# @schema type: object
+# @schema title: Sensor Configuration
+# @schema description: Configure sensor resources for Argo Events
+# @schema patternProperties: { "^.*$": {"type": "object", "properties": {"eventBusName": {"type": "string", "description": "EventBusName references to a EventBus name. By default the value is “default”"}, "replicas": {"type": "integer", "description": "Replicas is the sensor deployment replicas"}, "errorOnFailedRound": {"type": "boolean", "description": "ErrorOnFailedRound if set to true, marks sensor state as error if the previous trigger round fails. Once sensor state is set to error, no further triggers will be processed."}, "triggers":{"type":"object", "description": "Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.", "additionalProperties": true}, "dependencies": {"type":"array", "description":"Dependencies is a list of the events that this sensor is dependent on.", "additionalProperties": true}}, "additionalProperties": true}}}
+sensors: {}

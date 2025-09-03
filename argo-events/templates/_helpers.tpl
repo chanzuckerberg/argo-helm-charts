@@ -94,3 +94,41 @@ https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.NATSBus
   {{- end -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Renders an EventDependency list based on the provided values.
+*/}}
+{{- define "argo-events.sensor.dependencies" -}}
+{{- range .dependencies -}}
+- name: {{ .name }}
+  eventSourceName: {{ .eventSourceName }}
+  eventName: {{ .eventName }}
+  {{- include "argo-events.sensor.filters" . | nindent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Renders the complete filters for a sensor dependency.
+*/}}
+{{- define "argo-events.sensor.filters" -}}
+{{- $filterValues := .filters -}}
+{{- if $filterValues -}}
+filters:
+  {{- $optionalFieldsList := list "context" "exprs" "data" "script" "time" "exprLogicalOperator" "dataLogicalOperator" }}
+  {{- range $optionalFieldsList -}}
+    {{- $value := get $filterValues . -}}
+    {{- if $value -}}
+      {{- if or (eq . "exprLogicalOperator") (eq . "dataLogicalOperator")  -}}
+{{- . | nindent 4 -}}: {{ $value | toJson }}
+      {{- else if eq . "script" -}}
+{{- . | nindent 4 -}}: |-
+        {{- $value | nindent 6 -}}
+      {{- else -}}
+{{- . | nindent 4 -}}:
+        {{- toYaml $value | nindent 6 -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}

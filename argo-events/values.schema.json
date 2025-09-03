@@ -146,13 +146,41 @@
       },
       "additionalProperties": false
     },
-    "global": {
-      "description": "Global values shared between all subcharts",
-      "$comment": "Added automatically by 'helm schema' to allow this chart to be used as a Helm dependency, as the `additionalProperties` setting would otherwise collide with Helm's special 'global' values key.",
-      "type": [
-        "object",
-        "null"
-      ]
+    "sensors": {
+      "title": "Sensor Configuration",
+      "description": "Configure sensor resources for Argo Events",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "properties": {
+            "dependencies": {
+              "description": "Dependencies is a list of the events that this sensor is dependent on.",
+              "type": "array",
+              "additionalProperties": true
+            },
+            "errorOnFailedRound": {
+              "description": "ErrorOnFailedRound if set to true, marks sensor state as error if the previous trigger round fails. Once sensor state is set to error, no further triggers will be processed.",
+              "type": "boolean"
+            },
+            "eventBusName": {
+              "description": "EventBusName references to a EventBus name. By default the value is “default”",
+              "type": "string"
+            },
+            "replicas": {
+              "description": "Replicas is the sensor deployment replicas",
+              "type": "integer"
+            },
+            "triggers": {
+              "description": "Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.",
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

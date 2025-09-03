@@ -1,0 +1,14 @@
+{{- if .Values.sensors }}
+{{- range $name, $instance := .Values.sensors }}
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: {{ $name}}
+spec:
+  template:
+    serviceAccountName: operate-workflow-sa
+  dependencies:
+    {{- include "argo-events.sensor.dependencies" $instance | nindent 4 }}
+---
+{{- end -}}
+{{- end -}}
