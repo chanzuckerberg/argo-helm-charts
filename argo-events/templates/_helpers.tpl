@@ -100,12 +100,20 @@ https://argoproj.github.io/argo-events/APIs/#argoproj.io/v1alpha1.NATSBus
 Renders an EventDependency list based on the provided values.
 */}}
 {{- define "argo-events.sensor.dependencies" -}}
-{{- range .dependencies -}}
+{{- range .dependencies }}
 - name: {{ .name }}
   eventSourceName: {{ .eventSourceName }}
   eventName: {{ .eventName }}
+  {{- if .filters }}
   {{- include "argo-events.sensor.filters" . | nindent 2 }}
-{{- end -}}
+  {{- end }}
+  {{- if .transform }}
+  {{- include "argo-events.sensor.transformer" . | nindent 2 }}
+  {{- end }}
+  {{- if .filtersLogicalOperator }}
+  filtersLogicalOperator: {{ .filtersLogicalOperator | toJson }}
+  {{- end }}
+{{- end }}
 {{- end -}}
 
 {{/*
@@ -113,7 +121,6 @@ Renders the complete filters for a sensor dependency.
 */}}
 {{- define "argo-events.sensor.filters" -}}
 {{- $filterValues := .filters -}}
-{{- if $filterValues -}}
 filters:
   {{- $optionalFieldsList := list "context" "exprs" "data" "script" "time" "exprLogicalOperator" "dataLogicalOperator" }}
   {{- range $optionalFieldsList -}}
@@ -131,4 +138,17 @@ filters:
     {{- end -}}
   {{- end -}}
 {{- end -}}
+
+{{/*
+Renders the transformer for a sensor dependency.
+*/}}
+{{- define "argo-events.sensor.transformer" -}}
+transform:
+  {{- if .transform.jq }}
+  jq: {{ .transform.jq | toJson }}
+  {{- end }}
+  {{- if .transform.script }}
+  script: |-
+    {{- .transform.script | nindent 4 -}}
+  {{- end -}}
 {{- end -}}
