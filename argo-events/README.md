@@ -13,6 +13,7 @@
 | - [eventbus](#eventbus )         | No      | object         | No         | -          | Event Bus Configuration                    |
 | - [eventsources](#eventsources ) | No      | object         | No         | -          | Event Sources Configuration                |
 | - [global](#global )             | No      | object or null | No         | -          | Global values shared between all subcharts |
+| - [sensors](#sensors )           | No      | object         | No         | -          | Sensor Configuration                       |
 
 ## <a name="eventbus"></a>1. Property `argo-events > eventbus`
 
@@ -330,5 +331,99 @@ must respect the following conditions
 | **Required** | No               |
 
 **Description:** Global values shared between all subcharts
+
+## <a name="sensors"></a>4. Property `argo-events > sensors`
+
+**Title:** Sensor Configuration
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Configure sensor resources for Argo Events
+
+| Property                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#sensors_pattern1 ) | Yes     | object | No         | -          | -                 |
+
+### <a name="sensors_pattern1"></a>4.1. Pattern Property `argo-events > sensors > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                             |
+| ------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [dependencies](#sensors_pattern1_dependencies )             | No      | array   | No         | -          | Dependencies is a list of the events that this sensor is dependent on.                                                                                                        |
+| - [errorOnFailedRound](#sensors_pattern1_errorOnFailedRound ) | No      | boolean | No         | -          | ErrorOnFailedRound if set to true, marks sensor state as error if the previous trigger round fails. Once sensor state is set to error, no further triggers will be processed. |
+| - [eventBusName](#sensors_pattern1_eventBusName )             | No      | string  | No         | -          | EventBusName references to a EventBus name. By default the value is “default”                                                                                                 |
+| - [replicas](#sensors_pattern1_replicas )                     | No      | integer | No         | -          | Replicas is the sensor deployment replicas                                                                                                                                    |
+| - [triggers](#sensors_pattern1_triggers )                     | No      | object  | No         | -          | Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.                                                                             |
+| - [](#sensors_pattern1_additionalProperties )                 | No      | object  | No         | -          | -                                                                                                                                                                             |
+
+#### <a name="sensors_pattern1_dependencies"></a>4.1.1. Property `argo-events > sensors > ^.*$ > dependencies`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Dependencies is a list of the events that this sensor is dependent on.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+#### <a name="sensors_pattern1_errorOnFailedRound"></a>4.1.2. Property `argo-events > sensors > ^.*$ > errorOnFailedRound`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** ErrorOnFailedRound if set to true, marks sensor state as error if the previous trigger round fails. Once sensor state is set to error, no further triggers will be processed.
+
+#### <a name="sensors_pattern1_eventBusName"></a>4.1.3. Property `argo-events > sensors > ^.*$ > eventBusName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** EventBusName references to a EventBus name. By default the value is “default”
+
+#### <a name="sensors_pattern1_replicas"></a>4.1.4. Property `argo-events > sensors > ^.*$ > replicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Replicas is the sensor deployment replicas
+
+#### <a name="sensors_pattern1_triggers"></a>4.1.5. Property `argo-events > sensors > ^.*$ > triggers`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.
+
+| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#sensors_pattern1_triggers_additionalProperties ) | No      | object | No         | -          | -                 |
 
 ----------------------------------------------------------------------------------------------------------------------------
