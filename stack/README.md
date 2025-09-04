@@ -1366,11 +1366,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                  | Pattern | Type             | Deprecated | Definition | Title/Description       |
-| ------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------- |
-| - [apiVersion](#cronJobs_pattern1_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | -                       |
-| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source |
-| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source |
+| Property                                                                  | Pattern | Type             | Deprecated | Definition | Title/Description              |
+| ------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------ |
+| - [apiVersion](#cronJobs_pattern1_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | API version of the data source |
+| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source        |
+| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source        |
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiVersion"></a>2.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiVersion`
 
@@ -1378,6 +1378,8 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** API version of the data source
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>2.1.21.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
@@ -3405,11 +3407,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                       | Pattern | Type             | Deprecated | Definition | Title/Description       |
-| -------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------- |
-| - [apiVersion](#global_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | -                       |
-| - [kind](#global_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source |
-| - [name](#global_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source |
+| Property                                                       | Pattern | Type             | Deprecated | Definition | Title/Description              |
+| -------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------ |
+| - [apiVersion](#global_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | API version of the data source |
+| - [kind](#global_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source        |
+| - [name](#global_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source        |
 
 ###### <a name="global_persistence_pvc_dataSource_apiVersion"></a>3.21.4.2.1. Property `stack > global > persistence > pvc > dataSource > apiVersion`
 
@@ -3417,6 +3419,8 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** API version of the data source
 
 ###### <a name="global_persistence_pvc_dataSource_kind"></a>3.21.4.2.2. Property `stack > global > persistence > pvc > dataSource > kind`
 
@@ -5462,11 +5466,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                  | Pattern | Type             | Deprecated | Definition | Title/Description       |
-| ------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------- |
-| - [apiVersion](#cronJobs_pattern1_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | -                       |
-| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source |
-| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source |
+| Property                                                                  | Pattern | Type             | Deprecated | Definition | Title/Description              |
+| ------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------ |
+| - [apiVersion](#cronJobs_pattern1_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | API version of the data source |
+| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source        |
+| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source        |
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiVersion"></a>4.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiVersion`
 
@@ -5474,6 +5478,8 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** API version of the data source
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>4.1.21.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
@@ -7519,11 +7525,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                  | Pattern | Type             | Deprecated | Definition | Title/Description       |
-| ------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------------- |
-| - [apiVersion](#cronJobs_pattern1_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | -                       |
-| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source |
-| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source |
+| Property                                                                  | Pattern | Type             | Deprecated | Definition | Title/Description              |
+| ------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------ |
+| - [apiVersion](#cronJobs_pattern1_persistence_pvc_dataSource_apiVersion ) | No      | string           | No         | -          | API version of the data source |
+| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )             | No      | enum (of string) | No         | -          | Kind of the data source        |
+| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )             | No      | string           | No         | -          | Name of the data source        |
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiVersion"></a>5.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiVersion`
 
@@ -7531,6 +7537,8 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** API version of the data source
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>5.1.21.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
