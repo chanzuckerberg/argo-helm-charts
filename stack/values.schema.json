@@ -509,12 +509,8 @@
                       "type": "string"
                     },
                     "kind": {
-                      "description": "Kind of the data source",
-                      "type": "string",
-                      "enum": [
-                        "VolumeSnapshot",
-                        "PersistentVolumeClaim"
-                      ]
+                      "description": "Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]",
+                      "type": "string"
                     },
                     "name": {
                       "description": "Name of the data source",
