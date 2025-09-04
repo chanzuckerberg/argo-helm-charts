@@ -504,7 +504,7 @@
                 "dataSource": {
                   "type": "object",
                   "properties": {
-                    "apiVersion": {
+                    "apiGroup": {
                       "type": "string"
                     },
                     "kind": {
