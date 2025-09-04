@@ -505,7 +505,7 @@
                   "type": "object",
                   "properties": {
                     "apiGroup": {
-                      "description": "API group of the data source",
+                      "description": "API version of the data source",
                       "type": "string"
                     },
                     "kind": {
