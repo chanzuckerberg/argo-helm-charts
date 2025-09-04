@@ -190,7 +190,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       storageClassName: "default" # @schema description: Storage class name
       dataSource:
         name: "" # @schema description: Name of the data source
-        kind: null # @schema enum: [VolumeSnapshot, PersistentVolumeClaim]; description: Kind of the data source
+        kind: "" # @schema description: Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
         apiGroup: "snapshot.storage.k8s.io/v1" # @schema description: API version of the data source
     existingClaim: "" # @schema description: Existing PVC name
     mountPath: "" # @schema description: Mount path for the PVC
