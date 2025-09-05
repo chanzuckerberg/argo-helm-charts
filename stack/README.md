@@ -2,11 +2,11 @@
 
 **Title:** stack
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                            |
 | -------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------ |
@@ -28,11 +28,11 @@
 
 ## <a name="cronJobs"></a>2. Property `stack > cronJobs`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Cron jobs to deploy
 
@@ -49,7 +49,7 @@ must respect the following conditions
 | ------------------------- | ------------------- |
 | **Type**                  | `object`            |
 | **Required**              | No                  |
-| **Additional properties** | Any type allowed    |
+| **Additional properties** | Not allowed         |
 | **Defined in**            | #/properties/global |
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
@@ -118,11 +118,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_appContext"></a>2.1.3. Property `stack > cronJobs > ^.*$ > appContext`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -145,11 +145,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_appSecrets"></a>2.1.4. Property `stack > cronJobs > ^.*$ > appSecrets`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -159,11 +159,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_clusterSecret"></a>2.1.4.1. Property `stack > cronJobs > ^.*$ > appSecrets > clusterSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -186,11 +186,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_envSecret"></a>2.1.4.2. Property `stack > cronJobs > ^.*$ > appSecrets > envSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -213,11 +213,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_stackSecret"></a>2.1.4.3. Property `stack > cronJobs > ^.*$ > appSecrets > stackSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -268,11 +268,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_autoscaling"></a>2.1.6. Property `stack > cronJobs > ^.*$ > autoscaling`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Autoscaling configuration
 
@@ -401,11 +401,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_env_items"></a>2.1.10.1. stack > cronJobs > ^.*$ > env > env items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -449,11 +449,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_envFrom_items"></a>2.1.11.1. stack > cronJobs > ^.*$ > envFrom > envFrom items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -495,11 +495,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_image"></a>2.1.13. Property `stack > cronJobs > ^.*$ > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                             | Pattern | Type             | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
@@ -567,11 +567,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_ingress"></a>2.1.15. Property `stack > cronJobs > ^.*$ > ingress`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Ingress configuration
 
@@ -588,11 +588,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_ingress_annotations"></a>2.1.15.1. Property `stack > cronJobs > ^.*$ > ingress > annotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -704,11 +704,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_ingress_paths_items"></a>2.1.15.6.1. stack > cronJobs > ^.*$ > ingress > paths > paths items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -786,11 +786,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_livenessProbe"></a>2.1.17. Property `stack > cronJobs > ^.*$ > livenessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Liveness probe configuration
 
@@ -814,11 +814,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>2.1.17.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -922,11 +922,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_nodeSelector"></a>2.1.19. Property `stack > cronJobs > ^.*$ > nodeSelector`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description              |
 | -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
@@ -943,11 +943,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_oidcProxy"></a>2.1.20. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                            |
 | ---------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------- |
@@ -1055,11 +1055,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_oidcProxy_image"></a>2.1.20.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1095,11 +1095,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>2.1.20.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1108,11 +1108,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>2.1.20.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                          | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -1159,11 +1159,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>2.1.20.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -1231,11 +1231,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>2.1.20.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -1275,11 +1275,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_persistence"></a>2.1.21. Property `stack > cronJobs > ^.*$ > persistence`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
 | ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
@@ -1317,11 +1317,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_persistence_pvc"></a>2.1.21.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
@@ -1360,11 +1360,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>2.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
@@ -1401,11 +1401,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>2.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                             | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
@@ -1413,11 +1413,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>2.1.21.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** PVC resource requests
 
@@ -1445,11 +1445,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_podAnnotations"></a>2.1.22. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Annotations to add to pods
 
@@ -1507,11 +1507,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_readinessProbe"></a>2.1.26. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Readiness probe configuration
 
@@ -1535,11 +1535,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -1643,11 +1643,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_resources"></a>2.1.28. Property `stack > cronJobs > ^.*$ > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests and limits for the primary container
 
@@ -1658,11 +1658,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_resources_limits"></a>2.1.28.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource limits
 
@@ -1711,11 +1711,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_resources_requests"></a>2.1.28.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests
 
@@ -1788,11 +1788,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_service"></a>2.1.31. Property `stack > cronJobs > ^.*$ > service`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service configuration
 
@@ -1821,11 +1821,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.32. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service account configuration
 
@@ -1901,11 +1901,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_startupProbe"></a>2.1.35. Property `stack > cronJobs > ^.*$ > startupProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Startup probe configuration
 
@@ -1930,11 +1930,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.35.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Exec probe configuration
 
@@ -2083,11 +2083,11 @@ Must be one of:
 
 ## <a name="global"></a>3. Property `stack > global`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
@@ -2155,11 +2155,11 @@ Must be one of:
 
 ### <a name="global_appContext"></a>3.3. Property `stack > global > appContext`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2182,11 +2182,11 @@ Must be one of:
 
 ### <a name="global_appSecrets"></a>3.4. Property `stack > global > appSecrets`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2196,11 +2196,11 @@ Must be one of:
 
 #### <a name="global_appSecrets_clusterSecret"></a>3.4.1. Property `stack > global > appSecrets > clusterSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2223,11 +2223,11 @@ Must be one of:
 
 #### <a name="global_appSecrets_envSecret"></a>3.4.2. Property `stack > global > appSecrets > envSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2250,11 +2250,11 @@ Must be one of:
 
 #### <a name="global_appSecrets_stackSecret"></a>3.4.3. Property `stack > global > appSecrets > stackSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2305,11 +2305,11 @@ Must be one of:
 
 ### <a name="global_autoscaling"></a>3.6. Property `stack > global > autoscaling`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Autoscaling configuration
 
@@ -2438,11 +2438,11 @@ Must be one of:
 
 #### <a name="global_env_items"></a>3.10.1. stack > global > env > env items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2486,11 +2486,11 @@ Must be one of:
 
 #### <a name="global_envFrom_items"></a>3.11.1. stack > global > envFrom > envFrom items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2532,11 +2532,11 @@ Must be one of:
 
 ### <a name="global_image"></a>3.13. Property `stack > global > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                  | Pattern | Type             | Deprecated | Definition | Title/Description |
 | ----------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
@@ -2604,11 +2604,11 @@ Must be one of:
 
 ### <a name="global_ingress"></a>3.15. Property `stack > global > ingress`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Ingress configuration
 
@@ -2625,11 +2625,11 @@ Must be one of:
 
 #### <a name="global_ingress_annotations"></a>3.15.1. Property `stack > global > ingress > annotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2741,11 +2741,11 @@ Must be one of:
 
 ##### <a name="global_ingress_paths_items"></a>3.15.6.1. stack > global > ingress > paths > paths items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -2823,11 +2823,11 @@ Must be one of:
 
 ### <a name="global_livenessProbe"></a>3.17. Property `stack > global > livenessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Liveness probe configuration
 
@@ -2851,11 +2851,11 @@ Must be one of:
 
 #### <a name="global_livenessProbe_httpGet"></a>3.17.2. Property `stack > global > livenessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -2959,11 +2959,11 @@ Must be one of:
 
 ### <a name="global_nodeSelector"></a>3.19. Property `stack > global > nodeSelector`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description              |
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
@@ -2980,11 +2980,11 @@ Must be one of:
 
 ### <a name="global_oidcProxy"></a>3.20. Property `stack > global > oidcProxy`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                            |
 | ----------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------- |
@@ -3092,11 +3092,11 @@ Must be one of:
 
 #### <a name="global_oidcProxy_image"></a>3.20.7. Property `stack > global > oidcProxy > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3132,11 +3132,11 @@ Must be one of:
 
 #### <a name="global_oidcProxy_resources"></a>3.20.9. Property `stack > global > oidcProxy > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3145,11 +3145,11 @@ Must be one of:
 
 ##### <a name="global_oidcProxy_resources_limits"></a>3.20.9.1. Property `stack > global > oidcProxy > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                               | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------ | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -3196,11 +3196,11 @@ Must be one of:
 
 ##### <a name="global_oidcProxy_resources_requests"></a>3.20.9.2. Property `stack > global > oidcProxy > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                 | Pattern | Type        | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -3268,11 +3268,11 @@ Must be one of:
 
 ##### <a name="global_oidcProxy_skipAuth_items"></a>3.20.10.1. stack > global > oidcProxy > skipAuth > skipAuth items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -3312,11 +3312,11 @@ Must be one of:
 
 ### <a name="global_persistence"></a>3.21. Property `stack > global > persistence`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                              | Pattern | Type    | Deprecated | Definition | Title/Description      |
 | ----------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
@@ -3354,11 +3354,11 @@ Must be one of:
 
 #### <a name="global_persistence_pvc"></a>3.21.4. Property `stack > global > persistence > pvc`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | --------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
@@ -3397,11 +3397,11 @@ Must be one of:
 
 ##### <a name="global_persistence_pvc_dataSource"></a>3.21.4.2. Property `stack > global > persistence > pvc > dataSource`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
@@ -3438,11 +3438,11 @@ Must be one of:
 
 ##### <a name="global_persistence_pvc_resources"></a>3.21.4.3. Property `stack > global > persistence > pvc > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
@@ -3450,11 +3450,11 @@ Must be one of:
 
 ###### <a name="global_persistence_pvc_resources_requests"></a>3.21.4.3.1. Property `stack > global > persistence > pvc > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** PVC resource requests
 
@@ -3482,11 +3482,11 @@ Must be one of:
 
 ### <a name="global_podAnnotations"></a>3.22. Property `stack > global > podAnnotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Annotations to add to pods
 
@@ -3544,11 +3544,11 @@ Must be one of:
 
 ### <a name="global_readinessProbe"></a>3.26. Property `stack > global > readinessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Readiness probe configuration
 
@@ -3572,11 +3572,11 @@ Must be one of:
 
 #### <a name="global_readinessProbe_httpGet"></a>3.26.2. Property `stack > global > readinessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -3680,11 +3680,11 @@ Must be one of:
 
 ### <a name="global_resources"></a>3.28. Property `stack > global > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests and limits for the primary container
 
@@ -3695,11 +3695,11 @@ Must be one of:
 
 #### <a name="global_resources_limits"></a>3.28.1. Property `stack > global > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource limits
 
@@ -3748,11 +3748,11 @@ Must be one of:
 
 #### <a name="global_resources_requests"></a>3.28.2. Property `stack > global > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests
 
@@ -3825,11 +3825,11 @@ Must be one of:
 
 ### <a name="global_service"></a>3.31. Property `stack > global > service`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service configuration
 
@@ -3858,11 +3858,11 @@ Must be one of:
 
 ### <a name="global_serviceAccount"></a>3.32. Property `stack > global > serviceAccount`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service account configuration
 
@@ -3938,11 +3938,11 @@ Must be one of:
 
 ### <a name="global_startupProbe"></a>3.35. Property `stack > global > startupProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Startup probe configuration
 
@@ -3967,11 +3967,11 @@ Must be one of:
 
 #### <a name="global_startupProbe_exec"></a>3.35.2. Property `stack > global > startupProbe > exec`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Exec probe configuration
 
@@ -4120,11 +4120,11 @@ Must be one of:
 
 ## <a name="jobs"></a>4. Property `stack > jobs`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Jobs to deploy
 
@@ -4141,7 +4141,7 @@ must respect the following conditions
 | ------------------------- | ------------------- |
 | **Type**                  | `object`            |
 | **Required**              | No                  |
-| **Additional properties** | Any type allowed    |
+| **Additional properties** | Not allowed         |
 | **Defined in**            | #/properties/global |
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
@@ -4210,11 +4210,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_appContext"></a>4.1.3. Property `stack > cronJobs > ^.*$ > appContext`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4237,11 +4237,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_appSecrets"></a>4.1.4. Property `stack > cronJobs > ^.*$ > appSecrets`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4251,11 +4251,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_clusterSecret"></a>4.1.4.1. Property `stack > cronJobs > ^.*$ > appSecrets > clusterSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4278,11 +4278,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_envSecret"></a>4.1.4.2. Property `stack > cronJobs > ^.*$ > appSecrets > envSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4305,11 +4305,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_stackSecret"></a>4.1.4.3. Property `stack > cronJobs > ^.*$ > appSecrets > stackSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4360,11 +4360,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_autoscaling"></a>4.1.6. Property `stack > cronJobs > ^.*$ > autoscaling`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Autoscaling configuration
 
@@ -4493,11 +4493,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_env_items"></a>4.1.10.1. stack > cronJobs > ^.*$ > env > env items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4541,11 +4541,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_envFrom_items"></a>4.1.11.1. stack > cronJobs > ^.*$ > envFrom > envFrom items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4587,11 +4587,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_image"></a>4.1.13. Property `stack > cronJobs > ^.*$ > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                             | Pattern | Type             | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
@@ -4659,11 +4659,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_ingress"></a>4.1.15. Property `stack > cronJobs > ^.*$ > ingress`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Ingress configuration
 
@@ -4680,11 +4680,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_ingress_annotations"></a>4.1.15.1. Property `stack > cronJobs > ^.*$ > ingress > annotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4796,11 +4796,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_ingress_paths_items"></a>4.1.15.6.1. stack > cronJobs > ^.*$ > ingress > paths > paths items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -4878,11 +4878,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_livenessProbe"></a>4.1.17. Property `stack > cronJobs > ^.*$ > livenessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Liveness probe configuration
 
@@ -4906,11 +4906,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>4.1.17.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -5014,11 +5014,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_nodeSelector"></a>4.1.19. Property `stack > cronJobs > ^.*$ > nodeSelector`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description              |
 | -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
@@ -5035,11 +5035,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_oidcProxy"></a>4.1.20. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                            |
 | ---------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------- |
@@ -5147,11 +5147,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_oidcProxy_image"></a>4.1.20.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5187,11 +5187,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>4.1.20.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5200,11 +5200,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>4.1.20.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                          | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -5251,11 +5251,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>4.1.20.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -5323,11 +5323,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>4.1.20.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -5367,11 +5367,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_persistence"></a>4.1.21. Property `stack > cronJobs > ^.*$ > persistence`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
 | ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
@@ -5409,11 +5409,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_persistence_pvc"></a>4.1.21.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
@@ -5452,11 +5452,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>4.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
@@ -5493,11 +5493,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>4.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                             | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
@@ -5505,11 +5505,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>4.1.21.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** PVC resource requests
 
@@ -5537,11 +5537,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_podAnnotations"></a>4.1.22. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Annotations to add to pods
 
@@ -5599,11 +5599,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_readinessProbe"></a>4.1.26. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Readiness probe configuration
 
@@ -5627,11 +5627,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -5735,11 +5735,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_resources"></a>4.1.28. Property `stack > cronJobs > ^.*$ > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests and limits for the primary container
 
@@ -5750,11 +5750,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_resources_limits"></a>4.1.28.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource limits
 
@@ -5803,11 +5803,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_resources_requests"></a>4.1.28.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests
 
@@ -5880,11 +5880,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_service"></a>4.1.31. Property `stack > cronJobs > ^.*$ > service`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service configuration
 
@@ -5913,11 +5913,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.32. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service account configuration
 
@@ -5993,11 +5993,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_startupProbe"></a>4.1.35. Property `stack > cronJobs > ^.*$ > startupProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Startup probe configuration
 
@@ -6022,11 +6022,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.35.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Exec probe configuration
 
@@ -6175,11 +6175,11 @@ Must be one of:
 
 ## <a name="services"></a>5. Property `stack > services`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Services to deploy
 
@@ -6196,7 +6196,7 @@ must respect the following conditions
 | ------------------------- | ------------------- |
 | **Type**                  | `object`            |
 | **Required**              | No                  |
-| **Additional properties** | Any type allowed    |
+| **Additional properties** | Not allowed         |
 | **Defined in**            | #/properties/global |
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
@@ -6265,11 +6265,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_appContext"></a>5.1.3. Property `stack > cronJobs > ^.*$ > appContext`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6292,11 +6292,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_appSecrets"></a>5.1.4. Property `stack > cronJobs > ^.*$ > appSecrets`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6306,11 +6306,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_clusterSecret"></a>5.1.4.1. Property `stack > cronJobs > ^.*$ > appSecrets > clusterSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6333,11 +6333,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_envSecret"></a>5.1.4.2. Property `stack > cronJobs > ^.*$ > appSecrets > envSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6360,11 +6360,11 @@ must respect the following conditions
 
 ##### <a name="cronJobs_pattern1_appSecrets_stackSecret"></a>5.1.4.3. Property `stack > cronJobs > ^.*$ > appSecrets > stackSecret`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6415,11 +6415,11 @@ must respect the following conditions
 
 #### <a name="cronJobs_pattern1_autoscaling"></a>5.1.6. Property `stack > cronJobs > ^.*$ > autoscaling`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Autoscaling configuration
 
@@ -6548,11 +6548,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_env_items"></a>5.1.10.1. stack > cronJobs > ^.*$ > env > env items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6596,11 +6596,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_envFrom_items"></a>5.1.11.1. stack > cronJobs > ^.*$ > envFrom > envFrom items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6642,11 +6642,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_image"></a>5.1.13. Property `stack > cronJobs > ^.*$ > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                             | Pattern | Type             | Deprecated | Definition | Title/Description |
 | ---------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
@@ -6714,11 +6714,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_ingress"></a>5.1.15. Property `stack > cronJobs > ^.*$ > ingress`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Ingress configuration
 
@@ -6735,11 +6735,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_ingress_annotations"></a>5.1.15.1. Property `stack > cronJobs > ^.*$ > ingress > annotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6851,11 +6851,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_ingress_paths_items"></a>5.1.15.6.1. stack > cronJobs > ^.*$ > ingress > paths > paths items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -6933,11 +6933,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_livenessProbe"></a>5.1.17. Property `stack > cronJobs > ^.*$ > livenessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Liveness probe configuration
 
@@ -6961,11 +6961,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>5.1.17.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -7069,11 +7069,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_nodeSelector"></a>5.1.19. Property `stack > cronJobs > ^.*$ > nodeSelector`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description              |
 | -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
@@ -7090,11 +7090,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_oidcProxy"></a>5.1.20. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                            |
 | ---------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------- |
@@ -7202,11 +7202,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_oidcProxy_image"></a>5.1.20.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7242,11 +7242,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>5.1.20.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7255,11 +7255,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>5.1.20.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                          | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -7306,11 +7306,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>5.1.20.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                            | Pattern | Type        | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
@@ -7378,11 +7378,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>5.1.20.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
@@ -7422,11 +7422,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_persistence"></a>5.1.21. Property `stack > cronJobs > ^.*$ > persistence`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
 | ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
@@ -7464,11 +7464,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_persistence_pvc"></a>5.1.21.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
@@ -7507,11 +7507,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>5.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
@@ -7548,11 +7548,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>5.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                                                             | Pattern | Type   | Deprecated | Definition | Title/Description     |
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
@@ -7560,11 +7560,11 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>5.1.21.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** PVC resource requests
 
@@ -7592,11 +7592,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_podAnnotations"></a>5.1.22. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Annotations to add to pods
 
@@ -7654,11 +7654,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_readinessProbe"></a>5.1.26. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Readiness probe configuration
 
@@ -7682,11 +7682,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>5.1.26.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** HTTP probe configuration (exec & tcpSocket are also available)
 
@@ -7790,11 +7790,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_resources"></a>5.1.28. Property `stack > cronJobs > ^.*$ > resources`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests and limits for the primary container
 
@@ -7805,11 +7805,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_resources_limits"></a>5.1.28.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource limits
 
@@ -7858,11 +7858,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_resources_requests"></a>5.1.28.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Resource requests
 
@@ -7935,11 +7935,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_service"></a>5.1.31. Property `stack > cronJobs > ^.*$ > service`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service configuration
 
@@ -7968,11 +7968,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_serviceAccount"></a>5.1.32. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Service account configuration
 
@@ -8048,11 +8048,11 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_startupProbe"></a>5.1.35. Property `stack > cronJobs > ^.*$ > startupProbe`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Startup probe configuration
 
@@ -8077,11 +8077,11 @@ Must be one of:
 
 ##### <a name="cronJobs_pattern1_startupProbe_exec"></a>5.1.35.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 **Description:** Exec probe configuration
 
