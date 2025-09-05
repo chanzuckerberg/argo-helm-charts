@@ -2,11 +2,11 @@
 
 **Title:** grafana
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 | Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                    |
 | -------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -53,11 +53,11 @@
 
 ## <a name="datasources"></a>4. Property `grafana > datasources`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** List of datasources to configure for the Grafana instance.
 
@@ -70,11 +70,11 @@
 
 ### <a name="datasources_cloudwatch"></a>4.1. Property `grafana > datasources > cloudwatch`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** CloudWatch datasource configuration.
 
@@ -103,11 +103,11 @@
 
 ### <a name="datasources_loki"></a>4.2. Property `grafana > datasources > loki`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** Loki datasource configuration.
 
@@ -136,11 +136,11 @@
 
 ### <a name="datasources_prometheus"></a>4.3. Property `grafana > datasources > prometheus`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** Prometheus datasource configuration.
 
@@ -169,11 +169,11 @@
 
 ### <a name="datasources_tempo"></a>4.4. Property `grafana > datasources > tempo`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** Tempo datasource configuration.
 
@@ -211,11 +211,11 @@
 
 ## <a name="env"></a>6. Property `grafana > env`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.
 
@@ -252,11 +252,11 @@ must respect the following conditions
 
 ## <a name="grafanaAnnotations"></a>8. Property `grafana > grafanaAnnotations`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** Annotations to add to the Grafana instance.
 
@@ -334,11 +334,11 @@ must respect the following conditions
 
 ## <a name="serviceAccount"></a>15. Property `grafana > serviceAccount`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 | Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description                          |
 | --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
@@ -346,11 +346,11 @@ must respect the following conditions
 
 ### <a name="serviceAccount_annotations"></a>15.1. Property `grafana > serviceAccount > annotations`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 **Description:** Annotations to add to the service account.
 
