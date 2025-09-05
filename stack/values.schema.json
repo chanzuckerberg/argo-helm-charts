@@ -14,8 +14,7 @@
       "patternProperties": {
         "^.*$": {
           "$ref": "#/properties/global",
-          "type": "object",
-          "additionalProperties": false
+          "type": "object"
         }
       }
     },
@@ -154,15 +153,13 @@
             "type": "object",
             "properties": {
               "configMapRef": {
-                "type": "object",
-                "additionalProperties": false
+                "type": "object"
               },
               "prefix": {
                 "type": "string"
               },
               "secretRef": {
-                "type": "object",
-                "additionalProperties": false
+                "type": "object"
               }
             }
           }
@@ -767,8 +764,7 @@
       "patternProperties": {
         "^.*$": {
           "$ref": "#/properties/global",
-          "type": "object",
-          "additionalProperties": false
+          "type": "object"
         }
       }
     },
@@ -779,7 +775,6 @@
         "^.*$": {
           "$ref": "#/properties/global",
           "type": "object",
-          "additionalProperties": false,
           "unevaluatedProperties": false
         }
       }
