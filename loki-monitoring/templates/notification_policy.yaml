@@ -1,0 +1,18 @@
+{{ if .Values.enabled }}
+{{ if .Values.notificationPolicy.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaNotificationPolicy
+metadata:
+  name: {{.Values.notificationPolicy.name}}
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      app: {{.Values.grafana.name}}
+  route:
+    receiver: {{.Values.contactPoint.name}}
+    group_wait: 1s
+    group_interval: 1s
+    repeat_interval: 30m
+{{ end }}
+{{ end }}

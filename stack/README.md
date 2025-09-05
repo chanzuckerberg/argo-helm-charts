@@ -2,11 +2,11 @@
 
 **Title:** stack
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 | Property                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                            |
 | -------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------ |
@@ -1326,6 +1326,7 @@ Must be one of:
 | Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
 | - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
+| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
 
@@ -1357,7 +1358,48 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>2.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>2.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
+| --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
+| - [apiGroup](#cronJobs_pattern1_persistence_pvc_dataSource_apiGroup ) | No      | string | No         | -          | API version of the data source                                  |
+| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
+| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>2.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** API version of the data source
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>2.1.21.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>2.1.21.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the data source
+
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>2.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -1369,7 +1411,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>2.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>2.1.21.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -1383,7 +1425,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>2.1.21.4.2.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>2.1.21.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -1392,7 +1434,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>2.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>2.1.21.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -3321,6 +3363,7 @@ Must be one of:
 | Property                                                        | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | --------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
 | - [accessModes](#global_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
+| - [dataSource](#global_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
 | - [resources](#global_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
 | - [storageClassName](#global_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
 
@@ -3352,7 +3395,48 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_persistence_pvc_resources"></a>3.21.4.2. Property `stack > global > persistence > pvc > resources`
+##### <a name="global_persistence_pvc_dataSource"></a>3.21.4.2. Property `stack > global > persistence > pvc > dataSource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
+| - [apiGroup](#global_persistence_pvc_dataSource_apiGroup ) | No      | string | No         | -          | API version of the data source                                  |
+| - [kind](#global_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
+| - [name](#global_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
+
+###### <a name="global_persistence_pvc_dataSource_apiGroup"></a>3.21.4.2.1. Property `stack > global > persistence > pvc > dataSource > apiGroup`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** API version of the data source
+
+###### <a name="global_persistence_pvc_dataSource_kind"></a>3.21.4.2.2. Property `stack > global > persistence > pvc > dataSource > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
+
+###### <a name="global_persistence_pvc_dataSource_name"></a>3.21.4.2.3. Property `stack > global > persistence > pvc > dataSource > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the data source
+
+##### <a name="global_persistence_pvc_resources"></a>3.21.4.3. Property `stack > global > persistence > pvc > resources`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -3364,7 +3448,7 @@ Must be one of:
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#global_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="global_persistence_pvc_resources_requests"></a>3.21.4.2.1. Property `stack > global > persistence > pvc > resources > requests`
+###### <a name="global_persistence_pvc_resources_requests"></a>3.21.4.3.1. Property `stack > global > persistence > pvc > resources > requests`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -3378,7 +3462,7 @@ Must be one of:
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#global_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="global_persistence_pvc_resources_requests_storage"></a>3.21.4.2.1.1. Property `stack > global > persistence > pvc > resources > requests > storage`
+###### <a name="global_persistence_pvc_resources_requests_storage"></a>3.21.4.3.1.1. Property `stack > global > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -3387,7 +3471,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-##### <a name="global_persistence_pvc_storageClassName"></a>3.21.4.3. Property `stack > global > persistence > pvc > storageClassName`
+##### <a name="global_persistence_pvc_storageClassName"></a>3.21.4.4. Property `stack > global > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -5334,6 +5418,7 @@ Must be one of:
 | Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
 | - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
+| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
 
@@ -5365,7 +5450,48 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>4.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>4.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
+| --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
+| - [apiGroup](#cronJobs_pattern1_persistence_pvc_dataSource_apiGroup ) | No      | string | No         | -          | API version of the data source                                  |
+| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
+| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>4.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** API version of the data source
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>4.1.21.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>4.1.21.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the data source
+
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>4.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -5377,7 +5503,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>4.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>4.1.21.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -5391,7 +5517,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>4.1.21.4.2.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>4.1.21.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -5400,7 +5526,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>4.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>4.1.21.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -7347,6 +7473,7 @@ Must be one of:
 | Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
 | -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
 | - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
+| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
 
@@ -7378,7 +7505,48 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>5.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>5.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                               |
+| --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------- |
+| - [apiGroup](#cronJobs_pattern1_persistence_pvc_dataSource_apiGroup ) | No      | string | No         | -          | API version of the data source                                  |
+| - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
+| - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>5.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** API version of the data source
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>5.1.21.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
+
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>5.1.21.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the data source
+
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>5.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -7390,7 +7558,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>5.1.21.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>5.1.21.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -7404,7 +7572,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>5.1.21.4.2.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>5.1.21.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -7413,7 +7581,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>5.1.21.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>5.1.21.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |

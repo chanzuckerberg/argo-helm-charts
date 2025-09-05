@@ -6,8 +6,7 @@
   "properties": {
     "argus-config": {
       "description": "Allows values for the argus-config Helm chart",
-      "type": "object",
-      "additionalProperties": false
+      "type": "object"
     },
     "cronJobs": {
       "description": "Cron jobs to deploy",
@@ -18,8 +17,7 @@
           "type": "object",
           "additionalProperties": false
         }
-      },
-      "additionalProperties": false
+      }
     },
     "global": {
       "description": "Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs",
@@ -27,13 +25,11 @@
       "properties": {
         "affinity": {
           "description": "Affinity for the pod",
-          "type": "object",
-          "additionalProperties": false
+          "type": "object"
         },
         "annotations": {
           "description": "Global annotations to add to all resources",
-          "type": "object",
-          "additionalProperties": false
+          "type": "object"
         },
         "appContext": {
           "type": "object",
@@ -44,8 +40,7 @@
             "stackContextConfigMapName": {
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "appSecrets": {
           "type": "object",
@@ -59,8 +54,7 @@
                 "secretName": {
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "envSecret": {
               "type": "object",
@@ -71,8 +65,7 @@
                 "secretName": {
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "stackSecret": {
               "type": "object",
@@ -83,11 +76,9 @@
                 "secretName": {
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             }
-          },
-          "additionalProperties": false
+          }
         },
         "args": {
           "description": "Arguments to pass to the command in the primary container",
@@ -120,8 +111,7 @@
               "description": "Target memory utilization percentage",
               "type": "integer"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "command": {
           "description": "Command to run in the primary container",
@@ -154,8 +144,7 @@
               "value": {
                 "type": "string"
               }
-            },
-            "additionalProperties": false
+            }
           }
         },
         "envFrom": {
@@ -175,8 +164,7 @@
                 "type": "object",
                 "additionalProperties": false
               }
-            },
-            "additionalProperties": false
+            }
           }
         },
         "fullnameOverride": {
@@ -203,8 +191,7 @@
               "description": "Image tag",
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "imagePullSecrets": {
           "type": "array",
@@ -237,8 +224,7 @@
                 "nginx.ingress.kubernetes.io/session-cookie-name": {
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "className": {
               "description": "Ingress class name",
@@ -270,8 +256,7 @@
                     "description": "Ingress path type",
                     "type": "string"
                   }
-                },
-                "additionalProperties": false
+                }
               }
             },
             "rules": {
@@ -282,8 +267,7 @@
               "description": "List of ingress TLS configurations",
               "type": "array"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "initContainers": {
           "description": "List of init containers",
@@ -320,8 +304,7 @@
                   "description": "Scheme to use",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "initialDelaySeconds": {
               "description": "Number of seconds after the container has started before the probe is first initiated",
@@ -339,8 +322,7 @@
               "description": "Timeout for the probe",
               "type": "number"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "nameOverride": {
           "description": "Name to prefix the K8s resources with, combined with the stack name prefix",
@@ -353,8 +335,7 @@
               "description": "Node selector for architecture",
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "oidcProxy": {
           "type": "object",
@@ -369,8 +350,7 @@
             },
             "annotations": {
               "description": "Annotations to add to the OIDC proxy",
-              "type": "object",
-              "additionalProperties": false
+              "type": "object"
             },
             "cookieRefresh": {
               "description": "Refresh tokens and cookies after this period",
@@ -398,8 +378,7 @@
                   "description": "Image tag",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "replicaCount": {
               "description": "Number of replicas",
@@ -426,8 +405,7 @@
                       "description": "Memory limit",
                       "type": "string"
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "requests": {
                   "type": "object",
@@ -447,11 +425,9 @@
                       "description": "Memory request",
                       "type": "string"
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "skipAuth": {
               "description": "Paths to skip authentication",
@@ -465,16 +441,14 @@
                   "path": {
                     "type": "string"
                   }
-                },
-                "additionalProperties": false
+                }
               }
             },
             "volumeMounts": {
               "description": "Volume mounts for the OIDC proxy",
               "type": "array"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "persistence": {
           "type": "object",
@@ -501,6 +475,23 @@
                     "type": "string"
                   }
                 },
+                "dataSource": {
+                  "type": "object",
+                  "properties": {
+                    "apiGroup": {
+                      "description": "API version of the data source",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "description": "Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Name of the data source",
+                      "type": "string"
+                    }
+                  }
+                },
                 "resources": {
                   "type": "object",
                   "properties": {
@@ -512,21 +503,17 @@
                           "description": "Storage resource request",
                           "type": "string"
                         }
-                      },
-                      "additionalProperties": false
+                      }
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "storageClassName": {
                   "description": "Storage class name",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             }
-          },
-          "additionalProperties": false
+          }
         },
         "podAnnotations": {
           "description": "Annotations to add to pods",
@@ -540,18 +527,15 @@
               "description": "Linkerd injection annotation",
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "podLabels": {
           "description": "Global labels to add to all pods",
-          "type": "object",
-          "additionalProperties": false
+          "type": "object"
         },
         "podSecurityContext": {
           "description": "Pod security context",
-          "type": "object",
-          "additionalProperties": false
+          "type": "object"
         },
         "progressDeadlineSeconds": {
           "description": "the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled",
@@ -588,8 +572,7 @@
                   "description": "Scheme to use",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "initialDelaySeconds": {
               "description": "Number of seconds after the container has started before the probe is first initiated",
@@ -607,8 +590,7 @@
               "description": "Timeout for the probe",
               "type": "number"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "replicaCount": {
           "description": "Number of replicas",
@@ -637,8 +619,7 @@
                   "description": "Memory limit",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "requests": {
               "description": "Resource requests",
@@ -659,11 +640,9 @@
                   "description": "Memory request",
                   "type": "string"
                 }
-              },
-              "additionalProperties": false
+              }
             }
-          },
-          "additionalProperties": false
+          }
         },
         "restartPolicy": {
           "description": "Restart policy for the pod",
@@ -676,8 +655,7 @@
         },
         "securityContext": {
           "description": "Security context",
-          "type": "object",
-          "additionalProperties": false
+          "type": "object"
         },
         "service": {
           "description": "Service configuration",
@@ -691,8 +669,7 @@
               "description": "Service type",
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "serviceAccount": {
           "description": "Service account configuration",
@@ -700,8 +677,7 @@
           "properties": {
             "annotations": {
               "description": "Annotations to add to the service account",
-              "type": "object",
-              "additionalProperties": false
+              "type": "object"
             },
             "automount": {
               "description": "Specifies whether to automatically mount a ServiceAccount's API credentials",
@@ -715,8 +691,7 @@
               "description": "Name of the service account to use (if not set and create is true, a name is generated using the fullname template)",
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "shareProcessNamespace": {
           "description": "Share process namespace",
@@ -744,8 +719,7 @@
                     "type": "string"
                   }
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "failureThreshold": {
               "description": "Number of failures before the probe is considered failed",
@@ -767,8 +741,7 @@
               "description": "Timeout for the probe",
               "type": "integer"
             }
-          },
-          "additionalProperties": false
+          }
         },
         "tolerations": {
           "description": "Tolerations for the pod",
@@ -786,8 +759,7 @@
           "description": "Additional volumes on the output Deployment definition",
           "type": "array"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "jobs": {
       "description": "Jobs to deploy",
@@ -798,8 +770,7 @@
           "type": "object",
           "additionalProperties": false
         }
-      },
-      "additionalProperties": false
+      }
     },
     "services": {
       "description": "Services to deploy",
@@ -811,9 +782,7 @@
           "additionalProperties": false,
           "unevaluatedProperties": false
         }
-      },
-      "additionalProperties": false
+      }
     }
-  },
-  "additionalProperties": false
+  }
 }

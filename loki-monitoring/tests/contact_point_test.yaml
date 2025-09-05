@@ -1,0 +1,40 @@
+suite: test grafana contact point
+templates:
+  - templates/contact_point.yaml
+tests:
+  - it: renders GrafanaContactPoint when enabled
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaContactPoint
+      - equal:
+          path: metadata.name
+          value: org-infra-eng-alerts
+      - equal:
+          path: spec.valuesFrom[0].valueFrom.secretKeyRef.name
+          value: slack-webhook-secret
+      - equal:
+          path: spec.valuesFrom[0].valueFrom.secretKeyRef.key
+          value: slack-webhook-url
+  - it: reflects overridden secret name/key
+    set:
+      contactPoint:
+        slack:
+          secretName: other-secret
+          secretKey: other-key
+    asserts:
+      - equal:
+          path: spec.valuesFrom[0].valueFrom.secretKeyRef.name
+          value: other-secret
+      - equal:
+          path: spec.valuesFrom[0].valueFrom.secretKeyRef.key
+          value: other-key
+  - it: does not render when either toggles are disabled
+    set:
+      enabled: true
+      contactPoint:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0

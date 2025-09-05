@@ -212,7 +212,7 @@ tests:
     set:
       global:
         oidcProxy:
-          enable: true
+          enabled: true
         fullnameOverride: "overwrittenfull"
       services:
         service1:

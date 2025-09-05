@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.12.0...stack-v2.13.0) (2025-09-05)
+
+
+### Features
+
+* Add volume snapshot support for pvc ([#273](https://github.com/chanzuckerberg/argo-helm-charts/issues/273)) ([9b7c290](https://github.com/chanzuckerberg/argo-helm-charts/commit/9b7c290cbbf72d112a7fda69210987f1d235318b))
+
 ## [2.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.11.0...stack-v2.12.0) (2025-06-17)
 
 

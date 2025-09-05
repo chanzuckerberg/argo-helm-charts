@@ -1,0 +1,11 @@
+{{ if .Values.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: {{.Values.folder.name}}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{.Values.grafana.name}}
+  title: {{.Values.folder.title}}
+{{ end }}

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.4...grafana-v0.7.0) (2025-09-05)
+
+
+### Features
+
+* add cloudwatch datasource to grafana chart ([#262](https://github.com/chanzuckerberg/argo-helm-charts/issues/262)) ([c5e9a7c](https://github.com/chanzuckerberg/argo-helm-charts/commit/c5e9a7c3a348e2f0cd8f762e2ce5a951e89a2979))
+
 ## [0.6.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.3...grafana-v0.6.4) (2025-08-05)
 
 
