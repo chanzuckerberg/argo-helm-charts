@@ -775,7 +775,7 @@
         "^.*$": {
           "$ref": "#/properties/global",
           "type": "object",
-          "unevaluatedProperties": false
+          "additionalProperties": true
         }
       }
     }
