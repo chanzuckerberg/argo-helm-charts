@@ -1,0 +1,40 @@
+# Default values for argo-events.
+
+# @schema type: object
+# @schema title: Event Sources Configuration
+# @schema description: Configure various event sources for Argo Events
+eventsources:
+  # @schema description: mixed event sources
+  # @schema type: boolean
+  # @schema default: false
+  isMixedEventSource: false
+  # @schema description: an HTTP based EventSource
+  # @schema type: object
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"method": {"type": "string", "description": "HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)"}, "port": {"type": "string", "description": "Port on which the webhook server will listen"}, "endpoint": {"type": "string", "description": "URL path where the webhook will receive events"}}, "required": ["method", "port", "endpoint"]}}}
+  webhook: {}
+  # @schema description: SQS event source configuration.
+  # @schema type: object
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"region": {"type": "string", "description": "AWS region"}, "queue": {"type": "string", "description": "AWS SQS queue to listen to for messages"}, "waitTimeSeconds": {"type": "integer", "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning."}}, "required": ["region", "queue", "waitTimeSeconds"]}}}
+  aws-sqs: {}
+# @schema type: object
+# @schema title: Event Bus Configuration
+# @schema description: Configure various event bus for Argo Events
+eventbus:
+  # @schema description: NATs event bus configuration.
+  # @schema type: object
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"exotic": {"type": "object", "description": "Exotic holds an exotic NATS config","additionalProperties": true}, "native": {"type": "object", "description": "Native means to bring up a native NATS service","additionalProperties": true}}}}}
+  nats: {}
+  # @schema description: JetStream event bus configuration.
+  # @schema type: object
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"version": {"type": "string", "description": "JetStream version, such as “2.7.3”"}, "replicas": {"type": "integer", "description": "JetStream StatefulSet size"}}, "additionalProperties": true}}}
+  jetstream: {}
+  # @schema description: Kafka event bus configuration.
+  # @schema type: object
+  # @schema patternProperties: { "^.*$": {"type": "object", "properties": {"url": {"type": "string", "description": "URL to kafka cluster, multiple URLs separated by comma"}},"additionalProperties": true}}
+  kafka: {}
+
+# @schema type: object
+# @schema title: Sensor Configuration
+# @schema description: Configure sensor resources for Argo Events
+# @schema patternProperties: { "^.*$": {"type": "object", "properties": {"eventBusName": {"type": "string", "description": "EventBusName references to a EventBus name. By default the value is “default”"}, "replicas": {"type": "integer", "description": "Replicas is the sensor deployment replicas"}, "errorOnFailedRound": {"type": "boolean", "description": "ErrorOnFailedRound if set to true, marks sensor state as error if the previous trigger round fails. Once sensor state is set to error, no further triggers will be processed."}, "triggers":{"type":"object", "description": "Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.", "additionalProperties": true}, "dependencies": {"type":"array", "description":"Dependencies is a list of the events that this sensor is dependent on.", "additionalProperties": true}}, "additionalProperties": true}}}
+sensors: {}

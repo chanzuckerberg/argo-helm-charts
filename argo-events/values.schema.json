@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/argo-events",
+  "title": "argo-events",
+  "type": "object",
+  "properties": {
+    "eventbus": {
+      "title": "Event Bus Configuration",
+      "description": "Configure various event bus for Argo Events",
+      "type": "object",
+      "properties": {
+        "jetstream": {
+          "description": "JetStream event bus configuration.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "replicas": {
+                  "description": "JetStream StatefulSet size",
+                  "type": "integer"
+                },
+                "version": {
+                  "description": "JetStream version, such as “2.7.3”",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "kafka": {
+          "description": "Kafka event bus configuration.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "URL to kafka cluster, multiple URLs separated by comma",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "nats": {
+          "description": "NATs event bus configuration.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "exotic": {
+                  "description": "Exotic holds an exotic NATS config",
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "native": {
+                  "description": "Native means to bring up a native NATS service",
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "eventsources": {
+      "title": "Event Sources Configuration",
+      "description": "Configure various event sources for Argo Events",
+      "type": "object",
+      "properties": {
+        "aws-sqs": {
+          "description": "SQS event source configuration.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "required": [
+                "region",
+                "queue",
+                "waitTimeSeconds"
+              ],
+              "properties": {
+                "queue": {
+                  "description": "AWS SQS queue to listen to for messages",
+                  "type": "string"
+                },
+                "region": {
+                  "description": "AWS region",
+                  "type": "string"
+                },
+                "waitTimeSeconds": {
+                  "description": "The duration (in seconds) for which the call waits for a message to arrive in the queue before returning.",
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "isMixedEventSource": {
+          "description": "mixed event sources",
+          "default": false,
+          "type": "boolean"
+        },
+        "webhook": {
+          "description": "an HTTP based EventSource",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "required": [
+                "method",
+                "port",
+                "endpoint"
+              ],
+              "properties": {
+                "endpoint": {
+                  "description": "URL path where the webhook will receive events",
+                  "type": "string"
+                },
+                "method": {
+                  "description": "HTTP method allowed for the webhook (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port on which the webhook server will listen",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "global": {
+      "description": "Global values shared between all subcharts",
+      "$comment": "Added automatically by 'helm schema' to allow this chart to be used as a Helm dependency, as the `additionalProperties` setting would otherwise collide with Helm's special 'global' values key.",
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "sensors": {
+      "title": "Sensor Configuration",
+      "description": "Configure sensor resources for Argo Events",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "properties": {
+            "dependencies": {
+              "description": "Dependencies is a list of the events that this sensor is dependent on.",
+              "type": "array",
+              "additionalProperties": true
+            },
+            "errorOnFailedRound": {
+              "description": "ErrorOnFailedRound if set to true, marks sensor state as error if the previous trigger round fails. Once sensor state is set to error, no further triggers will be processed.",
+              "type": "boolean"
+            },
+            "eventBusName": {
+              "description": "EventBusName references to a EventBus name. By default the value is “default”",
+              "type": "string"
+            },
+            "replicas": {
+              "description": "Replicas is the sensor deployment replicas",
+              "type": "integer"
+            },
+            "triggers": {
+              "description": "Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.",
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
