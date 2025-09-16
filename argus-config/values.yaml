@@ -4,7 +4,7 @@ global: # @schema description: Global parameters
     stackContextConfigMapName: "" # @schema description: Stack level configuration configmap name
 
   appSecrets: # @schema description: App secrets (provided by Argus API)
-    envSecret: 
+    envSecret:
       secretName: "" # @schema description: Environment-level Kube secret name to write External Secrets to
       secretKey: "" # @schema description: Environment-level secret key to map External Secrets from
     stackSecret:
@@ -12,6 +12,9 @@ global: # @schema description: Global parameters
       secretKey: "" # @schema description: Stack-level secret key to map External Secrets from
     clusterSecret:
       secretName: "" # @schema description: Cluster-level Kube secret name to write External Secrets to
+      secretKey: "" # @schema description: Cluster-level secret key to map External Secrets from
+    clusterSecretTF:
+      secretName: "" # @schema description: Cluster-level Kube secret name set by terraform to write External Secrets to
       secretKey: "" # @schema description: Cluster-level secret key to map External Secrets from
 
   deploymentStage: "staging" # @schema description: Deployment stage
@@ -28,7 +31,4 @@ global: # @schema description: Global parameters
     appSourcePath: "" # @schema description: equivalant to ARGOCD_APP_SOURCE_PATH
     appSourceRepoUrl: "" # @schema description: equivalant to ARGOCD_APP_SOURCE_REPO_URL
     appSourceTargetRevision: "" # @schema description: equivalant to ARGOCD_APP_SOURCE_REPO_URL
-
-
-
 
