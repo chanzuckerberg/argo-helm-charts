@@ -509,6 +509,16 @@
                   "type": "string"
                 }
               }
+            },
+            "volumeClaimTemplate": {
+              "description": "Volume claim template for StatefulSet",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Name of the volume claim template",
+                  "type": "string"
+                }
+              }
             }
           }
         },
@@ -755,6 +765,31 @@
         "volumes": {
           "description": "Additional volumes on the output Deployment definition",
           "type": "array"
+        },
+        "workload": {
+          "type": "object",
+          "properties": {
+            "maxUnavailable": {
+              "description": "Maximum number of pods that can be unavailable during StatefulSet updates",
+              "type": "integer"
+            },
+            "type": {
+              "description": "Type of workload to deploy",
+              "type": "string",
+              "enum": [
+                "deployment",
+                "statefulset"
+              ]
+            },
+            "updateStrategy": {
+              "description": "Update strategy for StatefulSet",
+              "type": "string",
+              "enum": [
+                "RollingUpdate",
+                "OnDelete"
+              ]
+            }
+          }
         }
       }
     },

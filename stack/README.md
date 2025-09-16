@@ -95,6 +95,7 @@ must respect the following conditions
 | - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
 | - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
 | - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| - [workload](#cronJobs_pattern1_workload )                                   | No      | object           | No         | -          | -                                                                                                                                           |
 
 #### <a name="cronJobs_pattern1_affinity"></a>2.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -1281,12 +1282,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
-| - [enabled](#cronJobs_pattern1_persistence_enabled )             | No      | boolean | No         | -          | Enable persistence     |
-| - [existingClaim](#cronJobs_pattern1_persistence_existingClaim ) | No      | string  | No         | -          | Existing PVC name      |
-| - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
-| - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
+| Property                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                     |
+| ---------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------- |
+| - [enabled](#cronJobs_pattern1_persistence_enabled )                         | No      | boolean | No         | -          | Enable persistence                    |
+| - [existingClaim](#cronJobs_pattern1_persistence_existingClaim )             | No      | string  | No         | -          | Existing PVC name                     |
+| - [mountPath](#cronJobs_pattern1_persistence_mountPath )                     | No      | string  | No         | -          | Mount path for the PVC                |
+| - [pvc](#cronJobs_pattern1_persistence_pvc )                                 | No      | object  | No         | -          | -                                     |
+| - [volumeClaimTemplate](#cronJobs_pattern1_persistence_volumeClaimTemplate ) | No      | object  | No         | -          | Volume claim template for StatefulSet |
 
 ##### <a name="cronJobs_pattern1_persistence_enabled"></a>2.1.21.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
@@ -1442,6 +1444,29 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Storage class name
+
+##### <a name="cronJobs_pattern1_persistence_volumeClaimTemplate"></a>2.1.21.5. Property `stack > cronJobs > ^.*$ > persistence > volumeClaimTemplate`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Volume claim template for StatefulSet
+
+| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description                 |
+| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------- |
+| - [name](#cronJobs_pattern1_persistence_volumeClaimTemplate_name ) | No      | string | No         | -          | Name of the volume claim template |
+
+###### <a name="cronJobs_pattern1_persistence_volumeClaimTemplate_name"></a>2.1.21.5.1. Property `stack > cronJobs > ^.*$ > persistence > volumeClaimTemplate > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the volume claim template
 
 #### <a name="cronJobs_pattern1_podAnnotations"></a>2.1.22. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
@@ -2081,6 +2106,55 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
+#### <a name="cronJobs_pattern1_workload"></a>2.1.40. Property `stack > cronJobs > ^.*$ > workload`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                        | Pattern | Type             | Deprecated | Definition | Title/Description                                                         |
+| --------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [maxUnavailable](#cronJobs_pattern1_workload_maxUnavailable ) | No      | integer          | No         | -          | Maximum number of pods that can be unavailable during StatefulSet updates |
+| - [type](#cronJobs_pattern1_workload_type )                     | No      | enum (of string) | No         | -          | Type of workload to deploy                                                |
+| - [updateStrategy](#cronJobs_pattern1_workload_updateStrategy ) | No      | enum (of string) | No         | -          | Update strategy for StatefulSet                                           |
+
+##### <a name="cronJobs_pattern1_workload_maxUnavailable"></a>2.1.40.1. Property `stack > cronJobs > ^.*$ > workload > maxUnavailable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of pods that can be unavailable during StatefulSet updates
+
+##### <a name="cronJobs_pattern1_workload_type"></a>2.1.40.2. Property `stack > cronJobs > ^.*$ > workload > type`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Type of workload to deploy
+
+Must be one of:
+* "deployment"
+* "statefulset"
+
+##### <a name="cronJobs_pattern1_workload_updateStrategy"></a>2.1.40.3. Property `stack > cronJobs > ^.*$ > workload > updateStrategy`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Update strategy for StatefulSet
+
+Must be one of:
+* "RollingUpdate"
+* "OnDelete"
+
 ## <a name="global"></a>3. Property `stack > global`
 
 |                           |                  |
@@ -2132,6 +2206,7 @@ Must be one of:
 | - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
 | - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
 | - [volumes](#global_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| - [workload](#global_workload )                                   | No      | object           | No         | -          | -                                                                                                                                           |
 
 ### <a name="global_affinity"></a>3.1. Property `stack > global > affinity`
 
@@ -3318,12 +3393,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                              | Pattern | Type    | Deprecated | Definition | Title/Description      |
-| ----------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
-| - [enabled](#global_persistence_enabled )             | No      | boolean | No         | -          | Enable persistence     |
-| - [existingClaim](#global_persistence_existingClaim ) | No      | string  | No         | -          | Existing PVC name      |
-| - [mountPath](#global_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
-| - [pvc](#global_persistence_pvc )                     | No      | object  | No         | -          | -                      |
+| Property                                                          | Pattern | Type    | Deprecated | Definition | Title/Description                     |
+| ----------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------- |
+| - [enabled](#global_persistence_enabled )                         | No      | boolean | No         | -          | Enable persistence                    |
+| - [existingClaim](#global_persistence_existingClaim )             | No      | string  | No         | -          | Existing PVC name                     |
+| - [mountPath](#global_persistence_mountPath )                     | No      | string  | No         | -          | Mount path for the PVC                |
+| - [pvc](#global_persistence_pvc )                                 | No      | object  | No         | -          | -                                     |
+| - [volumeClaimTemplate](#global_persistence_volumeClaimTemplate ) | No      | object  | No         | -          | Volume claim template for StatefulSet |
 
 #### <a name="global_persistence_enabled"></a>3.21.1. Property `stack > global > persistence > enabled`
 
@@ -3479,6 +3555,29 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Storage class name
+
+#### <a name="global_persistence_volumeClaimTemplate"></a>3.21.5. Property `stack > global > persistence > volumeClaimTemplate`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Volume claim template for StatefulSet
+
+| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description                 |
+| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------- |
+| - [name](#global_persistence_volumeClaimTemplate_name ) | No      | string | No         | -          | Name of the volume claim template |
+
+##### <a name="global_persistence_volumeClaimTemplate_name"></a>3.21.5.1. Property `stack > global > persistence > volumeClaimTemplate > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the volume claim template
 
 ### <a name="global_podAnnotations"></a>3.22. Property `stack > global > podAnnotations`
 
@@ -4118,6 +4217,55 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
+### <a name="global_workload"></a>3.40. Property `stack > global > workload`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                             | Pattern | Type             | Deprecated | Definition | Title/Description                                                         |
+| ---------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [maxUnavailable](#global_workload_maxUnavailable ) | No      | integer          | No         | -          | Maximum number of pods that can be unavailable during StatefulSet updates |
+| - [type](#global_workload_type )                     | No      | enum (of string) | No         | -          | Type of workload to deploy                                                |
+| - [updateStrategy](#global_workload_updateStrategy ) | No      | enum (of string) | No         | -          | Update strategy for StatefulSet                                           |
+
+#### <a name="global_workload_maxUnavailable"></a>3.40.1. Property `stack > global > workload > maxUnavailable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of pods that can be unavailable during StatefulSet updates
+
+#### <a name="global_workload_type"></a>3.40.2. Property `stack > global > workload > type`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Type of workload to deploy
+
+Must be one of:
+* "deployment"
+* "statefulset"
+
+#### <a name="global_workload_updateStrategy"></a>3.40.3. Property `stack > global > workload > updateStrategy`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Update strategy for StatefulSet
+
+Must be one of:
+* "RollingUpdate"
+* "OnDelete"
+
 ## <a name="jobs"></a>4. Property `stack > jobs`
 
 |                           |                  |
@@ -4187,6 +4335,7 @@ must respect the following conditions
 | - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
 | - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
 | - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| - [workload](#cronJobs_pattern1_workload )                                   | No      | object           | No         | -          | -                                                                                                                                           |
 
 #### <a name="cronJobs_pattern1_affinity"></a>4.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -5373,12 +5522,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
-| - [enabled](#cronJobs_pattern1_persistence_enabled )             | No      | boolean | No         | -          | Enable persistence     |
-| - [existingClaim](#cronJobs_pattern1_persistence_existingClaim ) | No      | string  | No         | -          | Existing PVC name      |
-| - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
-| - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
+| Property                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                     |
+| ---------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------- |
+| - [enabled](#cronJobs_pattern1_persistence_enabled )                         | No      | boolean | No         | -          | Enable persistence                    |
+| - [existingClaim](#cronJobs_pattern1_persistence_existingClaim )             | No      | string  | No         | -          | Existing PVC name                     |
+| - [mountPath](#cronJobs_pattern1_persistence_mountPath )                     | No      | string  | No         | -          | Mount path for the PVC                |
+| - [pvc](#cronJobs_pattern1_persistence_pvc )                                 | No      | object  | No         | -          | -                                     |
+| - [volumeClaimTemplate](#cronJobs_pattern1_persistence_volumeClaimTemplate ) | No      | object  | No         | -          | Volume claim template for StatefulSet |
 
 ##### <a name="cronJobs_pattern1_persistence_enabled"></a>4.1.21.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
@@ -5534,6 +5684,29 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Storage class name
+
+##### <a name="cronJobs_pattern1_persistence_volumeClaimTemplate"></a>4.1.21.5. Property `stack > cronJobs > ^.*$ > persistence > volumeClaimTemplate`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Volume claim template for StatefulSet
+
+| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description                 |
+| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------- |
+| - [name](#cronJobs_pattern1_persistence_volumeClaimTemplate_name ) | No      | string | No         | -          | Name of the volume claim template |
+
+###### <a name="cronJobs_pattern1_persistence_volumeClaimTemplate_name"></a>4.1.21.5.1. Property `stack > cronJobs > ^.*$ > persistence > volumeClaimTemplate > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the volume claim template
 
 #### <a name="cronJobs_pattern1_podAnnotations"></a>4.1.22. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
@@ -6173,6 +6346,55 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
+#### <a name="cronJobs_pattern1_workload"></a>4.1.40. Property `stack > cronJobs > ^.*$ > workload`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                        | Pattern | Type             | Deprecated | Definition | Title/Description                                                         |
+| --------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [maxUnavailable](#cronJobs_pattern1_workload_maxUnavailable ) | No      | integer          | No         | -          | Maximum number of pods that can be unavailable during StatefulSet updates |
+| - [type](#cronJobs_pattern1_workload_type )                     | No      | enum (of string) | No         | -          | Type of workload to deploy                                                |
+| - [updateStrategy](#cronJobs_pattern1_workload_updateStrategy ) | No      | enum (of string) | No         | -          | Update strategy for StatefulSet                                           |
+
+##### <a name="cronJobs_pattern1_workload_maxUnavailable"></a>4.1.40.1. Property `stack > cronJobs > ^.*$ > workload > maxUnavailable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of pods that can be unavailable during StatefulSet updates
+
+##### <a name="cronJobs_pattern1_workload_type"></a>4.1.40.2. Property `stack > cronJobs > ^.*$ > workload > type`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Type of workload to deploy
+
+Must be one of:
+* "deployment"
+* "statefulset"
+
+##### <a name="cronJobs_pattern1_workload_updateStrategy"></a>4.1.40.3. Property `stack > cronJobs > ^.*$ > workload > updateStrategy`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Update strategy for StatefulSet
+
+Must be one of:
+* "RollingUpdate"
+* "OnDelete"
+
 ## <a name="services"></a>5. Property `stack > services`
 
 |                           |                  |
@@ -6242,6 +6464,7 @@ must respect the following conditions
 | - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
 | - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
 | - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| - [workload](#cronJobs_pattern1_workload )                                   | No      | object           | No         | -          | -                                                                                                                                           |
 
 #### <a name="cronJobs_pattern1_affinity"></a>5.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -7428,12 +7651,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description      |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
-| - [enabled](#cronJobs_pattern1_persistence_enabled )             | No      | boolean | No         | -          | Enable persistence     |
-| - [existingClaim](#cronJobs_pattern1_persistence_existingClaim ) | No      | string  | No         | -          | Existing PVC name      |
-| - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
-| - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
+| Property                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                     |
+| ---------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------- |
+| - [enabled](#cronJobs_pattern1_persistence_enabled )                         | No      | boolean | No         | -          | Enable persistence                    |
+| - [existingClaim](#cronJobs_pattern1_persistence_existingClaim )             | No      | string  | No         | -          | Existing PVC name                     |
+| - [mountPath](#cronJobs_pattern1_persistence_mountPath )                     | No      | string  | No         | -          | Mount path for the PVC                |
+| - [pvc](#cronJobs_pattern1_persistence_pvc )                                 | No      | object  | No         | -          | -                                     |
+| - [volumeClaimTemplate](#cronJobs_pattern1_persistence_volumeClaimTemplate ) | No      | object  | No         | -          | Volume claim template for StatefulSet |
 
 ##### <a name="cronJobs_pattern1_persistence_enabled"></a>5.1.21.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
@@ -7589,6 +7813,29 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Storage class name
+
+##### <a name="cronJobs_pattern1_persistence_volumeClaimTemplate"></a>5.1.21.5. Property `stack > cronJobs > ^.*$ > persistence > volumeClaimTemplate`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Volume claim template for StatefulSet
+
+| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description                 |
+| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------- |
+| - [name](#cronJobs_pattern1_persistence_volumeClaimTemplate_name ) | No      | string | No         | -          | Name of the volume claim template |
+
+###### <a name="cronJobs_pattern1_persistence_volumeClaimTemplate_name"></a>5.1.21.5.1. Property `stack > cronJobs > ^.*$ > persistence > volumeClaimTemplate > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the volume claim template
 
 #### <a name="cronJobs_pattern1_podAnnotations"></a>5.1.22. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
@@ -8227,5 +8474,54 @@ Must be one of:
 | **Items unicity**    | False              |
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
+
+#### <a name="cronJobs_pattern1_workload"></a>5.1.40. Property `stack > cronJobs > ^.*$ > workload`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                        | Pattern | Type             | Deprecated | Definition | Title/Description                                                         |
+| --------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [maxUnavailable](#cronJobs_pattern1_workload_maxUnavailable ) | No      | integer          | No         | -          | Maximum number of pods that can be unavailable during StatefulSet updates |
+| - [type](#cronJobs_pattern1_workload_type )                     | No      | enum (of string) | No         | -          | Type of workload to deploy                                                |
+| - [updateStrategy](#cronJobs_pattern1_workload_updateStrategy ) | No      | enum (of string) | No         | -          | Update strategy for StatefulSet                                           |
+
+##### <a name="cronJobs_pattern1_workload_maxUnavailable"></a>5.1.40.1. Property `stack > cronJobs > ^.*$ > workload > maxUnavailable`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of pods that can be unavailable during StatefulSet updates
+
+##### <a name="cronJobs_pattern1_workload_type"></a>5.1.40.2. Property `stack > cronJobs > ^.*$ > workload > type`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Type of workload to deploy
+
+Must be one of:
+* "deployment"
+* "statefulset"
+
+##### <a name="cronJobs_pattern1_workload_updateStrategy"></a>5.1.40.3. Property `stack > cronJobs > ^.*$ > workload > updateStrategy`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Update strategy for StatefulSet
+
+Must be one of:
+* "RollingUpdate"
+* "OnDelete"
 
 ----------------------------------------------------------------------------------------------------------------------------
