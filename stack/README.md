@@ -1323,21 +1323,21 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
-| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
-| - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
-| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
-| - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
-| - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
+| Property                                                                   | Pattern | Type                      | Deprecated | Definition | Title/Description        |
+| -------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------ |
+| - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the PVC |
+| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object                    | No         | -          | -                        |
+| - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
+| - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>2.1.21.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
 
-**Description:** Access modes
+**Description:** Access modes for the PVC
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -1353,10 +1353,16 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>2.1.21.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>2.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
@@ -3360,21 +3366,21 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                        | Pattern | Type            | Deprecated | Definition | Title/Description  |
-| --------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
-| - [accessModes](#global_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
-| - [dataSource](#global_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
-| - [resources](#global_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
-| - [storageClassName](#global_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
+| Property                                                        | Pattern | Type                      | Deprecated | Definition | Title/Description        |
+| --------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------ |
+| - [accessModes](#global_persistence_pvc_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the PVC |
+| - [dataSource](#global_persistence_pvc_dataSource )             | No      | object                    | No         | -          | -                        |
+| - [resources](#global_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
+| - [storageClassName](#global_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
 ##### <a name="global_persistence_pvc_accessModes"></a>3.21.4.1. Property `stack > global > persistence > pvc > accessModes`
 
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
 
-**Description:** Access modes
+**Description:** Access modes for the PVC
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -3390,10 +3396,16 @@ Must be one of:
 
 ###### <a name="global_persistence_pvc_accessModes_items"></a>3.21.4.1.1. stack > global > persistence > pvc > accessModes > accessModes items
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
 
 ##### <a name="global_persistence_pvc_dataSource"></a>3.21.4.2. Property `stack > global > persistence > pvc > dataSource`
 
@@ -5415,21 +5427,21 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
-| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
-| - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
-| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
-| - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
-| - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
+| Property                                                                   | Pattern | Type                      | Deprecated | Definition | Title/Description        |
+| -------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------ |
+| - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the PVC |
+| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object                    | No         | -          | -                        |
+| - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
+| - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>4.1.21.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
 
-**Description:** Access modes
+**Description:** Access modes for the PVC
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -5445,10 +5457,16 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>4.1.21.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>4.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
@@ -7470,21 +7488,21 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description  |
-| -------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------ |
-| - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of string | No         | -          | Access modes       |
-| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object          | No         | -          | -                  |
-| - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object          | No         | -          | -                  |
-| - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string          | No         | -          | Storage class name |
+| Property                                                                   | Pattern | Type                      | Deprecated | Definition | Title/Description        |
+| -------------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------ |
+| - [accessModes](#cronJobs_pattern1_persistence_pvc_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the PVC |
+| - [dataSource](#cronJobs_pattern1_persistence_pvc_dataSource )             | No      | object                    | No         | -          | -                        |
+| - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
+| - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>5.1.21.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
 
-**Description:** Access modes
+**Description:** Access modes for the PVC
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -7500,10 +7518,16 @@ Must be one of:
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>5.1.21.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
 
 ###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>5.1.21.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
