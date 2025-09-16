@@ -182,7 +182,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   persistence:
     enabled: false # @schema description: Enable persistence
     pvc:
-      accessModes: # @schema type: array; item: string; description: Access modes
+      accessModes: # @schema type: array; item: string; itemEnum: [ReadWriteOnce, ReadOnlyMany, ReadWriteMany, ReadWriteOncePod]; description: Access modes for the PVC
         - ReadWriteOnce
       resources:
         requests: # @schema description: PVC resource requests
