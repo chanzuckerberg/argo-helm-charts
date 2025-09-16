@@ -1,13 +1,16 @@
 {
-  "$id": "argo.helm.charts/argus-config",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "additionalProperties": false,
+  "$id": "argo.helm.charts/argus-config",
+  "title": "argus-config",
+  "type": "object",
   "properties": {
     "global": {
       "description": "Global parameters",
+      "type": "object",
       "properties": {
         "appContext": {
           "description": "App context (provided by Argus API)",
+          "type": "object",
           "properties": {
             "envContextConfigMapName": {
               "description": "Environment level configuration configmap name",
@@ -17,13 +20,14 @@
               "description": "Stack level configuration configmap name",
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "appSecrets": {
           "description": "App secrets (provided by Argus API)",
+          "type": "object",
           "properties": {
             "clusterSecret": {
+              "type": "object",
               "properties": {
                 "secretKey": {
                   "description": "Cluster-level secret key to map External Secrets from",
@@ -33,10 +37,23 @@
                   "description": "Cluster-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
+            },
+            "clusterSecretTF": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "description": "Cluster-level secret key to map External Secrets from",
+                  "type": "string"
+                },
+                "secretName": {
+                  "description": "Cluster-level Kube secret name set by terraform to write External Secrets to",
+                  "type": "string"
+                }
+              }
             },
             "envSecret": {
+              "type": "object",
               "properties": {
                 "secretKey": {
                   "description": "Environment-level secret key to map External Secrets from",
@@ -46,10 +63,10 @@
                   "description": "Environment-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
             },
             "stackSecret": {
+              "type": "object",
               "properties": {
                 "secretKey": {
                   "description": "Stack-level secret key to map External Secrets from",
@@ -59,14 +76,13 @@
                   "description": "Stack-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         },
         "argoBuildEnv": {
           "description": "Argo built-in environment parameters",
+          "type": "object",
           "properties": {
             "appName": {
               "description": "equivalant to ARGOCD_APP_NAME",
@@ -100,8 +116,7 @@
               "description": "equivalant to ARGOCD_APP_SOURCE_REPO_URL",
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "deploymentStage": {
           "description": "Deployment stage",
@@ -109,18 +124,15 @@
         },
         "ingress": {
           "description": "Ingress configuration",
+          "type": "object",
           "properties": {
             "host": {
               "description": "Ingress host",
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     }
-  },
-  "title": "argus-config",
-  "type": "object"
+  }
 }
