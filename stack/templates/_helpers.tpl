@@ -137,7 +137,7 @@ image: {{ .image.repository }}:{{ .image.tag | default "latest" }}
 
 {{- define "service.claimName" -}}
 {{- if .Values.persistence.existingClaim }}
-    {{- printf "%s" (tpl .Values.persistence.existingClaim $) -}}
+    {{- printf "%s" .Values.persistence.existingClaim -}}
 {{- else -}}
     {{- printf "%s" (include "service.fullname" .) -}}
 {{- end -}}
@@ -201,4 +201,33 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "oidcProxy.authDomain" -}}
 {{ .Values.ingress.host }}
+{{- end -}}
+
+{{/*
+Service configuration for envFrom (secrets and configmaps)
+*/}}
+{{- define "service.configuration" -}}
+{{- $envFromList := list -}}
+{{- range .Values.envFrom -}}
+{{- $envFromList = append $envFromList . -}}
+{{- end -}}
+{{- if .Values.appContext.envContextConfigMapName -}}
+{{- $envFromList = append $envFromList (dict "configMapRef" (dict "name" .Values.appContext.envContextConfigMapName)) -}}
+{{- end -}}
+{{- if .Values.appContext.stackContextConfigMapName -}}
+{{- $envFromList = append $envFromList (dict "configMapRef" (dict "name" .Values.appContext.stackContextConfigMapName)) -}}
+{{- end -}}
+{{- if .Values.appSecrets.envSecret.secretName -}}
+{{- $envFromList = append $envFromList (dict "secretRef" (dict "name" .Values.appSecrets.envSecret.secretName)) -}}
+{{- end -}}
+{{- if .Values.appSecrets.stackSecret.secretName -}}
+{{- $envFromList = append $envFromList (dict "secretRef" (dict "name" .Values.appSecrets.stackSecret.secretName)) -}}
+{{- end -}}
+{{- if .Values.appSecrets.clusterSecret.secretName -}}
+{{- $envFromList = append $envFromList (dict "secretRef" (dict "name" .Values.appSecrets.clusterSecret.secretName)) -}}
+{{- end -}}
+{{- if gt (len $envFromList) 0 -}}
+envFrom:
+{{- toYaml $envFromList | nindent 0 -}}
+{{- end -}}
 {{- end -}}

@@ -7,10 +7,10 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 
-{{- if eq .Values.workload.type "deployment" }}
+{{- if eq .Values.workload.type "statefulset" }}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "service.fullname" . }}
   labels:
@@ -24,8 +24,7 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
-  progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
-  revisionHistoryLimit: 3
+  serviceName: {{ include "service.fullname" . }}-headless
   selector:
     matchLabels:
       {{- include "service.selectorLabels" . | nindent 6 }}
@@ -80,7 +79,7 @@ spec:
           {{- if or (and .Values.persistence.enabled .Values.persistence.mountPath) .Values.volumeMounts}}
           volumeMounts:
             {{- if and .Values.persistence.enabled .Values.persistence.mountPath }}
-            - name: data
+            - name: {{ .Values.persistence.volumeClaimTemplate.name | default "data" }}
               mountPath: {{ .Values.persistence.mountPath }}
             {{- end }}
             {{- if .Values.volumeMounts }}
@@ -110,13 +109,8 @@ spec:
       {{- end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       restartPolicy: {{ .Values.restartPolicy }}
-      {{- if or .Values.persistence.enabled .Values.volumes}}
+      {{- if .Values.volumes}}
       volumes:
-        {{- if .Values.persistence.enabled }}
-        - name: data
-          persistentVolumeClaim:
-            claimName: {{ include "service.claimName" . }}
-        {{- end }}
         {{- if .Values.volumes }}
         {{- toYaml .Values.volumes | nindent 8 }}
         {{- end }}
@@ -147,6 +141,21 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.persistence.volumeClaimTemplate.name | default "data" }}
+      labels:
+        {{- include "service.labels" . | nindent 8 }}
+    spec:
+      {{- toYaml .Values.persistence.pvc | nindent 6}}
+  {{- end }}
+  updateStrategy:
+    type: {{ .Values.workload.updateStrategy | default "RollingUpdate" }}
+    {{- if eq (.Values.workload.updateStrategy | default "RollingUpdate") "RollingUpdate" }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.workload.maxUnavailable | default 1 }}
+    {{- end }}
 {{- end }}
 ---
 {{- end }}

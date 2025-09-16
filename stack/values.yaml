@@ -3,6 +3,12 @@ global: # @schema description: Global configuration for the stack - this serves 
   deploymentStage: "" # @schema description: Deployment stage
 
   replicaCount: 1 # @schema description: Number of replicas
+  
+  # Workload type configuration
+  workload:
+    type: "deployment" # @schema enum: [deployment, statefulset]; description: Type of workload to deploy
+    updateStrategy: "RollingUpdate" # @schema enum: [RollingUpdate, OnDelete]; description: Update strategy for StatefulSet
+    maxUnavailable: 1 # @schema description: Maximum number of pods that can be unavailable during StatefulSet updates
 
   # Settings for the primary container
   image:
@@ -194,6 +200,9 @@ global: # @schema description: Global configuration for the stack - this serves 
         apiGroup: "snapshot.storage.k8s.io/v1" # @schema description: API version of the data source
     existingClaim: "" # @schema description: Existing PVC name
     mountPath: "" # @schema description: Mount path for the PVC
+    # StatefulSet-specific configuration
+    volumeClaimTemplate: # @schema description: Volume claim template for StatefulSet
+      name: "data" # @schema description: Name of the volume claim template
 
   oidcProxy:
     enabled: false # @schema description: Enable OIDC proxy
