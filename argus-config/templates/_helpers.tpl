@@ -12,7 +12,7 @@ envFrom:
 {{- end }}
 {{- if ne (trim .Values.appSecrets.clusterSecretTF.secretName) "" }}
 - secretRef:
-    name: {{ .Values.appSecrets.clusterSecret.secretName }}
+    name: {{ .Values.appSecrets.clusterSecretTF.secretName }}
     optional: true
 {{- end }}
 {{- if ne (trim .Values.appSecrets.envSecret.secretName) "" }}
