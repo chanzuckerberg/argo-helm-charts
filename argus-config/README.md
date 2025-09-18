@@ -73,12 +73,12 @@
 
 **Description:** App secrets (provided by Argus API)
 
-| Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [clusterSecret](#global_appSecrets_clusterSecret )     | No      | object | No         | -          | -                 |
-| - [clusterSecretTF](#global_appSecrets_clusterSecretTF ) | No      | object | No         | -          | -                 |
-| - [envSecret](#global_appSecrets_envSecret )             | No      | object | No         | -          | -                 |
-| - [stackSecret](#global_appSecrets_stackSecret )         | No      | object | No         | -          | -                 |
+| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [clusterSecret](#global_appSecrets_clusterSecret )       | No      | object | No         | -          | -                 |
+| - [clusterSecretCLI](#global_appSecrets_clusterSecretCLI ) | No      | object | No         | -          | -                 |
+| - [envSecret](#global_appSecrets_envSecret )               | No      | object | No         | -          | -                 |
+| - [stackSecret](#global_appSecrets_stackSecret )           | No      | object | No         | -          | -                 |
 
 #### <a name="global_appSecrets_clusterSecret"></a>1.2.1. Property `argus-config > global > appSecrets > clusterSecret`
 
@@ -111,7 +111,7 @@
 
 **Description:** Cluster-level Kube secret name to write External Secrets to
 
-#### <a name="global_appSecrets_clusterSecretTF"></a>1.2.2. Property `argus-config > global > appSecrets > clusterSecretTF`
+#### <a name="global_appSecrets_clusterSecretCLI"></a>1.2.2. Property `argus-config > global > appSecrets > clusterSecretCLI`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -119,12 +119,12 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                            |
-| -------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------- |
-| - [secretKey](#global_appSecrets_clusterSecretTF_secretKey )   | No      | string | No         | -          | Cluster-level secret key to map External Secrets from                        |
-| - [secretName](#global_appSecrets_clusterSecretTF_secretName ) | No      | string | No         | -          | Cluster-level Kube secret name set by terraform to write External Secrets to |
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description                                                            |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------- |
+| - [secretKey](#global_appSecrets_clusterSecretCLI_secretKey )   | No      | string | No         | -          | Cluster-level secret key to map External Secrets from                        |
+| - [secretName](#global_appSecrets_clusterSecretCLI_secretName ) | No      | string | No         | -          | Cluster-level Kube secret name set by terraform to write External Secrets to |
 
-##### <a name="global_appSecrets_clusterSecretTF_secretKey"></a>1.2.2.1. Property `argus-config > global > appSecrets > clusterSecretTF > secretKey`
+##### <a name="global_appSecrets_clusterSecretCLI_secretKey"></a>1.2.2.1. Property `argus-config > global > appSecrets > clusterSecretCLI > secretKey`
 
 |              |          |
 | ------------ | -------- |
@@ -133,7 +133,7 @@
 
 **Description:** Cluster-level secret key to map External Secrets from
 
-##### <a name="global_appSecrets_clusterSecretTF_secretName"></a>1.2.2.2. Property `argus-config > global > appSecrets > clusterSecretTF > secretName`
+##### <a name="global_appSecrets_clusterSecretCLI_secretName"></a>1.2.2.2. Property `argus-config > global > appSecrets > clusterSecretCLI > secretName`
 
 |              |          |
 | ------------ | -------- |

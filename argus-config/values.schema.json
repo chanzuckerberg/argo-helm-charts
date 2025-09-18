@@ -39,7 +39,7 @@
                 }
               }
             },
-            "clusterSecretTF": {
+            "clusterSecretCLI": {
               "type": "object",
               "properties": {
                 "secretKey": {
