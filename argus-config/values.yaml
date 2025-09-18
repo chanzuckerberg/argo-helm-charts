@@ -13,7 +13,7 @@ global: # @schema description: Global parameters
     clusterSecret:
       secretName: "" # @schema description: Cluster-level Kube secret name to write External Secrets to
       secretKey: "" # @schema description: Cluster-level secret key to map External Secrets from
-    clusterSecretCLI:
+    clusterCLISecret:
       secretName: "" # @schema description: Cluster-level Kube secret name set by terraform to write External Secrets to
       secretKey: "" # @schema description: Cluster-level secret key to map External Secrets from
 
