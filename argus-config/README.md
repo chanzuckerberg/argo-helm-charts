@@ -88,10 +88,10 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description                                                            |
-| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------- |
-| - [secretKey](#global_appSecrets_clusterCLISecret_secretKey )   | No      | string | No         | -          | Cluster-level secret key to map External Secrets from                        |
-| - [secretName](#global_appSecrets_clusterCLISecret_secretName ) | No      | string | No         | -          | Cluster-level Kube secret name set by terraform to write External Secrets to |
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description                                                  |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [secretKey](#global_appSecrets_clusterCLISecret_secretKey )   | No      | string | No         | -          | Cluster-level secret key to map External Secrets from              |
+| - [secretName](#global_appSecrets_clusterCLISecret_secretName ) | No      | string | No         | -          | Cluster-level Kube secret name set by argus set secret CLI command |
 
 ##### <a name="global_appSecrets_clusterCLISecret_secretKey"></a>1.2.1.1. Property `argus-config > global > appSecrets > clusterCLISecret > secretKey`
 
@@ -109,7 +109,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Cluster-level Kube secret name set by terraform to write External Secrets to
+**Description:** Cluster-level Kube secret name set by argus set secret CLI command
 
 #### <a name="global_appSecrets_clusterSecret"></a>1.2.2. Property `argus-config > global > appSecrets > clusterSecret`
 
@@ -119,10 +119,10 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                           |
-| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------- |
-| - [secretKey](#global_appSecrets_clusterSecret_secretKey )   | No      | string | No         | -          | Cluster-level secret key to map External Secrets from       |
-| - [secretName](#global_appSecrets_clusterSecret_secretName ) | No      | string | No         | -          | Cluster-level Kube secret name to write External Secrets to |
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                     |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------- |
+| - [secretKey](#global_appSecrets_clusterSecret_secretKey )   | No      | string | No         | -          | Cluster-level secret key to map External Secrets from                 |
+| - [secretName](#global_appSecrets_clusterSecret_secretName ) | No      | string | No         | -          | Cluster-level Kube secret name set by terraform in argus-infra-stacks |
 
 ##### <a name="global_appSecrets_clusterSecret_secretKey"></a>1.2.2.1. Property `argus-config > global > appSecrets > clusterSecret > secretKey`
 
@@ -140,7 +140,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Cluster-level Kube secret name to write External Secrets to
+**Description:** Cluster-level Kube secret name set by terraform in argus-infra-stacks
 
 #### <a name="global_appSecrets_envSecret"></a>1.2.3. Property `argus-config > global > appSecrets > envSecret`
 
