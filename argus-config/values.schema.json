@@ -34,7 +34,7 @@
                   "type": "string"
                 },
                 "secretName": {
-                  "description": "Cluster-level Kube secret name set by terraform to write External Secrets to",
+                  "description": "Cluster-level Kube secret name set by argus set secret CLI command",
                   "type": "string"
                 }
               }
@@ -47,7 +47,7 @@
                   "type": "string"
                 },
                 "secretName": {
-                  "description": "Cluster-level Kube secret name to write External Secrets to",
+                  "description": "Cluster-level Kube secret name set by terraform in argus-infra-stacks",
                   "type": "string"
                 }
               }
