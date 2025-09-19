@@ -11,10 +11,10 @@ global: # @schema description: Global parameters
       secretName: "" # @schema description: Stack-level Kube secret name to write External Secrets to
       secretKey: "" # @schema description: Stack-level secret key to map External Secrets from
     clusterSecret:
-      secretName: "" # @schema description: Cluster-level Kube secret name to write External Secrets to
+      secretName: "" # @schema description: Cluster-level Kube secret name set by terraform in argus-infra-stacks
       secretKey: "" # @schema description: Cluster-level secret key to map External Secrets from
     clusterCLISecret:
-      secretName: "" # @schema description: Cluster-level Kube secret name set by terraform to write External Secrets to
+      secretName: "" # @schema description: Cluster-level Kube secret name set by argus set secret CLI command
       secretKey: "" # @schema description: Cluster-level secret key to map External Secrets from
 
   deploymentStage: "staging" # @schema description: Deployment stage
