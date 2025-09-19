@@ -466,10 +466,16 @@
               "type": "object",
               "properties": {
                 "accessModes": {
-                  "description": "Access modes",
+                  "description": "Access modes for the PVC",
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "ReadWriteOnce",
+                      "ReadOnlyMany",
+                      "ReadWriteMany",
+                      "ReadWriteOncePod"
+                    ]
                   }
                 },
                 "dataSource": {
