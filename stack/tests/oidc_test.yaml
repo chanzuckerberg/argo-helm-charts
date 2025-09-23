@@ -49,7 +49,7 @@ tests:
             secretName: blah4
           clusterSecret:
             secretName: blah5
-          clusterSecretCLI:
+          clusterCLISecret:
             secretName: blah6
         oidcProxy:
           enabled: true
@@ -75,7 +75,7 @@ tests:
             secretName: blah4
           clusterSecret:
             secretName: blah5
-          clusterSecretCLI:
+          clusterCLISecret:
             secretName: blah6
         oidcProxy:
           enabled: true
