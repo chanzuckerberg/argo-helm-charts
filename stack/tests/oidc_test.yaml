@@ -49,6 +49,8 @@ tests:
             secretName: blah4
           clusterSecret:
             secretName: blah5
+          clusterCLISecret:
+            secretName: blah6
         oidcProxy:
           enabled: true
           additionalSecrets:
@@ -62,7 +64,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].envFrom
-          count: 5
+          count: 6
   - it: combines additionalSecrets with argus secrets in envFrom
     set:
       global:
@@ -73,6 +75,8 @@ tests:
             secretName: blah4
           clusterSecret:
             secretName: blah5
+          clusterCLISecret:
+            secretName: blah6
         oidcProxy:
           enabled: true
           additionalSecrets:
@@ -86,7 +90,7 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].envFrom
-          count: 5
+          count: 6
   - it: defaults to 0 envFrom object
     set:
       global:
