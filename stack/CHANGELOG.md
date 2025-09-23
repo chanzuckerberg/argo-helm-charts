@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.14.0...stack-v2.15.0) (2025-09-23)
+
+
+### Features
+
+* enable cluster-wide secrets in stack helm chart ([#279](https://github.com/chanzuckerberg/argo-helm-charts/issues/279)) ([6efc717](https://github.com/chanzuckerberg/argo-helm-charts/commit/6efc7172dc3d3bb6cd674f9d5283874fb36ce1bd))
+
 ## [2.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.13.0...stack-v2.14.0) (2025-09-23)
 
 
