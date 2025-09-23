@@ -10,9 +10,9 @@ envFrom:
     name: {{ .Values.appSecrets.clusterSecret.secretName }}
     optional: true
 {{- end }}
-{{- if ne (trim .Values.appSecrets.clusterSecretCLI.secretName) "" }}
+{{- if ne (trim .Values.appSecrets.clusterCLISecret.secretName) "" }}
 - secretRef:
-    name: {{ .Values.appSecrets.clusterSecretCLI.secretName }}
+    name: {{ .Values.appSecrets.clusterCLISecret.secretName }}
     optional: true
 {{- end }}
 {{- if ne (trim .Values.appSecrets.envSecret.secretName) "" }}
