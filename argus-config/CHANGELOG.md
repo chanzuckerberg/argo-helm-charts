@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.0...argus-config-v1.5.1) (2025-09-23)
+
+
+### Bug Fixes
+
+* update secret reference in helm template for cluster CLI secrets ([#280](https://github.com/chanzuckerberg/argo-helm-charts/issues/280)) ([c4f8a39](https://github.com/chanzuckerberg/argo-helm-charts/commit/c4f8a391c94074efe87f2c2baeb7d8aea6d87f7e))
+
 ## [1.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.2...argus-config-v1.5.0) (2025-09-23)
 
 
