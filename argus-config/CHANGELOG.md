@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.2...argus-config-v1.5.0) (2025-09-23)
+
+
+### Features
+
+* update helm chart to include a new envFrom section tf cluster-wide secrets ([#275](https://github.com/chanzuckerberg/argo-helm-charts/issues/275)) ([25a4289](https://github.com/chanzuckerberg/argo-helm-charts/commit/25a42899346a561d44ea5667421af529126f70af))
+
 ## [1.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.1...argus-config-v1.4.2) (2025-04-28)
 
 

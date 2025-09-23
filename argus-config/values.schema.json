@@ -26,6 +26,19 @@
           "description": "App secrets (provided by Argus API)",
           "type": "object",
           "properties": {
+            "clusterCLISecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "description": "Cluster-level secret key to map External Secrets from",
+                  "type": "string"
+                },
+                "secretName": {
+                  "description": "Cluster-level Kube secret name set by argus set secret CLI command",
+                  "type": "string"
+                }
+              }
+            },
             "clusterSecret": {
               "type": "object",
               "properties": {
@@ -34,7 +47,7 @@
                   "type": "string"
                 },
                 "secretName": {
-                  "description": "Cluster-level Kube secret name to write External Secrets to",
+                  "description": "Cluster-level Kube secret name set by terraform in argus-infra-stacks",
                   "type": "string"
                 }
               }
