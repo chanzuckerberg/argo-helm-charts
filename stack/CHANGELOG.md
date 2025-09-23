@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.13.0...stack-v2.14.0) (2025-09-23)
+
+
+### Features
+
+* Allow other accessModes for PVCs ([#277](https://github.com/chanzuckerberg/argo-helm-charts/issues/277)) ([4ec501b](https://github.com/chanzuckerberg/argo-helm-charts/commit/4ec501ba903b6310e927bc683a33fde85110127f))
+
 ## [2.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.12.0...stack-v2.13.0) (2025-09-05)
 
 
