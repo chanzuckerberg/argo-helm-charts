@@ -137,7 +137,7 @@ image: {{ .image.repository }}:{{ .image.tag | default "latest" }}
 
 {{- define "service.claimName" -}}
 {{- if .Values.persistence.existingClaim }}
-    {{- printf "%s" (tpl .Values.persistence.existingClaim $) -}}
+    {{- printf "%s" .Values.persistence.existingClaim -}}
 {{- else -}}
     {{- printf "%s" (include "service.fullname" .) -}}
 {{- end -}}

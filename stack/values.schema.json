@@ -656,6 +656,76 @@
             "Never"
           ]
         },
+        "s3Storage": {
+          "type": "object",
+          "properties": {
+            "accessModes": {
+              "description": "Access modes for the S3 storage",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ReadWriteOnce",
+                  "ReadOnlyMany",
+                  "ReadWriteMany",
+                  "ReadWriteOncePod"
+                ]
+              }
+            },
+            "annotations": {
+              "description": "Additional annotations for PV/PVC",
+              "type": "object"
+            },
+            "bucketName": {
+              "description": "S3 bucket name",
+              "type": "string"
+            },
+            "capacity": {
+              "description": "Storage capacity",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable S3 CSI storage",
+              "type": "boolean"
+            },
+            "labels": {
+              "description": "Additional labels for PV/PVC",
+              "type": "object"
+            },
+            "namespace": {
+              "description": "Namespace for PV/PVC (uses release namespace if empty)",
+              "type": "string"
+            },
+            "pvName": {
+              "description": "Custom PV name (auto-generated if empty)",
+              "type": "string"
+            },
+            "pvcName": {
+              "description": "Custom PVC name (auto-generated if empty)",
+              "type": "string"
+            },
+            "reclaimPolicy": {
+              "description": "Reclaim policy for the PV",
+              "type": "string"
+            },
+            "region": {
+              "description": "AWS region",
+              "type": "string"
+            },
+            "storageClassName": {
+              "description": "Storage class name (empty for no storage class)",
+              "type": "string"
+            },
+            "volumeAttributes": {
+              "description": "Additional CSI volume attributes",
+              "type": "object"
+            },
+            "volumeHandle": {
+              "description": "CSI volume handle (auto-generated if empty)",
+              "type": "string"
+            }
+          }
+        },
         "securityContext": {
           "description": "Security context",
           "type": "object"
