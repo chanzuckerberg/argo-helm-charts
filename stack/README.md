@@ -85,6 +85,7 @@ must respect the following conditions
 | - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
 | - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
 | - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
@@ -1782,7 +1783,186 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_securityContext"></a>2.1.30. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_s3Storage"></a>2.1.30. Property `stack > cronJobs > ^.*$ > s3Storage`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
+| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
+| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
+| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
+| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
+| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
+| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
+| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
+| - [namespace](#cronJobs_pattern1_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
+| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
+| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
+| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
+| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
+| - [storageClassName](#cronJobs_pattern1_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
+| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
+| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.30.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
+
+**Description:** Access modes for the S3 storage
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                     | Description |
+| ------------------------------------------------------------------- | ----------- |
+| [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
+
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>2.1.30.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
+
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>2.1.30.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional annotations for PV/PVC
+
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>2.1.30.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** S3 bucket name
+
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>2.1.30.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage capacity
+
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>2.1.30.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable S3 CSI storage
+
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>2.1.30.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional labels for PV/PVC
+
+##### <a name="cronJobs_pattern1_s3Storage_namespace"></a>2.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > namespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Namespace for PV/PVC (uses release namespace if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PV name (auto-generated if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PVC name (auto-generated if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Reclaim policy for the PV
+
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS region
+
+##### <a name="cronJobs_pattern1_s3Storage_storageClassName"></a>2.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > storageClassName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage class name (empty for no storage class)
+
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional CSI volume attributes
+
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.30.14. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** CSI volume handle (auto-generated if empty)
+
+#### <a name="cronJobs_pattern1_securityContext"></a>2.1.31. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1792,7 +1972,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>2.1.31. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>2.1.32. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1807,7 +1987,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>2.1.31.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>2.1.32.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -1816,7 +1996,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>2.1.31.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>2.1.32.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -1825,7 +2005,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.32. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.33. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1842,7 +2022,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.32.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.33.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1852,7 +2032,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.32.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.33.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -1861,7 +2041,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.32.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.33.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -1870,7 +2050,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.32.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.33.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -1879,7 +2059,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.33. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.34. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -1888,7 +2068,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>2.1.34. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>2.1.35. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -1905,7 +2085,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.35. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.36. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1925,7 +2105,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.35.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.36.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1934,7 +2114,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.35.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.36.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1948,7 +2128,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.35.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.36.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1967,14 +2147,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.35.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.36.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.35.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.36.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -1983,7 +2163,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.35.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.36.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -1992,7 +2172,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.35.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.36.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -2001,7 +2181,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.35.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.36.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -2010,7 +2190,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.35.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.36.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -2019,7 +2199,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>2.1.36. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>2.1.37. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -2036,7 +2216,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.37. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.38. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -2053,7 +2233,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.38. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.39. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -2070,7 +2250,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>2.1.39. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>2.1.40. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -2128,6 +2308,7 @@ Must be one of:
 | - [replicaCount](#global_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
 | - [resources](#global_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
 | - [restartPolicy](#global_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
+| - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
 | - [securityContext](#global_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
 | - [service](#global_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
 | - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
@@ -3825,7 +4006,186 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-### <a name="global_securityContext"></a>3.30. Property `stack > global > securityContext`
+### <a name="global_s3Storage"></a>3.30. Property `stack > global > s3Storage`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                  | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
+| --------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
+| - [accessModes](#global_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
+| - [annotations](#global_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
+| - [bucketName](#global_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
+| - [capacity](#global_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
+| - [enabled](#global_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
+| - [labels](#global_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
+| - [namespace](#global_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
+| - [pvName](#global_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
+| - [pvcName](#global_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
+| - [reclaimPolicy](#global_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
+| - [region](#global_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
+| - [storageClassName](#global_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
+| - [volumeAttributes](#global_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
+| - [volumeHandle](#global_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+
+#### <a name="global_s3Storage_accessModes"></a>3.30.1. Property `stack > global > s3Storage > accessModes`
+
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
+
+**Description:** Access modes for the S3 storage
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                          | Description |
+| -------------------------------------------------------- | ----------- |
+| [accessModes items](#global_s3Storage_accessModes_items) | -           |
+
+##### <a name="global_s3Storage_accessModes_items"></a>3.30.1.1. stack > global > s3Storage > accessModes > accessModes items
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
+
+#### <a name="global_s3Storage_annotations"></a>3.30.2. Property `stack > global > s3Storage > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional annotations for PV/PVC
+
+#### <a name="global_s3Storage_bucketName"></a>3.30.3. Property `stack > global > s3Storage > bucketName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** S3 bucket name
+
+#### <a name="global_s3Storage_capacity"></a>3.30.4. Property `stack > global > s3Storage > capacity`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage capacity
+
+#### <a name="global_s3Storage_enabled"></a>3.30.5. Property `stack > global > s3Storage > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable S3 CSI storage
+
+#### <a name="global_s3Storage_labels"></a>3.30.6. Property `stack > global > s3Storage > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional labels for PV/PVC
+
+#### <a name="global_s3Storage_namespace"></a>3.30.7. Property `stack > global > s3Storage > namespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Namespace for PV/PVC (uses release namespace if empty)
+
+#### <a name="global_s3Storage_pvName"></a>3.30.8. Property `stack > global > s3Storage > pvName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PV name (auto-generated if empty)
+
+#### <a name="global_s3Storage_pvcName"></a>3.30.9. Property `stack > global > s3Storage > pvcName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PVC name (auto-generated if empty)
+
+#### <a name="global_s3Storage_reclaimPolicy"></a>3.30.10. Property `stack > global > s3Storage > reclaimPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Reclaim policy for the PV
+
+#### <a name="global_s3Storage_region"></a>3.30.11. Property `stack > global > s3Storage > region`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS region
+
+#### <a name="global_s3Storage_storageClassName"></a>3.30.12. Property `stack > global > s3Storage > storageClassName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage class name (empty for no storage class)
+
+#### <a name="global_s3Storage_volumeAttributes"></a>3.30.13. Property `stack > global > s3Storage > volumeAttributes`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional CSI volume attributes
+
+#### <a name="global_s3Storage_volumeHandle"></a>3.30.14. Property `stack > global > s3Storage > volumeHandle`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** CSI volume handle (auto-generated if empty)
+
+### <a name="global_securityContext"></a>3.31. Property `stack > global > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3835,7 +4195,7 @@ Must be one of:
 
 **Description:** Security context
 
-### <a name="global_service"></a>3.31. Property `stack > global > service`
+### <a name="global_service"></a>3.32. Property `stack > global > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3850,7 +4210,7 @@ Must be one of:
 | - [port](#global_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#global_service_type ) | No      | string | No         | -          | Service type      |
 
-#### <a name="global_service_port"></a>3.31.1. Property `stack > global > service > port`
+#### <a name="global_service_port"></a>3.32.1. Property `stack > global > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -3859,7 +4219,7 @@ Must be one of:
 
 **Description:** Service port
 
-#### <a name="global_service_type"></a>3.31.2. Property `stack > global > service > type`
+#### <a name="global_service_type"></a>3.32.2. Property `stack > global > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -3868,7 +4228,7 @@ Must be one of:
 
 **Description:** Service type
 
-### <a name="global_serviceAccount"></a>3.32. Property `stack > global > serviceAccount`
+### <a name="global_serviceAccount"></a>3.33. Property `stack > global > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3885,7 +4245,7 @@ Must be one of:
 | - [create](#global_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#global_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-#### <a name="global_serviceAccount_annotations"></a>3.32.1. Property `stack > global > serviceAccount > annotations`
+#### <a name="global_serviceAccount_annotations"></a>3.33.1. Property `stack > global > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3895,7 +4255,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-#### <a name="global_serviceAccount_automount"></a>3.32.2. Property `stack > global > serviceAccount > automount`
+#### <a name="global_serviceAccount_automount"></a>3.33.2. Property `stack > global > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -3904,7 +4264,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-#### <a name="global_serviceAccount_create"></a>3.32.3. Property `stack > global > serviceAccount > create`
+#### <a name="global_serviceAccount_create"></a>3.33.3. Property `stack > global > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -3913,7 +4273,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-#### <a name="global_serviceAccount_name"></a>3.32.4. Property `stack > global > serviceAccount > name`
+#### <a name="global_serviceAccount_name"></a>3.33.4. Property `stack > global > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -3922,7 +4282,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-### <a name="global_shareProcessNamespace"></a>3.33. Property `stack > global > shareProcessNamespace`
+### <a name="global_shareProcessNamespace"></a>3.34. Property `stack > global > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -3931,7 +4291,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-### <a name="global_sidecars"></a>3.34. Property `stack > global > sidecars`
+### <a name="global_sidecars"></a>3.35. Property `stack > global > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -3948,7 +4308,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_startupProbe"></a>3.35. Property `stack > global > startupProbe`
+### <a name="global_startupProbe"></a>3.36. Property `stack > global > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3968,7 +4328,7 @@ Must be one of:
 | - [successThreshold](#global_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#global_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-#### <a name="global_startupProbe_enabled"></a>3.35.1. Property `stack > global > startupProbe > enabled`
+#### <a name="global_startupProbe_enabled"></a>3.36.1. Property `stack > global > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -3977,7 +4337,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-#### <a name="global_startupProbe_exec"></a>3.35.2. Property `stack > global > startupProbe > exec`
+#### <a name="global_startupProbe_exec"></a>3.36.2. Property `stack > global > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3991,7 +4351,7 @@ Must be one of:
 | ----------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#global_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-##### <a name="global_startupProbe_exec_command"></a>3.35.2.1. Property `stack > global > startupProbe > exec > command`
+##### <a name="global_startupProbe_exec_command"></a>3.36.2.1. Property `stack > global > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4010,14 +4370,14 @@ Must be one of:
 | -------------------------------------------------------- | ----------- |
 | [command items](#global_startupProbe_exec_command_items) | -           |
 
-###### <a name="global_startupProbe_exec_command_items"></a>3.35.2.1.1. stack > global > startupProbe > exec > command > command items
+###### <a name="global_startupProbe_exec_command_items"></a>3.36.2.1.1. stack > global > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_startupProbe_failureThreshold"></a>3.35.3. Property `stack > global > startupProbe > failureThreshold`
+#### <a name="global_startupProbe_failureThreshold"></a>3.36.3. Property `stack > global > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -4026,7 +4386,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-#### <a name="global_startupProbe_initialDelaySeconds"></a>3.35.4. Property `stack > global > startupProbe > initialDelaySeconds`
+#### <a name="global_startupProbe_initialDelaySeconds"></a>3.36.4. Property `stack > global > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4035,7 +4395,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-#### <a name="global_startupProbe_periodSeconds"></a>3.35.5. Property `stack > global > startupProbe > periodSeconds`
+#### <a name="global_startupProbe_periodSeconds"></a>3.36.5. Property `stack > global > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4044,7 +4404,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-#### <a name="global_startupProbe_successThreshold"></a>3.35.6. Property `stack > global > startupProbe > successThreshold`
+#### <a name="global_startupProbe_successThreshold"></a>3.36.6. Property `stack > global > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -4053,7 +4413,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-#### <a name="global_startupProbe_timeoutSeconds"></a>3.35.7. Property `stack > global > startupProbe > timeoutSeconds`
+#### <a name="global_startupProbe_timeoutSeconds"></a>3.36.7. Property `stack > global > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4062,7 +4422,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_tolerations"></a>3.36. Property `stack > global > tolerations`
+### <a name="global_tolerations"></a>3.37. Property `stack > global > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -4079,7 +4439,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_topologySpreadConstraints"></a>3.37. Property `stack > global > topologySpreadConstraints`
+### <a name="global_topologySpreadConstraints"></a>3.38. Property `stack > global > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -4096,7 +4456,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumeMounts"></a>3.38. Property `stack > global > volumeMounts`
+### <a name="global_volumeMounts"></a>3.39. Property `stack > global > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -4113,7 +4473,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumes"></a>3.39. Property `stack > global > volumes`
+### <a name="global_volumes"></a>3.40. Property `stack > global > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -4189,6 +4549,7 @@ must respect the following conditions
 | - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
 | - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
 | - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
@@ -5886,7 +6247,186 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_securityContext"></a>4.1.30. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_s3Storage"></a>4.1.30. Property `stack > cronJobs > ^.*$ > s3Storage`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
+| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
+| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
+| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
+| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
+| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
+| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
+| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
+| - [namespace](#cronJobs_pattern1_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
+| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
+| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
+| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
+| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
+| - [storageClassName](#cronJobs_pattern1_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
+| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
+| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.30.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
+
+**Description:** Access modes for the S3 storage
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                     | Description |
+| ------------------------------------------------------------------- | ----------- |
+| [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
+
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>4.1.30.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
+
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>4.1.30.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional annotations for PV/PVC
+
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>4.1.30.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** S3 bucket name
+
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>4.1.30.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage capacity
+
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>4.1.30.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable S3 CSI storage
+
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>4.1.30.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional labels for PV/PVC
+
+##### <a name="cronJobs_pattern1_s3Storage_namespace"></a>4.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > namespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Namespace for PV/PVC (uses release namespace if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PV name (auto-generated if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PVC name (auto-generated if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Reclaim policy for the PV
+
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS region
+
+##### <a name="cronJobs_pattern1_s3Storage_storageClassName"></a>4.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > storageClassName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage class name (empty for no storage class)
+
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional CSI volume attributes
+
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.30.14. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** CSI volume handle (auto-generated if empty)
+
+#### <a name="cronJobs_pattern1_securityContext"></a>4.1.31. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5896,7 +6436,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>4.1.31. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>4.1.32. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5911,7 +6451,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>4.1.31.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>4.1.32.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -5920,7 +6460,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>4.1.31.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>4.1.32.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -5929,7 +6469,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.32. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.33. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5946,7 +6486,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.32.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.33.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5956,7 +6496,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.32.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.33.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -5965,7 +6505,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.32.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.33.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -5974,7 +6514,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.32.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.33.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -5983,7 +6523,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.33. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.34. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -5992,7 +6532,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>4.1.34. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>4.1.35. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -6009,7 +6549,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.35. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.36. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6029,7 +6569,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.35.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.36.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6038,7 +6578,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.35.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.36.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6052,7 +6592,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.35.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.36.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6071,14 +6611,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.35.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.36.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.35.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.36.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -6087,7 +6627,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.35.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.36.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6096,7 +6636,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.35.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.36.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6105,7 +6645,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.35.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.36.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -6114,7 +6654,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.35.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.36.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6123,7 +6663,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>4.1.36. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>4.1.37. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -6140,7 +6680,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.37. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.38. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -6157,7 +6697,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.38. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.39. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -6174,7 +6714,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>4.1.39. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>4.1.40. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -6250,6 +6790,7 @@ must respect the following conditions
 | - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
 | - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
 | - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
@@ -7947,7 +8488,186 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_securityContext"></a>5.1.30. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_s3Storage"></a>5.1.30. Property `stack > cronJobs > ^.*$ > s3Storage`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
+| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
+| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
+| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
+| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
+| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
+| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
+| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
+| - [namespace](#cronJobs_pattern1_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
+| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
+| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
+| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
+| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
+| - [storageClassName](#cronJobs_pattern1_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
+| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
+| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>5.1.30.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+
+|              |                             |
+| ------------ | --------------------------- |
+| **Type**     | `array of enum (of string)` |
+| **Required** | No                          |
+
+**Description:** Access modes for the S3 storage
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                     | Description |
+| ------------------------------------------------------------------- | ----------- |
+| [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
+
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>5.1.30.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "ReadWriteOnce"
+* "ReadOnlyMany"
+* "ReadWriteMany"
+* "ReadWriteOncePod"
+
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>5.1.30.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional annotations for PV/PVC
+
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>5.1.30.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** S3 bucket name
+
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>5.1.30.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage capacity
+
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>5.1.30.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable S3 CSI storage
+
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>5.1.30.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional labels for PV/PVC
+
+##### <a name="cronJobs_pattern1_s3Storage_namespace"></a>5.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > namespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Namespace for PV/PVC (uses release namespace if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>5.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PV name (auto-generated if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>5.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom PVC name (auto-generated if empty)
+
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>5.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Reclaim policy for the PV
+
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>5.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS region
+
+##### <a name="cronJobs_pattern1_s3Storage_storageClassName"></a>5.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > storageClassName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Storage class name (empty for no storage class)
+
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>5.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Additional CSI volume attributes
+
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>5.1.30.14. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** CSI volume handle (auto-generated if empty)
+
+#### <a name="cronJobs_pattern1_securityContext"></a>5.1.31. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7957,7 +8677,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>5.1.31. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>5.1.32. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7972,7 +8692,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>5.1.31.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>5.1.32.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -7981,7 +8701,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>5.1.31.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>5.1.32.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -7990,7 +8710,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>5.1.32. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>5.1.33. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8007,7 +8727,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>5.1.32.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>5.1.33.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8017,7 +8737,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>5.1.32.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>5.1.33.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -8026,7 +8746,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>5.1.32.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>5.1.33.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -8035,7 +8755,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>5.1.32.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>5.1.33.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -8044,7 +8764,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>5.1.33. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>5.1.34. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -8053,7 +8773,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>5.1.34. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>5.1.35. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -8070,7 +8790,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>5.1.35. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>5.1.36. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8090,7 +8810,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>5.1.35.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>5.1.36.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8099,7 +8819,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>5.1.35.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>5.1.36.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8113,7 +8833,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>5.1.35.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>5.1.36.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8132,14 +8852,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>5.1.35.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>5.1.36.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>5.1.35.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>5.1.36.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -8148,7 +8868,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>5.1.35.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>5.1.36.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -8157,7 +8877,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>5.1.35.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>5.1.36.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -8166,7 +8886,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>5.1.35.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>5.1.36.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -8175,7 +8895,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>5.1.35.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>5.1.36.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -8184,7 +8904,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>5.1.36. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>5.1.37. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -8201,7 +8921,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>5.1.37. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>5.1.38. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -8218,7 +8938,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>5.1.38. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>5.1.39. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -8235,7 +8955,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>5.1.39. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>5.1.40. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
