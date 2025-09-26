@@ -1804,7 +1804,6 @@ Must be one of:
 | - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
 | - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
 | - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [storageClassName](#cronJobs_pattern1_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
 
@@ -1934,16 +1933,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_storageClassName"></a>2.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > storageClassName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Storage class name (empty for no storage class)
-
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1953,7 +1943,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.30.14. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -4027,7 +4017,6 @@ Must be one of:
 | - [pvcName](#global_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
 | - [reclaimPolicy](#global_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
 | - [region](#global_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [storageClassName](#global_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
 | - [volumeAttributes](#global_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
 | - [volumeHandle](#global_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
 
@@ -4157,16 +4146,7 @@ Must be one of:
 
 **Description:** AWS region
 
-#### <a name="global_s3Storage_storageClassName"></a>3.30.12. Property `stack > global > s3Storage > storageClassName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Storage class name (empty for no storage class)
-
-#### <a name="global_s3Storage_volumeAttributes"></a>3.30.13. Property `stack > global > s3Storage > volumeAttributes`
+#### <a name="global_s3Storage_volumeAttributes"></a>3.30.12. Property `stack > global > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4176,7 +4156,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-#### <a name="global_s3Storage_volumeHandle"></a>3.30.14. Property `stack > global > s3Storage > volumeHandle`
+#### <a name="global_s3Storage_volumeHandle"></a>3.30.13. Property `stack > global > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -6268,7 +6248,6 @@ Must be one of:
 | - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
 | - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
 | - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [storageClassName](#cronJobs_pattern1_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
 
@@ -6398,16 +6377,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_storageClassName"></a>4.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > storageClassName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Storage class name (empty for no storage class)
-
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6417,7 +6387,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.30.14. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -8509,7 +8479,6 @@ Must be one of:
 | - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
 | - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
 | - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [storageClassName](#cronJobs_pattern1_s3Storage_storageClassName ) | No      | string                    | No         | -          | Storage class name (empty for no storage class)        |
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
 
@@ -8639,16 +8608,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_storageClassName"></a>5.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > storageClassName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Storage class name (empty for no storage class)
-
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>5.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>5.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8658,7 +8618,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>5.1.30.14. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>5.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |

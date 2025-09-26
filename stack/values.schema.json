@@ -712,10 +712,6 @@
               "description": "AWS region",
               "type": "string"
             },
-            "storageClassName": {
-              "description": "Storage class name (empty for no storage class)",
-              "type": "string"
-            },
             "volumeAttributes": {
               "description": "Additional CSI volume attributes",
               "type": "object"
