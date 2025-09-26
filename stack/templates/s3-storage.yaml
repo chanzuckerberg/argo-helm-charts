@@ -22,7 +22,7 @@ spec:
   accessModes:
     {{- toYaml .Values.global.s3Storage.accessModes | nindent 4 }}
   persistentVolumeReclaimPolicy: {{ .Values.global.s3Storage.reclaimPolicy | default "Retain" }}
-  storageClassName: {{ .Values.global.s3Storage.storageClassName | default "" | quote }}
+  storageClassName: ""
   csi:
     driver: s3.csi.aws.com
     volumeHandle: {{ .Values.global.s3Storage.volumeHandle | default (printf "%s-s3-handle" (include "stack.fullname" .)) }}
@@ -52,7 +52,7 @@ metadata:
 spec:
   accessModes:
     {{- toYaml .Values.global.s3Storage.accessModes | nindent 4 }}
-  storageClassName: {{ .Values.global.s3Storage.storageClassName | default "" | quote }}
+  storageClassName: ""
   resources:
     requests:
       storage: {{ .Values.global.s3Storage.capacity | default "5Gi" }}

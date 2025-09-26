@@ -202,7 +202,6 @@ global: # @schema description: Global configuration for the stack - this serves 
     capacity: "5Gi" # @schema description: Storage capacity
     accessModes: # @schema type: array; item: string; itemEnum: [ReadWriteOnce, ReadOnlyMany, ReadWriteMany, ReadWriteOncePod]; description: Access modes for the S3 storage
       - ReadWriteMany
-    storageClassName: "" # @schema description: Storage class name (empty for no storage class)
     reclaimPolicy: "Retain" # @schema description: Reclaim policy for the PV
     pvName: "" # @schema description: Custom PV name (auto-generated if empty)
     pvcName: "" # @schema description: Custom PVC name (auto-generated if empty)
