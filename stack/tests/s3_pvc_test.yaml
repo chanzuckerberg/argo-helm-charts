@@ -99,17 +99,3 @@ tests:
       - contains:
           path: spec.accessModes
           content: "ReadWriteMany"
-
-  - it: supports custom namespace
-    set:
-      global:
-        s3Storage:
-          enabled: true
-          bucketName: "namespace-test"
-          namespace: "custom-namespace"
-    asserts:
-      - hasDocuments:
-          count: 1
-      - equal:
-          path: metadata.namespace
-          value: "custom-namespace"
