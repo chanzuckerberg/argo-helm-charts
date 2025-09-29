@@ -195,6 +195,21 @@ global: # @schema description: Global configuration for the stack - this serves 
     existingClaim: "" # @schema description: Existing PVC name
     mountPath: "" # @schema description: Mount path for the PVC
 
+  s3Storage:
+    enabled: false # @schema description: Enable S3 CSI storage
+    bucketName: "" # @schema description: S3 bucket name
+    region: "us-west-2" # @schema description: AWS region
+    capacity: "5Gi" # @schema description: Storage capacity
+    accessModes: # @schema type: array; item: string; itemEnum: [ReadWriteOnce, ReadOnlyMany, ReadWriteMany, ReadWriteOncePod]; description: Access modes for the S3 storage
+      - ReadWriteMany
+    reclaimPolicy: "Retain" # @schema description: Reclaim policy for the PV
+    pvName: "" # @schema description: Custom PV name (auto-generated if empty)
+    pvcName: "" # @schema description: Custom PVC name (auto-generated if empty)
+    volumeHandle: "" # @schema description: CSI volume handle (auto-generated if empty)
+    labels: {} # @schema type: object; description: Additional labels for PV/PVC
+    annotations: {} # @schema type: object; description: Additional annotations for PV/PVC
+    volumeAttributes: {} # @schema type: object; description: Additional CSI volume attributes
+
   oidcProxy:
     enabled: false # @schema description: Enable OIDC proxy
     image:
