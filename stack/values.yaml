@@ -206,7 +206,6 @@ global: # @schema description: Global configuration for the stack - this serves 
     pvName: "" # @schema description: Custom PV name (auto-generated if empty)
     pvcName: "" # @schema description: Custom PVC name (auto-generated if empty)
     volumeHandle: "" # @schema description: CSI volume handle (auto-generated if empty)
-    namespace: "" # @schema description: Namespace for PV/PVC (uses release namespace if empty)
     labels: {} # @schema type: object; description: Additional labels for PV/PVC
     annotations: {} # @schema type: object; description: Additional annotations for PV/PVC
     volumeAttributes: {} # @schema type: object; description: Additional CSI volume attributes
