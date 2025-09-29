@@ -692,10 +692,6 @@
               "description": "Additional labels for PV/PVC",
               "type": "object"
             },
-            "namespace": {
-              "description": "Namespace for PV/PVC (uses release namespace if empty)",
-              "type": "string"
-            },
             "pvName": {
               "description": "Custom PV name (auto-generated if empty)",
               "type": "string"

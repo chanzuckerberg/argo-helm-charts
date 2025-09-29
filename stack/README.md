@@ -1791,21 +1791,20 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
-| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
-| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
-| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
-| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
-| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
-| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
-| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
-| - [namespace](#cronJobs_pattern1_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
-| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
-| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
-| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
-| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
-| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                           |
+| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------- |
+| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage             |
+| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC           |
+| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                              |
+| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                            |
+| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                       |
+| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                |
+| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)    |
+| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)   |
+| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                   |
+| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                  |
+| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
+| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
 ##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.30.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
@@ -1888,16 +1887,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_namespace"></a>2.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > namespace`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Namespace for PV/PVC (uses release namespace if empty)
-
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -1906,7 +1896,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -1915,7 +1905,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -1924,7 +1914,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -1933,7 +1923,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1943,7 +1933,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -4004,21 +3994,20 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                  | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
-| --------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
-| - [accessModes](#global_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
-| - [annotations](#global_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
-| - [bucketName](#global_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
-| - [capacity](#global_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
-| - [enabled](#global_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
-| - [labels](#global_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
-| - [namespace](#global_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
-| - [pvName](#global_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
-| - [pvcName](#global_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
-| - [reclaimPolicy](#global_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
-| - [region](#global_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [volumeAttributes](#global_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
-| - [volumeHandle](#global_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+| Property                                                  | Pattern | Type                      | Deprecated | Definition | Title/Description                           |
+| --------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------- |
+| - [accessModes](#global_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage             |
+| - [annotations](#global_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC           |
+| - [bucketName](#global_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                              |
+| - [capacity](#global_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                            |
+| - [enabled](#global_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                       |
+| - [labels](#global_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                |
+| - [pvName](#global_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)    |
+| - [pvcName](#global_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)   |
+| - [reclaimPolicy](#global_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                   |
+| - [region](#global_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                  |
+| - [volumeAttributes](#global_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
+| - [volumeHandle](#global_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
 #### <a name="global_s3Storage_accessModes"></a>3.30.1. Property `stack > global > s3Storage > accessModes`
 
@@ -4101,16 +4090,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-#### <a name="global_s3Storage_namespace"></a>3.30.7. Property `stack > global > s3Storage > namespace`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Namespace for PV/PVC (uses release namespace if empty)
-
-#### <a name="global_s3Storage_pvName"></a>3.30.8. Property `stack > global > s3Storage > pvName`
+#### <a name="global_s3Storage_pvName"></a>3.30.7. Property `stack > global > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -4119,7 +4099,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-#### <a name="global_s3Storage_pvcName"></a>3.30.9. Property `stack > global > s3Storage > pvcName`
+#### <a name="global_s3Storage_pvcName"></a>3.30.8. Property `stack > global > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -4128,7 +4108,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-#### <a name="global_s3Storage_reclaimPolicy"></a>3.30.10. Property `stack > global > s3Storage > reclaimPolicy`
+#### <a name="global_s3Storage_reclaimPolicy"></a>3.30.9. Property `stack > global > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -4137,7 +4117,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-#### <a name="global_s3Storage_region"></a>3.30.11. Property `stack > global > s3Storage > region`
+#### <a name="global_s3Storage_region"></a>3.30.10. Property `stack > global > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -4146,7 +4126,7 @@ Must be one of:
 
 **Description:** AWS region
 
-#### <a name="global_s3Storage_volumeAttributes"></a>3.30.12. Property `stack > global > s3Storage > volumeAttributes`
+#### <a name="global_s3Storage_volumeAttributes"></a>3.30.11. Property `stack > global > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4156,7 +4136,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-#### <a name="global_s3Storage_volumeHandle"></a>3.30.13. Property `stack > global > s3Storage > volumeHandle`
+#### <a name="global_s3Storage_volumeHandle"></a>3.30.12. Property `stack > global > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -6235,21 +6215,20 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
-| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
-| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
-| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
-| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
-| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
-| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
-| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
-| - [namespace](#cronJobs_pattern1_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
-| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
-| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
-| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
-| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
-| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                           |
+| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------- |
+| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage             |
+| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC           |
+| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                              |
+| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                            |
+| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                       |
+| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                |
+| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)    |
+| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)   |
+| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                   |
+| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                  |
+| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
+| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
 ##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.30.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
@@ -6332,16 +6311,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_namespace"></a>4.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > namespace`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Namespace for PV/PVC (uses release namespace if empty)
-
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -6350,7 +6320,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -6359,7 +6329,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -6368,7 +6338,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -6377,7 +6347,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6387,7 +6357,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -8466,21 +8436,20 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                                      |
-| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------------------ |
-| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage                        |
-| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC                      |
-| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                                         |
-| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                                       |
-| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                                  |
-| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                           |
-| - [namespace](#cronJobs_pattern1_s3Storage_namespace )               | No      | string                    | No         | -          | Namespace for PV/PVC (uses release namespace if empty) |
-| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)               |
-| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)              |
-| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                              |
-| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                             |
-| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes                       |
-| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty)            |
+| Property                                                             | Pattern | Type                      | Deprecated | Definition | Title/Description                           |
+| -------------------------------------------------------------------- | ------- | ------------------------- | ---------- | ---------- | ------------------------------------------- |
+| - [accessModes](#cronJobs_pattern1_s3Storage_accessModes )           | No      | array of enum (of string) | No         | -          | Access modes for the S3 storage             |
+| - [annotations](#cronJobs_pattern1_s3Storage_annotations )           | No      | object                    | No         | -          | Additional annotations for PV/PVC           |
+| - [bucketName](#cronJobs_pattern1_s3Storage_bucketName )             | No      | string                    | No         | -          | S3 bucket name                              |
+| - [capacity](#cronJobs_pattern1_s3Storage_capacity )                 | No      | string                    | No         | -          | Storage capacity                            |
+| - [enabled](#cronJobs_pattern1_s3Storage_enabled )                   | No      | boolean                   | No         | -          | Enable S3 CSI storage                       |
+| - [labels](#cronJobs_pattern1_s3Storage_labels )                     | No      | object                    | No         | -          | Additional labels for PV/PVC                |
+| - [pvName](#cronJobs_pattern1_s3Storage_pvName )                     | No      | string                    | No         | -          | Custom PV name (auto-generated if empty)    |
+| - [pvcName](#cronJobs_pattern1_s3Storage_pvcName )                   | No      | string                    | No         | -          | Custom PVC name (auto-generated if empty)   |
+| - [reclaimPolicy](#cronJobs_pattern1_s3Storage_reclaimPolicy )       | No      | string                    | No         | -          | Reclaim policy for the PV                   |
+| - [region](#cronJobs_pattern1_s3Storage_region )                     | No      | string                    | No         | -          | AWS region                                  |
+| - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
+| - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
 ##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>5.1.30.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
@@ -8563,16 +8532,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_namespace"></a>5.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > namespace`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Namespace for PV/PVC (uses release namespace if empty)
-
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>5.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>5.1.30.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -8581,7 +8541,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>5.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>5.1.30.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -8590,7 +8550,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>5.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>5.1.30.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -8599,7 +8559,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>5.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>5.1.30.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -8608,7 +8568,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>5.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>5.1.30.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8618,7 +8578,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>5.1.30.13. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>5.1.30.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
