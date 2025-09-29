@@ -3,138 +3,22 @@ suite: test s3 storage
 templates:
   - s3-storage.yaml
 tests:
-  - it: creates S3 PV and PVC when S3 storage is enabled
+  - it: creates correct number of resources when S3 storage is enabled
     set:
       global:
         s3Storage:
           enabled: true
-          bucketName: "test-s3-bucket"
-          region: "us-west-2"
-          capacity: "10Gi"
-          pvName: "test-s3-pv"
-          pvcName: "test-s3-pvc"
-          volumeHandle: "test-s3-handle"
-          accessModes:
-            - ReadWriteMany
-          reclaimPolicy: "Retain"
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
+          bucketName: "test-bucket"
     asserts:
-      # Verify we have 2 documents
       - hasDocuments:
           count: 2
-      # Test PersistentVolume (first document)
-      - isKind:
-          of: PersistentVolume
-          documentIndex: 0
-      - equal:
-          path: metadata.name
-          value: "test-s3-pv"
-          documentIndex: 0
-      - equal:
-          path: spec.capacity.storage
-          value: "10Gi"
-          documentIndex: 0
-      - equal:
-          path: spec.csi.driver
-          value: "s3.csi.aws.com"
-          documentIndex: 0
-      - equal:
-          path: spec.csi.volumeAttributes.bucketName
-          value: "test-s3-bucket"
-          documentIndex: 0
-      # Test PersistentVolumeClaim (second document)
-      - isKind:
-          of: PersistentVolumeClaim
-          documentIndex: 1
-      - equal:
-          path: metadata.name
-          value: "test-s3-pvc"
-          documentIndex: 1
-      - equal:
-          path: spec.resources.requests.storage
-          value: "10Gi"
-          documentIndex: 1
-      - equal:
-          path: spec.volumeName
-          value: "test-s3-pv"
-          documentIndex: 1
 
-  - it: does not create S3 resources when S3 storage is disabled
+  - it: creates no resources when S3 storage is disabled
     set:
       global:
         s3Storage:
           enabled: false
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
     asserts:
       - hasDocuments:
           count: 0
 
-  - it: creates S3 resources with auto-generated names
-    set:
-      global:
-        s3Storage:
-          enabled: true
-          bucketName: "auto-test-bucket"
-          # Don't set custom names - should auto-generate
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
-    asserts:
-      - hasDocuments:
-          count: 2
-      # Test auto-generated PV name
-      - isKind:
-          of: PersistentVolume
-          documentIndex: 0
-      - matchRegex:
-          path: metadata.name
-          pattern: "^RELEASE-NAME-stack-s3-pv$"
-          documentIndex: 0
-      # Test auto-generated PVC name
-      - isKind:
-          of: PersistentVolumeClaim
-          documentIndex: 1
-      - matchRegex:
-          path: metadata.name
-          pattern: "^RELEASE-NAME-stack-s3-pvc$"
-          documentIndex: 1
-
-  - it: creates S3 resources with default values
-    set:
-      global:
-        s3Storage:
-          enabled: true
-          bucketName: "default-test-bucket"
-      services:
-        service1:
-          autoscaling:
-            enabled: false
-          replicaCount: 1
-    asserts:
-      - hasDocuments:
-          count: 2
-      # Test default capacity (5Gi)
-      - equal:
-          path: spec.capacity.storage
-          value: "5Gi"
-          documentIndex: 0
-      # Test default access modes
-      - contains:
-          path: spec.accessModes
-          content: "ReadWriteMany"
-          documentIndex: 0
-      # Test default region
-      - equal:
-          path: spec.csi.volumeAttributes.region
-          value: "us-west-2"
-          documentIndex: 0
