@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.15.0...stack-v2.16.0) (2025-09-29)
+
+
+### Features
+
+* Add s3 support to stack chart ([#283](https://github.com/chanzuckerberg/argo-helm-charts/issues/283)) ([46a08cd](https://github.com/chanzuckerberg/argo-helm-charts/commit/46a08cd73d894d04d5cdc069ee51ff13af8837d4))
+
 ## [2.15.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.14.0...stack-v2.15.0) (2025-09-23)
 
 
