@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/basic-auth-secret",
+  "title": "basic-auth-secret",
+  "type": "object",
+  "properties": {
+    "externalSecret": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the external secret resource to create",
+          "type": "string"
+        },
+        "secretStoreRef": {
+          "description": "Name of the secret store to use for external secrets",
+          "type": "string"
+        }
+      }
+    },
+    "keyPrefix": {
+      "description": "Key prefix for the secret keys in the external secret store",
+      "type": "string"
+    }
+  }
+}
