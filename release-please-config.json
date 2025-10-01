@@ -34,6 +34,9 @@
     },
     "argo-project": {
       "package-name": "argo-project"
+    },
+    "basic-auth-secret": {
+      "package-name": "basic-auth-secret"
     }
   }
 }

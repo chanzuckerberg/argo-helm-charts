@@ -1,0 +1,5 @@
+externalSecret:
+  name: central-loki-basic-auth # @schema description: Name of the external secret resource to create
+  secretStoreRef: aws-secretsmanager # @schema description: Name of the secret store to use for external secrets
+
+keyPrefix: prod-central-o11y/central-loki # @schema description: Key prefix for the secret keys in the external secret store
