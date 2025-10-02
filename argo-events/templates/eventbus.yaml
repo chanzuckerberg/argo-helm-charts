@@ -1,0 +1,41 @@
+{{- if .Values.eventbus.jetstream }}
+{{- range $name, $instance := .Values.eventbus.jetstream }}
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: {{ $name | default "default"  }}
+spec:
+  jetstream:
+    version: {{ $instance.version | default "latest" }}
+    replicas: {{ $instance.replicas | default 1 }}
+    {{- include "argo-events.jetstream.optionalFields" $instance }}
+---
+{{- end }}
+{{- end }}
+{{- if .Values.eventbus.kafka }}
+{{- range $name, $instance := .Values.eventbus.kafka }}
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: {{ $name }}
+spec:
+  kafka:
+    url: {{ $instance.url | default "" }}
+    topic: {{ $instance.topic | default (printf "%s-%s" $.Release.Namespace "kafka-eventbus") }}
+    version: {{ $instance.version | default "3.7.0" }}
+    {{- include "argo-events.kafka.optionalFields" $instance }}
+---
+{{- end }}
+{{- end }}
+{{- if .Values.eventbus.nats }}
+{{- range $name, $instance := .Values.eventbus.nats }}
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: {{ $name }}
+spec:
+  nats:
+    {{- include "argo-events.nats.optionalFields" $instance }}
+---
+{{- end }}
+{{- end }}

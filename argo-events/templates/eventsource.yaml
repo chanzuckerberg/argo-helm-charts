@@ -1,0 +1,31 @@
+{{- include "argo-events.eventsource.validateHaStrategy" . -}}
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: {{ include "argo-events.eventsource.name" .Values.eventsources }}
+spec:
+  {{- if .Values.eventsources.webhook }}
+  service:
+    ports:
+      {{- range $webhookName, $webhookValue := .Values.eventsources.webhook }}
+      - port: {{ $webhookValue.port | default "12000" }}
+        targetPort: {{ $webhookValue.port | default "12000" }}
+     {{- end }}
+  webhook:
+    # event-source can run multiple HTTP servers. Simply define a unique port to start a new HTTP server
+    {{- range $webhookName, $webhookValue := .Values.eventsources.webhook }}
+      {{ $webhookName }}:
+        port: {{ $webhookValue.port | default "12000" }}
+        endpoint: {{ $webhookValue.endpoint | default "/example" }}
+        method: {{ $webhookValue.method | default "POST" }}
+     {{- end }}
+  {{- end }}
+  {{- if get .Values.eventsources "aws-sqs" }}
+  sqs:
+    {{- range $sqsName, $sqsValue := get .Values.eventsources "aws-sqs" }}
+      {{ $sqsName }}:
+        region: {{ $sqsValue.region | default "us-east-1" }}
+        queue: {{ $sqsValue.queue | default "my-queue" }}
+        waitTimeSeconds: {{ $sqsValue.waitTimeSeconds | default 20 }}
+    {{- end }}
+  {{- end }}
