@@ -81,7 +81,7 @@ tests:
     asserts:
       - equal:
           path: spec.jobTemplate.spec.template.spec.containers[0].image
-          value: "bitnami/kubectl:latest"
+          value: "533267185808.dkr.ecr.us-west-2.amazonaws.com/docker.io/central/bitnami/kubectl:latest"
 
   - it: should use custom runner image when provided
     set:

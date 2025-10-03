@@ -7,5 +7,5 @@ target:
   namespace: default # @schema description: The namespace of the deployment to restart.
 
 runner:
-  image: bitnami/kubectl:latest # @schema description: The Docker image to use for the restarter job.
+  image: 533267185808.dkr.ecr.us-west-2.amazonaws.com/docker.io/central/bitnami/kubectl:latest # @schema description: The Docker image to use for the restarter job.
   
