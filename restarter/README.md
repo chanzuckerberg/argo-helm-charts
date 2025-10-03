@@ -2,11 +2,11 @@
 
 **Title:** restarter
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 | Property                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                |
 | ------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
@@ -26,11 +26,11 @@
 
 ## <a name="runner"></a>2. Property `restarter > runner`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 | Property                  | Pattern | Type   | Deprecated | Definition | Title/Description                              |
 | ------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------- |
@@ -56,11 +56,11 @@
 
 ## <a name="target"></a>4. Property `restarter > target`
 
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
 | Property                            | Pattern | Type   | Deprecated | Definition | Title/Description                           |
 | ----------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------- |
