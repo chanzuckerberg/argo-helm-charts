@@ -1,0 +1,171 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test eventsource.yaml
+templates:
+  - eventsource.yaml
+
+tests:
+  - it: should render a webhook eventsource resource
+    set:
+      eventsources:
+        webhook:
+          example:
+            endpoint: "example"
+            method: "POST"
+            port: "12000"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: webhook
+      - equal:
+          path: spec.service
+          value:
+            ports:
+              - port: 12000
+                targetPort: 12000
+      - equal:
+          path: spec.webhook
+          value:
+            example:
+              port: 12000
+              endpoint: example
+              method: POST
+  - it: should render one webhook eventsource resource but with multiple ports
+    set:
+      eventsources:
+        webhook:
+          example:
+            endpoint: "example"
+            method: "POST"
+            port: "12000"
+          example2:
+            endpoint: "example2"
+            method: "GET"
+            port: "13000"
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: webhook
+      - equal:
+          path: spec.service
+          value:
+            ports:
+              - port: 12000
+                targetPort: 12000
+              - port: 13000
+                targetPort: 13000
+      - equal:
+          path: spec.webhook
+          value:
+            example:
+              port: 12000
+              endpoint: example
+              method: POST
+            example2:
+              port: 13000
+              endpoint: example2
+              method: GET
+
+  - it: should render a sqs eventsource resource
+    set:
+      eventsources:
+        aws-sqs:
+          example:
+            region: "us-east-1"
+            queue: "my-queue"
+            waitTimeSeconds: 20
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: aws-sqs
+      - equal:
+          path: spec.sqs
+          value:
+            example:
+              region: us-east-1
+              queue: my-queue
+              waitTimeSeconds: 20
+  - it: should render a sqs eventsource resource with multiple sqs listeners
+    set:
+      eventsources:
+        aws-sqs:
+          example:
+            region: "us-east-1"
+            queue: "my-queue"
+            waitTimeSeconds: 20
+          example2:
+            region: "us-west-2"
+            queue: "my-queue-2"
+            waitTimeSeconds: 30
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: aws-sqs
+      - equal:
+          path: spec.sqs
+          value:
+            example:
+              region: us-east-1
+              queue: my-queue
+              waitTimeSeconds: 20
+            example2:
+              region: us-west-2
+              queue: my-queue-2
+              waitTimeSeconds: 30
+
+  - it: should render one eventsource resources with sqs and webhook kind
+    set:
+      eventsources:
+        isMixedEventSource: true
+        webhook:
+          example:
+            endpoint: "example"
+            method: "POST"
+            port: "12000"
+        aws-sqs:
+          example:
+            region: "us-east-1"
+            queue: "my-queue"
+            waitTimeSeconds: 20
+
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EventSource
+      - equal:
+          path: metadata.name
+          value: mixed-event-source
+      - equal:
+          path: spec.webhook
+          value:
+            example:
+              port: 12000
+              endpoint: example
+              method: POST
+      - equal:
+          path: spec.sqs
+          value:
+            example:
+              region: us-east-1
+              queue: my-queue
+              waitTimeSeconds: 20
