@@ -4,6 +4,10 @@
   "title": "stack",
   "type": "object",
   "properties": {
+    "argo-rollouts": {
+      "description": "Allows values for the argo-roll Helm chart",
+      "type": "object"
+    },
     "argus-config": {
       "description": "Allows values for the argus-config Helm chart",
       "type": "object"
@@ -118,6 +122,15 @@
           "items": {
             "type": "string"
           }
+        },
+        "deploymentKind": {
+          "description": "Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).",
+          "default": "Deployment",
+          "type": "string",
+          "enum": [
+            "Deployment",
+            "Rollout"
+          ]
         },
         "deploymentStage": {
           "description": "Deployment stage",
