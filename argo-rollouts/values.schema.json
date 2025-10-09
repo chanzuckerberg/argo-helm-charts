@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/argo-rollouts",
+  "title": "argo-rollouts",
+  "type": "object",
+  "properties": {
+    "global": {
+      "description": "Global parameters",
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "description": "Specifies the rollout strategy for the application.",
+          "default": "bluegreen",
+          "type": "object",
+          "properties": {
+            "bluegreen": {
+              "type": "object",
+              "properties": {
+                "activeService": {
+                  "description": "Name of the service that the rollout modifies as the active service.",
+                  "type": "string"
+                },
+                "autoPromotionEnabled": {
+                  "description": "indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.",
+                  "type": "boolean"
+                },
+                "prePromotionAnalysis": {
+                  "description": "configuration to run analysis before a selector switch",
+                  "$ref": "#/properties/rolloutAnalysis",
+                  "type": "object"
+                },
+                "previewService": {
+                  "description": "Name of the service that the rollout modifies as the preview service.",
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "rolloutAnalysis": {
+      "description": "defines a template that is used to create a analysisRun",
+      "type": "object",
+      "properties": {
+        "analysisRunMetadata": {
+          "description": "extra labels to add to the AnalysisRun",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "additional annotations to add to the AnalysisRun",
+              "type": "object",
+              "properties": {
+                "test": {
+                  "type": "string"
+                }
+              }
+            },
+            "labels": {
+              "description": "additional labels to add to the AnalysisRun",
+              "type": "object"
+            }
+          }
+        },
+        "args": {
+          "description": "the arguments that will be added to the AnalysisRuns",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "valueFrom": {
+                "type": "object",
+                "properties": {
+                  "fieldRef": {
+                    "type": "object",
+                    "properties": {
+                      "fieldPath": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "podTemplateHashValue": {
+                    "type": "string",
+                    "enum": [
+                      "Latest",
+                      "Stable"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "templates": {
+          "description": "reference to a list of analysis templates to combine for an AnalysisRun",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clusterScope": {
+                "description": "Whether to look for the templateName at cluster scope or namespace scope.",
+                "type": "boolean"
+              },
+              "templateName": {
+                "description": " name of the AnalysisTemplate to use for the rollout analysis",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "services": {
+      "description": "Services to deploy",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object",
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  }
+}
