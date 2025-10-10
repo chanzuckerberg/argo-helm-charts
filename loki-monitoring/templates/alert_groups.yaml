@@ -289,5 +289,61 @@ spec:
     labels: {}
     for: 5m
     isPaused: false
+  - uid: fev4nq6pv2k8xb
+    title: Loki PVC Low Disk Space
+    condition: C
+    data:
+      - refId: A
+        relativeTimeRange:
+          from: 600
+          to: 0
+        datasourceUid: prometheus
+        model:
+          datasource:
+              type: prometheus
+              uid: prometheus
+          disableTextWrap: false
+          editorMode: code
+          expr: min (kubelet_volume_stats_available_bytes{namespace="{{ .Values.loki.namespace }}"} / kubelet_volume_stats_capacity_bytes{namespace="{{ .Values.loki.namespace }}"}) by (persistentvolumeclaim)
+          fullMetaSearch: false
+          includeNullMetadata: true
+          instant: false
+          intervalMs: 1000
+          legendFormat: __auto
+          maxDataPoints: 43200
+          range: true
+          refId: A
+          useBackend: false
+      - refId: C
+        datasourceUid: __expr__
+        model:
+          conditions:
+              - evaluator:
+                  params:
+                      - 0.1
+                  type: lt
+                operator:
+                  type: and
+                query:
+                  params:
+                      - C
+                reducer:
+                  params: []
+                  type: min
+                type: query
+          datasource:
+              type: __expr__
+              uid: __expr__
+          expression: A
+          intervalMs: 1000
+          maxDataPoints: 43200
+          refId: C
+          type: threshold
+    noDataState: OK
+    execErrState: OK
+    annotations: {}
+    labels: {}
+    for: 5m
+    isPaused: false
 {{ end }}
 {{ end }}
