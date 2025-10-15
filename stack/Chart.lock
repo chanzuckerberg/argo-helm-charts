@@ -5,5 +5,5 @@ dependencies:
 - name: argo-rollouts
   repository: file://../argo-rollouts
   version: 0.1.0
-digest: sha256:109f2124e4d7a96529331299fe4afbe6cb07d89f10fb20d8e76659d14faac527
-generated: "2025-10-06T15:12:25.818062-07:00"
+digest: sha256:af4acc34fd3062cb8cce7c586087c19eec8ae526aedc6e6c7feb0ab64249e723
+generated: "2025-10-15T18:14:00.376753918Z"
