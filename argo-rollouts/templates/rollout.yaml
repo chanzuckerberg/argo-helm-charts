@@ -47,7 +47,7 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "service.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
       shareProcessNamespace: {{ .Values.shareProcessNamespace }}
       containers:
         - name: {{ .Chart.Name }}
@@ -76,7 +76,7 @@ spec:
             {{- include "container.probe" (omit .Values.startupProbe "enabled") | nindent 12 }}
           {{- end }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources | nindent 12 -}}
           {{- if or (and .Values.persistence.enabled .Values.persistence.mountPath) .Values.volumeMounts}}
           volumeMounts:
             {{- if and .Values.persistence.enabled .Values.persistence.mountPath }}
@@ -90,16 +90,16 @@ spec:
           {{- include "service.configuration" . | nindent 10}}
           {{- include "service.nonsensitiveEnvVars" (list $global.Values.global .Values) | nindent 10 }}
         {{- if .Values.sidecars }}
-        {{- range $i, $container := .Values.sidecars }}
+        {{- range $i, $container := .Values.sidecars -}}
         {{- $imageDict := fromYaml (include "image" $container) }}
         {{- $container = mergeOverwrite $container $imageDict }}
-        {{- with omit $container "envFrom" "env" }}
-        - {{- toYaml . | nindent 10 }}
-          {{- include "service.configuration" $service | nindent 10}}
-        {{- end }}
-        {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
-        {{- end }}
-        {{- end }}
+        {{ with omit $container "envFrom" "env" -}}
+        - {{ toYaml . | nindent 10 -}}
+          {{ include "service.configuration" $service | nindent 10 -}}
+        {{- end -}}
+        {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 -}}
+        {{- end -}}
+        {{- end -}}
       {{if .Values.initContainers }}
       initContainers:
       {{- range $i, $container := .Values.initContainers }}
@@ -110,7 +110,7 @@ spec:
           {{- include "service.configuration" $service | nindent 10}}
       {{- end }}
       {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
-      {{- end }}
+      {{- end -}}
       {{end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       restartPolicy: {{ .Values.restartPolicy }}

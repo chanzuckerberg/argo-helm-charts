@@ -18,6 +18,9 @@ tests:
         deploymentKind: Rollout
       services:
         service1:
+          shareProcessNamespace: false 
+          podSecurityContext: {}
+          securityContext: {}
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -120,5 +123,30 @@ tests:
                   test: "value"
 
     asserts:
+      # --- manifest should match snapshot ---
+      - matchSnapshot: {}
+      # --- API and Metadata Checks ---
       - hasDocuments:
           count: 1
+      - isKind:
+          of: Rollout
+      - equal:
+          path: metadata.name
+          value: release-name-argo-rollouts-service1
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: ServerSideApply=false
+      - equal:
+          path: metadata.annotations["test"]
+          value: value
+      
+      # --- Basic Rollout Spec Checks ---
+      - equal:
+          path: spec.replicas
+          value: 2
+      - equal:
+          path: spec.revisionHistoryLimit
+          value: 3
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/service"]
+          value: release-name-argo-rollouts-service1

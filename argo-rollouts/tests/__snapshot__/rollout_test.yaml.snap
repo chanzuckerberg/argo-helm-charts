@@ -1,0 +1,125 @@
+should create a rollout when deployment kind is set to rollout:
+  1: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: ServerSideApply=false
+        test: value
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: argo-rollouts
+        app.kubernetes.io/service: release-name-argo-rollouts-service1
+        app.kubernetes.io/version: 1.16.0
+        helm.sh/chart: argo-rollouts-0.1.0
+      name: release-name-argo-rollouts-service1
+    spec:
+      replicas: 2
+      revisionHistoryLimit: 3
+      selector:
+        matchLabels:
+          app.kubernetes.io/service: release-name-argo-rollouts-service1
+      strategy:
+        bluegreen:
+          activeService: release-name-argo-rollouts-service1
+          autoPromotionEnabled: true
+          prePromotionAnalysis:
+            analysisRunMetadata:
+              annotations:
+                test: value
+            args:
+              - name: arg1
+                value: value1
+              - name: target-service-name
+                value: release-name-argo-rollouts-service1
+              - name: target-service-namespace
+                value: NAMESPACE
+              - name: preview-service-name
+                value: release-name-argo-rollouts-service1-preview
+              - name: preview-rs-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
+            templates:
+              - templateName: template1
+              - templateName: template2
+          previewService: release-name-argo-rollouts-service1-preview
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/instance: RELEASE-NAME
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: argo-rollouts
+            app.kubernetes.io/service: release-name-argo-rollouts-service1
+            app.kubernetes.io/version: 1.16.0
+            helm.sh/chart: argo-rollouts-0.1.0
+        spec:
+          containers:
+            - args:
+                - arg1
+                - arg2
+              command:
+                - command1
+                - command2
+              env: []
+              image: nginx:latest
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              name: argo-rollouts
+              ports:
+                - containerPort: 80
+                  name: http
+                  protocol: TCP
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              securityContext: {}
+              startupProbe: {}
+            - env: []
+              image: sidecar1:latest
+              name: sidecar1
+            - env: []
+              image: sidecar2:latest
+              name: sidecar2
+          dnsPolicy: null
+          initContainers:
+            - command:
+                - echo
+                - Hello World
+              env: []
+              image: alpine:latest
+              name: initContainer1
+          restartPolicy: null
+          securityContext: {}
+          serviceAccountName: release-name-argo-rollouts-service1
+          shareProcessNamespace: false
+          topologySpreadConstraints:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/service: release-name-argo-rollouts-service1
+              maxSkew: 2
+              topologyKey: topology.kubernetes.io/zone
+              whenUnsatisfiable: ScheduleAnyway
