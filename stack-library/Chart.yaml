@@ -1,0 +1,5 @@
+apiVersion: v2
+name: stack-library
+version: 0.1.0
+type: library
+description: Shared helper templates

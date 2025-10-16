@@ -1,0 +1,124 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test rollouts
+templates:
+  - rollout.yaml
+tests:
+  - it: should not create a rollout when deployment kind is not set to rollout
+    set:
+      global:
+        deploymentKind: Deployment
+
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create a rollout when deployment kind is set to rollout
+    set:
+      global:
+        deploymentKind: Rollout
+      services:
+        service1:
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: / 
+              port: http
+              scheme: HTTP
+            periodSeconds: 10 
+            successThreshold: 1 
+            timeoutSeconds: 1
+            initialDelaySeconds: 30
+          readinessProbe: 
+            failureThreshold: 3
+            httpGet: 
+              path: /
+              port: http 
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1 
+            timeoutSeconds: 1 
+            initialDelaySeconds: 30
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "100m" 
+              memory: "128Mi"
+          image:
+            repository: nginx 
+            pullPolicy: IfNotPresent
+            tag: "latest"
+          service:
+            type: ClusterIP
+            port: 80
+          startupProbe:
+            enabled: true
+          persistence:
+            enabled: false
+            pvc:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 8Gi
+              storageClassName: "default"
+              dataSource:
+                name: ""
+                kind: ""
+                apiGroup: "snapshot.storage.k8s.io/v1"
+            existingClaim: ""
+            mountPath: ""
+          appContext:
+            envContextConfigMapName: ""
+            stackContextConfigMapName: ""
+          appSecrets:
+            envSecret:
+              secretName: ""
+              secretKey: ""
+            stackSecret:
+              secretName: ""
+              secretKey: ""
+            clusterSecret:
+              secretName: ""
+              secretKey: ""
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          serviceAccount:
+            create: true
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "sidecar1:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+      rolloutAnalysis:
+        analysisRunMetadata:
+          annotations:
+            test: "value"
+        strategy:
+          bluegreen:
+            autoPromotionEnabled: true
+            prePromotionAnalysis:
+              templates:
+                - templateName: "template1"
+                - templateName: "template2"
+              args:
+                - name: "arg1"  
+                  value: "value1"
+              analysisRunMetadata:
+                annotations:
+                  test: "value"
+
+    asserts:
+      - hasDocuments:
+          count: 1

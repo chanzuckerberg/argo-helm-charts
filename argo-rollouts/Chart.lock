@@ -1,0 +1,6 @@
+dependencies:
+- name: stack-library
+  repository: file://../stack-library
+  version: 0.1.0
+digest: sha256:045b931335f5863000f78e0cd882d2d48a6802f4487443192dc10a1ec2f6f058
+generated: "2025-10-16T15:15:54.563041-07:00"
