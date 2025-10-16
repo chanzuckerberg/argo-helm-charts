@@ -104,7 +104,7 @@ should create a rollout when deployment kind is set to rollout:
             - env: []
               image: sidecar2:latest
               name: sidecar2
-          dnsPolicy: null
+          dnsPolicy: ClusterFirst
           initContainers:
             - command:
                 - echo
@@ -112,7 +112,7 @@ should create a rollout when deployment kind is set to rollout:
               env: []
               image: alpine:latest
               name: initContainer1
-          restartPolicy: null
+          restartPolicy: Always
           securityContext: {}
           serviceAccountName: release-name-argo-rollouts-service1
           shareProcessNamespace: false

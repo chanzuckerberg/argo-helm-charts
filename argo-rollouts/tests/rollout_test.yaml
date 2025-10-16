@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 suite: test rollouts
+values:
+  - values/default.yaml
 templates:
   - rollout.yaml
 tests:
@@ -18,73 +20,6 @@ tests:
         deploymentKind: Rollout
       services:
         service1:
-          shareProcessNamespace: false 
-          podSecurityContext: {}
-          securityContext: {}
-          livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: / 
-              port: http
-              scheme: HTTP
-            periodSeconds: 10 
-            successThreshold: 1 
-            timeoutSeconds: 1
-            initialDelaySeconds: 30
-          readinessProbe: 
-            failureThreshold: 3
-            httpGet: 
-              path: /
-              port: http 
-              scheme: HTTP
-            periodSeconds: 10
-            successThreshold: 1 
-            timeoutSeconds: 1 
-            initialDelaySeconds: 30
-          resources:
-            limits:
-              cpu: "1"
-              memory: "1Gi"
-            requests:
-              cpu: "100m" 
-              memory: "128Mi"
-          image:
-            repository: nginx 
-            pullPolicy: IfNotPresent
-            tag: "latest"
-          service:
-            type: ClusterIP
-            port: 80
-          startupProbe:
-            enabled: true
-          persistence:
-            enabled: false
-            pvc:
-              accessModes:
-                - ReadWriteOnce
-              resources:
-                requests:
-                  storage: 8Gi
-              storageClassName: "default"
-              dataSource:
-                name: ""
-                kind: ""
-                apiGroup: "snapshot.storage.k8s.io/v1"
-            existingClaim: ""
-            mountPath: ""
-          appContext:
-            envContextConfigMapName: ""
-            stackContextConfigMapName: ""
-          appSecrets:
-            envSecret:
-              secretName: ""
-              secretKey: ""
-            stackSecret:
-              secretName: ""
-              secretKey: ""
-            clusterSecret:
-              secretName: ""
-              secretKey: ""
           args: ["arg1", "arg2"]
           command: ["command1", "command2"]
           serviceAccount:
