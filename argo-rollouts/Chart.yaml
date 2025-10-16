@@ -24,6 +24,6 @@ version: 0.1.0
 appVersion: "1.16.0"
 
 dependencies:
-  - name: stack-library
+  - name: shared-library
     version: "0.1.0"
-    repository: "file://../stack-library"
+    repository: "file://../shared-library"

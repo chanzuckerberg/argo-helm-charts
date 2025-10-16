@@ -3,4 +3,4 @@ dependencies:
   repository: file://../shared-library
   version: 0.1.0
 digest: sha256:1ffcb76e68a52d13a25e6856e7f5949c0a17b6f0b8ac030789d5ff0c540c0580
-generated: "2025-10-16T15:51:38.672621-07:00"
+generated: "2025-10-16T15:51:51.671498-07:00"

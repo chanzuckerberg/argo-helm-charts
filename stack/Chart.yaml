@@ -31,6 +31,6 @@ dependencies:
     version: "0.1.0"
     repository: "file://../argo-rollouts"
     condition: argo-rollouts.enabled
-  - name: stack-library
+  - name: shared-library
     version: "0.1.0"
-    repository: "file://../stack-library"
+    repository: "file://../shared-library"

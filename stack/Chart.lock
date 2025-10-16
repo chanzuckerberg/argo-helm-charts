@@ -5,8 +5,8 @@ dependencies:
 - name: argo-rollouts
   repository: file://../argo-rollouts
   version: 0.1.0
-- name: stack-library
-  repository: file://../stack-library
+- name: shared-library
+  repository: file://../shared-library
   version: 0.1.0
-digest: sha256:fa0b537e2cd06931ab59608b727d7705e26f09e539ec11b40e3e4dd99f260fce
-generated: "2025-10-16T15:17:17.40281-07:00"
+digest: sha256:08ce796225cb649517f9c2be37011914f3006338d48643572f79be2ccbf6910b
+generated: "2025-10-16T15:51:44.763262-07:00"
