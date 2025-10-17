@@ -10,7 +10,7 @@
 
 | Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                            |
 | ---------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------ |
-| - [argo-rollouts](#argo-rollouts ) | No      | object | No         | -          | Allows values for the argo-roll Helm chart                                                                   |
+| - [argo-rollouts](#argo-rollouts ) | No      | object | No         | -          | Allows values for the argo-rollouts Helm chart                                                               |
 | - [argus-config](#argus-config )   | No      | object | No         | -          | Allows values for the argus-config Helm chart                                                                |
 | - [cronJobs](#cronJobs )           | No      | object | No         | -          | Cron jobs to deploy                                                                                          |
 | - [global](#global )               | No      | object | No         | -          | Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs |
@@ -25,7 +25,7 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Allows values for the argo-roll Helm chart
+**Description:** Allows values for the argo-rollouts Helm chart
 
 | Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |

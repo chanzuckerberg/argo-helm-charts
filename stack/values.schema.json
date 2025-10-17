@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "argo-rollouts": {
-      "description": "Allows values for the argo-roll Helm chart",
+      "description": "Allows values for the argo-rollouts Helm chart",
       "type": "object",
       "properties": {
         "enabled": {
