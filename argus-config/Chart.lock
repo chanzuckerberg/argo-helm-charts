@@ -1,6 +1,6 @@
 dependencies:
-- name: shared-library
-  repository: file://../shared-library
+- name: argus-shared-library
+  repository: file://../argus-shared-library
   version: 0.1.0
-digest: sha256:1ffcb76e68a52d13a25e6856e7f5949c0a17b6f0b8ac030789d5ff0c540c0580
-generated: "2025-10-16T15:51:51.671498-07:00"
+digest: sha256:b064a44ee9f6e1486bb000182ddc55a06b8929a19e5fed6e3d76bb5f556bf7c5
+generated: "2025-10-17T17:44:37.164817388Z"
