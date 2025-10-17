@@ -19,7 +19,6 @@ tests:
     set:
       global:
         deploymentKind: Rollout
-        rollout: {}
       services:
         service1:
           image:
