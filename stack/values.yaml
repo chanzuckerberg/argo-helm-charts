@@ -1,5 +1,5 @@
 argus-config: {} # @schema description: Allows values for the argus-config Helm chart
-# @schema description: Allows values for the argo-roll Helm chart
+# @schema description: Allows values for the argo-rollouts Helm chart
 argo-rollouts:
   enabled: false # Subchart is DISABLED by default
   # services:
