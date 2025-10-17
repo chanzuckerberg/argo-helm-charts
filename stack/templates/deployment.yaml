@@ -1,4 +1,6 @@
 {{ $global := . }}
+{{- $kind := default "Deployment" $global.Values.global.deploymentKind }}
+{{- if eq $kind "Deployment" }}
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -6,7 +8,6 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -147,5 +148,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
