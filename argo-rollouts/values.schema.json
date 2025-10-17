@@ -51,12 +51,7 @@
           "properties": {
             "annotations": {
               "description": "additional annotations to add to the AnalysisRun",
-              "type": "object",
-              "properties": {
-                "test": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             },
             "labels": {
               "description": "additional labels to add to the AnalysisRun",
