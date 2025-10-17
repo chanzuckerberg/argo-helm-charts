@@ -1,0 +1,103 @@
+suite: test rollout
+templates:
+  - rollout.yaml
+tests:
+  - it: should not render a rollout when deploymentKind is Deployment
+    set:
+      global:
+        deploymentKind: Deployment
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+    asserts:
+      - hasDocuments:
+          count: 0
+        
+  - it: should work and render a Rollout with default values
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "alpine:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+          service:
+            port: 3000
+    asserts:
+      - matchSnapshot: {}
+      - isKind:
+          of: Rollout
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: ServerSideApply=false
+  
+  - it: should work and render a Rollout with supplied values
+    set:
+      global:
+        deploymentKind: Rollout
+      rollout:
+        strategy:
+          blueGreen:
+            autoPromotionEnabled: true
+            prePromotionAnalysis:
+              templates:
+                - templateName: "template1"
+              args:
+                - name: "arg1"  
+                  value: "value1"
+              analysisRunMetadata:
+                annotations:
+                  test: "value"
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "alpine:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+          service:
+            port: 3000
+    asserts:
+      - matchSnapshot: {}
+      - isKind:
+          of: Rollout
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: ServerSideApply=false
+      
