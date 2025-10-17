@@ -3,7 +3,6 @@ name: Lint and Test Charts
 on: pull_request
 
 jobs:
-
   lint-test:
     strategy:
       matrix:
@@ -43,6 +42,16 @@ jobs:
             exit 1
           fi
 
+      - name: Validate chart template with default values for rollout
+        run: |
+          helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
+          helm dependency update ./stack
+          helm dependency build ./stack
+          output=$(helm template ./stack --values ./test-fixtures/values.yaml --values ./test-fixtures/rollout.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
+          if [[ $output -ne "error: no objects passed to apply" ]]; then
+            exit 1
+          fi
+
       - name: Validate chart template with invalid values
         run: |
           output=$(helm template ./stack --values ./test-fixtures/values1.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
@@ -61,10 +70,10 @@ jobs:
           helm dep update ./stack
           helm dependency build ./stack
           helm install test ./stack --wait --values ./test-fixtures/gha-cluster-values.yaml --debug
-          
+
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: "3.12"
           check-latest: true
 
       - name: Set up chart-testing

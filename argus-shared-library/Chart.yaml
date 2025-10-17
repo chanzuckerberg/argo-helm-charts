@@ -1,0 +1,5 @@
+apiVersion: v2
+name: argus-shared-library
+version: 0.1.0
+type: library
+description: A shared library that contains helper templates for Argus stack helm chart and all its subchart

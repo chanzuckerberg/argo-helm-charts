@@ -26,6 +26,9 @@
     "stack": {
       "package-name": "stack"
     },
+    "argus-shared-library": {
+      "package-name": "argus-shared-library"
+    },
     "grafana": {
       "package-name": "grafana"
     },
