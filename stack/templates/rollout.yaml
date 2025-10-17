@@ -1,31 +1,33 @@
 {{ $global := . }}
 {{- $kind := default "Deployment" .Values.global.deploymentKind }}
-{{- if eq $kind "Deployment" }}
-{{ range $serviceName, $serviceValues := .Values.services }}
+{{- if eq $kind "Rollout" }}
+{{- range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-
+{{- $blueGreenStrategy := $global.Values.rollout.strategy.blueGreen }}
+{{- $rolloutAnalysis := default dict (get $blueGreenStrategy "prePromotionAnalysis") }}
+{{- $rolloutAnalysisRunMetadata := default dict (get $rolloutAnalysis "analysisRunMetadata") }}
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ include "service.fullname" . }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml (mergeOverwrite 
+    {{- $rolloutAnnotations := default dict (get $rolloutAnalysisRunMetadata "annotations") }}
+    {{- toYaml (mergeOverwrite
                 (dict)
-                (fromYaml (include "stack.annotations" $service )) 
-      ) | nindent 4 }}
+                (fromYaml (include "stack.annotations" $service ))
+                (default dict $rolloutAnnotations) 
+                (dict "argocd.argoproj.io/sync-options" "ServerSideApply=false")
+    ) | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
-  progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -90,6 +92,7 @@ spec:
           {{- end }}
           {{- include "service.configuration" . | nindent 10}}
           {{- include "service.nonsensitiveEnvVars" (list $global.Values.global .Values) | nindent 10 }}
+        {{- if .Values.sidecars }}
         {{- range $i, $container := .Values.sidecars }}
         {{- $imageDict := fromYaml (include "image" $container) }}
         {{- $container = mergeOverwrite $container $imageDict }}
@@ -99,6 +102,8 @@ spec:
         {{- end }}
         {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
         {{- end }}
+        {{- end }}
+      {{if .Values.initContainers }}
       initContainers:
       {{- range $i, $container := .Values.initContainers }}
       {{- $imageDict := fromYaml (include "image" $container) }}
@@ -109,6 +114,7 @@ spec:
       {{- end }}
       {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $service.Values $container) | nindent 10 }}
       {{- end }}
+      {{end }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       restartPolicy: {{ .Values.restartPolicy }}
       {{- if or .Values.persistence.enabled .Values.volumes}}
@@ -147,6 +153,37 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+  strategy:
+    {{- $previewSeviceName := default (printf "%s-preview" (include "service.fullname" .)) $blueGreenStrategy.previewService }}
+    blueGreen:
+      activeService: {{ default (include "service.fullname" .) $blueGreenStrategy.activeService }}
+      previewService: {{ $previewSeviceName }}
+      autoPromotionEnabled: {{ default false $blueGreenStrategy.autoPromotionEnabled }}
+      {{- with $blueGreenStrategy.postInboundTraffic }}
+      postInboundTraffic:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $blueGreenStrategy.prePromotionAnalysis }}
+      prePromotionAnalysis:
+        templates:
+        {{- range .templates }}
+          - templateName: {{ .templateName }}
+        {{- end }}
+        {{- $templateArgs := list }}
+        {{- if .args }}
+        {{- $templateArgs = concat $templateArgs .args }}
+        {{- end }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-name" "value" (include "service.fullname" $service ))) }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "target-service-namespace" "value" $global.Release.Namespace )) }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "preview-service-name" "value" $previewSeviceName)) }}
+        {{- $templateArgs = concat $templateArgs (list (dict "name" "preview-rs-hash" "valueFrom" (dict "podTemplateHashValue" "Latest"))) }}
+        args:
+        {{- toYaml $templateArgs | nindent 12 }} 
+        {{- with $rolloutAnalysisRunMetadata }}
+        analysisRunMetadata:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- end }}
 ---
 {{- end }}

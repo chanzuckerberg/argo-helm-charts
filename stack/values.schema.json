@@ -119,6 +119,15 @@
             "type": "string"
           }
         },
+        "deploymentKind": {
+          "description": "Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).",
+          "default": "Deployment",
+          "type": "string",
+          "enum": [
+            "Deployment",
+            "Rollout"
+          ]
+        },
         "deploymentStage": {
           "description": "Deployment stage",
           "type": "string"
@@ -835,6 +844,115 @@
           "type": "object"
         }
       }
+    },
+    "rollout": {
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "description": "Specifies the rollout strategy for the application.",
+          "default": "blueGreen",
+          "type": "object",
+          "properties": {
+            "blueGreen": {
+              "default": "blueGreen",
+              "type": "object",
+              "properties": {
+                "activeService": {
+                  "description": "Name of the service that the rollout modifies as the active service.",
+                  "type": "string"
+                },
+                "autoPromotionEnabled": {
+                  "description": "indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.",
+                  "type": "boolean"
+                },
+                "prePromotionAnalysis": {
+                  "description": "configuration to run analysis before a selector switch",
+                  "$ref": "#/properties/rolloutAnalysis",
+                  "type": "object"
+                },
+                "previewService": {
+                  "description": "Name of the service that the rollout modifies as the preview service.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "rolloutAnalysis": {
+      "description": "defines a template that is used to create a analysisRun",
+      "type": "object",
+      "properties": {
+        "analysisRunMetadata": {
+          "description": "extra labels to add to the AnalysisRun",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "additional annotations to add to the AnalysisRun",
+              "type": "object"
+            },
+            "labels": {
+              "description": "additional labels to add to the AnalysisRun",
+              "type": "object"
+            }
+          }
+        },
+        "args": {
+          "description": "the arguments that will be added to the AnalysisRuns",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "valueFrom": {
+                "type": "object",
+                "properties": {
+                  "fieldRef": {
+                    "type": "object",
+                    "properties": {
+                      "fieldPath": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "podTemplateHashValue": {
+                    "type": "string",
+                    "enum": [
+                      "Latest",
+                      "Stable"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "templates": {
+          "description": "reference to a list of analysis templates to combine for an AnalysisRun",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clusterScope": {
+                "description": "Whether to look for the templateName at cluster scope or namespace scope.",
+                "type": "boolean"
+              },
+              "templateName": {
+                "description": " name of the AnalysisTemplate to use for the rollout analysis",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
     },
     "services": {
       "description": "Services to deploy",

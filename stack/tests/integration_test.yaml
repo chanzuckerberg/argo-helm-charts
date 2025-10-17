@@ -1,0 +1,49 @@
+suite: test deployment, preview/active service and rollout integration
+templates:
+  - "*.yaml"
+tests:
+  - it: when deploymentKind is Deployment, should only render deployment and active service
+    set:
+      global:
+        deploymentKind: Deployment
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+    asserts:
+      - hasDocuments:
+          count: 1
+        template: deployment.yaml
+      - hasDocuments:
+          count: 1
+        template: service.yaml
+      - hasDocuments:
+          count: 0
+        template: rollout.yaml
+      - hasDocuments:
+          count: 0
+        template: preview_service.yaml
+
+  - it: when deploymentKind is rollout, should only render rollout and both active/preview service
+    set:
+      global:
+        deploymentKind: Rollout
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: deployment.yaml
+      - hasDocuments:
+          count: 1
+        template: service.yaml
+      - hasDocuments:
+          count: 1
+        template: rollout.yaml
+      - hasDocuments:
+          count: 1
+        template: preview_service.yaml

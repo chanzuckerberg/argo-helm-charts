@@ -1,0 +1,54 @@
+suite: test preview service for rollout
+templates:
+  - preview_service.yaml
+tests:
+  - it: should not render a preview service when deploymentKind is Deployment
+    set:
+      global:
+        deploymentKind: Deployment
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should work and render a Preview Service with default values
+    set:
+      global:
+        deploymentKind: Rollout
+        rollout: {}
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "alpine:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+          service:
+            port: 3000
+    asserts:
+      - matchSnapshot: {}
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: ServerSideApply=false
+  
