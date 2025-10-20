@@ -17,7 +17,10 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    argocd.argoproj.io/sync-options: ServerSideApply=false
+    {{- toYaml (mergeOverwrite
+                (fromYaml (include "stack.annotations" $service ))
+                (dict "argocd.argoproj.io/sync-options" "ServerSideApply=false")
+    ) | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:

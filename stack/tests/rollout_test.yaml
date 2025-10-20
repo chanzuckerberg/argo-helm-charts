@@ -72,7 +72,7 @@ tests:
         service1:
           image:
             repository: "your-app"
-            tag: "latest"
+            tag: sha-mytag
           args: ["arg1", "arg2"]
           command: ["command1", "command2"]
           autoscaling:

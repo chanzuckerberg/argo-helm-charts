@@ -21,4 +21,5 @@ should work and render a Preview Service with default values:
           targetPort: http
       selector:
         app.kubernetes.io/service: release-name-stack-service1
+        rollouts-pod-template-hash: ClusterIP
       type: ClusterIP

@@ -173,7 +173,7 @@ should work and render a Rollout with supplied values:
                 - command1
                 - command2
               env: []
-              image: your-app:latest
+              image: your-app:sha-mytag
               imagePullPolicy: IfNotPresent
               livenessProbe:
                 failureThreshold: 3
