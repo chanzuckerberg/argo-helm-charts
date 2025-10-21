@@ -56,49 +56,50 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                           |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -          | Affinity for the pod                                                                                                                        |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -          | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -          | Arguments to pass to the command in the primary container                                                                                   |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -          | Autoscaling configuration                                                                                                                   |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -          | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -          | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -          | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -          | DNS policy for the pod                                                                                                                      |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -          | -                                                                                                                                           |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -          | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -          | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -          | -                                                                                                                                           |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -          | -                                                                                                                                           |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -          | Ingress configuration                                                                                                                       |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -          | List of init containers                                                                                                                     |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -          | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -          | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -          | -                                                                                                                                           |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -          | -                                                                                                                                           |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -          | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -          | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -          | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -          | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -          | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -          | Share process namespace                                                                                                                     |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -          | List of sidecars                                                                                                                            |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -          | Startup probe configuration                                                                                                                 |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -          | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
 
 #### <a name="cronJobs_pattern1_affinity"></a>2.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -1800,7 +1801,276 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>2.1.31. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_rollout"></a>2.1.31. Property `stack > cronJobs > ^.*$ > rollout`
+
+|                           |                      |
+| ------------------------- | -------------------- |
+| **Type**                  | `object`             |
+| **Required**              | No                   |
+| **Additional properties** | Any type allowed     |
+| **Defined in**            | #/properties/rollout |
+
+| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                   |
+| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------- |
+| - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
+| - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
+
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>2.1.31.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+**Description:** Specifies the rollout strategy for the application.
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>2.1.31.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+| Property                                                                                      | Pattern | Type    | Deprecated | Definition                      | Title/Description                                                                                                       |
+| --------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| - [activeService](#cronJobs_pattern1_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -                               | Name of the service that the rollout modifies as the active service.                                                    |
+| - [autoPromotionEnabled](#cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -                               | indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state. |
+| - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
+| - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>2.1.31.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the active service.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>2.1.31.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>2.1.31.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+
+|                           |                              |
+| ------------------------- | ---------------------------- |
+| **Type**                  | `object`                     |
+| **Required**              | No                           |
+| **Additional properties** | Any type allowed             |
+| **Defined in**            | #/properties/rolloutAnalysis |
+
+**Description:** configuration to run analysis before a selector switch
+
+| Property                                                                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [analysisRunMetadata](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata ) | No      | object          | No         | -          | extra labels to add to the AnalysisRun                                  |
+| - [args](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args )                               | No      | array of object | No         | -          | the arguments that will be added to the AnalysisRuns                    |
+| - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
+| - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>2.1.31.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** extra labels to add to the AnalysisRun
+
+| Property                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                |
+| -------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------ |
+| - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
+| - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>2.1.31.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional annotations to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>2.1.31.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional labels to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>2.1.31.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** the arguments that will be added to the AnalysisRuns
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>2.1.31.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name )           | No      | string | No         | -          | -                 |
+| - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
+| - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>2.1.31.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>2.1.31.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>2.1.31.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
+| - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>2.1.31.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>2.1.31.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>2.1.31.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Latest"
+* "Stable"
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>2.1.31.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** reference to a list of analysis templates to combine for an AnalysisRun
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                       | Description |
+| ----------------------------------------------------------------------------------------------------- | ----------- |
+| [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>2.1.31.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
+| - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>2.1.31.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Whether to look for the templateName at cluster scope or namespace scope.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>2.1.31.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:**  name of the AnalysisTemplate to use for the rollout analysis
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>2.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the preview service.
+
+#### <a name="cronJobs_pattern1_s3Storage"></a>2.1.32. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1823,7 +2093,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.31.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.32.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -1844,7 +2114,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>2.1.31.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>2.1.32.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -1857,7 +2127,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>2.1.31.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>2.1.32.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1867,7 +2137,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>2.1.31.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>2.1.32.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -1876,7 +2146,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>2.1.31.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>2.1.32.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -1885,7 +2155,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>2.1.31.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>2.1.32.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1894,7 +2164,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>2.1.31.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>2.1.32.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1904,7 +2174,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.31.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.32.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -1913,7 +2183,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.31.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.32.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -1922,7 +2192,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.31.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.32.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -1931,7 +2201,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.31.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.32.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -1940,7 +2210,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.31.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.32.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1950,7 +2220,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.31.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.32.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -1959,7 +2229,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>2.1.32. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>2.1.33. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1969,7 +2239,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>2.1.33. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>2.1.34. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1984,7 +2254,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>2.1.33.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>2.1.34.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -1993,7 +2263,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>2.1.33.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>2.1.34.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -2002,7 +2272,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.34. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.35. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2019,7 +2289,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.34.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.35.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2029,7 +2299,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.34.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.35.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -2038,7 +2308,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.34.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.35.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -2047,7 +2317,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.34.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.35.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -2056,7 +2326,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.35. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.36. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -2065,7 +2335,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>2.1.36. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>2.1.37. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -2082,7 +2352,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.37. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.38. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2102,7 +2372,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.37.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.38.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -2111,7 +2381,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.37.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.38.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2125,7 +2395,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.37.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.38.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2144,14 +2414,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.37.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.38.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.37.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.38.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -2160,7 +2430,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.37.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.38.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -2169,7 +2439,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.37.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.38.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -2178,7 +2448,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.37.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.38.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -2187,7 +2457,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.37.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.38.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -2196,7 +2466,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>2.1.38. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>2.1.39. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -2213,7 +2483,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.39. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.40. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -2230,7 +2500,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.40. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.41. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -2247,7 +2517,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>2.1.41. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>2.1.42. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -2274,49 +2544,50 @@ Must be one of:
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                          | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                           |
-| ----------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#global_affinity )                                   | No      | object           | No         | -          | Affinity for the pod                                                                                                                        |
-| - [annotations](#global_annotations )                             | No      | object           | No         | -          | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#global_appContext )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [appSecrets](#global_appSecrets )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [args](#global_args )                                           | No      | array of string  | No         | -          | Arguments to pass to the command in the primary container                                                                                   |
-| - [autoscaling](#global_autoscaling )                             | No      | object           | No         | -          | Autoscaling configuration                                                                                                                   |
-| - [command](#global_command )                                     | No      | array of string  | No         | -          | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#global_deploymentKind )                       | No      | enum (of string) | No         | -          | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#global_deploymentStage )                     | No      | string           | No         | -          | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#global_dnsPolicy )                                 | No      | enum (of string) | No         | -          | DNS policy for the pod                                                                                                                      |
-| - [env](#global_env )                                             | No      | array of object  | No         | -          | -                                                                                                                                           |
-| - [envFrom](#global_envFrom )                                     | No      | array of object  | No         | -          | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#global_fullnameOverride )                   | No      | string           | No         | -          | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [image](#global_image )                                         | No      | object           | No         | -          | -                                                                                                                                           |
-| - [imagePullSecrets](#global_imagePullSecrets )                   | No      | array of string  | No         | -          | -                                                                                                                                           |
-| - [ingress](#global_ingress )                                     | No      | object           | No         | -          | Ingress configuration                                                                                                                       |
-| - [initContainers](#global_initContainers )                       | No      | array            | No         | -          | List of init containers                                                                                                                     |
-| - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -          | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -          | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -          | -                                                                                                                                           |
-| - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [persistence](#global_persistence )                             | No      | object           | No         | -          | -                                                                                                                                           |
-| - [podAnnotations](#global_podAnnotations )                       | No      | object           | No         | -          | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#global_podLabels )                                 | No      | object           | No         | -          | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#global_podSecurityContext )               | No      | object           | No         | -          | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#global_progressDeadlineSeconds )     | No      | integer          | No         | -          | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#global_readinessProbe )                       | No      | object           | No         | -          | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#global_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
-| - [resources](#global_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#global_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
-| - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [securityContext](#global_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
-| - [service](#global_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
-| - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -          | Share process namespace                                                                                                                     |
-| - [sidecars](#global_sidecars )                                   | No      | array            | No         | -          | List of sidecars                                                                                                                            |
-| - [startupProbe](#global_startupProbe )                           | No      | object           | No         | -          | Startup probe configuration                                                                                                                 |
-| - [tolerations](#global_tolerations )                             | No      | array            | No         | -          | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#global_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                          | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
+| ----------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#global_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
+| - [annotations](#global_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
+| - [appContext](#global_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [appSecrets](#global_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [args](#global_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
+| - [autoscaling](#global_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
+| - [command](#global_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
+| - [deploymentKind](#global_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
+| - [deploymentStage](#global_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
+| - [dnsPolicy](#global_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
+| - [env](#global_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
+| - [envFrom](#global_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
+| - [fullnameOverride](#global_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
+| - [image](#global_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [imagePullSecrets](#global_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
+| - [ingress](#global_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
+| - [initContainers](#global_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
+| - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
+| - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
+| - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [persistence](#global_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [podAnnotations](#global_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
+| - [podLabels](#global_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
+| - [podSecurityContext](#global_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
+| - [progressDeadlineSeconds](#global_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
+| - [readinessProbe](#global_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
+| - [replicaCount](#global_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
+| - [resources](#global_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
+| - [restartPolicy](#global_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
+| - [rollout](#global_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
+| - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [securityContext](#global_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
+| - [service](#global_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
+| - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
+| - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
+| - [sidecars](#global_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
+| - [startupProbe](#global_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
+| - [tolerations](#global_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
+| - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
+| - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
+| - [volumes](#global_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
 
 ### <a name="global_affinity"></a>3.1. Property `stack > global > affinity`
 
@@ -4018,7 +4289,276 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-### <a name="global_s3Storage"></a>3.31. Property `stack > global > s3Storage`
+### <a name="global_rollout"></a>3.31. Property `stack > global > rollout`
+
+|                           |                      |
+| ------------------------- | -------------------- |
+| **Type**                  | `object`             |
+| **Required**              | No                   |
+| **Additional properties** | Any type allowed     |
+| **Defined in**            | #/properties/rollout |
+
+| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                   |
+| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------- |
+| - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
+| - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
+
+#### <a name="cronJobs_pattern1_rollout_strategy"></a>3.31.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+**Description:** Specifies the rollout strategy for the application.
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
+
+##### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>3.31.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+| Property                                                                                      | Pattern | Type    | Deprecated | Definition                      | Title/Description                                                                                                       |
+| --------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| - [activeService](#cronJobs_pattern1_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -                               | Name of the service that the rollout modifies as the active service.                                                    |
+| - [autoPromotionEnabled](#cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -                               | indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state. |
+| - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
+| - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>3.31.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the active service.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>3.31.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>3.31.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+
+|                           |                              |
+| ------------------------- | ---------------------------- |
+| **Type**                  | `object`                     |
+| **Required**              | No                           |
+| **Additional properties** | Any type allowed             |
+| **Defined in**            | #/properties/rolloutAnalysis |
+
+**Description:** configuration to run analysis before a selector switch
+
+| Property                                                                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [analysisRunMetadata](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata ) | No      | object          | No         | -          | extra labels to add to the AnalysisRun                                  |
+| - [args](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args )                               | No      | array of object | No         | -          | the arguments that will be added to the AnalysisRuns                    |
+| - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
+| - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>3.31.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** extra labels to add to the AnalysisRun
+
+| Property                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                |
+| -------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------ |
+| - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
+| - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>3.31.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional annotations to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>3.31.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional labels to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>3.31.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** the arguments that will be added to the AnalysisRuns
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>3.31.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name )           | No      | string | No         | -          | -                 |
+| - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
+| - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>3.31.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>3.31.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>3.31.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
+| - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>3.31.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>3.31.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>3.31.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Latest"
+* "Stable"
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>3.31.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** reference to a list of analysis templates to combine for an AnalysisRun
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                       | Description |
+| ----------------------------------------------------------------------------------------------------- | ----------- |
+| [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>3.31.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
+| - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>3.31.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Whether to look for the templateName at cluster scope or namespace scope.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>3.31.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:**  name of the AnalysisTemplate to use for the rollout analysis
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>3.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the preview service.
+
+### <a name="global_s3Storage"></a>3.32. Property `stack > global > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4041,7 +4581,7 @@ Must be one of:
 | - [volumeAttributes](#global_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#global_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-#### <a name="global_s3Storage_accessModes"></a>3.31.1. Property `stack > global > s3Storage > accessModes`
+#### <a name="global_s3Storage_accessModes"></a>3.32.1. Property `stack > global > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -4062,7 +4602,7 @@ Must be one of:
 | -------------------------------------------------------- | ----------- |
 | [accessModes items](#global_s3Storage_accessModes_items) | -           |
 
-##### <a name="global_s3Storage_accessModes_items"></a>3.31.1.1. stack > global > s3Storage > accessModes > accessModes items
+##### <a name="global_s3Storage_accessModes_items"></a>3.32.1.1. stack > global > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -4075,7 +4615,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-#### <a name="global_s3Storage_annotations"></a>3.31.2. Property `stack > global > s3Storage > annotations`
+#### <a name="global_s3Storage_annotations"></a>3.32.2. Property `stack > global > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4085,7 +4625,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-#### <a name="global_s3Storage_bucketName"></a>3.31.3. Property `stack > global > s3Storage > bucketName`
+#### <a name="global_s3Storage_bucketName"></a>3.32.3. Property `stack > global > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -4094,7 +4634,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-#### <a name="global_s3Storage_capacity"></a>3.31.4. Property `stack > global > s3Storage > capacity`
+#### <a name="global_s3Storage_capacity"></a>3.32.4. Property `stack > global > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -4103,7 +4643,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-#### <a name="global_s3Storage_enabled"></a>3.31.5. Property `stack > global > s3Storage > enabled`
+#### <a name="global_s3Storage_enabled"></a>3.32.5. Property `stack > global > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -4112,7 +4652,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-#### <a name="global_s3Storage_labels"></a>3.31.6. Property `stack > global > s3Storage > labels`
+#### <a name="global_s3Storage_labels"></a>3.32.6. Property `stack > global > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4122,7 +4662,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-#### <a name="global_s3Storage_pvName"></a>3.31.7. Property `stack > global > s3Storage > pvName`
+#### <a name="global_s3Storage_pvName"></a>3.32.7. Property `stack > global > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -4131,7 +4671,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-#### <a name="global_s3Storage_pvcName"></a>3.31.8. Property `stack > global > s3Storage > pvcName`
+#### <a name="global_s3Storage_pvcName"></a>3.32.8. Property `stack > global > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -4140,7 +4680,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-#### <a name="global_s3Storage_reclaimPolicy"></a>3.31.9. Property `stack > global > s3Storage > reclaimPolicy`
+#### <a name="global_s3Storage_reclaimPolicy"></a>3.32.9. Property `stack > global > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -4149,7 +4689,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-#### <a name="global_s3Storage_region"></a>3.31.10. Property `stack > global > s3Storage > region`
+#### <a name="global_s3Storage_region"></a>3.32.10. Property `stack > global > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -4158,7 +4698,7 @@ Must be one of:
 
 **Description:** AWS region
 
-#### <a name="global_s3Storage_volumeAttributes"></a>3.31.11. Property `stack > global > s3Storage > volumeAttributes`
+#### <a name="global_s3Storage_volumeAttributes"></a>3.32.11. Property `stack > global > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4168,7 +4708,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-#### <a name="global_s3Storage_volumeHandle"></a>3.31.12. Property `stack > global > s3Storage > volumeHandle`
+#### <a name="global_s3Storage_volumeHandle"></a>3.32.12. Property `stack > global > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -4177,7 +4717,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-### <a name="global_securityContext"></a>3.32. Property `stack > global > securityContext`
+### <a name="global_securityContext"></a>3.33. Property `stack > global > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4187,7 +4727,7 @@ Must be one of:
 
 **Description:** Security context
 
-### <a name="global_service"></a>3.33. Property `stack > global > service`
+### <a name="global_service"></a>3.34. Property `stack > global > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4202,7 +4742,7 @@ Must be one of:
 | - [port](#global_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#global_service_type ) | No      | string | No         | -          | Service type      |
 
-#### <a name="global_service_port"></a>3.33.1. Property `stack > global > service > port`
+#### <a name="global_service_port"></a>3.34.1. Property `stack > global > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -4211,7 +4751,7 @@ Must be one of:
 
 **Description:** Service port
 
-#### <a name="global_service_type"></a>3.33.2. Property `stack > global > service > type`
+#### <a name="global_service_type"></a>3.34.2. Property `stack > global > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -4220,7 +4760,7 @@ Must be one of:
 
 **Description:** Service type
 
-### <a name="global_serviceAccount"></a>3.34. Property `stack > global > serviceAccount`
+### <a name="global_serviceAccount"></a>3.35. Property `stack > global > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4237,7 +4777,7 @@ Must be one of:
 | - [create](#global_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#global_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-#### <a name="global_serviceAccount_annotations"></a>3.34.1. Property `stack > global > serviceAccount > annotations`
+#### <a name="global_serviceAccount_annotations"></a>3.35.1. Property `stack > global > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4247,7 +4787,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-#### <a name="global_serviceAccount_automount"></a>3.34.2. Property `stack > global > serviceAccount > automount`
+#### <a name="global_serviceAccount_automount"></a>3.35.2. Property `stack > global > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -4256,7 +4796,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-#### <a name="global_serviceAccount_create"></a>3.34.3. Property `stack > global > serviceAccount > create`
+#### <a name="global_serviceAccount_create"></a>3.35.3. Property `stack > global > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -4265,7 +4805,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-#### <a name="global_serviceAccount_name"></a>3.34.4. Property `stack > global > serviceAccount > name`
+#### <a name="global_serviceAccount_name"></a>3.35.4. Property `stack > global > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -4274,7 +4814,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-### <a name="global_shareProcessNamespace"></a>3.35. Property `stack > global > shareProcessNamespace`
+### <a name="global_shareProcessNamespace"></a>3.36. Property `stack > global > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -4283,7 +4823,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-### <a name="global_sidecars"></a>3.36. Property `stack > global > sidecars`
+### <a name="global_sidecars"></a>3.37. Property `stack > global > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -4300,7 +4840,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_startupProbe"></a>3.37. Property `stack > global > startupProbe`
+### <a name="global_startupProbe"></a>3.38. Property `stack > global > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4320,7 +4860,7 @@ Must be one of:
 | - [successThreshold](#global_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#global_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-#### <a name="global_startupProbe_enabled"></a>3.37.1. Property `stack > global > startupProbe > enabled`
+#### <a name="global_startupProbe_enabled"></a>3.38.1. Property `stack > global > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -4329,7 +4869,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-#### <a name="global_startupProbe_exec"></a>3.37.2. Property `stack > global > startupProbe > exec`
+#### <a name="global_startupProbe_exec"></a>3.38.2. Property `stack > global > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4343,7 +4883,7 @@ Must be one of:
 | ----------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#global_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-##### <a name="global_startupProbe_exec_command"></a>3.37.2.1. Property `stack > global > startupProbe > exec > command`
+##### <a name="global_startupProbe_exec_command"></a>3.38.2.1. Property `stack > global > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4362,14 +4902,14 @@ Must be one of:
 | -------------------------------------------------------- | ----------- |
 | [command items](#global_startupProbe_exec_command_items) | -           |
 
-###### <a name="global_startupProbe_exec_command_items"></a>3.37.2.1.1. stack > global > startupProbe > exec > command > command items
+###### <a name="global_startupProbe_exec_command_items"></a>3.38.2.1.1. stack > global > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_startupProbe_failureThreshold"></a>3.37.3. Property `stack > global > startupProbe > failureThreshold`
+#### <a name="global_startupProbe_failureThreshold"></a>3.38.3. Property `stack > global > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -4378,7 +4918,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-#### <a name="global_startupProbe_initialDelaySeconds"></a>3.37.4. Property `stack > global > startupProbe > initialDelaySeconds`
+#### <a name="global_startupProbe_initialDelaySeconds"></a>3.38.4. Property `stack > global > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4387,7 +4927,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-#### <a name="global_startupProbe_periodSeconds"></a>3.37.5. Property `stack > global > startupProbe > periodSeconds`
+#### <a name="global_startupProbe_periodSeconds"></a>3.38.5. Property `stack > global > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4396,7 +4936,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-#### <a name="global_startupProbe_successThreshold"></a>3.37.6. Property `stack > global > startupProbe > successThreshold`
+#### <a name="global_startupProbe_successThreshold"></a>3.38.6. Property `stack > global > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -4405,7 +4945,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-#### <a name="global_startupProbe_timeoutSeconds"></a>3.37.7. Property `stack > global > startupProbe > timeoutSeconds`
+#### <a name="global_startupProbe_timeoutSeconds"></a>3.38.7. Property `stack > global > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4414,7 +4954,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_tolerations"></a>3.38. Property `stack > global > tolerations`
+### <a name="global_tolerations"></a>3.39. Property `stack > global > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -4431,7 +4971,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_topologySpreadConstraints"></a>3.39. Property `stack > global > topologySpreadConstraints`
+### <a name="global_topologySpreadConstraints"></a>3.40. Property `stack > global > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -4448,7 +4988,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumeMounts"></a>3.40. Property `stack > global > volumeMounts`
+### <a name="global_volumeMounts"></a>3.41. Property `stack > global > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -4465,7 +5005,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumes"></a>3.41. Property `stack > global > volumes`
+### <a name="global_volumes"></a>3.42. Property `stack > global > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -4510,49 +5050,50 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                           |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -          | Affinity for the pod                                                                                                                        |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -          | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -          | Arguments to pass to the command in the primary container                                                                                   |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -          | Autoscaling configuration                                                                                                                   |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -          | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -          | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -          | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -          | DNS policy for the pod                                                                                                                      |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -          | -                                                                                                                                           |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -          | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -          | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -          | -                                                                                                                                           |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -          | -                                                                                                                                           |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -          | Ingress configuration                                                                                                                       |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -          | List of init containers                                                                                                                     |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -          | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -          | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -          | -                                                                                                                                           |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -          | -                                                                                                                                           |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -          | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -          | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -          | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -          | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -          | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -          | Share process namespace                                                                                                                     |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -          | List of sidecars                                                                                                                            |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -          | Startup probe configuration                                                                                                                 |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -          | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
 
 #### <a name="cronJobs_pattern1_affinity"></a>4.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -6254,7 +6795,276 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>4.1.31. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_rollout"></a>4.1.31. Property `stack > cronJobs > ^.*$ > rollout`
+
+|                           |                      |
+| ------------------------- | -------------------- |
+| **Type**                  | `object`             |
+| **Required**              | No                   |
+| **Additional properties** | Any type allowed     |
+| **Defined in**            | #/properties/rollout |
+
+| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                   |
+| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------- |
+| - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
+| - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
+
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>4.1.31.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+**Description:** Specifies the rollout strategy for the application.
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>4.1.31.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+| Property                                                                                      | Pattern | Type    | Deprecated | Definition                      | Title/Description                                                                                                       |
+| --------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| - [activeService](#cronJobs_pattern1_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -                               | Name of the service that the rollout modifies as the active service.                                                    |
+| - [autoPromotionEnabled](#cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -                               | indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state. |
+| - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
+| - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>4.1.31.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the active service.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>4.1.31.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>4.1.31.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+
+|                           |                              |
+| ------------------------- | ---------------------------- |
+| **Type**                  | `object`                     |
+| **Required**              | No                           |
+| **Additional properties** | Any type allowed             |
+| **Defined in**            | #/properties/rolloutAnalysis |
+
+**Description:** configuration to run analysis before a selector switch
+
+| Property                                                                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [analysisRunMetadata](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata ) | No      | object          | No         | -          | extra labels to add to the AnalysisRun                                  |
+| - [args](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args )                               | No      | array of object | No         | -          | the arguments that will be added to the AnalysisRuns                    |
+| - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
+| - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>4.1.31.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** extra labels to add to the AnalysisRun
+
+| Property                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                |
+| -------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------ |
+| - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
+| - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>4.1.31.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional annotations to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>4.1.31.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional labels to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>4.1.31.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** the arguments that will be added to the AnalysisRuns
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>4.1.31.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name )           | No      | string | No         | -          | -                 |
+| - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
+| - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>4.1.31.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>4.1.31.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>4.1.31.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
+| - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>4.1.31.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>4.1.31.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>4.1.31.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Latest"
+* "Stable"
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>4.1.31.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** reference to a list of analysis templates to combine for an AnalysisRun
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                       | Description |
+| ----------------------------------------------------------------------------------------------------- | ----------- |
+| [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>4.1.31.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
+| - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>4.1.31.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Whether to look for the templateName at cluster scope or namespace scope.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>4.1.31.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:**  name of the AnalysisTemplate to use for the rollout analysis
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>4.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the preview service.
+
+#### <a name="cronJobs_pattern1_s3Storage"></a>4.1.32. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6277,7 +7087,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.31.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.32.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -6298,7 +7108,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>4.1.31.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>4.1.32.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -6311,7 +7121,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>4.1.31.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>4.1.32.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6321,7 +7131,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>4.1.31.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>4.1.32.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -6330,7 +7140,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>4.1.31.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>4.1.32.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -6339,7 +7149,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>4.1.31.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>4.1.32.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6348,7 +7158,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>4.1.31.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>4.1.32.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6358,7 +7168,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.31.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.32.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -6367,7 +7177,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.31.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.32.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -6376,7 +7186,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.31.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.32.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -6385,7 +7195,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.31.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.32.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -6394,7 +7204,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.31.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.32.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6404,7 +7214,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.31.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.32.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -6413,7 +7223,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>4.1.32. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>4.1.33. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6423,7 +7233,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>4.1.33. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>4.1.34. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6438,7 +7248,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>4.1.33.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>4.1.34.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -6447,7 +7257,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>4.1.33.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>4.1.34.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -6456,7 +7266,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.34. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.35. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6473,7 +7283,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.34.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.35.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6483,7 +7293,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.34.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.35.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -6492,7 +7302,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.34.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.35.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -6501,7 +7311,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.34.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.35.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -6510,7 +7320,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.35. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.36. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -6519,7 +7329,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>4.1.36. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>4.1.37. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -6536,7 +7346,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.37. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.38. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6556,7 +7366,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.37.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.38.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6565,7 +7375,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.37.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.38.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6579,7 +7389,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.37.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.38.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6598,14 +7408,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.37.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.38.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.37.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.38.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -6614,7 +7424,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.37.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.38.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6623,7 +7433,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.37.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.38.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6632,7 +7442,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.37.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.38.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -6641,7 +7451,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.37.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.38.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6650,7 +7460,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>4.1.38. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>4.1.39. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -6667,7 +7477,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.39. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.40. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -6684,7 +7494,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.40. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.41. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -6701,7 +7511,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>4.1.41. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>4.1.42. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -6791,14 +7601,14 @@ Must be one of:
 
 **Description:** configuration to run analysis before a selector switch
 
-| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
-| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
-| - [analysisRunMetadata](#rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata ) | No      | object          | No         | -          | extra labels to add to the AnalysisRun                                  |
-| - [args](#rollout_strategy_blueGreen_prePromotionAnalysis_args )                               | No      | array of object | No         | -          | the arguments that will be added to the AnalysisRuns                    |
-| - [templates](#rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
-| - [](#rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
+| Property                                                                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [analysisRunMetadata](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata ) | No      | object          | No         | -          | extra labels to add to the AnalysisRun                                  |
+| - [args](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args )                               | No      | array of object | No         | -          | the arguments that will be added to the AnalysisRuns                    |
+| - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
+| - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>5.1.1.3.1. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>5.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6808,12 +7618,12 @@ Must be one of:
 
 **Description:** extra labels to add to the AnalysisRun
 
-| Property                                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description                                |
-| -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------ |
-| - [annotations](#rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
-| - [labels](#rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
+| Property                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                |
+| -------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------ |
+| - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
+| - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>5.1.1.3.1.1. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>5.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6823,7 +7633,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>5.1.1.3.1.2. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>5.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6833,7 +7643,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>5.1.1.3.2. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>5.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6850,39 +7660,11 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                           | Description |
-| ------------------------------------------------------------------------- | ----------- |
-| [args items](#rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>5.1.1.3.2.1. stack > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [name](#rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name )           | No      | string | No         | -          | -                 |
-| - [value](#rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
-| - [valueFrom](#rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
-
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>5.1.1.3.2.1.1. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>5.1.1.3.2.1.2. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>5.1.1.3.2.1.3. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>5.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6890,12 +7672,27 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                                                              | Pattern | Type             | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
-| - [fieldRef](#rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
-| - [podTemplateHashValue](#rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name )           | No      | string | No         | -          | -                 |
+| - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
+| - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>5.1.1.3.2.1.3.1. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>5.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>5.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>5.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6903,18 +7700,31 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [fieldPath](#rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
+| Property                                                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
+| - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>5.1.1.3.2.1.3.1.1. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>5.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>5.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>5.1.1.3.2.1.3.2. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>5.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -6925,7 +7735,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>5.1.1.3.3. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>5.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6942,11 +7752,11 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                     | Description |
-| ----------------------------------------------------------------------------------- | ----------- |
-| [templates items](#rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
+| Each item of this array must be                                                                       | Description |
+| ----------------------------------------------------------------------------------------------------- | ----------- |
+| [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>5.1.1.3.3.1. stack > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>5.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6954,12 +7764,12 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
-| ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
-| - [clusterScope](#rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
-| - [templateName](#rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
+| Property                                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
+| - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>5.1.1.3.3.1.1. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>5.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -6968,7 +7778,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>5.1.1.3.3.1.2. Property `stack > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>5.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -7210,49 +8020,50 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                           |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -          | Affinity for the pod                                                                                                                        |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -          | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -          | -                                                                                                                                           |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -          | Arguments to pass to the command in the primary container                                                                                   |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -          | Autoscaling configuration                                                                                                                   |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -          | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -          | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -          | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -          | DNS policy for the pod                                                                                                                      |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -          | -                                                                                                                                           |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -          | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -          | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -          | -                                                                                                                                           |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -          | -                                                                                                                                           |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -          | Ingress configuration                                                                                                                       |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -          | List of init containers                                                                                                                     |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -          | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -          | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -          | -                                                                                                                                           |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -          | -                                                                                                                                           |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -          | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -          | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -          | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -          | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -          | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -          | Number of replicas                                                                                                                          |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -          | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -          | Restart policy for the pod                                                                                                                  |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -          | -                                                                                                                                           |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -          | Security context                                                                                                                            |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -          | Service configuration                                                                                                                       |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -          | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -          | Share process namespace                                                                                                                     |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -          | List of sidecars                                                                                                                            |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -          | Startup probe configuration                                                                                                                 |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -          | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -          | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -          | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -          | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
 
 #### <a name="cronJobs_pattern1_affinity"></a>7.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -8954,7 +9765,276 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>7.1.31. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_rollout"></a>7.1.31. Property `stack > cronJobs > ^.*$ > rollout`
+
+|                           |                      |
+| ------------------------- | -------------------- |
+| **Type**                  | `object`             |
+| **Required**              | No                   |
+| **Additional properties** | Any type allowed     |
+| **Defined in**            | #/properties/rollout |
+
+| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                   |
+| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------- |
+| - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
+| - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
+
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>7.1.31.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+**Description:** Specifies the rollout strategy for the application.
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>7.1.31.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+| **Default**               | `"blueGreen"`    |
+
+| Property                                                                                      | Pattern | Type    | Deprecated | Definition                      | Title/Description                                                                                                       |
+| --------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| - [activeService](#cronJobs_pattern1_rollout_strategy_blueGreen_activeService )               | No      | string  | No         | -                               | Name of the service that the rollout modifies as the active service.                                                    |
+| - [autoPromotionEnabled](#cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled ) | No      | boolean | No         | -                               | indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state. |
+| - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
+| - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>7.1.31.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the active service.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>7.1.31.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>7.1.31.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+
+|                           |                              |
+| ------------------------- | ---------------------------- |
+| **Type**                  | `object`                     |
+| **Required**              | No                           |
+| **Additional properties** | Any type allowed             |
+| **Defined in**            | #/properties/rolloutAnalysis |
+
+**Description:** configuration to run analysis before a selector switch
+
+| Property                                                                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [analysisRunMetadata](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata ) | No      | object          | No         | -          | extra labels to add to the AnalysisRun                                  |
+| - [args](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args )                               | No      | array of object | No         | -          | the arguments that will be added to the AnalysisRuns                    |
+| - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
+| - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>7.1.31.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** extra labels to add to the AnalysisRun
+
+| Property                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description                                |
+| -------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------ |
+| - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
+| - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>7.1.31.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional annotations to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>7.1.31.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** additional labels to add to the AnalysisRun
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>7.1.31.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** the arguments that will be added to the AnalysisRuns
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>7.1.31.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name )           | No      | string | No         | -          | -                 |
+| - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
+| - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>7.1.31.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>7.1.31.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>7.1.31.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
+| - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>7.1.31.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>7.1.31.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>7.1.31.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Latest"
+* "Stable"
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>7.1.31.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** reference to a list of analysis templates to combine for an AnalysisRun
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                       | Description |
+| ----------------------------------------------------------------------------------------------------- | ----------- |
+| [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>7.1.31.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
+| - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>7.1.31.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Whether to look for the templateName at cluster scope or namespace scope.
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>7.1.31.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:**  name of the AnalysisTemplate to use for the rollout analysis
+
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>7.1.31.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service that the rollout modifies as the preview service.
+
+#### <a name="cronJobs_pattern1_s3Storage"></a>7.1.32. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8977,7 +10057,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>7.1.31.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>7.1.32.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -8998,7 +10078,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>7.1.31.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>7.1.32.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -9011,7 +10091,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>7.1.31.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>7.1.32.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9021,7 +10101,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>7.1.31.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>7.1.32.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -9030,7 +10110,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>7.1.31.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>7.1.32.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -9039,7 +10119,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>7.1.31.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>7.1.32.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -9048,7 +10128,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>7.1.31.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>7.1.32.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9058,7 +10138,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>7.1.31.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>7.1.32.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -9067,7 +10147,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>7.1.31.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>7.1.32.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -9076,7 +10156,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>7.1.31.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>7.1.32.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -9085,7 +10165,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>7.1.31.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>7.1.32.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -9094,7 +10174,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>7.1.31.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>7.1.32.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9104,7 +10184,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>7.1.31.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>7.1.32.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -9113,7 +10193,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>7.1.32. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>7.1.33. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9123,7 +10203,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>7.1.33. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>7.1.34. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9138,7 +10218,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>7.1.33.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>7.1.34.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -9147,7 +10227,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>7.1.33.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>7.1.34.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -9156,7 +10236,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>7.1.34. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>7.1.35. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9173,7 +10253,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>7.1.34.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>7.1.35.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9183,7 +10263,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>7.1.34.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>7.1.35.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -9192,7 +10272,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>7.1.34.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>7.1.35.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -9201,7 +10281,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.34.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.35.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -9210,7 +10290,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>7.1.35. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>7.1.36. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -9219,7 +10299,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>7.1.36. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>7.1.37. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -9236,7 +10316,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>7.1.37. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>7.1.38. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9256,7 +10336,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>7.1.37.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>7.1.38.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -9265,7 +10345,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>7.1.37.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>7.1.38.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9279,7 +10359,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>7.1.37.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>7.1.38.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -9298,14 +10378,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>7.1.37.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>7.1.38.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>7.1.37.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>7.1.38.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -9314,7 +10394,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>7.1.37.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>7.1.38.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -9323,7 +10403,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>7.1.37.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>7.1.38.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -9332,7 +10412,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>7.1.37.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>7.1.38.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -9341,7 +10421,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>7.1.37.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>7.1.38.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -9350,7 +10430,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>7.1.38. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>7.1.39. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -9367,7 +10447,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.39. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.40. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -9384,7 +10464,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.40. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.41. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -9401,7 +10481,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>7.1.41. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>7.1.42. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
