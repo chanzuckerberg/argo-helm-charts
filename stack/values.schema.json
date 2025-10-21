@@ -665,6 +665,10 @@
             "Never"
           ]
         },
+        "rollout": {
+          "$ref": "#/properties/rollout",
+          "type": "object"
+        },
         "s3Storage": {
           "type": "object",
           "properties": {

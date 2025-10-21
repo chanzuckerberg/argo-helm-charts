@@ -8,7 +8,9 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- $blueGreenStrategy := $global.Values.rollout.strategy.blueGreen }}
+{{- $rolloutConfig := default dict (get $service.Values "rollout") }}
+{{- $strategy := default dict (get $rolloutConfig "strategy") }}
+{{- $blueGreenStrategy := default dict (get $strategy "blueGreen") }}
 {{- $rolloutAnalysis := default dict (get $blueGreenStrategy "prePromotionAnalysis") }}
 {{- $rolloutAnalysisRunMetadata := default dict (get $rolloutAnalysis "analysisRunMetadata") }}
 ---

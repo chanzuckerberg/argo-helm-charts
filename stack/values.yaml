@@ -47,6 +47,8 @@ global: # @schema description: Global configuration for the stack - this serves 
   # @schema enum:[Deployment, Rollout]
   # @schema default: Deployment
   deploymentKind: "Deployment"
+  # @schema $ref: #/properties/rollout
+  rollout: {} 
   deploymentStage: "" # @schema description: Deployment stage
 
   replicaCount: 1 # @schema description: Number of replicas

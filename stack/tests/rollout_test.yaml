@@ -55,21 +55,22 @@ tests:
     set:
       global:
         deploymentKind: Rollout
-      rollout:
-        strategy:
-          blueGreen:
-            autoPromotionEnabled: true
-            prePromotionAnalysis:
-              templates:
-                - templateName: "template1"
-              args:
-                - name: "arg1"  
-                  value: "value1"
-              analysisRunMetadata:
-                annotations:
-                  test: "value"
+
       services:
         service1:
+          rollout:
+            strategy:
+              blueGreen:
+                autoPromotionEnabled: true
+                prePromotionAnalysis:
+                  templates:
+                    - templateName: "template1"
+                  args:
+                    - name: "arg1"  
+                      value: "value1"
+                  analysisRunMetadata:
+                    annotations:
+                      test: "value"
           image:
             repository: "your-app"
             tag: sha-mytag
