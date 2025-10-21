@@ -7,7 +7,7 @@ setup:
 test:
 	@for i in $$(find . -type d); do \
 		if [ -e "$$i/Chart.yaml" ]; then \
-			helm unittest $$i; \
+			helm unittest $$i -u; \
 		fi; \
 	done
 
