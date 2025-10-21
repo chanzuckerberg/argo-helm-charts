@@ -15,10 +15,6 @@
 * Fix restarter bitnami image and reference a htpasswd secret for nginx auth ([#291](https://github.com/chanzuckerberg/argo-helm-charts/issues/291)) ([d806e11](https://github.com/chanzuckerberg/argo-helm-charts/commit/d806e111f5e12531cdcd44ed0e904c98156ca93b))
 
 
-### Misc
-
-* force patch release to include recent maintenance ([#297](https://github.com/chanzuckerberg/argo-helm-charts/issues/297)) ([b362da1](https://github.com/chanzuckerberg/argo-helm-charts/commit/b362da15c6a05481a2a4b416c9b46ee36debfa83))
-
 ## [0.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/basic-auth-secret-v0.1.0...basic-auth-secret-v0.2.0) (2025-10-01)
 
 
