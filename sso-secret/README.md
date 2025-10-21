@@ -2,11 +2,11 @@
 
 **Title:** sso-secret
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
 
 | Property                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                   |
 | -------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------- |
