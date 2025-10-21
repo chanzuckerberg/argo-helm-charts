@@ -7,23 +7,20 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
+
 ---
+{{- if eq $kind "Rollout" }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "service.fullname" . }}
+  name: {{ include "service.fullname" . }}-preview
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- if eq $kind "Rollout" }}
     {{- toYaml (mergeOverwrite
-                (dict)
                 (fromYaml (include "stack.annotations" $service ))
                 (dict "argocd.argoproj.io/sync-options" "ServerSideApply=false")
     ) | nindent 4 }}
-    {{- else }}
-    {{- include "stack.annotations" $service | nindent 4 }}
-    {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -33,6 +30,6 @@ spec:
       name: http
   selector:
     {{- include "service.selectorLabels" . | nindent 4 }}
----
+{{- end }}
 {{- end }}
 {{- end }}
