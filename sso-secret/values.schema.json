@@ -1,7 +1,8 @@
 {
-  "$id": "argo.helm.charts/sso-secret",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "additionalProperties": false,
+  "$id": "argo.helm.charts/sso-secret",
+  "title": "sso-secret",
+  "type": "object",
   "properties": {
     "applicationName": {
       "description": "Name of the application to configure the sso secret for",
@@ -19,7 +20,5 @@
       "description": "Name of the secret store to use for external secrets.",
       "type": "string"
     }
-  },
-  "title": "sso-secret",
-  "type": "object"
+  }
 }
