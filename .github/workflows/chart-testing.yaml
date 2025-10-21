@@ -54,6 +54,16 @@ jobs:
         run: |
           helm template ./stack --values ./test-fixtures/values2.yaml | kubectl apply -f - --dry-run=client 2>&1
 
+      - name: Validate chart template with default values for rollout
+        run: |
+          helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
+          helm dependency update ./stack
+          helm dependency build ./stack
+          output=$(helm template ./stack --values ./test-fixtures/values.yaml --values ./test-fixtures/rollout-values.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
+          if [[ $output -ne "error: no objects passed to apply" ]]; then
+            exit 1
+          fi
+
       - name: Install helm on cluster
         if: steps.list-changed.outputs.changed == 'true'
         run: |
