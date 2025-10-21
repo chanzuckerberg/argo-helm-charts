@@ -2,6 +2,7 @@
   "release-type": "helm",
   "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
   "bump-minor-pre-major": true,
+  "extra-patch-types": ["chore"],
   "changelog-sections": [
     {
       "type": "feat",
