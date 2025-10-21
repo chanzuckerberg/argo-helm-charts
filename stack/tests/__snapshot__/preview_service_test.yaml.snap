@@ -11,7 +11,7 @@ should work and render a Preview Service with default values:
         app.kubernetes.io/name: stack
         app.kubernetes.io/service: release-name-stack-service1
         app.kubernetes.io/version: 1.16.0
-        helm.sh/chart: stack-2.16.0
+        helm.sh/chart: stack-2.17.0
       name: release-name-stack-service1-preview
     spec:
       ports:
