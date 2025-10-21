@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.1...argus-config-v1.5.2) (2025-10-21)
+
+
+### Misc
+
+* force patch release to include recent maintenance ([#297](https://github.com/chanzuckerberg/argo-helm-charts/issues/297)) ([b362da1](https://github.com/chanzuckerberg/argo-helm-charts/commit/b362da15c6a05481a2a4b416c9b46ee36debfa83))
+
 ## [1.5.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.0...argus-config-v1.5.1) (2025-09-23)
 
 
