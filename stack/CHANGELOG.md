@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.16.0...stack-v2.17.0) (2025-10-21)
+
+
+### Features
+
+* rollout object integration ([#294](https://github.com/chanzuckerberg/argo-helm-charts/issues/294)) ([d6340b7](https://github.com/chanzuckerberg/argo-helm-charts/commit/d6340b70642e86712e51c1d92ebdabf07da14595))
+
 ## [2.16.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.15.0...stack-v2.16.0) (2025-09-29)
 
 

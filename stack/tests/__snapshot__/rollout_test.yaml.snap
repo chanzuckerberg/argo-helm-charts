@@ -1,0 +1,237 @@
+should work and render a Rollout with default values:
+  1: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: ServerSideApply=false
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: stack
+        app.kubernetes.io/service: release-name-stack-service1
+        app.kubernetes.io/version: 1.16.0
+        helm.sh/chart: stack-2.17.0
+      name: release-name-stack-service1
+    spec:
+      replicas: 2
+      revisionHistoryLimit: 3
+      selector:
+        matchLabels:
+          app.kubernetes.io/service: release-name-stack-service1
+      strategy:
+        blueGreen:
+          activeService: release-name-stack-service1
+          autoPromotionEnabled: false
+          previewService: release-name-stack-service1-preview
+      template:
+        metadata:
+          annotations:
+            config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
+            linkerd.io/inject: enabled
+          labels:
+            app.kubernetes.io/instance: RELEASE-NAME
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: stack
+            app.kubernetes.io/service: release-name-stack-service1
+            app.kubernetes.io/version: 1.16.0
+            helm.sh/chart: stack-2.17.0
+        spec:
+          containers:
+            - args:
+                - arg1
+                - arg2
+              command:
+                - command1
+                - command2
+              env: []
+              image: your-app:latest
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              name: stack
+              ports:
+                - containerPort: 3000
+                  name: http
+                  protocol: TCP
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              securityContext: {}
+            - env: []
+              image: alpine:latest
+              name: sidecar1
+            - env: []
+              image: sidecar2:latest
+              name: sidecar2
+          dnsPolicy: ClusterFirst
+          initContainers:
+            - command:
+                - echo
+                - Hello World
+              env: []
+              image: alpine:latest
+              name: initContainer1
+          nodeSelector:
+            kubernetes.io/arch: arm64
+          restartPolicy: Always
+          securityContext: {}
+          serviceAccountName: default
+          shareProcessNamespace: false
+          topologySpreadConstraints:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/service: release-name-stack-service1
+              maxSkew: 2
+              topologyKey: topology.kubernetes.io/zone
+              whenUnsatisfiable: ScheduleAnyway
+should work and render a Rollout with supplied values:
+  1: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: ServerSideApply=false
+        test: value
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: stack
+        app.kubernetes.io/service: release-name-stack-service1
+        app.kubernetes.io/version: 1.16.0
+        helm.sh/chart: stack-2.17.0
+      name: release-name-stack-service1
+    spec:
+      replicas: 2
+      revisionHistoryLimit: 3
+      selector:
+        matchLabels:
+          app.kubernetes.io/service: release-name-stack-service1
+      strategy:
+        blueGreen:
+          activeService: release-name-stack-service1
+          autoPromotionEnabled: true
+          prePromotionAnalysis:
+            analysisRunMetadata:
+              annotations:
+                test: value
+            args:
+              - name: arg1
+                value: value1
+              - name: target-service-name
+                value: release-name-stack-service1
+              - name: target-service-namespace
+                value: NAMESPACE
+              - name: preview-service-name
+                value: release-name-stack-service1-preview
+              - name: preview-rs-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
+            templates:
+              - templateName: template1
+          previewService: release-name-stack-service1-preview
+      template:
+        metadata:
+          annotations:
+            config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
+            linkerd.io/inject: enabled
+          labels:
+            app.kubernetes.io/instance: RELEASE-NAME
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: stack
+            app.kubernetes.io/service: release-name-stack-service1
+            app.kubernetes.io/version: 1.16.0
+            helm.sh/chart: stack-2.17.0
+        spec:
+          containers:
+            - args:
+                - arg1
+                - arg2
+              command:
+                - command1
+                - command2
+              env: []
+              image: your-app:sha-mytag
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              name: stack
+              ports:
+                - containerPort: 3000
+                  name: http
+                  protocol: TCP
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              securityContext: {}
+            - env: []
+              image: alpine:latest
+              name: sidecar1
+            - env: []
+              image: sidecar2:latest
+              name: sidecar2
+          dnsPolicy: ClusterFirst
+          initContainers:
+            - command:
+                - echo
+                - Hello World
+              env: []
+              image: alpine:latest
+              name: initContainer1
+          nodeSelector:
+            kubernetes.io/arch: arm64
+          restartPolicy: Always
+          securityContext: {}
+          serviceAccountName: default
+          shareProcessNamespace: false
+          topologySpreadConstraints:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/service: release-name-stack-service1
+              maxSkew: 2
+              topologyKey: topology.kubernetes.io/zone
+              whenUnsatisfiable: ScheduleAnyway

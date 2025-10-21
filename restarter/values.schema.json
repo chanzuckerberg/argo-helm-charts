@@ -15,8 +15,7 @@
           "description": "The Docker image to use for the restarter job.",
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "schedule": {
       "description": "Cron schedule for the restarter job. This is set to run at 3 AM PST (11 AM UTC).",
@@ -33,9 +32,7 @@
           "description": "The namespace of the deployment to restart.",
           "type": "string"
         }
-      },
-      "additionalProperties": false
+      }
     }
-  },
-  "additionalProperties": false
+  }
 }

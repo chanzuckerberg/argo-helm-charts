@@ -38,11 +38,11 @@ spec:
               ) /
               sum(rate(loki_request_duration_seconds_count{namespace="{{ .Values.loki.namespace }}", method!="gRPC", route!="ready"}[5m]))
           hide: false
-          instant: true
+          instant: false
           intervalMs: 1000
           legendFormat: __auto
           maxDataPoints: 43200
-          range: false
+          range: true
           refId: A
       - refId: C
         datasourceUid: __expr__
@@ -59,7 +59,7 @@ spec:
                       - C
                 reducer:
                   params: []
-                  type: last
+                  type: mean
                 type: query
           datasource:
               type: __expr__
@@ -91,11 +91,11 @@ spec:
           expr: histogram_quantile(0.95, sum by(le) (rate(loki_request_duration_seconds_bucket{namespace="{{ .Values.loki.namespace }}"}[5m])))
           fullMetaSearch: false
           includeNullMetadata: true
-          instant: true
+          instant: false
           intervalMs: 1000
           legendFormat: __auto
           maxDataPoints: 43200
-          range: false
+          range: true
           refId: A
           useBackend: false
       - refId: C
@@ -113,7 +113,7 @@ spec:
                       - C
                 reducer:
                   params: []
-                  type: last
+                  type: mean
                 type: query
           datasource:
               type: __expr__
@@ -144,11 +144,11 @@ spec:
               uid: prometheus
           editorMode: code
           expr: sum by(statefulset) (kube_statefulset_status_replicas_ready{namespace="{{ .Values.loki.namespace }}"}) - (sum by(statefulset) (kube_statefulset_status_replicas{namespace="{{ .Values.loki.namespace }}"}))
-          instant: true
+          instant: false
           intervalMs: 1000
           legendFormat: __auto
           maxDataPoints: 43200
-          range: false
+          range: true
           refId: A
       - refId: C
         datasourceUid: __expr__
@@ -165,7 +165,7 @@ spec:
                       - C
                 reducer:
                   params: []
-                  type: last
+                  type: mean
                 type: query
           datasource:
               type: __expr__
@@ -196,11 +196,11 @@ spec:
               uid: prometheus
           editorMode: code
           expr: sum by(deployment) (kube_deployment_status_replicas_unavailable{namespace="{{ .Values.loki.namespace }}"})
-          instant: true
+          instant: false
           intervalMs: 1000
           legendFormat: __auto
           maxDataPoints: 43200
-          range: false
+          range: true
           refId: A
       - refId: C
         datasourceUid: __expr__
@@ -217,7 +217,7 @@ spec:
                       - C
                 reducer:
                   params: []
-                  type: last
+                  type: mean
                 type: query
           datasource:
               type: __expr__
@@ -251,11 +251,11 @@ spec:
           expr: sum by(app_kubernetes_io_component) (changes(process_start_time_seconds{namespace="{{ .Values.loki.namespace }}"}[15m]))
           fullMetaSearch: false
           includeNullMetadata: true
-          instant: true
+          instant: false
           intervalMs: 1000
           legendFormat: __auto
           maxDataPoints: 43200
-          range: false
+          range: true
           refId: A
           useBackend: false
       - refId: C
@@ -273,7 +273,63 @@ spec:
                       - C
                 reducer:
                   params: []
-                  type: last
+                  type: mean
+                type: query
+          datasource:
+              type: __expr__
+              uid: __expr__
+          expression: A
+          intervalMs: 1000
+          maxDataPoints: 43200
+          refId: C
+          type: threshold
+    noDataState: OK
+    execErrState: OK
+    annotations: {}
+    labels: {}
+    for: 5m
+    isPaused: false
+  - uid: fev4nq6pv2k8xb
+    title: Loki PVC Low Disk Space
+    condition: C
+    data:
+      - refId: A
+        relativeTimeRange:
+          from: 600
+          to: 0
+        datasourceUid: prometheus
+        model:
+          datasource:
+              type: prometheus
+              uid: prometheus
+          disableTextWrap: false
+          editorMode: code
+          expr: min (kubelet_volume_stats_available_bytes{namespace="{{ .Values.loki.namespace }}"} / kubelet_volume_stats_capacity_bytes{namespace="{{ .Values.loki.namespace }}"}) by (persistentvolumeclaim)
+          fullMetaSearch: false
+          includeNullMetadata: true
+          instant: false
+          intervalMs: 1000
+          legendFormat: __auto
+          maxDataPoints: 43200
+          range: true
+          refId: A
+          useBackend: false
+      - refId: C
+        datasourceUid: __expr__
+        model:
+          conditions:
+              - evaluator:
+                  params:
+                      - 0.1
+                  type: lt
+                operator:
+                  type: and
+                query:
+                  params:
+                      - C
+                reducer:
+                  params: []
+                  type: min
                 type: query
           datasource:
               type: __expr__
