@@ -1,5 +1,6 @@
 {
   "release-type": "helm",
+  "bootstrap-sha": "ad0eb4b2b80970c0bb7fec3fd8fb800fa5f9b47b",
   "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
   "bump-minor-pre-major": true,
   "changelog-sections": [
