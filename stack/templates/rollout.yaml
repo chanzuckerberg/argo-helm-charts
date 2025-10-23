@@ -26,7 +26,12 @@ metadata:
                 (dict)
                 (fromYaml (include "stack.annotations" $service ))
                 (default dict $rolloutAnnotations) 
-                (dict "argocd.argoproj.io/sync-options" "ServerSideApply=false")
+
+                (dict
+                 "argocd.argoproj.io/sync-options" "ServerSideApply=false"
+                 "app.kubernetes.io/repo-url" $global.Values.global.argoBuildEnv.appSourceRepoUrl
+                 "app.kubernetes.io/commit-sha" $global.Values.global.argoBuildEnv.appRevision
+                )
     ) | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}

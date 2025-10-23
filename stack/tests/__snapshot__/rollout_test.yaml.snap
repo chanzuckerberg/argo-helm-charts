@@ -4,6 +4,8 @@ should work and render a Rollout with default values:
     kind: Rollout
     metadata:
       annotations:
+        app.kubernetes.io/commit-sha: 0a4f8352711b56833c12db6ac79c02cf80d4b842
+        app.kubernetes.io/repo-url: https://github.com/chanzuckerberg/argus-example-app.git
         argocd.argoproj.io/sync-options: ServerSideApply=false
       labels:
         app.kubernetes.io/instance: RELEASE-NAME
@@ -113,6 +115,8 @@ should work and render a Rollout with supplied values:
     kind: Rollout
     metadata:
       annotations:
+        app.kubernetes.io/commit-sha: 0a4f8352711b56833c12db6ac79c02cf80d4b842
+        app.kubernetes.io/repo-url: https://github.com/chanzuckerberg/argus-example-app.git
         argocd.argoproj.io/sync-options: ServerSideApply=false
         test: value
       labels:
