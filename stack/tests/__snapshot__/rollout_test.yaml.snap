@@ -5,8 +5,8 @@ should work and render a Rollout with default values:
     metadata:
       annotations:
         argocd.argoproj.io/sync-options: ServerSideApply=false
-        argus-app.commit-sha: 0a4f8352711b56833c12db6ac79c02cf80d4b842
-        argus-app.repo-url: https://github.com/chanzuckerberg/argus-example-app.git
+        commitSha: 0a4f8352711b56833c12db6ac79c02cf80d4b842
+        repoUrl: https://github.com/chanzuckerberg/argus-example-app.git
       labels:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
@@ -116,8 +116,8 @@ should work and render a Rollout with supplied values:
     metadata:
       annotations:
         argocd.argoproj.io/sync-options: ServerSideApply=false
-        argus-app.commit-sha: 0a4f8352711b56833c12db6ac79c02cf80d4b842
-        argus-app.repo-url: https://github.com/chanzuckerberg/argus-example-app.git
+        commitSha: 0a4f8352711b56833c12db6ac79c02cf80d4b842
+        repoUrl: https://github.com/chanzuckerberg/argus-example-app.git
         test: value
       labels:
         app.kubernetes.io/instance: RELEASE-NAME

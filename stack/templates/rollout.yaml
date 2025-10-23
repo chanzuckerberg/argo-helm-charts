@@ -29,8 +29,8 @@ metadata:
 
                 (dict
                  "argocd.argoproj.io/sync-options" "ServerSideApply=false"
-                 "argus-app.repo-url" $global.Values.global.argoBuildEnv.appSourceRepoUrl
-                 "argus-app.commit-sha" $global.Values.global.argoBuildEnv.appRevision
+                 "repoUrl" $global.Values.global.argoBuildEnv.appSourceRepoUrl
+                 "commitSha" $global.Values.global.argoBuildEnv.appRevision
                 )
     ) | nindent 4 }}
 spec:
