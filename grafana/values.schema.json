@@ -39,7 +39,7 @@
           "type": "string"
         },
         "url": {
-          "description": "URL of the Central Grafana instance (Argus Metrics Gateway). Default value is a placeholder.",
+          "description": "URL of the Central Grafana instance (Argus Metrics Gateway).",
           "type": "string"
         }
       }
