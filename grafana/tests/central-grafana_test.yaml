@@ -1,0 +1,178 @@
+suite: test central-grafana.yaml
+templates:
+  - central-grafana.yaml
+
+tests:
+  - it: should not render anything if .Values.enabled is false
+    set:
+      enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not render anything if .Values.centralGrafana.enabled is false
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a Grafana resource when enabled
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Grafana
+
+  - it: should have correct apiVersion
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+    asserts:
+      - equal:
+          path: apiVersion
+          value: grafana.integreatly.org/v1beta1
+
+  - it: should have metadata with default name
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        grafanaName: "central-grafana"
+    asserts:
+      - isNotEmpty:
+          path: metadata.name
+      - equal:
+          path: metadata.name
+          value: "central-grafana"
+      - isNotEmpty:
+          path: metadata.labels.name
+      - equal:
+          path: metadata.labels.name
+          value: "central-grafana"
+
+  - it: should use custom grafanaName when provided
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        grafanaName: "custom-central-grafana"
+    asserts:
+      - equal:
+          path: metadata.name
+          value: "custom-central-grafana"
+      - equal:
+          path: metadata.labels.name
+          value: "custom-central-grafana"
+
+  - it: should have external configuration with default apiKey secret name and key
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+    asserts:
+      - isNotEmpty:
+          path: spec.external
+      - isNotEmpty:
+          path: spec.external.apiKey
+      - equal:
+          path: spec.external.apiKey.name
+          value: "central-grafana-admin-api-key"
+      - equal:
+          path: spec.external.apiKey.key
+          value: "GF_SECURITY_ADMIN_APIKEY"
+      - isNotEmpty:
+          path: spec.external.url
+
+  - it: should use custom apiKey secret configuration when provided
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        apiKeySecret:
+          name: "custom-api-key-secret"
+          key: "CUSTOM_API_KEY"
+    asserts:
+      - equal:
+          path: spec.external.apiKey.name
+          value: "custom-api-key-secret"
+      - equal:
+          path: spec.external.apiKey.key
+          value: "CUSTOM_API_KEY"
+
+  - it: should have external url
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        url: "https://example.grafana-workspace.us-west-2.amazonaws.com"
+    asserts:
+      - equal:
+          path: spec.external.url
+          value: "https://example.grafana-workspace.us-west-2.amazonaws.com"
+
+  - it: should use default grafanaName when not specified
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        grafanaName: null
+    asserts:
+      - equal:
+          path: metadata.name
+          value: "central-grafana"
+      - equal:
+          path: metadata.labels.name
+          value: "central-grafana"
+
+  - it: should use default apiKey secret name when not specified
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        apiKeySecret:
+          name: null
+    asserts:
+      - equal:
+          path: spec.external.apiKey.name
+          value: "central-grafana-admin-api-key"
+
+  - it: should use default apiKey secret key when not specified
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        apiKeySecret:
+          key: null
+    asserts:
+      - equal:
+          path: spec.external.apiKey.key
+          value: "GF_SECURITY_ADMIN_APIKEY"
+
+  - it: should include all required fields with default values
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+    asserts:
+      - isKind:
+          of: Grafana
+      - equal:
+          path: metadata.name
+          value: "central-grafana"
+      - equal:
+          path: metadata.labels.name
+          value: "central-grafana"
+      - isNotEmpty:
+          path: spec.external
+      - isNotEmpty:
+          path: spec.external.apiKey
+      - isNotEmpty:
+          path: spec.external.url
