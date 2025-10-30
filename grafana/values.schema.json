@@ -31,7 +31,7 @@
           }
         },
         "enabled": {
-          "description": "Enable the Central Grafana instance.",
+          "description": "Enable the resource provisioning into the Central Grafana workspace.",
           "type": "boolean"
         },
         "grafanaName": {
@@ -39,7 +39,7 @@
           "type": "string"
         },
         "url": {
-          "description": "URL of the Central Grafana instance. Default value is a placeholder.",
+          "description": "URL of the Central Grafana instance (Argus Metrics Gateway). Default value is a placeholder.",
           "type": "string"
         }
       }
