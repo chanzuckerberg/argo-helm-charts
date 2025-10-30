@@ -1,0 +1,16 @@
+{{ if .Values.enabled }}
+{{ if .Values.centralGrafana.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  labels:
+    name: {{ .Values.centralGrafana.grafanaName | default "central-grafana" | quote }}
+  name: {{ .Values.centralGrafana.grafanaName | default "central-grafana" | quote }}
+spec:
+  external:
+    apiKey:
+      key: {{ .Values.centralGrafana.apiKeySecret.key | default "GF_SECURITY_ADMIN_APIKEY" | quote }}
+      name: {{ .Values.centralGrafana.apiKeySecret.name | default "central-grafana-admin-api-key" | quote }}
+    url: {{ .Values.centralGrafana.url | quote }}
+{{ end }}
+{{ end }}
