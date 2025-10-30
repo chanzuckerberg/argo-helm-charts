@@ -1,0 +1,18 @@
+{{- if .Values.enabled }}
+{{- $centralGrafana := .Values.centralGrafana | default dict }}
+{{- if $centralGrafana.enabled }}
+{{- $apiKeySecret := $centralGrafana.apiKeySecret | default dict }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  labels:
+    name: {{ $centralGrafana.grafanaName | default "central-grafana" | quote }}
+  name: {{ $centralGrafana.grafanaName | default "central-grafana" | quote }}
+spec:
+  external:
+    apiKey:
+      key: {{ $apiKeySecret.key | default "GF_SECURITY_ADMIN_APIKEY" | quote }}
+      name: {{ $apiKeySecret.name | default "central-grafana-admin-api-key" | quote }}
+    url: {{ $centralGrafana.url | default "https://example.grafana-workspace.region.amazonaws.com" | quote }}
+{{- end }}
+{{- end }}
