@@ -1,17 +1,18 @@
 {{- if .Values.enabled }}
-{{- if .Values.centralGrafana.enabled }}
-{{- $apiKeySecret := .Values.centralGrafana.apiKeySecret | default dict }}
+{{- $centralGrafana := .Values.centralGrafana | default dict }}
+{{- if $centralGrafana.enabled }}
+{{- $apiKeySecret := $centralGrafana.apiKeySecret | default dict }}
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
   labels:
-    name: {{ .Values.centralGrafana.grafanaName | default "central-grafana" | quote }}
-  name: {{ .Values.centralGrafana.grafanaName | default "central-grafana" | quote }}
+    name: {{ $centralGrafana.grafanaName | default "central-grafana" | quote }}
+  name: {{ $centralGrafana.grafanaName | default "central-grafana" | quote }}
 spec:
   external:
     apiKey:
       key: {{ $apiKeySecret.key | default "GF_SECURITY_ADMIN_APIKEY" | quote }}
       name: {{ $apiKeySecret.name | default "central-grafana-admin-api-key" | quote }}
-    url: {{ required "centralGrafana.url is required and must be set in your values file" .Values.centralGrafana.url | quote }}
+    url: {{ $centralGrafana.url | default "https://example.grafana-workspace.region.amazonaws.com" | quote }}
 {{- end }}
 {{- end }}
