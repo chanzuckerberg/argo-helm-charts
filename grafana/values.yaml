@@ -53,7 +53,7 @@ serviceAccount:
 allow_embedding: "false" # @schema description: Allow embedding of Grafana dashboards in other applications.
 
 centralGrafana:
-  enabled: true # @schema description: Enable the Central Grafana instance.
+  enabled: true # @schema description: Enable the resource provisioning into the Central Grafana workspace.
   grafanaName: "central-grafana" # @schema description: Name of the Grafana instance to create.
   apiKeySecret:
     name: central-grafana-admin-api-key # @schema description: Name of the secret containing the Admin API key for the Central Grafana instance.
