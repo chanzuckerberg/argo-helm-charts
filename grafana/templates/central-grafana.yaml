@@ -1,5 +1,5 @@
-{{ if .Values.enabled }}
-{{ if .Values.centralGrafana.enabled }}
+{{- if .Values.enabled }}
+{{- if .Values.centralGrafana.enabled }}
 {{- $apiKeySecret := .Values.centralGrafana.apiKeySecret | default dict }}
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
@@ -13,5 +13,5 @@ spec:
       key: {{ $apiKeySecret.key | default "GF_SECURITY_ADMIN_APIKEY" | quote }}
       name: {{ $apiKeySecret.name | default "central-grafana-admin-api-key" | quote }}
     url: {{ .Values.centralGrafana.url | quote }}
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
