@@ -51,12 +51,12 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                    |
-| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------- |
-| - [apiKeySecret](#centralGrafana_apiKeySecret ) | No      | object  | No         | -          | -                                                                    |
-| - [enabled](#centralGrafana_enabled )           | No      | boolean | No         | -          | Enable the resource provisioning into the Central Grafana workspace. |
-| - [grafanaName](#centralGrafana_grafanaName )   | No      | string  | No         | -          | Name of the Grafana instance to create.                              |
-| - [url](#centralGrafana_url )                   | No      | string  | No         | -          | URL of the Central Grafana instance (Argus Metrics Gateway).         |
+| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                               |
+| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
+| - [apiKeySecret](#centralGrafana_apiKeySecret ) | No      | object  | No         | -          | -                                                                                                               |
+| - [enabled](#centralGrafana_enabled )           | No      | boolean | No         | -          | Enable the resource provisioning into the Central Grafana workspace.                                            |
+| - [grafanaName](#centralGrafana_grafanaName )   | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                         |
+| - [url](#centralGrafana_url )                   | No      | string  | No         | -          | URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL. |
 
 ### <a name="centralGrafana_apiKeySecret"></a>3.1. Property `grafana > centralGrafana > apiKeySecret`
 
@@ -114,7 +114,11 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** URL of the Central Grafana instance (Argus Metrics Gateway).
+**Description:** URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.
+
+| Restrictions                      |                                                                                                                                                                                                                                                       |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^https://g-[a-f0-9]+\.grafana-workspace\.[a-z0-9]+(-[a-z0-9]+)*\.amazonaws\.com$``` [Test](https://regex101.com/?regex=%5Ehttps%3A%2F%2Fg-%5Ba-f0-9%5D%2B%5C.grafana-workspace%5C.%5Ba-z0-9%5D%2B%28-%5Ba-z0-9%5D%2B%29%2A%5C.amazonaws%5C.com%24) |
 
 ## <a name="clusterName"></a>4. Property `grafana > clusterName`
 
