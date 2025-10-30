@@ -58,4 +58,4 @@ centralGrafana:
   apiKeySecret:
     name: central-grafana-admin-api-key # @schema description: Name of the secret containing the Admin API key for the Central Grafana instance.
     key: GF_SECURITY_ADMIN_APIKEY # @schema description: Key of the secret containing the Admin API key for the Central Grafana instance.
-  url: "" # @schema description: URL of the Central Grafana instance (Argus Metrics Gateway).
+  url: https://g-0000000000.grafana-workspace.us-west-2.amazonaws.com # @schema description: URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.; pattern: ^https://g-[a-f0-9]+\.grafana-workspace\.[a-z0-9]+(-[a-z0-9]+)*\.amazonaws\.com$

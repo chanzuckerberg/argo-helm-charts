@@ -112,11 +112,11 @@ tests:
       enabled: true
       centralGrafana:
         enabled: true
-        url: "https://example.grafana-workspace.us-west-2.amazonaws.com"
+        url: "https://g-2c3bce61e8.grafana-workspace.us-west-2.amazonaws.com"
     asserts:
       - equal:
           path: spec.external.url
-          value: "https://example.grafana-workspace.us-west-2.amazonaws.com"
+          value: "https://g-2c3bce61e8.grafana-workspace.us-west-2.amazonaws.com"
 
   - it: should use default grafanaName when not specified
     set:
