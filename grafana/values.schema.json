@@ -14,6 +14,36 @@
     "baseDomain": {
       "type": "string"
     },
+    "centralGrafana": {
+      "type": "object",
+      "properties": {
+        "apiKeySecret": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "description": "Key of the secret containing the Admin API key for the Central Grafana instance.",
+              "type": "string"
+            },
+            "name": {
+              "description": "Name of the secret containing the Admin API key for the Central Grafana instance.",
+              "type": "string"
+            }
+          }
+        },
+        "enabled": {
+          "description": "Enable the Central Grafana instance.",
+          "type": "boolean"
+        },
+        "grafanaName": {
+          "description": "Name of the Grafana instance to create.",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL of the Central Grafana instance.",
+          "type": "string"
+        }
+      }
+    },
     "clusterName": {
       "description": "Name of the cluster to configure the platform Grafana for. This value is required.",
       "type": "string"
