@@ -39,7 +39,7 @@
           "type": "string"
         },
         "url": {
-          "description": "URL of the Central Grafana instance.",
+          "description": "URL of the Central Grafana instance. Default value is a placeholder.",
           "type": "string"
         }
       }
