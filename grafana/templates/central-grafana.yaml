@@ -12,6 +12,6 @@ spec:
     apiKey:
       key: {{ $apiKeySecret.key | default "GF_SECURITY_ADMIN_APIKEY" | quote }}
       name: {{ $apiKeySecret.name | default "central-grafana-admin-api-key" | quote }}
-    url: {{ .Values.centralGrafana.url | quote }}
+    url: {{ required "centralGrafana.url is required and must be set in your values file" .Values.centralGrafana.url | quote }}
 {{- end }}
 {{- end }}
