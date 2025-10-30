@@ -51,12 +51,12 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                    |
-| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------- |
-| - [apiKeySecret](#centralGrafana_apiKeySecret ) | No      | object  | No         | -          | -                                                                    |
-| - [enabled](#centralGrafana_enabled )           | No      | boolean | No         | -          | Enable the Central Grafana instance.                                 |
-| - [grafanaName](#centralGrafana_grafanaName )   | No      | string  | No         | -          | Name of the Grafana instance to create.                              |
-| - [url](#centralGrafana_url )                   | No      | string  | No         | -          | URL of the Central Grafana instance. Default value is a placeholder. |
+| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                            |
+| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
+| - [apiKeySecret](#centralGrafana_apiKeySecret ) | No      | object  | No         | -          | -                                                                                            |
+| - [enabled](#centralGrafana_enabled )           | No      | boolean | No         | -          | Enable the resource provisioning into the Central Grafana workspace.                         |
+| - [grafanaName](#centralGrafana_grafanaName )   | No      | string  | No         | -          | Name of the Grafana instance to create.                                                      |
+| - [url](#centralGrafana_url )                   | No      | string  | No         | -          | URL of the Central Grafana instance (Argus Metrics Gateway). Default value is a placeholder. |
 
 ### <a name="centralGrafana_apiKeySecret"></a>3.1. Property `grafana > centralGrafana > apiKeySecret`
 
@@ -96,7 +96,7 @@
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable the Central Grafana instance.
+**Description:** Enable the resource provisioning into the Central Grafana workspace.
 
 ### <a name="centralGrafana_grafanaName"></a>3.3. Property `grafana > centralGrafana > grafanaName`
 
@@ -114,7 +114,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** URL of the Central Grafana instance. Default value is a placeholder.
+**Description:** URL of the Central Grafana instance (Argus Metrics Gateway). Default value is a placeholder.
 
 ## <a name="clusterName"></a>4. Property `grafana > clusterName`
 
