@@ -494,6 +494,10 @@ tests:
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
+          content: --cookie-domain=stack.play.dev.czi.team
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
           content: --whitelist-domain=.stack.play.dev.czi.team
       - documentIndex: 0
         notContains:
