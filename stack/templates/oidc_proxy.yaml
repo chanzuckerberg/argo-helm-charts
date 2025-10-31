@@ -77,8 +77,8 @@ spec:
             - --email-domain=*
             - --cookie-secure=true
             - --set-xauthrequest
-            - --cookie-domain={{- include "baseDomain" . }}
-            - --whitelist-domain=.{{- include "baseDomain" . }}
+            - --cookie-domain={{- .Values.ingress.host }}
+            - --whitelist-domain=.{{- .Values.ingress.host }}
             - --skip-provider-button=true
             - --pass-authorization-header=true
             - --reverse-proxy
@@ -105,12 +105,12 @@ spec:
             {{ end }}
             {{ end }} 
             {{- range $allHosts -}}
-            {{- printf "- --whitelist-domain=%s" . | nindent 12 -}}
+              {{- printf "- --whitelist-domain=%s" . | nindent 12 -}}
 
-            {{ if eq (len $cookiePrefix) 0 }}
-            # if a user provides a cookie-domain flag, we want to use that instead of the 
-            # default cookie-domain
-            {{- printf "- --cookie-domain=%s" . | nindent 12 -}}
+              {{ if eq (len $cookiePrefix) 0 }}
+              # if a user provides a cookie-domain flag, we want to use that instead of the 
+              # default cookie-domain
+              {{- printf "- --cookie-domain=%s" . | nindent 12 -}}
             {{ end }}
             
             {{- end -}}
