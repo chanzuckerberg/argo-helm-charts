@@ -38,6 +38,9 @@
     },
     "basic-auth-secret": {
       "package-name": "basic-auth-secret"
+    },
+    "cluster-healthcheck": {
+      "package-name": "cluster-healthcheck"
     }
   }
 }

@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: integration test
+templates:
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  - poddisruptionbudget.yaml
+
+tests:
+  - it: should render all resources with default values
+    template: deployment.yaml
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-cluster-healthcheck
+
+  - it: should work with production-like configuration for deployment
+    template: deployment.yaml
+    set:
+      replicaCount: 5
+      image:
+        repository: hashicorp/http-echo
+        tag: "0.2.3"
+        pullPolicy: IfNotPresent
+      resources:
+        limits:
+          cpu: 200m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      priorityClassName: system-cluster-critical
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: hashicorp/http-echo:0.2.3
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: 200m
+
+  - it: should work with production-like configuration for ingress
+    template: ingress.yaml
+    set:
+      ingress:
+        enabled: true
+        className: nginx
+        hostname: healthcheck.prod.example.com
+        path: /
+        pathType: Prefix
+        tls:
+          enabled: true
+          secretName: healthcheck-prod-tls
+    asserts:
+      - isKind:
+          of: Ingress
+      - equal:
+          path: spec.rules[0].host
+          value: healthcheck.prod.example.com
+      - equal:
+          path: spec.tls[0].secretName
+          value: healthcheck-prod-tls
+
+  - it: should maintain naming consistency across all resources
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-cluster-healthcheck
+
+  - it: should maintain label consistency across all resources
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: cluster-healthcheck
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+

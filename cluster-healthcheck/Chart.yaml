@@ -1,0 +1,7 @@
+apiVersion: v2
+name: cluster-healthcheck
+description: A simple HTTP echo server for cluster health monitoring
+type: application
+version: 0.1.0
+appVersion: "0.0.1"
+

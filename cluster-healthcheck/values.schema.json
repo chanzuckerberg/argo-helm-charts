@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/cluster-healthcheck",
+  "title": "cluster-healthcheck",
+  "type": "object",
+  "properties": {
+    "affinity": {
+      "description": "Pod affinity and anti-affinity rules",
+      "type": "object",
+      "properties": {
+        "nodeAffinity": {
+          "description": "Node affinity rules",
+          "type": "object",
+          "properties": {
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "description": "Required node affinity rules",
+              "type": "object",
+              "properties": {
+                "nodeSelectorTerms": {
+                  "description": "Node selector terms",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "matchExpressions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "operator": {
+                              "type": "string"
+                            },
+                            "values": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "image": {
+      "description": "Container image configuration",
+      "type": "object",
+      "properties": {
+        "pullPolicy": {
+          "description": "Image pull policy",
+          "type": "string",
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
+        },
+        "repository": {
+          "description": "Container image repository",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Container image tag",
+          "type": "string"
+        }
+      }
+    },
+    "ingress": {
+      "description": "Ingress configuration",
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "description": "Ingress annotations",
+          "type": "object",
+          "properties": {
+            "external-dns.alpha.kubernetes.io/exclude": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/proxy-connect-timeout": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/proxy-read-timeout": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/proxy-send-timeout": {
+              "type": "string"
+            }
+          }
+        },
+        "className": {
+          "description": "Ingress class name",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Enable ingress for external access",
+          "type": "boolean"
+        },
+        "hostname": {
+          "description": "Ingress hostname for the healthcheck endpoint",
+          "type": "string"
+        },
+        "path": {
+          "description": "Ingress path",
+          "type": "string"
+        },
+        "pathType": {
+          "description": "Path type for ingress routing",
+          "type": "string",
+          "enum": [
+            "Prefix",
+            "Exact",
+            "ImplementationSpecific"
+          ]
+        },
+        "tls": {
+          "description": "TLS configuration for ingress",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable TLS for ingress",
+              "type": "boolean"
+            },
+            "secretName": {
+              "description": "Name of the TLS secret",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "podAnnotations": {
+      "description": "Annotations to add to pods",
+      "type": "object",
+      "properties": {
+        "karpenter.sh/do-not-disrupt": {
+          "type": "string"
+        }
+      }
+    },
+    "podDisruptionBudget": {
+      "description": "Pod disruption budget configuration",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable pod disruption budget",
+          "type": "boolean"
+        },
+        "maxUnavailable": {
+          "description": "Maximum number of unavailable pods during disruption",
+          "type": "integer"
+        }
+      }
+    },
+    "priorityClassName": {
+      "description": "Priority class name for pod scheduling",
+      "type": "string"
+    },
+    "replicaCount": {
+      "description": "Number of replicas for the healthcheck deployment",
+      "type": "integer"
+    },
+    "resources": {
+      "description": "Resource requests and limits",
+      "type": "object",
+      "properties": {
+        "limits": {
+          "description": "Resource limits",
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "description": "CPU limit",
+              "type": "string"
+            },
+            "memory": {
+              "description": "Memory limit",
+              "type": "string"
+            }
+          }
+        },
+        "requests": {
+          "description": "Resource requests",
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "description": "CPU request",
+              "type": "string"
+            },
+            "memory": {
+              "description": "Memory request",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "service": {
+      "description": "Service configuration",
+      "type": "object",
+      "properties": {
+        "port": {
+          "description": "Service port",
+          "type": "integer"
+        },
+        "targetPort": {
+          "description": "Container target port",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Kubernetes service type",
+          "type": "string",
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
+        }
+      }
+    }
+  }
+}

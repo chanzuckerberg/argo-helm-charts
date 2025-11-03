@@ -1,0 +1,211 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test ingress.yaml
+templates:
+  - ingress.yaml
+
+tests:
+  - it: should create an Ingress resource when enabled
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+      - containsDocument:
+          apiVersion: networking.k8s.io/v1
+          kind: Ingress
+
+  - it: should not create Ingress when disabled
+    set:
+      ingress:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have correct metadata
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-cluster-healthcheck
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+
+  - it: should have correct labels
+    asserts:
+      - equal:
+          path: metadata.labels["helm.sh/chart"]
+          value: cluster-healthcheck-0.1.0
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: cluster-healthcheck
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+
+  - it: should have default annotations
+    asserts:
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "false"
+      - equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/proxy-connect-timeout"]
+          value: "10"
+      - equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/proxy-read-timeout"]
+          value: "10"
+      - equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/proxy-send-timeout"]
+          value: "10"
+
+  - it: should use custom annotations when provided
+    set:
+      ingress:
+        annotations:
+          custom-annotation: "custom-value"
+    asserts:
+      - equal:
+          path: metadata.annotations.custom-annotation
+          value: "custom-value"
+
+  - it: should have default ingress class
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: nginx
+
+  - it: should use custom ingress class when provided
+    set:
+      ingress:
+        className: traefik
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: traefik
+
+  - it: should have TLS configuration when enabled
+    asserts:
+      - isNotEmpty:
+          path: spec.tls
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: healthcheck.example.com
+      - equal:
+          path: spec.tls[0].secretName
+          value: cluster-healthcheck-tls
+
+  - it: should not have TLS when disabled
+    set:
+      ingress:
+        tls:
+          enabled: false
+    asserts:
+      - notExists:
+          path: spec.tls
+
+  - it: should use custom TLS secret name
+    set:
+      ingress:
+        tls:
+          secretName: custom-tls-secret
+    asserts:
+      - equal:
+          path: spec.tls[0].secretName
+          value: custom-tls-secret
+
+  - it: should have correct ingress rule
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: healthcheck.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Prefix
+
+  - it: should use custom hostname
+    set:
+      ingress:
+        hostname: custom.example.com
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: custom.example.com
+      - equal:
+          path: spec.tls[0].hosts[0]
+          value: custom.example.com
+
+  - it: should use custom path and pathType
+    set:
+      ingress:
+        path: /health
+        pathType: Exact
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /health
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Exact
+
+  - it: should have correct backend service
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: RELEASE-NAME-cluster-healthcheck
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 80
+
+  - it: should use custom service port
+    set:
+      service:
+        port: 8080
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 8080
+
+  - it: should work with all custom values
+    set:
+      ingress:
+        enabled: true
+        className: custom-class
+        hostname: healthcheck.prod.example.com
+        path: /check
+        pathType: Exact
+        tls:
+          enabled: true
+          secretName: prod-tls-secret
+        annotations:
+          custom-key: custom-value
+      service:
+        port: 8888
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: custom-class
+      - equal:
+          path: spec.rules[0].host
+          value: healthcheck.prod.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /check
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Exact
+      - equal:
+          path: spec.tls[0].secretName
+          value: prod-tls-secret
+      - equal:
+          path: metadata.annotations.custom-key
+          value: custom-value
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 8888
+

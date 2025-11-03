@@ -1,0 +1,55 @@
+replicaCount: 3 # @schema description: Number of replicas for the healthcheck deployment
+
+image: # @schema description: Container image configuration
+  repository: hashicorp/http-echo # @schema description: Container image repository
+  tag: latest # @schema description: Container image tag
+  pullPolicy: IfNotPresent # @schema enum: [Always, IfNotPresent, Never]; description: Image pull policy
+
+service: # @schema description: Service configuration
+  type: ClusterIP # @schema enum: [ClusterIP, NodePort, LoadBalancer]; description: Kubernetes service type
+  port: 80 # @schema description: Service port
+  targetPort: 8080 # @schema description: Container target port
+
+ingress: # @schema description: Ingress configuration
+  enabled: true # @schema description: Enable ingress for external access
+  className: nginx # @schema description: Ingress class name
+  annotations: # @schema description: Ingress annotations
+    external-dns.alpha.kubernetes.io/exclude: "false"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "10"
+  # hostname will be set per-cluster via ApplicationSet
+  hostname: healthcheck.example.com # @schema description: Ingress hostname for the healthcheck endpoint
+  path: / # @schema description: Ingress path
+  pathType: Prefix # @schema enum: [Prefix, Exact, ImplementationSpecific]; description: Path type for ingress routing
+  tls: # @schema description: TLS configuration for ingress
+    enabled: true # @schema description: Enable TLS for ingress
+    secretName: cluster-healthcheck-tls # @schema description: Name of the TLS secret
+
+resources: # @schema description: Resource requests and limits
+  limits: # @schema description: Resource limits
+    cpu: 100m # @schema description: CPU limit
+    memory: 64Mi # @schema description: Memory limit
+  requests: # @schema description: Resource requests
+    cpu: 50m # @schema description: CPU request
+    memory: 32Mi # @schema description: Memory request
+
+priorityClassName: system-cluster-critical # @schema description: Priority class name for pod scheduling
+
+podAnnotations: # @schema description: Annotations to add to pods
+  karpenter.sh/do-not-disrupt: "true"
+
+affinity: # @schema description: Pod affinity and anti-affinity rules
+  nodeAffinity: # @schema description: Node affinity rules
+    requiredDuringSchedulingIgnoredDuringExecution: # @schema description: Required node affinity rules
+      nodeSelectorTerms: # @schema description: Node selector terms
+        - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: NotIn
+              values:
+                - fargate
+
+podDisruptionBudget: # @schema description: Pod disruption budget configuration
+  enabled: true # @schema description: Enable pod disruption budget
+  maxUnavailable: 1 # @schema description: Maximum number of unavailable pods during disruption
+
