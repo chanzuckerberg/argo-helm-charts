@@ -19,6 +19,10 @@ tests:
     set:
       global:
         deploymentKind: Rollout
+        argoBuildEnv:
+          appRevision: "0a4f8352711b56833c12db6ac79c02cf80d4b842" 
+          appRevisionShort: "0a4f835"
+          appSourceRepoUrl: "https://github.com/chanzuckerberg/argus-example-app.git"
       services:
         service1:
           image:
@@ -55,7 +59,10 @@ tests:
     set:
       global:
         deploymentKind: Rollout
-
+        argoBuildEnv:
+          appRevision: "0a4f8352711b56833c12db6ac79c02cf80d4b842" 
+          appRevisionShort: "0a4f835"
+          appSourceRepoUrl: "https://github.com/chanzuckerberg/argus-example-app.git"
       services:
         service1:
           rollout:
