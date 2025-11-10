@@ -217,22 +217,64 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service -}}
-{{- $yPos := mul $idx 18 -}}
-{{- $panelId := add (mul $idx 5) 1 -}}
-{{- $sectionPanelDict := dict "collapsed" false "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $yPos) "id" $panelId "panels" (list) "title" $serviceName "type" "row" -}}
+{{- $sectionPanelDict := dict "collapsed" false "panels" (list) "title" $serviceName "type" "row" "serviceIndex" $idx -}}
 {{- $panels = append $panels $sectionPanelDict -}}
 
 {{- if .Values.ingress.enabled }}
-{{- $successRatePanelDict := include "stack.grafanaDashboard.charts.successRate" (dict "global" $global "service" $service "yPos" $yPos "panelId" $panelId) | fromYaml -}}
+{{- $successRatePanelDict := include "stack.grafanaDashboard.charts.successRate" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $successRatePanelDict -}}
-{{- $failureRatePanelDict := include "stack.grafanaDashboard.charts.failureRate" (dict "global" $global "service" $service "yPos" $yPos "panelId" $panelId) | fromYaml -}}
+{{- $failureRatePanelDict := include "stack.grafanaDashboard.charts.failureRate" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $failureRatePanelDict -}}
-{{- $ingressLatencyPanelDict := include "stack.grafanaDashboard.charts.ingressLatency" (dict "global" $global "service" $service "yPos" $yPos "panelId" $panelId) | fromYaml -}}
+{{- $ingressLatencyPanelDict := include "stack.grafanaDashboard.charts.ingressLatency" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $ingressLatencyPanelDict -}}
 {{- end }}
-{{- $containerRestartsPanelDict := include "stack.grafanaDashboard.charts.containerRestarts" (dict "global" $global "service" $service "yPos" $yPos "panelId" $panelId) | fromYaml -}}
+{{- $containerRestartsPanelDict := include "stack.grafanaDashboard.charts.containerRestarts" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $containerRestartsPanelDict -}}
 {{- end -}}
+{{- end -}}
+
+{{/* Now iterate over panels and set gridPos and id sequentially */}}
+{{- $finalPanels := list -}}
+{{- $currentX := 0 -}}
+{{- $currentY := 0 -}}
+{{- $currentServiceIdx := -1 -}}
+{{- $serviceStartY := 0 -}}
+{{- range $panelIdx, $panel := $panels -}}
+  {{- $panel = set $panel "id" (add $panelIdx 1) -}}
+  {{- if eq $panel.type "row" -}}
+    {{/* Row panel - reset to start of new service section */}}
+    {{- $currentServiceIdx = $panel.serviceIndex -}}
+    {{- $serviceStartY = mul $currentServiceIdx 18 -}}
+    {{- $currentY = $serviceStartY -}}
+    {{- $currentX = 0 -}}
+    {{- $panel = set $panel "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $serviceStartY) -}}
+    {{- $panel = unset $panel "serviceIndex" -}}
+    {{/* After row, start panels on next line */}}
+    {{- $currentY = add $serviceStartY 1 -}}
+  {{- else -}}
+    {{/* Regular panel - use existing gridPos.h and gridPos.w, calculate x and y */}}
+    {{- $existingGridPos := $panel.gridPos -}}
+    {{- $h := default 8 $existingGridPos.h -}}
+    {{- $w := default 12 $existingGridPos.w -}}
+
+    {{/* If panel doesn't fit on current row, wrap to next row */}}
+    {{- if gt (add $currentX $w) 24 -}}
+      {{- $currentX = 0 -}}
+      {{- $currentY = add $currentY $h -}}
+    {{- end -}}
+
+    {{/* Set final gridPos with calculated x and y */}}
+    {{- $panel = set $panel "gridPos" (dict "h" $h "w" $w "x" $currentX "y" $currentY) -}}
+
+    {{/* Move x position for next panel */}}
+    {{- $currentX = add $currentX $w -}}
+    {{/* If we've filled the row, reset x and move to next row */}}
+    {{- if ge $currentX 24 -}}
+      {{- $currentX = 0 -}}
+      {{- $currentY = add $currentY $h -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $finalPanels = append $finalPanels $panel -}}
 {{- end -}}
 
 {{/* 3. Build the final, top-level dashboard dictionary */}}
@@ -245,7 +287,7 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
     "editable" true
     "hideControls" false
     "graphTooltip" 1
-    "panels" $panels
+    "panels" $finalPanels
     "time" (dict "from" "now-6h" "to" "now")
     "timepicker" (dict "time_options" (list) "refresh_intervals" (list))
     "templating" (dict "list" (list))
@@ -262,18 +304,15 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 
 {{/*
 Create a success rate panel for a service.
-Expects a dict with keys: global, service, yPos, panelId
+Expects a dict with keys: global, service
 */}}
 {{- define "stack.grafanaDashboard.charts.successRate" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $yPos := .yPos -}}
-{{- $panelId := .panelId -}}
 {{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status=~\"2..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\"}[5m])) * 100" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" "prometheus")
-    "gridPos" (dict "h" 8 "w" 12 "x" 12 "y" (add $yPos 1))
-    "id" (add $panelId 2)
+    "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
         "calcs" (list)
@@ -306,18 +345,15 @@ Expects a dict with keys: global, service, yPos, panelId
 
 {{/*
 Create a failure rate panel for a service, segmented by error code.
-Expects a dict with keys: global, service, yPos, panelId
+Expects a dict with keys: global, service
 */}}
 {{- define "stack.grafanaDashboard.charts.failureRate" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $yPos := .yPos -}}
-{{- $panelId := .panelId -}}
 {{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status!~\"2..\"}[5m])) by (status)" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" "prometheus")
-    "gridPos" (dict "h" 8 "w" 12 "x" 0 "y" (add $yPos 9))
-    "id" (add $panelId 3)
+    "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
         "calcs" (list)
@@ -350,18 +386,15 @@ Expects a dict with keys: global, service, yPos, panelId
 
 {{/*
 Create a container restarts panel for a service.
-Expects a dict with keys: global, service, yPos, panelId
+Expects a dict with keys: global, service
 */}}
 {{- define "stack.grafanaDashboard.charts.containerRestarts" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $yPos := .yPos -}}
-{{- $panelId := .panelId -}}
 {{- $metricsQuery := printf "increase(kube_pod_container_status_restarts_total{namespace=\"%s\", pod=~\"%s-.*\"}[5m])" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" "prometheus")
-    "gridPos" (dict "h" 8 "w" 12 "x" 12 "y" (add $yPos 9))
-    "id" (add $panelId 4)
+    "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
         "calcs" (list)
@@ -394,18 +427,15 @@ Expects a dict with keys: global, service, yPos, panelId
 
 {{/*
 Create an ingress latency panel for a service.
-Expects a dict with keys: global, service, yPos, panelId
+Expects a dict with keys: global, service
 */}}
 {{- define "stack.grafanaDashboard.charts.ingressLatency" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $yPos := .yPos -}}
-{{- $panelId := .panelId -}}
 {{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_request_duration_seconds_sum{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" "prometheus")
-    "gridPos" (dict "h" 8 "w" 12 "x" 0 "y" (add $yPos 1))
-    "id" (add $panelId 1)
+    "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
         "calcs" (list)
