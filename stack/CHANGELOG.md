@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.17.0...stack-v2.17.1) (2025-11-03)
+
+
+### Bug Fixes
+
+* make the default cookie domain the stack's domain ([#307](https://github.com/chanzuckerberg/argo-helm-charts/issues/307)) ([2cd19f4](https://github.com/chanzuckerberg/argo-helm-charts/commit/2cd19f4f8aa014ea564f2e33a701a0fa1f0321c5))
+
 ## [2.17.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.16.0...stack-v2.17.0) (2025-10-21)
 
 

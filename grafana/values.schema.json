@@ -14,6 +14,37 @@
     "baseDomain": {
       "type": "string"
     },
+    "centralGrafana": {
+      "type": "object",
+      "properties": {
+        "apiKeySecret": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "description": "Key of the secret containing the Admin API key for the Central Grafana instance.",
+              "type": "string"
+            },
+            "name": {
+              "description": "Name of the secret containing the Admin API key for the Central Grafana instance.",
+              "type": "string"
+            }
+          }
+        },
+        "enabled": {
+          "description": "Enable the resource provisioning into the Central Grafana workspace.",
+          "type": "boolean"
+        },
+        "grafanaName": {
+          "description": "Name of the Grafana instance to create.",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.",
+          "type": "string",
+          "pattern": "^https://g-[a-f0-9]+\\.grafana-workspace\\.[a-z0-9]+(-[a-z0-9]+)*\\.amazonaws\\.com$"
+        }
+      }
+    },
     "clusterName": {
       "description": "Name of the cluster to configure the platform Grafana for. This value is required.",
       "type": "string"
