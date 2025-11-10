@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.7.0...grafana-v0.8.0) (2025-11-03)
+
+
+### Features
+
+* Provision central grafana CRD ([#305](https://github.com/chanzuckerberg/argo-helm-charts/issues/305)) ([2a8cef6](https://github.com/chanzuckerberg/argo-helm-charts/commit/2a8cef69bfdb45a05ab4b4464a204582e7fa8b95))
+
 ## [0.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.4...grafana-v0.7.0) (2025-09-05)
 
 
