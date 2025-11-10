@@ -218,7 +218,7 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service -}}
 {{- $yPos := mul $idx 18 -}}
-{{- $panelId := add (mul $idx 4) 1 -}}
+{{- $panelId := add (mul $idx 5) 1 -}}
 {{- $sectionPanelDict := dict "collapsed" false "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $yPos) "id" $panelId "panels" (list) "title" $serviceName "type" "row" -}}
 {{- $panels = append $panels $sectionPanelDict -}}
 
@@ -230,6 +230,8 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- $ingressLatencyPanelDict := include "stack.grafanaDashboard.charts.ingressLatency" (dict "global" $global "service" $service "yPos" $yPos "panelId" $panelId) | fromYaml -}}
 {{- $panels = append $panels $ingressLatencyPanelDict -}}
 {{- end }}
+{{- $containerRestartsPanelDict := include "stack.grafanaDashboard.charts.containerRestarts" (dict "global" $global "service" $service "yPos" $yPos "panelId" $panelId) | fromYaml -}}
+{{- $panels = append $panels $containerRestartsPanelDict -}}
 {{- end -}}
 {{- end -}}
 
@@ -341,6 +343,50 @@ Expects a dict with keys: global, service, yPos, panelId
       )
     )
     "title" "Failure % by Error Code"
+    "type" "timeseries"
+-}}
+{{- $panelDict | toYaml -}}
+{{- end -}}
+
+{{/*
+Create a container restarts panel for a service.
+Expects a dict with keys: global, service, yPos, panelId
+*/}}
+{{- define "stack.grafanaDashboard.charts.containerRestarts" -}}
+{{- $global := .global -}}
+{{- $service := .service -}}
+{{- $yPos := .yPos -}}
+{{- $panelId := .panelId -}}
+{{- $metricsQuery := printf "increase(kube_pod_container_status_restarts_total{namespace=\"%s\", pod=~\"%s-.*\"}[5m])" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
+{{- $panelDict := dict
+    "datasource" (dict "type" "prometheus" "uid" "prometheus")
+    "gridPos" (dict "h" 8 "w" 12 "x" 12 "y" (add $yPos 9))
+    "id" (add $panelId 4)
+    "options" (dict
+      "legend" (dict
+        "calcs" (list)
+        "displayMode" "list"
+        "placement" "bottom"
+        "showLegend" true
+      )
+      "tooltip" (dict
+        "hideZeros" false
+        "mode" "single"
+        "sort" "none"
+      )
+    )
+    "pluginVersion" "12.1.0"
+    "targets" (list
+      (dict
+        "datasource" (dict "type" "prometheus" "uid" "prometheus")
+        "editorMode" "code"
+        "expr" $metricsQuery
+        "legendFormat" "{{pod}}"
+        "range" true
+        "refId" "A"
+      )
+    )
+    "title" "Container Restarts"
     "type" "timeseries"
 -}}
 {{- $panelDict | toYaml -}}
