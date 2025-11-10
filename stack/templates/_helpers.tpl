@@ -217,7 +217,7 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service -}}
-{{- $sectionPanelDict := dict "collapsed" false "panels" (list) "title" $serviceName "type" "row" "serviceIndex" $idx -}}
+{{- $sectionPanelDict := dict "collapsed" false "panels" (list) "title" (printf "Service: %s" $serviceName) "type" "row" "serviceIndex" $idx -}}
 {{- $panels = append $panels $sectionPanelDict -}}
 
 {{- if .Values.ingress.enabled }}
