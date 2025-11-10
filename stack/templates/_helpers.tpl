@@ -202,3 +202,86 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "oidcProxy.authDomain" -}}
 {{ .Values.ingress.host }}
 {{- end -}}
+
+{{/*
+Create the full dashboard data structure as a Helm dictionary and return it as a JSON string.
+*/}}
+{{- define "stack.grafanaDashboard.json" -}}
+{{- $panels := list -}}
+{{- $global := . -}}
+{{- range $idx, $serviceName := (keys .Values.services | sortAlpha) -}}
+  {{- $serviceValues := index $global.Values.services $serviceName -}}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service -}}
+{{- $yPos := mul $idx 9 -}}
+{{- $panelId := add (mul $idx 2) 1 -}}
+{{- $sectionPanelDict := dict "collapsed" false "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $yPos) "id" $panelId "panels" (list) "title" $serviceName "type" "row" -}}
+{{- $panels = append $panels $sectionPanelDict -}}
+
+{{- if .Values.ingress.enabled }}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_request_duration_seconds_sum{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
+{{- $ingressLatencyPanelDict := dict
+    "datasource" (dict "type" "prometheus" "uid" "prometheus")
+    "gridPos" (dict "h" 8 "w" 12 "x" 0 "y" (add $yPos 1))
+    "id" (add $panelId 1)
+    "options" (dict
+      "legend" (dict
+        "calcs" (list)
+        "displayMode" "list"
+        "placement" "bottom"
+        "showLegend" true
+      )
+      "tooltip" (dict
+        "hideZeros" false
+        "mode" "single"
+        "sort" "none"
+      )
+    )
+    "pluginVersion" "12.1.0"
+    "targets" (list
+      (dict
+        "datasource" (dict "type" "prometheus" "uid" "prometheus")
+        "editorMode" "code"
+        "expr" $metricsQuery
+        "legendFormat" "__auto"
+        "range" true
+        "refId" "A"
+      )
+    )
+    "title" "Ingress Request Latency"
+    "type" "timeseries"
+-}}
+
+{{- $panels = append $panels $ingressLatencyPanelDict -}}
+{{- end }}
+{{- end -}}
+{{- end -}}
+
+{{/* 3. Build the final, top-level dashboard dictionary */}}
+{{- $dashboard := dict
+    "id" nil
+    "title" (printf "%s-dashboard" (include "stack.fullname" $global | lower))
+    "tags" (list)
+    "style" "dark"
+    "timezone" "browser"
+    "editable" true
+    "hideControls" false
+    "graphTooltip" 1
+    "panels" $panels
+    "time" (dict "from" "now-6h" "to" "now")
+    "timepicker" (dict "time_options" (list) "refresh_intervals" (list))
+    "templating" (dict "list" (list))
+    "annotations" (dict "list" (list))
+    "refresh" "5s"
+    "schemaVersion" 17
+    "version" 0
+    "links" (list)
+-}}
+
+{{/* 5. Return the *entire data structure*. DO NOT pipe to toJson here. */}}
+{{- $dashboard | toPrettyJson }}
+{{- end -}}
