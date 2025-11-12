@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.17.1...stack-v2.18.0) (2025-11-12)
+
+
+### Features
+
+* add a default grafana dashboard to the "stack" helm chart ([#309](https://github.com/chanzuckerberg/argo-helm-charts/issues/309)) ([1f5c6ca](https://github.com/chanzuckerberg/argo-helm-charts/commit/1f5c6cafa932fb1f7275d067b4093b851e0c549a))
+
 ## [2.17.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.17.0...stack-v2.17.1) (2025-11-03)
 
 
