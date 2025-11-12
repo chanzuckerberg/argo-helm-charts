@@ -79,6 +79,37 @@
             }
           }
         },
+        "argoBuildEnv": {
+          "description": "Argo built-in environment parameters (provided by Argus API)",
+          "type": "object",
+          "properties": {
+            "appName": {
+              "description": "Equivalant to ARGOCD_APP_NAME",
+              "type": "string"
+            },
+            "appNamespace": {
+              "type": "string"
+            },
+            "appRevision": {
+              "type": "string"
+            },
+            "appRevisionShort": {
+              "type": "string"
+            },
+            "appRevisionShort8": {
+              "type": "string"
+            },
+            "appSourcePath": {
+              "type": "string"
+            },
+            "appSourceRepoUrl": {
+              "type": "string"
+            },
+            "appSourceTargetRevision": {
+              "type": "string"
+            }
+          }
+        },
         "args": {
           "description": "Arguments to pass to the command in the primary container",
           "type": "array",
