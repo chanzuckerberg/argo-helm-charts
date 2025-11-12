@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.1...argus-config-v1.6.0) (2025-11-12)
+
+
+### Features
+
+* add a default grafana dashboard to the "stack" helm chart ([#309](https://github.com/chanzuckerberg/argo-helm-charts/issues/309)) ([1f5c6ca](https://github.com/chanzuckerberg/argo-helm-charts/commit/1f5c6cafa932fb1f7275d067b4093b851e0c549a))
+
 ## [1.5.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.0...argus-config-v1.5.1) (2025-09-23)
 
 
