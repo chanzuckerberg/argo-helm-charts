@@ -20,6 +20,12 @@ tests:
           appSourcePath: "."
           appSourceRepoUrl: "http://github.com/chanzuckerberg/repo"
           appSourceTargetRevision: "main"
+        argusMetadata:
+          appName: "argusAppName"
+          envName: "argusEnvName"
+          stackName: "argusStackName"
+          repoName: "argusRepoName"
+          repoOwner: "argusRepoOwner"
 
     asserts:
       - hasDocuments:
@@ -35,10 +41,13 @@ tests:
       - equal:
           path: data
           value: 
-            __ARGUS_STACK_NAME: RELEASE-NAME
+            __ARGUS_STACK_NAME: argusStackName
+            __ARGUS_APP_NAME: argusAppName
+            __ARGUS_ENV_NAME: argusEnvName
+            __ARGUS_REPO_NAME: argusRepoName
+            __ARGUS_REPO_OWNER: argusRepoOwner
             __ARGUS_STACK_INGRESS_HOST: stack.play.dev.czi.team
             __ARGUS_DEPLOYMENT_STAGE: staging
-            __ARGUS_APP_NAME: argoAppName
             __ARGUS_APP_NAMESPACE: argoCD
             __ARGUS_APP_REVISION: testSHAAAAAAAAA
             __ARGUS_APP_REVISION_SHORT: testSHA
@@ -47,7 +56,7 @@ tests:
             __ARGUS_APP_SOURCE_REPO_URL: http://github.com/chanzuckerberg/repo
             __ARGUS_APP_SOURCE_TARGET_REVISION: main
   
-  - it: Argus config map should build even if not we don't pass in Argo Build Environment
+  - it: Argus config map should build even if not we don't pass in Argo Build Environment or Argus Metadata
     set:
       global:
         appContext:
