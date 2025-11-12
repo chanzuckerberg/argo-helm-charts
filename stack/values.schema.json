@@ -241,6 +241,15 @@
           "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
           "type": "string"
         },
+        "grafanaDashboard": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable Grafana dashboard (globally, can be overridden per service)",
+              "type": "boolean"
+            }
+          }
+        },
         "image": {
           "type": "object",
           "properties": {
