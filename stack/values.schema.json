@@ -84,28 +84,35 @@
           "type": "object",
           "properties": {
             "appName": {
-              "description": "Equivalant to ARGOCD_APP_NAME",
+              "description": "Set by Argus API to ARGOCD_APP_NAME (this is the ArgoCD app name, not the Argus app name)",
               "type": "string"
             },
             "appNamespace": {
+              "description": "Set by Argus API to ARGOCD_APP_NAMESPACE",
               "type": "string"
             },
             "appRevision": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION",
               "type": "string"
             },
             "appRevisionShort": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT",
               "type": "string"
             },
             "appRevisionShort8": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT_8",
               "type": "string"
             },
             "appSourcePath": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_PATH",
               "type": "string"
             },
             "appSourceRepoUrl": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
               "type": "string"
             },
             "appSourceTargetRevision": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
               "type": "string"
             }
           }
@@ -115,6 +122,32 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        },
+        "argusMetadata": {
+          "description": "Argus metadata (provided by Argus API)",
+          "type": "object",
+          "properties": {
+            "appName": {
+              "description": "Set by Argus API to Argus app name",
+              "type": "string"
+            },
+            "envName": {
+              "description": "Set by Argus API to Argus environment name",
+              "type": "string"
+            },
+            "repoName": {
+              "description": "Set by Argus API to Argus repository name",
+              "type": "string"
+            },
+            "repoOwner": {
+              "description": "Set by Argus API to Argus repository owner",
+              "type": "string"
+            },
+            "stackName": {
+              "description": "Set by Argus API to Argus stack name",
+              "type": "string"
+            }
           }
         },
         "autoscaling": {
