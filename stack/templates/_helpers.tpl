@@ -513,7 +513,7 @@ Expects a dict with keys: global, cronJob
         "showLegend" true
       )
       "tooltip" (dict
-        "hideZeros" false
+        "hideZeros" true
         "mode" "multi"
         "sort" "none"
       )
@@ -547,17 +547,59 @@ Expects a dict with keys: global, cronJob
       )
     )
     "title" "CronJob Executions"
-    "type" "barchart"
+    "type" "timeseries"
+    "transformations" (list
+      (dict
+        "id" "diff"
+        "options" (dict)
+      )
+      (dict
+        "id" "filterByValue"
+        "options" (dict
+          "filters" (list
+            (dict
+              "config" (dict
+                "id" "greater"
+                "options" (dict "value" 0)
+              )
+              "fieldName" "Success"
+            )
+            (dict
+              "config" (dict
+                "id" "greater"
+                "options" (dict "value" 0)
+              )
+              "fieldName" "Failure"
+            )
+          )
+          "match" "any"
+          "type" "include"
+        )
+      )
+    )
     "fieldConfig" (dict
       "defaults" (dict
         "unit" "short"
         "min" 0
         "custom" (dict
+          "drawStyle" "bars"
+          "barAlignment" 0
+          "lineInterpolation" "linear"
+          "barWidthFactor" 0.6
+          "fillOpacity" 80
+          "gradientMode" "none"
           "hideFrom" (dict
             "tooltip" false
             "viz" false
             "legend" false
           )
+          "lineWidth" 1
+          "pointSize" 5
+          "scaleDistribution" (dict "type" "linear")
+          "showPoints" "never"
+          "spanNulls" false
+          "stacking" (dict "group" "A" "mode" "none")
+          "thresholdsStyle" (dict "mode" "off")
         )
       )
       "overrides" (list
