@@ -252,6 +252,8 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- $panels = append $panels $cronJobMetricsPanelDict -}}
 {{- $cronJobLastSuccessfulRunPanelDict := include "stack.grafanaDashboard.charts.cronJobLastSuccessfulRun" (dict "global" $global "cronJob" $cronJob) | fromYaml -}}
 {{- $panels = append $panels $cronJobLastSuccessfulRunPanelDict -}}
+{{- $cronJobAvgDurationPanelDict := include "stack.grafanaDashboard.charts.cronJobAverageDuration" (dict "global" $global "cronJob" $cronJob) | fromYaml -}}
+{{- $panels = append $panels $cronJobAvgDurationPanelDict -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -643,6 +645,64 @@ Expects a dict with keys: global, cronJob
           "mode" "absolute"
           "steps" (list
             (dict "color" "green" "value" nil)
+          )
+        )
+      )
+    )
+-}}
+{{- $panelDict | toYaml -}}
+{{- end -}}
+
+{{/*
+Create a stat panel showing the average duration of cronjob runs.
+Expects a dict with keys: global, cronJob
+*/}}
+{{- define "stack.grafanaDashboard.charts.cronJobAverageDuration" -}}
+{{- $global := .global -}}
+{{- $cronJob := .cronJob -}}
+{{- $cronJobFullname := include "service.fullname" $cronJob -}}
+{{- $namespace := $global.Values.global.argoBuildEnv.appNamespace -}}
+{{- $avgDurationQuery := printf "avg(kube_job_status_completion_time{namespace=\"%s\", job_name=~\"%s-.*\"} - kube_job_status_start_time{namespace=\"%s\", job_name=~\"%s-.*\"})" $namespace $cronJobFullname $namespace $cronJobFullname -}}
+{{- $panelDict := dict
+    "datasource" (dict "type" "prometheus" "uid" "prometheus")
+    "gridPos" (dict "h" 8 "w" 6)
+    "options" (dict
+      "colorMode" "value"
+      "graphMode" "area"
+      "justifyMode" "auto"
+      "orientation" "auto"
+      "reduceOptions" (dict
+        "calcs" (list "lastNotNull")
+        "fields" ""
+        "values" false
+      )
+      "textMode" "value_and_name"
+      "showPercentChange" false
+    )
+    "pluginVersion" "12.1.0"
+    "targets" (list
+      (dict
+        "datasource" (dict "type" "prometheus" "uid" "prometheus")
+        "editorMode" "code"
+        "expr" $avgDurationQuery
+        "legendFormat" "Average Duration"
+        "range" true
+        "refId" "A"
+      )
+    )
+    "title" "Average Job Duration"
+    "type" "stat"
+    "fieldConfig" (dict
+      "defaults" (dict
+        "unit" "s"
+        "noValue" "No data"
+        "decimals" 2
+        "thresholds" (dict
+          "mode" "absolute"
+          "steps" (list
+            (dict "color" "green" "value" nil)
+            (dict "color" "yellow" "value" 60)
+            (dict "color" "red" "value" 300)
           )
         )
       )
