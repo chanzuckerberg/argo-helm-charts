@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.19.0...stack-v2.19.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* use patched argus-config ([#316](https://github.com/chanzuckerberg/argo-helm-charts/issues/316)) ([44c255b](https://github.com/chanzuckerberg/argo-helm-charts/commit/44c255b49cbc34cb8752a2ec3a7cb18f2e57dbb5))
+
 ## [2.19.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.18.0...stack-v2.19.0) (2025-11-14)
 
 
