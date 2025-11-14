@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.19.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.18.0...stack-v2.19.0) (2025-11-14)
+
+
+### Features
+
+* add default grafana dashboard charts for cronjobs ([#311](https://github.com/chanzuckerberg/argo-helm-charts/issues/311)) ([6178212](https://github.com/chanzuckerberg/argo-helm-charts/commit/61782127de2cf17cde41c9b5422f441b80f14159))
+* bump argus-config version ([#313](https://github.com/chanzuckerberg/argo-helm-charts/issues/313)) ([1267ad9](https://github.com/chanzuckerberg/argo-helm-charts/commit/1267ad9b2be2fcc9fa4b2167f632a4a46907ceda))
+
 ## [2.18.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.17.1...stack-v2.18.0) (2025-11-12)
 
 
