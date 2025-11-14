@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.6.0...argus-config-v1.6.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* refactor envFrom injection with better empty checks ([#314](https://github.com/chanzuckerberg/argo-helm-charts/issues/314)) ([69de3cf](https://github.com/chanzuckerberg/argo-helm-charts/commit/69de3cf402f71d45255613be02d3e0079380d0d9))
+
 ## [1.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.1...argus-config-v1.6.0) (2025-11-12)
 
 
