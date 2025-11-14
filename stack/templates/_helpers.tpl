@@ -500,8 +500,8 @@ Expects a dict with keys: global, cronJob
 {{- $cronJob := .cronJob -}}
 {{- $cronJobFullname := include "service.fullname" $cronJob -}}
 {{- $namespace := $global.Values.global.argoBuildEnv.appNamespace -}}
-{{- $successQuery := printf "sum(kube_job_status_succeeded{namespace=\"%s\", job_name=~\"%s-.*\"})" $namespace $cronJobFullname -}}
-{{- $failureQuery := printf "sum(kube_job_status_failed{namespace=\"%s\", job_name=~\"%s-.*\"})" $namespace $cronJobFullname -}}
+{{- $successQuery := printf "count((kube_job_status_succeeded{namespace=\"%s\", job_name=~\"%s-.*\"} UNLESS kube_job_status_succeeded{namespace=\"%s\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $namespace $cronJobFullname $namespace $cronJobFullname -}}
+{{- $failureQuery := printf "count((kube_job_status_failed{namespace=\"%s\", job_name=~\"%s-.*\"} UNLESS kube_job_status_failed{namespace=\"%s\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $namespace $cronJobFullname $namespace $cronJobFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" "prometheus")
     "gridPos" (dict "h" 8 "w" 12)
@@ -547,33 +547,22 @@ Expects a dict with keys: global, cronJob
       )
     )
     "title" "CronJob Executions"
-    "type" "timeseries"
+    "type" "barchart"
     "transformations" (list
-      (dict
-        "id" "diff"
-        "options" (dict)
-      )
       (dict
         "id" "filterByValue"
         "options" (dict
           "filters" (list
             (dict
               "config" (dict
-                "id" "greater"
+                "id" "equal"
                 "options" (dict "value" 0)
               )
-              "fieldName" "Success"
-            )
-            (dict
-              "config" (dict
-                "id" "greater"
-                "options" (dict "value" 0)
-              )
-              "fieldName" "Failure"
+              "fieldName" ""
             )
           )
-          "match" "any"
-          "type" "include"
+          "match" "all"
+          "type" "exclude"
         )
       )
     )
