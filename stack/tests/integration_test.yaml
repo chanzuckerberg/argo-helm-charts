@@ -6,6 +6,8 @@ tests:
     set:
       global:
         deploymentKind: Deployment
+        argoBuildEnv:
+          appNamespace: "argus-testapp-rdev"
       services:
         service1:
           image:
@@ -29,6 +31,8 @@ tests:
     set:
       global:
         deploymentKind: Rollout
+        argoBuildEnv:
+          appNamespace: "argus-testapp-rdev"
       services:
         service1:
           image:

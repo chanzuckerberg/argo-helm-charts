@@ -1,0 +1,20 @@
+{{ $global := . }}
+{{ $globalValues := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global }}
+{{- with $globalValues }}
+{{- if .Values.grafanaDashboard.enabled -}}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ include "stack.fullname" . | lower }}-dashboard
+spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      app: grafana
+  json: |
+    {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
+---
+{{ end }}
+{{- end }}

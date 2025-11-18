@@ -147,6 +147,25 @@ global: # @schema description: Global configuration for the stack - this serves 
       ## @skip global.appSecrets.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
       secretKey: ""
 
+  # @schema description: Argo built-in environment parameters (provided by Argus API)
+  argoBuildEnv:
+    appName: "" # @schema description: Set by Argus API to ARGOCD_APP_NAME (this is the ArgoCD app name, not the Argus app name)
+    appNamespace: "" # @schema description: Set by Argus API to ARGOCD_APP_NAMESPACE
+    appRevision: "" # @schema description: Set by Argus API to ARGOCD_APP_REVISION
+    appRevisionShort: "" # @schema description: Set by Argus API to ARGOCD_APP_REVISION_SHORT
+    appRevisionShort8: "" # @schema description: Set by Argus API to ARGOCD_APP_REVISION_SHORT_8
+    appSourcePath: "" # @schema description: Set by Argus API to ARGOCD_APP_SOURCE_PATH
+    appSourceRepoUrl: "" # @schema description: Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL
+    appSourceTargetRevision: "" # @schema description: Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL
+
+  # @schema description: Argus metadata (provided by Argus API)
+  argusMetadata:
+    appName: "" # @schema description: Set by Argus API to Argus app name
+    envName: "" # @schema description: Set by Argus API to Argus environment name
+    stackName: "" # @schema description: Set by Argus API to Argus stack name
+    repoName: "" # @schema description: Set by Argus API to Argus repository name
+    repoOwner: "" # @schema description: Set by Argus API to Argus repository owner
+
   annotations: {} # @schema description: Global annotations to add to all resources
   podLabels: {} # @schema description: Global labels to add to all pods
 
@@ -288,6 +307,9 @@ global: # @schema description: Global configuration for the stack - this serves 
       requests:
         cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 4Gi # @schema description: Memory request
+
+  grafanaDashboard:
+    enabled: false # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
 
 services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
   {}
