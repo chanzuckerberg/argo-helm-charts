@@ -48,7 +48,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   # @schema default: Deployment
   deploymentKind: "Deployment"
   # @schema $ref: #/properties/rollout
-  rollout: {} 
+  rollout: {}
   deploymentStage: "" # @schema description: Deployment stage
 
   replicaCount: 1 # @schema description: Number of replicas
@@ -80,7 +80,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     successThreshold: 1 # @schema type: number; description: Number of successes before the probe is considered successful
     timeoutSeconds: 1 # @schema type: number; description: Timeout for the probe
     initialDelaySeconds: 30 # @schema type: number; description: Number of seconds after the container has started before the probe is first initiated
-  
+
   readinessProbe: # @schema description: Readiness probe configuration
     failureThreshold: 3 # @schema type: number; description: Number of failures before the probe is considered failed
     httpGet: # @schema description: HTTP probe configuration (exec & tcpSocket are also available)
@@ -91,7 +91,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     successThreshold: 1 # @schema type: number; description: Number of successes before the probe is considered successful
     timeoutSeconds: 1 # @schema type: number; description: Timeout for the probe
     initialDelaySeconds: 30 # @schema type: number; description: Number of seconds after the container has started before the probe is first initiated
-  
+
   startupProbe: # @schema description: Startup probe configuration
     enabled: false # @schema description: Enable the startup probe
     failureThreshold: 3 # @schema description: Number of failures before the probe is considered failed
@@ -101,7 +101,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     periodSeconds: 10 # @schema description: How often to perform the probe
     ## Probe configuration (httpGet & tcpSocket are also available)
     exec: # @schema description: Exec probe configuration
-      command: 
+      command:
         - ps
         - "-ef"
 
@@ -175,12 +175,10 @@ global: # @schema description: Global configuration for the stack - this serves 
     annotations: {} # @schema description: Annotations to add to the service account
     name: "" # @schema description: Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-  podSecurityContext: # @schema description: Pod security context
-    {}
+  podSecurityContext: {} # @schema description: Pod security context
     # fsGroup: 2000
 
-  securityContext: # @schema description: Security context
-    {}
+  securityContext: {} # @schema description: Security context
     # capabilities:
     #   drop:
     #   - ALL
@@ -195,8 +193,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     className: nginx # @schema description: Ingress class name
     host: chart-example.local # @schema description: Ingress host
     paths: # @schema description: List of ingress paths
-      - 
-        path: / # @schema description: Ingress path
+      - path: / # @schema description: Ingress path
         pathType: Prefix # @schema description: Ingress path type
     rules: [] # @schema description: List of ingress rules
     oidcProtected: false # @schema description: Enable OIDC protection
@@ -211,13 +208,11 @@ global: # @schema description: Global configuration for the stack - this serves 
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-  
+
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
 
-  podAnnotations: # @schema type: object; description: Annotations to add to pods
-    linkerd.io/inject: enabled # @schema description: Linkerd injection annotation
-    config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465 # @schema description: Linkerd skip outbound ports annotation
+  podAnnotations: {} # @schema type: object; description: Annotations to add to pods
 
   autoscaling: # @schema description: Autoscaling configuration
     enabled: true # @schema description: Enable autoscaling
@@ -308,8 +303,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   grafanaDashboard:
     enabled: false # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
 
-services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
-  {}
+services: {} # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
   # service1:
   #   args: ["arg1", "arg2"]
   #   command: ["command1", "command2"]
@@ -345,8 +339,7 @@ services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global",
   #     - name: sidecar4
   #       image: sidecar4:latest
 
-cronJobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object" } }; description: Cron jobs to deploy
-  {}
+cronJobs: {} # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object" } }; description: Cron jobs to deploy
   # cronJob1:
   #   concurrencyPolicy: Forbid
   #   schedule: "* * * * *"
@@ -359,8 +352,7 @@ cronJobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global",
   #   command: ["command1", "command2"]
   #   args: ["arg1", "arg2"]
 
-jobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object" } }; description: Jobs to deploy
-  {}
+jobs: {} # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object" } }; description: Jobs to deploy
   # job1:
   #   activeDeadlineSeconds: 300
   #   backoffLimit: 2
