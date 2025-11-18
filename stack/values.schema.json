@@ -112,6 +112,16 @@
             }
           }
         },
+        "ciliumNetworkPolicy": {
+          "description": "Cilium network policy configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable Cilium network policy",
+              "type": "boolean"
+            }
+          }
+        },
         "command": {
           "description": "Command to run in the primary container",
           "type": "array",
