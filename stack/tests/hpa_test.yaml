@@ -25,3 +25,19 @@ tests:
       - equal:
           path: spec.maxReplicas
           value: 10
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "development"
+      services:
+        service1:
+          autoscaling:
+            enabled: true
+            minReplicas: 1
+            maxReplicas: 5
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "development"
