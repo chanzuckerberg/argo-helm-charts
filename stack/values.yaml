@@ -171,6 +171,9 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   shareProcessNamespace: false # @schema description: Share process namespace
 
+  ciliumNetworkPolicy: # @schema description: Cilium network policy configuration
+    enabled: false # @schema description: Enable Cilium network policy
+
   ingress: # @schema description: Ingress configuration
     enabled: true # @schema description: Enable ingress
     className: nginx # @schema description: Ingress class name

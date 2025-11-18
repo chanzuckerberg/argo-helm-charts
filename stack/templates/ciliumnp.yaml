@@ -1,0 +1,33 @@
+{{ $global := . }}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+{{- if .Values.ciliumNetworkPolicy.enabled }}
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml (mergeOverwrite 
+                (dict)
+                (fromYaml (include "stack.annotations" $service )) 
+      ) | nindent 4 }}
+spec:
+  description: "L3-L4 policy to restrict access to {{ include "service.fullname" . }}"
+  endpointSelector:
+    matchLabels:
+      {{- include "service.selectorLabels" . | nindent 6 }}
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        {{- include "service.selectorLabels" . | nindent 8 }}
+{{- end }}
+{{- end }}
+{{- end }}
