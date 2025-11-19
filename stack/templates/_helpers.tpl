@@ -84,11 +84,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels
+Argus labels
 */}}
-{{- define "stack.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "stack.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+{{- define "stack.argusLabels" -}}
 {{- with .Values.argusMetadata }}
 {{- if .appName }}
 argus/app-name: {{ .appName }}
@@ -106,6 +104,15 @@ argus/repo-name: {{ .repoName }}
 argus/repo-owner: {{ .repoOwner }}
 {{- end }}
 {{- end }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "stack.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "stack.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- include "stack.argusLabels" . }}
 {{- end }}
 
 {{- define "service.selectorLabels" -}}
