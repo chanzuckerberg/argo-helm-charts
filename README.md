@@ -20,7 +20,7 @@ Suppose you want to test some local changes of the stack helm chart in the `argu
 1. Clone the `argus-example-app` repository
 1. Change the `.infra/rdev/Chart.yaml` in the `argus-example-app` to point to the local directory
     - set the `repository` of the `stack` chart dependency to `file://<relative path to argo-helm-charts/stack/ directory>`
-1. Run `helm dependency update` from a terminal in the `argus-example-app` repository
+1. Run `helm dependency update` from a terminal in the `argus-example-app/.infra/rdev` path in the argus-example-app repository
 1. Create a new branch then commit and push the changes to the `argus-example-app` repository
     - This should include your changes to `.infra/rdev/Chart.yaml`, the newly created `.infra/rdev/Chart.lock`, and the `.infra/rdev/charts/stack-<X.Y.Z>.tgz` file
 1. Create a PR in the `argus-example-app` repository and create a stack in Argus using the `stack` label on the PR

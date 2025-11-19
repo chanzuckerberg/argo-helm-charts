@@ -120,3 +120,18 @@ tests:
           kind: ServiceAccount
           name: "release-name-stack-job2"
         not: true
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "test"
+      jobs:
+        test-job:
+          image:
+            repository: test-repo
+            tag: latest
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "test"
