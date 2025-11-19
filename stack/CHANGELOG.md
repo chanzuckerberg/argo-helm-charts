@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.21.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.20.1...stack-v2.21.0) (2025-11-19)
+
+
+### Features
+
+* make stack dashboards have a deterministic url ([#325](https://github.com/chanzuckerberg/argo-helm-charts/issues/325)) ([91f3a97](https://github.com/chanzuckerberg/argo-helm-charts/commit/91f3a9710b266d88861961383c31057427da23da))
+
 ## [2.20.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.20.0...stack-v2.20.1) (2025-11-19)
 
 
