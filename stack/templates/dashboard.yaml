@@ -27,12 +27,12 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
-  name: {{ .Values.argusMetadata.appName }}-{{ .Values.environment }}
+  name: {{ .Values.argusMetadata.appName }}-{{ .Values.argusMetadata.envName }}
 spec:
   instanceSelector:
     matchLabels:
       name: grafana-central
-  title: {{ .Values.argusMetadata.appName }}-{{ .Values.environment }}
+  title: {{ .Values.argusMetadata.appName }}-{{ .Values.argusMetadata.envName }}
   parentFolderRef: {{ .Values.argusMetadata.appName }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
@@ -45,6 +45,7 @@ spec:
   instanceSelector:
     matchLabels:
       app: grafana
+  parentFolderRef: {{ .Values.argusMetadata.appName }}-{{ .Values.argusMetadata.envName }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
 ---
