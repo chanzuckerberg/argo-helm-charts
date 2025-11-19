@@ -1,26 +1,19 @@
 {{ $global := . }}
-{{ range $serviceName, $serviceValues := .Values.services }}
-  {{- $globalValuesDict := $global.Values.global | toYaml -}}
-  {{- $values := fromYaml $globalValuesDict -}}
-  {{- $values = set $values "name" $serviceName -}}
-  {{- $values := mergeOverwrite $values $serviceValues -}}
-  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
-{{- with $service }}
+{{- $globalValues := .Values.global }}
+{{- $scope := dict "Chart" .Chart "Release" .Release "Capabilities" .Capabilities "Values" $globalValues }}
+{{- with $scope }}
 {{- if .Values.ciliumNetworkPolicy.enabled }}
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: {{ include "service.fullname" . }}
+  name: {{ include "stack.fullname" . }}
   labels:
-    {{- include "service.labels" . | nindent 4 }}
+    {{- include "stack.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml (mergeOverwrite 
-                (dict)
-                (fromYaml (include "stack.annotations" $service )) 
-      ) | nindent 4 }}
+    {{- toYaml .Values.annotations | nindent 4 }}
 spec:
-  description: "L3-L4 policy to restrict access to {{ include "service.fullname" . }}"
+  description: "L3-L4 policy to restrict access to {{ include "stack.fullname" . }}"
   endpointSelector:
     matchLabels:
       {{- include "stack.argusLabels" . | nindent 6 }}
@@ -28,20 +21,9 @@ spec:
   - fromEndpoints:
     - matchLabels:
         {{- include "stack.argusLabels" . | nindent 8 }}
-    toPorts:
-    - ports:
-      - port: "80"
-        protocol: TCP
-      - port: "443"
-        protocol: TCP
-      - port: "8080"
-        protocol: TCP
-      - port: "8443"
-        protocol: TCP
-      - port: "3000"
-        protocol: TCP
-      - port: "5000"
-        protocol: TCP
-{{- end }}
+    - matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/part-of: ingress-nginx
+        io.kubernetes.pod.namespace: nginx-encrypted-ingress
 {{- end }}
 {{- end }}
