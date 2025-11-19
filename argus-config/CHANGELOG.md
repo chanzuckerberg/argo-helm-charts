@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.6.0...argus-config-v1.6.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* refactor envFrom injection with better empty checks ([#314](https://github.com/chanzuckerberg/argo-helm-charts/issues/314)) ([69de3cf](https://github.com/chanzuckerberg/argo-helm-charts/commit/69de3cf402f71d45255613be02d3e0079380d0d9))
+
+## [1.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.1...argus-config-v1.6.0) (2025-11-12)
+
+
+### Features
+
+* add a default grafana dashboard to the "stack" helm chart ([#309](https://github.com/chanzuckerberg/argo-helm-charts/issues/309)) ([1f5c6ca](https://github.com/chanzuckerberg/argo-helm-charts/commit/1f5c6cafa932fb1f7275d067b4093b851e0c549a))
+
+## [1.5.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.5.0...argus-config-v1.5.1) (2025-09-23)
+
+
+### Bug Fixes
+
+* update secret reference in helm template for cluster CLI secrets ([#280](https://github.com/chanzuckerberg/argo-helm-charts/issues/280)) ([c4f8a39](https://github.com/chanzuckerberg/argo-helm-charts/commit/c4f8a391c94074efe87f2c2baeb7d8aea6d87f7e))
+
+## [1.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.2...argus-config-v1.5.0) (2025-09-23)
+
+
+### Features
+
+* update helm chart to include a new envFrom section tf cluster-wide secrets ([#275](https://github.com/chanzuckerberg/argo-helm-charts/issues/275)) ([25a4289](https://github.com/chanzuckerberg/argo-helm-charts/commit/25a42899346a561d44ea5667421af529126f70af))
+
 ## [1.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.4.1...argus-config-v1.4.2) (2025-04-28)
 
 

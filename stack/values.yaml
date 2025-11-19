@@ -1,5 +1,54 @@
 argus-config: {} # @schema description: Allows values for the argus-config Helm chart
+# @schema type: object
+# @schema description: defines a template that is used to create a analysisRun
+# @schema additionalProperties: true
+rolloutAnalysis:
+  # @schema item: object
+  # @schema itemProperties: {"templateName": {"type": "string", "description": " name of the AnalysisTemplate to use for the rollout analysis"}, "clusterScope": {"type": "boolean", "description": "Whether to look for the templateName at cluster scope or namespace scope."}}
+  # @schema description: reference to a list of analysis templates to combine for an AnalysisRun
+  templates: []
+  # @schema item: object
+  # @schema itemProperties: {"name": {"type": "string"}, "value": {"type": "string"}, "valueFrom": {"type": "object", properties: {"podTemplateHashValue": {"type": "string", "enum": ["Latest", "Stable"]}, "fieldRef": {"type":"object", "properties": {"fieldPath": {"type": "string"}}}}}}
+  # @schema description: the arguments that will be added to the AnalysisRuns
+  args: []
+  # @schema type: object
+  # @schema description: extra labels to add to the AnalysisRun
+  analysisRunMetadata:
+    # @schema type: object
+    # @schema description: additional labels to add to the AnalysisRun
+    labels: {}
+    # @schema type: object
+    # @schema description: additional annotations to add to the AnalysisRun
+    annotations: {}
+# @schema additionalProperties: true
+rollout:
+  # @schema description: Specifies the rollout strategy for the application.
+  # @schema type: object
+  # @schema default: blueGreen
+  strategy:
+    # @schema default: blueGreen
+    blueGreen:
+      # @schema type: string
+      # @schema description: Name of the service that the rollout modifies as the active service.
+      activeService: ""
+      # @schema type: string
+      # @schema description: Name of the service that the rollout modifies as the preview service.
+      previewService: ""
+      # @schema type: boolean
+      # @schema description: indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
+      autoPromotionEnabled: false
+      # @schema $ref: #/properties/rolloutAnalysis
+      # @schema description: configuration to run analysis before a selector switch
+      prePromotionAnalysis: {}
+
 global: # @schema description: Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
+  # @schema description: Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).
+  # @schema type: string
+  # @schema enum:[Deployment, Rollout]
+  # @schema default: Deployment
+  deploymentKind: "Deployment"
+  # @schema $ref: #/properties/rollout
+  rollout: {} 
   deploymentStage: "" # @schema description: Deployment stage
 
   replicaCount: 1 # @schema description: Number of replicas
@@ -98,6 +147,25 @@ global: # @schema description: Global configuration for the stack - this serves 
       ## @skip global.appSecrets.clusterSecret.secretKey Cluster-level secret key to map External Secrets from
       secretKey: ""
 
+  # @schema description: Argo built-in environment parameters (provided by Argus API)
+  argoBuildEnv:
+    appName: "" # @schema description: Set by Argus API to ARGOCD_APP_NAME (this is the ArgoCD app name, not the Argus app name)
+    appNamespace: "" # @schema description: Set by Argus API to ARGOCD_APP_NAMESPACE
+    appRevision: "" # @schema description: Set by Argus API to ARGOCD_APP_REVISION
+    appRevisionShort: "" # @schema description: Set by Argus API to ARGOCD_APP_REVISION_SHORT
+    appRevisionShort8: "" # @schema description: Set by Argus API to ARGOCD_APP_REVISION_SHORT_8
+    appSourcePath: "" # @schema description: Set by Argus API to ARGOCD_APP_SOURCE_PATH
+    appSourceRepoUrl: "" # @schema description: Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL
+    appSourceTargetRevision: "" # @schema description: Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL
+
+  # @schema description: Argus metadata (provided by Argus API)
+  argusMetadata:
+    appName: "" # @schema description: Set by Argus API to Argus app name
+    envName: "" # @schema description: Set by Argus API to Argus environment name
+    stackName: "" # @schema description: Set by Argus API to Argus stack name
+    repoName: "" # @schema description: Set by Argus API to Argus repository name
+    repoOwner: "" # @schema description: Set by Argus API to Argus repository owner
+
   annotations: {} # @schema description: Global annotations to add to all resources
   podLabels: {} # @schema description: Global labels to add to all pods
 
@@ -182,14 +250,33 @@ global: # @schema description: Global configuration for the stack - this serves 
   persistence:
     enabled: false # @schema description: Enable persistence
     pvc:
-      accessModes: # @schema type: array; item: string; description: Access modes
+      accessModes: # @schema type: array; item: string; itemEnum: [ReadWriteOnce, ReadOnlyMany, ReadWriteMany, ReadWriteOncePod]; description: Access modes for the PVC
         - ReadWriteOnce
       resources:
         requests: # @schema description: PVC resource requests
           storage: 8Gi # @schema description: Storage resource request
       storageClassName: "default" # @schema description: Storage class name
+      dataSource:
+        name: "" # @schema description: Name of the data source
+        kind: "" # @schema description: Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
+        apiGroup: "snapshot.storage.k8s.io/v1" # @schema description: API version of the data source
     existingClaim: "" # @schema description: Existing PVC name
     mountPath: "" # @schema description: Mount path for the PVC
+
+  s3Storage:
+    enabled: false # @schema description: Enable S3 CSI storage
+    bucketName: "" # @schema description: S3 bucket name
+    region: "us-west-2" # @schema description: AWS region
+    capacity: "5Gi" # @schema description: Storage capacity
+    accessModes: # @schema type: array; item: string; itemEnum: [ReadWriteOnce, ReadOnlyMany, ReadWriteMany, ReadWriteOncePod]; description: Access modes for the S3 storage
+      - ReadWriteMany
+    reclaimPolicy: "Retain" # @schema description: Reclaim policy for the PV
+    pvName: "" # @schema description: Custom PV name (auto-generated if empty)
+    pvcName: "" # @schema description: Custom PVC name (auto-generated if empty)
+    volumeHandle: "" # @schema description: CSI volume handle (auto-generated if empty)
+    labels: {} # @schema type: object; description: Additional labels for PV/PVC
+    annotations: {} # @schema type: object; description: Additional annotations for PV/PVC
+    volumeAttributes: {} # @schema type: object; description: Additional CSI volume attributes
 
   oidcProxy:
     enabled: false # @schema description: Enable OIDC proxy
@@ -217,6 +304,9 @@ global: # @schema description: Global configuration for the stack - this serves 
       requests:
         cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 4Gi # @schema description: Memory request
+
+  grafanaDashboard:
+    enabled: false # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
 
 services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
   {}

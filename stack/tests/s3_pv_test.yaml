@@ -1,0 +1,119 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test s3 persistent volume
+templates:
+  - s3-pv.yaml
+tests:
+  - it: creates S3 PV when S3 storage is enabled
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "test-s3-bucket"
+          region: "us-west-2"
+          capacity: "10Gi"
+          pvName: "test-s3-pv"
+          volumeHandle: "test-s3-handle"
+          accessModes:
+            - ReadWriteMany
+          reclaimPolicy: "Retain"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PersistentVolume
+      - equal:
+          path: metadata.name
+          value: "test-s3-pv"
+      - equal:
+          path: spec.capacity.storage
+          value: "10Gi"
+      - equal:
+          path: spec.csi.driver
+          value: "s3.csi.aws.com"
+      - equal:
+          path: spec.csi.volumeHandle
+          value: "test-s3-handle"
+      - equal:
+          path: spec.csi.volumeAttributes.bucketName
+          value: "test-s3-bucket"
+      - equal:
+          path: spec.csi.volumeAttributes.region
+          value: "us-west-2"
+      - equal:
+          path: spec.persistentVolumeReclaimPolicy
+          value: "Retain"
+      - equal:
+          path: spec.storageClassName
+          value: ""
+
+  - it: does not create S3 PV when S3 storage is disabled
+    set:
+      global:
+        s3Storage:
+          enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: creates S3 PV with auto-generated name
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "auto-test-bucket"
+          # Don't set custom name - should auto-generate
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PersistentVolume
+      - matchRegex:
+          path: metadata.name
+          pattern: "^RELEASE-NAME-stack-s3-pv$"
+
+  - it: creates S3 PV with default values
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "default-test-bucket"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PersistentVolume
+      - equal:
+          path: spec.capacity.storage
+          value: "5Gi"
+      - contains:
+          path: spec.accessModes
+          content: "ReadWriteMany"
+      - equal:
+          path: spec.csi.volumeAttributes.region
+          value: "us-west-2"
+      - equal:
+          path: spec.persistentVolumeReclaimPolicy
+          value: "Retain"
+
+  - it: supports custom volume attributes
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "attributes-test"
+          volumeAttributes:
+            uid: "1000"
+            gid: "1000"
+            dirMode: "0755"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.csi.volumeAttributes.uid
+          value: "1000"
+      - equal:
+          path: spec.csi.volumeAttributes.gid
+          value: "1000"
+      - equal:
+          path: spec.csi.volumeAttributes.dirMode
+          value: "0755"

@@ -62,5 +62,29 @@ spec:
     url: "{{ .Values.datasources.tempo.url }}"
     basicAuth: false
     editable: true
+---
+{{ end }}
+{{ if .Values.datasources.cloudwatch.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: {{ .Values.grafanaName }}-cloudwatch-datasource
+  labels:
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  datasource:
+    name: CloudWatch
+    type: cloudwatch
+    uid: cloudwatch
+    access: proxy
+    basicAuth: false
+    editable: true
+    jsonData:
+      defaultRegion: {{ .Values.datasources.cloudwatch.region }}
+---
 {{ end }}
 {{ end }}

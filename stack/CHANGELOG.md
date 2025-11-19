@@ -1,5 +1,76 @@
 # Changelog
 
+## [2.20.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.19.1...stack-v2.20.0) (2025-11-19)
+
+
+### Features
+
+* add argus metadata to selector labels to prepare for policies ([#321](https://github.com/chanzuckerberg/argo-helm-charts/issues/321)) ([d74c5f5](https://github.com/chanzuckerberg/argo-helm-charts/commit/d74c5f5f1d22ec80ae341dd9fce24484271925e2))
+
+## [2.19.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.19.0...stack-v2.19.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* use patched argus-config ([#316](https://github.com/chanzuckerberg/argo-helm-charts/issues/316)) ([44c255b](https://github.com/chanzuckerberg/argo-helm-charts/commit/44c255b49cbc34cb8752a2ec3a7cb18f2e57dbb5))
+
+## [2.19.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.18.0...stack-v2.19.0) (2025-11-14)
+
+
+### Features
+
+* add default grafana dashboard charts for cronjobs ([#311](https://github.com/chanzuckerberg/argo-helm-charts/issues/311)) ([6178212](https://github.com/chanzuckerberg/argo-helm-charts/commit/61782127de2cf17cde41c9b5422f441b80f14159))
+* bump argus-config version ([#313](https://github.com/chanzuckerberg/argo-helm-charts/issues/313)) ([1267ad9](https://github.com/chanzuckerberg/argo-helm-charts/commit/1267ad9b2be2fcc9fa4b2167f632a4a46907ceda))
+
+## [2.18.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.17.1...stack-v2.18.0) (2025-11-12)
+
+
+### Features
+
+* add a default grafana dashboard to the "stack" helm chart ([#309](https://github.com/chanzuckerberg/argo-helm-charts/issues/309)) ([1f5c6ca](https://github.com/chanzuckerberg/argo-helm-charts/commit/1f5c6cafa932fb1f7275d067b4093b851e0c549a))
+
+## [2.17.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.17.0...stack-v2.17.1) (2025-11-03)
+
+
+### Bug Fixes
+
+* make the default cookie domain the stack's domain ([#307](https://github.com/chanzuckerberg/argo-helm-charts/issues/307)) ([2cd19f4](https://github.com/chanzuckerberg/argo-helm-charts/commit/2cd19f4f8aa014ea564f2e33a701a0fa1f0321c5))
+
+## [2.17.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.16.0...stack-v2.17.0) (2025-10-21)
+
+
+### Features
+
+* rollout object integration ([#294](https://github.com/chanzuckerberg/argo-helm-charts/issues/294)) ([d6340b7](https://github.com/chanzuckerberg/argo-helm-charts/commit/d6340b70642e86712e51c1d92ebdabf07da14595))
+
+## [2.16.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.15.0...stack-v2.16.0) (2025-09-29)
+
+
+### Features
+
+* Add s3 support to stack chart ([#283](https://github.com/chanzuckerberg/argo-helm-charts/issues/283)) ([46a08cd](https://github.com/chanzuckerberg/argo-helm-charts/commit/46a08cd73d894d04d5cdc069ee51ff13af8837d4))
+
+## [2.15.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.14.0...stack-v2.15.0) (2025-09-23)
+
+
+### Features
+
+* enable cluster-wide secrets in stack helm chart ([#279](https://github.com/chanzuckerberg/argo-helm-charts/issues/279)) ([6efc717](https://github.com/chanzuckerberg/argo-helm-charts/commit/6efc7172dc3d3bb6cd674f9d5283874fb36ce1bd))
+
+## [2.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.13.0...stack-v2.14.0) (2025-09-23)
+
+
+### Features
+
+* Allow other accessModes for PVCs ([#277](https://github.com/chanzuckerberg/argo-helm-charts/issues/277)) ([4ec501b](https://github.com/chanzuckerberg/argo-helm-charts/commit/4ec501ba903b6310e927bc683a33fde85110127f))
+
+## [2.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.12.0...stack-v2.13.0) (2025-09-05)
+
+
+### Features
+
+* Add volume snapshot support for pvc ([#273](https://github.com/chanzuckerberg/argo-helm-charts/issues/273)) ([9b7c290](https://github.com/chanzuckerberg/argo-helm-charts/commit/9b7c290cbbf72d112a7fda69210987f1d235318b))
+
 ## [2.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.11.0...stack-v2.12.0) (2025-06-17)
 
 

@@ -1,0 +1,24 @@
+{{ if .Values.enabled }}
+{{ if .Values.contactPoint.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaContactPoint
+metadata:
+  name: {{.Values.contactPoint.name}}
+spec:
+  allowCrossNamespaceImport: true
+  name: {{.Values.contactPoint.name}}
+  type: slack
+  instanceSelector:
+    matchLabels:
+      app: {{.Values.grafana.name}}
+  settings:
+    type: slack
+    disableResolveMessage: false
+  valuesFrom:
+    - targetPath: url
+      valueFrom:
+        secretKeyRef:
+           name: {{.Values.contactPoint.slack.secretName}}
+           key: {{.Values.contactPoint.slack.secretKey}}
+{{ end }}
+{{ end }}

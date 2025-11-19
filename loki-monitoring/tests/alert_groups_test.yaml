@@ -1,0 +1,66 @@
+suite: test grafana alert rule group
+templates:
+  - templates/alert_groups.yaml
+tests:
+  - it: renders GrafanaAlertRuleGroup when enabled
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaAlertRuleGroup
+      - equal:
+          path: metadata.name
+          value: loki-alerts
+      - equal:
+          path: spec.folderRef
+          value: loki
+      - equal:
+          path: spec.instanceSelector.matchLabels.app
+          value: grafana
+      - equal:
+          path: spec.name
+          value: Loki Alerts
+  - it: does not render when either toggle is disabled
+    set:
+      enabled: true
+      alertRuleGroup:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: reflects cw-loki namespace in all PromQL queries
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+      - matchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="cw-loki"'
+  - it: does not contain old loki namespace in queries when using cw-loki
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - notMatchRegex:
+          path: spec.rules[0].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[1].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[2].data[0].model.expr
+          pattern: 'namespace="loki"'
+      - notMatchRegex:
+          path: spec.rules[3].data[0].model.expr
+          pattern: 'namespace="loki"'

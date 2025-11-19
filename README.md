@@ -20,7 +20,7 @@ Suppose you want to test some local changes of the stack helm chart in the `argu
 1. Clone the `argus-example-app` repository
 1. Change the `.infra/rdev/Chart.yaml` in the `argus-example-app` to point to the local directory
     - set the `repository` of the `stack` chart dependency to `file://<relative path to argo-helm-charts/stack/ directory>`
-1. Run `helm dependency update` from a terminal in the `argus-example-app` repository
+1. Run `helm dependency update` from a terminal in the `argus-example-app/.infra/rdev` path in the argus-example-app repository
 1. Create a new branch then commit and push the changes to the `argus-example-app` repository
     - This should include your changes to `.infra/rdev/Chart.yaml`, the newly created `.infra/rdev/Chart.lock`, and the `.infra/rdev/charts/stack-<X.Y.Z>.tgz` file
 1. Create a PR in the `argus-example-app` repository and create a stack in Argus using the `stack` label on the PR
@@ -28,3 +28,9 @@ Suppose you want to test some local changes of the stack helm chart in the `argu
 [Here is an example of the changes](https://github.com/chanzuckerberg/argus-example-app/pull/159/commits/3685595e8e7d31a49077de173a678817ac96de65)
 
 NOTE: Do not merge `.infra/rdev/Chart.lock` or `.infra/rdev/charts/stack-<X.Y.Z>.tgz` into the main branch. These files should only be used for testing purposes.
+
+## Code of Conduct
+
+This project adheres to the Contributor Covenant [code of conduct](https://github.com/chanzuckerberg/.github/blob/master/CODE_OF_CONDUCT.md).
+By participating, you are expected to uphold this code. 
+Please report unacceptable behavior to [opensource@chanzuckerberg.com](mailto:opensource@chanzuckerberg.com).

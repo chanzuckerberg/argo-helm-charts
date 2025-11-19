@@ -1,13 +1,16 @@
 {
-  "$id": "argo.helm.charts/argus-config",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "additionalProperties": false,
+  "$id": "argo.helm.charts/argus-config",
+  "title": "argus-config",
+  "type": "object",
   "properties": {
     "global": {
       "description": "Global parameters",
+      "type": "object",
       "properties": {
         "appContext": {
           "description": "App context (provided by Argus API)",
+          "type": "object",
           "properties": {
             "envContextConfigMapName": {
               "description": "Environment level configuration configmap name",
@@ -17,26 +20,40 @@
               "description": "Stack level configuration configmap name",
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         },
         "appSecrets": {
           "description": "App secrets (provided by Argus API)",
+          "type": "object",
           "properties": {
-            "clusterSecret": {
+            "clusterCLISecret": {
+              "type": "object",
               "properties": {
                 "secretKey": {
                   "description": "Cluster-level secret key to map External Secrets from",
                   "type": "string"
                 },
                 "secretName": {
-                  "description": "Cluster-level Kube secret name to write External Secrets to",
+                  "description": "Cluster-level Kube secret name set by argus set secret CLI command",
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
+            },
+            "clusterSecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "description": "Cluster-level secret key to map External Secrets from",
+                  "type": "string"
+                },
+                "secretName": {
+                  "description": "Cluster-level Kube secret name set by terraform in argus-infra-stacks",
+                  "type": "string"
+                }
+              }
             },
             "envSecret": {
+              "type": "object",
               "properties": {
                 "secretKey": {
                   "description": "Environment-level secret key to map External Secrets from",
@@ -46,10 +63,10 @@
                   "description": "Environment-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
             },
             "stackSecret": {
+              "type": "object",
               "properties": {
                 "secretKey": {
                   "description": "Stack-level secret key to map External Secrets from",
@@ -59,17 +76,16 @@
                   "description": "Stack-level Kube secret name to write External Secrets to",
                   "type": "string"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         },
         "argoBuildEnv": {
           "description": "Argo built-in environment parameters",
+          "type": "object",
           "properties": {
             "appName": {
-              "description": "equivalant to ARGOCD_APP_NAME",
+              "description": "equivalant to ARGOCD_APP_NAME (NOT the Argus app name)",
               "type": "string"
             },
             "appNamespace": {
@@ -100,8 +116,33 @@
               "description": "equivalant to ARGOCD_APP_SOURCE_REPO_URL",
               "type": "string"
             }
-          },
-          "type": "object"
+          }
+        },
+        "argusMetadata": {
+          "description": "Argus metadata (provided by Argus API)",
+          "type": "object",
+          "properties": {
+            "appName": {
+              "description": "Set by Argus API to Argus app name (this is the Argus app name, not the ArgoCD app name)",
+              "type": "string"
+            },
+            "envName": {
+              "description": "Set by Argus API to Argus environment name",
+              "type": "string"
+            },
+            "repoName": {
+              "description": "Set by Argus API to Argus repository name",
+              "type": "string"
+            },
+            "repoOwner": {
+              "description": "Set by Argus API to Argus repository owner",
+              "type": "string"
+            },
+            "stackName": {
+              "description": "Set by Argus API to Argus stack name",
+              "type": "string"
+            }
+          }
         },
         "deploymentStage": {
           "description": "Deployment stage",
@@ -109,18 +150,15 @@
         },
         "ingress": {
           "description": "Ingress configuration",
+          "type": "object",
           "properties": {
             "host": {
               "description": "Ingress host",
               "type": "string"
             }
-          },
-          "type": "object"
+          }
         }
-      },
-      "type": "object"
+      }
     }
-  },
-  "title": "argus-config",
-  "type": "object"
+  }
 }

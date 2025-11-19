@@ -1,4 +1,6 @@
 {{ $global := . }}
+{{- $kind := default "Deployment" .Values.global.deploymentKind }}
+{{- if eq $kind "Deployment" }}
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -147,5 +149,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}

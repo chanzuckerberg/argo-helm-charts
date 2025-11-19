@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.7.0...grafana-v0.8.0) (2025-11-03)
+
+
+### Features
+
+* Provision central grafana CRD ([#305](https://github.com/chanzuckerberg/argo-helm-charts/issues/305)) ([2a8cef6](https://github.com/chanzuckerberg/argo-helm-charts/commit/2a8cef69bfdb45a05ab4b4464a204582e7fa8b95))
+
+## [0.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.4...grafana-v0.7.0) (2025-09-05)
+
+
+### Features
+
+* add cloudwatch datasource to grafana chart ([#262](https://github.com/chanzuckerberg/argo-helm-charts/issues/262)) ([c5e9a7c](https://github.com/chanzuckerberg/argo-helm-charts/commit/c5e9a7c3a348e2f0cd8f762e2ce5a951e89a2979))
+
+## [0.6.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.3...grafana-v0.6.4) (2025-08-05)
+
+
+### Bug Fixes
+
+* Remove grafana.ini key ([#258](https://github.com/chanzuckerberg/argo-helm-charts/issues/258)) ([b6870df](https://github.com/chanzuckerberg/argo-helm-charts/commit/b6870dff85cb84da3b4d89bffebb16616cca5a2a))
+
+## [0.6.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.2...grafana-v0.6.3) (2025-08-05)
+
+
+### Bug Fixes
+
+* formatting for grafana helm ([#256](https://github.com/chanzuckerberg/argo-helm-charts/issues/256)) ([515ada3](https://github.com/chanzuckerberg/argo-helm-charts/commit/515ada3147be434ff8fe87b22032b0debe39527b))
+
+## [0.6.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.1...grafana-v0.6.2) (2025-08-05)
+
+
+### Bug Fixes
+
+* Remove if statement for allow_embedding ([#254](https://github.com/chanzuckerberg/argo-helm-charts/issues/254)) ([da5eedc](https://github.com/chanzuckerberg/argo-helm-charts/commit/da5eedcf1e294cf78dd3296a0a70b34501c3fcee))
+
 ## [0.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.6.0...grafana-v0.6.1) (2025-08-04)
 
 

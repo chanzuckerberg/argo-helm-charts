@@ -1,0 +1,55 @@
+suite: test dashboard namespace configuration
+templates:
+  - templates/dashboard.yaml
+tests:
+  - it: uses default loki namespace when not overridden
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaDashboard
+  
+  - it: properly renders cw-loki namespace in dashboard
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaDashboard
+  
+  - it: maintains other loki configuration values when changing namespace
+    set:
+      loki:
+        namespace: cw-loki
+        name: custom-loki
+        uid: custom-uid
+        dashboardTitle: Custom Dashboard
+    asserts:
+      - equal:
+          path: metadata.name
+          value: custom-loki-monitoring
+      - equal:
+          path: spec.folderRef
+          value: loki
+  
+  - it: handles special characters in namespace names correctly
+    set:
+      loki:
+        namespace: "cw-loki-staging"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaDashboard
+  
+  - it: completely replaces all namespace references in dashboard
+    set:
+      loki:
+        namespace: cw-loki
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: GrafanaDashboard
