@@ -26,9 +26,6 @@ should work and render a Rollout with default values:
           previewService: release-name-stack-service1-preview
       template:
         metadata:
-          annotations:
-            config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
-            linkerd.io/inject: enabled
           labels:
             app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm
@@ -154,9 +151,6 @@ should work and render a Rollout with supplied values:
           previewService: release-name-stack-service1-preview
       template:
         metadata:
-          annotations:
-            config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465
-            linkerd.io/inject: enabled
           labels:
             app.kubernetes.io/instance: RELEASE-NAME
             app.kubernetes.io/managed-by: Helm

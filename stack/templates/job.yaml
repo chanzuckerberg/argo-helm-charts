@@ -36,7 +36,7 @@ spec:
   {{- end }}
   template:
     metadata:
-      {{- with mergeOverwrite .Values.podAnnotations (dict "linkerd.io/inject" "disabled") }}
+      {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
