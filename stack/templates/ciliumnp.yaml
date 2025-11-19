@@ -1,19 +1,26 @@
 {{ $global := . }}
-{{- $globalValues := .Values.global }}
-{{- $scope := dict "Chart" .Chart "Release" .Release "Capabilities" .Capabilities "Values" $globalValues }}
-{{- with $scope }}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
 {{- if .Values.ciliumNetworkPolicy.enabled }}
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: {{ include "stack.fullname" . }}
+  name: {{ include "service.fullname" . }}
   labels:
-    {{- include "stack.labels" . | nindent 4 }}
+    {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml .Values.annotations | nindent 4 }}
+    {{- toYaml (mergeOverwrite 
+                (dict)
+                (fromYaml (include "stack.annotations" $service )) 
+      ) | nindent 4 }}
 spec:
-  description: "L3-L4 policy to restrict access to {{ include "stack.fullname" . }}"
+  description: "L3-L4 policy to restrict access to {{ include "service.fullname" . }}"
   endpointSelector:
     matchLabels:
       {{- include "stack.argusLabels" . | nindent 6 }}
@@ -21,5 +28,6 @@ spec:
   - fromEndpoints:
     - matchLabels:
         {{- include "stack.argusLabels" . | nindent 8 }}
+{{- end }}
 {{- end }}
 {{- end }}
