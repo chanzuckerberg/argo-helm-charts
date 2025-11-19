@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.20.0...stack-v2.20.1) (2025-11-19)
+
+
+### Misc
+
+* remove linkerd from future stacks ([#319](https://github.com/chanzuckerberg/argo-helm-charts/issues/319)) ([7a17078](https://github.com/chanzuckerberg/argo-helm-charts/commit/7a170782a0f2d46d268c82cab96aab8dcbc14445))
+
 ## [2.20.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.19.1...stack-v2.20.0) (2025-11-19)
 
 

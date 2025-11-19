@@ -602,17 +602,7 @@
         },
         "podAnnotations": {
           "description": "Annotations to add to pods",
-          "type": "object",
-          "properties": {
-            "config.linkerd.io/skip-outbound-ports": {
-              "description": "Linkerd skip outbound ports annotation",
-              "type": "string"
-            },
-            "linkerd.io/inject": {
-              "description": "Linkerd injection annotation",
-              "type": "string"
-            }
-          }
+          "type": "object"
         },
         "podLabels": {
           "description": "Global labels to add to all pods",

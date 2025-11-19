@@ -216,9 +216,8 @@ global: # @schema description: Global configuration for the stack - this serves 
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
 
   podAnnotations: # @schema type: object; description: Annotations to add to pods
-    linkerd.io/inject: enabled # @schema description: Linkerd injection annotation
-    config.linkerd.io/skip-outbound-ports: 3306,5432,6379,9300,11211,4444,4567,4568,587,25,2525,465,2465 # @schema description: Linkerd skip outbound ports annotation
-
+    {}
+    
   autoscaling: # @schema description: Autoscaling configuration
     enabled: true # @schema description: Enable autoscaling
     minReplicas: 1 # @schema description: Minimum number of replicas
