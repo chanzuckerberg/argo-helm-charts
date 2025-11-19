@@ -5,10 +5,9 @@ templates:
 tests:
   - it: should not create CiliumNetworkPolicy when ciliumNetworkPolicy.enabled is false
     set:
-      services:
-        service1:
-          ciliumNetworkPolicy:
-            enabled: false
+      global:
+        ciliumNetworkPolicy:
+          enabled: false
     asserts:
       - hasDocuments:
           count: 0
@@ -18,10 +17,6 @@ tests:
       global:
         ciliumNetworkPolicy:
           enabled: true
-      services:
-        service1:
-          args: ["arg1", "arg2"]
-          command: ["command1", "command2"]
     asserts:
       - hasDocuments:
           count: 1
@@ -30,53 +25,6 @@ tests:
       - containsDocument:
           apiVersion: cilium.io/v2
           kind: CiliumNetworkPolicy
-
-  - it: should set correct metadata name
-    set:
-      global:
-        ciliumNetworkPolicy:
-          enabled: true
-      services:
-        service1:
-          args: ["arg1", "arg2"]
-    asserts:
-      - equal:
-          path: metadata.name
-          value: "release-name-stack-service1"
-
-  - it: should include service labels
-    set:
-      global:
-        ciliumNetworkPolicy:
-          enabled: true
-      services:
-        service1:
-          args: ["arg1", "arg2"]
-    asserts:
-      - equal:
-          path: metadata.labels["app.kubernetes.io/name"]
-          value: "stack"
-      - equal:
-          path: metadata.labels["app.kubernetes.io/instance"]
-          value: "RELEASE-NAME"
-      - equal:
-          path: metadata.labels["app.kubernetes.io/service"]
-          value: "release-name-stack-service1"
-
-  - it: should include argus/env-name label when argusMetadata.envName is set
-    set:
-      global:
-        ciliumNetworkPolicy:
-          enabled: true
-        argusMetadata:
-          envName: "production"
-      services:
-        service1:
-          args: ["arg1", "arg2"]
-    asserts:
-      - equal:
-          path: metadata.labels["argus/env-name"]
-          value: "production"
 
   - it: should include all argus metadata labels
     set:
@@ -89,9 +37,6 @@ tests:
           stackName: "test-stack"
           repoName: "test-repo"
           repoOwner: "test-owner"
-      services:
-        service1:
-          args: ["arg1", "arg2"]
     asserts:
       - equal:
           path: metadata.labels["argus/app-name"]
@@ -117,9 +62,6 @@ tests:
         argusMetadata:
           envName: "production"
           appName: "myapp"
-      services:
-        service1:
-          args: ["arg1", "arg2"]
     asserts:
       - equal:
           path: spec.endpointSelector.matchLabels["argus/env-name"]
@@ -136,9 +78,6 @@ tests:
         argusMetadata:
           envName: "test"
           stackName: "mystack"
-      services:
-        service1:
-          args: ["arg1", "arg2"]
     asserts:
       - equal:
           path: spec.ingress[0].fromEndpoints[0].matchLabels["argus/env-name"]
@@ -152,13 +91,10 @@ tests:
       global:
         ciliumNetworkPolicy:
           enabled: true
-      services:
-        service1:
-          args: ["arg1", "arg2"]
     asserts:
       - equal:
           path: spec.description
-          value: "L3-L4 policy to restrict access to release-name-stack-service1"
+          value: "L3-L4 policy to restrict access to RELEASE-NAME-stack"
 
   - it: should work with fullnameOverride
     set:
@@ -166,38 +102,13 @@ tests:
         ciliumNetworkPolicy:
           enabled: true
         fullnameOverride: "overwrittenfull"
-      services:
-        service1:
-          args: ["arg1", "arg2"]
     asserts:
       - equal:
           path: metadata.name
-          value: "overwrittenfull-service1"
+          value: "overwrittenfull"
       - equal:
           path: spec.description
-          value: "L3-L4 policy to restrict access to overwrittenfull-service1"
-
-  - it: should create multiple policies for multiple services
-    set:
-      global:
-        ciliumNetworkPolicy:
-          enabled: true
-      services:
-        service1:
-          args: ["arg1", "arg2"]
-        service2:
-          args: ["arg3", "arg4"]
-    asserts:
-      - hasDocuments:
-          count: 2
-      - documentIndex: 0
-        equal:
-          path: metadata.name
-          value: "release-name-stack-service1"
-      - documentIndex: 1
-        equal:
-          path: metadata.name
-          value: "release-name-stack-service2"
+          value: "L3-L4 policy to restrict access to overwrittenfull"
 
   - it: should include annotations
     set:
@@ -206,9 +117,6 @@ tests:
           enabled: true
         annotations:
           custom-annotation: "test-value"
-      services:
-        service1:
-          args: ["arg1", "arg2"]
     asserts:
       - equal:
           path: metadata.annotations["custom-annotation"]
