@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.8.0...grafana-v0.8.1) (2025-11-19)
+
+
+### Misc
+
+* remove linkerd from future stacks ([#319](https://github.com/chanzuckerberg/argo-helm-charts/issues/319)) ([7a17078](https://github.com/chanzuckerberg/argo-helm-charts/commit/7a170782a0f2d46d268c82cab96aab8dcbc14445))
+
 ## [0.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.7.0...grafana-v0.8.0) (2025-11-03)
 
 
