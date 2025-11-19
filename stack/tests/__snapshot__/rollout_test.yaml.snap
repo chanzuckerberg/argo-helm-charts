@@ -35,7 +35,7 @@ should work and render a Rollout with default values:
             app.kubernetes.io/name: stack
             app.kubernetes.io/service: release-name-stack-service1
             app.kubernetes.io/version: 1.16.0
-            helm.sh/chart: stack-2.19.1
+            helm.sh/chart: stack-2.20.0
         spec:
           containers:
             - args:
@@ -121,7 +121,7 @@ should work and render a Rollout with supplied values:
         app.kubernetes.io/name: stack
         app.kubernetes.io/service: release-name-stack-service1
         app.kubernetes.io/version: 1.16.0
-        helm.sh/chart: stack-2.19.1
+        helm.sh/chart: stack-2.20.0
       name: release-name-stack-service1
     spec:
       replicas: 2
@@ -163,7 +163,7 @@ should work and render a Rollout with supplied values:
             app.kubernetes.io/name: stack
             app.kubernetes.io/service: release-name-stack-service1
             app.kubernetes.io/version: 1.16.0
-            helm.sh/chart: stack-2.19.1
+            helm.sh/chart: stack-2.20.0
         spec:
           containers:
             - args:
