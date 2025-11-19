@@ -20,14 +20,19 @@ Suppose you want to test some local changes of the stack helm chart in the `argu
 1. Clone the `argus-example-app` repository
 1. Change the `.infra/rdev/Chart.yaml` in the `argus-example-app` to point to the local directory
     - set the `repository` of the `stack` chart dependency to `file://<relative path to argo-helm-charts/stack/ directory>`
-1. Run `helm dependency update` from a terminal in the `argus-example-app` repository
+1. Run `helm dependency update` from a terminal in the `argus-example-app/.infra/rdev` path in the argus-example-app repository. This step creates a `.tgz` file used in the next step.
 1. Create a new branch then commit and push the changes to the `argus-example-app` repository
     - This should include your changes to `.infra/rdev/Chart.yaml`, the newly created `.infra/rdev/Chart.lock`, and the `.infra/rdev/charts/stack-<X.Y.Z>.tgz` file
 1. Create a PR in the `argus-example-app` repository and create a stack in Argus using the `stack` label on the PR
 
-[Here is an example of the changes](https://github.com/chanzuckerberg/argus-example-app/pull/159/commits/3685595e8e7d31a49077de173a678817ac96de65)
+Here are examples of the changes:
+- https://github.com/chanzuckerberg/argus-example-app/pull/159/commits/3685595e8e7d31a49077de173a678817ac96de65
+- https://github.com/chanzuckerberg/argus-example-app/pull/315/commits/ef3a5a03eb03c4dfc4361971695fe77c82779ee2 (newer)
 
-NOTE: Do not merge `.infra/rdev/Chart.lock` or `.infra/rdev/charts/stack-<X.Y.Z>.tgz` into the main branch. These files should only be used for testing purposes.
+NOTES: 
+- Do not merge `.infra/rdev/Chart.lock` or `.infra/rdev/charts/stack-<X.Y.Z>.tgz` into the main branch. These files should only be used for testing purposes.
+- The lint checks will fail when you do this because those checks cannot find the argo-helm-charts repo used to generate the .tgz file. You shouldn't have to worry about it because your test changes (with the .lock or .tgz files) should not get merged anyway.
+
 
 ## Code of Conduct
 

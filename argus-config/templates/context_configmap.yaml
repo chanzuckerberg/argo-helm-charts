@@ -7,17 +7,28 @@ apiVersion: v1
 metadata:
   name: {{ .appContext.stackContextConfigMapName }}
 data:
-  __ARGUS_STACK_NAME: {{ $global.Release.Name | quote }}
   {{- if and (ne .ingress nil) .ingress.host }}
   __ARGUS_STACK_INGRESS_HOST: {{ .ingress.host | quote }}
   {{- end }}
   {{- if .deploymentStage }}
   __ARGUS_DEPLOYMENT_STAGE: {{ .deploymentStage | quote }}
   {{- end }}
-  {{- if ne .argoBuildEnv nil }}
-  {{- if .argoBuildEnv.appName }}
-  __ARGUS_APP_NAME: {{ .argoBuildEnv.appName | quote }}
+  __ARGUS_STACK_NAME: {{ if and (ne .argusMetadata nil) .argusMetadata.stackName }}{{ .argusMetadata.stackName | quote }}{{ else }}{{ $global.Release.Name | quote }}{{ end }}
+  {{- if ne .argusMetadata nil }}
+  {{- if .argusMetadata.appName }}
+  __ARGUS_APP_NAME: {{ .argusMetadata.appName | quote }}
   {{- end }}
+  {{- if .argusMetadata.envName }}
+  __ARGUS_ENV_NAME: {{ .argusMetadata.envName | quote }}
+  {{- end }}
+  {{- if .argusMetadata.repoName }}
+  __ARGUS_REPO_NAME: {{ .argusMetadata.repoName | quote }}
+  {{- end }}
+  {{- if .argusMetadata.repoOwner }}
+  __ARGUS_REPO_OWNER: {{ .argusMetadata.repoOwner | quote }}
+  {{- end }}
+  {{- end }}
+  {{- if ne .argoBuildEnv nil }}
   {{- if .argoBuildEnv.appNamespace }}
   __ARGUS_APP_NAMESPACE: {{ .argoBuildEnv.appNamespace | quote }}
   {{- end }}

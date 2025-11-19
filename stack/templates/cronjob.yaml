@@ -11,7 +11,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "service.fullname" . }}  
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
   annotations:
     karpenter.sh/do-not-disrupt: "true"
 spec:
@@ -21,6 +23,9 @@ spec:
   {{- end }}
   jobTemplate:
     spec:
+      {{- if hasKey .Values "backoffLimit" }}
+      backoffLimit: {{ .Values.backoffLimit }}
+      {{- end }}
       template:
         spec:
           serviceAccountName: {{ include "service.serviceAccountName" . }}
@@ -52,8 +57,9 @@ spec:
             {{- include "service.configuration" $cronJob | nindent 12}}
           {{- end }}
           {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $cronJob.Values $container) | nindent 12 }}
-          {{- end }}
-          restartPolicy: OnFailure
+          {{- end -}}
+          {{/* restartPolicy for a cronjob can only be OnFailure or Never, if not specified, set it to Never */}}
+          restartPolicy: {{ if eq .Values.restartPolicy "OnFailure" }}OnFailure{{ else }}Never{{ end }}
           {{- with .Values.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}

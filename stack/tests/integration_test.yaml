@@ -6,6 +6,8 @@ tests:
     set:
       global:
         deploymentKind: Deployment
+        argoBuildEnv:
+          appNamespace: "argus-testapp-rdev"
       services:
         service1:
           image:
@@ -29,6 +31,8 @@ tests:
     set:
       global:
         deploymentKind: Rollout
+        argoBuildEnv:
+          appNamespace: "argus-testapp-rdev"
       services:
         service1:
           image:
@@ -47,3 +51,26 @@ tests:
       - hasDocuments:
           count: 1
         template: preview_service.yaml
+
+  - it: should include argus/env-name label in all resources when argusMetadata.envName is set
+    set:
+      global:
+        deploymentKind: Deployment
+        argusMetadata:
+          envName: "integration-env"
+        argoBuildEnv:
+          appNamespace: "argus-testapp-rdev"
+      services:
+        service1:
+          image:
+            repository: "your-app"
+            tag: "latest"
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "integration-env"
+        template: deployment.yaml
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "integration-env"
+        template: service.yaml

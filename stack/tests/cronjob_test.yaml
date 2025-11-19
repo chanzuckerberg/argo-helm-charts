@@ -208,3 +208,25 @@ tests:
     asserts:
       - hasDocuments:
           count: 1
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "staging"
+      cronJobs:
+        test-job:
+          schedule: "0 0 * * *"
+          image:
+            repository: test-repo
+            tag: latest
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        exists:
+          path: metadata.labels["argus/env-name"]
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["argus/env-name"]
+          value: "staging"
