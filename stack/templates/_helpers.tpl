@@ -89,6 +89,23 @@ Selector labels
 {{- define "stack.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "stack.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- with .Values.argusMetadata }}
+{{- if .appName }}
+argus/app-name: {{ .appName }}
+{{- end }}
+{{- if .envName }}
+argus/env-name: {{ .envName }}
+{{- end }}
+{{- if .stackName }}
+argus/stack-name: {{ .stackName }}
+{{- end }}
+{{- if .repoName }}
+argus/repo-name: {{ .repoName }}
+{{- end }}
+{{- if .repoOwner }}
+argus/repo-owner: {{ .repoOwner }}
+{{- end }}
+{{- end }}
 {{- end }}
 
 {{- define "service.selectorLabels" -}}
