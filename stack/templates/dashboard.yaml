@@ -2,38 +2,41 @@
 {{ $globalValues := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global }}
 {{- with $globalValues }}
 {{- if .Values.grafanaDashboard.enabled -}}
+{{- $rootFolder := "argus" }}
+{{- $appFolder := .Values.argusMetadata.appName }}
+{{- $envFolder := printf "%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.envName }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
-  name: argus
+  name: {{ $rootFolder }}
 spec:
   instanceSelector:
     matchLabels:
       name: grafana-central
-  title: argus
+  title: {{ $rootFolder }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
-  name: {{ .Values.argusMetadata.appName }}
+  name: {{ $appFolder }}
 spec:
   instanceSelector:
     matchLabels:
       name: grafana-central
-  title: {{ .Values.argusMetadata.appName }}
-  parentFolderRef: argus
+  title: {{ $appFolder }}
+  parentFolderRef: {{ $rootFolder }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
-  name: {{ .Values.argusMetadata.appName }}-{{ .Values.argusMetadata.envName }}
+  name: {{ $envFolder }}
 spec:
   instanceSelector:
     matchLabels:
       name: grafana-central
-  title: {{ .Values.argusMetadata.appName }}-{{ .Values.argusMetadata.envName }}
-  parentFolderRef: {{ .Values.argusMetadata.appName }}
+  title: {{ $envFolder }}
+  parentFolderRef: {{ $appFolder }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -45,7 +48,7 @@ spec:
   instanceSelector:
     matchLabels:
       app: grafana
-  parentFolderRef: {{ .Values.argusMetadata.appName }}-{{ .Values.argusMetadata.envName }}
+  parentFolderRef: {{ $envFolder }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
 ---
