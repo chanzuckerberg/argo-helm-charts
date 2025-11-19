@@ -51,3 +51,19 @@ tests:
         equal:
           path: spec.maxUnavailable
           value: 1
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "pdb-env"
+      services:
+        service1:
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "pdb-env"

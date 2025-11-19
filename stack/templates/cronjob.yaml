@@ -11,7 +11,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "service.fullname" . }}  
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
   annotations:
     karpenter.sh/do-not-disrupt: "true"
 spec:
