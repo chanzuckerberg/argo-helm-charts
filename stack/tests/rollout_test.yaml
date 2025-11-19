@@ -101,3 +101,18 @@ tests:
           path: metadata.annotations["argocd.argoproj.io/sync-options"]
           value: ServerSideApply=false
       
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        deploymentKind: Rollout
+        argusMetadata:
+          envName: "rollout-env"
+      services:
+        service1:
+          image:
+            repository: "test-app"
+            tag: "latest"
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "rollout-env"
