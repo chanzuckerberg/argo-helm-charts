@@ -1,0 +1,29 @@
+{{ $global := . }}
+{{- $globalValues := .Values.global }}
+{{- $scope := dict "Chart" .Chart "Release" .Release "Capabilities" .Capabilities "Values" $globalValues }}
+{{- with $scope }}
+{{- if .Values.ciliumNetworkPolicy.enabled }}
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ include "stack.fullname" . }}
+  labels:
+    {{- include "stack.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.annotations | nindent 4 }}
+spec:
+  description: "L3-L4 policy to restrict access to {{ include "stack.fullname" . }}"
+  endpointSelector:
+    matchLabels:
+      {{- include "stack.argusLabels" . | nindent 6 }}
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        {{- include "stack.argusLabels" . | nindent 8 }}
+    - matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/part-of: ingress-nginx
+        io.kubernetes.pod.namespace: nginx-encrypted-ingress
+{{- end }}
+{{- end }}
