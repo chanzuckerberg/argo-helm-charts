@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.19.1...stack-v2.20.0) (2025-11-19)
+
+
+### Features
+
+* add argus metadata to selector labels to prepare for policies ([#321](https://github.com/chanzuckerberg/argo-helm-charts/issues/321)) ([d74c5f5](https://github.com/chanzuckerberg/argo-helm-charts/commit/d74c5f5f1d22ec80ae341dd9fce24484271925e2))
+
 ## [2.19.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.19.0...stack-v2.19.1) (2025-11-14)
 
 

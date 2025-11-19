@@ -239,3 +239,18 @@ tests:
       - equal:
           path: metadata.name
           value: "overwrittenfull-service1"
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "production"
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "production"
