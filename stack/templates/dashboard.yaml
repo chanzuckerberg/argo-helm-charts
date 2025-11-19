@@ -4,6 +4,38 @@
 {{- if .Values.grafanaDashboard.enabled -}}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: argus
+spec:
+  instanceSelector:
+    matchLabels:
+      name: grafana-central
+  title: argus
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: {{ .Values.argusMetadata.appName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: grafana-central
+  title: {{ .Values.argusMetadata.appName }}
+  parentFolderRef: argus
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: {{ .Values.argusMetadata.appName }}-{{ .Values.environment }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: grafana-central
+  title: {{ .Values.argusMetadata.appName }}-{{ .Values.environment }}
+  parentFolderRef: {{ .Values.argusMetadata.appName }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
   name: {{ include "stack.fullname" . | lower }}-dashboard
