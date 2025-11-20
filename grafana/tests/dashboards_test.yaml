@@ -6,7 +6,7 @@ tests:
   - it: should render a GrafanaDashboard resource
     asserts:
       - hasDocuments:
-          count: 20
+          count: 19
       - isKind:
           of: GrafanaDashboard
 
@@ -21,7 +21,7 @@ tests:
           path: metadata.namespace
       - isNotEmpty:
           path: spec
-  
+
   - it: should have datasources
     asserts:
       - isNotEmpty:

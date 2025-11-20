@@ -1658,29 +1658,6 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-| Property                                                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description                      |
-| ----------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------- |
-| - [config.linkerd.io/skip-outbound-ports](#cronJobs_pattern1_podAnnotations_configlinkerdio/skip-outbound-ports ) | No      | string | No         | -          | Linkerd skip outbound ports annotation |
-| - [linkerd.io/inject](#cronJobs_pattern1_podAnnotations_linkerdio/inject )                                        | No      | string | No         | -          | Linkerd injection annotation           |
-
-##### <a name="cronJobs_pattern1_podAnnotations_configlinkerdio/skip-outbound-ports"></a>2.1.26.1. Property `stack > cronJobs > ^.*$ > podAnnotations > config.linkerd.io/skip-outbound-ports`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd skip outbound ports annotation
-
-##### <a name="cronJobs_pattern1_podAnnotations_linkerdio/inject"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > podAnnotations > linkerd.io/inject`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd injection annotation
-
 #### <a name="cronJobs_pattern1_podLabels"></a>2.1.27. Property `stack > cronJobs > ^.*$ > podLabels`
 
 |                           |                  |
@@ -4325,29 +4302,6 @@ Must be one of:
 | **Additional properties** | Any type allowed |
 
 **Description:** Annotations to add to pods
-
-| Property                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                      |
-| ------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------------- |
-| - [config.linkerd.io/skip-outbound-ports](#global_podAnnotations_configlinkerdio/skip-outbound-ports ) | No      | string | No         | -          | Linkerd skip outbound ports annotation |
-| - [linkerd.io/inject](#global_podAnnotations_linkerdio/inject )                                        | No      | string | No         | -          | Linkerd injection annotation           |
-
-#### <a name="global_podAnnotations_configlinkerdio/skip-outbound-ports"></a>3.26.1. Property `stack > global > podAnnotations > config.linkerd.io/skip-outbound-ports`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd skip outbound ports annotation
-
-#### <a name="global_podAnnotations_linkerdio/inject"></a>3.26.2. Property `stack > global > podAnnotations > linkerd.io/inject`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd injection annotation
 
 ### <a name="global_podLabels"></a>3.27. Property `stack > global > podLabels`
 
@@ -7011,29 +6965,6 @@ Must be one of:
 | **Additional properties** | Any type allowed |
 
 **Description:** Annotations to add to pods
-
-| Property                                                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description                      |
-| ----------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------- |
-| - [config.linkerd.io/skip-outbound-ports](#cronJobs_pattern1_podAnnotations_configlinkerdio/skip-outbound-ports ) | No      | string | No         | -          | Linkerd skip outbound ports annotation |
-| - [linkerd.io/inject](#cronJobs_pattern1_podAnnotations_linkerdio/inject )                                        | No      | string | No         | -          | Linkerd injection annotation           |
-
-##### <a name="cronJobs_pattern1_podAnnotations_configlinkerdio/skip-outbound-ports"></a>4.1.26.1. Property `stack > cronJobs > ^.*$ > podAnnotations > config.linkerd.io/skip-outbound-ports`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd skip outbound ports annotation
-
-##### <a name="cronJobs_pattern1_podAnnotations_linkerdio/inject"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > podAnnotations > linkerd.io/inject`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd injection annotation
 
 #### <a name="cronJobs_pattern1_podLabels"></a>4.1.27. Property `stack > cronJobs > ^.*$ > podLabels`
 
@@ -10161,29 +10092,6 @@ Must be one of:
 | **Additional properties** | Any type allowed |
 
 **Description:** Annotations to add to pods
-
-| Property                                                                                                          | Pattern | Type   | Deprecated | Definition | Title/Description                      |
-| ----------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------- |
-| - [config.linkerd.io/skip-outbound-ports](#cronJobs_pattern1_podAnnotations_configlinkerdio/skip-outbound-ports ) | No      | string | No         | -          | Linkerd skip outbound ports annotation |
-| - [linkerd.io/inject](#cronJobs_pattern1_podAnnotations_linkerdio/inject )                                        | No      | string | No         | -          | Linkerd injection annotation           |
-
-##### <a name="cronJobs_pattern1_podAnnotations_configlinkerdio/skip-outbound-ports"></a>7.1.26.1. Property `stack > cronJobs > ^.*$ > podAnnotations > config.linkerd.io/skip-outbound-ports`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd skip outbound ports annotation
-
-##### <a name="cronJobs_pattern1_podAnnotations_linkerdio/inject"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > podAnnotations > linkerd.io/inject`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Linkerd injection annotation
 
 #### <a name="cronJobs_pattern1_podLabels"></a>7.1.27. Property `stack > cronJobs > ^.*$ > podLabels`
 
