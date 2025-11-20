@@ -13,7 +13,7 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      name: grafana-central
+      name: central-grafana
   title: {{ $rootFolder }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
@@ -23,7 +23,7 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      name: grafana-central
+      name: central-grafana
   title: {{ $appFolder }}
   parentFolderRef: {{ $rootFolder }}
 ---
@@ -34,7 +34,7 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      name: grafana-central
+      name: central-grafana
   title: {{ $envFolder }}
   parentFolderRef: {{ $appFolder }}
 ---
