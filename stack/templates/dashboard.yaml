@@ -48,7 +48,7 @@ spec:
   instanceSelector:
     matchLabels:
       name: central-grafana
-  parentFolderRef: {{ $envFolder }}
+  folderRef: {{ $envFolder }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
 ---
