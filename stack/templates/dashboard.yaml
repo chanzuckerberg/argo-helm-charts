@@ -47,7 +47,7 @@ spec:
   resyncPeriod: 30s
   instanceSelector:
     matchLabels:
-      app: grafana
+      name: central-grafana
   parentFolderRef: {{ $envFolder }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
