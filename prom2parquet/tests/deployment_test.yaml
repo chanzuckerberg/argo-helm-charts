@@ -1,0 +1,166 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - deployment.yaml
+  - serviceaccount.yaml
+tests:
+  - it: should render a Deployment with default values
+    template: deployment.yaml
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-prom2parquet
+      - equal:
+          path: spec.replicas
+          value: 1
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "prom2parquet:latest"
+
+  - it: should use custom image repository and tag
+    template: deployment.yaml
+    set:
+      image:
+        repository: "custom-repo/prom2parquet"
+        tag: "v2.0.0"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "custom-repo/prom2parquet:v2.0.0"
+
+  - it: should configure backend arguments correctly
+    template: deployment.yaml
+    set:
+      backend:
+        type: "s3/aws"
+        root: "my-bucket"
+        prefix: "metrics"
+      serverPort: 9090
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "--backend=s3/aws"
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "--backend-root=my-bucket"
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "--prefix=metrics"
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "--server-port=9090"
+
+  - it: should set AWS credentials from secret when provided
+    template: deployment.yaml
+    set:
+      awsCredentials:
+        secretName: "my-aws-secret"
+        accessKeyIdKey: "access_key"
+        secretAccessKeyKey: "secret_key"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: my-aws-secret
+                key: access_key
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: my-aws-secret
+                key: secret_key
+
+  - it: should have empty env array when no credentials or env vars are set
+    template: deployment.yaml
+    set:
+      awsCredentials:
+        secretName: ""
+      env: []
+    asserts:
+      - isEmpty:
+          path: spec.template.spec.containers[0].env
+
+  - it: should apply security context
+    template: deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsNonRoot
+          value: true
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem
+          value: true
+
+  - it: should set resource limits and requests
+    template: deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: "100m"
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: "128Mi"
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: "500m"
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: "512Mi"
+
+  - it: should create service account when enabled
+    template: serviceaccount.yaml
+    set:
+      serviceAccount:
+        create: true
+    asserts:
+      - isKind:
+          of: ServiceAccount
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-prom2parquet
+
+  - it: should add annotations to service account
+    template: serviceaccount.yaml
+    set:
+      serviceAccount:
+        create: true
+        annotations:
+          eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/my-role"
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/my-role"
+
+  - it: should add custom environment variables
+    template: deployment.yaml
+    set:
+      env:
+        - name: CUSTOM_VAR
+          value: "custom-value"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CUSTOM_VAR
+            value: "custom-value"
+
+  - it: should add additional args
+    template: deployment.yaml
+    set:
+      args:
+        - "--extra-flag=value"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "--extra-flag=value"
+
