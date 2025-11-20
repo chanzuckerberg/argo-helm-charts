@@ -1,133 +1,683 @@
 # prom2parquet
 
-A Helm chart for deploying prom2parquet - a tool that exports Prometheus metrics to Parquet format on S3.
+**Title:** prom2parquet
 
-## Description
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-This chart deploys prom2parquet, which provides a Prometheus remote write endpoint that converts metrics to Parquet format and stores them in S3 (or other backends).
+| Property                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                |
+| -------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------ |
+| - [affinity](#affinity )                     | No      | object          | No         | -          | Affinity rules for pod assignment                |
+| - [args](#args )                             | No      | array of string | No         | -          | Additional command-line arguments                |
+| - [awsCredentials](#awsCredentials )         | No      | object          | No         | -          | -                                                |
+| - [backend](#backend )                       | No      | object          | No         | -          | -                                                |
+| - [env](#env )                               | No      | array of object | No         | -          | Additional environment variables                 |
+| - [envFrom](#envFrom )                       | No      | array of object | No         | -          | Environment variables from ConfigMaps or Secrets |
+| - [fullnameOverride](#fullnameOverride )     | No      | string          | No         | -          | Override the full name of the chart              |
+| - [image](#image )                           | No      | object          | No         | -          | -                                                |
+| - [imagePullSecrets](#imagePullSecrets )     | No      | array of string | No         | -          | Image pull secrets                               |
+| - [nameOverride](#nameOverride )             | No      | string          | No         | -          | Override the name of the chart                   |
+| - [nodeSelector](#nodeSelector )             | No      | object          | No         | -          | Node selector for pod assignment                 |
+| - [podAnnotations](#podAnnotations )         | No      | object          | No         | -          | Annotations to add to the pod                    |
+| - [podLabels](#podLabels )                   | No      | object          | No         | -          | Labels to add to the pod                         |
+| - [podSecurityContext](#podSecurityContext ) | No      | object          | No         | -          | Security context for the pod                     |
+| - [replicaCount](#replicaCount )             | No      | integer         | No         | -          | Number of replicas for the deployment            |
+| - [resources](#resources )                   | No      | object          | No         | -          | -                                                |
+| - [securityContext](#securityContext )       | No      | object          | No         | -          | Security context for the container               |
+| - [serverPort](#serverPort )                 | No      | integer         | No         | -          | Port for the prom2parquet server                 |
+| - [service](#service )                       | No      | object          | No         | -          | -                                                |
+| - [serviceAccount](#serviceAccount )         | No      | object          | No         | -          | -                                                |
+| - [tolerations](#tolerations )               | No      | array           | No         | -          | Tolerations for pod assignment                   |
 
-## Prerequisites
+## <a name="affinity"></a>1. Property `prom2parquet > affinity`
 
-- Kubernetes 1.19+
-- Helm 3.0+
-- AWS credentials (if using S3 backend)
-- For IRSA (IAM Roles for Service Accounts): An IAM role with S3 access
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-## Installing the Chart
+**Description:** Affinity rules for pod assignment
 
-To install the chart with the release name `my-prom2parquet`:
+## <a name="args"></a>2. Property `prom2parquet > args`
 
-```bash
-helm install my-prom2parquet ./prom2parquet
-```
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
 
-## Configuration
+**Description:** Additional command-line arguments
 
-The following table lists the configurable parameters of the prom2parquet chart and their default values.
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
 
-### Basic Configuration
+| Each item of this array must be | Description |
+| ------------------------------- | ----------- |
+| [args items](#args_items)       | -           |
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `replicaCount` | Number of replicas | `1` |
-| `image.repository` | Container image repository | `prom2parquet` |
-| `image.pullPolicy` | Image pull policy | `IfNotPresent` |
-| `image.tag` | Container image tag | `latest` |
+### <a name="args_items"></a>2.1. prom2parquet > args > args items
 
-### Backend Configuration
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `backend.type` | Backend type (e.g., s3/aws) | `s3/aws` |
-| `backend.root` | Backend root path (e.g., S3 bucket name) | `""` |
-| `backend.prefix` | Prefix for storing data | `parquet` |
-| `serverPort` | Port for the prom2parquet server | `1234` |
+## <a name="awsCredentials"></a>3. Property `prom2parquet > awsCredentials`
 
-### AWS Credentials
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `awsCredentials.secretName` | Name of secret containing AWS credentials | `""` |
-| `awsCredentials.accessKeyIdKey` | Key in secret for AWS_ACCESS_KEY_ID | `access_key_id` |
-| `awsCredentials.secretAccessKeyKey` | Key in secret for AWS_SECRET_ACCESS_KEY | `secret_access_key` |
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                        |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------- |
+| - [accessKeyIdKey](#awsCredentials_accessKeyIdKey )         | No      | string | No         | -          | Key in the secret for AWS_ACCESS_KEY_ID                  |
+| - [secretAccessKeyKey](#awsCredentials_secretAccessKeyKey ) | No      | string | No         | -          | Key in the secret for AWS_SECRET_ACCESS_KEY              |
+| - [secretName](#awsCredentials_secretName )                 | No      | string | No         | -          | Name of the Kubernetes secret containing AWS credentials |
 
-### Service Account
+### <a name="awsCredentials_accessKeyIdKey"></a>3.1. Property `prom2parquet > awsCredentials > accessKeyIdKey`
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `serviceAccount.create` | Create service account | `true` |
-| `serviceAccount.annotations` | Service account annotations (e.g., for IRSA) | `{}` |
-| `serviceAccount.name` | Service account name | `""` |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-### Resources
+**Description:** Key in the secret for AWS_ACCESS_KEY_ID
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `resources.limits.cpu` | CPU limit | `500m` |
-| `resources.limits.memory` | Memory limit | `512Mi` |
-| `resources.requests.cpu` | CPU request | `100m` |
-| `resources.requests.memory` | Memory request | `128Mi` |
+### <a name="awsCredentials_secretAccessKeyKey"></a>3.2. Property `prom2parquet > awsCredentials > secretAccessKeyKey`
 
-## Example: Using with IRSA (IAM Roles for Service Accounts)
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-```yaml
-serviceAccount:
-  create: true
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/prom2parquet-role
+**Description:** Key in the secret for AWS_SECRET_ACCESS_KEY
 
-backend:
-  type: "s3/aws"
-  root: "my-metrics-bucket"
-  prefix: "parquet"
+### <a name="awsCredentials_secretName"></a>3.3. Property `prom2parquet > awsCredentials > secretName`
 
-image:
-  repository: "123456789012.dkr.ecr.us-west-2.amazonaws.com/prom2parquet"
-  tag: "v1.0.0"
-```
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-## Example: Using with AWS Credentials from Secret
+**Description:** Name of the Kubernetes secret containing AWS credentials
 
-```yaml
-awsCredentials:
-  secretName: "prom2parquet-aws-creds"
+## <a name="backend"></a>4. Property `prom2parquet > backend`
 
-backend:
-  type: "s3/aws"
-  root: "my-metrics-bucket"
-  prefix: "parquet"
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-image:
-  repository: "123456789012.dkr.ecr.us-west-2.amazonaws.com/prom2parquet"
-  tag: "v1.0.0"
-```
+| Property                     | Pattern | Type   | Deprecated | Definition | Title/Description                        |
+| ---------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------- |
+| - [prefix](#backend_prefix ) | No      | string | No         | -          | Prefix for storing data in the backend   |
+| - [root](#backend_root )     | No      | string | No         | -          | Backend root path (e.g., S3 bucket name) |
+| - [type](#backend_type )     | No      | string | No         | -          | Backend type (e.g., s3/aws)              |
 
-The secret should contain:
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: prom2parquet-aws-creds
-type: Opaque
-data:
-  access_key_id: <base64-encoded-access-key>
-  secret_access_key: <base64-encoded-secret-key>
-```
+### <a name="backend_prefix"></a>4.1. Property `prom2parquet > backend > prefix`
 
-## Prometheus Configuration
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-Configure Prometheus to use prom2parquet as a remote write endpoint:
+**Description:** Prefix for storing data in the backend
 
-```yaml
-remoteWrite:
-  - url: http://my-prom2parquet:1234/write
-```
+### <a name="backend_root"></a>4.2. Property `prom2parquet > backend > root`
 
-## Uninstalling the Chart
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-To uninstall/delete the `my-prom2parquet` deployment:
+**Description:** Backend root path (e.g., S3 bucket name)
 
-```bash
-helm delete my-prom2parquet
-```
+### <a name="backend_type"></a>4.3. Property `prom2parquet > backend > type`
 
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Backend type (e.g., s3/aws)
+
+## <a name="env"></a>5. Property `prom2parquet > env`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Additional environment variables
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be | Description |
+| ------------------------------- | ----------- |
+| [env items](#env_items)         | -           |
+
+### <a name="env_items"></a>5.1. prom2parquet > env > env items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#env_items_name )   | No      | string | No         | -          | -                 |
+| - [value](#env_items_value ) | No      | string | No         | -          | -                 |
+
+#### <a name="env_items_name"></a>5.1.1. Property `prom2parquet > env > env items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="env_items_value"></a>5.1.2. Property `prom2parquet > env > env items > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="envFrom"></a>6. Property `prom2parquet > envFrom`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Environment variables from ConfigMaps or Secrets
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be | Description |
+| ------------------------------- | ----------- |
+| [envFrom items](#envFrom_items) | -           |
+
+### <a name="envFrom_items"></a>6.1. prom2parquet > envFrom > envFrom items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [configMapRef](#envFrom_items_configMapRef ) | No      | object | No         | -          | -                 |
+| - [secretRef](#envFrom_items_secretRef )       | No      | object | No         | -          | -                 |
+
+#### <a name="envFrom_items_configMapRef"></a>6.1.1. Property `prom2parquet > envFrom > envFrom items > configMapRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#envFrom_items_configMapRef_name ) | No      | string | No         | -          | -                 |
+
+##### <a name="envFrom_items_configMapRef_name"></a>6.1.1.1. Property `prom2parquet > envFrom > envFrom items > configMapRef > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="envFrom_items_secretRef"></a>6.1.2. Property `prom2parquet > envFrom > envFrom items > secretRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#envFrom_items_secretRef_name ) | No      | string | No         | -          | -                 |
+
+##### <a name="envFrom_items_secretRef_name"></a>6.1.2.1. Property `prom2parquet > envFrom > envFrom items > secretRef > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="fullnameOverride"></a>7. Property `prom2parquet > fullnameOverride`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override the full name of the chart
+
+## <a name="image"></a>8. Property `prom2parquet > image`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                           | Pattern | Type             | Deprecated | Definition | Title/Description          |
+| ---------------------------------- | ------- | ---------------- | ---------- | ---------- | -------------------------- |
+| - [pullPolicy](#image_pullPolicy ) | No      | enum (of string) | No         | -          | Image pull policy          |
+| - [repository](#image_repository ) | No      | string           | No         | -          | Container image repository |
+| - [tag](#image_tag )               | No      | string           | No         | -          | Container image tag        |
+
+### <a name="image_pullPolicy"></a>8.1. Property `prom2parquet > image > pullPolicy`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Image pull policy
+
+Must be one of:
+* "Always"
+* "IfNotPresent"
+* "Never"
+
+### <a name="image_repository"></a>8.2. Property `prom2parquet > image > repository`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Container image repository
+
+### <a name="image_tag"></a>8.3. Property `prom2parquet > image > tag`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Container image tag
+
+## <a name="imagePullSecrets"></a>9. Property `prom2parquet > imagePullSecrets`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Image pull secrets
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                   | Description |
+| ------------------------------------------------- | ----------- |
+| [imagePullSecrets items](#imagePullSecrets_items) | -           |
+
+### <a name="imagePullSecrets_items"></a>9.1. prom2parquet > imagePullSecrets > imagePullSecrets items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="nameOverride"></a>10. Property `prom2parquet > nameOverride`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override the name of the chart
+
+## <a name="nodeSelector"></a>11. Property `prom2parquet > nodeSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Node selector for pod assignment
+
+## <a name="podAnnotations"></a>12. Property `prom2parquet > podAnnotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Annotations to add to the pod
+
+## <a name="podLabels"></a>13. Property `prom2parquet > podLabels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Labels to add to the pod
+
+## <a name="podSecurityContext"></a>14. Property `prom2parquet > podSecurityContext`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Security context for the pod
+
+## <a name="replicaCount"></a>15. Property `prom2parquet > replicaCount`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Number of replicas for the deployment
+
+## <a name="resources"></a>16. Property `prom2parquet > resources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [limits](#resources_limits )     | No      | object | No         | -          | -                 |
+| - [requests](#resources_requests ) | No      | object | No         | -          | -                 |
+
+### <a name="resources_limits"></a>16.1. Property `prom2parquet > resources > limits`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                              | Pattern | Type        | Deprecated | Definition | Title/Description |
+| ------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [cpu](#resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
+| - [memory](#resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
+
+#### <a name="resources_limits_cpu"></a>16.1.1. Property `prom2parquet > resources > limits > cpu`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** CPU limit
+
+| One of(Option)                           |
+| ---------------------------------------- |
+| [item 0](#resources_limits_cpu_oneOf_i0) |
+| [item 1](#resources_limits_cpu_oneOf_i1) |
+
+##### <a name="resources_limits_cpu_oneOf_i0"></a>16.1.1.1. Property `prom2parquet > resources > limits > cpu > oneOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="resources_limits_cpu_oneOf_i1"></a>16.1.1.2. Property `prom2parquet > resources > limits > cpu > oneOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+#### <a name="resources_limits_memory"></a>16.1.2. Property `prom2parquet > resources > limits > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Memory limit
+
+### <a name="resources_requests"></a>16.2. Property `prom2parquet > resources > requests`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                | Pattern | Type        | Deprecated | Definition | Title/Description |
+| --------------------------------------- | ------- | ----------- | ---------- | ---------- | ----------------- |
+| - [cpu](#resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
+| - [memory](#resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
+
+#### <a name="resources_requests_cpu"></a>16.2.1. Property `prom2parquet > resources > requests > cpu`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** CPU request
+
+| One of(Option)                             |
+| ------------------------------------------ |
+| [item 0](#resources_requests_cpu_oneOf_i0) |
+| [item 1](#resources_requests_cpu_oneOf_i1) |
+
+##### <a name="resources_requests_cpu_oneOf_i0"></a>16.2.1.1. Property `prom2parquet > resources > requests > cpu > oneOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="resources_requests_cpu_oneOf_i1"></a>16.2.1.2. Property `prom2parquet > resources > requests > cpu > oneOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+#### <a name="resources_requests_memory"></a>16.2.2. Property `prom2parquet > resources > requests > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Memory request
+
+## <a name="securityContext"></a>17. Property `prom2parquet > securityContext`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Security context for the container
+
+| Property                                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                  |
+| ------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ---------------------------------- |
+| - [allowPrivilegeEscalation](#securityContext_allowPrivilegeEscalation ) | No      | boolean | No         | -          | Prevent privilege escalation       |
+| - [readOnlyRootFilesystem](#securityContext_readOnlyRootFilesystem )     | No      | boolean | No         | -          | Mount root filesystem as read-only |
+| - [runAsNonRoot](#securityContext_runAsNonRoot )                         | No      | boolean | No         | -          | Run container as non-root user     |
+
+### <a name="securityContext_allowPrivilegeEscalation"></a>17.1. Property `prom2parquet > securityContext > allowPrivilegeEscalation`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Prevent privilege escalation
+
+### <a name="securityContext_readOnlyRootFilesystem"></a>17.2. Property `prom2parquet > securityContext > readOnlyRootFilesystem`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Mount root filesystem as read-only
+
+### <a name="securityContext_runAsNonRoot"></a>17.3. Property `prom2parquet > securityContext > runAsNonRoot`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Run container as non-root user
+
+## <a name="serverPort"></a>18. Property `prom2parquet > serverPort`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Port for the prom2parquet server
+
+## <a name="service"></a>19. Property `prom2parquet > service`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                 | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [port](#service_port ) | No      | integer | No         | -          | Service port      |
+| - [type](#service_type ) | No      | string  | No         | -          | Service type      |
+
+### <a name="service_port"></a>19.1. Property `prom2parquet > service > port`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Service port
+
+### <a name="service_type"></a>19.2. Property `prom2parquet > service > type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Service type
+
+## <a name="serviceAccount"></a>20. Property `prom2parquet > serviceAccount`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                     |
+| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------- |
+| - [annotations](#serviceAccount_annotations ) | No      | object  | No         | -          | Annotations to add to the service account (e.g., eks.amazonaws.com/role-arn for IRSA) |
+| - [automount](#serviceAccount_automount )     | No      | boolean | No         | -          | Automatically mount a ServiceAccount's API credentials                                |
+| - [create](#serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                 |
+| - [name](#serviceAccount_name )               | No      | string  | No         | -          | The name of the service account to use                                                |
+
+### <a name="serviceAccount_annotations"></a>20.1. Property `prom2parquet > serviceAccount > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Annotations to add to the service account (e.g., eks.amazonaws.com/role-arn for IRSA)
+
+### <a name="serviceAccount_automount"></a>20.2. Property `prom2parquet > serviceAccount > automount`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Automatically mount a ServiceAccount's API credentials
+
+### <a name="serviceAccount_create"></a>20.3. Property `prom2parquet > serviceAccount > create`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Specifies whether a service account should be created
+
+### <a name="serviceAccount_name"></a>20.4. Property `prom2parquet > serviceAccount > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** The name of the service account to use
+
+## <a name="tolerations"></a>21. Property `prom2parquet > tolerations`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Tolerations for pod assignment
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+----------------------------------------------------------------------------------------------------------------------------

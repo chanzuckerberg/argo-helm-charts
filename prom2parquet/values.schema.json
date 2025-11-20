@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/prom2parquet",
+  "title": "prom2parquet",
+  "type": "object",
+  "properties": {
+    "affinity": {
+      "description": "Affinity rules for pod assignment",
+      "type": "object"
+    },
+    "args": {
+      "description": "Additional command-line arguments",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "awsCredentials": {
+      "type": "object",
+      "properties": {
+        "accessKeyIdKey": {
+          "description": "Key in the secret for AWS_ACCESS_KEY_ID",
+          "type": "string"
+        },
+        "secretAccessKeyKey": {
+          "description": "Key in the secret for AWS_SECRET_ACCESS_KEY",
+          "type": "string"
+        },
+        "secretName": {
+          "description": "Name of the Kubernetes secret containing AWS credentials",
+          "type": "string"
+        }
+      }
+    },
+    "backend": {
+      "type": "object",
+      "properties": {
+        "prefix": {
+          "description": "Prefix for storing data in the backend",
+          "type": "string"
+        },
+        "root": {
+          "description": "Backend root path (e.g., S3 bucket name)",
+          "type": "string"
+        },
+        "type": {
+          "description": "Backend type (e.g., s3/aws)",
+          "type": "string"
+        }
+      }
+    },
+    "env": {
+      "description": "Additional environment variables",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "envFrom": {
+      "description": "Environment variables from ConfigMaps or Secrets",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "configMapRef": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "secretRef": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "fullnameOverride": {
+      "description": "Override the full name of the chart",
+      "type": "string"
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "pullPolicy": {
+          "description": "Image pull policy",
+          "type": "string",
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
+        },
+        "repository": {
+          "description": "Container image repository",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Container image tag",
+          "type": "string"
+        }
+      }
+    },
+    "imagePullSecrets": {
+      "description": "Image pull secrets",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "nameOverride": {
+      "description": "Override the name of the chart",
+      "type": "string"
+    },
+    "nodeSelector": {
+      "description": "Node selector for pod assignment",
+      "type": "object"
+    },
+    "podAnnotations": {
+      "description": "Annotations to add to the pod",
+      "type": "object"
+    },
+    "podLabels": {
+      "description": "Labels to add to the pod",
+      "type": "object"
+    },
+    "podSecurityContext": {
+      "description": "Security context for the pod",
+      "type": "object"
+    },
+    "replicaCount": {
+      "description": "Number of replicas for the deployment",
+      "type": "integer"
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "description": "CPU limit",
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "memory": {
+              "description": "Memory limit",
+              "type": "string"
+            }
+          }
+        },
+        "requests": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "description": "CPU request",
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "memory": {
+              "description": "Memory request",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "securityContext": {
+      "description": "Security context for the container",
+      "type": "object",
+      "properties": {
+        "allowPrivilegeEscalation": {
+          "description": "Prevent privilege escalation",
+          "type": "boolean"
+        },
+        "readOnlyRootFilesystem": {
+          "description": "Mount root filesystem as read-only",
+          "type": "boolean"
+        },
+        "runAsNonRoot": {
+          "description": "Run container as non-root user",
+          "type": "boolean"
+        }
+      }
+    },
+    "serverPort": {
+      "description": "Port for the prom2parquet server",
+      "type": "integer"
+    },
+    "service": {
+      "type": "object",
+      "properties": {
+        "port": {
+          "description": "Service port",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Service type",
+          "type": "string"
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "description": "Annotations to add to the service account (e.g., eks.amazonaws.com/role-arn for IRSA)",
+          "type": "object"
+        },
+        "automount": {
+          "description": "Automatically mount a ServiceAccount's API credentials",
+          "type": "boolean"
+        },
+        "create": {
+          "description": "Specifies whether a service account should be created",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "The name of the service account to use",
+          "type": "string"
+        }
+      }
+    },
+    "tolerations": {
+      "description": "Tolerations for pod assignment",
+      "type": "array"
+    }
+  }
+}
