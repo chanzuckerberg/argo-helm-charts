@@ -2,41 +2,50 @@
 {{ $globalValues := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global }}
 {{- with $globalValues }}
 {{- if .Values.grafanaDashboard.enabled -}}
-{{- $rootFolder := "argus" }}
-{{- $appFolder := .Values.argusMetadata.appName }}
-{{- $envFolder := printf "%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.envName }}
+{{- $rootFolderName := printf "argus-%s" .Values.argusMetadata.stackName }}
+{{- $rootFolderTitle := "Argus" }}
+{{- $appFolderName := printf "%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.stackName }}
+{{- $appFolderTitle := .Values.argusMetadata.appName -}}
+{{- $envFolderName := printf "%s-%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.envName .Values.argusMetadata.stackName }}
+{{- $envFolderTitle := .Values.argusMetadata.envName -}}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
-  name: {{ $rootFolder }}
+  name: {{ $rootFolderName }}
 spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
   instanceSelector:
     matchLabels:
       name: central-grafana
-  title: {{ $rootFolder }}
+  title: {{ $rootFolderTitle }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
-  name: {{ $appFolder }}
+  name: {{ $appFolderName }}
 spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
   instanceSelector:
     matchLabels:
       name: central-grafana
-  title: {{ $appFolder }}
-  parentFolderRef: {{ $rootFolder }}
+  title: {{ $appFolderTitle }}
+  parentFolderRef: {{ $rootFolderName }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
-  name: {{ $envFolder }}
+  name: {{ $envFolderName }}
 spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
   instanceSelector:
     matchLabels:
       name: central-grafana
-  title: {{ $envFolder }}
-  parentFolderRef: {{ $appFolder }}
+  title: {{ $envFolderTitle }}
+  parentFolderRef: {{ $appFolderName }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -48,7 +57,7 @@ spec:
   instanceSelector:
     matchLabels:
       name: central-grafana
-  folderRef: {{ $envFolder }}
+  folderRef: {{ $envFolderName }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
 ---
