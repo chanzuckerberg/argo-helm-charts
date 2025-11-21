@@ -2,17 +2,70 @@
 {{ $globalValues := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global }}
 {{- with $globalValues }}
 {{- if .Values.grafanaDashboard.enabled -}}
+{{- $rootFolderName := printf "argus-%s" .Values.argusMetadata.stackName }}
+{{- $rootFolderTitle := "Argus" }}
+{{- $appFolderName := printf "%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.stackName }}
+{{- $appFolderTitle := .Values.argusMetadata.appName -}}
+{{- $envFolderName := printf "%s-%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.envName .Values.argusMetadata.stackName }}
+{{- $envFolderTitle := .Values.argusMetadata.envName -}}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
+kind: GrafanaFolder
 metadata:
-  name: {{ include "stack.fullname" . | lower }}-dashboard
+  name: {{ $rootFolderName }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
   instanceSelector:
     matchLabels:
-      app: grafana
+      name: central-grafana
+  title: {{ $rootFolderTitle }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: {{ $appFolderName }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: central-grafana
+  title: {{ $appFolderTitle }}
+  parentFolderRef: {{ $rootFolderName }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: {{ $envFolderName }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: central-grafana
+  title: {{ $envFolderTitle }}
+  parentFolderRef: {{ $appFolderName }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ include "stack.fullname" . | lower }}-dashboard
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  allowCrossNamespaceImport: true
+  resyncPeriod: 30s
+  instanceSelector:
+    matchLabels:
+      name: central-grafana
+  folderRef: {{ $envFolderName }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
 ---
