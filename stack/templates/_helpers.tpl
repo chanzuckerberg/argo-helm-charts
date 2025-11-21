@@ -394,7 +394,7 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceFailureRate" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status!~\"2..\"}[5m])) by (status)" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\"}[5m])) * 100" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" "amp")
     "gridPos" (dict "h" 8 "w" 12)
