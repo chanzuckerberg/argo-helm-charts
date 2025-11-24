@@ -305,7 +305,7 @@ global: # @schema description: Global configuration for the stack - this serves 
         memory: 4Gi # @schema description: Memory request
 
   grafanaDashboard:
-    enabled: false # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
+    enabled: true # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
     datasources:
       prometheus:
         uid: "amp" # @schema description: Prometheus datasource UID
