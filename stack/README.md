@@ -679,11 +679,46 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled ) | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| Property                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
+| --------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
 
-##### <a name="cronJobs_pattern1_grafanaDashboard_enabled"></a>2.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > enabled`
+##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>2.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [prometheus](#cronJobs_pattern1_grafanaDashboard_datasources_prometheus ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_datasources_prometheus"></a>2.1.16.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources > prometheus`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description         |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------- |
+| - [uid](#cronJobs_pattern1_grafanaDashboard_datasources_prometheus_uid ) | No      | string | No         | -          | Prometheus datasource UID |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_datasources_prometheus_uid"></a>2.1.16.1.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources > prometheus > uid`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Prometheus datasource UID
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_enabled"></a>2.1.16.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -691,6 +726,39 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>2.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Instance selector for the Grafana dashboard
+
+| Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [matchLabels](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>2.1.16.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>2.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_image"></a>2.1.17. Property `stack > cronJobs > ^.*$ > image`
 
@@ -3324,11 +3392,46 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| ---------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [enabled](#global_grafanaDashboard_enabled ) | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
+| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#global_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
+| - [enabled](#global_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [instanceSelector](#global_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
 
-#### <a name="global_grafanaDashboard_enabled"></a>3.16.1. Property `stack > global > grafanaDashboard > enabled`
+#### <a name="global_grafanaDashboard_datasources"></a>3.16.1. Property `stack > global > grafanaDashboard > datasources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [prometheus](#global_grafanaDashboard_datasources_prometheus ) | No      | object | No         | -          | -                 |
+
+##### <a name="global_grafanaDashboard_datasources_prometheus"></a>3.16.1.1. Property `stack > global > grafanaDashboard > datasources > prometheus`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description         |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------- |
+| - [uid](#global_grafanaDashboard_datasources_prometheus_uid ) | No      | string | No         | -          | Prometheus datasource UID |
+
+###### <a name="global_grafanaDashboard_datasources_prometheus_uid"></a>3.16.1.1.1. Property `stack > global > grafanaDashboard > datasources > prometheus > uid`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Prometheus datasource UID
+
+#### <a name="global_grafanaDashboard_enabled"></a>3.16.2. Property `stack > global > grafanaDashboard > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -3336,6 +3439,39 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
+
+#### <a name="global_grafanaDashboard_instanceSelector"></a>3.16.3. Property `stack > global > grafanaDashboard > instanceSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Instance selector for the Grafana dashboard
+
+| Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [matchLabels](#global_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
+
+##### <a name="global_grafanaDashboard_instanceSelector_matchLabels"></a>3.16.3.1. Property `stack > global > grafanaDashboard > instanceSelector > matchLabels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#global_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="global_grafanaDashboard_instanceSelector_matchLabels_name"></a>3.16.3.1.1. Property `stack > global > grafanaDashboard > instanceSelector > matchLabels > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ### <a name="global_image"></a>3.17. Property `stack > global > image`
 
@@ -5987,11 +6123,46 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled ) | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| Property                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
+| --------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
 
-##### <a name="cronJobs_pattern1_grafanaDashboard_enabled"></a>4.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > enabled`
+##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>4.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [prometheus](#cronJobs_pattern1_grafanaDashboard_datasources_prometheus ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_datasources_prometheus"></a>4.1.16.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources > prometheus`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description         |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------- |
+| - [uid](#cronJobs_pattern1_grafanaDashboard_datasources_prometheus_uid ) | No      | string | No         | -          | Prometheus datasource UID |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_datasources_prometheus_uid"></a>4.1.16.1.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources > prometheus > uid`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Prometheus datasource UID
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_enabled"></a>4.1.16.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5999,6 +6170,39 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>4.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Instance selector for the Grafana dashboard
+
+| Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [matchLabels](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>4.1.16.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>4.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_image"></a>4.1.17. Property `stack > cronJobs > ^.*$ > image`
 
@@ -9114,11 +9318,46 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled ) | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| Property                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
+| --------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
 
-##### <a name="cronJobs_pattern1_grafanaDashboard_enabled"></a>7.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > enabled`
+##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>7.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [prometheus](#cronJobs_pattern1_grafanaDashboard_datasources_prometheus ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_datasources_prometheus"></a>7.1.16.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources > prometheus`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description         |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------- |
+| - [uid](#cronJobs_pattern1_grafanaDashboard_datasources_prometheus_uid ) | No      | string | No         | -          | Prometheus datasource UID |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_datasources_prometheus_uid"></a>7.1.16.1.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources > prometheus > uid`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Prometheus datasource UID
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_enabled"></a>7.1.16.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -9126,6 +9365,39 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>7.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Instance selector for the Grafana dashboard
+
+| Property                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [matchLabels](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>7.1.16.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>7.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_image"></a>7.1.17. Property `stack > cronJobs > ^.*$ > image`
 
