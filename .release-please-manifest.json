@@ -4,5 +4,6 @@
   "sso-secret": "0.2.0",
   "grafana": "0.8.1",
   "argo-project": "1.0.1",
-  "basic-auth-secret": "0.3.0"
+  "basic-auth-secret": "0.3.0",
+  "prom2parquet": "0.2.0"
 }
