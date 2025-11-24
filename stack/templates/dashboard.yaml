@@ -22,6 +22,7 @@ spec:
     matchLabels:
       name: central-grafana
   title: {{ $rootFolderTitle }}
+  uid: {{ $rootFolderTitle | lower }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
@@ -35,8 +36,9 @@ spec:
   instanceSelector:
     matchLabels:
       name: central-grafana
-  title: {{ $appFolderTitle }}
   parentFolderRef: {{ $rootFolderName }}
+  title: {{ $appFolderTitle }}
+  uid: {{ $appFolderTitle | lower }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
@@ -50,8 +52,9 @@ spec:
   instanceSelector:
     matchLabels:
       name: central-grafana
-  title: {{ $envFolderTitle }}
   parentFolderRef: {{ $appFolderName }}
+  title: {{ $envFolderTitle }}
+  uid: {{ printf "%s-%s" $appFolderTitle $envFolderTitle | lower }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
