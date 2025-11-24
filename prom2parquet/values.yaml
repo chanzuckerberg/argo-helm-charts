@@ -1,0 +1,65 @@
+nameOverride: "" # @schema description: Override the name of the chart
+fullnameOverride: "" # @schema description: Override the full name of the chart
+
+replicaCount: 1 # @schema description: Number of replicas for the deployment
+
+image:
+  repository: prom2parquet # @schema description: Container image repository
+  pullPolicy: IfNotPresent # @schema enum: [Always, IfNotPresent, Never]; description: Image pull policy
+  tag: "latest" # @schema description: Container image tag
+
+imagePullSecrets: [] # @schema type: array; item: string; description: Image pull secrets
+
+serviceAccount:
+  create: true # @schema description: Specifies whether a service account should be created
+  automount: true # @schema description: Automatically mount a ServiceAccount's API credentials
+  annotations: {} # @schema description: Annotations to add to the service account (e.g., eks.amazonaws.com/role-arn for IRSA)
+  name: "" # @schema description: The name of the service account to use
+
+podAnnotations: {} # @schema description: Annotations to add to the pod
+
+podLabels: {} # @schema description: Labels to add to the pod
+
+podSecurityContext: {} # @schema description: Security context for the pod
+
+securityContext: # @schema description: Security context for the container
+  runAsNonRoot: true # @schema description: Run container as non-root user
+  allowPrivilegeEscalation: false # @schema description: Prevent privilege escalation
+  readOnlyRootFilesystem: true # @schema description: Mount root filesystem as read-only
+
+service:
+  type: ClusterIP # @schema description: Service type
+  port: 1234 # @schema description: Service port
+
+backend:
+  type: "s3/aws" # @schema description: Backend type (e.g., s3/aws)
+  root: "" # @schema description: Backend root path (e.g., S3 bucket name)
+  prefix: "parquet" # @schema description: Prefix for storing data in the backend
+
+serverPort: 1234 # @schema description: Port for the prom2parquet server
+
+args: [] # @schema type: array; item: string; description: Additional command-line arguments
+
+env: [] # @schema type: array; item: object; itemProperties: {"name": {"type": "string"}, "value": {"type": "string"}}; description: Additional environment variables
+
+envFrom: [] # @schema type: array; item: object; itemProperties: {"secretRef": {"type": "object", "properties": {"name": {"type": "string"}}}, "configMapRef": {"type": "object", "properties": {"name": {"type": "string"}}}}; description: Environment variables from ConfigMaps or Secrets
+
+awsCredentials:
+  secretName: "" # @schema description: Name of the Kubernetes secret containing AWS credentials
+  accessKeyIdKey: "access_key_id" # @schema description: Key in the secret for AWS_ACCESS_KEY_ID
+  secretAccessKeyKey: "secret_access_key" # @schema description: Key in the secret for AWS_SECRET_ACCESS_KEY
+
+resources:
+  limits:
+    cpu: "500m" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
+    memory: "512Mi" # @schema description: Memory limit
+  requests:
+    cpu: "100m" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
+    memory: "128Mi" # @schema description: Memory request
+
+nodeSelector: {} # @schema description: Node selector for pod assignment
+
+tolerations: [] # @schema description: Tolerations for pod assignment
+
+affinity: {} # @schema description: Affinity rules for pod assignment
+

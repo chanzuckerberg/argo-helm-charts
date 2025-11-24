@@ -1,0 +1,7 @@
+apiVersion: v2
+name: prom2parquet
+description: A Helm chart for deploying prom2parquet - exports Prometheus
+  metrics to Parquet format on S3
+type: application
+version: 0.2.0
+appVersion: "1.0.0"
