@@ -306,6 +306,9 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   grafanaDashboard:
     enabled: false # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
+    instanceSelector: # @schema description: Instance selector for the Grafana dashboard
+      matchLabels:
+        name: central-grafana
 
 services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
   {}

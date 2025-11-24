@@ -1,7 +1,7 @@
-{{ $global := . }}
-{{ $globalValues := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global }}
+{{- $global := . }}
+{{- $globalValues := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global }}
 {{- with $globalValues }}
-{{- if .Values.grafanaDashboard.enabled -}}
+{{- if and .Values.grafanaDashboard .Values.grafanaDashboard.enabled .Values.argusMetadata .Values.argusMetadata.stackName .Values.argusMetadata.appName .Values.argusMetadata.envName }}
 {{- $rootFolderName := printf "argus-%s" .Values.argusMetadata.stackName }}
 {{- $rootFolderTitle := "Argus" }}
 {{- $appFolderName := printf "%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.stackName }}
@@ -13,14 +13,11 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $rootFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
   instanceSelector:
-    matchLabels:
-      name: central-grafana
+    {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   title: {{ $rootFolderTitle }}
   uid: {{ $rootFolderTitle | lower }}
 ---
@@ -28,14 +25,11 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $appFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
   instanceSelector:
-    matchLabels:
-      name: central-grafana
+    {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $rootFolderName }}
   title: {{ $appFolderTitle }}
   uid: {{ $appFolderTitle | lower }}
@@ -44,14 +38,11 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $envFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
   instanceSelector:
-    matchLabels:
-      name: central-grafana
+    {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $appFolderName }}
   title: {{ $envFolderTitle }}
   uid: {{ printf "%s-%s" $appFolderTitle $envFolderTitle | lower }}
@@ -60,17 +51,13 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
   name: {{ include "stack.fullname" . | lower }}-dashboard
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
   instanceSelector:
-    matchLabels:
-      name: central-grafana
+    {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   folderRef: {{ $envFolderName }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
----
-{{ end }}
+{{- end }}
 {{- end }}
