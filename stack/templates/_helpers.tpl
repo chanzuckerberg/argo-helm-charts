@@ -355,7 +355,7 @@ Expects a dict with keys: global, service
 {{- $service := .service -}}
 {{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status=~\"2..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\"}[5m])) * 100" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
-    "datasource" (dict "type" "prometheus" "uid" "amp")
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
@@ -373,7 +373,7 @@ Expects a dict with keys: global, service
     "pluginVersion" "12.1.0"
     "targets" (list
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $metricsQuery
         "legendFormat" "__auto"
@@ -396,7 +396,7 @@ Expects a dict with keys: global, service
 {{- $service := .service -}}
 {{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\"}[5m])) * 100" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
-    "datasource" (dict "type" "prometheus" "uid" "amp")
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
@@ -414,7 +414,7 @@ Expects a dict with keys: global, service
     "pluginVersion" "12.1.0"
     "targets" (list
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $metricsQuery
         "legendFormat" "{{status}}"
@@ -437,7 +437,7 @@ Expects a dict with keys: global, service
 {{- $service := .service -}}
 {{- $metricsQuery := printf "increase(kube_pod_container_status_restarts_total{namespace=\"%s\", pod=~\"%s-.*\"}[5m])" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
-    "datasource" (dict "type" "prometheus" "uid" "amp")
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
@@ -455,7 +455,7 @@ Expects a dict with keys: global, service
     "pluginVersion" "12.1.0"
     "targets" (list
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $metricsQuery
         "legendFormat" "{{pod}}"
@@ -478,7 +478,7 @@ Expects a dict with keys: global, service
 {{- $service := .service -}}
 {{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_request_duration_seconds_sum{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
 {{- $panelDict := dict
-    "datasource" (dict "type" "prometheus" "uid" "amp")
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
@@ -496,7 +496,7 @@ Expects a dict with keys: global, service
     "pluginVersion" "12.1.0"
     "targets" (list
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $metricsQuery
         "legendFormat" "__auto"
@@ -522,7 +522,7 @@ Expects a dict with keys: global, cronJob
 {{- $successQuery := printf "count((kube_job_status_succeeded{namespace=\"%s\", job_name=~\"%s-.*\"} UNLESS kube_job_status_succeeded{namespace=\"%s\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $namespace $cronJobFullname $namespace $cronJobFullname -}}
 {{- $failureQuery := printf "count((kube_job_status_failed{namespace=\"%s\", job_name=~\"%s-.*\"} UNLESS kube_job_status_failed{namespace=\"%s\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $namespace $cronJobFullname $namespace $cronJobFullname -}}
 {{- $panelDict := dict
-    "datasource" (dict "type" "prometheus" "uid" "amp")
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
     "options" (dict
       "legend" (dict
@@ -549,7 +549,7 @@ Expects a dict with keys: global, cronJob
     "pluginVersion" "12.1.0"
     "targets" (list
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $successQuery
         "legendFormat" "Success"
@@ -557,7 +557,7 @@ Expects a dict with keys: global, cronJob
         "refId" "A"
       )
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $failureQuery
         "legendFormat" "Failure"
@@ -646,7 +646,7 @@ Expects a dict with keys: global, cronJob
 {{- $namespace := $global.Values.global.argoBuildEnv.appNamespace -}}
 {{- $lastSuccessQuery := printf "max(kube_job_status_completion_time{namespace=\"%s\", job_name=~\"%s-.*\"} > 0) * 1000" $namespace $cronJobFullname -}}
 {{- $panelDict := dict
-    "datasource" (dict "type" "prometheus" "uid" "amp")
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 6)
     "options" (dict
       "colorMode" "value"
@@ -664,7 +664,7 @@ Expects a dict with keys: global, cronJob
     "pluginVersion" "12.1.0"
     "targets" (list
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $lastSuccessQuery
         "legendFormat" "Last Successful Run"
@@ -714,7 +714,7 @@ Expects a dict with keys: global, cronJob
 {{- $namespace := $global.Values.global.argoBuildEnv.appNamespace -}}
 {{- $avgDurationQuery := printf "avg(kube_job_status_completion_time{namespace=\"%s\", job_name=~\"%s-.*\"} - kube_job_status_start_time{namespace=\"%s\", job_name=~\"%s-.*\"})" $namespace $cronJobFullname $namespace $cronJobFullname -}}
 {{- $panelDict := dict
-    "datasource" (dict "type" "prometheus" "uid" "amp")
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 6)
     "options" (dict
       "colorMode" "value"
@@ -732,7 +732,7 @@ Expects a dict with keys: global, cronJob
     "pluginVersion" "12.1.0"
     "targets" (list
       (dict
-        "datasource" (dict "type" "prometheus" "uid" "amp")
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
         "editorMode" "code"
         "expr" $avgDurationQuery
         "legendFormat" "Average Duration"
