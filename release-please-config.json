@@ -38,6 +38,9 @@
     },
     "basic-auth-secret": {
       "package-name": "basic-auth-secret"
+    },
+    "prom2parquet": {
+      "package-name": "prom2parquet"
     }
   }
 }
