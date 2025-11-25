@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.2.0...prom2parquet-v0.2.1) (2025-11-25)
+
+
+### Bug Fixes
+
+* Remove unimplemented prefix parameter ([#333](https://github.com/chanzuckerberg/argo-helm-charts/issues/333)) ([b912757](https://github.com/chanzuckerberg/argo-helm-charts/commit/b912757457ce5c8ab14fd95710558c4b2ae801b7))
+
 ## [0.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.1.0...prom2parquet-v0.2.0) (2025-11-20)
 
 
