@@ -244,9 +244,37 @@
         "grafanaDashboard": {
           "type": "object",
           "properties": {
+            "datasources": {
+              "type": "object",
+              "properties": {
+                "prometheus": {
+                  "type": "object",
+                  "properties": {
+                    "uid": {
+                      "description": "Prometheus datasource UID",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
             "enabled": {
               "description": "Enable Grafana dashboard (globally, can be overridden per service)",
               "type": "boolean"
+            },
+            "instanceSelector": {
+              "description": "Instance selector for the Grafana dashboard",
+              "type": "object",
+              "properties": {
+                "matchLabels": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
             }
           }
         },

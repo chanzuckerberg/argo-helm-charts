@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.22.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.21.0...stack-v2.22.0) (2025-11-24)
+
+
+### Features
+
+* Enable grafana dashboards by default ([#324](https://github.com/chanzuckerberg/argo-helm-charts/issues/324)) ([a963c9b](https://github.com/chanzuckerberg/argo-helm-charts/commit/a963c9bdca3cdf6a588685793340ef74dcdf870d))
+* migrate per stack dashboards to central-grafana ([#330](https://github.com/chanzuckerberg/argo-helm-charts/issues/330)) ([0307e9d](https://github.com/chanzuckerberg/argo-helm-charts/commit/0307e9d833b3a623a4ef0da282241cb14a3f4ecf))
+
 ## [2.21.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.20.1...stack-v2.21.0) (2025-11-19)
 
 
