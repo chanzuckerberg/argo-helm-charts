@@ -320,7 +320,7 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- end -}}
 
 {{/* 3. Build the final, top-level dashboard dictionary */}}
-{{- $dashboardTitle := printf "%s-dashboard" (include "stack.fullname" $global | lower) -}}
+{{- $dashboardTitle := $global.Release.Name }}
 {{- $dashboard := dict
     "id" nil
     "uid" $dashboardTitle
