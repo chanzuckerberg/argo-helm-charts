@@ -16,7 +16,6 @@ serviceAccount:
 backend:
   type: "s3/aws"
   root: "my-metrics-bucket"
-  prefix: "parquet"
 
 serverPort: 1234
 

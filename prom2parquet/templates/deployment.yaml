@@ -39,7 +39,6 @@ spec:
             {{- if .Values.backend.root }}
             - "--backend-root={{ .Values.backend.root }}"
             {{- end }}
-            - "--prefix={{ .Values.backend.prefix }}"
             - "--server-port={{ .Values.serverPort }}"
             {{- range .Values.args }}
             - {{ . | quote }}

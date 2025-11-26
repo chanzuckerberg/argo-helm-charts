@@ -34,20 +34,16 @@ tests:
     template: deployment.yaml
     set:
       backend:
-        type: "s3/aws"
+        type: "s3"
         root: "my-bucket"
-        prefix: "metrics"
       serverPort: 9090
     asserts:
       - contains:
           path: spec.template.spec.containers[0].args
-          content: "--backend=s3/aws"
+          content: "--backend=s3"
       - contains:
           path: spec.template.spec.containers[0].args
           content: "--backend-root=my-bucket"
-      - contains:
-          path: spec.template.spec.containers[0].args
-          content: "--prefix=metrics"
       - contains:
           path: spec.template.spec.containers[0].args
           content: "--server-port=9090"

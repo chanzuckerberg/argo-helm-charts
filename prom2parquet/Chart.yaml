@@ -3,5 +3,5 @@ name: prom2parquet
 description: A Helm chart for deploying prom2parquet - exports Prometheus
   metrics to Parquet format on S3
 type: application
-version: 0.2.0
+version: 0.2.2
 appVersion: "1.0.0"
