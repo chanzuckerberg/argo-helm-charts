@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.2.1...prom2parquet-v0.2.2) (2025-11-26)
+
+
+### Bug Fixes
+
+* prom2parquet remove other prefix param artifacts ([#335](https://github.com/chanzuckerberg/argo-helm-charts/issues/335)) ([0782ea8](https://github.com/chanzuckerberg/argo-helm-charts/commit/0782ea83fdb4da5c51ee5adaf22d3271969d0f29))
+
 ## [0.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.2.0...prom2parquet-v0.2.1) (2025-11-25)
 
 
