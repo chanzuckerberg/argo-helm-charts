@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.23.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.22.0...stack-v2.23.0) (2025-11-26)
+
+
+### Features
+
+* automatically configure Argus Event annotations in per-stack Grafana Dashboards ([#332](https://github.com/chanzuckerberg/argo-helm-charts/issues/332)) ([29a696e](https://github.com/chanzuckerberg/argo-helm-charts/commit/29a696e5af16329024dc29e3c0357206e66f0474))
+
 ## [2.22.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.21.0...stack-v2.22.0) (2025-11-24)
 
 

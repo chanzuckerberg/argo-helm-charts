@@ -320,7 +320,7 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- end -}}
 
 {{/* 3. Build the final, top-level dashboard dictionary */}}
-{{- $dashboardTitle := printf "%s-dashboard" (include "stack.fullname" $global | lower) -}}
+{{- $dashboardTitle := $global.Release.Name }}
 {{- $dashboard := dict
     "id" nil
     "uid" $dashboardTitle
@@ -335,7 +335,38 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
     "time" (dict "from" "now-6h" "to" "now")
     "timepicker" (dict "time_options" (list) "refresh_intervals" (list))
     "templating" (dict "list" (list))
-    "annotations" (dict "list" (list))
+    "annotations" (dict "list" (list
+      (dict
+        "builtIn" 1
+        "datasource" (dict
+          "type" "grafana"
+          "uid" "-- Grafana --"
+        )
+        "enable" true
+        "hide" true
+        "iconColor" "rgba(0, 211, 255, 1)"
+        "name" "Annotations & Alerts"
+        "type" "dashboard"
+      )
+      (dict
+        "datasource" (dict
+          "type" "datasource"
+          "uid" "grafana"
+        )
+        "enable" true
+        "iconColor" "red"
+        "name" "Argus Events"
+        "target" (dict
+          "limit" 100
+          "matchAny" false
+          "tags" (list
+            (printf "app:%s" $global.Values.global.argusMetadata.appName)
+            (printf "env:%s" $global.Values.global.argusMetadata.envName)
+          )
+          "type" "tags"
+        )
+      )
+    ))
     "refresh" "5s"
     "schemaVersion" 17
     "version" 0
