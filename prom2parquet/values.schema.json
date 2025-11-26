@@ -35,10 +35,6 @@
     "backend": {
       "type": "object",
       "properties": {
-        "prefix": {
-          "description": "Prefix for storing data in the backend",
-          "type": "string"
-        },
         "root": {
           "description": "Backend root path (e.g., S3 bucket name)",
           "type": "string"
