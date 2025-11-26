@@ -119,22 +119,12 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                     | Pattern | Type   | Deprecated | Definition | Title/Description                        |
-| ---------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------- |
-| - [prefix](#backend_prefix ) | No      | string | No         | -          | Prefix for storing data in the backend   |
-| - [root](#backend_root )     | No      | string | No         | -          | Backend root path (e.g., S3 bucket name) |
-| - [type](#backend_type )     | No      | string | No         | -          | Backend type (e.g., s3/aws)              |
+| Property                 | Pattern | Type   | Deprecated | Definition | Title/Description                        |
+| ------------------------ | ------- | ------ | ---------- | ---------- | ---------------------------------------- |
+| - [root](#backend_root ) | No      | string | No         | -          | Backend root path (e.g., S3 bucket name) |
+| - [type](#backend_type ) | No      | string | No         | -          | Backend type (e.g., s3/aws)              |
 
-### <a name="backend_prefix"></a>4.1. Property `prom2parquet > backend > prefix`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Prefix for storing data in the backend
-
-### <a name="backend_root"></a>4.2. Property `prom2parquet > backend > root`
+### <a name="backend_root"></a>4.1. Property `prom2parquet > backend > root`
 
 |              |          |
 | ------------ | -------- |
@@ -143,7 +133,7 @@
 
 **Description:** Backend root path (e.g., S3 bucket name)
 
-### <a name="backend_type"></a>4.3. Property `prom2parquet > backend > type`
+### <a name="backend_type"></a>4.2. Property `prom2parquet > backend > type`
 
 |              |          |
 | ------------ | -------- |
