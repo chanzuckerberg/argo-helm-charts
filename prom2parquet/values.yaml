@@ -34,7 +34,6 @@ service:
 backend:
   type: "s3/aws" # @schema description: Backend type (e.g., s3/aws)
   root: "" # @schema description: Backend root path (e.g., S3 bucket name)
-  prefix: "parquet" # @schema description: Prefix for storing data in the backend
 
 serverPort: 1234 # @schema description: Port for the prom2parquet server
 
