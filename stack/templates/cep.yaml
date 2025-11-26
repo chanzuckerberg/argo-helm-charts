@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumEnvoyConfig
+metadata:
+  name: envoy-requestid-extension
+spec:
+  services:
+    - name:  {{ include "stack.fullname" . }}
+  resources:
+    - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
+      name: test-listener
+      filterChains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typedConfig:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                statPrefix: ingress_http
+                requestIdExtension:
+                  typedConfig:
+                    "@type": type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig
+                    packTraceReason: true
+                    useRequestIdForTraceSampling: true
+                routeConfig:
+                  name: local_route
+                httpFilters:
+                  - name: envoy.filters.http.router
+                    typedConfig:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
