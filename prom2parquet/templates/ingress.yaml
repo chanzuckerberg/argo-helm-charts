@@ -1,9 +1,10 @@
 {{- if .Values.ingress.enabled -}}
+{{- $global := . -}}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "prom2parquet.fullname" .  }}
+  name: {{ include "prom2parquet.fullname" . }}
   labels:
     {{- include "prom2parquet.labels" . | nindent 4 }}
     {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
@@ -29,12 +30,14 @@ spec:
             {{- end }}
             backend:
               service:
-                {{- include "prom2parquet.fullname" . | nindent 16}}
+                name: {{ include "prom2parquet.fullname" $global }}
+                port:
+                  number: {{ $global.Values.service.port }}
           {{- end }}
     {{- $customHosts := list -}}
     {{- range $i, $rule := .Values.ingress.rules -}}
-    {{- $ruleValues := mergeOverwrite (dict "host" .Values.ingress.host "paths" .Values.ingress.paths) $rule -}}
-    {{ $customHosts = append $customHosts $ruleValues.host }}
+    {{- $ruleValues := mergeOverwrite (dict "host" $global.Values.ingress.host "paths" $global.Values.ingress.paths) $rule -}}
+    {{- $customHosts = append $customHosts $ruleValues.host }}
     - host: {{ $ruleValues.host }}
       http:
         paths:
@@ -45,23 +48,25 @@ spec:
             {{- end }}
             backend:
               service:
-                {{- (include "prom2parquet.fullname" .) | nindent 16 -}}
+                name: {{ include "prom2parquet.fullname" $global }}
+                port:
+                  number: {{ $global.Values.service.port }}
           {{ end -}}
     {{- end }}
   tls:
     - hosts:
-      - {{ .Values.ingress.host  }}
+      - {{ .Values.ingress.host }}
     {{- range .Values.ingress.tls }}
     - hosts:
         {{- range .hosts }}
-        - {{ .  }}
+        - {{ . }}
         {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
-   {{ if gt (len $customHosts) 0 }}
+   {{- if gt (len $customHosts) 0 }}
     - hosts:
       {{- toYaml $customHosts | nindent 6 }}
-      {{- $secretName := printf "%s-%s-%s" "custom-hosts" (include "stack.fullname" .) "tls-secret" }}
-      secretName: {{  regexReplaceAll "[^a-zA-Z0-9-]" $secretName "-" }}
-    {{ end }}
+      {{- $secretName := printf "%s-%s-%s" "custom-hosts" (include "prom2parquet.fullname" .) "tls-secret" }}
+      secretName: {{ regexReplaceAll "[^a-zA-Z0-9-]" $secretName "-" }}
+    {{- end }}
 {{- end }}
