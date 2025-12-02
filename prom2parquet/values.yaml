@@ -32,7 +32,7 @@ service:
   port: 51234 # @schema description: Service port
 
 backend:
-  type: "s3/aws" # @schema description: Backend type (e.g., s3/aws)
+  type: "s3" # @schema description: Backend type (e.g., s3, aws (s3==aws))
   root: "" # @schema description: Backend root path (e.g., S3 bucket name)
 
 serverPort: 51234 # @schema description: Port for the prom2parquet server
