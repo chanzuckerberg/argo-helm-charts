@@ -29,13 +29,13 @@ securityContext: # @schema description: Security context for the container
 
 service:
   type: ClusterIP # @schema description: Service type
-  port: 1234 # @schema description: Service port
+  port: 51234 # @schema description: Service port
 
 backend:
   type: "s3/aws" # @schema description: Backend type (e.g., s3/aws)
   root: "" # @schema description: Backend root path (e.g., S3 bucket name)
 
-serverPort: 1234 # @schema description: Port for the prom2parquet server
+serverPort: 51234 # @schema description: Port for the prom2parquet server
 
 args: [] # @schema type: array; item: string; description: Additional command-line arguments
 
@@ -84,7 +84,7 @@ ingress: # @schema description: Ingress configuration
   host: chart-example.local # @schema description: Ingress host
   paths: # @schema description: List of ingress paths
     -
-      path: / # @schema description: Ingress path
+      path: /receive # @schema description: Ingress path
       pathType: Prefix # @schema description: Ingress path type
   rules: [] # @schema description: List of ingress rules
   oidcProtected: false # @schema description: Enable OIDC protection
