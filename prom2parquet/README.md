@@ -123,7 +123,7 @@
 | Property                 | Pattern | Type   | Deprecated | Definition | Title/Description                        |
 | ------------------------ | ------- | ------ | ---------- | ---------- | ---------------------------------------- |
 | - [root](#backend_root ) | No      | string | No         | -          | Backend root path (e.g., S3 bucket name) |
-| - [type](#backend_type ) | No      | string | No         | -          | Backend type (e.g., s3/aws)              |
+| - [type](#backend_type ) | No      | string | No         | -          | Backend type (e.g., s3, aws (s3==aws))   |
 
 ### <a name="backend_root"></a>4.1. Property `prom2parquet > backend > root`
 
@@ -141,7 +141,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Backend type (e.g., s3/aws)
+**Description:** Backend type (e.g., s3, aws (s3==aws))
 
 ## <a name="env"></a>5. Property `prom2parquet > env`
 

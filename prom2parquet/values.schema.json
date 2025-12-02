@@ -40,7 +40,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Backend type (e.g., s3/aws)",
+          "description": "Backend type (e.g., s3, aws (s3==aws))",
           "type": "string"
         }
       }
