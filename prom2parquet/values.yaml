@@ -62,3 +62,40 @@ tolerations: [] # @schema description: Tolerations for pod assignment
 
 affinity: {} # @schema description: Affinity rules for pod assignment
 
+#ingress: # @schema description: Ingress configuration
+#  enabled: true # @schema description: Enable ingress
+#  className: nginx # @schema description: Ingress class name
+#  host: cw-prom2parquet.cw.dev-cw-o11y.dev.czi.team # @schema description: Ingress host paths: # @schema description: List of ingress paths
+#    -
+#      path: /receive # @schema description: Ingress path
+#      pathType: Prefix # @schema description: Ingress path type
+#  oidcProtected: false # @schema description: Enable OIDC protection
+#  annotations:
+#    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+#    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+#    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+#    nginx.ingress.kubernetes.io/affinity: "cookie"
+#    nginx.ingress.kubernetes.io/session-cookie-name: "prom2parquet_ingress"
+#    nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
+
+ingress: # @schema description: Ingress configuration
+  enabled: true # @schema description: Enable ingress
+  className: nginx # @schema description: Ingress class name
+  host: chart-example.local # @schema description: Ingress host
+  paths: # @schema description: List of ingress paths
+    -
+      path: / # @schema description: Ingress path
+      pathType: Prefix # @schema description: Ingress path type
+  rules: [] # @schema description: List of ingress rules
+  oidcProtected: false # @schema description: Enable OIDC protection
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "argus_sticky_session"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
+  tls: [] # @schema description: List of ingress TLS configurations
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
