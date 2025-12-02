@@ -79,7 +79,7 @@ affinity: {} # @schema description: Affinity rules for pod assignment
 #    nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
 
 ingress: # @schema description: Ingress configuration
-  enabled: true # @schema description: Enable ingress
+  enabled: false # @schema description: Enable ingress
   className: nginx # @schema description: Ingress class name
   host: chart-example.local # @schema description: Ingress host
   paths: # @schema description: List of ingress paths
