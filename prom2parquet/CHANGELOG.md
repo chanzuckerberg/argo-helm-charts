@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.2.2...prom2parquet-v0.3.0) (2025-12-03)
+
+
+### Features
+
+* prom2parquet ingress ([#338](https://github.com/chanzuckerberg/argo-helm-charts/issues/338)) ([69636d3](https://github.com/chanzuckerberg/argo-helm-charts/commit/69636d3b7ffc515c87a2b158161220903332619a))
+
 ## [0.2.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.2.1...prom2parquet-v0.2.2) (2025-11-26)
 
 

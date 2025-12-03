@@ -40,7 +40,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Backend type (e.g., s3/aws)",
+          "description": "Backend type (e.g., s3, aws (s3==aws))",
           "type": "string"
         }
       }
@@ -116,6 +116,76 @@
       "type": "array",
       "items": {
         "type": "string"
+      }
+    },
+    "ingress": {
+      "description": "Ingress configuration",
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "properties": {
+            "nginx.ingress.kubernetes.io/affinity": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/proxy-connect-timeout": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/proxy-read-timeout": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/proxy-send-timeout": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/session-cookie-max-age": {
+              "type": "string"
+            },
+            "nginx.ingress.kubernetes.io/session-cookie-name": {
+              "type": "string"
+            }
+          }
+        },
+        "className": {
+          "description": "Ingress class name",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Enable ingress",
+          "type": "boolean"
+        },
+        "host": {
+          "description": "Ingress host",
+          "type": "string"
+        },
+        "oidcProtected": {
+          "description": "Enable OIDC protection",
+          "type": "boolean"
+        },
+        "paths": {
+          "description": "List of ingress paths",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "description": "Ingress path",
+                "type": "string"
+              },
+              "pathType": {
+                "description": "Ingress path type",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rules": {
+          "description": "List of ingress rules",
+          "type": "array"
+        },
+        "tls": {
+          "description": "List of ingress TLS configurations",
+          "type": "array"
+        }
       }
     },
     "nameOverride": {

@@ -19,6 +19,7 @@
 | - [fullnameOverride](#fullnameOverride )     | No      | string          | No         | -          | Override the full name of the chart              |
 | - [image](#image )                           | No      | object          | No         | -          | -                                                |
 | - [imagePullSecrets](#imagePullSecrets )     | No      | array of string | No         | -          | Image pull secrets                               |
+| - [ingress](#ingress )                       | No      | object          | No         | -          | Ingress configuration                            |
 | - [nameOverride](#nameOverride )             | No      | string          | No         | -          | Override the name of the chart                   |
 | - [nodeSelector](#nodeSelector )             | No      | object          | No         | -          | Node selector for pod assignment                 |
 | - [podAnnotations](#podAnnotations )         | No      | object          | No         | -          | Annotations to add to the pod                    |
@@ -122,7 +123,7 @@
 | Property                 | Pattern | Type   | Deprecated | Definition | Title/Description                        |
 | ------------------------ | ------- | ------ | ---------- | ---------- | ---------------------------------------- |
 | - [root](#backend_root ) | No      | string | No         | -          | Backend root path (e.g., S3 bucket name) |
-| - [type](#backend_type ) | No      | string | No         | -          | Backend type (e.g., s3/aws)              |
+| - [type](#backend_type ) | No      | string | No         | -          | Backend type (e.g., s3, aws (s3==aws))   |
 
 ### <a name="backend_root"></a>4.1. Property `prom2parquet > backend > root`
 
@@ -140,7 +141,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Backend type (e.g., s3/aws)
+**Description:** Backend type (e.g., s3, aws (s3==aws))
 
 ## <a name="env"></a>5. Property `prom2parquet > env`
 
@@ -345,7 +346,209 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="nameOverride"></a>10. Property `prom2parquet > nameOverride`
+## <a name="ingress"></a>10. Property `prom2parquet > ingress`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Ingress configuration
+
+| Property                                   | Pattern | Type            | Deprecated | Definition | Title/Description                  |
+| ------------------------------------------ | ------- | --------------- | ---------- | ---------- | ---------------------------------- |
+| - [annotations](#ingress_annotations )     | No      | object          | No         | -          | -                                  |
+| - [className](#ingress_className )         | No      | string          | No         | -          | Ingress class name                 |
+| - [enabled](#ingress_enabled )             | No      | boolean         | No         | -          | Enable ingress                     |
+| - [host](#ingress_host )                   | No      | string          | No         | -          | Ingress host                       |
+| - [oidcProtected](#ingress_oidcProtected ) | No      | boolean         | No         | -          | Enable OIDC protection             |
+| - [paths](#ingress_paths )                 | No      | array of object | No         | -          | List of ingress paths              |
+| - [rules](#ingress_rules )                 | No      | array           | No         | -          | List of ingress rules              |
+| - [tls](#ingress_tls )                     | No      | array           | No         | -          | List of ingress TLS configurations |
+
+### <a name="ingress_annotations"></a>10.1. Property `prom2parquet > ingress > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [nginx.ingress.kubernetes.io/affinity](#ingress_annotations_nginxingresskubernetesio/affinity )                             | No      | string | No         | -          | -                 |
+| - [nginx.ingress.kubernetes.io/proxy-connect-timeout](#ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout )   | No      | string | No         | -          | -                 |
+| - [nginx.ingress.kubernetes.io/proxy-read-timeout](#ingress_annotations_nginxingresskubernetesio/proxy-read-timeout )         | No      | string | No         | -          | -                 |
+| - [nginx.ingress.kubernetes.io/proxy-send-timeout](#ingress_annotations_nginxingresskubernetesio/proxy-send-timeout )         | No      | string | No         | -          | -                 |
+| - [nginx.ingress.kubernetes.io/session-cookie-max-age](#ingress_annotations_nginxingresskubernetesio/session-cookie-max-age ) | No      | string | No         | -          | -                 |
+| - [nginx.ingress.kubernetes.io/session-cookie-name](#ingress_annotations_nginxingresskubernetesio/session-cookie-name )       | No      | string | No         | -          | -                 |
+
+#### <a name="ingress_annotations_nginxingresskubernetesio/affinity"></a>10.1.1. Property `prom2parquet > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>10.1.2. Property `prom2parquet > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>10.1.3. Property `prom2parquet > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>10.1.4. Property `prom2parquet > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>10.1.5. Property `prom2parquet > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>10.1.6. Property `prom2parquet > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="ingress_className"></a>10.2. Property `prom2parquet > ingress > className`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Ingress class name
+
+### <a name="ingress_enabled"></a>10.3. Property `prom2parquet > ingress > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable ingress
+
+### <a name="ingress_host"></a>10.4. Property `prom2parquet > ingress > host`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Ingress host
+
+### <a name="ingress_oidcProtected"></a>10.5. Property `prom2parquet > ingress > oidcProtected`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable OIDC protection
+
+### <a name="ingress_paths"></a>10.6. Property `prom2parquet > ingress > paths`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of ingress paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be     | Description |
+| ----------------------------------- | ----------- |
+| [paths items](#ingress_paths_items) | -           |
+
+#### <a name="ingress_paths_items"></a>10.6.1. prom2parquet > ingress > paths > paths items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [path](#ingress_paths_items_path )         | No      | string | No         | -          | Ingress path      |
+| - [pathType](#ingress_paths_items_pathType ) | No      | string | No         | -          | Ingress path type |
+
+##### <a name="ingress_paths_items_path"></a>10.6.1.1. Property `prom2parquet > ingress > paths > paths items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Ingress path
+
+##### <a name="ingress_paths_items_pathType"></a>10.6.1.2. Property `prom2parquet > ingress > paths > paths items > pathType`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Ingress path type
+
+### <a name="ingress_rules"></a>10.7. Property `prom2parquet > ingress > rules`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** List of ingress rules
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+### <a name="ingress_tls"></a>10.8. Property `prom2parquet > ingress > tls`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** List of ingress TLS configurations
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+## <a name="nameOverride"></a>11. Property `prom2parquet > nameOverride`
 
 |              |          |
 | ------------ | -------- |
@@ -354,7 +557,7 @@ Must be one of:
 
 **Description:** Override the name of the chart
 
-## <a name="nodeSelector"></a>11. Property `prom2parquet > nodeSelector`
+## <a name="nodeSelector"></a>12. Property `prom2parquet > nodeSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -364,7 +567,7 @@ Must be one of:
 
 **Description:** Node selector for pod assignment
 
-## <a name="podAnnotations"></a>12. Property `prom2parquet > podAnnotations`
+## <a name="podAnnotations"></a>13. Property `prom2parquet > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -374,7 +577,7 @@ Must be one of:
 
 **Description:** Annotations to add to the pod
 
-## <a name="podLabels"></a>13. Property `prom2parquet > podLabels`
+## <a name="podLabels"></a>14. Property `prom2parquet > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -384,7 +587,7 @@ Must be one of:
 
 **Description:** Labels to add to the pod
 
-## <a name="podSecurityContext"></a>14. Property `prom2parquet > podSecurityContext`
+## <a name="podSecurityContext"></a>15. Property `prom2parquet > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -394,7 +597,7 @@ Must be one of:
 
 **Description:** Security context for the pod
 
-## <a name="replicaCount"></a>15. Property `prom2parquet > replicaCount`
+## <a name="replicaCount"></a>16. Property `prom2parquet > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -403,7 +606,7 @@ Must be one of:
 
 **Description:** Number of replicas for the deployment
 
-## <a name="resources"></a>16. Property `prom2parquet > resources`
+## <a name="resources"></a>17. Property `prom2parquet > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -416,7 +619,7 @@ Must be one of:
 | - [limits](#resources_limits )     | No      | object | No         | -          | -                 |
 | - [requests](#resources_requests ) | No      | object | No         | -          | -                 |
 
-### <a name="resources_limits"></a>16.1. Property `prom2parquet > resources > limits`
+### <a name="resources_limits"></a>17.1. Property `prom2parquet > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -429,7 +632,7 @@ Must be one of:
 | - [cpu](#resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-#### <a name="resources_limits_cpu"></a>16.1.1. Property `prom2parquet > resources > limits > cpu`
+#### <a name="resources_limits_cpu"></a>17.1.1. Property `prom2parquet > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -444,21 +647,21 @@ Must be one of:
 | [item 0](#resources_limits_cpu_oneOf_i0) |
 | [item 1](#resources_limits_cpu_oneOf_i1) |
 
-##### <a name="resources_limits_cpu_oneOf_i0"></a>16.1.1.1. Property `prom2parquet > resources > limits > cpu > oneOf > item 0`
+##### <a name="resources_limits_cpu_oneOf_i0"></a>17.1.1.1. Property `prom2parquet > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="resources_limits_cpu_oneOf_i1"></a>16.1.1.2. Property `prom2parquet > resources > limits > cpu > oneOf > item 1`
+##### <a name="resources_limits_cpu_oneOf_i1"></a>17.1.1.2. Property `prom2parquet > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-#### <a name="resources_limits_memory"></a>16.1.2. Property `prom2parquet > resources > limits > memory`
+#### <a name="resources_limits_memory"></a>17.1.2. Property `prom2parquet > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -467,7 +670,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-### <a name="resources_requests"></a>16.2. Property `prom2parquet > resources > requests`
+### <a name="resources_requests"></a>17.2. Property `prom2parquet > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -480,7 +683,7 @@ Must be one of:
 | - [cpu](#resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-#### <a name="resources_requests_cpu"></a>16.2.1. Property `prom2parquet > resources > requests > cpu`
+#### <a name="resources_requests_cpu"></a>17.2.1. Property `prom2parquet > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -495,21 +698,21 @@ Must be one of:
 | [item 0](#resources_requests_cpu_oneOf_i0) |
 | [item 1](#resources_requests_cpu_oneOf_i1) |
 
-##### <a name="resources_requests_cpu_oneOf_i0"></a>16.2.1.1. Property `prom2parquet > resources > requests > cpu > oneOf > item 0`
+##### <a name="resources_requests_cpu_oneOf_i0"></a>17.2.1.1. Property `prom2parquet > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="resources_requests_cpu_oneOf_i1"></a>16.2.1.2. Property `prom2parquet > resources > requests > cpu > oneOf > item 1`
+##### <a name="resources_requests_cpu_oneOf_i1"></a>17.2.1.2. Property `prom2parquet > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-#### <a name="resources_requests_memory"></a>16.2.2. Property `prom2parquet > resources > requests > memory`
+#### <a name="resources_requests_memory"></a>17.2.2. Property `prom2parquet > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -518,7 +721,7 @@ Must be one of:
 
 **Description:** Memory request
 
-## <a name="securityContext"></a>17. Property `prom2parquet > securityContext`
+## <a name="securityContext"></a>18. Property `prom2parquet > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -534,7 +737,7 @@ Must be one of:
 | - [readOnlyRootFilesystem](#securityContext_readOnlyRootFilesystem )     | No      | boolean | No         | -          | Mount root filesystem as read-only |
 | - [runAsNonRoot](#securityContext_runAsNonRoot )                         | No      | boolean | No         | -          | Run container as non-root user     |
 
-### <a name="securityContext_allowPrivilegeEscalation"></a>17.1. Property `prom2parquet > securityContext > allowPrivilegeEscalation`
+### <a name="securityContext_allowPrivilegeEscalation"></a>18.1. Property `prom2parquet > securityContext > allowPrivilegeEscalation`
 
 |              |           |
 | ------------ | --------- |
@@ -543,7 +746,7 @@ Must be one of:
 
 **Description:** Prevent privilege escalation
 
-### <a name="securityContext_readOnlyRootFilesystem"></a>17.2. Property `prom2parquet > securityContext > readOnlyRootFilesystem`
+### <a name="securityContext_readOnlyRootFilesystem"></a>18.2. Property `prom2parquet > securityContext > readOnlyRootFilesystem`
 
 |              |           |
 | ------------ | --------- |
@@ -552,7 +755,7 @@ Must be one of:
 
 **Description:** Mount root filesystem as read-only
 
-### <a name="securityContext_runAsNonRoot"></a>17.3. Property `prom2parquet > securityContext > runAsNonRoot`
+### <a name="securityContext_runAsNonRoot"></a>18.3. Property `prom2parquet > securityContext > runAsNonRoot`
 
 |              |           |
 | ------------ | --------- |
@@ -561,7 +764,7 @@ Must be one of:
 
 **Description:** Run container as non-root user
 
-## <a name="serverPort"></a>18. Property `prom2parquet > serverPort`
+## <a name="serverPort"></a>19. Property `prom2parquet > serverPort`
 
 |              |           |
 | ------------ | --------- |
@@ -570,7 +773,7 @@ Must be one of:
 
 **Description:** Port for the prom2parquet server
 
-## <a name="service"></a>19. Property `prom2parquet > service`
+## <a name="service"></a>20. Property `prom2parquet > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -583,7 +786,7 @@ Must be one of:
 | - [port](#service_port ) | No      | integer | No         | -          | Service port      |
 | - [type](#service_type ) | No      | string  | No         | -          | Service type      |
 
-### <a name="service_port"></a>19.1. Property `prom2parquet > service > port`
+### <a name="service_port"></a>20.1. Property `prom2parquet > service > port`
 
 |              |           |
 | ------------ | --------- |
@@ -592,7 +795,7 @@ Must be one of:
 
 **Description:** Service port
 
-### <a name="service_type"></a>19.2. Property `prom2parquet > service > type`
+### <a name="service_type"></a>20.2. Property `prom2parquet > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -601,7 +804,7 @@ Must be one of:
 
 **Description:** Service type
 
-## <a name="serviceAccount"></a>20. Property `prom2parquet > serviceAccount`
+## <a name="serviceAccount"></a>21. Property `prom2parquet > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -616,7 +819,7 @@ Must be one of:
 | - [create](#serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                 |
 | - [name](#serviceAccount_name )               | No      | string  | No         | -          | The name of the service account to use                                                |
 
-### <a name="serviceAccount_annotations"></a>20.1. Property `prom2parquet > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>21.1. Property `prom2parquet > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -626,7 +829,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account (e.g., eks.amazonaws.com/role-arn for IRSA)
 
-### <a name="serviceAccount_automount"></a>20.2. Property `prom2parquet > serviceAccount > automount`
+### <a name="serviceAccount_automount"></a>21.2. Property `prom2parquet > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -635,7 +838,7 @@ Must be one of:
 
 **Description:** Automatically mount a ServiceAccount's API credentials
 
-### <a name="serviceAccount_create"></a>20.3. Property `prom2parquet > serviceAccount > create`
+### <a name="serviceAccount_create"></a>21.3. Property `prom2parquet > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -644,7 +847,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-### <a name="serviceAccount_name"></a>20.4. Property `prom2parquet > serviceAccount > name`
+### <a name="serviceAccount_name"></a>21.4. Property `prom2parquet > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -653,7 +856,7 @@ Must be one of:
 
 **Description:** The name of the service account to use
 
-## <a name="tolerations"></a>21. Property `prom2parquet > tolerations`
+## <a name="tolerations"></a>22. Property `prom2parquet > tolerations`
 
 |              |         |
 | ------------ | ------- |
