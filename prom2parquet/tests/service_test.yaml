@@ -17,11 +17,11 @@ tests:
           path: spec.type
           value: ClusterIP
 
-  - it: should expose port 1234 by default
+  - it: should expose port 51234 by default
     asserts:
       - equal:
           path: spec.ports[0].port
-          value: 1234
+          value: 51234
       - equal:
           path: spec.ports[0].name
           value: http
