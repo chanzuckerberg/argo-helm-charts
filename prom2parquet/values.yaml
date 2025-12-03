@@ -77,7 +77,7 @@ ingress: # @schema description: Ingress configuration
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/session-cookie-name: "argus_sticky_session"
+    nginx.ingress.kubernetes.io/session-cookie-name: "prom2parquet_sticky_session"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
   tls: [] # @schema description: List of ingress TLS configurations
   #  - secretName: chart-example-tls
