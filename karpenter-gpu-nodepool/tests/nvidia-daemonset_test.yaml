@@ -1,0 +1,234 @@
+suite: test nvidia daemonset
+templates:
+  - nvidia-daemonset.yaml
+tests:
+  - it: should create DaemonSet when enabled is true (default)
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: DaemonSet
+      - containsDocument:
+          apiVersion: apps/v1
+          kind: DaemonSet
+          name: nvidia-device-plugin-daemonset
+
+  - it: should not create DaemonSet when disabled
+    set:
+      nvidiaDriver:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have correct metadata
+    asserts:
+      - equal:
+          path: metadata.name
+          value: nvidia-device-plugin-daemonset
+      - equal:
+          path: metadata.namespace
+          value: kube-system
+      - equal:
+          path: apiVersion
+          value: apps/v1
+      - equal:
+          path: kind
+          value: DaemonSet
+
+  - it: should have correct labels
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: karpenter-gpu-nodepool-nvidia
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+
+  - it: should use default image
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "nvcr.io/nvidia/k8s-device-plugin:v0.17.0"
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+
+  - it: should allow custom image
+    set:
+      nvidiaDriver:
+        image:
+          repository: custom/nvidia-plugin
+          tag: v0.16.0
+          pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "custom/nvidia-plugin:v0.16.0"
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+
+  - it: should have default args
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args[0]
+          value: "--fail-on-init-error=false"
+
+  - it: should allow custom args
+    set:
+      nvidiaDriver:
+        args:
+          - "--device-list-strategy=volume-mounts"
+          - "--fail-on-init-error=true"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args[0]
+          value: "--device-list-strategy=volume-mounts"
+      - equal:
+          path: spec.template.spec.containers[0].args[1]
+          value: "--fail-on-init-error=true"
+
+  - it: should have correct security context
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+      - contains:
+          path: spec.template.spec.containers[0].securityContext.capabilities.drop
+          content: ALL
+
+  - it: should have default tolerations
+    asserts:
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            operator: "Exists"
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            key: "workload.gpu"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+
+  - it: should allow custom tolerations
+    set:
+      nvidiaDriver:
+        tolerations:
+          - key: custom-taint
+            operator: Equal
+            value: custom-value
+            effect: NoSchedule
+    asserts:
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            key: custom-taint
+            operator: Equal
+            value: custom-value
+            effect: NoSchedule
+
+  - it: should have correct volume mounts
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: device-plugin
+            mountPath: /var/lib/kubelet/device-plugins
+
+  - it: should have correct volumes
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: device-plugin
+            hostPath:
+              path: /var/lib/kubelet/device-plugins
+
+  - it: should have correct update strategy
+    asserts:
+      - equal:
+          path: spec.updateStrategy.type
+          value: RollingUpdate
+
+  - it: should have correct pod labels
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels.name
+          value: nvidia-device-plugin-ds
+      - equal:
+          path: spec.selector.matchLabels.name
+          value: nvidia-device-plugin-ds
+
+  - it: should allow custom namespace
+    set:
+      nvidiaDriver:
+        namespace: gpu-system
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: gpu-system
+
+  - it: should allow custom name
+    set:
+      nvidiaDriver:
+        name: custom-nvidia-plugin
+    asserts:
+      - equal:
+          path: metadata.name
+          value: custom-nvidia-plugin
+
+  - it: should support nodeSelector
+    set:
+      nvidiaDriver:
+        nodeSelector:
+          gpu: "true"
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector.gpu
+          value: "true"
+
+  - it: should support resource limits
+    set:
+      nvidiaDriver:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: 128Mi
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 50m
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: 64Mi
+
+  - it: should support environment variables
+    set:
+      nvidiaDriver:
+        env:
+          - name: NVIDIA_VISIBLE_DEVICES
+            value: all
+          - name: NVIDIA_DRIVER_CAPABILITIES
+            value: compute,utility
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NVIDIA_VISIBLE_DEVICES
+            value: all
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: NVIDIA_DRIVER_CAPABILITIES
+            value: compute,utility
+

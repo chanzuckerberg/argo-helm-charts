@@ -1,0 +1,113 @@
+nodepool:
+  enabled: true # @schema description: Enable deployment of NodePool.
+  name: gpu-workloads # @schema description: Name of the NodePool.
+  
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized # @schema description: Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty).
+    consolidateAfter: 30s # @schema description: Time to wait before consolidating nodes.
+  
+  template:
+    metadata:
+      labels: # @schema description: Labels to apply to nodes created by this NodePool.; patternProperties: { "^.*$": { "type": "string" } }
+        workload.type: gpu
+        workload.node-purpose: gpu
+    
+    spec:
+      expireAfter: 24h # @schema description: Time after which nodes will expire and be replaced (e.g., 24h, 48h).
+      
+      nodeClassRef:
+        group: karpenter.k8s.aws # @schema description: Group for the NodeClass reference.
+        kind: EC2NodeClass # @schema description: Kind of NodeClass (typically EC2NodeClass).
+        name: default # @schema description: Name of the EC2NodeClass to use. This value is required.; required: true
+      
+      startupTaints: # @schema description: Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready.
+        - key: ebs.csi.aws.com/agent-not-ready
+          effect: NoSchedule
+        - key: efs.csi.aws.com/agent-not-ready
+          effect: NoSchedule
+      
+      requirements: # @schema description: Node requirements for scheduling. Defines constraints for instance selection.
+        - key: kubernetes.io/arch
+          operator: In
+          values:
+            - amd64
+            - arm64
+        - key: kubernetes.io/os
+          operator: In
+          values:
+            - linux
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values:
+            - on-demand
+        - key: karpenter.k8s.aws/instance-family
+          operator: In
+          values:
+            - g4dn
+            - g5
+            - g6
+            - g6e
+            - p4d
+            - p4de
+            - p5
+        - key: karpenter.k8s.aws/instance-gpu-count
+          operator: NotIn
+          values:
+            - "0"
+      
+      taints: # @schema description: Taints to apply to nodes to prevent non-GPU workloads from scheduling.
+        - key: workload.gpu
+          value: "true"
+          effect: NoSchedule
+
+nvidiaDriver:
+  enabled: true # @schema description: Enable deployment of NVIDIA device plugin DaemonSet.
+  name: nvidia-device-plugin-daemonset # @schema description: Name of the DaemonSet.
+  namespace: kube-system # @schema description: Namespace where the DaemonSet will be deployed.
+  
+  image:
+    repository: nvcr.io/nvidia/k8s-device-plugin # @schema description: NVIDIA device plugin image repository.
+    tag: v0.17.0 # @schema description: Image tag for the NVIDIA device plugin.
+    pullPolicy: IfNotPresent # @schema description: Image pull policy (IfNotPresent, Always, or Never).
+  
+  args: # @schema description: Arguments to pass to the NVIDIA device plugin container.
+    - "--fail-on-init-error=false"
+  
+  securityContext: # @schema description: Security context for the container to run with minimal privileges.
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  
+  tolerations: # @schema description: Tolerations for the DaemonSet pods to schedule on GPU nodes.
+    - operator: "Exists"
+    - key: "workload.gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  
+  nodeSelector: {} # @schema description: Node selector for the DaemonSet. Can be used to target specific nodes.; patternProperties: { "^.*$": { "type": "string" } }
+  
+  podLabels: # @schema description: Additional labels for the DaemonSet pods.; patternProperties: { "^.*$": { "type": "string" } }
+    name: nvidia-device-plugin-ds
+  
+  updateStrategy: # @schema description: Update strategy for the DaemonSet.
+    type: RollingUpdate
+  
+  volumeMounts: # @schema description: Volume mounts for the container to access device plugin socket path.
+    - name: device-plugin
+      mountPath: /var/lib/kubelet/device-plugins
+  
+  volumes: # @schema description: Volumes for the DaemonSet to access host device plugin directory.
+    - name: device-plugin
+      hostPath:
+        path: /var/lib/kubelet/device-plugins
+  
+  resources: {} # @schema description: Resources for the NVIDIA device plugin container. Can be used to set limits and requests.
+    # limits:
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 50m
+    #   memory: 64Mi
+  
+  env: [] # @schema description: Additional environment variables for the NVIDIA device plugin container.
