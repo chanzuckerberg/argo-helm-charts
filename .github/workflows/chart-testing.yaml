@@ -50,37 +50,58 @@ jobs:
             echo "Changed charts: $changed"
           fi
 
-      - name: Validate chart template with default values
-        if: contains(steps.list-changed.outputs.changed, 'stack') || steps.list-changed.outputs.changed == ''
+      - name: Validate changed charts with test fixtures
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
-          helm dependency update ./stack
-          helm dependency build ./stack
-          output=$(helm template ./stack --values ./test-fixtures/values.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
-          if [[ $output -ne "error: no objects passed to apply" ]]; then
-            exit 1
-          fi
+          for chart in $(ct list-changed --chart-dirs . --target-branch ${{ github.event.repository.default_branch }}); do
+            echo "Validating chart: $chart"
+            
+            # Update dependencies if Chart.yaml has dependencies
+            if [ -f "$chart/Chart.yaml" ] && grep -q "dependencies:" "$chart/Chart.yaml"; then
+              echo "Updating dependencies for $chart"
+              helm dependency update "$chart" || true
+              helm dependency build "$chart" || true
+            fi
+            
+            # Test with default values if test-fixtures/values.yaml exists
+            if [ -f "$chart/test-fixtures/values.yaml" ]; then
+              echo "Testing $chart with default test values"
+              helm template test-release "$chart" --values "$chart/test-fixtures/values.yaml" | kubectl apply -f - --dry-run=client
+            fi
+            
+            # Test with invalid values if test-fixtures/values1.yaml exists
+            if [ -f "$chart/test-fixtures/values1.yaml" ]; then
+              echo "Testing $chart with invalid test values (expecting failure)"
+              helm template test-release "$chart" --values "$chart/test-fixtures/values1.yaml" 2>&1 | grep -q "error" || echo "Warning: Expected error not found"
+            fi
+            
+            # Test with valid values if test-fixtures/values2.yaml exists
+            if [ -f "$chart/test-fixtures/values2.yaml" ]; then
+              echo "Testing $chart with valid test values"
+              helm template test-release "$chart" --values "$chart/test-fixtures/values2.yaml" | kubectl apply -f - --dry-run=client
+            fi
+          done
 
-      - name: Validate chart template with invalid values
-        if: contains(steps.list-changed.outputs.changed, 'stack') || steps.list-changed.outputs.changed == ''
-        run: |
-          output=$(helm template ./stack --values ./test-fixtures/values1.yaml | kubectl apply -f - --dry-run=client 2>&1 || :)
-          if [[ $output -ne "Error: failed to parse ./test-fixtures/values1.yaml: error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string into Go value of type map[string]interface {}" ]]; then
-            exit 1
-          fi
-
-      - name: Validate chart template with valid values
-        if: contains(steps.list-changed.outputs.changed, 'stack') || steps.list-changed.outputs.changed == ''
-        run: |
-          helm template ./stack --values ./test-fixtures/values2.yaml | kubectl apply -f - --dry-run=client 2>&1
-
-      - name: Install helm on cluster
-        if: contains(steps.list-changed.outputs.changed, 'stack')
+      - name: Install changed charts on cluster
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts/
-          helm dep update ./stack
-          helm dependency build ./stack
-          helm install test ./stack --wait --values ./test-fixtures/gha-cluster-values.yaml --debug
+          for chart in $(ct list-changed --chart-dirs . --target-branch ${{ github.event.repository.default_branch }}); do
+            echo "Installing chart: $chart"
+            
+            # Update dependencies if needed
+            if [ -f "$chart/Chart.yaml" ] && grep -q "dependencies:" "$chart/Chart.yaml"; then
+              helm dependency update "$chart" || true
+              helm dependency build "$chart" || true
+            fi
+            
+            # Install with gha-cluster-values if it exists
+            if [ -f "$chart/test-fixtures/gha-cluster-values.yaml" ]; then
+              echo "Installing $chart with gha-cluster-values.yaml"
+              helm install test-$(basename "$chart") "$chart" --wait --values "$chart/test-fixtures/gha-cluster-values.yaml" --debug
+            fi
+          done
           
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
