@@ -101,3 +101,18 @@ tests:
           path: metadata.name
           value: my-custom-priority
 
+  - it: should have default preemptionPolicy
+    asserts:
+      - equal:
+          path: preemptionPolicy
+          value: PreemptLowerPriority
+
+  - it: should allow custom preemptionPolicy
+    set:
+      priorityClass:
+        preemptionPolicy: Never
+    asserts:
+      - equal:
+          path: preemptionPolicy
+          value: Never
+
