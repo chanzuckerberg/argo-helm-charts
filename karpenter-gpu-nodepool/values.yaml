@@ -98,6 +98,16 @@ nvidiaDriver:
   
   nodeSelector: {} # @schema description: Node selector for the DaemonSet. Can be used to target specific nodes.; patternProperties: { "^.*$": { "type": "string" } }
   
+  affinity: {} # @schema description: Affinity rules for the DaemonSet pods. Can be used for advanced scheduling like avoiding Fargate nodes.
+    # nodeAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #       - matchExpressions:
+    #           - key: eks.amazonaws.com/compute-type
+    #             operator: NotIn
+    #             values:
+    #               - fargate
+  
   podLabels: # @schema description: Additional labels for the DaemonSet pods.; patternProperties: { "^.*$": { "type": "string" } }
     name: nvidia-device-plugin-ds
   
