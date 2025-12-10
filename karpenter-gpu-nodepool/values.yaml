@@ -60,10 +60,20 @@ nodepool:
           value: "true"
           effect: NoSchedule
 
+priorityClass:
+  enabled: true # @schema description: Enable creation of PriorityClass for critical GPU infrastructure.
+  name: gpu-device-plugin-critical # @schema description: Name of the PriorityClass.
+  value: 900002000 # @schema description: Priority value (higher = more important).
+  globalDefault: false # @schema description: Whether this PriorityClass should be the default for all pods.
+  preemptionPolicy: PreemptLowerPriority # @schema description: Policy for preempting lower priority pods (PreemptLowerPriority or Never).
+  description: "Priority class for GPU device plugin to ensure it runs before user workloads" # @schema description: Human-readable description of when to use this priority class.
+
 nvidiaDriver:
   enabled: true # @schema description: Enable deployment of NVIDIA device plugin DaemonSet.
   name: nvidia-device-plugin-daemonset # @schema description: Name of the DaemonSet.
   namespace: kube-system # @schema description: Namespace where the DaemonSet will be deployed.
+  
+  priorityClassName: "" # @schema description: Priority class name for the DaemonSet pods. If empty and priorityClass.enabled is true, uses the chart's PriorityClass.
   
   image:
     repository: nvcr.io/nvidia/k8s-device-plugin # @schema description: NVIDIA device plugin image repository.

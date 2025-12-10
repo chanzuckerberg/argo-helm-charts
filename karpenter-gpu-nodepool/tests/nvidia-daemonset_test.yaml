@@ -232,3 +232,38 @@ tests:
             name: NVIDIA_DRIVER_CAPABILITIES
             value: compute,utility
 
+  - it: should use chart priorityClass by default when enabled
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: gpu-device-plugin-critical
+
+  - it: should not set priorityClassName when priorityClass is disabled
+    set:
+      priorityClass:
+        enabled: false
+    asserts:
+      - isNull:
+          path: spec.template.spec.priorityClassName
+
+  - it: should allow custom priorityClassName
+    set:
+      nvidiaDriver:
+        priorityClassName: system-node-critical
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: system-node-critical
+
+  - it: should use custom priorityClassName even when chart priorityClass is enabled
+    set:
+      priorityClass:
+        enabled: true
+        name: gpu-device-plugin-critical
+      nvidiaDriver:
+        priorityClassName: my-custom-priority
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: my-custom-priority
+
