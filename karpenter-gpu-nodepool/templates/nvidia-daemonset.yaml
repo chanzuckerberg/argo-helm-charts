@@ -1,0 +1,51 @@
+{{- if .Values.nvidiaDriver.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Values.nvidiaDriver.name }}
+  namespace: {{ .Values.nvidiaDriver.namespace }}
+  labels:
+    {{- include "karpenter-gpu-nodepool.nvidia.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- toYaml .Values.nvidiaDriver.podLabels | nindent 6 }}
+  updateStrategy:
+    {{- toYaml .Values.nvidiaDriver.updateStrategy | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{- toYaml .Values.nvidiaDriver.podLabels | nindent 8 }}
+    spec:
+      {{- with .Values.nvidiaDriver.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nvidiaDriver.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: nvidia-device-plugin-ctr
+          image: "{{ .Values.nvidiaDriver.image.repository }}:{{ .Values.nvidiaDriver.image.tag }}"
+          imagePullPolicy: {{ .Values.nvidiaDriver.image.pullPolicy }}
+          {{- with .Values.nvidiaDriver.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.nvidiaDriver.securityContext | nindent 12 }}
+          volumeMounts:
+            {{- toYaml .Values.nvidiaDriver.volumeMounts | nindent 12 }}
+          {{- with .Values.nvidiaDriver.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.nvidiaDriver.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        {{- toYaml .Values.nvidiaDriver.volumes | nindent 8 }}
+{{- end }}
+
