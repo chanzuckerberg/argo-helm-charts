@@ -143,6 +143,10 @@
     "nvidiaDriver": {
       "type": "object",
       "properties": {
+        "affinity": {
+          "description": "Affinity rules for the DaemonSet pods. Can be used for advanced scheduling like avoiding Fargate nodes.",
+          "type": "object"
+        },
         "args": {
           "description": "Arguments to pass to the NVIDIA device plugin container.",
           "type": "array",
