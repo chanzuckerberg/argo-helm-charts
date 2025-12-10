@@ -41,6 +41,9 @@
     },
     "prom2parquet": {
       "package-name": "prom2parquet"
+    },
+    "karpenter-gpu-nodepool": {
+      "package-name": "karpenter-gpu-nodepool"
     }
   }
 }

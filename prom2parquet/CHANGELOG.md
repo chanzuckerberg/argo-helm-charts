@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.3.0...prom2parquet-v0.3.1) (2025-12-10)
+
+
+### Bug Fixes
+
+* Remove prom2parquet disabled values ([#340](https://github.com/chanzuckerberg/argo-helm-charts/issues/340)) ([5bd938c](https://github.com/chanzuckerberg/argo-helm-charts/commit/5bd938c8c6e42ae2a8eb4082352016124f97e537))
+
 ## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/prom2parquet-v0.2.2...prom2parquet-v0.3.0) (2025-12-03)
 
 

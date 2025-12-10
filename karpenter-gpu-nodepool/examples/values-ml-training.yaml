@@ -1,0 +1,89 @@
+# Example: High-performance P4/P5 instances for ML training
+# This configuration uses only P4d, P4de, and P5 instances with on-demand capacity
+
+nodepool:
+  enabled: true
+  name: gpu-ml-training
+  
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 120s
+  
+  template:
+    metadata:
+      labels:
+        workload.type: ml-training
+        workload.node-purpose: gpu
+        gpu-tier: high-performance
+    
+    spec:
+      expireAfter: 48h
+      
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: gpu-optimized
+      
+      startupTaints:
+        - key: ebs.csi.aws.com/agent-not-ready
+          effect: NoSchedule
+        - key: efs.csi.aws.com/agent-not-ready
+          effect: NoSchedule
+      
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values:
+            - amd64
+        - key: kubernetes.io/os
+          operator: In
+          values:
+            - linux
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values:
+            - on-demand
+        - key: karpenter.k8s.aws/instance-family
+          operator: In
+          values:
+            - p4d
+            - p4de
+            - p5
+        - key: karpenter.k8s.aws/instance-gpu-count
+          operator: NotIn
+          values:
+            - "0"
+      
+      taints:
+        - key: workload.gpu
+          value: "true"
+          effect: NoSchedule
+        - key: workload.ml-training
+          value: "true"
+          effect: NoSchedule
+
+nvidiaDriver:
+  enabled: true
+  image:
+    repository: nvcr.io/nvidia/k8s-device-plugin
+    tag: v0.18.0
+    pullPolicy: IfNotPresent
+  
+  tolerations:
+    - operator: "Exists"
+    - key: "workload.gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "workload.ml-training"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+

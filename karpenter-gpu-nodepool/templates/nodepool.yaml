@@ -1,0 +1,33 @@
+{{- if .Values.nodepool.enabled }}
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: {{ .Values.nodepool.name }}
+  labels:
+    {{- include "karpenter-gpu-nodepool.labels" . | nindent 4 }}
+spec:
+  disruption:
+    consolidationPolicy: {{ .Values.nodepool.disruption.consolidationPolicy }}
+    consolidateAfter: {{ .Values.nodepool.disruption.consolidateAfter }}
+  template:
+    metadata:
+      labels:
+        {{- toYaml .Values.nodepool.template.metadata.labels | nindent 8 }}
+    spec:
+      expireAfter: {{ .Values.nodepool.template.spec.expireAfter }}
+      nodeClassRef:
+        group: {{ .Values.nodepool.template.spec.nodeClassRef.group }}
+        kind: {{ .Values.nodepool.template.spec.nodeClassRef.kind }}
+        name: {{ .Values.nodepool.template.spec.nodeClassRef.name }}
+      {{- with .Values.nodepool.template.spec.startupTaints }}
+      startupTaints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      requirements:
+        {{- toYaml .Values.nodepool.template.spec.requirements | nindent 8 }}
+      {{- with .Values.nodepool.template.spec.taints }}
+      taints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+

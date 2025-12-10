@@ -1,0 +1,141 @@
+suite: integration tests
+templates:
+  - nodepool.yaml
+  - nvidia-daemonset.yaml
+tests:
+  - it: should create NodePool by default
+    template: nodepool.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: NodePool
+
+  - it: should create DaemonSet by default
+    template: nvidia-daemonset.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: DaemonSet
+
+  - it: should create only NodePool when NVIDIA driver disabled
+    set:
+      nvidiaDriver:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+    template: nodepool.yaml
+
+  - it: should create only DaemonSet when NodePool disabled
+    set:
+      nodepool:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+    template: nvidia-daemonset.yaml
+
+  - it: should create nothing when both disabled
+    set:
+      nodepool:
+        enabled: false
+      nvidiaDriver:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should handle spot instances configuration
+    set:
+      nodepool:
+        template:
+          spec:
+            requirements:
+              - key: karpenter.sh/capacity-type
+                operator: In
+                values:
+                  - spot
+                  - on-demand
+              - key: karpenter.k8s.aws/instance-family
+                operator: In
+                values:
+                  - g5
+    template: nodepool.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.requirements
+          content:
+            key: karpenter.sh/capacity-type
+            operator: In
+            values:
+              - spot
+              - on-demand
+
+  - it: should configure for specific GPU instance family
+    set:
+      nodepool:
+        template:
+          spec:
+            requirements:
+              - key: karpenter.k8s.aws/instance-family
+                operator: In
+                values:
+                  - g5
+              - key: karpenter.k8s.aws/instance-gpu-count
+                operator: NotIn
+                values:
+                  - "0"
+    template: nodepool.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.requirements
+          content:
+            key: karpenter.k8s.aws/instance-family
+            operator: In
+            values:
+              - g5
+
+  - it: should support custom node class and custom NVIDIA version
+    set:
+      nodepool:
+        template:
+          spec:
+            nodeClassRef:
+              name: gpu-optimized
+      nvidiaDriver:
+        image:
+          tag: v0.16.2
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeClassRef.name
+          value: gpu-optimized
+    template: nodepool.yaml
+
+  - it: DaemonSet should have matching GPU taint toleration
+    set:
+      nodepool:
+        template:
+          spec:
+            taints:
+              - key: workload.gpu
+                value: "true"
+                effect: NoSchedule
+      nvidiaDriver:
+        tolerations:
+          - operator: "Exists"
+          - key: "workload.gpu"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+    template: nvidia-daemonset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            key: "workload.gpu"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+

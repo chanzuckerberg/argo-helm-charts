@@ -1,0 +1,15 @@
+apiVersion: v2
+name: karpenter-gpu-nodepool
+description: A Helm chart for deploying Karpenter NodePool with GPU support and
+  NVIDIA device plugin
+type: application
+version: 0.2.0
+appVersion: "1.0"
+keywords:
+  - karpenter
+  - gpu
+  - nvidia
+  - nodepool
+home: https://github.com/chanzuckerberg/argo-helm-charts
+maintainers:
+  - name: CZI Platform Team

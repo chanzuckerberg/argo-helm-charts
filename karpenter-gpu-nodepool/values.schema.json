@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/karpenter-gpu-nodepool",
+  "title": "karpenter-gpu-nodepool",
+  "type": "object",
+  "properties": {
+    "nodepool": {
+      "type": "object",
+      "properties": {
+        "disruption": {
+          "type": "object",
+          "properties": {
+            "consolidateAfter": {
+              "description": "Time to wait before consolidating nodes.",
+              "type": "string"
+            },
+            "consolidationPolicy": {
+              "description": "Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty).",
+              "type": "string"
+            }
+          }
+        },
+        "enabled": {
+          "description": "Enable deployment of NodePool.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Name of the NodePool.",
+          "type": "string"
+        },
+        "template": {
+          "type": "object",
+          "properties": {
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "labels": {
+                  "description": "Labels to apply to nodes created by this NodePool.",
+                  "type": "object",
+                  "properties": {
+                    "workload.node-purpose": {
+                      "type": "string"
+                    },
+                    "workload.type": {
+                      "type": "string"
+                    }
+                  },
+                  "patternProperties": {
+                    "^.*$": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "spec": {
+              "type": "object",
+              "properties": {
+                "expireAfter": {
+                  "description": "Time after which nodes will expire and be replaced (e.g., 24h, 48h).",
+                  "type": "string"
+                },
+                "nodeClassRef": {
+                  "type": "object",
+                  "required": [
+                    "name"
+                  ],
+                  "properties": {
+                    "group": {
+                      "description": "Group for the NodeClass reference.",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "description": "Kind of NodeClass (typically EC2NodeClass).",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Name of the EC2NodeClass to use. This value is required.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "requirements": {
+                  "description": "Node requirements for scheduling. Defines constraints for instance selection.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "startupTaints": {
+                  "description": "Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "effect": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "taints": {
+                  "description": "Taints to apply to nodes to prevent non-GPU workloads from scheduling.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "effect": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "nvidiaDriver": {
+      "type": "object",
+      "properties": {
+        "args": {
+          "description": "Arguments to pass to the NVIDIA device plugin container.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "enabled": {
+          "description": "Enable deployment of NVIDIA device plugin DaemonSet.",
+          "type": "boolean"
+        },
+        "env": {
+          "description": "Additional environment variables for the NVIDIA device plugin container.",
+          "type": "array"
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "description": "Image pull policy (IfNotPresent, Always, or Never).",
+              "type": "string"
+            },
+            "repository": {
+              "description": "NVIDIA device plugin image repository.",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Image tag for the NVIDIA device plugin.",
+              "type": "string"
+            }
+          }
+        },
+        "name": {
+          "description": "Name of the DaemonSet.",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Namespace where the DaemonSet will be deployed.",
+          "type": "string"
+        },
+        "nodeSelector": {
+          "description": "Node selector for the DaemonSet. Can be used to target specific nodes.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          }
+        },
+        "podLabels": {
+          "description": "Additional labels for the DaemonSet pods.",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          }
+        },
+        "resources": {
+          "description": "Resources for the NVIDIA device plugin container. Can be used to set limits and requests.",
+          "type": "object"
+        },
+        "securityContext": {
+          "description": "Security context for the container to run with minimal privileges.",
+          "type": "object",
+          "properties": {
+            "allowPrivilegeEscalation": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "object",
+              "properties": {
+                "drop": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tolerations": {
+          "description": "Tolerations for the DaemonSet pods to schedule on GPU nodes.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "effect": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "operator": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "updateStrategy": {
+          "description": "Update strategy for the DaemonSet.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            }
+          }
+        },
+        "volumeMounts": {
+          "description": "Volume mounts for the container to access device plugin socket path.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mountPath": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "volumes": {
+          "description": "Volumes for the DaemonSet to access host device plugin directory.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hostPath": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
