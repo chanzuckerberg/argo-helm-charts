@@ -80,6 +80,3 @@ ingress: # @schema description: Ingress configuration
     nginx.ingress.kubernetes.io/session-cookie-name: "prom2parquet_sticky_session"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
   tls: [] # @schema description: List of ingress TLS configurations
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
