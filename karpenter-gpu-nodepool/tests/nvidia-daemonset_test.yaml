@@ -267,3 +267,72 @@ tests:
           path: spec.template.spec.priorityClassName
           value: my-custom-priority
 
+  - it: should not have affinity by default
+    asserts:
+      - isNull:
+          path: spec.template.spec.affinity
+
+  - it: should support node affinity
+    set:
+      nvidiaDriver:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: eks.amazonaws.com/compute-type
+                      operator: NotIn
+                      values:
+                        - fargate
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.affinity
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key
+          value: eks.amazonaws.com/compute-type
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator
+          value: NotIn
+      - contains:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values
+          content: fargate
+
+  - it: should support pod affinity
+    set:
+      nvidiaDriver:
+        affinity:
+          podAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - gpu-workload
+                  topologyKey: kubernetes.io/hostname
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.affinity
+      - equal:
+          path: spec.template.spec.affinity.podAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight
+          value: 100
+
+  - it: should support pod anti-affinity
+    set:
+      nvidiaDriver:
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchLabels:
+                    app: conflicting-app
+                topologyKey: kubernetes.io/hostname
+    asserts:
+      - isNotNull:
+          path: spec.template.spec.affinity
+      - equal:
+          path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchLabels.app
+          value: conflicting-app
+

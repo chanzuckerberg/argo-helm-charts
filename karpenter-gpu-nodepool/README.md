@@ -398,6 +398,7 @@ must respect the following conditions
 
 | Property                                                | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                       |
 | ------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#nvidiaDriver_affinity )                   | No      | object          | No         | -          | Affinity rules for the DaemonSet pods. Can be used for advanced scheduling like avoiding Fargate nodes.                 |
 | - [args](#nvidiaDriver_args )                           | No      | array of string | No         | -          | Arguments to pass to the NVIDIA device plugin container.                                                                |
 | - [enabled](#nvidiaDriver_enabled )                     | No      | boolean         | No         | -          | Enable deployment of NVIDIA device plugin DaemonSet.                                                                    |
 | - [env](#nvidiaDriver_env )                             | No      | array           | No         | -          | Additional environment variables for the NVIDIA device plugin container.                                                |
@@ -414,7 +415,17 @@ must respect the following conditions
 | - [volumeMounts](#nvidiaDriver_volumeMounts )           | No      | array of object | No         | -          | Volume mounts for the container to access device plugin socket path.                                                    |
 | - [volumes](#nvidiaDriver_volumes )                     | No      | array of object | No         | -          | Volumes for the DaemonSet to access host device plugin directory.                                                       |
 
-### <a name="nvidiaDriver_args"></a>2.1. Property `karpenter-gpu-nodepool > nvidiaDriver > args`
+### <a name="nvidiaDriver_affinity"></a>2.1. Property `karpenter-gpu-nodepool > nvidiaDriver > affinity`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Affinity rules for the DaemonSet pods. Can be used for advanced scheduling like avoiding Fargate nodes.
+
+### <a name="nvidiaDriver_args"></a>2.2. Property `karpenter-gpu-nodepool > nvidiaDriver > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -435,14 +446,14 @@ must respect the following conditions
 | -------------------------------------- | ----------- |
 | [args items](#nvidiaDriver_args_items) | -           |
 
-#### <a name="nvidiaDriver_args_items"></a>2.1.1. karpenter-gpu-nodepool > nvidiaDriver > args > args items
+#### <a name="nvidiaDriver_args_items"></a>2.2.1. karpenter-gpu-nodepool > nvidiaDriver > args > args items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_enabled"></a>2.2. Property `karpenter-gpu-nodepool > nvidiaDriver > enabled`
+### <a name="nvidiaDriver_enabled"></a>2.3. Property `karpenter-gpu-nodepool > nvidiaDriver > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -451,7 +462,7 @@ must respect the following conditions
 
 **Description:** Enable deployment of NVIDIA device plugin DaemonSet.
 
-### <a name="nvidiaDriver_env"></a>2.3. Property `karpenter-gpu-nodepool > nvidiaDriver > env`
+### <a name="nvidiaDriver_env"></a>2.4. Property `karpenter-gpu-nodepool > nvidiaDriver > env`
 
 |              |         |
 | ------------ | ------- |
@@ -468,7 +479,7 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="nvidiaDriver_image"></a>2.4. Property `karpenter-gpu-nodepool > nvidiaDriver > image`
+### <a name="nvidiaDriver_image"></a>2.5. Property `karpenter-gpu-nodepool > nvidiaDriver > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -482,7 +493,7 @@ must respect the following conditions
 | - [repository](#nvidiaDriver_image_repository ) | No      | string | No         | -          | NVIDIA device plugin image repository.              |
 | - [tag](#nvidiaDriver_image_tag )               | No      | string | No         | -          | Image tag for the NVIDIA device plugin.             |
 
-#### <a name="nvidiaDriver_image_pullPolicy"></a>2.4.1. Property `karpenter-gpu-nodepool > nvidiaDriver > image > pullPolicy`
+#### <a name="nvidiaDriver_image_pullPolicy"></a>2.5.1. Property `karpenter-gpu-nodepool > nvidiaDriver > image > pullPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -491,7 +502,7 @@ must respect the following conditions
 
 **Description:** Image pull policy (IfNotPresent, Always, or Never).
 
-#### <a name="nvidiaDriver_image_repository"></a>2.4.2. Property `karpenter-gpu-nodepool > nvidiaDriver > image > repository`
+#### <a name="nvidiaDriver_image_repository"></a>2.5.2. Property `karpenter-gpu-nodepool > nvidiaDriver > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -500,7 +511,7 @@ must respect the following conditions
 
 **Description:** NVIDIA device plugin image repository.
 
-#### <a name="nvidiaDriver_image_tag"></a>2.4.3. Property `karpenter-gpu-nodepool > nvidiaDriver > image > tag`
+#### <a name="nvidiaDriver_image_tag"></a>2.5.3. Property `karpenter-gpu-nodepool > nvidiaDriver > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -509,7 +520,7 @@ must respect the following conditions
 
 **Description:** Image tag for the NVIDIA device plugin.
 
-### <a name="nvidiaDriver_name"></a>2.5. Property `karpenter-gpu-nodepool > nvidiaDriver > name`
+### <a name="nvidiaDriver_name"></a>2.6. Property `karpenter-gpu-nodepool > nvidiaDriver > name`
 
 |              |          |
 | ------------ | -------- |
@@ -518,7 +529,7 @@ must respect the following conditions
 
 **Description:** Name of the DaemonSet.
 
-### <a name="nvidiaDriver_namespace"></a>2.6. Property `karpenter-gpu-nodepool > nvidiaDriver > namespace`
+### <a name="nvidiaDriver_namespace"></a>2.7. Property `karpenter-gpu-nodepool > nvidiaDriver > namespace`
 
 |              |          |
 | ------------ | -------- |
@@ -527,7 +538,7 @@ must respect the following conditions
 
 **Description:** Namespace where the DaemonSet will be deployed.
 
-### <a name="nvidiaDriver_nodeSelector"></a>2.7. Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector`
+### <a name="nvidiaDriver_nodeSelector"></a>2.8. Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -541,7 +552,7 @@ must respect the following conditions
 | ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#nvidiaDriver_nodeSelector_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_nodeSelector_pattern1"></a>2.7.1. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector > ^.*$`
+#### <a name="nvidiaDriver_nodeSelector_pattern1"></a>2.8.1. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -551,7 +562,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_podLabels"></a>2.8. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels`
+### <a name="nvidiaDriver_podLabels"></a>2.9. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -566,14 +577,14 @@ must respect the following conditions
 | - [name](#nvidiaDriver_podLabels_name )     | No      | string | No         | -          | -                 |
 | - [^.*$](#nvidiaDriver_podLabels_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_podLabels_name"></a>2.8.1. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > name`
+#### <a name="nvidiaDriver_podLabels_name"></a>2.9.1. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="nvidiaDriver_podLabels_pattern1"></a>2.8.2. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > ^.*$`
+#### <a name="nvidiaDriver_podLabels_pattern1"></a>2.9.2. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -583,7 +594,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_priorityClassName"></a>2.9. Property `karpenter-gpu-nodepool > nvidiaDriver > priorityClassName`
+### <a name="nvidiaDriver_priorityClassName"></a>2.10. Property `karpenter-gpu-nodepool > nvidiaDriver > priorityClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -592,7 +603,7 @@ must respect the following conditions
 
 **Description:** Priority class name for the DaemonSet pods. If empty and priorityClass.enabled is true, uses the chart's PriorityClass.
 
-### <a name="nvidiaDriver_resources"></a>2.10. Property `karpenter-gpu-nodepool > nvidiaDriver > resources`
+### <a name="nvidiaDriver_resources"></a>2.11. Property `karpenter-gpu-nodepool > nvidiaDriver > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -602,7 +613,7 @@ must respect the following conditions
 
 **Description:** Resources for the NVIDIA device plugin container. Can be used to set limits and requests.
 
-### <a name="nvidiaDriver_securityContext"></a>2.11. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext`
+### <a name="nvidiaDriver_securityContext"></a>2.12. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -617,14 +628,14 @@ must respect the following conditions
 | - [allowPrivilegeEscalation](#nvidiaDriver_securityContext_allowPrivilegeEscalation ) | No      | boolean | No         | -          | -                 |
 | - [capabilities](#nvidiaDriver_securityContext_capabilities )                         | No      | object  | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_securityContext_allowPrivilegeEscalation"></a>2.11.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > allowPrivilegeEscalation`
+#### <a name="nvidiaDriver_securityContext_allowPrivilegeEscalation"></a>2.12.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > allowPrivilegeEscalation`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-#### <a name="nvidiaDriver_securityContext_capabilities"></a>2.11.2. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities`
+#### <a name="nvidiaDriver_securityContext_capabilities"></a>2.12.2. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -636,7 +647,7 @@ must respect the following conditions
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [drop](#nvidiaDriver_securityContext_capabilities_drop ) | No      | array of string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_securityContext_capabilities_drop"></a>2.11.2.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop`
+##### <a name="nvidiaDriver_securityContext_capabilities_drop"></a>2.12.2.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -655,14 +666,14 @@ must respect the following conditions
 | ------------------------------------------------------------------- | ----------- |
 | [drop items](#nvidiaDriver_securityContext_capabilities_drop_items) | -           |
 
-###### <a name="nvidiaDriver_securityContext_capabilities_drop_items"></a>2.11.2.1.1. karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop > drop items
+###### <a name="nvidiaDriver_securityContext_capabilities_drop_items"></a>2.12.2.1.1. karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop > drop items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_tolerations"></a>2.12. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations`
+### <a name="nvidiaDriver_tolerations"></a>2.13. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -683,7 +694,7 @@ must respect the following conditions
 | ---------------------------------------------------- | ----------- |
 | [tolerations items](#nvidiaDriver_tolerations_items) | -           |
 
-#### <a name="nvidiaDriver_tolerations_items"></a>2.12.1. karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items
+#### <a name="nvidiaDriver_tolerations_items"></a>2.13.1. karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -698,35 +709,35 @@ must respect the following conditions
 | - [operator](#nvidiaDriver_tolerations_items_operator ) | No      | string | No         | -          | -                 |
 | - [value](#nvidiaDriver_tolerations_items_value )       | No      | string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_tolerations_items_effect"></a>2.12.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > effect`
+##### <a name="nvidiaDriver_tolerations_items_effect"></a>2.13.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > effect`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_tolerations_items_key"></a>2.12.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > key`
+##### <a name="nvidiaDriver_tolerations_items_key"></a>2.13.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > key`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_tolerations_items_operator"></a>2.12.1.3. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > operator`
+##### <a name="nvidiaDriver_tolerations_items_operator"></a>2.13.1.3. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > operator`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_tolerations_items_value"></a>2.12.1.4. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > value`
+##### <a name="nvidiaDriver_tolerations_items_value"></a>2.13.1.4. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_updateStrategy"></a>2.13. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy`
+### <a name="nvidiaDriver_updateStrategy"></a>2.14. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -740,14 +751,14 @@ must respect the following conditions
 | -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [type](#nvidiaDriver_updateStrategy_type ) | No      | string | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_updateStrategy_type"></a>2.13.1. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy > type`
+#### <a name="nvidiaDriver_updateStrategy_type"></a>2.14.1. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy > type`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_volumeMounts"></a>2.14. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts`
+### <a name="nvidiaDriver_volumeMounts"></a>2.15. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -768,7 +779,7 @@ must respect the following conditions
 | ------------------------------------------------------ | ----------- |
 | [volumeMounts items](#nvidiaDriver_volumeMounts_items) | -           |
 
-#### <a name="nvidiaDriver_volumeMounts_items"></a>2.14.1. karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items
+#### <a name="nvidiaDriver_volumeMounts_items"></a>2.15.1. karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -781,21 +792,21 @@ must respect the following conditions
 | - [mountPath](#nvidiaDriver_volumeMounts_items_mountPath ) | No      | string | No         | -          | -                 |
 | - [name](#nvidiaDriver_volumeMounts_items_name )           | No      | string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_volumeMounts_items_mountPath"></a>2.14.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > mountPath`
+##### <a name="nvidiaDriver_volumeMounts_items_mountPath"></a>2.15.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > mountPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_volumeMounts_items_name"></a>2.14.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > name`
+##### <a name="nvidiaDriver_volumeMounts_items_name"></a>2.15.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_volumes"></a>2.15. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes`
+### <a name="nvidiaDriver_volumes"></a>2.16. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -816,7 +827,7 @@ must respect the following conditions
 | -------------------------------------------- | ----------- |
 | [volumes items](#nvidiaDriver_volumes_items) | -           |
 
-#### <a name="nvidiaDriver_volumes_items"></a>2.15.1. karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items
+#### <a name="nvidiaDriver_volumes_items"></a>2.16.1. karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -829,7 +840,7 @@ must respect the following conditions
 | - [hostPath](#nvidiaDriver_volumes_items_hostPath ) | No      | object | No         | -          | -                 |
 | - [name](#nvidiaDriver_volumes_items_name )         | No      | string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_volumes_items_hostPath"></a>2.15.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath`
+##### <a name="nvidiaDriver_volumes_items_hostPath"></a>2.16.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -841,14 +852,14 @@ must respect the following conditions
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [path](#nvidiaDriver_volumes_items_hostPath_path ) | No      | string | No         | -          | -                 |
 
-###### <a name="nvidiaDriver_volumes_items_hostPath_path"></a>2.15.1.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath > path`
+###### <a name="nvidiaDriver_volumes_items_hostPath_path"></a>2.16.1.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_volumes_items_name"></a>2.15.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > name`
+##### <a name="nvidiaDriver_volumes_items_name"></a>2.16.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > name`
 
 |              |          |
 | ------------ | -------- |
