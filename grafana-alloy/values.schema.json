@@ -269,6 +269,10 @@
     "centralLoki": {
       "type": "object",
       "properties": {
+        "basicAuthEnvVar": {
+          "description": "Name of the environment variable containing basic auth credentials",
+          "type": "string"
+        },
         "enabled": {
           "description": "Enable central Loki endpoint",
           "type": "boolean"

@@ -72,7 +72,7 @@ tests:
           pattern: 'https://loki-gateway\.example\.com/loki/api/v1/push'
       - matchRegex:
           path: data["config.alloy"]
-          pattern: 'LOKI_BASIC_AUTH_CREDENTIALS'
+          pattern: 'BASIC_AUTH_CREDENTIALS'
 
   - it: should not include central loki endpoint when disabled
     set:
@@ -83,7 +83,23 @@ tests:
     asserts:
       - notMatchRegex:
           path: data["config.alloy"]
-          pattern: 'LOKI_BASIC_AUTH_CREDENTIALS'
+          pattern: 'BASIC_AUTH_CREDENTIALS'
+
+  - it: should use custom basicAuthEnvVar when provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      centralLoki:
+        enabled: true
+        url: "https://loki-gateway.example.com/loki/api/v1/push"
+        basicAuthEnvVar: "CUSTOM_AUTH_CREDENTIALS"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'CUSTOM_AUTH_CREDENTIALS'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'BASIC_AUTH_CREDENTIALS'
 
   - it: should include kubernetes events source in default config
     set:
