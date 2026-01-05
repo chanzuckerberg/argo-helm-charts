@@ -689,12 +689,22 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                           | Pattern | Type    | Deprecated | Definition | Title/Description                |
-| ---------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------- |
-| - [enabled](#centralLoki_enabled ) | No      | boolean | No         | -          | Enable central Loki endpoint     |
-| - [url](#centralLoki_url )         | No      | string  | No         | -          | URL of the central Loki endpoint |
+| Property                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
+| -------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [basicAuthEnvVar](#centralLoki_basicAuthEnvVar ) | No      | string  | No         | -          | Name of the environment variable containing basic auth credentials |
+| - [enabled](#centralLoki_enabled )                 | No      | boolean | No         | -          | Enable central Loki endpoint                                       |
+| - [url](#centralLoki_url )                         | No      | string  | No         | -          | URL of the central Loki endpoint                                   |
 
-### <a name="centralLoki_enabled"></a>3.1. Property `grafana-alloy > centralLoki > enabled`
+### <a name="centralLoki_basicAuthEnvVar"></a>3.1. Property `grafana-alloy > centralLoki > basicAuthEnvVar`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the environment variable containing basic auth credentials
+
+### <a name="centralLoki_enabled"></a>3.2. Property `grafana-alloy > centralLoki > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -703,7 +713,7 @@ Must be one of:
 
 **Description:** Enable central Loki endpoint
 
-### <a name="centralLoki_url"></a>3.2. Property `grafana-alloy > centralLoki > url`
+### <a name="centralLoki_url"></a>3.3. Property `grafana-alloy > centralLoki > url`
 
 |              |          |
 | ------------ | -------- |
