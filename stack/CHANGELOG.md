@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.23.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.23.0...stack-v2.23.1) (2026-01-05)
+
+
+### Bug Fixes
+
+* allow users to pass in stackName into volume ([#350](https://github.com/chanzuckerberg/argo-helm-charts/issues/350)) ([6af8212](https://github.com/chanzuckerberg/argo-helm-charts/commit/6af8212b09ce4fcbd5ba134062db3697b472592c))
+* pin unit test chart version to avoid release breaking snapshot ([#346](https://github.com/chanzuckerberg/argo-helm-charts/issues/346)) ([6d73c2b](https://github.com/chanzuckerberg/argo-helm-charts/commit/6d73c2b76086a3488b5075aca19aeab4d48e2a19))
+
 ## [2.23.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.22.0...stack-v2.23.0) (2025-11-26)
 
 
