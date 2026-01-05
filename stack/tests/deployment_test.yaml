@@ -255,7 +255,7 @@ tests:
           path: metadata.labels["argus/env-name"]
           value: "production"
 
-  - it: correctly renders volumeMounts with tpl
+  - it: correctly renders volumes with tpl
     set:
       global:
         argusMetadata:
@@ -273,3 +273,19 @@ tests:
       - equal:
           path: spec.template.spec.volumes[0].configMap.name
           value: "otel-collector-config-test-stack"
+
+  - it: correctly renders volumes with tpl even when values are strings
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          volumes:
+            - name: otel-collector-config
+              configMap:
+                name: 'otel-collector-config-literal-str'
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[0].configMap.name
+          value: "otel-collector-config-literal-str"
