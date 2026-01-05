@@ -1,0 +1,123 @@
+# Grafana Alloy Helm Chart Values
+# This chart deploys Grafana Alloy with customizable configuration
+
+enabled: true # @schema description: Enable or disable the Grafana Alloy deployment
+
+clusterName: "" # @schema description: Name of the cluster where this chart is deployed. This value is required.; required: true
+
+# Loki endpoints configuration
+loki:
+  # @schema description: Local Loki endpoint configuration
+  local:
+    url: "http://loki.loki.svc:3100/loki/api/v1/push" # @schema description: URL of the local Loki instance
+
+# Central Loki endpoint configuration (e.g., Argus metrics gateway)
+centralLoki:
+  enabled: true # @schema description: Enable central Loki endpoint
+  url: "" # @schema description: URL of the central Loki endpoint
+  # Basic auth credentials are read from LOKI_BASIC_AUTH_CREDENTIALS environment variable
+
+# Custom Alloy configuration to merge/override the default configmap
+# This will be used to create a custom grafana-alloy-config ConfigMap
+alloyConfig:
+  # @schema description: Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.
+  # See https://grafana.com/docs/alloy/latest/reference/config-blocks/
+  content: ""
+
+# Alloy subchart configuration
+# Reference: https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy
+alloy:
+  # @schema description: Alloy deployment configuration
+  alloy:
+    # @schema description: Alloy container image configuration
+    image:
+      registry: docker.io # @schema description: Container registry for Alloy image
+      repository: grafana/alloy # @schema description: Container image repository
+      # tag: defaults to appVersion from alloy subchart # @schema description: Container image tag (Alloy version)
+      pullPolicy: IfNotPresent # @schema enum: [Always, IfNotPresent, Never]; description: Image pull policy
+
+    # @schema description: ConfigMap configuration for Alloy
+    configMap:
+      create: false # @schema description: Whether to create the default ConfigMap (false since we create our own)
+      name: grafana-alloy-config # @schema description: Name of the ConfigMap to use
+      key: config.alloy # @schema description: Key in the ConfigMap containing the configuration
+
+    # @schema description: Extra arguments to pass to Alloy
+    extraArgs: []
+
+    # @schema description: Extra environment variables
+    extraEnv: []
+
+    # @schema description: Extra ports to expose
+    extraPorts: []
+
+    # @schema description: Clustering configuration
+    clustering:
+      enabled: false # @schema description: Enable clustering mode
+
+    # @schema description: Stabilize outgoing connection when clustering is enabled
+    stabilityLevel: generally-available # @schema description: Stability level for Alloy features; enum: [experimental, public-preview, generally-available]
+
+  # @schema description: Controller configuration
+  controller:
+    type: deployment # @schema enum: [daemonset, deployment, statefulset]; description: Type of controller to use
+    replicas: 1 # @schema description: Number of replicas (only for deployment/statefulset)
+
+  # @schema description: Service configuration
+  service:
+    enabled: true # @schema description: Enable the service
+    type: ClusterIP # @schema description: Service type
+
+  # @schema description: Service account configuration
+  serviceAccount:
+    create: true # @schema description: Create a service account
+    name: "grafana-alloy" # @schema description: Name of the service account
+    annotations: {} # @schema description: Annotations to add to the service account
+
+  # @schema description: RBAC configuration
+  rbac:
+    create: true # @schema description: Create RBAC resources
+
+  # @schema description: Pod security context
+  podSecurityContext: {}
+
+  # @schema description: Config reloader configuration
+  configReloader:
+    enabled: true # @schema description: Enable config reloader
+
+  # @schema description: Container security context
+  securityContext:
+    runAsNonRoot: true # @schema description: Run container as non-root user
+    allowPrivilegeEscalation: false # @schema description: Prevent privilege escalation
+    readOnlyRootFilesystem: true # @schema description: Mount root filesystem as read-only
+
+  # @schema description: Resource requests and limits
+  resources:
+    requests:
+      cpu: 1 # @schema description: CPU request
+      memory: 1Gi # @schema description: Memory request
+    limits:
+      cpu: 2 # @schema description: CPU limit
+      memory: 4Gi # @schema description: Memory limit
+
+  # @schema description: Node selector for pod assignment
+  nodeSelector: {}
+
+  # @schema description: Tolerations for pod assignment
+  tolerations: []
+
+  # @schema description: Affinity rules for pod assignment
+  affinity: {}
+
+  # @schema description: Ingress configuration
+  ingress:
+    enabled: false # @schema description: Enable ingress
+    annotations: {} # @schema description: Annotations for the ingress
+    hosts: [] # @schema description: Ingress hosts
+    tls: [] # @schema description: TLS configuration
+
+  # @schema description: Pod annotations
+  podAnnotations: {}
+
+  # @schema description: Pod labels
+  podLabels: {}
