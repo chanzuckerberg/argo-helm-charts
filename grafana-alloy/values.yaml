@@ -13,7 +13,7 @@ loki:
 
 # Central Loki endpoint configuration (e.g., Argus metrics gateway)
 centralLoki:
-  enabled: true # @schema description: Enable central Loki endpoint
+  enabled: false # @schema description: Enable central Loki endpoint
   url: "" # @schema description: URL of the central Loki endpoint
   # Basic auth credentials are read from LOKI_BASIC_AUTH_CREDENTIALS environment variable
 
