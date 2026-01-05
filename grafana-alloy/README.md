@@ -1,208 +1,768 @@
-# Grafana Alloy Helm Chart
+# grafana-alloy
 
-A Helm chart for deploying [Grafana Alloy](https://grafana.com/docs/alloy/latest/) with custom configuration for Kubernetes events collection.
+**Title:** grafana-alloy
 
-## Description
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-This chart deploys Grafana Alloy using the official Grafana Alloy Helm chart as a dependency. It provides a pre-configured setup for collecting Kubernetes events and shipping them to Loki endpoints.
+| Property                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [alloy](#alloy )             | No      | object  | No         | -          | -                                                                         |
+| - [alloyConfig](#alloyConfig ) | No      | object  | No         | -          | -                                                                         |
+| - [centralLoki](#centralLoki ) | No      | object  | No         | -          | -                                                                         |
+| + [clusterName](#clusterName ) | No      | string  | No         | -          | Name of the cluster where this chart is deployed. This value is required. |
+| - [enabled](#enabled )         | No      | boolean | No         | -          | Enable or disable the Grafana Alloy deployment                            |
+| - [loki](#loki )               | No      | object  | No         | -          | -                                                                         |
 
-Key features:
-- Kubernetes events collection out of the box
-- Dual Loki endpoint support (local + remote/CloudWatch)
-- Cluster-aware labeling for multi-cluster deployments
-- ArgoCD ApplicationSet compatible
+## <a name="alloy"></a>1. Property `grafana-alloy > alloy`
 
-## Prerequisites
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-- Kubernetes 1.19+
-- Helm 3.0+
+| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description                 |
+| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------- |
+| - [affinity](#alloy_affinity )                     | No      | object | No         | -          | Affinity rules for pod assignment |
+| - [alloy](#alloy_alloy )                           | No      | object | No         | -          | Alloy deployment configuration    |
+| - [configReloader](#alloy_configReloader )         | No      | object | No         | -          | Config reloader configuration     |
+| - [controller](#alloy_controller )                 | No      | object | No         | -          | Controller configuration          |
+| - [ingress](#alloy_ingress )                       | No      | object | No         | -          | Ingress configuration             |
+| - [nodeSelector](#alloy_nodeSelector )             | No      | object | No         | -          | Node selector for pod assignment  |
+| - [podAnnotations](#alloy_podAnnotations )         | No      | object | No         | -          | Pod annotations                   |
+| - [podLabels](#alloy_podLabels )                   | No      | object | No         | -          | Pod labels                        |
+| - [podSecurityContext](#alloy_podSecurityContext ) | No      | object | No         | -          | Pod security context              |
+| - [rbac](#alloy_rbac )                             | No      | object | No         | -          | RBAC configuration                |
+| - [resources](#alloy_resources )                   | No      | object | No         | -          | Resource requests and limits      |
+| - [securityContext](#alloy_securityContext )       | No      | object | No         | -          | Container security context        |
+| - [service](#alloy_service )                       | No      | object | No         | -          | Service configuration             |
+| - [serviceAccount](#alloy_serviceAccount )         | No      | object | No         | -          | Service account configuration     |
+| - [tolerations](#alloy_tolerations )               | No      | array  | No         | -          | Tolerations for pod assignment    |
 
-## Installation
+### <a name="alloy_affinity"></a>1.1. Property `grafana-alloy > alloy > affinity`
 
-### Add the Helm repository
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-```bash
-helm repo add argo-helm-charts https://chanzuckerberg.github.io/argo-helm-charts
-helm repo update
-```
+**Description:** Affinity rules for pod assignment
 
-### Install the chart
+### <a name="alloy_alloy"></a>1.2. Property `grafana-alloy > alloy > alloy`
 
-```bash
-helm install grafana-alloy argo-helm-charts/grafana-alloy \
-  --namespace monitoring \
-  --create-namespace \
-  --set clusterName=my-cluster \
-  --set centralLoki.url=https://loki-gateway.example.com/loki/api/v1/push
-```
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-### Install with custom values
+**Description:** Alloy deployment configuration
 
-```bash
-helm install grafana-alloy argo-helm-charts/grafana-alloy \
-  --namespace monitoring \
-  --create-namespace \
-  -f custom-values.yaml
-```
+| Property                                         | Pattern | Type             | Deprecated | Definition | Title/Description                   |
+| ------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------------------------- |
+| - [clustering](#alloy_alloy_clustering )         | No      | object           | No         | -          | Clustering configuration            |
+| - [configMap](#alloy_alloy_configMap )           | No      | object           | No         | -          | ConfigMap configuration for Alloy   |
+| - [extraArgs](#alloy_alloy_extraArgs )           | No      | array            | No         | -          | Extra arguments to pass to Alloy    |
+| - [extraEnv](#alloy_alloy_extraEnv )             | No      | array            | No         | -          | Extra environment variables         |
+| - [extraPorts](#alloy_alloy_extraPorts )         | No      | array            | No         | -          | Extra ports to expose               |
+| - [image](#alloy_alloy_image )                   | No      | object           | No         | -          | Alloy container image configuration |
+| - [stabilityLevel](#alloy_alloy_stabilityLevel ) | No      | enum (of string) | No         | -          | Stability level for Alloy features  |
 
-## Configuration
+#### <a name="alloy_alloy_clustering"></a>1.2.1. Property `grafana-alloy > alloy > alloy > clustering`
 
-### Required Parameters
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `clusterName` | Name of the cluster (used for labeling events) | `""` (required) |
+**Description:** Clustering configuration
 
-### Key Parameters
+| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description      |
+| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
+| - [enabled](#alloy_alloy_clustering_enabled ) | No      | boolean | No         | -          | Enable clustering mode |
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `enabled` | Enable or disable the deployment | `true` |
-| `loki.local.url` | URL of the local Loki instance | `http://loki.loki.svc:3100/loki/api/v1/push` |
-| `centralLoki.enabled` | Enable central Loki endpoint | `true` |
-| `centralLoki.url` | URL of the central Loki endpoint | `""` |
-| `alloy.alloy.image.tag` | Alloy image version | (default from subchart) |
-| `alloy.controller.type` | Controller type (deployment, daemonset, statefulset) | `deployment` |
-| `alloy.controller.replicas` | Number of replicas | `1` |
-| `alloy.resources` | Resource requests/limits | See `values.yaml` |
+##### <a name="alloy_alloy_clustering_enabled"></a>1.2.1.1. Property `grafana-alloy > alloy > alloy > clustering > enabled`
 
-### ArgoCD ApplicationSet Example
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
 
-When deploying via ArgoCD ApplicationSet, you can template the `clusterName`:
+**Description:** Enable clustering mode
 
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: grafana-alloy
-spec:
-  generators:
-    - clusters: {}
-  template:
-    metadata:
-      name: 'grafana-alloy-{{name}}'
-    spec:
-      project: default
-      source:
-        repoURL: https://chanzuckerberg.github.io/argo-helm-charts
-        chart: grafana-alloy
-        targetRevision: 1.5.1
-        helm:
-          values: |
-            clusterName: "{{name}}"
-            centralLoki:
-              enabled: true
-              url: "https://loki-gateway.example.com/loki/api/v1/push"
-      destination:
-        server: '{{server}}'
-        namespace: monitoring
-```
+#### <a name="alloy_alloy_configMap"></a>1.2.2. Property `grafana-alloy > alloy > alloy > configMap`
 
-### Example: Basic Deployment
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-```yaml
-clusterName: prod-us-west-2
+**Description:** ConfigMap configuration for Alloy
 
-loki:
-  local:
-    url: "http://loki.loki.svc:3100/loki/api/v1/push"
+| Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                       |
+| ------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [create](#alloy_alloy_configMap_create ) | No      | boolean | No         | -          | Whether to create the default ConfigMap (false since we create our own) |
+| - [key](#alloy_alloy_configMap_key )       | No      | string  | No         | -          | Key in the ConfigMap containing the configuration                       |
+| - [name](#alloy_alloy_configMap_name )     | No      | string  | No         | -          | Name of the ConfigMap to use                                            |
 
-centralLoki:
-  enabled: true
-  url: "https://central-loki.example.com/loki/api/v1/push"
-```
+##### <a name="alloy_alloy_configMap_create"></a>1.2.2.1. Property `grafana-alloy > alloy > alloy > configMap > create`
 
-### Example: Disable Central Loki
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
 
-```yaml
-clusterName: dev-cluster
+**Description:** Whether to create the default ConfigMap (false since we create our own)
 
-centralLoki:
-  enabled: false
-```
+##### <a name="alloy_alloy_configMap_key"></a>1.2.2.2. Property `grafana-alloy > alloy > alloy > configMap > key`
 
-### Example: Custom Configuration
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-Override the default Kubernetes events collection with your own configuration:
+**Description:** Key in the ConfigMap containing the configuration
 
-```yaml
-clusterName: my-cluster
+##### <a name="alloy_alloy_configMap_name"></a>1.2.2.3. Property `grafana-alloy > alloy > alloy > configMap > name`
 
-alloyConfig:
-  content: |
-    logging {
-      level = "debug"
-    }
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
-    prometheus.scrape "default" {
-      targets = [
-        {"__address__" = "localhost:12345"},
-      ]
-      forward_to = [prometheus.remote_write.default.receiver]
-    }
+**Description:** Name of the ConfigMap to use
 
-    prometheus.remote_write "default" {
-      endpoint {
-        url = "http://prometheus:9090/api/v1/write"
-      }
-    }
-```
+#### <a name="alloy_alloy_extraArgs"></a>1.2.3. Property `grafana-alloy > alloy > alloy > extraArgs`
 
-### Example: DaemonSet for Node-level Collection
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
 
-```yaml
-clusterName: my-cluster
+**Description:** Extra arguments to pass to Alloy
 
-alloy:
-  controller:
-    type: daemonset
-```
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
-### Central Loki Authentication
+#### <a name="alloy_alloy_extraEnv"></a>1.2.4. Property `grafana-alloy > alloy > alloy > extraEnv`
 
-The central Loki endpoint uses basic authentication via the `LOKI_BASIC_AUTH_CREDENTIALS` environment variable. Configure it via the Alloy subchart:
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
 
-```yaml
-clusterName: my-cluster
+**Description:** Extra environment variables
 
-alloy:
-  alloy:
-    extraEnv:
-      - name: LOKI_BASIC_AUTH_CREDENTIALS
-        valueFrom:
-          secretKeyRef:
-            name: loki-credentials
-            key: basic-auth
-```
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
-## Default Configuration
+#### <a name="alloy_alloy_extraPorts"></a>1.2.5. Property `grafana-alloy > alloy > alloy > extraPorts`
 
-The chart ships with a default configuration for collecting Kubernetes events with the following features:
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
 
-- **Source**: Kubernetes events via `loki.source.kubernetes_events`
-- **Labeling**: Events are labeled with:
-  - `cluster`: The cluster name (from `clusterName` value)
-  - `exporter`: `grafana-alloy`
-  - `event_reason`, `event_type`, `event_kind`, `event_namespace`, `event_host`
-- **Destinations**: Dual Loki endpoints (local + optional remote with basic auth)
+**Description:** Extra ports to expose
 
-## Upgrading
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
-```bash
-helm upgrade grafana-alloy argo-helm-charts/grafana-alloy \
-  --namespace monitoring \
-  -f custom-values.yaml
-```
+#### <a name="alloy_alloy_image"></a>1.2.6. Property `grafana-alloy > alloy > alloy > image`
 
-## Uninstalling
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-```bash
-helm uninstall grafana-alloy --namespace monitoring
-```
+**Description:** Alloy container image configuration
 
-## References
+| Property                                       | Pattern | Type             | Deprecated | Definition | Title/Description                  |
+| ---------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------- |
+| - [pullPolicy](#alloy_alloy_image_pullPolicy ) | No      | enum (of string) | No         | -          | Image pull policy                  |
+| - [registry](#alloy_alloy_image_registry )     | No      | string           | No         | -          | Container registry for Alloy image |
+| - [repository](#alloy_alloy_image_repository ) | No      | string           | No         | -          | Container image repository         |
 
-- [Grafana Alloy Documentation](https://grafana.com/docs/alloy/latest/)
-- [Grafana Alloy Configuration Reference](https://grafana.com/docs/alloy/latest/reference/)
-- [Official Grafana Alloy Helm Chart](https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy)
-- [loki.source.kubernetes_events](https://grafana.com/docs/alloy/latest/reference/components/loki/loki.source.kubernetes_events/)
+##### <a name="alloy_alloy_image_pullPolicy"></a>1.2.6.1. Property `grafana-alloy > alloy > alloy > image > pullPolicy`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Image pull policy
+
+Must be one of:
+* "Always"
+* "IfNotPresent"
+* "Never"
+
+##### <a name="alloy_alloy_image_registry"></a>1.2.6.2. Property `grafana-alloy > alloy > alloy > image > registry`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Container registry for Alloy image
+
+##### <a name="alloy_alloy_image_repository"></a>1.2.6.3. Property `grafana-alloy > alloy > alloy > image > repository`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Container image repository
+
+#### <a name="alloy_alloy_stabilityLevel"></a>1.2.7. Property `grafana-alloy > alloy > alloy > stabilityLevel`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Stability level for Alloy features
+
+Must be one of:
+* "experimental"
+* "public-preview"
+* "generally-available"
+
+### <a name="alloy_configReloader"></a>1.3. Property `grafana-alloy > alloy > configReloader`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Config reloader configuration
+
+| Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description      |
+| ------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------- |
+| - [enabled](#alloy_configReloader_enabled ) | No      | boolean | No         | -          | Enable config reloader |
+
+#### <a name="alloy_configReloader_enabled"></a>1.3.1. Property `grafana-alloy > alloy > configReloader > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable config reloader
+
+### <a name="alloy_controller"></a>1.4. Property `grafana-alloy > alloy > controller`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Controller configuration
+
+| Property                                  | Pattern | Type             | Deprecated | Definition | Title/Description                                    |
+| ----------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------- |
+| - [replicas](#alloy_controller_replicas ) | No      | integer          | No         | -          | Number of replicas (only for deployment/statefulset) |
+| - [type](#alloy_controller_type )         | No      | enum (of string) | No         | -          | Type of controller to use                            |
+
+#### <a name="alloy_controller_replicas"></a>1.4.1. Property `grafana-alloy > alloy > controller > replicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Number of replicas (only for deployment/statefulset)
+
+#### <a name="alloy_controller_type"></a>1.4.2. Property `grafana-alloy > alloy > controller > type`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Type of controller to use
+
+Must be one of:
+* "daemonset"
+* "deployment"
+* "statefulset"
+
+### <a name="alloy_ingress"></a>1.5. Property `grafana-alloy > alloy > ingress`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Ingress configuration
+
+| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description           |
+| -------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------- |
+| - [annotations](#alloy_ingress_annotations ) | No      | object  | No         | -          | Annotations for the ingress |
+| - [enabled](#alloy_ingress_enabled )         | No      | boolean | No         | -          | Enable ingress              |
+| - [hosts](#alloy_ingress_hosts )             | No      | array   | No         | -          | Ingress hosts               |
+| - [tls](#alloy_ingress_tls )                 | No      | array   | No         | -          | TLS configuration           |
+
+#### <a name="alloy_ingress_annotations"></a>1.5.1. Property `grafana-alloy > alloy > ingress > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Annotations for the ingress
+
+#### <a name="alloy_ingress_enabled"></a>1.5.2. Property `grafana-alloy > alloy > ingress > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable ingress
+
+#### <a name="alloy_ingress_hosts"></a>1.5.3. Property `grafana-alloy > alloy > ingress > hosts`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Ingress hosts
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+#### <a name="alloy_ingress_tls"></a>1.5.4. Property `grafana-alloy > alloy > ingress > tls`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** TLS configuration
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+### <a name="alloy_nodeSelector"></a>1.6. Property `grafana-alloy > alloy > nodeSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Node selector for pod assignment
+
+### <a name="alloy_podAnnotations"></a>1.7. Property `grafana-alloy > alloy > podAnnotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Pod annotations
+
+### <a name="alloy_podLabels"></a>1.8. Property `grafana-alloy > alloy > podLabels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Pod labels
+
+### <a name="alloy_podSecurityContext"></a>1.9. Property `grafana-alloy > alloy > podSecurityContext`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Pod security context
+
+### <a name="alloy_rbac"></a>1.10. Property `grafana-alloy > alloy > rbac`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** RBAC configuration
+
+| Property                        | Pattern | Type    | Deprecated | Definition | Title/Description     |
+| ------------------------------- | ------- | ------- | ---------- | ---------- | --------------------- |
+| - [create](#alloy_rbac_create ) | No      | boolean | No         | -          | Create RBAC resources |
+
+#### <a name="alloy_rbac_create"></a>1.10.1. Property `grafana-alloy > alloy > rbac > create`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Create RBAC resources
+
+### <a name="alloy_resources"></a>1.11. Property `grafana-alloy > alloy > resources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Resource requests and limits
+
+| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [limits](#alloy_resources_limits )     | No      | object | No         | -          | -                 |
+| - [requests](#alloy_resources_requests ) | No      | object | No         | -          | -                 |
+
+#### <a name="alloy_resources_limits"></a>1.11.1. Property `grafana-alloy > alloy > resources > limits`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [cpu](#alloy_resources_limits_cpu )       | No      | integer | No         | -          | CPU limit         |
+| - [memory](#alloy_resources_limits_memory ) | No      | string  | No         | -          | Memory limit      |
+
+##### <a name="alloy_resources_limits_cpu"></a>1.11.1.1. Property `grafana-alloy > alloy > resources > limits > cpu`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** CPU limit
+
+##### <a name="alloy_resources_limits_memory"></a>1.11.1.2. Property `grafana-alloy > alloy > resources > limits > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Memory limit
+
+#### <a name="alloy_resources_requests"></a>1.11.2. Property `grafana-alloy > alloy > resources > requests`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description |
+| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [cpu](#alloy_resources_requests_cpu )       | No      | integer | No         | -          | CPU request       |
+| - [memory](#alloy_resources_requests_memory ) | No      | string  | No         | -          | Memory request    |
+
+##### <a name="alloy_resources_requests_cpu"></a>1.11.2.1. Property `grafana-alloy > alloy > resources > requests > cpu`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** CPU request
+
+##### <a name="alloy_resources_requests_memory"></a>1.11.2.2. Property `grafana-alloy > alloy > resources > requests > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Memory request
+
+### <a name="alloy_securityContext"></a>1.12. Property `grafana-alloy > alloy > securityContext`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Container security context
+
+| Property                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                  |
+| ------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ---------------------------------- |
+| - [allowPrivilegeEscalation](#alloy_securityContext_allowPrivilegeEscalation ) | No      | boolean | No         | -          | Prevent privilege escalation       |
+| - [readOnlyRootFilesystem](#alloy_securityContext_readOnlyRootFilesystem )     | No      | boolean | No         | -          | Mount root filesystem as read-only |
+| - [runAsNonRoot](#alloy_securityContext_runAsNonRoot )                         | No      | boolean | No         | -          | Run container as non-root user     |
+
+#### <a name="alloy_securityContext_allowPrivilegeEscalation"></a>1.12.1. Property `grafana-alloy > alloy > securityContext > allowPrivilegeEscalation`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Prevent privilege escalation
+
+#### <a name="alloy_securityContext_readOnlyRootFilesystem"></a>1.12.2. Property `grafana-alloy > alloy > securityContext > readOnlyRootFilesystem`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Mount root filesystem as read-only
+
+#### <a name="alloy_securityContext_runAsNonRoot"></a>1.12.3. Property `grafana-alloy > alloy > securityContext > runAsNonRoot`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Run container as non-root user
+
+### <a name="alloy_service"></a>1.13. Property `grafana-alloy > alloy > service`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Service configuration
+
+| Property                             | Pattern | Type    | Deprecated | Definition | Title/Description  |
+| ------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------ |
+| - [enabled](#alloy_service_enabled ) | No      | boolean | No         | -          | Enable the service |
+| - [type](#alloy_service_type )       | No      | string  | No         | -          | Service type       |
+
+#### <a name="alloy_service_enabled"></a>1.13.1. Property `grafana-alloy > alloy > service > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable the service
+
+#### <a name="alloy_service_type"></a>1.13.2. Property `grafana-alloy > alloy > service > type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Service type
+
+### <a name="alloy_serviceAccount"></a>1.14. Property `grafana-alloy > alloy > serviceAccount`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Service account configuration
+
+| Property                                            | Pattern | Type    | Deprecated | Definition | Title/Description                         |
+| --------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------- |
+| - [annotations](#alloy_serviceAccount_annotations ) | No      | object  | No         | -          | Annotations to add to the service account |
+| - [create](#alloy_serviceAccount_create )           | No      | boolean | No         | -          | Create a service account                  |
+| - [name](#alloy_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account               |
+
+#### <a name="alloy_serviceAccount_annotations"></a>1.14.1. Property `grafana-alloy > alloy > serviceAccount > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Annotations to add to the service account
+
+#### <a name="alloy_serviceAccount_create"></a>1.14.2. Property `grafana-alloy > alloy > serviceAccount > create`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Create a service account
+
+#### <a name="alloy_serviceAccount_name"></a>1.14.3. Property `grafana-alloy > alloy > serviceAccount > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the service account
+
+### <a name="alloy_tolerations"></a>1.15. Property `grafana-alloy > alloy > tolerations`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Tolerations for pod assignment
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+## <a name="alloyConfig"></a>2. Property `grafana-alloy > alloyConfig`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                              |
+| ---------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
+| - [content](#alloyConfig_content ) | No      | string | No         | -          | Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config. |
+
+### <a name="alloyConfig_content"></a>2.1. Property `grafana-alloy > alloyConfig > content`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.
+
+## <a name="centralLoki"></a>3. Property `grafana-alloy > centralLoki`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                           | Pattern | Type    | Deprecated | Definition | Title/Description                |
+| ---------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------- |
+| - [enabled](#centralLoki_enabled ) | No      | boolean | No         | -          | Enable central Loki endpoint     |
+| - [url](#centralLoki_url )         | No      | string  | No         | -          | URL of the central Loki endpoint |
+
+### <a name="centralLoki_enabled"></a>3.1. Property `grafana-alloy > centralLoki > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable central Loki endpoint
+
+### <a name="centralLoki_url"></a>3.2. Property `grafana-alloy > centralLoki > url`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** URL of the central Loki endpoint
+
+## <a name="clusterName"></a>4. Property `grafana-alloy > clusterName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | Yes      |
+
+**Description:** Name of the cluster where this chart is deployed. This value is required.
+
+## <a name="enabled"></a>5. Property `grafana-alloy > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable or disable the Grafana Alloy deployment
+
+## <a name="loki"></a>6. Property `grafana-alloy > loki`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                | Pattern | Type   | Deprecated | Definition | Title/Description                 |
+| ----------------------- | ------- | ------ | ---------- | ---------- | --------------------------------- |
+| - [local](#loki_local ) | No      | object | No         | -          | Local Loki endpoint configuration |
+
+### <a name="loki_local"></a>6.1. Property `grafana-alloy > loki > local`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Local Loki endpoint configuration
+
+| Property                  | Pattern | Type   | Deprecated | Definition | Title/Description              |
+| ------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
+| - [url](#loki_local_url ) | No      | string | No         | -          | URL of the local Loki instance |
+
+#### <a name="loki_local_url"></a>6.1.1. Property `grafana-alloy > loki > local > url`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** URL of the local Loki instance
+
+----------------------------------------------------------------------------------------------------------------------------
