@@ -1,6 +1,8 @@
 suite: test preview service for rollout
 templates:
   - preview_service.yaml
+chart:
+  version: 0.1.0-test # hardcoded chart version to avoid release breaking snapshots
 tests:
   - it: should not render a preview service when deploymentKind is Deployment
     set:
