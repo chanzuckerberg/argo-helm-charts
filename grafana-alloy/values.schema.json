@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/grafana-alloy",
+  "title": "grafana-alloy",
+  "type": "object",
+  "required": [
+    "clusterName"
+  ],
+  "properties": {
+    "alloy": {
+      "type": "object",
+      "properties": {
+        "affinity": {
+          "description": "Affinity rules for pod assignment",
+          "type": "object"
+        },
+        "alloy": {
+          "description": "Alloy deployment configuration",
+          "type": "object",
+          "properties": {
+            "clustering": {
+              "description": "Clustering configuration",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable clustering mode",
+                  "type": "boolean"
+                }
+              }
+            },
+            "configMap": {
+              "description": "ConfigMap configuration for Alloy",
+              "type": "object",
+              "properties": {
+                "create": {
+                  "description": "Whether to create the default ConfigMap (false since we create our own)",
+                  "type": "boolean"
+                },
+                "key": {
+                  "description": "Key in the ConfigMap containing the configuration",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Name of the ConfigMap to use",
+                  "type": "string"
+                }
+              }
+            },
+            "extraArgs": {
+              "description": "Extra arguments to pass to Alloy",
+              "type": "array"
+            },
+            "extraEnv": {
+              "description": "Extra environment variables",
+              "type": "array"
+            },
+            "extraPorts": {
+              "description": "Extra ports to expose",
+              "type": "array"
+            },
+            "image": {
+              "description": "Alloy container image configuration",
+              "type": "object",
+              "properties": {
+                "pullPolicy": {
+                  "description": "Image pull policy",
+                  "type": "string",
+                  "enum": [
+                    "Always",
+                    "IfNotPresent",
+                    "Never"
+                  ]
+                },
+                "registry": {
+                  "description": "Container registry for Alloy image",
+                  "type": "string"
+                },
+                "repository": {
+                  "description": "Container image repository",
+                  "type": "string"
+                }
+              }
+            },
+            "stabilityLevel": {
+              "description": "Stability level for Alloy features",
+              "type": "string",
+              "enum": [
+                "experimental",
+                "public-preview",
+                "generally-available"
+              ]
+            }
+          }
+        },
+        "configReloader": {
+          "description": "Config reloader configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable config reloader",
+              "type": "boolean"
+            }
+          }
+        },
+        "controller": {
+          "description": "Controller configuration",
+          "type": "object",
+          "properties": {
+            "replicas": {
+              "description": "Number of replicas (only for deployment/statefulset)",
+              "type": "integer"
+            },
+            "type": {
+              "description": "Type of controller to use",
+              "type": "string",
+              "enum": [
+                "daemonset",
+                "deployment",
+                "statefulset"
+              ]
+            }
+          }
+        },
+        "ingress": {
+          "description": "Ingress configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations for the ingress",
+              "type": "object"
+            },
+            "enabled": {
+              "description": "Enable ingress",
+              "type": "boolean"
+            },
+            "hosts": {
+              "description": "Ingress hosts",
+              "type": "array"
+            },
+            "tls": {
+              "description": "TLS configuration",
+              "type": "array"
+            }
+          }
+        },
+        "nodeSelector": {
+          "description": "Node selector for pod assignment",
+          "type": "object"
+        },
+        "podAnnotations": {
+          "description": "Pod annotations",
+          "type": "object"
+        },
+        "podLabels": {
+          "description": "Pod labels",
+          "type": "object"
+        },
+        "podSecurityContext": {
+          "description": "Pod security context",
+          "type": "object"
+        },
+        "rbac": {
+          "description": "RBAC configuration",
+          "type": "object",
+          "properties": {
+            "create": {
+              "description": "Create RBAC resources",
+              "type": "boolean"
+            }
+          }
+        },
+        "resources": {
+          "description": "Resource requests and limits",
+          "type": "object",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU limit",
+                  "type": "integer"
+                },
+                "memory": {
+                  "description": "Memory limit",
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU request",
+                  "type": "integer"
+                },
+                "memory": {
+                  "description": "Memory request",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "securityContext": {
+          "description": "Container security context",
+          "type": "object",
+          "properties": {
+            "allowPrivilegeEscalation": {
+              "description": "Prevent privilege escalation",
+              "type": "boolean"
+            },
+            "readOnlyRootFilesystem": {
+              "description": "Mount root filesystem as read-only",
+              "type": "boolean"
+            },
+            "runAsNonRoot": {
+              "description": "Run container as non-root user",
+              "type": "boolean"
+            }
+          }
+        },
+        "service": {
+          "description": "Service configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable the service",
+              "type": "boolean"
+            },
+            "type": {
+              "description": "Service type",
+              "type": "string"
+            }
+          }
+        },
+        "serviceAccount": {
+          "description": "Service account configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to the service account",
+              "type": "object"
+            },
+            "create": {
+              "description": "Create a service account",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "Name of the service account",
+              "type": "string"
+            }
+          }
+        },
+        "tolerations": {
+          "description": "Tolerations for pod assignment",
+          "type": "array"
+        }
+      }
+    },
+    "alloyConfig": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "description": "Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.",
+          "type": "string"
+        }
+      }
+    },
+    "centralLoki": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable central Loki endpoint",
+          "type": "boolean"
+        },
+        "url": {
+          "description": "URL of the central Loki endpoint",
+          "type": "string"
+        }
+      }
+    },
+    "clusterName": {
+      "description": "Name of the cluster where this chart is deployed. This value is required.",
+      "type": "string"
+    },
+    "enabled": {
+      "description": "Enable or disable the Grafana Alloy deployment",
+      "type": "boolean"
+    },
+    "loki": {
+      "type": "object",
+      "properties": {
+        "local": {
+          "description": "Local Loki endpoint configuration",
+          "type": "object",
+          "properties": {
+            "url": {
+              "description": "URL of the local Loki instance",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
