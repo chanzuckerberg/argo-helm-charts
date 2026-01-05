@@ -15,7 +15,7 @@ loki:
 centralLoki:
   enabled: false # @schema description: Enable central Loki endpoint
   url: "" # @schema description: URL of the central Loki endpoint
-  # Basic auth credentials are read from LOKI_BASIC_AUTH_CREDENTIALS environment variable
+  basicAuthEnvVar: "BASIC_AUTH_CREDENTIALS" # @schema description: Name of the environment variable containing basic auth credentials
 
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
