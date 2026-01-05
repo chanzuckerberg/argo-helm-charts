@@ -1,0 +1,86 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alloy-config
+  labels:
+    {{- include "grafana-alloy.labels" . | nindent 4 }}
+data:
+  config.alloy: |
+{{- if .Values.alloyConfig.content }}
+{{- .Values.alloyConfig.content | nindent 4 }}
+{{- else }}
+    // Grafana Alloy configuration for Kubernetes events collection
+    logging {
+      level = "info"
+    }
+
+    loki.source.kubernetes_events "k8s_events" {
+      forward_to = [loki.relabel.rename_namespace.receiver]
+      log_format = "json"
+      job_name   = "kubernetes-events"
+    }
+
+    loki.relabel "rename_namespace" {
+      forward_to = [loki.process.add_labels.receiver]
+      
+      rule {
+        source_labels = ["namespace"]
+        action = "replace"
+        target_label  = "event_namespace"
+      }
+    }
+
+    loki.process "add_labels" {
+      stage.static_labels {
+        values = {
+          cluster  = {{ .Values.clusterName | quote }},
+          exporter = "grafana-alloy",
+        }
+      }
+
+      stage.json {
+        expressions = {
+          event_message   = "msg",
+          event_reason    = "reason",
+          event_type      = "type",
+          event_count     = "count",
+          event_kind      = "kind",
+          event_host      = "sourcehost",
+          event_component = "sourcecomponent",
+        }
+      }
+
+      stage.labels {
+        values = {
+          event_reason    = "",
+          event_type      = "",
+          event_kind      = "",
+          event_namespace = "",
+          event_host      = "",
+        }
+      }
+
+      stage.label_keep {
+        values = ["job","cluster","exporter","level","event_message","event_reason","event_type","event_kind","event_namespace","event_host"]
+      }
+
+      forward_to = [loki.write.events.receiver]
+    }
+
+    loki.write "events" {
+      endpoint {
+        url = {{ .Values.loki.local.url | quote }}
+      }
+      {{- if and .Values.centralLoki.enabled .Values.centralLoki.url }}
+
+      endpoint {
+        url = {{ .Values.centralLoki.url | quote }}
+        headers = {
+          "Authorization" = "Basic " + env("LOKI_BASIC_AUTH_CREDENTIALS"),
+        }
+      }
+      {{- end }}
+    }
+{{- end }}
+{{- end }}

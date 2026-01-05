@@ -2,6 +2,7 @@ suite: integration tests
 templates:
   - nodepool.yaml
   - nvidia-daemonset.yaml
+  - priorityclass.yaml
 tests:
   - it: should create NodePool by default
     template: nodepool.yaml
@@ -42,6 +43,8 @@ tests:
       nodepool:
         enabled: false
       nvidiaDriver:
+        enabled: false
+      priorityClass:
         enabled: false
     asserts:
       - hasDocuments:
@@ -138,4 +141,83 @@ tests:
             operator: "Equal"
             value: "true"
             effect: "NoSchedule"
+
+  - it: should create PriorityClass when enabled
+    templates:
+      - priorityclass.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PriorityClass
+
+  - it: should not create PriorityClass when disabled
+    set:
+      priorityClass:
+        enabled: false
+    templates:
+      - priorityclass.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: DaemonSet should use PriorityClass when enabled
+    templates:
+      - nvidia-daemonset.yaml
+      - priorityclass.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: gpu-device-plugin-critical
+        template: nvidia-daemonset.yaml
+      - equal:
+          path: metadata.name
+          value: gpu-device-plugin-critical
+        template: priorityclass.yaml
+
+  - it: should work with all components enabled
+    templates:
+      - nodepool.yaml
+      - nvidia-daemonset.yaml
+      - priorityclass.yaml
+    asserts:
+      - isKind:
+          of: NodePool
+        template: nodepool.yaml
+      - isKind:
+          of: DaemonSet
+        template: nvidia-daemonset.yaml
+      - isKind:
+          of: PriorityClass
+        template: priorityclass.yaml
+
+  - it: should handle mixed configuration
+    set:
+      nodepool:
+        name: custom-gpu-pool
+      nvidiaDriver:
+        namespace: gpu-system
+      priorityClass:
+        name: custom-priority
+    templates:
+      - nodepool.yaml
+      - nvidia-daemonset.yaml
+      - priorityclass.yaml
+    asserts:
+      - equal:
+          path: metadata.name
+          value: custom-gpu-pool
+        template: nodepool.yaml
+      - equal:
+          path: metadata.namespace
+          value: gpu-system
+        template: nvidia-daemonset.yaml
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: custom-priority
+        template: nvidia-daemonset.yaml
+      - equal:
+          path: metadata.name
+          value: custom-priority
+        template: priorityclass.yaml
 

@@ -44,6 +44,9 @@
     },
     "karpenter-gpu-nodepool": {
       "package-name": "karpenter-gpu-nodepool"
+    },
+    "grafana-alloy": {
+      "package-name": "grafana-alloy"
     }
   }
 }

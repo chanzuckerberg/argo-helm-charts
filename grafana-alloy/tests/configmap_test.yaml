@@ -1,0 +1,158 @@
+suite: test configmap.yaml
+templates:
+  - configmap.yaml
+
+tests:
+  - it: should not render anything if .Values.enabled is false
+    set:
+      enabled: false
+      clusterName: test-cluster
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a ConfigMap when enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+
+  - it: should have the correct name
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - equal:
+          path: metadata.name
+          value: grafana-alloy-config
+
+  - it: should contain config.alloy key in data
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - isNotEmpty:
+          path: data["config.alloy"]
+
+  - it: should include cluster name in default configuration
+    set:
+      enabled: true
+      clusterName: my-production-cluster
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'cluster\s*=\s*"my-production-cluster"'
+
+  - it: should include local loki endpoint in default configuration
+    set:
+      enabled: true
+      clusterName: test-cluster
+      loki:
+        local:
+          url: "http://loki.loki.svc:3100/loki/api/v1/push"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'http://loki\.loki\.svc:3100/loki/api/v1/push'
+
+  - it: should include central loki endpoint when enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      centralLoki:
+        enabled: true
+        url: "https://loki-gateway.example.com/loki/api/v1/push"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'https://loki-gateway\.example\.com/loki/api/v1/push'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'LOKI_BASIC_AUTH_CREDENTIALS'
+
+  - it: should not include central loki endpoint when disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      centralLoki:
+        enabled: false
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'LOKI_BASIC_AUTH_CREDENTIALS'
+
+  - it: should include kubernetes events source in default config
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.source\.kubernetes_events'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'kubernetes-events'
+
+  - it: should include relabeling configuration in default config
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.relabel "rename_namespace"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'event_namespace'
+
+  - it: should include label processing in default config
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.process "add_labels"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'exporter = "grafana-alloy"'
+
+  - it: should have the correct labels
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - isNotEmpty:
+          path: metadata.labels
+      - matchRegex:
+          path: metadata.labels["helm.sh/chart"]
+          pattern: grafana-alloy-.*
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: grafana-alloy
+
+  - it: should use custom configuration when provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        content: |
+          logging {
+            level = "debug"
+          }
+          custom_component "test" {}
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level = "debug"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'custom_component "test"'
+      # Should not contain default kubernetes_events config when custom is provided
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.source\.kubernetes_events'

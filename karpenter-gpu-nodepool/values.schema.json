@@ -143,6 +143,10 @@
     "nvidiaDriver": {
       "type": "object",
       "properties": {
+        "affinity": {
+          "description": "Affinity rules for the DaemonSet pods. Can be used for advanced scheduling like avoiding Fargate nodes.",
+          "type": "object"
+        },
         "args": {
           "description": "Arguments to pass to the NVIDIA device plugin container.",
           "type": "array",
@@ -205,6 +209,10 @@
               "type": "string"
             }
           }
+        },
+        "priorityClassName": {
+          "description": "Priority class name for the DaemonSet pods. If empty and priorityClass.enabled is true, uses the chart's PriorityClass.",
+          "type": "string"
         },
         "resources": {
           "description": "Resources for the NVIDIA device plugin container. Can be used to set limits and requests.",
@@ -294,6 +302,35 @@
               }
             }
           }
+        }
+      }
+    },
+    "priorityClass": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Human-readable description of when to use this priority class.",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Enable creation of PriorityClass for critical GPU infrastructure.",
+          "type": "boolean"
+        },
+        "globalDefault": {
+          "description": "Whether this PriorityClass should be the default for all pods.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "Name of the PriorityClass.",
+          "type": "string"
+        },
+        "preemptionPolicy": {
+          "description": "Policy for preempting lower priority pods (PreemptLowerPriority or Never).",
+          "type": "string"
+        },
+        "value": {
+          "description": "Priority value (higher = more important).",
+          "type": "integer"
         }
       }
     }

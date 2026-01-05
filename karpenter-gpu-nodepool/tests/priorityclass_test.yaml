@@ -1,0 +1,118 @@
+suite: test priority class
+templates:
+  - priorityclass.yaml
+tests:
+  - it: should create PriorityClass when enabled (default)
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: PriorityClass
+      - containsDocument:
+          apiVersion: scheduling.k8s.io/v1
+          kind: PriorityClass
+          name: gpu-device-plugin-critical
+
+  - it: should not create PriorityClass when disabled
+    set:
+      priorityClass:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have correct metadata
+    asserts:
+      - equal:
+          path: metadata.name
+          value: gpu-device-plugin-critical
+      - equal:
+          path: apiVersion
+          value: scheduling.k8s.io/v1
+      - equal:
+          path: kind
+          value: PriorityClass
+
+  - it: should have correct labels
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: karpenter-gpu-nodepool
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+
+  - it: should use default priority value
+    asserts:
+      - isNotNull:
+          path: value
+      - isKind:
+          of: PriorityClass
+
+  - it: should allow custom priority value
+    set:
+      priorityClass:
+        value: 500000000
+    asserts:
+      - isNotNull:
+          path: value
+      - isKind:
+          of: PriorityClass
+
+  - it: should not be global default by default
+    asserts:
+      - equal:
+          path: globalDefault
+          value: false
+
+  - it: should allow setting as global default
+    set:
+      priorityClass:
+        globalDefault: true
+    asserts:
+      - equal:
+          path: globalDefault
+          value: true
+
+  - it: should have description
+    asserts:
+      - equal:
+          path: description
+          value: "Priority class for GPU device plugin to ensure it runs before user workloads"
+
+  - it: should allow custom description
+    set:
+      priorityClass:
+        description: "Custom priority class description"
+    asserts:
+      - equal:
+          path: description
+          value: "Custom priority class description"
+
+  - it: should use custom name
+    set:
+      priorityClass:
+        name: my-custom-priority
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-custom-priority
+
+  - it: should have default preemptionPolicy
+    asserts:
+      - equal:
+          path: preemptionPolicy
+          value: PreemptLowerPriority
+
+  - it: should allow custom preemptionPolicy
+    set:
+      priorityClass:
+        preemptionPolicy: Never
+    asserts:
+      - equal:
+          path: preemptionPolicy
+          value: Never
+

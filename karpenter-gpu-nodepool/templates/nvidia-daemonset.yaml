@@ -25,6 +25,13 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.nvidiaDriver.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.nvidiaDriver.priorityClassName .Values.priorityClass.enabled }}
+      priorityClassName: {{ .Values.nvidiaDriver.priorityClassName | default .Values.priorityClass.name }}
+      {{- end }}
       containers:
         - name: nvidia-device-plugin-ctr
           image: "{{ .Values.nvidiaDriver.image.repository }}:{{ .Values.nvidiaDriver.image.tag }}"
