@@ -132,7 +132,7 @@ tests:
     asserts:
       - matchRegex:
           path: data["config.alloy"]
-          pattern: 'loki\.process "add_labels"'
+          pattern: 'loki\.process "add_event_labels"'
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'exporter = "grafana-alloy"'

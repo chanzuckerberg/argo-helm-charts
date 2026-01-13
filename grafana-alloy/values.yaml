@@ -17,12 +17,42 @@ centralLoki:
   url: "" # @schema description: URL of the central Loki endpoint
   basicAuthEnvVar: "BASIC_AUTH_CREDENTIALS" # @schema description: Name of the environment variable containing basic auth credentials
 
+# Prometheus remote write configuration
+prometheusRemoteWrite:
+  enabled: false # @schema description: Enable Prometheus remote write
+  url: "" # @schema description: URL of the Prometheus remote write endpoint
+  externalLabels: {} # @schema description: External labels to add to all metrics
+  queueConfig: # @schema description: Queue configuration for remote write
+    maxSamplesPerSend: 3000 # @schema description: Maximum samples per send
+    batchSendDeadline: "10s" # @schema description: Batch send deadline
+    minShards: 4 # @schema description: Minimum shards
+    maxShards: 200 # @schema description: Maximum shards
+    capacity: 10000 # @schema description: Queue capacity
+  sigv4: # @schema description: SigV4 configuration for AWS authentication
+    enabled: false # @schema description: Enable SigV4 authentication
+    region: "" # @schema description: AWS region for SigV4
+  metricsFilter: # @schema description: Metrics filtering configuration
+    enabled: false # @schema description: Enable metrics filtering
+    regex: "" # @schema description: Regex pattern to match metric names to keep
+
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
 alloyConfig:
-  # @schema description: Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.
+  # @schema description: Custom Alloy configuration content (River format). If empty, uses default collection config.
   # See https://grafana.com/docs/alloy/latest/reference/config-blocks/
   content: ""
+  
+  # @schema description: Enable pod log collection
+  podLogs:
+    enabled: true # @schema description: Enable collection of pod logs from all nodes
+  
+  # @schema description: Enable Kubernetes events collection
+  events:
+    enabled: true # @schema description: Enable collection of Kubernetes events
+  
+  # @schema description: Enable Prometheus metrics collection
+  metrics:
+    enabled: false # @schema description: Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)
 
 # Alloy subchart configuration
 # Reference: https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy

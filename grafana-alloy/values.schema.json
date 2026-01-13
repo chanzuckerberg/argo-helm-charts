@@ -261,8 +261,38 @@
       "type": "object",
       "properties": {
         "content": {
-          "description": "Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.",
+          "description": "Custom Alloy configuration content (River format). If empty, uses default collection config.",
           "type": "string"
+        },
+        "events": {
+          "description": "Enable Kubernetes events collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable collection of Kubernetes events",
+              "type": "boolean"
+            }
+          }
+        },
+        "metrics": {
+          "description": "Enable Prometheus metrics collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)",
+              "type": "boolean"
+            }
+          }
+        },
+        "podLogs": {
+          "description": "Enable pod log collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable collection of pod logs from all nodes",
+              "type": "boolean"
+            }
+          }
         }
       }
     },
@@ -303,6 +333,77 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "prometheusRemoteWrite": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable Prometheus remote write",
+          "type": "boolean"
+        },
+        "externalLabels": {
+          "description": "External labels to add to all metrics",
+          "type": "object"
+        },
+        "metricsFilter": {
+          "description": "Metrics filtering configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable metrics filtering",
+              "type": "boolean"
+            },
+            "regex": {
+              "description": "Regex pattern to match metric names to keep",
+              "type": "string"
+            }
+          }
+        },
+        "queueConfig": {
+          "description": "Queue configuration for remote write",
+          "type": "object",
+          "properties": {
+            "batchSendDeadline": {
+              "description": "Batch send deadline",
+              "type": "string"
+            },
+            "capacity": {
+              "description": "Queue capacity",
+              "type": "integer"
+            },
+            "maxSamplesPerSend": {
+              "description": "Maximum samples per send",
+              "type": "integer"
+            },
+            "maxShards": {
+              "description": "Maximum shards",
+              "type": "integer"
+            },
+            "minShards": {
+              "description": "Minimum shards",
+              "type": "integer"
+            }
+          }
+        },
+        "sigv4": {
+          "description": "SigV4 configuration for AWS authentication",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable SigV4 authentication",
+              "type": "boolean"
+            },
+            "region": {
+              "description": "AWS region for SigV4",
+              "type": "string"
+            }
+          }
+        },
+        "url": {
+          "description": "URL of the Prometheus remote write endpoint",
+          "type": "string"
         }
       }
     }
