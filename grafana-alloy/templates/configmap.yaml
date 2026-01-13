@@ -226,29 +226,8 @@ data:
         values = ["job","cluster","exporter","level","event_message","event_reason","event_type","event_kind","event_namespace","event_host"]
       }
 
-      {{- if .Values.alloyConfig.podLogs.enabled }}
       forward_to = [loki.write.endpoints.receiver]
-      {{- else }}
-      forward_to = [loki.write.events.receiver]
-      {{- end }}
     }
-
-    {{- if not .Values.alloyConfig.podLogs.enabled }}
-    loki.write "events" {
-      endpoint {
-        url = {{ .Values.loki.local.url | quote }}
-      }
-      {{- if and .Values.centralLoki.enabled .Values.centralLoki.url }}
-
-      endpoint {
-        url = {{ .Values.centralLoki.url | quote }}
-        headers = {
-          "Authorization" = "Basic " + env({{ .Values.centralLoki.basicAuthEnvVar | quote }}),
-        }
-      }
-      {{- end }}
-    }
-    {{- end }}
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
