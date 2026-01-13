@@ -111,7 +111,8 @@ data:
 
       stage.static_labels {
         values = {
-          cluster = {{ .Values.clusterName | quote }},
+          cluster  = {{ .Values.clusterName | quote }},
+          exporter = "grafana-alloy",
         }
       }
 
@@ -122,23 +123,6 @@ data:
 
       stage.regex {
         expression = "(?i)(?:^|[\\s\"'\\[{(,:=])(?P<level>\\b(?:trace|debug|info|warn|warning|error|fatal|critical|trc|dbg|inf|wrn|err|crt|ftl)\\b)(?:[\\s\"'\\]}),.:=]|$)"
-      }
-
-      stage.json {
-        expressions = {
-          level = "level",
-        }
-      }
-
-      stage.logfmt {
-        mapping = {
-          level = "level",
-        }
-      }
-
-      stage.template {
-        source   = "level"
-        template = "{{ if .level }}{{ .level | lower }}{{ end }}"
       }
 
       stage.labels {
