@@ -286,6 +286,18 @@ data:
         replacement  = {{ .Values.clusterName | quote }}
       }
 
+      {{- if .Values.prometheusRemoteWrite.endpoints }}
+      {{- $firstEndpoint := index .Values.prometheusRemoteWrite.endpoints 0 }}
+      {{- if $firstEndpoint.externalLabels }}
+      {{- range $key, $value := $firstEndpoint.externalLabels }}
+      rule {
+        target_label = {{ $key | quote }}
+        replacement  = {{ $value | quote }}
+      }
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
       {{- if .Values.prometheusRemoteWrite.metricsFilter.enabled }}
       rule {
         source_labels = ["__name__"]
