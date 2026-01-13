@@ -18,76 +18,85 @@ data:
     {{- if .Values.alloyConfig.podLogs.enabled }}
     discovery.kubernetes "pods" {
       role = "pod"
+      selectors {
+        role  = "pod"
+        field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
+      }
     }
 
     discovery.relabel "pod_logs" {
       targets = discovery.kubernetes.pods.targets
 
       rule {
-        source_labels = ["__meta_kubernetes_pod_phase"]
-        regex         = "Pending|Succeeded|Failed|Completed"
-        action        = "drop"
-      }
-
-      rule {
-        source_labels = ["__meta_kubernetes_pod_node_name"]
-        target_label  = "__host__"
-      }
-
-      rule {
         source_labels = ["__meta_kubernetes_namespace"]
         target_label  = "namespace"
+        action        = "replace"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_pod_name"]
+        action        = "replace"
         target_label  = "pod"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_pod_container_name"]
+        action        = "replace"
         target_label  = "container"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        action        = "replace"
         target_label  = "job"
-        regex         = "(.+)"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_service"]
         target_label  = "service"
         regex         = "(.+)"
+        action        = "replace"
       }
       
       rule {
         source_labels = ["__meta_kubernetes_pod_label_service"]
         target_label  = "service"
         regex         = "(.+)"
+        action        = "replace"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_pod_label_workflowName"]
         target_label  = "workflowName"
         regex         = "(.+)"
+        action        = "replace"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_pod_label_workflowVersion"]
         target_label  = "workflowVersion"
         regex         = "(.+)"
+        action        = "replace"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+        action        = "replace"
         target_label  = "__path__"
         separator     = "/"
         replacement   = "/var/log/pods/*$1/*.log"
       }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_id"]
+        action        = "replace"
+        target_label  = "container_runtime"
+        regex         = "^(\\S+):\\/\\/.+$"
+        replacement   = "$1"
+      }
     }
 
-    loki.source.file "pod_logs" {
+    loki.source.kubernetes "pod_logs" {
       targets    = discovery.relabel.pod_logs.output
       forward_to = [loki.process.pod_logs.receiver]
     }
