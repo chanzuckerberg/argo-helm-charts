@@ -896,14 +896,11 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                           |
-| ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_enabled )               | No      | boolean | No         | -          | Enable Prometheus remote write              |
-| - [externalLabels](#prometheusRemoteWrite_externalLabels ) | No      | object  | No         | -          | External labels to add to all metrics       |
-| - [metricsFilter](#prometheusRemoteWrite_metricsFilter )   | No      | object  | No         | -          | Metrics filtering configuration             |
-| - [queueConfig](#prometheusRemoteWrite_queueConfig )       | No      | object  | No         | -          | Queue configuration for remote write        |
-| - [sigv4](#prometheusRemoteWrite_sigv4 )                   | No      | object  | No         | -          | SigV4 configuration for AWS authentication  |
-| - [url](#prometheusRemoteWrite_url )                       | No      | string  | No         | -          | URL of the Prometheus remote write endpoint |
+| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description               |
+| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------- |
+| - [enabled](#prometheusRemoteWrite_enabled )             | No      | boolean | No         | -          | Enable Prometheus remote write  |
+| - [endpoints](#prometheusRemoteWrite_endpoints )         | No      | array   | No         | -          | Array of remote write endpoints |
+| - [metricsFilter](#prometheusRemoteWrite_metricsFilter ) | No      | object  | No         | -          | Metrics filtering configuration |
 
 ### <a name="prometheusRemoteWrite_enabled"></a>7.1. Property `grafana-alloy > prometheusRemoteWrite > enabled`
 
@@ -914,15 +911,22 @@ Must be one of:
 
 **Description:** Enable Prometheus remote write
 
-### <a name="prometheusRemoteWrite_externalLabels"></a>7.2. Property `grafana-alloy > prometheusRemoteWrite > externalLabels`
+### <a name="prometheusRemoteWrite_endpoints"></a>7.2. Property `grafana-alloy > prometheusRemoteWrite > endpoints`
 
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
 
-**Description:** External labels to add to all metrics
+**Description:** Array of remote write endpoints
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
 ### <a name="prometheusRemoteWrite_metricsFilter"></a>7.3. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter`
 
@@ -956,110 +960,5 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Regex pattern to match metric names to keep
-
-### <a name="prometheusRemoteWrite_queueConfig"></a>7.4. Property `grafana-alloy > prometheusRemoteWrite > queueConfig`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Queue configuration for remote write
-
-| Property                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description        |
-| ---------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
-| - [batchSendDeadline](#prometheusRemoteWrite_queueConfig_batchSendDeadline ) | No      | string  | No         | -          | Batch send deadline      |
-| - [capacity](#prometheusRemoteWrite_queueConfig_capacity )                   | No      | integer | No         | -          | Queue capacity           |
-| - [maxSamplesPerSend](#prometheusRemoteWrite_queueConfig_maxSamplesPerSend ) | No      | integer | No         | -          | Maximum samples per send |
-| - [maxShards](#prometheusRemoteWrite_queueConfig_maxShards )                 | No      | integer | No         | -          | Maximum shards           |
-| - [minShards](#prometheusRemoteWrite_queueConfig_minShards )                 | No      | integer | No         | -          | Minimum shards           |
-
-#### <a name="prometheusRemoteWrite_queueConfig_batchSendDeadline"></a>7.4.1. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > batchSendDeadline`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Batch send deadline
-
-#### <a name="prometheusRemoteWrite_queueConfig_capacity"></a>7.4.2. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > capacity`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
-
-**Description:** Queue capacity
-
-#### <a name="prometheusRemoteWrite_queueConfig_maxSamplesPerSend"></a>7.4.3. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > maxSamplesPerSend`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
-
-**Description:** Maximum samples per send
-
-#### <a name="prometheusRemoteWrite_queueConfig_maxShards"></a>7.4.4. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > maxShards`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
-
-**Description:** Maximum shards
-
-#### <a name="prometheusRemoteWrite_queueConfig_minShards"></a>7.4.5. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > minShards`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
-
-**Description:** Minimum shards
-
-### <a name="prometheusRemoteWrite_sigv4"></a>7.5. Property `grafana-alloy > prometheusRemoteWrite > sigv4`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** SigV4 configuration for AWS authentication
-
-| Property                                           | Pattern | Type    | Deprecated | Definition | Title/Description           |
-| -------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------- |
-| - [enabled](#prometheusRemoteWrite_sigv4_enabled ) | No      | boolean | No         | -          | Enable SigV4 authentication |
-| - [region](#prometheusRemoteWrite_sigv4_region )   | No      | string  | No         | -          | AWS region for SigV4        |
-
-#### <a name="prometheusRemoteWrite_sigv4_enabled"></a>7.5.1. Property `grafana-alloy > prometheusRemoteWrite > sigv4 > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable SigV4 authentication
-
-#### <a name="prometheusRemoteWrite_sigv4_region"></a>7.5.2. Property `grafana-alloy > prometheusRemoteWrite > sigv4 > region`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** AWS region for SigV4
-
-### <a name="prometheusRemoteWrite_url"></a>7.6. Property `grafana-alloy > prometheusRemoteWrite > url`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** URL of the Prometheus remote write endpoint
 
 ----------------------------------------------------------------------------------------------------------------------------
