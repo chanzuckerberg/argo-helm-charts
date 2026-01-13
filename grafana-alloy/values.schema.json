@@ -177,8 +177,15 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "description": "CPU limit",
-                  "type": "integer"
+                  "description": "CPU limit (e.g., \"200m\", \"1\", \"2\")",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
                 },
                 "memory": {
                   "description": "Memory limit",
@@ -190,8 +197,15 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "description": "CPU request",
-                  "type": "integer"
+                  "description": "CPU request (e.g., \"200m\", \"1\", \"2\")",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
                 },
                 "memory": {
                   "description": "Memory request",

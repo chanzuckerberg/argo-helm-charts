@@ -124,10 +124,10 @@ alloy:
   # @schema description: Resource requests and limits
   resources:
     requests:
-      cpu: 1 # @schema description: CPU request
+      cpu: 1 # @schema description: CPU request (e.g., "200m", "1", "2"); anyOf: [{"type": "string"}, {"type": "number"}]
       memory: 1Gi # @schema description: Memory request
     limits:
-      cpu: 2 # @schema description: CPU limit
+      cpu: 2 # @schema description: CPU limit (e.g., "200m", "1", "2"); anyOf: [{"type": "string"}, {"type": "number"}]
       memory: 4Gi # @schema description: Memory limit
 
   # @schema description: Node selector for pod assignment
