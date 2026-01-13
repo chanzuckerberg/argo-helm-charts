@@ -357,9 +357,9 @@
           "description": "Enable Prometheus remote write",
           "type": "boolean"
         },
-        "externalLabels": {
-          "description": "External labels to add to all metrics",
-          "type": "object"
+        "endpoints": {
+          "description": "Array of remote write endpoints",
+          "type": "array"
         },
         "metricsFilter": {
           "description": "Metrics filtering configuration",
@@ -374,50 +374,6 @@
               "type": "string"
             }
           }
-        },
-        "queueConfig": {
-          "description": "Queue configuration for remote write",
-          "type": "object",
-          "properties": {
-            "batchSendDeadline": {
-              "description": "Batch send deadline",
-              "type": "string"
-            },
-            "capacity": {
-              "description": "Queue capacity",
-              "type": "integer"
-            },
-            "maxSamplesPerSend": {
-              "description": "Maximum samples per send",
-              "type": "integer"
-            },
-            "maxShards": {
-              "description": "Maximum shards",
-              "type": "integer"
-            },
-            "minShards": {
-              "description": "Minimum shards",
-              "type": "integer"
-            }
-          }
-        },
-        "sigv4": {
-          "description": "SigV4 configuration for AWS authentication",
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "description": "Enable SigV4 authentication",
-              "type": "boolean"
-            },
-            "region": {
-              "description": "AWS region for SigV4",
-              "type": "string"
-            }
-          }
-        },
-        "url": {
-          "description": "URL of the Prometheus remote write endpoint",
-          "type": "string"
         }
       }
     }

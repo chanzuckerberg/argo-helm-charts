@@ -298,32 +298,39 @@ data:
 
     {{- if .Values.prometheusRemoteWrite.enabled }}
     prometheus.remote_write "default" {
+      {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
       endpoint {
-        url = {{ .Values.prometheusRemoteWrite.url | quote }}
+        url = {{ $endpoint.url | quote }}
         
-        {{- if .Values.prometheusRemoteWrite.queueConfig }}
+        {{- if $endpoint.queueConfig }}
         queue_config {
-          max_samples_per_send = {{ .Values.prometheusRemoteWrite.queueConfig.maxSamplesPerSend }}
-          batch_send_deadline  = {{ .Values.prometheusRemoteWrite.queueConfig.batchSendDeadline | quote }}
-          min_shards           = {{ .Values.prometheusRemoteWrite.queueConfig.minShards }}
-          max_shards           = {{ .Values.prometheusRemoteWrite.queueConfig.maxShards }}
-          capacity             = {{ .Values.prometheusRemoteWrite.queueConfig.capacity }}
+          max_samples_per_send = {{ $endpoint.queueConfig.maxSamplesPerSend }}
+          batch_send_deadline  = {{ $endpoint.queueConfig.batchSendDeadline | quote }}
+          min_shards           = {{ $endpoint.queueConfig.minShards }}
+          max_shards           = {{ $endpoint.queueConfig.maxShards }}
+          capacity             = {{ $endpoint.queueConfig.capacity }}
         }
         {{- end }}
 
-        {{- if .Values.prometheusRemoteWrite.sigv4.enabled }}
+        {{- if $endpoint.sigv4 }}
+        {{- if $endpoint.sigv4.enabled }}
         sigv4 {
-          region = {{ .Values.prometheusRemoteWrite.sigv4.region | quote }}
+          region = {{ $endpoint.sigv4.region | quote }}
         }
+        {{- end }}
         {{- end }}
       }
+      {{- end }}
 
-      {{- if .Values.prometheusRemoteWrite.externalLabels }}
+      {{- if .Values.prometheusRemoteWrite.endpoints }}
+      {{- $firstEndpoint := index .Values.prometheusRemoteWrite.endpoints 0 }}
+      {{- if $firstEndpoint.externalLabels }}
       external_labels = {
-        {{- range $key, $value := .Values.prometheusRemoteWrite.externalLabels }}
+        {{- range $key, $value := $firstEndpoint.externalLabels }}
         {{ $key }} = {{ $value | quote }},
         {{- end }}
       }
+      {{- end }}
       {{- end }}
     }
     {{- end }}
