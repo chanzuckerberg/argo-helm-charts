@@ -279,7 +279,13 @@ data:
     }
 
     prometheus.relabel "filter_metrics" {
-      forward_to = [prometheus.remote_write.default.receiver]
+      {{- if .Values.prometheusRemoteWrite.enabled }}
+      forward_to = [
+        {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
+        prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ if ne $idx (sub (len $.Values.prometheusRemoteWrite.endpoints) 1) }},{{ end }}
+        {{- end }}
+      ]
+      {{- end }}
 
       rule {
         target_label = "cluster"
@@ -297,8 +303,8 @@ data:
     {{- end }}
 
     {{- if .Values.prometheusRemoteWrite.enabled }}
-    prometheus.remote_write "default" {
-      {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
+    {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
+    prometheus.remote_write "endpoint_{{ $idx }}" {
       endpoint {
         url = {{ $endpoint.url | quote }}
         
@@ -320,19 +326,16 @@ data:
         {{- end }}
         {{- end }}
       }
-      {{- end }}
 
-      {{- if .Values.prometheusRemoteWrite.endpoints }}
-      {{- $firstEndpoint := index .Values.prometheusRemoteWrite.endpoints 0 }}
-      {{- if $firstEndpoint.externalLabels }}
+      {{- if $endpoint.externalLabels }}
       external_labels = {
-        {{- range $key, $value := $firstEndpoint.externalLabels }}
+        {{- range $key, $value := $endpoint.externalLabels }}
         {{ $key }} = {{ $value | quote }},
         {{- end }}
       }
       {{- end }}
-      {{- end }}
     }
+    {{- end }}
     {{- end }}
 {{- end }}
 {{- end }}
