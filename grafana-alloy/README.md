@@ -8,14 +8,15 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
-| ------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
-| - [alloy](#alloy )             | No      | object  | No         | -          | -                                                                         |
-| - [alloyConfig](#alloyConfig ) | No      | object  | No         | -          | -                                                                         |
-| - [centralLoki](#centralLoki ) | No      | object  | No         | -          | -                                                                         |
-| + [clusterName](#clusterName ) | No      | string  | No         | -          | Name of the cluster where this chart is deployed. This value is required. |
-| - [enabled](#enabled )         | No      | boolean | No         | -          | Enable or disable the Grafana Alloy deployment                            |
-| - [loki](#loki )               | No      | object  | No         | -          | -                                                                         |
+| Property                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| -------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [alloy](#alloy )                                 | No      | object  | No         | -          | -                                                                         |
+| - [alloyConfig](#alloyConfig )                     | No      | object  | No         | -          | -                                                                         |
+| - [centralLoki](#centralLoki )                     | No      | object  | No         | -          | -                                                                         |
+| + [clusterName](#clusterName )                     | No      | string  | No         | -          | Name of the cluster where this chart is deployed. This value is required. |
+| - [enabled](#enabled )                             | No      | boolean | No         | -          | Enable or disable the Grafana Alloy deployment                            |
+| - [loki](#loki )                                   | No      | object  | No         | -          | -                                                                         |
+| - [prometheusRemoteWrite](#prometheusRemoteWrite ) | No      | object  | No         | -          | -                                                                         |
 
 ## <a name="alloy"></a>1. Property `grafana-alloy > alloy`
 
@@ -668,9 +669,12 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                              |
-| ---------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
-| - [content](#alloyConfig_content ) | No      | string | No         | -          | Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config. |
+| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                            |
+| ---------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
+| - [content](#alloyConfig_content ) | No      | string | No         | -          | Custom Alloy configuration content (River format). If empty, uses default collection config. |
+| - [events](#alloyConfig_events )   | No      | object | No         | -          | Enable Kubernetes events collection                                                          |
+| - [metrics](#alloyConfig_metrics ) | No      | object | No         | -          | Enable Prometheus metrics collection                                                         |
+| - [podLogs](#alloyConfig_podLogs ) | No      | object | No         | -          | Enable pod log collection                                                                    |
 
 ### <a name="alloyConfig_content"></a>2.1. Property `grafana-alloy > alloyConfig > content`
 
@@ -679,7 +683,76 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.
+**Description:** Custom Alloy configuration content (River format). If empty, uses default collection config.
+
+### <a name="alloyConfig_events"></a>2.2. Property `grafana-alloy > alloyConfig > events`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Enable Kubernetes events collection
+
+| Property                                  | Pattern | Type    | Deprecated | Definition | Title/Description                      |
+| ----------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------- |
+| - [enabled](#alloyConfig_events_enabled ) | No      | boolean | No         | -          | Enable collection of Kubernetes events |
+
+#### <a name="alloyConfig_events_enabled"></a>2.2.1. Property `grafana-alloy > alloyConfig > events > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable collection of Kubernetes events
+
+### <a name="alloyConfig_metrics"></a>2.3. Property `grafana-alloy > alloyConfig > metrics`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Enable Prometheus metrics collection
+
+| Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                             |
+| ------------------------------------------ | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------- |
+| - [enabled](#alloyConfig_metrics_enabled ) | No      | boolean | No         | -          | Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true) |
+
+#### <a name="alloyConfig_metrics_enabled"></a>2.3.1. Property `grafana-alloy > alloyConfig > metrics > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)
+
+### <a name="alloyConfig_podLogs"></a>2.4. Property `grafana-alloy > alloyConfig > podLogs`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Enable pod log collection
+
+| Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description                            |
+| ------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------- |
+| - [enabled](#alloyConfig_podLogs_enabled ) | No      | boolean | No         | -          | Enable collection of pod logs from all nodes |
+
+#### <a name="alloyConfig_podLogs_enabled"></a>2.4.1. Property `grafana-alloy > alloyConfig > podLogs > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable collection of pod logs from all nodes
 
 ## <a name="centralLoki"></a>3. Property `grafana-alloy > centralLoki`
 
@@ -774,5 +847,179 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** URL of the local Loki instance
+
+## <a name="prometheusRemoteWrite"></a>7. Property `grafana-alloy > prometheusRemoteWrite`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_enabled )               | No      | boolean | No         | -          | Enable Prometheus remote write              |
+| - [externalLabels](#prometheusRemoteWrite_externalLabels ) | No      | object  | No         | -          | External labels to add to all metrics       |
+| - [metricsFilter](#prometheusRemoteWrite_metricsFilter )   | No      | object  | No         | -          | Metrics filtering configuration             |
+| - [queueConfig](#prometheusRemoteWrite_queueConfig )       | No      | object  | No         | -          | Queue configuration for remote write        |
+| - [sigv4](#prometheusRemoteWrite_sigv4 )                   | No      | object  | No         | -          | SigV4 configuration for AWS authentication  |
+| - [url](#prometheusRemoteWrite_url )                       | No      | string  | No         | -          | URL of the Prometheus remote write endpoint |
+
+### <a name="prometheusRemoteWrite_enabled"></a>7.1. Property `grafana-alloy > prometheusRemoteWrite > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable Prometheus remote write
+
+### <a name="prometheusRemoteWrite_externalLabels"></a>7.2. Property `grafana-alloy > prometheusRemoteWrite > externalLabels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** External labels to add to all metrics
+
+### <a name="prometheusRemoteWrite_metricsFilter"></a>7.3. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Metrics filtering configuration
+
+| Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_metricsFilter_enabled ) | No      | boolean | No         | -          | Enable metrics filtering                    |
+| - [regex](#prometheusRemoteWrite_metricsFilter_regex )     | No      | string  | No         | -          | Regex pattern to match metric names to keep |
+
+#### <a name="prometheusRemoteWrite_metricsFilter_enabled"></a>7.3.1. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable metrics filtering
+
+#### <a name="prometheusRemoteWrite_metricsFilter_regex"></a>7.3.2. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter > regex`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Regex pattern to match metric names to keep
+
+### <a name="prometheusRemoteWrite_queueConfig"></a>7.4. Property `grafana-alloy > prometheusRemoteWrite > queueConfig`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Queue configuration for remote write
+
+| Property                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description        |
+| ---------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------ |
+| - [batchSendDeadline](#prometheusRemoteWrite_queueConfig_batchSendDeadline ) | No      | string  | No         | -          | Batch send deadline      |
+| - [capacity](#prometheusRemoteWrite_queueConfig_capacity )                   | No      | integer | No         | -          | Queue capacity           |
+| - [maxSamplesPerSend](#prometheusRemoteWrite_queueConfig_maxSamplesPerSend ) | No      | integer | No         | -          | Maximum samples per send |
+| - [maxShards](#prometheusRemoteWrite_queueConfig_maxShards )                 | No      | integer | No         | -          | Maximum shards           |
+| - [minShards](#prometheusRemoteWrite_queueConfig_minShards )                 | No      | integer | No         | -          | Minimum shards           |
+
+#### <a name="prometheusRemoteWrite_queueConfig_batchSendDeadline"></a>7.4.1. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > batchSendDeadline`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Batch send deadline
+
+#### <a name="prometheusRemoteWrite_queueConfig_capacity"></a>7.4.2. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > capacity`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Queue capacity
+
+#### <a name="prometheusRemoteWrite_queueConfig_maxSamplesPerSend"></a>7.4.3. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > maxSamplesPerSend`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum samples per send
+
+#### <a name="prometheusRemoteWrite_queueConfig_maxShards"></a>7.4.4. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > maxShards`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum shards
+
+#### <a name="prometheusRemoteWrite_queueConfig_minShards"></a>7.4.5. Property `grafana-alloy > prometheusRemoteWrite > queueConfig > minShards`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Minimum shards
+
+### <a name="prometheusRemoteWrite_sigv4"></a>7.5. Property `grafana-alloy > prometheusRemoteWrite > sigv4`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** SigV4 configuration for AWS authentication
+
+| Property                                           | Pattern | Type    | Deprecated | Definition | Title/Description           |
+| -------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------- |
+| - [enabled](#prometheusRemoteWrite_sigv4_enabled ) | No      | boolean | No         | -          | Enable SigV4 authentication |
+| - [region](#prometheusRemoteWrite_sigv4_region )   | No      | string  | No         | -          | AWS region for SigV4        |
+
+#### <a name="prometheusRemoteWrite_sigv4_enabled"></a>7.5.1. Property `grafana-alloy > prometheusRemoteWrite > sigv4 > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable SigV4 authentication
+
+#### <a name="prometheusRemoteWrite_sigv4_region"></a>7.5.2. Property `grafana-alloy > prometheusRemoteWrite > sigv4 > region`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** AWS region for SigV4
+
+### <a name="prometheusRemoteWrite_url"></a>7.6. Property `grafana-alloy > prometheusRemoteWrite > url`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** URL of the Prometheus remote write endpoint
 
 ----------------------------------------------------------------------------------------------------------------------------
