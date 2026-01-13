@@ -470,19 +470,39 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [cpu](#alloy_resources_limits_cpu )       | No      | integer | No         | -          | CPU limit         |
-| - [memory](#alloy_resources_limits_memory ) | No      | string  | No         | -          | Memory limit      |
+| Property                                    | Pattern | Type        | Deprecated | Definition | Title/Description                  |
+| ------------------------------------------- | ------- | ----------- | ---------- | ---------- | ---------------------------------- |
+| - [cpu](#alloy_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit (e.g., "200m", "1", "2") |
+| - [memory](#alloy_resources_limits_memory ) | No      | string      | No         | -          | Memory limit                       |
 
 ##### <a name="alloy_resources_limits_cpu"></a>1.11.1.1. Property `grafana-alloy > alloy > resources > limits > cpu`
 
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-**Description:** CPU limit
+**Description:** CPU limit (e.g., "200m", "1", "2")
+
+| Any of(Option)                                 |
+| ---------------------------------------------- |
+| [item 0](#alloy_resources_limits_cpu_anyOf_i0) |
+| [item 1](#alloy_resources_limits_cpu_anyOf_i1) |
+
+###### <a name="alloy_resources_limits_cpu_anyOf_i0"></a>1.11.1.1.1. Property `grafana-alloy > alloy > resources > limits > cpu > anyOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="alloy_resources_limits_cpu_anyOf_i1"></a>1.11.1.1.2. Property `grafana-alloy > alloy > resources > limits > cpu > anyOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
 
 ##### <a name="alloy_resources_limits_memory"></a>1.11.1.2. Property `grafana-alloy > alloy > resources > limits > memory`
 
@@ -501,19 +521,39 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description |
-| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [cpu](#alloy_resources_requests_cpu )       | No      | integer | No         | -          | CPU request       |
-| - [memory](#alloy_resources_requests_memory ) | No      | string  | No         | -          | Memory request    |
+| Property                                      | Pattern | Type        | Deprecated | Definition | Title/Description                    |
+| --------------------------------------------- | ------- | ----------- | ---------- | ---------- | ------------------------------------ |
+| - [cpu](#alloy_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request (e.g., "200m", "1", "2") |
+| - [memory](#alloy_resources_requests_memory ) | No      | string      | No         | -          | Memory request                       |
 
 ##### <a name="alloy_resources_requests_cpu"></a>1.11.2.1. Property `grafana-alloy > alloy > resources > requests > cpu`
 
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `combining`      |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-**Description:** CPU request
+**Description:** CPU request (e.g., "200m", "1", "2")
+
+| Any of(Option)                                   |
+| ------------------------------------------------ |
+| [item 0](#alloy_resources_requests_cpu_anyOf_i0) |
+| [item 1](#alloy_resources_requests_cpu_anyOf_i1) |
+
+###### <a name="alloy_resources_requests_cpu_anyOf_i0"></a>1.11.2.1.1. Property `grafana-alloy > alloy > resources > requests > cpu > anyOf > item 0`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="alloy_resources_requests_cpu_anyOf_i1"></a>1.11.2.1.2. Property `grafana-alloy > alloy > resources > requests > cpu > anyOf > item 1`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
 
 ##### <a name="alloy_resources_requests_memory"></a>1.11.2.2. Property `grafana-alloy > alloy > resources > requests > memory`
 
