@@ -280,11 +280,7 @@ data:
 
     prometheus.relabel "filter_metrics" {
       {{- if .Values.prometheusRemoteWrite.enabled }}
-      forward_to = [
-        {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
-        prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ if ne $idx (sub (len $.Values.prometheusRemoteWrite.endpoints) 1) }},{{ end }}
-        {{- end }}
-      ]
+      forward_to = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
       {{- end }}
 
       rule {
