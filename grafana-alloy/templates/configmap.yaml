@@ -94,12 +94,7 @@ data:
 
     loki.process "pod_logs" {
       stage.match {
-        selector = "{namespace=\"loki\",container=\"promtail\"}"
-        action   = "drop"
-      }
-
-      stage.match {
-        selector = "{namespace=\"loki\",container=\"alloy\"}"
+        selector = "{namespace=\"loki\",container=~\"promtail|alloy\"}"
         action   = "drop"
       }
 
