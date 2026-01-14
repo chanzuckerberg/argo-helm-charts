@@ -118,16 +118,32 @@ data:
         action   = "drop"
       }
 
-      stage.cri {}
-
       stage.drop {
         older_than          = "1h"
         drop_counter_reason = "log_too_old"
       }
 
-      stage.labels {
-        values = {
-          stream = "",
+      stage.match {
+        selector = "{container_runtime=~\"containerd|cri-o\"}"
+        
+        stage.cri {}
+
+        stage.labels {
+          values = {
+            stream = "",
+          }
+        }
+      }
+
+      stage.match {
+        selector = "{container_runtime=\"docker\"}"
+        
+        stage.docker {}
+
+        stage.labels {
+          values = {
+            stream = "",
+          }
         }
       }
 
