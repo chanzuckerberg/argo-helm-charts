@@ -354,6 +354,13 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
         "query" $global.Release.Namespace
         "current" (dict "value" $global.Release.Namespace "text" $global.Release.Namespace)
       )
+      (dict
+        "name" "stackName"
+        "type" "constant"
+        "hide" 2
+        "query" $global.Values.global.argusMetadata.stackName
+        "current" (dict "value" $global.Values.global.argusMetadata.stackName "text" $global.Values.global.argusMetadata.stackName)
+      )
     ))
     "annotations" (dict "list" (list
       (dict
