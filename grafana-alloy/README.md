@@ -12,7 +12,6 @@
 | -------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
 | - [alloy](#alloy )                                 | No      | object  | No         | -          | -                                                                         |
 | - [alloyConfig](#alloyConfig )                     | No      | object  | No         | -          | -                                                                         |
-| - [centralLoki](#centralLoki )                     | No      | object  | No         | -          | -                                                                         |
 | + [clusterName](#clusterName )                     | No      | string  | No         | -          | Name of the cluster where this chart is deployed. This value is required. |
 | - [enabled](#enabled )                             | No      | boolean | No         | -          | Enable or disable the Grafana Alloy deployment                            |
 | - [loki](#loki )                                   | No      | object  | No         | -          | -                                                                         |
@@ -794,48 +793,7 @@ Must be one of:
 
 **Description:** Enable collection of pod logs from all nodes
 
-## <a name="centralLoki"></a>3. Property `grafana-alloy > centralLoki`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| -------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [basicAuthEnvVar](#centralLoki_basicAuthEnvVar ) | No      | string  | No         | -          | Name of the environment variable containing basic auth credentials |
-| - [enabled](#centralLoki_enabled )                 | No      | boolean | No         | -          | Enable central Loki endpoint                                       |
-| - [url](#centralLoki_url )                         | No      | string  | No         | -          | URL of the central Loki endpoint                                   |
-
-### <a name="centralLoki_basicAuthEnvVar"></a>3.1. Property `grafana-alloy > centralLoki > basicAuthEnvVar`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the environment variable containing basic auth credentials
-
-### <a name="centralLoki_enabled"></a>3.2. Property `grafana-alloy > centralLoki > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable central Loki endpoint
-
-### <a name="centralLoki_url"></a>3.3. Property `grafana-alloy > centralLoki > url`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** URL of the central Loki endpoint
-
-## <a name="clusterName"></a>4. Property `grafana-alloy > clusterName`
+## <a name="clusterName"></a>3. Property `grafana-alloy > clusterName`
 
 |              |          |
 | ------------ | -------- |
@@ -844,7 +802,7 @@ Must be one of:
 
 **Description:** Name of the cluster where this chart is deployed. This value is required.
 
-## <a name="enabled"></a>5. Property `grafana-alloy > enabled`
+## <a name="enabled"></a>4. Property `grafana-alloy > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -853,7 +811,7 @@ Must be one of:
 
 **Description:** Enable or disable the Grafana Alloy deployment
 
-## <a name="loki"></a>6. Property `grafana-alloy > loki`
+## <a name="loki"></a>5. Property `grafana-alloy > loki`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -861,11 +819,32 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                | Pattern | Type   | Deprecated | Definition | Title/Description                 |
-| ----------------------- | ------- | ------ | ---------- | ---------- | --------------------------------- |
-| - [local](#loki_local ) | No      | object | No         | -          | Local Loki endpoint configuration |
+| Property                        | Pattern | Type            | Deprecated | Definition | Title/Description                      |
+| ------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------- |
+| - [endpoints](#loki_endpoints ) | No      | array of object | No         | -          | List of Loki endpoints to send logs to |
 
-### <a name="loki_local"></a>6.1. Property `grafana-alloy > loki > local`
+### <a name="loki_endpoints"></a>5.1. Property `grafana-alloy > loki > endpoints`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of Loki endpoints to send logs to
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be          | Description |
+| ---------------------------------------- | ----------- |
+| [endpoints items](#loki_endpoints_items) | -           |
+
+#### <a name="loki_endpoints_items"></a>5.1.1. grafana-alloy > loki > endpoints > endpoints items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -873,22 +852,20 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Local Loki endpoint configuration
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description        |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
+| - [url](#loki_endpoints_items_url ) | No      | string | No         | -          | URL of the Loki endpoint |
 
-| Property                  | Pattern | Type   | Deprecated | Definition | Title/Description              |
-| ------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
-| - [url](#loki_local_url ) | No      | string | No         | -          | URL of the local Loki instance |
-
-#### <a name="loki_local_url"></a>6.1.1. Property `grafana-alloy > loki > local > url`
+##### <a name="loki_endpoints_items_url"></a>5.1.1.1. Property `grafana-alloy > loki > endpoints > endpoints items > url`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** URL of the local Loki instance
+**Description:** URL of the Loki endpoint
 
-## <a name="prometheusRemoteWrite"></a>7. Property `grafana-alloy > prometheusRemoteWrite`
+## <a name="prometheusRemoteWrite"></a>6. Property `grafana-alloy > prometheusRemoteWrite`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -902,7 +879,7 @@ Must be one of:
 | - [endpoints](#prometheusRemoteWrite_endpoints )         | No      | array   | No         | -          | Array of remote write endpoints |
 | - [metricsFilter](#prometheusRemoteWrite_metricsFilter ) | No      | object  | No         | -          | Metrics filtering configuration |
 
-### <a name="prometheusRemoteWrite_enabled"></a>7.1. Property `grafana-alloy > prometheusRemoteWrite > enabled`
+### <a name="prometheusRemoteWrite_enabled"></a>6.1. Property `grafana-alloy > prometheusRemoteWrite > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -911,7 +888,7 @@ Must be one of:
 
 **Description:** Enable Prometheus remote write
 
-### <a name="prometheusRemoteWrite_endpoints"></a>7.2. Property `grafana-alloy > prometheusRemoteWrite > endpoints`
+### <a name="prometheusRemoteWrite_endpoints"></a>6.2. Property `grafana-alloy > prometheusRemoteWrite > endpoints`
 
 |              |         |
 | ------------ | ------- |
@@ -928,7 +905,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="prometheusRemoteWrite_metricsFilter"></a>7.3. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter`
+### <a name="prometheusRemoteWrite_metricsFilter"></a>6.3. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -943,7 +920,7 @@ Must be one of:
 | - [enabled](#prometheusRemoteWrite_metricsFilter_enabled ) | No      | boolean | No         | -          | Enable metrics filtering                    |
 | - [regex](#prometheusRemoteWrite_metricsFilter_regex )     | No      | string  | No         | -          | Regex pattern to match metric names to keep |
 
-#### <a name="prometheusRemoteWrite_metricsFilter_enabled"></a>7.3.1. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter > enabled`
+#### <a name="prometheusRemoteWrite_metricsFilter_enabled"></a>6.3.1. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -952,7 +929,7 @@ Must be one of:
 
 **Description:** Enable metrics filtering
 
-#### <a name="prometheusRemoteWrite_metricsFilter_regex"></a>7.3.2. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter > regex`
+#### <a name="prometheusRemoteWrite_metricsFilter_regex"></a>6.3.2. Property `grafana-alloy > prometheusRemoteWrite > metricsFilter > regex`
 
 |              |          |
 | ------------ | -------- |
