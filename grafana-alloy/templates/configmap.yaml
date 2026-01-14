@@ -118,6 +118,11 @@ data:
         expression = "(?i)(?:^|[\\s\"'\\[{(,:=])(?P<level>\\b(?:trace|debug|info|warn|warning|error|fatal|critical|trc|dbg|inf|wrn|err|crt|ftl)\\b)(?:[\\s\"'\\]}),.:=]|$)"
       }
 
+      stage.template {
+        source   = "level"
+        template = "{{ .Value | ToLower }}"
+      }
+
       stage.labels {
         values = {
           level = "",
