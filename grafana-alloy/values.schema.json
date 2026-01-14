@@ -310,23 +310,6 @@
         }
       }
     },
-    "centralLoki": {
-      "type": "object",
-      "properties": {
-        "basicAuthEnvVar": {
-          "description": "Name of the environment variable containing basic auth credentials",
-          "type": "string"
-        },
-        "enabled": {
-          "description": "Enable central Loki endpoint",
-          "type": "boolean"
-        },
-        "url": {
-          "description": "URL of the central Loki endpoint",
-          "type": "string"
-        }
-      }
-    },
     "clusterName": {
       "description": "Name of the cluster where this chart is deployed. This value is required.",
       "type": "string"
@@ -338,13 +321,16 @@
     "loki": {
       "type": "object",
       "properties": {
-        "local": {
-          "description": "Local Loki endpoint configuration",
-          "type": "object",
-          "properties": {
-            "url": {
-              "description": "URL of the local Loki instance",
-              "type": "string"
+        "endpoints": {
+          "description": "List of Loki endpoints to send logs to",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "description": "URL of the Loki endpoint",
+                "type": "string"
+              }
             }
           }
         }

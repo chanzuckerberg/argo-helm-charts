@@ -7,15 +7,18 @@ clusterName: "" # @schema description: Name of the cluster where this chart is d
 
 # Loki endpoints configuration
 loki:
-  # @schema description: Local Loki endpoint configuration
-  local:
-    url: "http://loki.loki.svc:3100/loki/api/v1/push" # @schema description: URL of the local Loki instance
+  endpoints: # @schema description: List of Loki endpoints to send logs to
+    - url: "http://loki.loki.svc:3100/loki/api/v1/push" # @schema description: URL of the Loki endpoint
+      # basicAuth: # @schema description: Basic authentication configuration (optional)
+      #   envVar: "BASIC_AUTH_CREDENTIALS" # @schema description: Name of the environment variable containing basic auth credentials
 
-# Central Loki endpoint configuration (e.g., Argus metrics gateway)
-centralLoki:
-  enabled: false # @schema description: Enable central Loki endpoint
-  url: "" # @schema description: URL of the central Loki endpoint
-  basicAuthEnvVar: "BASIC_AUTH_CREDENTIALS" # @schema description: Name of the environment variable containing basic auth credentials
+# Example with multiple endpoints:
+# loki:
+#   endpoints:
+#     - url: "http://loki.loki.svc:3100/loki/api/v1/push"
+#     - url: "https://loki.prod-central-o11y.prod.czi.team/loki/api/v1/push"
+#       basicAuth:
+#         envVar: "BASIC_AUTH_CREDENTIALS"
 
 # Prometheus remote write configuration
 prometheusRemoteWrite:

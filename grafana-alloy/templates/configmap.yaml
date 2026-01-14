@@ -153,16 +153,16 @@ data:
     }
 
     loki.write "endpoints" {
+      {{- range $idx, $endpoint := .Values.loki.endpoints }}
       endpoint {
-        url = {{ .Values.loki.local.url | quote }}
-      }
-
-      {{- if and .Values.centralLoki.enabled .Values.centralLoki.url }}
-      endpoint {
-        url = {{ .Values.centralLoki.url | quote }}
+        url = {{ $endpoint.url | quote }}
+        {{- if $endpoint.basicAuth }}
+        {{- if $endpoint.basicAuth.envVar }}
         headers = {
-          "Authorization" = "Basic " + env({{ .Values.centralLoki.basicAuthEnvVar | quote }}),
+          "Authorization" = "Basic " + env({{ $endpoint.basicAuth.envVar | quote }}),
         }
+        {{- end }}
+        {{- end }}
       }
       {{- end }}
     }

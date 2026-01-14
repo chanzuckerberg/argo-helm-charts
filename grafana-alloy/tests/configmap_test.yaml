@@ -63,9 +63,12 @@ tests:
     set:
       enabled: true
       clusterName: test-cluster
-      centralLoki:
-        enabled: true
-        url: "https://loki-gateway.example.com/loki/api/v1/push"
+      loki:
+        endpoints:
+          - url: "http://loki.loki.svc:3100/loki/api/v1/push"
+          - url: "https://loki-gateway.example.com/loki/api/v1/push"
+            basicAuth:
+              envVar: "BASIC_AUTH_CREDENTIALS"
     asserts:
       - matchRegex:
           path: data["config.alloy"]
@@ -78,8 +81,9 @@ tests:
     set:
       enabled: true
       clusterName: test-cluster
-      centralLoki:
-        enabled: false
+      loki:
+        endpoints:
+          - url: "http://loki.loki.svc:3100/loki/api/v1/push"
     asserts:
       - notMatchRegex:
           path: data["config.alloy"]
@@ -89,10 +93,12 @@ tests:
     set:
       enabled: true
       clusterName: test-cluster
-      centralLoki:
-        enabled: true
-        url: "https://loki-gateway.example.com/loki/api/v1/push"
-        basicAuthEnvVar: "CUSTOM_AUTH_CREDENTIALS"
+      loki:
+        endpoints:
+          - url: "http://loki.loki.svc:3100/loki/api/v1/push"
+          - url: "https://loki-gateway.example.com/loki/api/v1/push"
+            basicAuth:
+              envVar: "CUSTOM_AUTH_CREDENTIALS"
     asserts:
       - matchRegex:
           path: data["config.alloy"]
