@@ -132,12 +132,11 @@ data:
       stage.labels {
         values = {
           stream = "",
-          flags  = "",
         }
       }
 
       stage.label_drop {
-        values = ["filename"]
+        values = ["filename", "flags"]
       }
 
       stage.static_labels {
