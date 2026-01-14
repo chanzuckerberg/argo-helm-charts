@@ -118,11 +118,6 @@ data:
         expression = "(?i)(?:^|[\\s\"'\\[{(,:=])(?P<level>\\b(?:trace|debug|info|warn|warning|error|fatal|critical|trc|dbg|inf|wrn|err|crt|ftl)\\b)(?:[\\s\"'\\]}),.:=]|$)"
       }
 
-      stage.template {
-        source   = "level"
-        template = "{{ .Value | ToLower }}"
-      }
-
       stage.labels {
         values = {
           level = "",
@@ -147,7 +142,17 @@ data:
         }
       }
 
+      forward_to = [loki.relabel.normalize_level.receiver]
+    }
+
+    loki.relabel "normalize_level" {
       forward_to = [loki.write.endpoints.receiver]
+
+      rule {
+        action        = "lowercase"
+        source_labels = ["level"]
+        target_label  = "level"
+      }
     }
 
     loki.write "endpoints" {
