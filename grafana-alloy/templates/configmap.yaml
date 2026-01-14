@@ -125,6 +125,12 @@ data:
         drop_counter_reason = "log_too_old"
       }
 
+      stage.labels {
+        values = {
+          stream = "",
+        }
+      }
+
       stage.static_labels {
         values = {
           cluster  = {{ .Values.clusterName | quote }},
