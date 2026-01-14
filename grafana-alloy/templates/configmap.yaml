@@ -136,6 +136,10 @@ data:
         }
       }
 
+      stage.label_drop {
+        values = ["filename"]
+      }
+
       stage.static_labels {
         values = {
           cluster  = {{ .Values.clusterName | quote }},
