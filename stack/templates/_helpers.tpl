@@ -291,30 +291,38 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- $finalPanels := list -}}
 {{- $currentX := 0 -}}
 {{- $currentY := 0 -}}
-{{- $currentServiceIdx := -1 -}}
-{{- $serviceStartY := 0 -}}
+{{- $currentRowHeight := 8 -}}
 {{- range $panelIdx, $panel := $panels -}}
   {{- $panel = set $panel "id" (add $panelIdx 1) -}}
   {{- if eq $panel.type "row" -}}
-    {{/* Row panel - reset to start of new service section */}}
-    {{- $currentServiceIdx = $panel.serviceIndex -}}
-    {{- $serviceStartY = mul $currentServiceIdx 18 -}}
-    {{- $currentY = $serviceStartY -}}
+    {{/* Row panel - if we have panels on current row, move to next row first */}}
+    {{- if gt $currentX 0 -}}
+      {{- $currentY = add $currentY $currentRowHeight -}}
+    {{- end -}}
     {{- $currentX = 0 -}}
-    {{- $panel = set $panel "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $serviceStartY) -}}
+    {{- $panel = set $panel "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $currentY) -}}
     {{- $panel = unset $panel "serviceIndex" -}}
     {{/* After row, start panels on next line */}}
-    {{- $currentY = add $serviceStartY 1 -}}
+    {{- $currentY = add $currentY 1 -}}
+    {{- $currentRowHeight = 8 -}}
   {{- else -}}
     {{/* Regular panel - use existing gridPos.h and gridPos.w, calculate x and y */}}
     {{- $existingGridPos := $panel.gridPos -}}
-    {{- $h := default 8 $existingGridPos.h -}}
-    {{- $w := default 12 $existingGridPos.w -}}
+    {{- $rawH := default 8 $existingGridPos.h -}}
+    {{- $h := int (round (float64 $rawH)) -}}
+    {{- $rawW := default 12 $existingGridPos.w -}}
+    {{- $w := int (round (float64 $rawW)) -}}
 
     {{/* If panel doesn't fit on current row, wrap to next row */}}
     {{- if gt (add $currentX $w) 24 -}}
       {{- $currentX = 0 -}}
-      {{- $currentY = add $currentY $h -}}
+      {{- $currentY = add $currentY $currentRowHeight -}}
+      {{- $currentRowHeight = $h -}}
+    {{- else -}}
+      {{/* Track max height of panels in current row */}}
+      {{- if gt $h $currentRowHeight -}}
+        {{- $currentRowHeight = $h -}}
+      {{- end -}}
     {{- end -}}
 
     {{/* Set final gridPos with calculated x and y */}}
@@ -325,7 +333,8 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
     {{/* If we've filled the row, reset x and move to next row */}}
     {{- if ge $currentX 24 -}}
       {{- $currentX = 0 -}}
-      {{- $currentY = add $currentY $h -}}
+      {{- $currentY = add $currentY $currentRowHeight -}}
+      {{- $currentRowHeight = 8 -}}
     {{- end -}}
   {{- end -}}
   {{- $finalPanels = append $finalPanels $panel -}}
