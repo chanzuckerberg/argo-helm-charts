@@ -312,6 +312,17 @@ global: # @schema description: Global configuration for the stack - this serves 
     instanceSelector: # @schema description: Instance selector for the Grafana dashboard
       matchLabels:
         name: central-grafana
+    extraPanels: [] # @schema type: array; item: object; itemProperties: {"type": {"type": "string"}, "title": {"type": "string"}, "datasource": {"type": "object"}, "targets": {"type": "array"}, "gridPos": {"type": "object"}, "options": {"type": "object"}}; description: Extra panels to add to the Grafana dashboard
+    # extraPanels:
+    #   - type: timeseries
+    #     title: "Extra Panel"
+    #     datasource:
+    #       type: "prometheus"
+    #       uid: "amp"
+    #     targets:
+    #       - expr: "up"
+    #     gridPos: {"h": 10, "w": 12, "x": 0, "y": 0}
+    #     options: {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}}
 
 services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
   {}
