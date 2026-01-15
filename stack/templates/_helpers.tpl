@@ -308,10 +308,8 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
   {{- else -}}
     {{/* Regular panel - use existing gridPos.h and gridPos.w, calculate x and y */}}
     {{- $existingGridPos := $panel.gridPos -}}
-    {{- $rawH := default 8 $existingGridPos.h -}}
-    {{- $h := int (round (float64 $rawH)) -}}
-    {{- $rawW := default 12 $existingGridPos.w -}}
-    {{- $w := int (round (float64 $rawW)) -}}
+    {{- $h := default 8 $existingGridPos.h | int -}}
+    {{- $w := default 12 $existingGridPos.w | int -}}
 
     {{/* If panel doesn't fit on current row, wrap to next row */}}
     {{- if gt (add $currentX $w) 24 -}}
