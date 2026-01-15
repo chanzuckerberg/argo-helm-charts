@@ -271,11 +271,25 @@
                   "datasource": {
                     "type": "object"
                   },
-                  "gridPos": {
+                  "fieldConfig": {
                     "type": "object"
+                  },
+                  "gridPos": {
+                    "type": "object",
+                    "properties": {
+                      "h": {
+                        "type": "number"
+                      },
+                      "w": {
+                        "type": "number"
+                      }
+                    }
                   },
                   "options": {
                     "type": "object"
+                  },
+                  "pluginVersion": {
+                    "type": "string"
                   },
                   "targets": {
                     "type": "array"
