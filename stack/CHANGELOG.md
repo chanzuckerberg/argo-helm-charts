@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.24.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.23.1...stack-v2.24.0) (2026-01-15)
+
+
+### Features
+
+* allow adding custom charts to per-stack dashboards ([#355](https://github.com/chanzuckerberg/argo-helm-charts/issues/355)) ([68ead54](https://github.com/chanzuckerberg/argo-helm-charts/commit/68ead542ca9124a792e7f97aa521568d6259203e))
+
 ## [2.23.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.23.0...stack-v2.23.1) (2026-01-05)
 
 

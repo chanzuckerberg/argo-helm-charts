@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.3.0...grafana-alloy-v0.4.0) (2026-01-15)
+
+
+### Features
+
+* Parametrize basic auth credential environment variable name for grafana alloy ([#352](https://github.com/chanzuckerberg/argo-helm-charts/issues/352)) ([92c1fad](https://github.com/chanzuckerberg/argo-helm-charts/commit/92c1fad276bbc81834ec4428a39ef971f8ada951))
+
 ## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.2.0...grafana-alloy-v0.3.0) (2026-01-05)
 
 
