@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.24.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.24.0...stack-v2.24.1) (2026-01-16)
+
+
+### Bug Fixes
+
+* panel sections assumed static height when it should be dynamically calculated ([#356](https://github.com/chanzuckerberg/argo-helm-charts/issues/356)) ([4aa9c3a](https://github.com/chanzuckerberg/argo-helm-charts/commit/4aa9c3ac8d2a8db5838c36ed308c70986d60f665))
+* wrong number of args for round ([#358](https://github.com/chanzuckerberg/argo-helm-charts/issues/358)) ([8998efb](https://github.com/chanzuckerberg/argo-helm-charts/commit/8998efbc330d2ab56c65de1b9094bd1ab0874b0d))
+
 ## [2.24.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.23.1...stack-v2.24.0) (2026-01-15)
 
 
