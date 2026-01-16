@@ -248,6 +248,12 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- end }}
 {{- $containerRestartsPanelDict := include "stack.grafanaDashboard.charts.serviceContainerRestarts" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $containerRestartsPanelDict -}}
+
+{{/* Add extra panels from grafanaDashboard.extraPanels */}}
+{{- range $extraPanel := .Values.grafanaDashboard.extraPanels -}}
+  {{- $panels = append $panels $extraPanel -}}
+{{- end -}}
+
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -271,6 +277,12 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- $panels = append $panels $cronJobLastSuccessfulRunPanelDict -}}
 {{- $cronJobAvgDurationPanelDict := include "stack.grafanaDashboard.charts.cronJobAverageDuration" (dict "global" $global "cronJob" $cronJob) | fromYaml -}}
 {{- $panels = append $panels $cronJobAvgDurationPanelDict -}}
+
+{{/* Add extra panels from grafanaDashboard.extraPanels */}}
+{{- range $extraPanel := .Values.grafanaDashboard.extraPanels -}}
+  {{- $panels = append $panels $extraPanel -}}
+{{- end -}}
+
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -279,30 +291,38 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- $finalPanels := list -}}
 {{- $currentX := 0 -}}
 {{- $currentY := 0 -}}
-{{- $currentServiceIdx := -1 -}}
-{{- $serviceStartY := 0 -}}
+{{- $currentRowHeight := 8 -}}
 {{- range $panelIdx, $panel := $panels -}}
   {{- $panel = set $panel "id" (add $panelIdx 1) -}}
   {{- if eq $panel.type "row" -}}
-    {{/* Row panel - reset to start of new service section */}}
-    {{- $currentServiceIdx = $panel.serviceIndex -}}
-    {{- $serviceStartY = mul $currentServiceIdx 18 -}}
-    {{- $currentY = $serviceStartY -}}
+    {{/* Row panel - if we have panels on current row, move to next row first */}}
+    {{- if gt $currentX 0 -}}
+      {{- $currentY = add $currentY $currentRowHeight -}}
+    {{- end -}}
     {{- $currentX = 0 -}}
-    {{- $panel = set $panel "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $serviceStartY) -}}
+    {{- $panel = set $panel "gridPos" (dict "h" 1 "w" 24 "x" 0 "y" $currentY) -}}
     {{- $panel = unset $panel "serviceIndex" -}}
     {{/* After row, start panels on next line */}}
-    {{- $currentY = add $serviceStartY 1 -}}
+    {{- $currentY = add $currentY 1 -}}
+    {{- $currentRowHeight = 8 -}}
   {{- else -}}
     {{/* Regular panel - use existing gridPos.h and gridPos.w, calculate x and y */}}
     {{- $existingGridPos := $panel.gridPos -}}
-    {{- $h := default 8 $existingGridPos.h -}}
-    {{- $w := default 12 $existingGridPos.w -}}
+    {{- $rawH := default 8 $existingGridPos.h -}}
+    {{- $h := int (round (float64 $rawH)) -}}
+    {{- $rawW := default 12 $existingGridPos.w -}}
+    {{- $w := int (round (float64 $rawW)) -}}
 
     {{/* If panel doesn't fit on current row, wrap to next row */}}
     {{- if gt (add $currentX $w) 24 -}}
       {{- $currentX = 0 -}}
-      {{- $currentY = add $currentY $h -}}
+      {{- $currentY = add $currentY $currentRowHeight -}}
+      {{- $currentRowHeight = $h -}}
+    {{- else -}}
+      {{/* Track max height of panels in current row */}}
+      {{- if gt $h $currentRowHeight -}}
+        {{- $currentRowHeight = $h -}}
+      {{- end -}}
     {{- end -}}
 
     {{/* Set final gridPos with calculated x and y */}}
@@ -313,7 +333,8 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
     {{/* If we've filled the row, reset x and move to next row */}}
     {{- if ge $currentX 24 -}}
       {{- $currentX = 0 -}}
-      {{- $currentY = add $currentY $h -}}
+      {{- $currentY = add $currentY $currentRowHeight -}}
+      {{- $currentRowHeight = 8 -}}
     {{- end -}}
   {{- end -}}
   {{- $finalPanels = append $finalPanels $panel -}}
@@ -334,7 +355,22 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
     "panels" $finalPanels
     "time" (dict "from" "now-6h" "to" "now")
     "timepicker" (dict "time_options" (list) "refresh_intervals" (list))
-    "templating" (dict "list" (list))
+    "templating" (dict "list" (list
+      (dict
+        "name" "namespace"
+        "type" "constant"
+        "hide" 2
+        "query" $global.Release.Namespace
+        "current" (dict "value" $global.Release.Namespace "text" $global.Release.Namespace)
+      )
+      (dict
+        "name" "stackName"
+        "type" "constant"
+        "hide" 2
+        "query" $global.Values.global.argusMetadata.stackName
+        "current" (dict "value" $global.Values.global.argusMetadata.stackName "text" $global.Values.global.argusMetadata.stackName)
+      )
+    ))
     "annotations" (dict "list" (list
       (dict
         "builtIn" 1
@@ -384,7 +420,8 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceSuccessRate" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status=~\"2..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\"}[5m])) * 100" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
+{{- $serviceFullname := include "service.fullname" $service -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\", status=~\"2..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -425,7 +462,8 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceFailureRate" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"%s\", service=\"%s\"}[5m])) * 100" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
+{{- $serviceFullname := include "service.fullname" $service -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -466,7 +504,7 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceContainerRestarts" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $metricsQuery := printf "increase(kube_pod_container_status_restarts_total{namespace=\"%s\", pod=~\"%s-.*\"}[5m])" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
+{{- $metricsQuery := printf "increase(kube_pod_container_status_restarts_total{namespace=\"$namespace\", pod=~\"%s-.*\"}[5m])" (include "service.fullname" $service) -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -507,7 +545,8 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceIngressLatency" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_request_duration_seconds_sum{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"%s\", status=\"200\", service=\"%s\"}[5m]))" $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) $global.Values.global.argoBuildEnv.appNamespace (include "service.fullname" $service) -}}
+{{- $serviceFullname := include "service.fullname" $service -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_request_duration_seconds_sum{namespace=\"$namespace\", status=\"200\", service=\"%s\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"$namespace\", status=\"200\", service=\"%s\"}[5m]))" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -549,9 +588,8 @@ Expects a dict with keys: global, cronJob
 {{- $global := .global -}}
 {{- $cronJob := .cronJob -}}
 {{- $cronJobFullname := include "service.fullname" $cronJob -}}
-{{- $namespace := $global.Values.global.argoBuildEnv.appNamespace -}}
-{{- $successQuery := printf "count((kube_job_status_succeeded{namespace=\"%s\", job_name=~\"%s-.*\"} UNLESS kube_job_status_succeeded{namespace=\"%s\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $namespace $cronJobFullname $namespace $cronJobFullname -}}
-{{- $failureQuery := printf "count((kube_job_status_failed{namespace=\"%s\", job_name=~\"%s-.*\"} UNLESS kube_job_status_failed{namespace=\"%s\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $namespace $cronJobFullname $namespace $cronJobFullname -}}
+{{- $successQuery := printf "count((kube_job_status_succeeded{namespace=\"$namespace\", job_name=~\"%s-.*\"} UNLESS kube_job_status_succeeded{namespace=\"$namespace\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $cronJobFullname $cronJobFullname -}}
+{{- $failureQuery := printf "count((kube_job_status_failed{namespace=\"$namespace\", job_name=~\"%s-.*\"} UNLESS kube_job_status_failed{namespace=\"$namespace\", job_name=~\"%s-.*\"} offset $__interval) == 1)" $cronJobFullname $cronJobFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -674,8 +712,7 @@ Expects a dict with keys: global, cronJob
 {{- $global := .global -}}
 {{- $cronJob := .cronJob -}}
 {{- $cronJobFullname := include "service.fullname" $cronJob -}}
-{{- $namespace := $global.Values.global.argoBuildEnv.appNamespace -}}
-{{- $lastSuccessQuery := printf "max(kube_job_status_completion_time{namespace=\"%s\", job_name=~\"%s-.*\"} > 0) * 1000" $namespace $cronJobFullname -}}
+{{- $lastSuccessQuery := printf "max(kube_job_status_completion_time{namespace=\"$namespace\", job_name=~\"%s-.*\"} > 0) * 1000" $cronJobFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 6)
@@ -742,8 +779,7 @@ Expects a dict with keys: global, cronJob
 {{- $global := .global -}}
 {{- $cronJob := .cronJob -}}
 {{- $cronJobFullname := include "service.fullname" $cronJob -}}
-{{- $namespace := $global.Values.global.argoBuildEnv.appNamespace -}}
-{{- $avgDurationQuery := printf "avg(kube_job_status_completion_time{namespace=\"%s\", job_name=~\"%s-.*\"} - kube_job_status_start_time{namespace=\"%s\", job_name=~\"%s-.*\"})" $namespace $cronJobFullname $namespace $cronJobFullname -}}
+{{- $avgDurationQuery := printf "avg(kube_job_status_completion_time{namespace=\"$namespace\", job_name=~\"%s-.*\"} - kube_job_status_start_time{namespace=\"$namespace\", job_name=~\"%s-.*\"})" $cronJobFullname $cronJobFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 6)

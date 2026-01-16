@@ -679,11 +679,12 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>2.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -727,7 +728,134 @@ Must be one of:
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
 
-##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>2.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
+##### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels"></a>2.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Extra panels to add to the Grafana dashboard
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                            | Description |
+| -------------------------------------------------------------------------- | ----------- |
+| [extraPanels items](#cronJobs_pattern1_grafanaDashboard_extraPanels_items) | -           |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items"></a>2.1.16.3.1. stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [datasource](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_datasource )       | No      | object | No         | -          | -                 |
+| - [fieldConfig](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_fieldConfig )     | No      | object | No         | -          | -                 |
+| - [gridPos](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos )             | No      | object | No         | -          | -                 |
+| - [options](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_options )             | No      | object | No         | -          | -                 |
+| - [pluginVersion](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_pluginVersion ) | No      | string | No         | -          | -                 |
+| - [targets](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_targets )             | No      | array  | No         | -          | -                 |
+| - [title](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_title )                 | No      | string | No         | -          | -                 |
+| - [type](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_type )                   | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_datasource"></a>2.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > datasource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_fieldConfig"></a>2.1.16.3.1.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > fieldConfig`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos"></a>2.1.16.3.1.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [h](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_h ) | No      | number | No         | -          | -                 |
+| - [w](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_w ) | No      | number | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_h"></a>2.1.16.3.1.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos > h`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_w"></a>2.1.16.3.1.3.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos > w`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_options"></a>2.1.16.3.1.4. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > options`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_pluginVersion"></a>2.1.16.3.1.5. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > pluginVersion`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_targets"></a>2.1.16.3.1.6. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > targets`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_title"></a>2.1.16.3.1.7. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > title`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_type"></a>2.1.16.3.1.8. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>2.1.16.4. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -741,7 +869,7 @@ Must be one of:
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [matchLabels](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>2.1.16.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>2.1.16.4.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -753,7 +881,7 @@ Must be one of:
 | -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [name](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>2.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>2.1.16.4.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
 
 |              |          |
 | ------------ | -------- |
@@ -3392,11 +3520,12 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#global_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
-| - [enabled](#global_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [instanceSelector](#global_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
+| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#global_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
+| - [enabled](#global_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [extraPanels](#global_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
+| - [instanceSelector](#global_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
 
 #### <a name="global_grafanaDashboard_datasources"></a>3.16.1. Property `stack > global > grafanaDashboard > datasources`
 
@@ -3440,7 +3569,134 @@ Must be one of:
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
 
-#### <a name="global_grafanaDashboard_instanceSelector"></a>3.16.3. Property `stack > global > grafanaDashboard > instanceSelector`
+#### <a name="global_grafanaDashboard_extraPanels"></a>3.16.3. Property `stack > global > grafanaDashboard > extraPanels`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Extra panels to add to the Grafana dashboard
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                 | Description |
+| --------------------------------------------------------------- | ----------- |
+| [extraPanels items](#global_grafanaDashboard_extraPanels_items) | -           |
+
+##### <a name="global_grafanaDashboard_extraPanels_items"></a>3.16.3.1. stack > global > grafanaDashboard > extraPanels > extraPanels items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [datasource](#global_grafanaDashboard_extraPanels_items_datasource )       | No      | object | No         | -          | -                 |
+| - [fieldConfig](#global_grafanaDashboard_extraPanels_items_fieldConfig )     | No      | object | No         | -          | -                 |
+| - [gridPos](#global_grafanaDashboard_extraPanels_items_gridPos )             | No      | object | No         | -          | -                 |
+| - [options](#global_grafanaDashboard_extraPanels_items_options )             | No      | object | No         | -          | -                 |
+| - [pluginVersion](#global_grafanaDashboard_extraPanels_items_pluginVersion ) | No      | string | No         | -          | -                 |
+| - [targets](#global_grafanaDashboard_extraPanels_items_targets )             | No      | array  | No         | -          | -                 |
+| - [title](#global_grafanaDashboard_extraPanels_items_title )                 | No      | string | No         | -          | -                 |
+| - [type](#global_grafanaDashboard_extraPanels_items_type )                   | No      | string | No         | -          | -                 |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_datasource"></a>3.16.3.1.1. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > datasource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_fieldConfig"></a>3.16.3.1.2. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > fieldConfig`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_gridPos"></a>3.16.3.1.3. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > gridPos`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [h](#global_grafanaDashboard_extraPanels_items_gridPos_h ) | No      | number | No         | -          | -                 |
+| - [w](#global_grafanaDashboard_extraPanels_items_gridPos_w ) | No      | number | No         | -          | -                 |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_gridPos_h"></a>3.16.3.1.3.1. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > gridPos > h`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_gridPos_w"></a>3.16.3.1.3.2. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > gridPos > w`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_options"></a>3.16.3.1.4. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > options`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_pluginVersion"></a>3.16.3.1.5. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > pluginVersion`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_targets"></a>3.16.3.1.6. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > targets`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_title"></a>3.16.3.1.7. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > title`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_grafanaDashboard_extraPanels_items_type"></a>3.16.3.1.8. Property `stack > global > grafanaDashboard > extraPanels > extraPanels items > type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="global_grafanaDashboard_instanceSelector"></a>3.16.4. Property `stack > global > grafanaDashboard > instanceSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3454,7 +3710,7 @@ Must be one of:
 | ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [matchLabels](#global_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
 
-##### <a name="global_grafanaDashboard_instanceSelector_matchLabels"></a>3.16.3.1. Property `stack > global > grafanaDashboard > instanceSelector > matchLabels`
+##### <a name="global_grafanaDashboard_instanceSelector_matchLabels"></a>3.16.4.1. Property `stack > global > grafanaDashboard > instanceSelector > matchLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3466,7 +3722,7 @@ Must be one of:
 | --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [name](#global_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
 
-###### <a name="global_grafanaDashboard_instanceSelector_matchLabels_name"></a>3.16.3.1.1. Property `stack > global > grafanaDashboard > instanceSelector > matchLabels > name`
+###### <a name="global_grafanaDashboard_instanceSelector_matchLabels_name"></a>3.16.4.1.1. Property `stack > global > grafanaDashboard > instanceSelector > matchLabels > name`
 
 |              |          |
 | ------------ | -------- |
@@ -6123,11 +6379,12 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>4.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -6171,7 +6428,134 @@ Must be one of:
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
 
-##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>4.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
+##### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels"></a>4.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Extra panels to add to the Grafana dashboard
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                            | Description |
+| -------------------------------------------------------------------------- | ----------- |
+| [extraPanels items](#cronJobs_pattern1_grafanaDashboard_extraPanels_items) | -           |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items"></a>4.1.16.3.1. stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [datasource](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_datasource )       | No      | object | No         | -          | -                 |
+| - [fieldConfig](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_fieldConfig )     | No      | object | No         | -          | -                 |
+| - [gridPos](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos )             | No      | object | No         | -          | -                 |
+| - [options](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_options )             | No      | object | No         | -          | -                 |
+| - [pluginVersion](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_pluginVersion ) | No      | string | No         | -          | -                 |
+| - [targets](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_targets )             | No      | array  | No         | -          | -                 |
+| - [title](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_title )                 | No      | string | No         | -          | -                 |
+| - [type](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_type )                   | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_datasource"></a>4.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > datasource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_fieldConfig"></a>4.1.16.3.1.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > fieldConfig`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos"></a>4.1.16.3.1.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [h](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_h ) | No      | number | No         | -          | -                 |
+| - [w](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_w ) | No      | number | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_h"></a>4.1.16.3.1.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos > h`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_w"></a>4.1.16.3.1.3.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos > w`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_options"></a>4.1.16.3.1.4. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > options`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_pluginVersion"></a>4.1.16.3.1.5. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > pluginVersion`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_targets"></a>4.1.16.3.1.6. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > targets`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_title"></a>4.1.16.3.1.7. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > title`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_type"></a>4.1.16.3.1.8. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>4.1.16.4. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6185,7 +6569,7 @@ Must be one of:
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [matchLabels](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>4.1.16.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>4.1.16.4.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6197,7 +6581,7 @@ Must be one of:
 | -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [name](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>4.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>4.1.16.4.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
 
 |              |          |
 | ------------ | -------- |
@@ -9318,11 +9702,12 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object  | No         | -          | -                                                                  |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object  | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>7.1.16.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -9366,7 +9751,134 @@ Must be one of:
 
 **Description:** Enable Grafana dashboard (globally, can be overridden per service)
 
-##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>7.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
+##### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels"></a>7.1.16.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Extra panels to add to the Grafana dashboard
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                            | Description |
+| -------------------------------------------------------------------------- | ----------- |
+| [extraPanels items](#cronJobs_pattern1_grafanaDashboard_extraPanels_items) | -           |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items"></a>7.1.16.3.1. stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [datasource](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_datasource )       | No      | object | No         | -          | -                 |
+| - [fieldConfig](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_fieldConfig )     | No      | object | No         | -          | -                 |
+| - [gridPos](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos )             | No      | object | No         | -          | -                 |
+| - [options](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_options )             | No      | object | No         | -          | -                 |
+| - [pluginVersion](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_pluginVersion ) | No      | string | No         | -          | -                 |
+| - [targets](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_targets )             | No      | array  | No         | -          | -                 |
+| - [title](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_title )                 | No      | string | No         | -          | -                 |
+| - [type](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_type )                   | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_datasource"></a>7.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > datasource`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_fieldConfig"></a>7.1.16.3.1.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > fieldConfig`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos"></a>7.1.16.3.1.3. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [h](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_h ) | No      | number | No         | -          | -                 |
+| - [w](#cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_w ) | No      | number | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_h"></a>7.1.16.3.1.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos > h`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_gridPos_w"></a>7.1.16.3.1.3.2. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > gridPos > w`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `number` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_options"></a>7.1.16.3.1.4. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > options`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_pluginVersion"></a>7.1.16.3.1.5. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > pluginVersion`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_targets"></a>7.1.16.3.1.6. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > targets`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_title"></a>7.1.16.3.1.7. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > title`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_grafanaDashboard_extraPanels_items_type"></a>7.1.16.3.1.8. Property `stack > cronJobs > ^.*$ > grafanaDashboard > extraPanels > extraPanels items > type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector"></a>7.1.16.4. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9380,7 +9892,7 @@ Must be one of:
 | ---------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [matchLabels](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>7.1.16.3.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels"></a>7.1.16.4.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9392,7 +9904,7 @@ Must be one of:
 | -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [name](#cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>7.1.16.3.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
+###### <a name="cronJobs_pattern1_grafanaDashboard_instanceSelector_matchLabels_name"></a>7.1.16.4.1.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > instanceSelector > matchLabels > name`
 
 |              |          |
 | ------------ | -------- |

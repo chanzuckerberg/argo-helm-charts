@@ -262,6 +262,47 @@
               "description": "Enable Grafana dashboard (globally, can be overridden per service)",
               "type": "boolean"
             },
+            "extraPanels": {
+              "description": "Extra panels to add to the Grafana dashboard",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "datasource": {
+                    "type": "object"
+                  },
+                  "fieldConfig": {
+                    "type": "object"
+                  },
+                  "gridPos": {
+                    "type": "object",
+                    "properties": {
+                      "h": {
+                        "type": "number"
+                      },
+                      "w": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "options": {
+                    "type": "object"
+                  },
+                  "pluginVersion": {
+                    "type": "string"
+                  },
+                  "targets": {
+                    "type": "array"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
             "instanceSelector": {
               "description": "Instance selector for the Grafana dashboard",
               "type": "object",
