@@ -178,3 +178,77 @@ tests:
       - notMatchRegex:
           path: data["config.alloy"]
           pattern: 'loki\.source\.kubernetes_events'
+  - it: should not enable beyla when alloyConfig.beyla.enabled is not set
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        podLogs:
+          enabled: false
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf'
+  - it: should not enable beyla when alloyConfig.beyla.enabled is set but prometheusRemoteWrite is not enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf'
+  - it: should enable beyla when alloyConfig.beyla.enabled and prometheusRemoteWrite.enabled are true
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+          namespace: "my-app-ns"
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+          - url: http://central-loki-stack
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'namespace = "my-app-ns"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'metrics = \[prometheus\.remote_write\.endpoint_0\.receiver, prometheus\.remote_write\.endpoint_1\.receiver\]'
+  - it: should allow all namespace if alloyConfig.beyla.namespace is not set
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'namespace = ".*"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'metrics = \[prometheus\.remote_write\.endpoint_0\.receiver\]'
