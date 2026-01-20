@@ -413,5 +413,24 @@ data:
     }
     {{- end }}
     {{- end }}
+    {{- if and .Values.alloyConfig.beyla.enabled .Values.prometheusRemoteWrite.enabled }}
+    beyla.ebpf "default" {
+      attributes {
+        kubernetes {
+          enable = true
+        }
+      }
+      discovery {
+        services {
+          kubernetes {
+            namespace = {{ .Values.alloyConfig.beyla.namespace | default ".*" | quote }}
+          }
+        }
+      }
+      output {
+        metrics = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
+      }
+    }
+    {{- end }}
 {{- end }}
 {{- end }}
