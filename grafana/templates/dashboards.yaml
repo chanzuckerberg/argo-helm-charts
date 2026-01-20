@@ -347,4 +347,25 @@ spec:
   folder: "k8s Dashboards"
   json: >
 {{ .Files.Get "dashboards/kubernetes-health.json" | indent 4 }}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ .Values.grafanaName }}-multi-datasource-example
+  labels:
+    grafana_dashboard: "true"
+    grafana_name: {{ .Values.grafanaName }}
+spec:
+  instanceSelector:
+    matchLabels:
+      name: {{ .Values.grafanaName }}
+  folder: "Example Dashboards"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+    - inputName: "DS_LOKI"
+      datasourceName: "Loki"
+  grafanaCom:
+    id: 99999
+    revision: 1
 {{ end }}

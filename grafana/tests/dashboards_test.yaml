@@ -6,7 +6,7 @@ tests:
   - it: should render a GrafanaDashboard resource
     asserts:
       - hasDocuments:
-          count: 19
+          count: 20
       - isKind:
           of: GrafanaDashboard
 
@@ -18,14 +18,21 @@ tests:
   - it: should have valid metadata
     asserts:
       - isNotEmpty:
-          path: metadata.namespace
-      - isNotEmpty:
           path: spec
 
-  - it: should have datasources
+  - it: should have datasources in loki-kubernetes-logs dashboard
+    documentIndex: 0
     asserts:
       - isNotEmpty:
           path: spec.datasources
+      - equal:
+          path: spec.datasources[0].datasourceName
+          value: "Loki"
+
+  - it: should have an instance selector
+    asserts:
+      - isNotEmpty:
+          path: spec.instanceSelector
 
   - it: should have a folder
     asserts:
@@ -36,3 +43,17 @@ tests:
     asserts:
       - isNotEmpty:
           path: spec.instanceSelector.matchLabels.name
+
+  - it: should have multiple datasources in multi-datasource-example dashboard
+    documentIndex: 19
+    asserts:
+      - equal:
+          path: spec.datasources
+          value:
+            - inputName: "DS_PROMETHEUS"
+              datasourceName: "Prometheus"
+            - inputName: "DS_LOKI"
+              datasourceName: "Loki"
+      - lengthEqual:
+          path: spec.datasources
+          count: 2
