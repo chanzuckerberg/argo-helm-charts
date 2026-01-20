@@ -177,8 +177,15 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "description": "CPU limit",
-                  "type": "integer"
+                  "description": "CPU limit (e.g., \"200m\", \"1\", \"2\")",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
                 },
                 "memory": {
                   "description": "Memory limit",
@@ -190,8 +197,15 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "description": "CPU request",
-                  "type": "integer"
+                  "description": "CPU request (e.g., \"200m\", \"1\", \"2\")",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
                 },
                 "memory": {
                   "description": "Memory request",
@@ -261,25 +275,38 @@
       "type": "object",
       "properties": {
         "content": {
-          "description": "Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.",
-          "type": "string"
-        }
-      }
-    },
-    "centralLoki": {
-      "type": "object",
-      "properties": {
-        "basicAuthEnvVar": {
-          "description": "Name of the environment variable containing basic auth credentials",
+          "description": "Custom Alloy configuration content (River format). If empty, uses default collection config.",
           "type": "string"
         },
-        "enabled": {
-          "description": "Enable central Loki endpoint",
-          "type": "boolean"
+        "events": {
+          "description": "Enable Kubernetes events collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable collection of Kubernetes events",
+              "type": "boolean"
+            }
+          }
         },
-        "url": {
-          "description": "URL of the central Loki endpoint",
-          "type": "string"
+        "metrics": {
+          "description": "Enable Prometheus metrics collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)",
+              "type": "boolean"
+            }
+          }
+        },
+        "podLogs": {
+          "description": "Enable pod log collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable collection of pod logs from all nodes",
+              "type": "boolean"
+            }
+          }
         }
       }
     },
@@ -294,12 +321,42 @@
     "loki": {
       "type": "object",
       "properties": {
-        "local": {
-          "description": "Local Loki endpoint configuration",
+        "endpoints": {
+          "description": "List of Loki endpoints to send logs to",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "description": "URL of the Loki endpoint",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "prometheusRemoteWrite": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable Prometheus remote write",
+          "type": "boolean"
+        },
+        "endpoints": {
+          "description": "Array of remote write endpoints",
+          "type": "array"
+        },
+        "metricsFilter": {
+          "description": "Metrics filtering configuration",
           "type": "object",
           "properties": {
-            "url": {
-              "description": "URL of the local Loki instance",
+            "enabled": {
+              "description": "Enable metrics filtering",
+              "type": "boolean"
+            },
+            "regex": {
+              "description": "Regex pattern to match metric names to keep",
               "type": "string"
             }
           }
