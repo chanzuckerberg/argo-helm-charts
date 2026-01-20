@@ -18,6 +18,7 @@
 | - [enabled](#enabled )                       | No      | boolean | No         | -          | Enable the Grafana instance.                                                                                                                                                         |
 | - [env](#env )                               | No      | object  | No         | -          | Environment variables to set in the Grafana instance. This can be used to set custom environment variables for Grafana.                                                              |
 | - [extraSecretVolumes](#extraSecretVolumes ) | No      | array   | No         | -          | List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:                                                                   |
+| - [gateway](#gateway )                       | No      | object  | No         | -          | Gateway API HTTPRoute configuration for the Grafana instance.                                                                                                                        |
 | - [grafanaAnnotations](#grafanaAnnotations ) | No      | object  | No         | -          | Annotations to add to the Grafana instance.                                                                                                                                          |
 | - [grafanaBaseImage](#grafanaBaseImage )     | No      | string  | No         | -          | Base image for the Grafana instance.                                                                                                                                                 |
 | - [grafanaName](#grafanaName )               | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
@@ -328,7 +329,110 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-## <a name="grafanaAnnotations"></a>9. Property `grafana > grafanaAnnotations`
+## <a name="gateway"></a>9. Property `grafana > gateway`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Gateway API HTTPRoute configuration for the Grafana instance.
+
+| Property                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                             |
+| ------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#gateway_annotations )           | No      | object  | No         | -          | Annotations to add to the HTTPRoute resource.                                                                 |
+| - [enabled](#gateway_enabled )                   | No      | boolean | No         | -          | Enable Gateway API HTTPRoute instead of Ingress.                                                              |
+| - [gatewayName](#gateway_gatewayName )           | No      | string  | No         | -          | Name of the Gateway resource to attach the HTTPRoute to. This value is required when gateway.enabled is true. |
+| - [gatewayNamespace](#gateway_gatewayNamespace ) | No      | string  | No         | -          | Namespace of the Gateway resource. If not specified, defaults to the local namespace.                         |
+| - [labels](#gateway_labels )                     | No      | object  | No         | -          | Labels to add to the HTTPRoute resource.                                                                      |
+| - [sectionName](#gateway_sectionName )           | No      | string  | No         | -          | Optional name of a specific listener on the Gateway to attach to.                                             |
+
+### <a name="gateway_annotations"></a>9.1. Property `grafana > gateway > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Annotations to add to the HTTPRoute resource.
+
+| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#gateway_annotations_pattern1 ) | Yes     | string | No         | -          | -                 |
+
+#### <a name="gateway_annotations_pattern1"></a>9.1.1. Pattern Property `grafana > gateway > annotations > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="gateway_enabled"></a>9.2. Property `grafana > gateway > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable Gateway API HTTPRoute instead of Ingress.
+
+### <a name="gateway_gatewayName"></a>9.3. Property `grafana > gateway > gatewayName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of the Gateway resource to attach the HTTPRoute to. This value is required when gateway.enabled is true.
+
+### <a name="gateway_gatewayNamespace"></a>9.4. Property `grafana > gateway > gatewayNamespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Namespace of the Gateway resource. If not specified, defaults to the local namespace.
+
+### <a name="gateway_labels"></a>9.5. Property `grafana > gateway > labels`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Labels to add to the HTTPRoute resource.
+
+| Property                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#gateway_labels_pattern1 ) | Yes     | string | No         | -          | -                 |
+
+#### <a name="gateway_labels_pattern1"></a>9.5.1. Pattern Property `grafana > gateway > labels > ^.*$`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="gateway_sectionName"></a>9.6. Property `grafana > gateway > sectionName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Optional name of a specific listener on the Gateway to attach to.
+
+## <a name="grafanaAnnotations"></a>10. Property `grafana > grafanaAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -342,7 +446,7 @@ must respect the following conditions
 | --------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#grafanaAnnotations_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-### <a name="grafanaAnnotations_pattern1"></a>9.1. Pattern Property `grafana > grafanaAnnotations > ^.*$`
+### <a name="grafanaAnnotations_pattern1"></a>10.1. Pattern Property `grafana > grafanaAnnotations > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -352,7 +456,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="grafanaBaseImage"></a>10. Property `grafana > grafanaBaseImage`
+## <a name="grafanaBaseImage"></a>11. Property `grafana > grafanaBaseImage`
 
 |              |          |
 | ------------ | -------- |
@@ -361,7 +465,7 @@ must respect the following conditions
 
 **Description:** Base image for the Grafana instance.
 
-## <a name="grafanaName"></a>11. Property `grafana > grafanaName`
+## <a name="grafanaName"></a>12. Property `grafana > grafanaName`
 
 |              |          |
 | ------------ | -------- |
@@ -370,7 +474,7 @@ must respect the following conditions
 
 **Description:** Name of the Grafana instance to create.
 
-## <a name="grafanaSubdomain"></a>12. Property `grafana > grafanaSubdomain`
+## <a name="grafanaSubdomain"></a>13. Property `grafana > grafanaSubdomain`
 
 |              |          |
 | ------------ | -------- |
@@ -379,7 +483,7 @@ must respect the following conditions
 
 **Description:** Subdomain to use for the Grafana instance.
 
-## <a name="replicas"></a>13. Property `grafana > replicas`
+## <a name="replicas"></a>14. Property `grafana > replicas`
 
 |              |           |
 | ------------ | --------- |
@@ -392,7 +496,7 @@ must respect the following conditions
 | ------------ | ------ |
 | **Maximum**  | &le; 1 |
 
-## <a name="roleAttributePath"></a>14. Property `grafana > roleAttributePath`
+## <a name="roleAttributePath"></a>15. Property `grafana > roleAttributePath`
 
 |              |          |
 | ------------ | -------- |
@@ -401,7 +505,7 @@ must respect the following conditions
 
 **Description:** JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-## <a name="secretStoreRef"></a>15. Property `grafana > secretStoreRef`
+## <a name="secretStoreRef"></a>16. Property `grafana > secretStoreRef`
 
 |              |          |
 | ------------ | -------- |
@@ -410,7 +514,7 @@ must respect the following conditions
 
 **Description:** Name of the secret store to use for external secrets.
 
-## <a name="serviceAccount"></a>16. Property `grafana > serviceAccount`
+## <a name="serviceAccount"></a>17. Property `grafana > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -422,7 +526,7 @@ must respect the following conditions
 | --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | Annotations to add to the service account. |
 
-### <a name="serviceAccount_annotations"></a>16.1. Property `grafana > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>17.1. Property `grafana > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -436,7 +540,7 @@ must respect the following conditions
 | ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#serviceAccount_annotations_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="serviceAccount_annotations_pattern1"></a>16.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
+#### <a name="serviceAccount_annotations_pattern1"></a>17.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
