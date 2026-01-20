@@ -58,7 +58,7 @@ alloyConfig:
   metrics:
     enabled: false # @schema description: Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)
 
-  # @schema description: Enable Beyla integration for enhanced log processing
+  # @schema description: Enable Beyla integration for eBPF-based application instrumentation
   beyla:
     enabled: false # @schema description: Enable Beyla integration (requires prometheusRemoteWrite.enabled=true)
 
