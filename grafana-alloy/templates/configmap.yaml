@@ -417,7 +417,7 @@ data:
     beyla.ebpf "default" {
       attributes {
         kubernetes {
-          enable = "true"
+          enable = true
         }
       }
       discovery {
