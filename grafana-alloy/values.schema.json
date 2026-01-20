@@ -275,7 +275,7 @@
       "type": "object",
       "properties": {
         "beyla": {
-          "description": "Enable Beyla integration for enhanced log processing",
+          "description": "Enable Beyla integration for eBPF-based application instrumentation",
           "type": "object",
           "properties": {
             "enabled": {
