@@ -83,6 +83,33 @@ spec:
         - name: http
           port: 80
           targetPort: 3000
+  {{- if .Values.gateway.enabled }}
+  httpRoute:
+    metadata:
+      {{- if .Values.gateway.annotations }}
+      annotations:
+        {{- toYaml .Values.gateway.annotations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.gateway.labels }}
+      labels:
+        {{- toYaml .Values.gateway.labels | nindent 8 }}
+      {{- end }}
+    spec:
+      parentRefs:
+        - name: {{ .Values.gateway.gatewayName }}
+          {{- if .Values.gateway.gatewayNamespace }}
+          namespace: {{ .Values.gateway.gatewayNamespace }}
+          {{- end }}
+          {{- if .Values.gateway.sectionName }}
+          sectionName: {{ .Values.gateway.sectionName }}
+          {{- end }}
+      hostnames:
+        - "{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
+      rules:
+        - backendRefs:
+            - name: {{ .Values.grafanaName }}-service
+              port: 80
+  {{- else }}
   ingress:
     spec:
       ingressClassName: nginx
@@ -111,4 +138,5 @@ spec:
         nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
         nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
         nginx.ingress.kubernetes.io/session-cookie-name: grafana_sticky_session
+  {{- end }}
 {{ end }}

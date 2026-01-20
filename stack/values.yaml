@@ -211,7 +211,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
-  
+
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
 

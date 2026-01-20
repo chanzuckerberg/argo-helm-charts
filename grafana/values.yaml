@@ -52,6 +52,14 @@ serviceAccount:
 
 allow_embedding: "false" # @schema description: Allow embedding of Grafana dashboards in other applications.
 
+gateway: # @schema description: Gateway API HTTPRoute configuration for the Grafana instance.
+  enabled: false # @schema description: Enable Gateway API HTTPRoute instead of Ingress.
+  gatewayName: "" # @schema description: Name of the Gateway resource to attach the HTTPRoute to. This value is required when gateway.enabled is true.
+  gatewayNamespace: "" # @schema description: Namespace of the Gateway resource. If not specified, defaults to the local namespace.
+  sectionName: "" # @schema description: Optional name of a specific listener on the Gateway to attach to.
+  annotations: {} # @schema description: Annotations to add to the HTTPRoute resource.; patternProperties: { "^.*$": { "type": "string" } }
+  labels: {} # @schema description: Labels to add to the HTTPRoute resource.; patternProperties: { "^.*$": { "type": "string" } }
+
 centralGrafana:
   enabled: false # @schema description: Enable the resource provisioning into the Central Grafana workspace.
   grafanaName: "central-grafana" # @schema description: Name of the Grafana instance to create.

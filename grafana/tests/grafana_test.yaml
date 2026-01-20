@@ -25,7 +25,7 @@ tests:
   - it: should have an okta auth config
     asserts:
       - isNotEmpty:
-          path: spec.config.auth.okta
+          path: spec.config["auth.okta"]
   
   - it: should have a number of replicas specified
     asserts:
@@ -58,11 +58,11 @@ tests:
       - isNotEmpty:
           path: spec.config.auth
       - isNotEmpty:
-          path: spec.config.auth.basic
+          path: spec.config["auth.basic"]
       - isNotEmpty:
-          path: spec.config.auth.anonymous
+          path: spec.config["auth.anonymous"]
       - isNotEmpty:
-          path: spec.config.auth.okta
+          path: spec.config["auth.okta"]
 
   - it: should have a valid deployment configuration
     asserts:
@@ -207,3 +207,86 @@ tests:
             - name: secrets
               mountPath: /etc/secrets
               readOnly: true
+
+  - it: should render ingress when gateway is disabled
+    set:
+      gateway:
+        enabled: false
+    asserts:
+      - isNotEmpty:
+          path: spec.ingress
+      - notExists:
+          path: spec.httpRoute
+
+  - it: should render httpRoute when gateway is enabled
+    set:
+      gateway:
+        enabled: true
+        gatewayName: "test-gateway"
+        gatewayNamespace: "gateway-system"
+      grafanaSubdomain: "grafana"
+      baseDomain: "example.com"
+    asserts:
+      - isNotEmpty:
+          path: spec.httpRoute
+      - notExists:
+          path: spec.ingress
+      - equal:
+          path: spec.httpRoute.spec.parentRefs[0].name
+          value: "test-gateway"
+      - equal:
+          path: spec.httpRoute.spec.parentRefs[0].namespace
+          value: "gateway-system"
+      - equal:
+          path: spec.httpRoute.spec.hostnames[0]
+          value: "grafana.example.com"
+      - equal:
+          path: spec.httpRoute.spec.rules[0].backendRefs[0].name
+          value: "grafana-service"
+      - equal:
+          path: spec.httpRoute.spec.rules[0].backendRefs[0].port
+          value: 80
+
+  - it: should configure httpRoute with custom annotations and labels
+    set:
+      gateway:
+        enabled: true
+        gatewayName: "my-gateway"
+        annotations:
+          custom-annotation: "test-value"
+          another-annotation: "another-value"
+        labels:
+          custom-label: "test-label"
+    asserts:
+      - equal:
+          path: spec.httpRoute.metadata.annotations.custom-annotation
+          value: "test-value"
+      - equal:
+          path: spec.httpRoute.metadata.annotations.another-annotation
+          value: "another-value"
+      - equal:
+          path: spec.httpRoute.metadata.labels.custom-label
+          value: "test-label"
+
+  - it: should configure httpRoute with sectionName when provided
+    set:
+      gateway:
+        enabled: true
+        gatewayName: "test-gateway"
+        sectionName: "https-listener"
+    asserts:
+      - equal:
+          path: spec.httpRoute.spec.parentRefs[0].sectionName
+          value: "https-listener"
+
+  - it: should configure httpRoute without namespace when not provided
+    set:
+      gateway:
+        enabled: true
+        gatewayName: "local-gateway"
+    asserts:
+      - equal:
+          path: spec.httpRoute.spec.parentRefs[0].name
+          value: "local-gateway"
+      - notExists:
+          path: spec.httpRoute.spec.parentRefs[0].namespace

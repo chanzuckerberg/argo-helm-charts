@@ -7,7 +7,8 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 
-{{- if .Values.ingress.enabled -}}
+# Only create if .Values.ingress.enabled is true
+{{- if .Values.ingress.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

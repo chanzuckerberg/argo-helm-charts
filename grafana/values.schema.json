@@ -128,6 +128,46 @@
       "description": "List of extra secret volumes to mount in the Grafana instance. Each entry should be a map with the following keys:",
       "type": "array"
     },
+    "gateway": {
+      "description": "Gateway API HTTPRoute configuration for the Grafana instance.",
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "description": "Annotations to add to the HTTPRoute resource.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          }
+        },
+        "enabled": {
+          "description": "Enable Gateway API HTTPRoute instead of Ingress.",
+          "type": "boolean"
+        },
+        "gatewayName": {
+          "description": "Name of the Gateway resource to attach the HTTPRoute to. This value is required when gateway.enabled is true.",
+          "type": "string"
+        },
+        "gatewayNamespace": {
+          "description": "Namespace of the Gateway resource. If not specified, defaults to the local namespace.",
+          "type": "string"
+        },
+        "labels": {
+          "description": "Labels to add to the HTTPRoute resource.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          }
+        },
+        "sectionName": {
+          "description": "Optional name of a specific listener on the Gateway to attach to.",
+          "type": "string"
+        }
+      }
+    },
     "grafanaAnnotations": {
       "description": "Annotations to add to the Grafana instance.",
       "type": "object",
