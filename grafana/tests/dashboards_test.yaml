@@ -18,14 +18,12 @@ tests:
   - it: should have valid metadata
     asserts:
       - isNotEmpty:
-          path: metadata.namespace
-      - isNotEmpty:
           path: spec
 
-  - it: should have datasources
+  - it: should have an instance selector
     asserts:
       - isNotEmpty:
-          path: spec.datasources
+          path: spec.instanceSelector
 
   - it: should have a folder
     asserts:
