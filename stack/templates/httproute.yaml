@@ -1,0 +1,56 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+
+# Validate that we don't have conflicting ingress approaches: Gateway API and Ingress Controller
+{{- include "stack.validateRouting" . -}}
+
+# Only create if .Values.gatewayapi.enabled is true
+{{- if .Values.gatewayapi.enabled -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  {{- with (mergeOverwrite 
+              (dict)
+              (.Values.annotations) 
+              (.Values.gatewayapi.annotations)
+    ) }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ .Values.gatewayapi.gatewayName }}
+      {{- if .Values.gatewayapi.gatewayNamespace }}
+      namespace: {{ .Values.gatewayapi.gatewayNamespace }}
+      {{- end }}
+  hostnames:
+    {{- range .Values.gatewayapi.hostnames }}
+    - {{ . }}
+    {{- end }}
+  rules:
+    {{- range .Values.gatewayapi.paths }}
+    - matches:
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path }}
+      backendRefs:
+        - name: {{ include "service.fullname" $service }}
+          port: {{ $service.Values.service.port | int }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

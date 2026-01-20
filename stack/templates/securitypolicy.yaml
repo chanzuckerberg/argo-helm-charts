@@ -1,0 +1,83 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+
+# Validate that we don't have conflicting ingress approaches: Gateway API and Ingress Controller
+{{- include "stack.validateRouting" . -}}
+
+{{- if .Values.gatewayapi.enabled -}}
+{{- if or .Values.gatewayapi.jwtProtected .Values.gatewayapi.oidcProtected -}}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: {{ include "service.fullname" . }}
+  
+  {{- if .Values.gatewayapi.jwtProtected }}
+  # JWT-based authentication
+  jwt:
+    providers:
+    - name: jwt-provider
+      {{- if .Values.gatewayapi.jwt.issuer }}
+      issuer: {{ .Values.gatewayapi.jwt.issuer | quote }}
+      {{- end }}
+      {{- if .Values.gatewayapi.jwt.audiences }}
+      audiences:
+      {{- range .Values.gatewayapi.jwt.audiences }}
+      - {{ . | quote }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.gatewayapi.jwt.remoteJWKSUri }}
+      remoteJWKS:
+        uri: {{ .Values.gatewayapi.jwt.remoteJWKSUri | quote }}
+      {{- end }}
+    {{- if .Values.gatewayapi.jwt.optional }}
+    optional: {{ .Values.gatewayapi.jwt.optional }}
+    {{- end }}
+  {{- else if .Values.oidcProxy.enabled }}
+  # OIDC-based authentication
+  oidc:
+    provider:
+      {{- if .Values.gatewayapi.oidc.issuer }}
+      issuer: {{ .Values.gatewayapi.oidc.issuer | quote }}
+      {{- end }}
+    {{- if .Values.gatewayapi.oidc.clientID }}
+    clientID: {{ .Values.gatewayapi.oidc.clientID | quote }}
+    {{- end }}
+    {{- if .Values.gatewayapi.oidc.clientSecretName }}
+    clientSecret:
+      name: {{ .Values.gatewayapi.oidc.clientSecretName | quote }}
+    {{- end }}
+    {{- if .Values.gatewayapi.oidc.redirectURL }}
+    redirectURL: {{ .Values.gatewayapi.oidc.redirectURL | quote }}
+    {{- end }}
+    {{- if .Values.gatewayapi.oidc.logoutPath }}
+    logoutPath: {{ .Values.gatewayapi.oidc.logoutPath | quote }}
+    {{- end }}
+    {{- if .Values.gatewayapi.oidc.passThroughAuthHeader }}
+    passThroughAuthHeader: {{ .Values.gatewayapi.oidc.passThroughAuthHeader }}
+    {{- end }}
+    {{- if .Values.gatewayapi.oidc.scopes }}
+    scopes:
+    {{- range .Values.gatewayapi.oidc.scopes }}
+    - {{ . }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- end }}
+{{- end }}

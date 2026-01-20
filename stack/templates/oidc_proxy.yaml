@@ -1,6 +1,7 @@
 {{ $global := . }}
 {{- $allHosts := list -}}
 {{- $allOIDCProtectedServces := list -}}
+
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -9,6 +10,8 @@
 
   {{- with $values -}}
   {{ $serviceScope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" .}}
+
+
   {{- if and .ingress.oidcProtected .ingress.enabled -}}
     {{ range $i, $path := .ingress.paths }}
       {{- if (eq $path.pathType "Exact") -}}
@@ -43,6 +46,10 @@
 {{ $globalValues := .Values.global }}
 {{ $scope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $globalValues}}
 {{ with $scope }}
+
+# Validate that we don't have conflicting ingress approaches: Gateway API and Ingress Controller
+{{- include "stack.validateRouting" . -}}
+
 {{- if .Values.oidcProxy.enabled }}
 apiVersion: apps/v1
 kind: Deployment

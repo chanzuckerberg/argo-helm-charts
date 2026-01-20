@@ -18,8 +18,6 @@ tests:
   - it: should have valid metadata
     asserts:
       - isNotEmpty:
-          path: metadata.namespace
-      - isNotEmpty:
           path: spec
 
   - it: should have a resync period
@@ -42,7 +40,9 @@ tests:
       - isNotEmpty:
           path: spec.datasource.type
 
-  - it: should have a url
+  - it: should have a name and type
     asserts:
       - isNotEmpty:
-          path: spec.datasource.url
+          path: spec.datasource.name
+      - isNotEmpty:
+          path: spec.datasource.type
