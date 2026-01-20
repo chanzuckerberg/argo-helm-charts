@@ -212,36 +212,6 @@ global: # @schema description: Global configuration for the stack - this serves 
     #    hosts:
     #      - chart-example.local
 
-  gatewayapi: # @schema description: Gateway API HTTPRoute configuration
-    enabled: false # @schema description: Enable Gateway API HTTPRoute
-    gatewayName: "" # @schema description: Name of the Gateway to attach to
-    gatewayNamespace: "" # @schema description: Namespace of the Gateway (defaults to HTTPRoute namespace if empty)
-    hostnames: # @schema type: array; item: string; description: List of hostnames for the HTTPRoute
-      - chart-example.local
-    paths: # @schema description: List of path matches for the HTTPRoute
-      - 
-        path: / # @schema description: HTTPRoute path
-        pathType: PathPrefix # @schema enum: [Exact, PathPrefix]; description: HTTPRoute path match type
-    jwtProtected: false # @schema description: Enable JWT-based protection via SecurityPolicy, good for APIs
-    oidcProtected: false # @schema description: Enable OIDC-based protection via SecurityPolicy, good for web apps
-    annotations: {} # @schema type: object; description: Annotations to add to the HTTPRoute
-    jwt: # @schema description: JWT provider configuration for SecurityPolicy
-      issuer: "" # @schema description: JWT issuer URL
-      audiences: [] # @schema type: array; item: string; description: List of valid audiences
-      remoteJWKSUri: "" # @schema description: Remote JWKS URI for token validation
-      optional: true # @schema description: Don't fail if JWT is missing
-    oidc: # @schema description: OIDC provider configuration for SecurityPolicy (used when oidcProxy.enabled)
-      issuer: "" # @schema description: OIDC issuer URL
-      clientID: "" # @schema description: OIDC client ID
-      clientSecretName: "" # @schema description: Name of the secret containing OIDC client secret
-      redirectURL: "" # @schema description: OAuth2 redirect URL
-      logoutPath: "/oauth2/logout" # @schema description: Logout path
-      passThroughAuthHeader: true # @schema description: Allow JWT bearer tokens to skip OIDC
-      scopes: # @schema type: array; item: string; description: OIDC scopes to request
-        - openid
-        - profile
-        - email
-  
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
 

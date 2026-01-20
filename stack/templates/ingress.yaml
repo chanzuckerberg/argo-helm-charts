@@ -7,11 +7,8 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 
-# Validate that we don't have conflicting ingress approaches: Gateway API and Ingress Controller
-{{- include "stack.validateRouting" . -}}
-
 # Only create if .Values.ingress.enabled is true
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.ingress.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

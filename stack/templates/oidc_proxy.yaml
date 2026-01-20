@@ -47,9 +47,6 @@
 {{ $scope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $globalValues}}
 {{ with $scope }}
 
-# Validate that we don't have conflicting ingress approaches: Gateway API and Ingress Controller
-{{- include "stack.validateRouting" . -}}
-
 {{- if .Values.oidcProxy.enabled }}
 apiVersion: apps/v1
 kind: Deployment
