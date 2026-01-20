@@ -241,6 +241,126 @@
           "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
           "type": "string"
         },
+        "gatewayapi": {
+          "description": "Gateway API HTTPRoute configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to the HTTPRoute",
+              "type": "object"
+            },
+            "enabled": {
+              "description": "Enable Gateway API HTTPRoute",
+              "type": "boolean"
+            },
+            "gatewayName": {
+              "description": "Name of the Gateway to attach to",
+              "type": "string"
+            },
+            "gatewayNamespace": {
+              "description": "Namespace of the Gateway (defaults to HTTPRoute namespace if empty)",
+              "type": "string"
+            },
+            "hostnames": {
+              "description": "List of hostnames for the HTTPRoute",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "jwt": {
+              "description": "JWT provider configuration for SecurityPolicy",
+              "type": "object",
+              "properties": {
+                "audiences": {
+                  "description": "List of valid audiences",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "issuer": {
+                  "description": "JWT issuer URL",
+                  "type": "string"
+                },
+                "optional": {
+                  "description": "Don't fail if JWT is missing",
+                  "type": "boolean"
+                },
+                "remoteJWKSUri": {
+                  "description": "Remote JWKS URI for token validation",
+                  "type": "string"
+                }
+              }
+            },
+            "jwtProtected": {
+              "description": "Enable JWT-based protection via SecurityPolicy, good for APIs",
+              "type": "boolean"
+            },
+            "oidc": {
+              "description": "OIDC provider configuration for SecurityPolicy (used when oidcProxy.enabled)",
+              "type": "object",
+              "properties": {
+                "clientID": {
+                  "description": "OIDC client ID",
+                  "type": "string"
+                },
+                "clientSecretName": {
+                  "description": "Name of the secret containing OIDC client secret",
+                  "type": "string"
+                },
+                "issuer": {
+                  "description": "OIDC issuer URL",
+                  "type": "string"
+                },
+                "logoutPath": {
+                  "description": "Logout path",
+                  "type": "string"
+                },
+                "passThroughAuthHeader": {
+                  "description": "Allow JWT bearer tokens to skip OIDC",
+                  "type": "boolean"
+                },
+                "redirectURL": {
+                  "description": "OAuth2 redirect URL",
+                  "type": "string"
+                },
+                "scopes": {
+                  "description": "OIDC scopes to request",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "oidcProtected": {
+              "description": "Enable OIDC-based protection via SecurityPolicy, good for web apps",
+              "type": "boolean"
+            },
+            "paths": {
+              "description": "List of path matches for the HTTPRoute",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "description": "HTTPRoute path",
+                    "type": "string"
+                  },
+                  "pathType": {
+                    "description": "HTTPRoute path match type",
+                    "type": "string",
+                    "enum": [
+                      "Exact",
+                      "PathPrefix"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
         "grafanaDashboard": {
           "type": "object",
           "properties": {
