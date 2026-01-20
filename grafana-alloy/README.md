@@ -710,7 +710,7 @@ Must be one of:
 
 | Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                            |
 | ---------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
-| - [beyla](#alloyConfig_beyla )     | No      | object | No         | -          | Enable Beyla integration for enhanced log processing                                         |
+| - [beyla](#alloyConfig_beyla )     | No      | object | No         | -          | Enable Beyla integration for eBPF-based application instrumentation                          |
 | - [content](#alloyConfig_content ) | No      | string | No         | -          | Custom Alloy configuration content (River format). If empty, uses default collection config. |
 | - [events](#alloyConfig_events )   | No      | object | No         | -          | Enable Kubernetes events collection                                                          |
 | - [metrics](#alloyConfig_metrics ) | No      | object | No         | -          | Enable Prometheus metrics collection                                                         |
@@ -724,7 +724,7 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Enable Beyla integration for enhanced log processing
+**Description:** Enable Beyla integration for eBPF-based application instrumentation
 
 | Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                      |
 | ---------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------- |
