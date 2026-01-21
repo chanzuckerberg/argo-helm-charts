@@ -425,7 +425,7 @@ data:
       discovery {
         instrument {
           kubernetes {
-            namespace = "."
+            namespace = ".*"
           }
         }
       }
@@ -436,10 +436,10 @@ data:
         ]
       }
       output {
-          traces = [otelcol.processor.batch.default.input]
+        metrics = [otelcol.processor.batch.default.input]
       }
     }
-     otelcol.processor.batch "default" {
+    otelcol.processor.batch "default" {
       output {
         metrics = [otelcol.exporter.prometheus.default.input]
       }
