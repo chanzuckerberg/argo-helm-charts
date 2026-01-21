@@ -445,7 +445,6 @@ data:
         prometheus.remote_write.endpoint_{{ $idx }}.receiver,
         {{- end }}
       ]
-      honor_labels = true
     }
     {{- end }}
 {{- end }}
