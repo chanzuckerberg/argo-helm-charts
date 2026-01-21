@@ -415,9 +415,15 @@ data:
     {{- end }}
     {{- if and .Values.alloyConfig.beyla.enabled .Values.prometheusRemoteWrite.enabled }}
     beyla.ebpf "default" {
+      debug = "true"
+
       attributes {
-        kubernetes {
-          enable = "true"
+        instrument {
+          name = ".*"
+          
+          kubernetes {
+            namespace = ".*"
+          }
         }
       }
       discovery {
