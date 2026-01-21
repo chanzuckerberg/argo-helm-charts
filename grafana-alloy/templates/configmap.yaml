@@ -423,6 +423,7 @@ data:
         }
       }
       discovery {
+        exclude_otel_instrumented_services = false
         instrument {
           open_ports = "80,443,3000" 
           
