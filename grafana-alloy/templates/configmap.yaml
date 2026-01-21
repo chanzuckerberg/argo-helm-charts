@@ -436,18 +436,13 @@ data:
         ]
       }
       output {
-        traces = [otelcol.processor.batch.default.input]
+        traces = []
       }
     }
     prometheus.scrape "beyla_metrics" {
       targets    = beyla.ebpf.default.targets
       forward_to = [prometheus.remote_write.endpoint_0.receiver]
       scrape_interval = "15s"
-    }
-    otelcol.processor.batch "default" {
-      output {
-        metrics = [otelcol.exporter.prometheus.default.input]
-      }
     }
     {{- end }}
 {{- end }}
