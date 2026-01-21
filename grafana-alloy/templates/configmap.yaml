@@ -432,7 +432,7 @@ data:
       metrics {
         features = [
         "application", 
-        "network"
+        "network",
         ]
       }
       output {
