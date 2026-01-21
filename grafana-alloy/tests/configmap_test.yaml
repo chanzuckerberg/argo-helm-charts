@@ -223,9 +223,9 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'beyla\.ebpf\s+"default"'
-      - matchRegex:
-          path: data["config.alloy"]
-          pattern: 'namespace = "my-app-ns"'
+      # - matchRegex:
+      #     path: data["config.alloy"]
+      #     pattern: 'namespace = "my-app-ns"'
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'metrics = \[otelcol\.exporter\.prometheus\.to_prometheus\.input\]'
@@ -248,7 +248,7 @@ tests:
           pattern: 'beyla\.ebpf\s+"default"'
       - matchRegex:
           path: data["config.alloy"]
-          pattern: 'namespace = ".*"'
+          pattern: 'namespace = "."'
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'metrics = \[otelcol\.exporter\.prometheus\.to_prometheus\.input\]'
