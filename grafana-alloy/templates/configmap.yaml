@@ -418,13 +418,9 @@ data:
       debug = true
 
       attributes {
-        instrument {
-          name = ".*"
-          
-          kubernetes {
+        kubernetes {
             namespace = ".*"
           }
-        }
       }
       discovery {
         services {
