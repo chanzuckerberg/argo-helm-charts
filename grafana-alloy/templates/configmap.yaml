@@ -419,8 +419,8 @@ data:
 
       attributes {
         kubernetes {
-            namespace = ".*"
-          }
+          enable = "true"
+        }
       }
       discovery {
         services {
