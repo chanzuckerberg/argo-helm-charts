@@ -428,8 +428,15 @@ data:
         }
       }
       output {
-        metrics = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
+        metrics = [otelcol.exporter.prometheus.to_prometheus.input]
       }
+    }
+    otelcol.exporter.prometheus "to_prometheus" {
+      forward_to = [
+        {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
+        prometheus.remote_write.endpoint_{{ $idx }}.receiver,
+        {{- end }}
+      ]
     }
     {{- end }}
 {{- end }}
