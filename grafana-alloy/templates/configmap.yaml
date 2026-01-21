@@ -424,6 +424,16 @@ data:
       }
       discovery {
         instrument {
+          # 1. Add port 3000 specifically
+          open_ports = "80,443,3000" 
+          
+          kubernetes {
+            # 2. Update this regex! Your app is in a nested namespace
+            # 'argus-argus-example-app-staging' won't match "."
+            namespace = "argus-.*" 
+          }
+        }
+        instrument {
           kubernetes {
             namespace = ".*"
           }
