@@ -429,6 +429,12 @@ data:
           }
         }
       }
+      metrics {
+        features = [
+        "application", 
+        "network"
+        ]
+      }
       output {
         metrics = [otelcol.exporter.prometheus.to_prometheus.input]
       }
