@@ -415,7 +415,7 @@ data:
     {{- end }}
     {{- if and .Values.alloyConfig.beyla.enabled .Values.prometheusRemoteWrite.enabled }}
     beyla.ebpf "default" {
-      debug = "true"
+      debug = true
 
       attributes {
         instrument {
