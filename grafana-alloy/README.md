@@ -829,9 +829,10 @@ Must be one of:
 
 **Description:** Enable trace collection and export
 
-| Property                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
-| ----------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
-| - [enabled](#alloyConfig_traces_enabled ) | No      | boolean | No         | -          | Enable trace collection and export to Tempo (requires tempo.enabled=true) |
+| Property                                          | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [enabled](#alloyConfig_traces_enabled )         | No      | boolean | No         | -          | Enable trace collection and export to Tempo (requires tempo.enabled=true) |
+| - [k8sMetadata](#alloyConfig_traces_k8sMetadata ) | No      | object  | No         | -          | Attach Kubernetes metadata to traces using k8sattributes processor        |
 
 #### <a name="alloyConfig_traces_enabled"></a>2.6.1. Property `grafana-alloy > alloyConfig > traces > enabled`
 
@@ -841,6 +842,58 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable trace collection and export to Tempo (requires tempo.enabled=true)
+
+#### <a name="alloyConfig_traces_k8sMetadata"></a>2.6.2. Property `grafana-alloy > alloyConfig > traces > k8sMetadata`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Attach Kubernetes metadata to traces using k8sattributes processor
+
+| Property                                              | Pattern | Type            | Deprecated | Definition | Title/Description                                 |
+| ----------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------- |
+| - [enabled](#alloyConfig_traces_k8sMetadata_enabled ) | No      | boolean         | No         | -          | Enable Kubernetes metadata enrichment for traces  |
+| - [extract](#alloyConfig_traces_k8sMetadata_extract ) | No      | array of string | No         | -          | List of Kubernetes metadata attributes to extract |
+
+##### <a name="alloyConfig_traces_k8sMetadata_enabled"></a>2.6.2.1. Property `grafana-alloy > alloyConfig > traces > k8sMetadata > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable Kubernetes metadata enrichment for traces
+
+##### <a name="alloyConfig_traces_k8sMetadata_extract"></a>2.6.2.2. Property `grafana-alloy > alloyConfig > traces > k8sMetadata > extract`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** List of Kubernetes metadata attributes to extract
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                | Description |
+| -------------------------------------------------------------- | ----------- |
+| [extract items](#alloyConfig_traces_k8sMetadata_extract_items) | -           |
+
+###### <a name="alloyConfig_traces_k8sMetadata_extract_items"></a>2.6.2.2.1. grafana-alloy > alloyConfig > traces > k8sMetadata > extract > extract items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ## <a name="clusterName"></a>3. Property `grafana-alloy > clusterName`
 
