@@ -424,7 +424,9 @@ data:
       }
       discovery {
         exclude_otel_instrumented_services = false
+        skip_go_specific_tracers = true
         instrument {
+          name = "stack"
           open_ports = "80,443,3000" 
           
           kubernetes {
