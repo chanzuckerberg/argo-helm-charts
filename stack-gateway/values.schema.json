@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "argo.helm.charts/stack",
-  "title": "stack",
+  "$id": "argo.helm.charts/stack-gateway",
+  "title": "stack-gateway",
   "type": "object",
   "properties": {
     "argus-config": {
@@ -240,6 +240,102 @@
         "fullnameOverride": {
           "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
           "type": "string"
+        },
+        "gateway": {
+          "description": "Gateway API configuration for routing",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to route resources (shared across all route types)",
+              "type": "object"
+            },
+            "enabled": {
+              "description": "Enable Gateway API routing",
+              "type": "boolean"
+            },
+            "http": {
+              "description": "HTTPRoute-specific configuration",
+              "type": "object",
+              "properties": {
+                "additionalHostnames": {
+                  "description": "Additional hostnames for the HTTPRoute",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "hostname": {
+                  "description": "Primary hostname for the HTTPRoute",
+                  "type": "string"
+                },
+                "paths": {
+                  "description": "List of path configurations",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "pathType": {
+                        "type": "string",
+                        "enum": [
+                          "Exact",
+                          "PathPrefix"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "rules": {
+                  "description": "Additional routing rules with advanced match conditions",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "headers": {
+                        "type": "array"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "pathType": {
+                        "type": "string"
+                      },
+                      "queryParams": {
+                        "type": "array"
+                      },
+                      "weight": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "labels": {
+              "description": "Labels to add to route resources (shared across all route types)",
+              "type": "object"
+            },
+            "parentRefs": {
+              "description": "Gateway parent references (shared across all route types)",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  },
+                  "sectionName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
         "grafanaDashboard": {
           "type": "object",
@@ -836,96 +932,6 @@
         "shareProcessNamespace": {
           "description": "Share process namespace",
           "type": "boolean"
-        },
-        "gateway": {
-          "description": "Gateway API configuration for routing",
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "description": "Enable Gateway API routing",
-              "type": "boolean"
-            },
-            "parentRefs": {
-              "description": "Gateway parent references (shared across all route types)",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {"type": "string"},
-                  "namespace": {"type": "string"},
-                  "sectionName": {"type": "string"}
-                }
-              }
-            },
-            "annotations": {
-              "description": "Annotations to add to route resources",
-              "type": "object"
-            },
-            "labels": {
-              "description": "Labels to add to route resources",
-              "type": "object"
-            },
-            "http": {
-              "description": "HTTPRoute-specific configuration",
-              "type": "object",
-              "properties": {
-                "hostname": {
-                  "description": "Primary hostname for the HTTPRoute",
-                  "type": "string"
-                },
-                "additionalHostnames": {
-                  "description": "Additional hostnames for the HTTPRoute",
-                  "type": "array",
-                  "items": {"type": "string"}
-                },
-                "paths": {
-                  "description": "List of path configurations",
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "path": {"description": "Path to match", "type": "string"},
-                      "pathType": {"description": "Path match type", "type": "string", "enum": ["Exact", "PathPrefix"]}
-                    }
-                  }
-                },
-                "rules": {
-                  "description": "Additional routing rules with advanced match conditions",
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "path": {"type": "string"},
-                      "pathType": {"type": "string"},
-                      "headers": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {"type": "string"},
-                            "value": {"type": "string"},
-                            "type": {"type": "string"}
-                          }
-                        }
-                      },
-                      "queryParams": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {"type": "string"},
-                            "value": {"type": "string"},
-                            "type": {"type": "string"}
-                          }
-                        }
-                      },
-                      "weight": {"type": "number"}
-                    }
-                  }
-                }
-              }
-            }
-          }
         },
         "sidecars": {
           "description": "List of sidecars",
