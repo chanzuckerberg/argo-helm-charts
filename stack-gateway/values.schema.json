@@ -1,0 +1,1125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/stack",
+  "title": "stack",
+  "type": "object",
+  "properties": {
+    "argus-config": {
+      "description": "Allows values for the argus-config Helm chart",
+      "type": "object"
+    },
+    "cronJobs": {
+      "description": "Cron jobs to deploy",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object"
+        }
+      }
+    },
+    "global": {
+      "description": "Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs",
+      "type": "object",
+      "properties": {
+        "affinity": {
+          "description": "Affinity for the pod",
+          "type": "object"
+        },
+        "annotations": {
+          "description": "Global annotations to add to all resources",
+          "type": "object"
+        },
+        "appContext": {
+          "type": "object",
+          "properties": {
+            "envContextConfigMapName": {
+              "type": "string"
+            },
+            "stackContextConfigMapName": {
+              "type": "string"
+            }
+          }
+        },
+        "appSecrets": {
+          "type": "object",
+          "properties": {
+            "clusterSecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              }
+            },
+            "envSecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              }
+            },
+            "stackSecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "argoBuildEnv": {
+          "description": "Argo built-in environment parameters (provided by Argus API)",
+          "type": "object",
+          "properties": {
+            "appName": {
+              "description": "Set by Argus API to ARGOCD_APP_NAME (this is the ArgoCD app name, not the Argus app name)",
+              "type": "string"
+            },
+            "appNamespace": {
+              "description": "Set by Argus API to ARGOCD_APP_NAMESPACE",
+              "type": "string"
+            },
+            "appRevision": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION",
+              "type": "string"
+            },
+            "appRevisionShort": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT",
+              "type": "string"
+            },
+            "appRevisionShort8": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT_8",
+              "type": "string"
+            },
+            "appSourcePath": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_PATH",
+              "type": "string"
+            },
+            "appSourceRepoUrl": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
+              "type": "string"
+            },
+            "appSourceTargetRevision": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
+              "type": "string"
+            }
+          }
+        },
+        "args": {
+          "description": "Arguments to pass to the command in the primary container",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "argusMetadata": {
+          "description": "Argus metadata (provided by Argus API)",
+          "type": "object",
+          "properties": {
+            "appName": {
+              "description": "Set by Argus API to Argus app name",
+              "type": "string"
+            },
+            "envName": {
+              "description": "Set by Argus API to Argus environment name",
+              "type": "string"
+            },
+            "repoName": {
+              "description": "Set by Argus API to Argus repository name",
+              "type": "string"
+            },
+            "repoOwner": {
+              "description": "Set by Argus API to Argus repository owner",
+              "type": "string"
+            },
+            "stackName": {
+              "description": "Set by Argus API to Argus stack name",
+              "type": "string"
+            }
+          }
+        },
+        "autoscaling": {
+          "description": "Autoscaling configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable autoscaling",
+              "type": "boolean"
+            },
+            "maxReplicas": {
+              "description": "Maximum number of replicas",
+              "type": "integer"
+            },
+            "minReplicas": {
+              "description": "Minimum number of replicas",
+              "type": "integer"
+            },
+            "targetCPUUtilizationPercentage": {
+              "description": "Target CPU utilization percentage",
+              "type": "integer"
+            },
+            "targetMemoryUtilizationPercentage": {
+              "description": "Target memory utilization percentage",
+              "type": "integer"
+            }
+          }
+        },
+        "command": {
+          "description": "Command to run in the primary container",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deploymentKind": {
+          "description": "Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).",
+          "default": "Deployment",
+          "type": "string",
+          "enum": [
+            "Deployment",
+            "Rollout"
+          ]
+        },
+        "deploymentStage": {
+          "description": "Deployment stage",
+          "type": "string"
+        },
+        "dnsPolicy": {
+          "description": "DNS policy for the pod",
+          "type": "string",
+          "enum": [
+            "ClusterFirst",
+            "Default",
+            "None"
+          ]
+        },
+        "env": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "envFrom": {
+          "description": "Environment variables from configmaps or secrets",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "configMapRef": {
+                "type": "object"
+              },
+              "prefix": {
+                "type": "string"
+              },
+              "secretRef": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "fullnameOverride": {
+          "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
+          "type": "string"
+        },
+        "grafanaDashboard": {
+          "type": "object",
+          "properties": {
+            "datasources": {
+              "type": "object",
+              "properties": {
+                "prometheus": {
+                  "type": "object",
+                  "properties": {
+                    "uid": {
+                      "description": "Prometheus datasource UID",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "enabled": {
+              "description": "Enable Grafana dashboard (globally, can be overridden per service)",
+              "type": "boolean"
+            },
+            "extraPanels": {
+              "description": "Extra panels to add to the Grafana dashboard",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "datasource": {
+                    "type": "object"
+                  },
+                  "fieldConfig": {
+                    "type": "object"
+                  },
+                  "gridPos": {
+                    "type": "object",
+                    "properties": {
+                      "h": {
+                        "type": "number"
+                      },
+                      "w": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "options": {
+                    "type": "object"
+                  },
+                  "pluginVersion": {
+                    "type": "string"
+                  },
+                  "targets": {
+                    "type": "array"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "instanceSelector": {
+              "description": "Instance selector for the Grafana dashboard",
+              "type": "object",
+              "properties": {
+                "matchLabels": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "description": "Image pull policy",
+              "type": "string",
+              "enum": [
+                "Always",
+                "IfNotPresent",
+                "Never"
+              ]
+            },
+            "repository": {
+              "description": "Image repository",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Image tag",
+              "type": "string"
+            }
+          }
+        },
+        "imagePullSecrets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "initContainers": {
+          "description": "List of init containers",
+          "type": "array"
+        },
+        "livenessProbe": {
+          "description": "Liveness probe configuration",
+          "type": "object",
+          "properties": {
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": "number"
+            },
+            "httpGet": {
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "type": "object",
+              "properties": {
+                "path": {
+                  "description": "Path to probe",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port to probe",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "scheme": {
+                  "description": "Scheme to use",
+                  "type": "string"
+                }
+              }
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": "number"
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": "number"
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": "number"
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": "number"
+            }
+          }
+        },
+        "nameOverride": {
+          "description": "Name to prefix the K8s resources with, combined with the stack name prefix",
+          "type": "string"
+        },
+        "nodeSelector": {
+          "type": "object",
+          "properties": {
+            "kubernetes.io/arch": {
+              "description": "Node selector for architecture",
+              "type": "string"
+            }
+          }
+        },
+        "oidcProxy": {
+          "type": "object",
+          "properties": {
+            "additionalHeaders": {
+              "description": "Additional headers to add",
+              "type": "array"
+            },
+            "additionalSecrets": {
+              "description": "Additional secrets to mount",
+              "type": "array"
+            },
+            "annotations": {
+              "description": "Annotations to add to the OIDC proxy",
+              "type": "object"
+            },
+            "cookieRefresh": {
+              "description": "Refresh tokens and cookies after this period",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable OIDC proxy",
+              "type": "boolean"
+            },
+            "extraArgs": {
+              "description": "Extra arguments to pass to the OIDC proxy",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "image": {
+              "type": "object",
+              "properties": {
+                "repository": {
+                  "description": "Image repository",
+                  "type": "string"
+                },
+                "tag": {
+                  "description": "Image tag",
+                  "type": "string"
+                }
+              }
+            },
+            "replicaCount": {
+              "description": "Number of replicas",
+              "type": "integer"
+            },
+            "resources": {
+              "type": "object",
+              "properties": {
+                "limits": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "description": "CPU limit",
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "memory": {
+                      "description": "Memory limit",
+                      "type": "string"
+                    }
+                  }
+                },
+                "requests": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "description": "CPU request",
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "memory": {
+                      "description": "Memory request",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "skipAuth": {
+              "description": "Paths to skip authentication",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "volumeMounts": {
+              "description": "Volume mounts for the OIDC proxy",
+              "type": "array"
+            }
+          }
+        },
+        "persistence": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable persistence",
+              "type": "boolean"
+            },
+            "existingClaim": {
+              "description": "Existing PVC name",
+              "type": "string"
+            },
+            "mountPath": {
+              "description": "Mount path for the PVC",
+              "type": "string"
+            },
+            "pvc": {
+              "type": "object",
+              "properties": {
+                "accessModes": {
+                  "description": "Access modes for the PVC",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "ReadWriteOnce",
+                      "ReadOnlyMany",
+                      "ReadWriteMany",
+                      "ReadWriteOncePod"
+                    ]
+                  }
+                },
+                "dataSource": {
+                  "type": "object",
+                  "properties": {
+                    "apiGroup": {
+                      "description": "API version of the data source",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "description": "Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Name of the data source",
+                      "type": "string"
+                    }
+                  }
+                },
+                "resources": {
+                  "type": "object",
+                  "properties": {
+                    "requests": {
+                      "description": "PVC resource requests",
+                      "type": "object",
+                      "properties": {
+                        "storage": {
+                          "description": "Storage resource request",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "storageClassName": {
+                  "description": "Storage class name",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "podAnnotations": {
+          "description": "Annotations to add to pods",
+          "type": "object"
+        },
+        "podLabels": {
+          "description": "Global labels to add to all pods",
+          "type": "object"
+        },
+        "podSecurityContext": {
+          "description": "Pod security context",
+          "type": "object"
+        },
+        "progressDeadlineSeconds": {
+          "description": "the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled",
+          "type": "integer"
+        },
+        "readinessProbe": {
+          "description": "Readiness probe configuration",
+          "type": "object",
+          "properties": {
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": "number"
+            },
+            "httpGet": {
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "type": "object",
+              "properties": {
+                "path": {
+                  "description": "Path to probe",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port to probe",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "scheme": {
+                  "description": "Scheme to use",
+                  "type": "string"
+                }
+              }
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": "number"
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": "number"
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": "number"
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": "number"
+            }
+          }
+        },
+        "replicaCount": {
+          "description": "Number of replicas",
+          "type": "integer"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the primary container",
+          "type": "object",
+          "properties": {
+            "limits": {
+              "description": "Resource limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU limit",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "memory": {
+                  "description": "Memory limit",
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "description": "Resource requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU request",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "memory": {
+                  "description": "Memory request",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "restartPolicy": {
+          "description": "Restart policy for the pod",
+          "type": "string",
+          "enum": [
+            "Always",
+            "OnFailure",
+            "Never"
+          ]
+        },
+        "rollout": {
+          "$ref": "#/properties/rollout",
+          "type": "object"
+        },
+        "s3Storage": {
+          "type": "object",
+          "properties": {
+            "accessModes": {
+              "description": "Access modes for the S3 storage",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ReadWriteOnce",
+                  "ReadOnlyMany",
+                  "ReadWriteMany",
+                  "ReadWriteOncePod"
+                ]
+              }
+            },
+            "annotations": {
+              "description": "Additional annotations for PV/PVC",
+              "type": "object"
+            },
+            "bucketName": {
+              "description": "S3 bucket name",
+              "type": "string"
+            },
+            "capacity": {
+              "description": "Storage capacity",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable S3 CSI storage",
+              "type": "boolean"
+            },
+            "labels": {
+              "description": "Additional labels for PV/PVC",
+              "type": "object"
+            },
+            "pvName": {
+              "description": "Custom PV name (auto-generated if empty)",
+              "type": "string"
+            },
+            "pvcName": {
+              "description": "Custom PVC name (auto-generated if empty)",
+              "type": "string"
+            },
+            "reclaimPolicy": {
+              "description": "Reclaim policy for the PV",
+              "type": "string"
+            },
+            "region": {
+              "description": "AWS region",
+              "type": "string"
+            },
+            "volumeAttributes": {
+              "description": "Additional CSI volume attributes",
+              "type": "object"
+            },
+            "volumeHandle": {
+              "description": "CSI volume handle (auto-generated if empty)",
+              "type": "string"
+            }
+          }
+        },
+        "securityContext": {
+          "description": "Security context",
+          "type": "object"
+        },
+        "service": {
+          "description": "Service configuration",
+          "type": "object",
+          "properties": {
+            "port": {
+              "description": "Service port",
+              "type": "number"
+            },
+            "type": {
+              "description": "Service type",
+              "type": "string"
+            }
+          }
+        },
+        "serviceAccount": {
+          "description": "Service account configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to the service account",
+              "type": "object"
+            },
+            "automount": {
+              "description": "Specifies whether to automatically mount a ServiceAccount's API credentials",
+              "type": "boolean"
+            },
+            "create": {
+              "description": "Specifies whether a service account should be created",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "Name of the service account to use (if not set and create is true, a name is generated using the fullname template)",
+              "type": "string"
+            }
+          }
+        },
+        "shareProcessNamespace": {
+          "description": "Share process namespace",
+          "type": "boolean"
+        },
+        "gateway": {
+          "description": "Gateway API configuration for routing",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable Gateway API routing",
+              "type": "boolean"
+            },
+            "parentRefs": {
+              "description": "Gateway parent references (shared across all route types)",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "namespace": {"type": "string"},
+                  "sectionName": {"type": "string"}
+                }
+              }
+            },
+            "annotations": {
+              "description": "Annotations to add to route resources",
+              "type": "object"
+            },
+            "labels": {
+              "description": "Labels to add to route resources",
+              "type": "object"
+            },
+            "http": {
+              "description": "HTTPRoute-specific configuration",
+              "type": "object",
+              "properties": {
+                "hostname": {
+                  "description": "Primary hostname for the HTTPRoute",
+                  "type": "string"
+                },
+                "additionalHostnames": {
+                  "description": "Additional hostnames for the HTTPRoute",
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "paths": {
+                  "description": "List of path configurations",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {"description": "Path to match", "type": "string"},
+                      "pathType": {"description": "Path match type", "type": "string", "enum": ["Exact", "PathPrefix"]}
+                    }
+                  }
+                },
+                "rules": {
+                  "description": "Additional routing rules with advanced match conditions",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {"type": "string"},
+                      "pathType": {"type": "string"},
+                      "headers": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {"type": "string"},
+                            "value": {"type": "string"},
+                            "type": {"type": "string"}
+                          }
+                        }
+                      },
+                      "queryParams": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {"type": "string"},
+                            "value": {"type": "string"},
+                            "type": {"type": "string"}
+                          }
+                        }
+                      },
+                      "weight": {"type": "number"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "sidecars": {
+          "description": "List of sidecars",
+          "type": "array"
+        },
+        "startupProbe": {
+          "description": "Startup probe configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable the startup probe",
+              "type": "boolean"
+            },
+            "exec": {
+              "description": "Exec probe configuration",
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": "integer"
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": "integer"
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": "integer"
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": "integer"
+            }
+          }
+        },
+        "tolerations": {
+          "description": "Tolerations for the pod",
+          "type": "array"
+        },
+        "topologySpreadConstraints": {
+          "description": "Topology spread constraints for the pod",
+          "type": "array"
+        },
+        "volumeMounts": {
+          "description": "Additional volume mounts on the output Deployment definition",
+          "type": "array"
+        },
+        "volumes": {
+          "description": "Additional volumes on the output Deployment definition",
+          "type": "array"
+        }
+      }
+    },
+    "jobs": {
+      "description": "Jobs to deploy",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object"
+        }
+      }
+    },
+    "rollout": {
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "description": "Specifies the rollout strategy for the application.",
+          "default": "blueGreen",
+          "type": "object",
+          "properties": {
+            "blueGreen": {
+              "default": "blueGreen",
+              "type": "object",
+              "properties": {
+                "activeService": {
+                  "description": "Name of the service that the rollout modifies as the active service.",
+                  "type": "string"
+                },
+                "autoPromotionEnabled": {
+                  "description": "indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.",
+                  "type": "boolean"
+                },
+                "prePromotionAnalysis": {
+                  "description": "configuration to run analysis before a selector switch",
+                  "$ref": "#/properties/rolloutAnalysis",
+                  "type": "object"
+                },
+                "previewService": {
+                  "description": "Name of the service that the rollout modifies as the preview service.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "rolloutAnalysis": {
+      "description": "defines a template that is used to create a analysisRun",
+      "type": "object",
+      "properties": {
+        "analysisRunMetadata": {
+          "description": "extra labels to add to the AnalysisRun",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "additional annotations to add to the AnalysisRun",
+              "type": "object"
+            },
+            "labels": {
+              "description": "additional labels to add to the AnalysisRun",
+              "type": "object"
+            }
+          }
+        },
+        "args": {
+          "description": "the arguments that will be added to the AnalysisRuns",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "valueFrom": {
+                "type": "object",
+                "properties": {
+                  "fieldRef": {
+                    "type": "object",
+                    "properties": {
+                      "fieldPath": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "podTemplateHashValue": {
+                    "type": "string",
+                    "enum": [
+                      "Latest",
+                      "Stable"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "templates": {
+          "description": "reference to a list of analysis templates to combine for an AnalysisRun",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clusterScope": {
+                "description": "Whether to look for the templateName at cluster scope or namespace scope.",
+                "type": "boolean"
+              },
+              "templateName": {
+                "description": " name of the AnalysisTemplate to use for the rollout analysis",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "services": {
+      "description": "Services to deploy",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object",
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  }
+}

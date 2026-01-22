@@ -1,0 +1,281 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test HTTPRoute
+templates:
+  - httproute.yaml
+tests:
+  - it: should create HTTPRoute with default values
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: cluster-proxy
+                namespace: envoy-gateway
+            http:
+              hostname: "example.com"
+              paths:
+                - path: /
+                  pathType: PathPrefix
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HTTPRoute
+      - equal:
+          path: metadata.name
+          value: release-name-stack-gateway-service1
+      - equal:
+          path: spec.parentRefs[0].name
+          value: cluster-proxy
+      - equal:
+          path: spec.parentRefs[0].namespace
+          value: envoy-gateway
+      - contains:
+          path: spec.hostnames
+          content: "example.com"
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: PathPrefix
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: release-name-stack-gateway-service1
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 80
+
+  - it: should create HTTPRoute with multiple paths
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+                namespace: default
+            http:
+              hostname: "multi-path.com"
+              paths:
+                - path: /api
+                  pathType: PathPrefix
+                - path: /web
+                  pathType: Exact
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: PathPrefix
+      - equal:
+          path: spec.rules[1].matches[0].path.value
+          value: /web
+      - equal:
+          path: spec.rules[1].matches[0].path.type
+          value: Exact
+
+  - it: should create HTTPRoute with additional hostnames
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: cluster-proxy
+            http:
+              hostname: "primary.com"
+              additionalHostnames:
+                - "secondary.com"
+                - "tertiary.com"
+              paths:
+                - path: /
+    asserts:
+      - contains:
+          path: spec.hostnames
+          content: "primary.com"
+      - contains:
+          path: spec.hostnames
+          content: "secondary.com"
+      - contains:
+          path: spec.hostnames
+          content: "tertiary.com"
+
+  - it: should create HTTPRoute with advanced rules
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: gateway
+            http:
+              hostname: "advanced.com"
+              paths:
+                - path: /
+              rules:
+                - path: /api/v2
+                  pathType: PathPrefix
+                  headers:
+                    - name: X-API-Version
+                      value: v2
+                      type: Exact
+                  queryParams:
+                    - name: format
+                      value: json
+                  weight: 50
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.rules[1].matches[0].path.value
+          value: /api/v2
+      - equal:
+          path: spec.rules[1].matches[0].headers[0].name
+          value: X-API-Version
+      - equal:
+          path: spec.rules[1].matches[0].headers[0].value
+          value: v2
+      - equal:
+          path: spec.rules[1].matches[0].queryParams[0].name
+          value: format
+      - equal:
+          path: spec.rules[1].matches[0].queryParams[0].value
+          value: json
+      - equal:
+          path: spec.rules[1].backendRefs[0].weight
+          value: 50
+
+  - it: should not create HTTPRoute when disabled
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should include custom annotations
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: gateway
+            annotations:
+              custom.annotation/key: "value"
+            http:
+              hostname: "annotated.com"
+              paths:
+                - path: /
+    asserts:
+      - equal:
+          path: metadata.annotations["custom.annotation/key"]
+          value: "value"
+
+  - it: should create HTTPRoute with sectionName in parentRef
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: multi-listener-gateway
+                namespace: gateways
+                sectionName: https
+            http:
+              hostname: "section.com"
+              paths:
+                - path: /
+    asserts:
+      - equal:
+          path: spec.parentRefs[0].sectionName
+          value: https
+
+  - it: should create HTTPRoute for multiple services
+    set:
+      services:
+        frontend:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: cluster-proxy
+                namespace: envoy-gateway
+            http:
+              hostname: "frontend.com"
+              paths:
+                - path: /
+        backend:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: cluster-proxy
+                namespace: envoy-gateway
+            http:
+              hostname: "backend.com"
+              paths:
+                - path: /api
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-gateway-backend
+      - documentIndex: 0
+        contains:
+          path: spec.hostnames
+          content: "backend.com"
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-gateway-frontend
+      - documentIndex: 1
+        contains:
+          path: spec.hostnames
+          content: "frontend.com"
+
+  - it: should use custom service port
+    set:
+      services:
+        service1:
+          service:
+            port: 8080
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: gateway
+            http:
+              hostname: "custom-port.com"
+              paths:
+                - path: /
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 8080
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "httproute-env"
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: gateway
+            http:
+              hostname: "labeled.com"
+              paths:
+                - path: /
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "httproute-env"

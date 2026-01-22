@@ -1,0 +1,31 @@
+{{- if .Values.global.s3Storage.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.global.s3Storage.pvName | default (printf "%s-s3-pv" (include "stack.fullname" .)) }}
+  labels:
+    {{- include "stack.labels" . | nindent 4 }}
+    {{- with .Values.global.s3Storage.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.global.s3Storage.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  capacity:
+    storage: {{ .Values.global.s3Storage.capacity | default "5Gi" }}
+  accessModes:
+    {{- toYaml .Values.global.s3Storage.accessModes | nindent 4 }}
+  persistentVolumeReclaimPolicy: {{ .Values.global.s3Storage.reclaimPolicy | default "Retain" }}
+  storageClassName: ""
+  csi:
+    driver: s3.csi.aws.com
+    volumeHandle: {{ .Values.global.s3Storage.volumeHandle | default (printf "%s-s3-handle" (include "stack.fullname" .)) }}
+    volumeAttributes:
+      bucketName: {{ .Values.global.s3Storage.bucketName }}
+      region: {{ .Values.global.s3Storage.region | default "us-west-2" }}
+      {{- with .Values.global.s3Storage.volumeAttributes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+{{- end }}
