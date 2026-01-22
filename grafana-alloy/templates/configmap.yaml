@@ -435,6 +435,9 @@ data:
       }
       output {
         metrics = [otelcol.exporter.prometheus.to_prometheus.input]
+        {{- if and .Values.alloyConfig.traces.enabled .Values.tempo.enabled }}
+        traces = [otelcol.exporter.otlp.tempo.input]
+        {{- end }}
       }
     }
     otelcol.exporter.prometheus "to_prometheus" {
@@ -444,6 +447,59 @@ data:
         {{- end }}
       ]
     }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.traces.enabled .Values.tempo.enabled }}
+    // OTLP receiver for traces (can receive from instrumented applications)
+    otelcol.receiver.otlp "default" {
+      grpc {
+        endpoint = "0.0.0.0:4317"
+      }
+      http {
+        endpoint = "0.0.0.0:4318"
+      }
+      output {
+        traces = [otelcol.processor.batch.default.input]
+      }
+    }
+
+    // Batch processor for efficient trace export
+    otelcol.processor.batch "default" {
+      timeout = "5s"
+      send_batch_size = 8192
+      output {
+        traces = [otelcol.processor.attributes.add_cluster.input]
+      }
+    }
+
+    // Add cluster label to all traces
+    otelcol.processor.attributes "add_cluster" {
+      action {
+        key    = "cluster"
+        value  = {{ .Values.clusterName | quote }}
+        action = "upsert"
+      }
+      output {
+        traces = [otelcol.exporter.otlp.tempo.input]
+      }
+    }
+
+    // OTLP exporter to Tempo
+    {{- range $idx, $endpoint := .Values.tempo.endpoints }}
+    otelcol.exporter.otlp "tempo" {
+      client {
+        endpoint = {{ $endpoint.url | quote }}
+        {{- if $endpoint.tls }}
+        tls {
+          insecure = {{ $endpoint.tls.insecure | default false }}
+          {{- if $endpoint.tls.insecureSkipVerify }}
+          insecure_skip_verify = {{ $endpoint.tls.insecureSkipVerify }}
+          {{- end }}
+        }
+        {{- end }}
+      }
+    }
+    {{- end }}
     {{- end }}
 {{- end }}
 {{- end }}

@@ -317,6 +317,16 @@
               "type": "boolean"
             }
           }
+        },
+        "traces": {
+          "description": "Enable trace collection and export",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable trace collection and export to Tempo (requires tempo.enabled=true)",
+              "type": "boolean"
+            }
+          }
         }
       }
     },
@@ -368,6 +378,48 @@
             "regex": {
               "description": "Regex pattern to match metric names to keep",
               "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "tempo": {
+      "description": "Tempo trace export configuration",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable trace export to Tempo",
+          "type": "boolean"
+        },
+        "endpoints": {
+          "description": "Array of Tempo endpoints to send traces to",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "description": "URL of the Tempo OTLP endpoint (host:port)",
+                "type": "string"
+              },
+              "protocol": {
+                "description": "Protocol to use",
+                "type": "string",
+                "enum": ["grpc", "http"]
+              },
+              "tls": {
+                "description": "TLS configuration",
+                "type": "object",
+                "properties": {
+                  "insecure": {
+                    "description": "Disable TLS verification (for in-cluster communication)",
+                    "type": "boolean"
+                  },
+                  "insecureSkipVerify": {
+                    "description": "Skip TLS certificate verification",
+                    "type": "boolean"
+                  }
+                }
+              }
             }
           }
         }

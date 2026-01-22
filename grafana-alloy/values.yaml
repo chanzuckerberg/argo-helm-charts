@@ -39,6 +39,15 @@ prometheusRemoteWrite:
     enabled: false # @schema description: Enable metrics filtering
     regex: "" # @schema description: Regex pattern to match metric names to keep
 
+# Tempo trace export configuration
+tempo:
+  enabled: false # @schema description: Enable trace export to Tempo
+  endpoints: [] # @schema description: Array of Tempo endpoints to send traces to
+    # - url: "tempo.loki.svc:4317" # @schema description: URL of the Tempo OTLP endpoint (host:port)
+    #   protocol: "grpc" # @schema description: Protocol to use (grpc or http); enum: [grpc, http]
+    #   tls: # @schema description: TLS configuration
+    #     insecure: true # @schema description: Disable TLS verification (for in-cluster communication)
+
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
 alloyConfig:
@@ -57,6 +66,10 @@ alloyConfig:
   # @schema description: Enable Prometheus metrics collection
   metrics:
     enabled: false # @schema description: Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)
+
+  # @schema description: Enable trace collection and export
+  traces:
+    enabled: false # @schema description: Enable trace collection and export to Tempo (requires tempo.enabled=true)
 
   # @schema description: Enable Beyla integration for eBPF-based application instrumentation
   beyla:
