@@ -829,10 +829,13 @@ Must be one of:
 
 **Description:** Enable trace collection and export
 
-| Property                                          | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
-| ------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
-| - [enabled](#alloyConfig_traces_enabled )         | No      | boolean | No         | -          | Enable trace collection and export to Tempo (requires tempo.enabled=true) |
-| - [k8sMetadata](#alloyConfig_traces_k8sMetadata ) | No      | object  | No         | -          | Attach Kubernetes metadata to traces using k8sattributes processor        |
+| Property                                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [enabled](#alloyConfig_traces_enabled )                     | No      | boolean | No         | -          | Enable trace collection and export to Tempo (requires tempo.enabled=true) |
+| - [healthCheckFilter](#alloyConfig_traces_healthCheckFilter ) | No      | object  | No         | -          | Filter out noisy health check spans from traces                           |
+| - [k8sMetadata](#alloyConfig_traces_k8sMetadata )             | No      | object  | No         | -          | Attach Kubernetes metadata to traces using k8sattributes processor        |
+| - [serviceGraph](#alloyConfig_traces_serviceGraph )           | No      | object  | No         | -          | Generate service dependency graph metrics from traces                     |
+| - [spanMetrics](#alloyConfig_traces_spanMetrics )             | No      | object  | No         | -          | Generate RED metrics (Rate, Errors, Duration) from traces                 |
 
 #### <a name="alloyConfig_traces_enabled"></a>2.6.1. Property `grafana-alloy > alloyConfig > traces > enabled`
 
@@ -843,7 +846,59 @@ Must be one of:
 
 **Description:** Enable trace collection and export to Tempo (requires tempo.enabled=true)
 
-#### <a name="alloyConfig_traces_k8sMetadata"></a>2.6.2. Property `grafana-alloy > alloyConfig > traces > k8sMetadata`
+#### <a name="alloyConfig_traces_healthCheckFilter"></a>2.6.2. Property `grafana-alloy > alloyConfig > traces > healthCheckFilter`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Filter out noisy health check spans from traces
+
+| Property                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                       |
+| ----------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------- |
+| - [enabled](#alloyConfig_traces_healthCheckFilter_enabled ) | No      | boolean         | No         | -          | Enable filtering of health check endpoints                              |
+| - [routes](#alloyConfig_traces_healthCheckFilter_routes )   | No      | array of string | No         | -          | List of HTTP routes to filter out (exact match on http.route attribute) |
+
+##### <a name="alloyConfig_traces_healthCheckFilter_enabled"></a>2.6.2.1. Property `grafana-alloy > alloyConfig > traces > healthCheckFilter > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable filtering of health check endpoints
+
+##### <a name="alloyConfig_traces_healthCheckFilter_routes"></a>2.6.2.2. Property `grafana-alloy > alloyConfig > traces > healthCheckFilter > routes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** List of HTTP routes to filter out (exact match on http.route attribute)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                    | Description |
+| ------------------------------------------------------------------ | ----------- |
+| [routes items](#alloyConfig_traces_healthCheckFilter_routes_items) | -           |
+
+###### <a name="alloyConfig_traces_healthCheckFilter_routes_items"></a>2.6.2.2.1. grafana-alloy > alloyConfig > traces > healthCheckFilter > routes > routes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="alloyConfig_traces_k8sMetadata"></a>2.6.3. Property `grafana-alloy > alloyConfig > traces > k8sMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -858,7 +913,7 @@ Must be one of:
 | - [enabled](#alloyConfig_traces_k8sMetadata_enabled ) | No      | boolean         | No         | -          | Enable Kubernetes metadata enrichment for traces  |
 | - [extract](#alloyConfig_traces_k8sMetadata_extract ) | No      | array of string | No         | -          | List of Kubernetes metadata attributes to extract |
 
-##### <a name="alloyConfig_traces_k8sMetadata_enabled"></a>2.6.2.1. Property `grafana-alloy > alloyConfig > traces > k8sMetadata > enabled`
+##### <a name="alloyConfig_traces_k8sMetadata_enabled"></a>2.6.3.1. Property `grafana-alloy > alloyConfig > traces > k8sMetadata > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -867,7 +922,7 @@ Must be one of:
 
 **Description:** Enable Kubernetes metadata enrichment for traces
 
-##### <a name="alloyConfig_traces_k8sMetadata_extract"></a>2.6.2.2. Property `grafana-alloy > alloyConfig > traces > k8sMetadata > extract`
+##### <a name="alloyConfig_traces_k8sMetadata_extract"></a>2.6.3.2. Property `grafana-alloy > alloyConfig > traces > k8sMetadata > extract`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -888,12 +943,155 @@ Must be one of:
 | -------------------------------------------------------------- | ----------- |
 | [extract items](#alloyConfig_traces_k8sMetadata_extract_items) | -           |
 
-###### <a name="alloyConfig_traces_k8sMetadata_extract_items"></a>2.6.2.2.1. grafana-alloy > alloyConfig > traces > k8sMetadata > extract > extract items
+###### <a name="alloyConfig_traces_k8sMetadata_extract_items"></a>2.6.3.2.1. grafana-alloy > alloyConfig > traces > k8sMetadata > extract > extract items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+#### <a name="alloyConfig_traces_serviceGraph"></a>2.6.4. Property `grafana-alloy > alloyConfig > traces > serviceGraph`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Generate service dependency graph metrics from traces
+
+| Property                                                     | Pattern | Type            | Deprecated | Definition | Title/Description                                                          |
+| ------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------- |
+| - [dimensions](#alloyConfig_traces_serviceGraph_dimensions ) | No      | array of string | No         | -          | Dimensions to include in service graph metrics                             |
+| - [enabled](#alloyConfig_traces_serviceGraph_enabled )       | No      | boolean         | No         | -          | Enable service graph metrics (requires prometheusRemoteWrite.enabled=true) |
+
+##### <a name="alloyConfig_traces_serviceGraph_dimensions"></a>2.6.4.1. Property `grafana-alloy > alloyConfig > traces > serviceGraph > dimensions`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Dimensions to include in service graph metrics
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                       | Description |
+| --------------------------------------------------------------------- | ----------- |
+| [dimensions items](#alloyConfig_traces_serviceGraph_dimensions_items) | -           |
+
+###### <a name="alloyConfig_traces_serviceGraph_dimensions_items"></a>2.6.4.1.1. grafana-alloy > alloyConfig > traces > serviceGraph > dimensions > dimensions items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="alloyConfig_traces_serviceGraph_enabled"></a>2.6.4.2. Property `grafana-alloy > alloyConfig > traces > serviceGraph > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable service graph metrics (requires prometheusRemoteWrite.enabled=true)
+
+#### <a name="alloyConfig_traces_spanMetrics"></a>2.6.5. Property `grafana-alloy > alloyConfig > traces > spanMetrics`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Generate RED metrics (Rate, Errors, Duration) from traces
+
+| Property                                                                | Pattern | Type            | Deprecated | Definition | Title/Description                                                            |
+| ----------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------- |
+| - [dimensions](#alloyConfig_traces_spanMetrics_dimensions )             | No      | array of string | No         | -          | Dimensions to include in generated metrics                                   |
+| - [enabled](#alloyConfig_traces_spanMetrics_enabled )                   | No      | boolean         | No         | -          | Enable span metrics generation (requires prometheusRemoteWrite.enabled=true) |
+| - [histogramBuckets](#alloyConfig_traces_spanMetrics_histogramBuckets ) | No      | array of string | No         | -          | Histogram buckets for latency distribution                                   |
+| - [namespace](#alloyConfig_traces_spanMetrics_namespace )               | No      | string          | No         | -          | Metrics namespace for easier querying                                        |
+
+##### <a name="alloyConfig_traces_spanMetrics_dimensions"></a>2.6.5.1. Property `grafana-alloy > alloyConfig > traces > spanMetrics > dimensions`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Dimensions to include in generated metrics
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                      | Description |
+| -------------------------------------------------------------------- | ----------- |
+| [dimensions items](#alloyConfig_traces_spanMetrics_dimensions_items) | -           |
+
+###### <a name="alloyConfig_traces_spanMetrics_dimensions_items"></a>2.6.5.1.1. grafana-alloy > alloyConfig > traces > spanMetrics > dimensions > dimensions items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="alloyConfig_traces_spanMetrics_enabled"></a>2.6.5.2. Property `grafana-alloy > alloyConfig > traces > spanMetrics > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable span metrics generation (requires prometheusRemoteWrite.enabled=true)
+
+##### <a name="alloyConfig_traces_spanMetrics_histogramBuckets"></a>2.6.5.3. Property `grafana-alloy > alloyConfig > traces > spanMetrics > histogramBuckets`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Histogram buckets for latency distribution
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                  | Description |
+| -------------------------------------------------------------------------------- | ----------- |
+| [histogramBuckets items](#alloyConfig_traces_spanMetrics_histogramBuckets_items) | -           |
+
+###### <a name="alloyConfig_traces_spanMetrics_histogramBuckets_items"></a>2.6.5.3.1. grafana-alloy > alloyConfig > traces > spanMetrics > histogramBuckets > histogramBuckets items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="alloyConfig_traces_spanMetrics_namespace"></a>2.6.5.4. Property `grafana-alloy > alloyConfig > traces > spanMetrics > namespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Metrics namespace for easier querying
 
 ## <a name="clusterName"></a>3. Property `grafana-alloy > clusterName`
 
