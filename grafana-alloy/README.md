@@ -16,6 +16,7 @@
 | - [enabled](#enabled )                             | No      | boolean | No         | -          | Enable or disable the Grafana Alloy deployment                            |
 | - [loki](#loki )                                   | No      | object  | No         | -          | -                                                                         |
 | - [prometheusRemoteWrite](#prometheusRemoteWrite ) | No      | object  | No         | -          | -                                                                         |
+| - [tempo](#tempo )                                 | No      | object  | No         | -          | -                                                                         |
 
 ## <a name="alloy"></a>1. Property `grafana-alloy > alloy`
 
@@ -715,6 +716,7 @@ Must be one of:
 | - [events](#alloyConfig_events )   | No      | object | No         | -          | Enable Kubernetes events collection                                                          |
 | - [metrics](#alloyConfig_metrics ) | No      | object | No         | -          | Enable Prometheus metrics collection                                                         |
 | - [podLogs](#alloyConfig_podLogs ) | No      | object | No         | -          | Enable pod log collection                                                                    |
+| - [traces](#alloyConfig_traces )   | No      | object | No         | -          | Enable trace collection and export                                                           |
 
 ### <a name="alloyConfig_beyla"></a>2.1. Property `grafana-alloy > alloyConfig > beyla`
 
@@ -816,6 +818,29 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable collection of pod logs from all nodes
+
+### <a name="alloyConfig_traces"></a>2.6. Property `grafana-alloy > alloyConfig > traces`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Enable trace collection and export
+
+| Property                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ----------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [enabled](#alloyConfig_traces_enabled ) | No      | boolean | No         | -          | Enable trace collection and export to Tempo (requires tempo.enabled=true) |
+
+#### <a name="alloyConfig_traces_enabled"></a>2.6.1. Property `grafana-alloy > alloyConfig > traces > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable trace collection and export to Tempo (requires tempo.enabled=true)
 
 ## <a name="clusterName"></a>3. Property `grafana-alloy > clusterName`
 
@@ -961,5 +986,44 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Regex pattern to match metric names to keep
+
+## <a name="tempo"></a>7. Property `grafana-alloy > tempo`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                         | Pattern | Type    | Deprecated | Definition | Title/Description                          |
+| -------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------ |
+| - [enabled](#tempo_enabled )     | No      | boolean | No         | -          | Enable trace export to Tempo               |
+| - [endpoints](#tempo_endpoints ) | No      | array   | No         | -          | Array of Tempo endpoints to send traces to |
+
+### <a name="tempo_enabled"></a>7.1. Property `grafana-alloy > tempo > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable trace export to Tempo
+
+### <a name="tempo_endpoints"></a>7.2. Property `grafana-alloy > tempo > endpoints`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Array of Tempo endpoints to send traces to
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
 ----------------------------------------------------------------------------------------------------------------------------
