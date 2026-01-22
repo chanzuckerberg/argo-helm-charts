@@ -427,7 +427,7 @@ data:
         skip_go_specific_tracers = true
         instrument {
           kubernetes {
-            namespace = "argus-argus-*"
+            namespace = {{ .Values.alloyConfig.beyla.namespace | default ".*" | quote }}
           }
         }
       }
