@@ -317,6 +317,95 @@
               "type": "boolean"
             }
           }
+        },
+        "traces": {
+          "description": "Enable trace collection and export",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable trace collection and export to Tempo (requires tempo.enabled=true)",
+              "type": "boolean"
+            },
+            "healthCheckFilter": {
+              "description": "Filter out noisy health check spans from traces",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable filtering of health check endpoints",
+                  "type": "boolean"
+                },
+                "routes": {
+                  "description": "List of HTTP routes to filter out (exact match on http.route attribute)",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "k8sMetadata": {
+              "description": "Attach Kubernetes metadata to traces using k8sattributes processor",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable Kubernetes metadata enrichment for traces",
+                  "type": "boolean"
+                },
+                "extract": {
+                  "description": "List of Kubernetes metadata attributes to extract",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "serviceGraph": {
+              "description": "Generate service dependency graph metrics from traces",
+              "type": "object",
+              "properties": {
+                "dimensions": {
+                  "description": "Dimensions to include in service graph metrics",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "enabled": {
+                  "description": "Enable service graph metrics (requires prometheusRemoteWrite.enabled=true)",
+                  "type": "boolean"
+                }
+              }
+            },
+            "spanMetrics": {
+              "description": "Generate RED metrics (Rate, Errors, Duration) from traces",
+              "type": "object",
+              "properties": {
+                "dimensions": {
+                  "description": "Dimensions to include in generated metrics",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "enabled": {
+                  "description": "Enable span metrics generation (requires prometheusRemoteWrite.enabled=true)",
+                  "type": "boolean"
+                },
+                "histogramBuckets": {
+                  "description": "Histogram buckets for latency distribution",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "namespace": {
+                  "description": "Metrics namespace for easier querying",
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -370,6 +459,19 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "tempo": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable trace export to Tempo",
+          "type": "boolean"
+        },
+        "endpoints": {
+          "description": "Array of Tempo endpoints to send traces to",
+          "type": "array"
         }
       }
     }

@@ -191,6 +191,47 @@ tests:
       - notMatchRegex:
           path: data["config.alloy"]
           pattern: 'beyla\.ebpf'
+
+  - it: should include loki.write when events enabled but podLogs disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        podLogs:
+          enabled: false
+        events:
+          enabled: true
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.write\s+"endpoints"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.source\.kubernetes_events'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes\s+"pods"'
+
+  - it: should not include loki.write when both podLogs and events disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        podLogs:
+          enabled: false
+        events:
+          enabled: false
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.write\s+"endpoints"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.source\.kubernetes_events'
   - it: should not enable beyla when alloyConfig.beyla.enabled is set but prometheusRemoteWrite is not enabled
     set:
       enabled: true
@@ -252,3 +293,851 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'metrics = \[otelcol\.exporter\.prometheus\.to_prometheus\.input\]'
+
+  # Tracing and Tempo tests
+  - it: should not include tracing config when traces are disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: false
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.receiver\.otlp'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp'
+
+  - it: should not include tracing config when traces enabled but tempo disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: false
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.receiver\.otlp'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp'
+
+  - it: should include OTLP receiver when traces and tempo are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.receiver\.otlp\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'endpoint = "0\.0\.0\.0:4317"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'endpoint = "0\.0\.0\.0:4318"'
+
+  - it: should include batch processor when traces are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.batch\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'timeout = "5s"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'send_batch_size = 8192'
+
+  - it: should add cluster attribute to traces
+    set:
+      enabled: true
+      clusterName: my-trace-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.attributes\s+"add_cluster"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'key\s*=\s*"cluster"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'value\s*=\s*"my-trace-cluster"'
+
+  - it: should include OTLP exporter to Tempo
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp\s+"tempo_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'endpoint = "tempo\.loki\.svc:4317"'
+
+  - it: should configure Tempo endpoint with TLS insecure setting
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+            tls:
+              insecure: true
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp\s+"tempo_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'insecure = true'
+
+  - it: should configure Tempo endpoint with TLS insecure_skip_verify
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.example.com:4317"
+            tls:
+              insecure: false
+              insecureSkipVerify: true
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'endpoint = "tempo\.example\.com:4317"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'insecure = false'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'insecure_skip_verify = true'
+
+  - it: should chain OTLP receiver to batch to attributes to exporter
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          k8sMetadata:
+            enabled: false
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      # OTLP receiver outputs to batch processor
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.processor\.batch\.default\.input\]'
+      # Batch processor outputs to attributes processor (when k8sMetadata disabled)
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.processor\.attributes\.add_cluster\.input\]'
+      # Attributes processor outputs to OTLP exporter
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.exporter\.otlp\.tempo_0\.input\]'
+
+  - it: should include beyla trace output to tempo when both are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+        traces:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.exporter\.otlp\.tempo_0\.input\]'
+
+  - it: should not include beyla trace output when tempo is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+        traces:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+      tempo:
+        enabled: false
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.exporter\.otlp\.tempo_0\.input\]'
+
+  # Kubernetes metadata attachment tests
+  - it: should include k8sattributes processor when traces.k8sMetadata.enabled is true (default)
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes\s+"default"'
+
+  - it: should extract default Kubernetes metadata attributes
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.namespace\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.container\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.deployment\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.node\.name"'
+
+  - it: should chain batch to k8sattributes to attributes when k8s metadata enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      # Batch processor outputs to k8sattributes
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.processor\.k8sattributes\.default\.input\]'
+      # k8sattributes outputs to attributes processor
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes[\s\S]*output[\s\S]*traces = \[otelcol\.processor\.attributes\.add_cluster\.input\]'
+
+  - it: should not include k8sattributes when traces.k8sMetadata.enabled is false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          k8sMetadata:
+            enabled: false
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes'
+      # Batch should output directly to attributes processor
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.batch[\s\S]*output[\s\S]*traces = \[otelcol\.processor\.attributes\.add_cluster\.input\]'
+
+  - it: should allow custom metadata extraction list
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          k8sMetadata:
+            enabled: true
+            extract:
+              - k8s.namespace.name
+              - k8s.pod.name
+              - k8s.pod.uid
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.namespace\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.uid"'
+      # Should not include default attributes not in custom list
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.deployment\.name"'
+
+  # Pod association tests
+  - it: should include pod_association in k8sattributes processor
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'pod_association'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'from = "connection"'
+
+  # Tempo basic auth tests
+  - it: should configure Tempo endpoint with basic auth
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.example.com:443"
+            basicAuth:
+              username: "my-user"
+              password: "my-password"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.auth\.basic\s+"tempo_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = "my-user"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = "my-password"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'auth = otelcol\.auth\.basic\.tempo_0\.handler'
+
+  - it: should not include auth block when basic auth is not configured
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.auth\.basic'
+
+  # Protocol tests
+  - it: should use gRPC exporter by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp\s+"tempo_0"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlphttp'
+
+  - it: should use HTTP exporter when protocol is http
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "http://tempo.loki.svc:4318"
+            protocol: "http"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlphttp\s+"tempo_0"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp\s+"tempo_0"'
+
+  - it: should use gRPC exporter when protocol is explicitly grpc
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+            protocol: "grpc"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp\s+"tempo_0"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlphttp'
+
+  # Multiple Tempo endpoints tests
+  - it: should support multiple Tempo endpoints
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo-local.svc:4317"
+            tls:
+              insecure: true
+          - url: "tempo-cloud.example.com:443"
+            basicAuth:
+              username: "cloud-user"
+              password: "cloud-pass"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp\s+"tempo_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.otlp\s+"tempo_1"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'endpoint = "tempo-local\.svc:4317"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'endpoint = "tempo-cloud\.example\.com:443"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.auth\.basic\s+"tempo_1"'
+      # Attributes processor should output to both exporters
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.exporter\.otlp\.tempo_0\.input, otelcol\.exporter\.otlp\.tempo_1\.input\]'
+
+  # Health check filter tests
+  - it: should not include health check filter by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.filter'
+
+  - it: should include health check filter when enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          healthCheckFilter:
+            enabled: true
+            routes:
+              - /live
+              - /ready
+              - /healthz
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.filter\s+"health_check"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'error_mode = "ignore"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/live'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/ready'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/healthz'
+
+  - it: should chain k8sattributes to filter to attributes when both enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          k8sMetadata:
+            enabled: true
+          healthCheckFilter:
+            enabled: true
+            routes:
+              - /health
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      # k8sattributes outputs to filter
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes[\s\S]*output[\s\S]*traces = \[otelcol\.processor\.filter\.health_check\.input\]'
+      # filter outputs to attributes
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.filter[\s\S]*output[\s\S]*traces = \[otelcol\.processor\.attributes\.add_cluster\.input\]'
+
+  - it: should chain batch to filter when k8sMetadata disabled but filter enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          k8sMetadata:
+            enabled: false
+          healthCheckFilter:
+            enabled: true
+            routes:
+              - /health
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes'
+      # batch outputs to filter
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.batch[\s\S]*output[\s\S]*traces = \[otelcol\.processor\.filter\.health_check\.input\]'
+
+  # Span Metrics tests
+  - it: should not include span metrics by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.spanmetrics'
+
+  - it: should not include span metrics when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          spanMetrics:
+            enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.spanmetrics'
+
+  - it: should include span metrics when enabled with prometheusRemoteWrite
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          spanMetrics:
+            enabled: true
+            namespace: "my_span_metrics"
+            dimensions:
+              - service.name
+              - http.method
+            histogramBuckets:
+              - "50ms"
+              - "100ms"
+              - "500ms"
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.spanmetrics\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'namespace = "my_span_metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'name = "service\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'name = "http\.method"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"50ms"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.prometheus\s+"trace_metrics"'
+
+  - it: should include span metrics connector in add_cluster output
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          spanMetrics:
+            enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.spanmetrics\.default\.input'
+
+  # Service Graph tests
+  - it: should not include service graph by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.servicegraph'
+
+  - it: should include service graph when enabled with prometheusRemoteWrite
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          serviceGraph:
+            enabled: true
+            dimensions:
+              - http.method
+              - http.status_code
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.servicegraph\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'dimensions = \["http\.method", "http\.status_code"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.servicegraph\.default\.input'
+
+  - it: should include both span metrics and service graph when both enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          spanMetrics:
+            enabled: true
+          serviceGraph:
+            enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.spanmetrics\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.connector\.servicegraph\s+"default"'
+      # Both should output to same prometheus exporter
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.prometheus\.trace_metrics\.input'
+
+  # Extended metadata tests
+  - it: should include extended default metadata fields
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.statefulset\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.daemonset\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.cronjob\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.job\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.uid"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.start_time"'

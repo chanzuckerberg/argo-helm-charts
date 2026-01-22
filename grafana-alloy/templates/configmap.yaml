@@ -231,7 +231,9 @@ data:
         target_label  = "level"
       }
     }
+    {{- end }}
 
+    {{- if or .Values.alloyConfig.podLogs.enabled .Values.alloyConfig.events.enabled }}
     loki.write "endpoints" {
       {{- range $idx, $endpoint := .Values.loki.endpoints }}
       endpoint {
@@ -435,6 +437,9 @@ data:
       }
       output {
         metrics = [otelcol.exporter.prometheus.to_prometheus.input]
+        {{- if and .Values.alloyConfig.traces.enabled .Values.tempo.enabled }}
+        traces = [{{ range $idx, $endpoint := .Values.tempo.endpoints }}{{ if $idx }}, {{ end }}{{ if eq ($endpoint.protocol | default "grpc") "http" }}otelcol.exporter.otlphttp.tempo_{{ $idx }}.input{{ else }}otelcol.exporter.otlp.tempo_{{ $idx }}.input{{ end }}{{ end }}]
+        {{- end }}
       }
     }
     otelcol.exporter.prometheus "to_prometheus" {
@@ -444,6 +449,188 @@ data:
         {{- end }}
       ]
     }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.traces.enabled .Values.tempo.enabled }}
+    otelcol.receiver.otlp "default" {
+      grpc {
+        endpoint = "0.0.0.0:4317"
+      }
+      http {
+        endpoint = "0.0.0.0:4318"
+      }
+      output {
+        traces = [otelcol.processor.batch.default.input]
+      }
+    }
+
+    otelcol.processor.batch "default" {
+      timeout = "5s"
+      send_batch_size = 8192
+      output {
+        {{- if .Values.alloyConfig.traces.k8sMetadata.enabled }}
+        traces = [otelcol.processor.k8sattributes.default.input]
+        {{- else if .Values.alloyConfig.traces.healthCheckFilter.enabled }}
+        traces = [otelcol.processor.filter.health_check.input]
+        {{- else }}
+        traces = [otelcol.processor.attributes.add_cluster.input]
+        {{- end }}
+      }
+    }
+
+    {{- if .Values.alloyConfig.traces.k8sMetadata.enabled }}
+    otelcol.processor.k8sattributes "default" {
+      extract {
+        metadata = [
+          {{- range $idx, $attr := .Values.alloyConfig.traces.k8sMetadata.extract }}
+          {{ $attr | quote }},
+          {{- end }}
+        ]
+      }
+
+      pod_association {
+        source {
+          from = "connection"
+        }
+      }
+
+      output {
+        {{- if .Values.alloyConfig.traces.healthCheckFilter.enabled }}
+        traces = [otelcol.processor.filter.health_check.input]
+        {{- else }}
+        traces = [otelcol.processor.attributes.add_cluster.input]
+        {{- end }}
+      }
+    }
+    {{- end }}
+
+    {{- if .Values.alloyConfig.traces.healthCheckFilter.enabled }}
+    otelcol.processor.filter "health_check" {
+      error_mode = "ignore"
+      traces {
+        span = [
+          {{- range $idx, $route := .Values.alloyConfig.traces.healthCheckFilter.routes }}
+          "attributes[\"http.route\"] == \"{{ $route }}\"",
+          {{- end }}
+        ]
+      }
+      output {
+        traces = [otelcol.processor.attributes.add_cluster.input]
+      }
+    }
+    {{- end }}
+
+    otelcol.processor.attributes "add_cluster" {
+      action {
+        key    = "cluster"
+        value  = {{ .Values.clusterName | quote }}
+        action = "upsert"
+      }
+      output {
+        {{- $outputs := list }}
+        {{- range $idx, $endpoint := .Values.tempo.endpoints }}
+        {{- if eq ($endpoint.protocol | default "grpc") "http" }}
+        {{- $outputs = append $outputs (printf "otelcol.exporter.otlphttp.tempo_%d.input" $idx) }}
+        {{- else }}
+        {{- $outputs = append $outputs (printf "otelcol.exporter.otlp.tempo_%d.input" $idx) }}
+        {{- end }}
+        {{- end }}
+        {{- if and .Values.alloyConfig.traces.spanMetrics.enabled .Values.prometheusRemoteWrite.enabled }}
+        {{- $outputs = append $outputs "otelcol.connector.spanmetrics.default.input" }}
+        {{- end }}
+        {{- if and .Values.alloyConfig.traces.serviceGraph.enabled .Values.prometheusRemoteWrite.enabled }}
+        {{- $outputs = append $outputs "otelcol.connector.servicegraph.default.input" }}
+        {{- end }}
+        traces = [{{ join ", " $outputs }}]
+      }
+    }
+
+    {{- if and (or .Values.alloyConfig.traces.spanMetrics.enabled .Values.alloyConfig.traces.serviceGraph.enabled) .Values.prometheusRemoteWrite.enabled }}
+    otelcol.exporter.prometheus "trace_metrics" {
+      forward_to = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
+    }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.traces.spanMetrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    otelcol.connector.spanmetrics "default" {
+      {{- range $dim := .Values.alloyConfig.traces.spanMetrics.dimensions }}
+      dimension {
+        name = {{ $dim | quote }}
+      }
+      {{- end }}
+      dimension {
+        name    = "error"
+        default = "false"
+      }
+
+      histogram {
+        explicit {
+          buckets = [{{ range $idx, $bucket := .Values.alloyConfig.traces.spanMetrics.histogramBuckets }}{{ if $idx }}, {{ end }}{{ $bucket | quote }}{{ end }}]
+        }
+      }
+
+      namespace = {{ .Values.alloyConfig.traces.spanMetrics.namespace | quote }}
+
+      output {
+        metrics = [otelcol.exporter.prometheus.trace_metrics.input]
+      }
+    }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.traces.serviceGraph.enabled .Values.prometheusRemoteWrite.enabled }}
+    otelcol.connector.servicegraph "default" {
+      dimensions = [{{ range $idx, $dim := .Values.alloyConfig.traces.serviceGraph.dimensions }}{{ if $idx }}, {{ end }}{{ $dim | quote }}{{ end }}]
+
+      output {
+        metrics = [otelcol.exporter.prometheus.trace_metrics.input]
+      }
+    }
+    {{- end }}
+
+    {{- range $idx, $endpoint := .Values.tempo.endpoints }}
+    {{- if $endpoint.basicAuth }}
+    otelcol.auth.basic "tempo_{{ $idx }}" {
+      username = {{ $endpoint.basicAuth.username | quote }}
+      password = {{ $endpoint.basicAuth.password | quote }}
+    }
+    {{- end }}
+
+    {{- if eq ($endpoint.protocol | default "grpc") "http" }}
+    otelcol.exporter.otlphttp "tempo_{{ $idx }}" {
+      client {
+        endpoint = {{ $endpoint.url | quote }}
+        {{- if $endpoint.basicAuth }}
+        auth = otelcol.auth.basic.tempo_{{ $idx }}.handler
+        {{- end }}
+        {{- if $endpoint.tls }}
+        tls {
+          insecure = {{ $endpoint.tls.insecure | default false }}
+          {{- if $endpoint.tls.insecureSkipVerify }}
+          insecure_skip_verify = {{ $endpoint.tls.insecureSkipVerify }}
+          {{- end }}
+        }
+        {{- end }}
+      }
+    }
+    {{- else }}
+    otelcol.exporter.otlp "tempo_{{ $idx }}" {
+      client {
+        endpoint = {{ $endpoint.url | quote }}
+        {{- if $endpoint.basicAuth }}
+        auth = otelcol.auth.basic.tempo_{{ $idx }}.handler
+        {{- end }}
+        {{- if $endpoint.tls }}
+        tls {
+          insecure = {{ $endpoint.tls.insecure | default false }}
+          {{- if $endpoint.tls.insecureSkipVerify }}
+          insecure_skip_verify = {{ $endpoint.tls.insecureSkipVerify }}
+          {{- end }}
+        }
+        {{- end }}
+      }
+    }
+    {{- end }}
+    {{- end }}
     {{- end }}
 {{- end }}
 {{- end }}
