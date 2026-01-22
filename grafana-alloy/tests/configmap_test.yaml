@@ -495,3 +495,123 @@ tests:
       - notMatchRegex:
           path: data["config.alloy"]
           pattern: 'traces = \[otelcol\.exporter\.otlp\.tempo\.input\]'
+
+  # Kubernetes metadata attachment tests
+  - it: should include k8sattributes processor when traces.k8sMetadata.enabled is true (default)
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes\s+"default"'
+
+  - it: should extract default Kubernetes metadata attributes
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.namespace\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.container\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.deployment\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.node\.name"'
+
+  - it: should chain batch to k8sattributes to attributes when k8s metadata enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      # Batch processor outputs to k8sattributes
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[otelcol\.processor\.k8sattributes\.default\.input\]'
+      # k8sattributes outputs to attributes processor
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes[\s\S]*output[\s\S]*traces = \[otelcol\.processor\.attributes\.add_cluster\.input\]'
+
+  - it: should not include k8sattributes when traces.k8sMetadata.enabled is false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          k8sMetadata:
+            enabled: false
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.k8sattributes'
+      # Batch should output directly to attributes processor
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.batch[\s\S]*output[\s\S]*traces = \[otelcol\.processor\.attributes\.add_cluster\.input\]'
+
+  - it: should allow custom metadata extraction list
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        traces:
+          enabled: true
+          k8sMetadata:
+            enabled: true
+            extract:
+              - k8s.namespace.name
+              - k8s.pod.name
+              - k8s.pod.uid
+      tempo:
+        enabled: true
+        endpoints:
+          - url: "tempo.loki.svc:4317"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.namespace\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.name"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.pod\.uid"'
+      # Should not include default attributes not in custom list
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: '"k8s\.deployment\.name"'

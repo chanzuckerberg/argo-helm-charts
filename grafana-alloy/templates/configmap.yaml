@@ -450,7 +450,6 @@ data:
     {{- end }}
 
     {{- if and .Values.alloyConfig.traces.enabled .Values.tempo.enabled }}
-    // OTLP receiver for traces (can receive from instrumented applications)
     otelcol.receiver.otlp "default" {
       grpc {
         endpoint = "0.0.0.0:4317"
@@ -463,16 +462,34 @@ data:
       }
     }
 
-    // Batch processor for efficient trace export
     otelcol.processor.batch "default" {
       timeout = "5s"
       send_batch_size = 8192
       output {
+        {{- if .Values.alloyConfig.traces.k8sMetadata.enabled }}
+        traces = [otelcol.processor.k8sattributes.default.input]
+        {{- else }}
         traces = [otelcol.processor.attributes.add_cluster.input]
+        {{- end }}
       }
     }
 
-    // Add cluster label to all traces
+    {{- if .Values.alloyConfig.traces.k8sMetadata.enabled }}
+    otelcol.processor.k8sattributes "default" {
+      extract {
+        metadata = [
+          {{- range $idx, $attr := .Values.alloyConfig.traces.k8sMetadata.extract }}
+          {{ $attr | quote }},
+          {{- end }}
+        ]
+      }
+
+      output {
+        traces = [otelcol.processor.attributes.add_cluster.input]
+      }
+    }
+    {{- end }}
+
     otelcol.processor.attributes "add_cluster" {
       action {
         key    = "cluster"
@@ -484,7 +501,6 @@ data:
       }
     }
 
-    // OTLP exporter to Tempo
     {{- range $idx, $endpoint := .Values.tempo.endpoints }}
     otelcol.exporter.otlp "tempo" {
       client {

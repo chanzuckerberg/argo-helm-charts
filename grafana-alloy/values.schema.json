@@ -325,6 +325,23 @@
             "enabled": {
               "description": "Enable trace collection and export to Tempo (requires tempo.enabled=true)",
               "type": "boolean"
+            },
+            "k8sMetadata": {
+              "description": "Attach Kubernetes metadata to traces using k8sattributes processor",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable Kubernetes metadata enrichment for traces",
+                  "type": "boolean"
+                },
+                "extract": {
+                  "description": "List of Kubernetes metadata attributes to extract",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
         }
