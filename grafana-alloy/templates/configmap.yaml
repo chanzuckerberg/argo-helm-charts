@@ -418,31 +418,33 @@ data:
       debug = true
 
       attributes {
-        instrument {
-          name = ".*"
-          
-          kubernetes {
-            namespace = ".*"
-          }
+        kubernetes {
+          enable = "true"
         }
       }
       discovery {
-        services {
+        exclude_otel_instrumented_services = false
+        skip_go_specific_tracers = true
+        instrument {
           kubernetes {
             namespace = {{ .Values.alloyConfig.beyla.namespace | default ".*" | quote }}
           }
         }
       }
+      metrics {
+        features = [
+        "application", 
+        "network",
+        ]
+      }
       output {
-        metrics = [otelcol.exporter.prometheus.to_prometheus.input]
+        traces = []
       }
     }
-    otelcol.exporter.prometheus "to_prometheus" {
-      forward_to = [
-        {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
-        prometheus.remote_write.endpoint_{{ $idx }}.receiver,
-        {{- end }}
-      ]
+    prometheus.scrape "beyla_metrics" {
+      targets    = beyla.ebpf.default.targets
+      forward_to = [prometheus.remote_write.endpoint_0.receiver]
+      scrape_interval = "15s"
     }
     {{- end }}
 {{- end }}

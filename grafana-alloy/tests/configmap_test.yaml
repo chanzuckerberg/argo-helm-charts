@@ -228,7 +228,7 @@ tests:
           pattern: 'namespace = "my-app-ns"'
       - matchRegex:
           path: data["config.alloy"]
-          pattern: 'metrics = \[otelcol\.exporter\.prometheus\.to_prometheus\.input\]'
+          pattern: 'traces = \[\]'
   - it: should allow all namespace if alloyConfig.beyla.namespace is not set
     set:
       enabled: true
@@ -251,4 +251,4 @@ tests:
           pattern: 'namespace = ".*"'
       - matchRegex:
           path: data["config.alloy"]
-          pattern: 'metrics = \[otelcol\.exporter\.prometheus\.to_prometheus\.input\]'
+          pattern: 'traces = \[\]'
