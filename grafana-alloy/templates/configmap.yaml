@@ -428,12 +428,7 @@ data:
           open_ports = "80,443,3000" 
           
           kubernetes {
-            namespace = "argus-argus-*" 
-          }
-        }
-        instrument {
-          kubernetes {
-            namespace = ".*"
+            namespace = ".*" 
           }
         }
       }
