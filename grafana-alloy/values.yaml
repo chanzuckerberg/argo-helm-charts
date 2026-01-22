@@ -43,10 +43,18 @@ prometheusRemoteWrite:
 tempo:
   enabled: false # @schema description: Enable trace export to Tempo
   endpoints: [] # @schema description: Array of Tempo endpoints to send traces to
-    # - url: "tempo.loki.svc:4317" # @schema description: URL of the Tempo OTLP endpoint (host:port)
-    #   protocol: "grpc" # @schema description: Protocol to use (grpc or http); enum: [grpc, http]
-    #   tls: # @schema description: TLS configuration
-    #     insecure: true # @schema description: Disable TLS verification (for in-cluster communication)
+    # Example for in-cluster Tempo (no auth needed):
+    # - url: "tempo.loki.svc:4317"
+    #   protocol: "grpc" # @schema description: Protocol to use (grpc or http); enum: [grpc, http]; default: grpc
+    #   tls:
+    #     insecure: true
+    #
+    # Example for external Tempo with basic auth:
+    # - url: "tempo.example.com:443"
+    #   protocol: "grpc"
+    #   basicAuth:
+    #     username: "my-user"
+    #     password: "my-password"
 
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
@@ -80,7 +88,57 @@ alloyConfig:
         - k8s.pod.name
         - k8s.container.name
         - k8s.deployment.name
+        - k8s.statefulset.name
+        - k8s.daemonset.name
+        - k8s.cronjob.name
+        - k8s.job.name
         - k8s.node.name
+        - k8s.pod.uid
+        - k8s.pod.start_time
+    # @schema description: Filter out noisy health check spans from traces
+    healthCheckFilter:
+      enabled: false # @schema description: Enable filtering of health check endpoints
+      # @schema description: List of HTTP routes to filter out (exact match on http.route attribute)
+      # @schema type: array; item: string
+      routes:
+        - /live
+        - /alive
+        - /healthy
+        - /ready
+        - /readyz
+        - /healthz
+    # @schema description: Generate RED metrics (Rate, Errors, Duration) from traces
+    spanMetrics:
+      enabled: false # @schema description: Enable span metrics generation (requires prometheusRemoteWrite.enabled=true)
+      # @schema description: Namespace prefix for generated metrics
+      namespace: "traces_spanmetrics" # @schema description: Metrics namespace for easier querying
+      # @schema description: Dimensions to include in generated metrics
+      # @schema type: array; item: string
+      dimensions:
+        - service.name
+        - http.method
+        - http.status_code
+        - span.kind
+      # @schema description: Histogram buckets for latency distribution
+      # @schema type: array; item: string
+      histogramBuckets:
+        - "10ms"
+        - "50ms"
+        - "100ms"
+        - "250ms"
+        - "500ms"
+        - "1s"
+        - "2.5s"
+        - "5s"
+        - "10s"
+    # @schema description: Generate service dependency graph metrics from traces
+    serviceGraph:
+      enabled: false # @schema description: Enable service graph metrics (requires prometheusRemoteWrite.enabled=true)
+      # @schema description: Dimensions to include in service graph metrics
+      # @schema type: array; item: string
+      dimensions:
+        - http.method
+        - http.status_code
 
   # @schema description: Enable Beyla integration for eBPF-based application instrumentation
   beyla:
