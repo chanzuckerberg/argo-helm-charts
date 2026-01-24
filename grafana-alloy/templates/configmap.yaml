@@ -443,17 +443,10 @@ data:
     }
     prometheus.scrape "beyla_metrics" {
       targets    = beyla.ebpf.default.targets
-      forward_to = [prometheus.relabel.drop_high_cardinality.receiver]
+      forward_to = [prometheus.remote_write.endpoint_0.receiver]
       scrape_interval = "1m"
     }
 
-    prometheus.relabel "drop_high_cardinality" {
-      forward_to = [prometheus.remote_write.endpoint_0.receiver]
-      rule {
-        source_labels = ["instance", "k8s_pod_uid", "k8s_pod_name", "instance_id"]
-        action        = "labeldrop"
-      }
-    }
     otelcol.receiver.otlp "beyla" {
       grpc { endpoint = "0.0.0.0:4317" }
       http { endpoint = "0.0.0.0:4318" }
