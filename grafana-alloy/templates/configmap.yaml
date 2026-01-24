@@ -438,7 +438,7 @@ data:
         ]
       }
       output {
-        traces = []
+        traces = [otelcol.receiver.otlp.beyla.input]
       }
     }
     prometheus.scrape "beyla_metrics" {
@@ -452,6 +452,28 @@ data:
       rule {
         source_labels = ["instance", "k8s_pod_uid", "k8s_pod_name", "instance_id"]
         action        = "labeldrop"
+      }
+    }
+    otelcol.receiver.otlp "beyla" {
+      grpc { endpoint = "0.0.0.0:4317" }
+      http { endpoint = "0.0.0.0:4318" }
+
+      output {
+        traces = [otelcol.processor.batch.default.input]
+      }
+    }
+    otelcol.processor.batch "default" {
+      output {
+        traces = [otelcol.exporter.otlp.tempo.input]
+      }
+    }
+    otelcol.exporter.otlp "tempo" {
+      client {
+        endpoint = "tempo-distributor.cw-tempo.svc.cluster.local:4317" 
+        tls {
+          insecure = true
+          insecure_skip_verify = true
+        }
       }
     }
     {{- end }}
