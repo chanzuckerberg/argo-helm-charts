@@ -438,7 +438,7 @@ data:
         ]
       }
       output {
-        traces = [otelcol.receiver.otlp.beyla.input]
+        traces = [otelcol.processor.batch.default.input]
       }
     }
     prometheus.scrape "beyla_metrics" {
@@ -447,17 +447,9 @@ data:
       scrape_interval = "1m"
     }
 
-    otelcol.receiver.otlp "beyla" {
-      grpc { endpoint = "0.0.0.0:4317" }
-      http { endpoint = "0.0.0.0:4318" }
-
-      output {
-        traces = [otelcol.processor.batch.default.input]
-      }
-    }
     otelcol.processor.batch "default" {
       output {
-        traces = [otelcol.exporter.otlp.tempo.input]
+        traces  = [otelcol.exporter.otlp.tempo.input]
       }
     }
     otelcol.exporter.otlp "tempo" {
