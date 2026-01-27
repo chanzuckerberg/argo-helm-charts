@@ -211,6 +211,44 @@ global: # @schema description: Global configuration for the stack - this serves 
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+
+  gateway: # @schema description: Gateway API HTTPRoute configuration
+    enabled: false # @schema description: Enable Gateway API HTTPRoute
+    # @schema type: array
+    # @schema item: object
+    # @schema itemProperties: {"name": {"type": "string", "description": "Name of the Gateway to attach to"}, "namespace": {"type": "string", "description": "Namespace of the Gateway"}, "sectionName": {"type": "string", "description": "Section within the Gateway to attach to"}}
+    # @schema description: Parent Gateway references for the HTTPRoute
+    parentRefs: []
+    # parentRefs:
+    #   - name: my-gateway
+    #     namespace: gateway-system
+    #     sectionName: https
+    hostnames: [] # @schema type: array; item: string; description: Hostnames for the HTTPRoute
+    annotations: {} # @schema type: object; description: Annotations to add to the HTTPRoute
+    # @schema type: array
+    # @schema item: object
+    # @schema itemProperties: {"path": {"type": "string"}, "pathType": {"type": "string", "enum": ["Exact", "PathPrefix", "RegularExpression"]}, "headers": {"type": "array"}, "queryParams": {"type": "array"}, "method": {"type": "string"}}
+    # @schema description: List of routing rules for the HTTPRoute
+    rules: []
+    # rules:
+    #   - path: /api
+    #     pathType: PathPrefix
+    #   - path: /
+    #     pathType: PathPrefix
+    #     headers:
+    #       - name: X-Custom-Header
+    #         value: custom-value
+    # @schema type: array
+    # @schema item: object
+    # @schema itemProperties: {"type": {"type": "string", "enum": ["RequestHeaderModifier", "ResponseHeaderModifier", "RequestRedirect", "URLRewrite", "RequestMirror", "ExtensionRef"]}, "requestHeaderModifier": {"type": "object"}, "responseHeaderModifier": {"type": "object"}, "requestRedirect": {"type": "object"}, "urlRewrite": {"type": "object"}}
+    # @schema description: Filters to apply to all rules
+    filters: []
+    # filters:
+    #   - type: RequestHeaderModifier
+    #     requestHeaderModifier:
+    #       add:
+    #         - name: X-Forwarded-Proto
+    #           value: https
   
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
