@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.4.0...grafana-alloy-v0.5.0) (2026-01-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add metrics and logs support to grafana-alloy chart [DO NOT MERGE]  ([#354](https://github.com/chanzuckerberg/argo-helm-charts/issues/354))
+
+### Features
+
+* Add metrics and logs support to grafana-alloy chart [DO NOT MERGE]  ([#354](https://github.com/chanzuckerberg/argo-helm-charts/issues/354)) ([ca28853](https://github.com/chanzuckerberg/argo-helm-charts/commit/ca288534328f9d04c8b86820cc0ca7d2c29fa7c7))
+* Enable basic auth support for prometheus remote write endpoints ([#372](https://github.com/chanzuckerberg/argo-helm-charts/issues/372)) ([c7566a2](https://github.com/chanzuckerberg/argo-helm-charts/commit/c7566a2f87db27160074281f998541c94e81622b))
+* enable Beyla for ebpf in Grafana Alloy ([#363](https://github.com/chanzuckerberg/argo-helm-charts/issues/363)) ([f4eff06](https://github.com/chanzuckerberg/argo-helm-charts/commit/f4eff0659ac6916c7e17ce9a9d767a4300abfd8d))
+
+
+### Bug Fixes
+
+* allow debug mode for beyla ([#366](https://github.com/chanzuckerberg/argo-helm-charts/issues/366)) ([103bd00](https://github.com/chanzuckerberg/argo-helm-charts/commit/103bd0078cadd437f9429c940cbbfdf9e37edafd))
+* experimenting different beyla config ([#368](https://github.com/chanzuckerberg/argo-helm-charts/issues/368)) ([95f3868](https://github.com/chanzuckerberg/argo-helm-charts/commit/95f386823cf96d93726f1aa36eab1a7b423afccc))
+* grafana beyla config type error ([#364](https://github.com/chanzuckerberg/argo-helm-charts/issues/364)) ([773fc44](https://github.com/chanzuckerberg/argo-helm-charts/commit/773fc44ea0da1143592f6c5d69fdd01fb059deae))
+* grafana metric output ([#365](https://github.com/chanzuckerberg/argo-helm-charts/issues/365)) ([41c4e6b](https://github.com/chanzuckerberg/argo-helm-charts/commit/41c4e6baad28869733a31c837947dd6eaa9cdf7a))
+* type mismatch ([#367](https://github.com/chanzuckerberg/argo-helm-charts/issues/367)) ([9ac22fd](https://github.com/chanzuckerberg/argo-helm-charts/commit/9ac22fd6c04521526f4ce1604f613057aeaf1f74))
+
 ## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.3.0...grafana-alloy-v0.4.0) (2026-01-15)
 
 
