@@ -25,6 +25,9 @@ prometheusRemoteWrite:
   enabled: false # @schema description: Enable Prometheus remote write
   endpoints: [] # @schema description: Array of remote write endpoints
     # - url: "" # @schema description: URL of the Prometheus remote write endpoint
+    #   basicAuth: # @schema description: Basic authentication configuration (optional)
+    #     usernameEnvVar: "MIMIR_USERNAME" # @schema description: Name of the environment variable containing username
+    #     passwordEnvVar: "MIMIR_PASSWORD" # @schema description: Name of the environment variable containing password
     #   externalLabels: {} # @schema description: External labels to add to all metrics for this endpoint
     #   queueConfig: # @schema description: Queue configuration for remote write
     #     maxSamplesPerSend: 3000 # @schema description: Maximum samples per send

@@ -252,3 +252,188 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'traces = \[\]'
+  - it: should configure basic_auth for prometheusRemoteWrite when basicAuth is provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://local-prometheus.svc/api/v1/write
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+              passwordEnvVar: "MIMIR_PASSWORD"
+            externalLabels:
+              exporter: grafana-alloy
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR_USERNAME"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR_PASSWORD"\)'
+  - it: should not include basic_auth when basicAuth is not provided for prometheusRemoteWrite
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+
+  - it: should support mixed basic auth configuration across multiple prometheusRemoteWrite endpoints
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://local-prometheus.svc/api/v1/write
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+              passwordEnvVar: "MIMIR_PASSWORD"
+          - url: http://another-local.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write "endpoint_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write "endpoint_1"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write "endpoint_2"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'http://local-prometheus\.svc/api/v1/write'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'https://mimir\.example\.com/api/v1/push'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'http://another-local\.svc/api/v1/write'
+      # Basic auth should be present for the endpoint that has it configured
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR_USERNAME"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR_PASSWORD"\)'
+
+  - it: should use custom environment variable names for prometheusRemoteWrite basic auth
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://cortex.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "CORTEX_USER"
+              passwordEnvVar: "CORTEX_PASS"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("CORTEX_USER"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("CORTEX_PASS"\)'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'MIMIR_USERNAME'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'MIMIR_PASSWORD'
+
+  - it: should not include basic_auth when only usernameEnvVar is provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+
+  - it: should not include basic_auth when only passwordEnvVar is provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              passwordEnvVar: "MIMIR_PASSWORD"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+
+  - it: should configure basic auth for all endpoints when all have basicAuth configured
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://mimir-1.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR1_USER"
+              passwordEnvVar: "MIMIR1_PASS"
+          - url: https://mimir-2.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR2_USER"
+              passwordEnvVar: "MIMIR2_PASS"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR1_USER"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR1_PASS"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR2_USER"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR2_PASS"\)'
+
+  - it: should not render prometheusRemoteWrite endpoints when prometheusRemoteWrite.enabled is false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: false
+        endpoints:
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+              passwordEnvVar: "MIMIR_PASSWORD"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'MIMIR_USERNAME'
