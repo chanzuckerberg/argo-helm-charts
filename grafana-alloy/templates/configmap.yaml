@@ -384,6 +384,15 @@ data:
       endpoint {
         url = {{ $endpoint.url | quote }}
         
+
+        {{- if $endpoint.basicAuth }}
+        {{- if and $endpoint.basicAuth.usernameEnvVar $endpoint.basicAuth.passwordEnvVar }}
+        basic_auth {
+          username = env({{ $endpoint.basicAuth.usernameEnvVar | quote }})
+          password = env({{ $endpoint.basicAuth.passwordEnvVar | quote }})
+        }
+        {{- end }}
+        {{- end }}
         {{- if $endpoint.queueConfig }}
         queue_config {
           max_samples_per_send = {{ $endpoint.queueConfig.maxSamplesPerSend }}
