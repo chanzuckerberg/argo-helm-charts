@@ -713,6 +713,7 @@ Must be one of:
 | - [beyla](#alloyConfig_beyla )     | No      | object | No         | -          | Enable Beyla integration for eBPF-based application instrumentation                          |
 | - [content](#alloyConfig_content ) | No      | string | No         | -          | Custom Alloy configuration content (River format). If empty, uses default collection config. |
 | - [events](#alloyConfig_events )   | No      | object | No         | -          | Enable Kubernetes events collection                                                          |
+| - [logging](#alloyConfig_logging ) | No      | object | No         | -          | Logging configuration for Alloy                                                              |
 | - [metrics](#alloyConfig_metrics ) | No      | object | No         | -          | Enable Prometheus metrics collection                                                         |
 | - [podLogs](#alloyConfig_podLogs ) | No      | object | No         | -          | Enable pod log collection                                                                    |
 
@@ -728,9 +729,19 @@ Must be one of:
 
 | Property                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                      |
 | ---------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------- |
+| - [debug](#alloyConfig_beyla_debug )     | No      | boolean | No         | -          | Enable debug logging for Beyla BPF component                           |
 | - [enabled](#alloyConfig_beyla_enabled ) | No      | boolean | No         | -          | Enable Beyla integration (requires prometheusRemoteWrite.enabled=true) |
 
-#### <a name="alloyConfig_beyla_enabled"></a>2.1.1. Property `grafana-alloy > alloyConfig > beyla > enabled`
+#### <a name="alloyConfig_beyla_debug"></a>2.1.1. Property `grafana-alloy > alloyConfig > beyla > debug`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable debug logging for Beyla BPF component
+
+#### <a name="alloyConfig_beyla_enabled"></a>2.1.2. Property `grafana-alloy > alloyConfig > beyla > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -771,7 +782,50 @@ Must be one of:
 
 **Description:** Enable collection of Kubernetes events
 
-### <a name="alloyConfig_metrics"></a>2.4. Property `grafana-alloy > alloyConfig > metrics`
+### <a name="alloyConfig_logging"></a>2.4. Property `grafana-alloy > alloyConfig > logging`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Logging configuration for Alloy
+
+| Property                                 | Pattern | Type             | Deprecated | Definition | Title/Description    |
+| ---------------------------------------- | ------- | ---------------- | ---------- | ---------- | -------------------- |
+| - [format](#alloyConfig_logging_format ) | No      | enum (of string) | No         | -          | Log format for Alloy |
+| - [level](#alloyConfig_logging_level )   | No      | enum (of string) | No         | -          | Log level for Alloy  |
+
+#### <a name="alloyConfig_logging_format"></a>2.4.1. Property `grafana-alloy > alloyConfig > logging > format`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Log format for Alloy
+
+Must be one of:
+* "logfmt"
+* "json"
+
+#### <a name="alloyConfig_logging_level"></a>2.4.2. Property `grafana-alloy > alloyConfig > logging > level`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+**Description:** Log level for Alloy
+
+Must be one of:
+* "debug"
+* "info"
+* "warn"
+* "error"
+
+### <a name="alloyConfig_metrics"></a>2.5. Property `grafana-alloy > alloyConfig > metrics`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -785,7 +839,7 @@ Must be one of:
 | ------------------------------------------ | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------- |
 | - [enabled](#alloyConfig_metrics_enabled ) | No      | boolean | No         | -          | Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true) |
 
-#### <a name="alloyConfig_metrics_enabled"></a>2.4.1. Property `grafana-alloy > alloyConfig > metrics > enabled`
+#### <a name="alloyConfig_metrics_enabled"></a>2.5.1. Property `grafana-alloy > alloyConfig > metrics > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -794,7 +848,7 @@ Must be one of:
 
 **Description:** Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)
 
-### <a name="alloyConfig_podLogs"></a>2.5. Property `grafana-alloy > alloyConfig > podLogs`
+### <a name="alloyConfig_podLogs"></a>2.6. Property `grafana-alloy > alloyConfig > podLogs`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -808,7 +862,7 @@ Must be one of:
 | ------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------- |
 | - [enabled](#alloyConfig_podLogs_enabled ) | No      | boolean | No         | -          | Enable collection of pod logs from all nodes |
 
-#### <a name="alloyConfig_podLogs_enabled"></a>2.5.1. Property `grafana-alloy > alloyConfig > podLogs > enabled`
+#### <a name="alloyConfig_podLogs_enabled"></a>2.6.1. Property `grafana-alloy > alloyConfig > podLogs > enabled`
 
 |              |           |
 | ------------ | --------- |
