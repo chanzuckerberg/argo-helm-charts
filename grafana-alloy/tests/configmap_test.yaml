@@ -437,3 +437,135 @@ tests:
       - notMatchRegex:
           path: data["config.alloy"]
           pattern: 'MIMIR_USERNAME'
+
+  - it: should use default logging level (info) when not specified
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"info"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'format\s*=\s*"logfmt"'
+
+  - it: should configure custom logging level
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: error
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"error"'
+
+  - it: should configure debug logging level
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: debug
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"debug"'
+
+  - it: should configure warn logging level
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: warn
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"warn"'
+
+  - it: should configure json log format
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          format: json
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'format\s*=\s*"json"'
+
+  - it: should configure both logging level and format
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: error
+          format: json
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"error"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'format\s*=\s*"json"'
+
+  - it: should disable beyla debug by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'debug = false'
+
+  - it: should enable beyla debug when configured
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+          debug: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'debug = true'
+
+  - it: should explicitly disable beyla debug
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+          debug: false
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'debug = false'

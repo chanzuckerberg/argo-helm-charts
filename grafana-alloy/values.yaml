@@ -48,6 +48,11 @@ alloyConfig:
   # @schema description: Custom Alloy configuration content (River format). If empty, uses default collection config.
   # See https://grafana.com/docs/alloy/latest/reference/config-blocks/
   content: ""
+
+  # @schema description: Logging configuration for Alloy
+  logging:
+    level: info # @schema enum: [debug, info, warn, error]; description: Log level for Alloy
+    format: logfmt # @schema enum: [logfmt, json]; description: Log format for Alloy
   
   # @schema description: Enable pod log collection
   podLogs:
@@ -64,6 +69,7 @@ alloyConfig:
   # @schema description: Enable Beyla integration for eBPF-based application instrumentation
   beyla:
     enabled: false # @schema description: Enable Beyla integration (requires prometheusRemoteWrite.enabled=true)
+    debug: false # @schema description: Enable debug logging for Beyla BPF component
 
 # Alloy subchart configuration
 # Reference: https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy
