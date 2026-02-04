@@ -278,6 +278,10 @@
           "description": "Enable Beyla integration for eBPF-based application instrumentation",
           "type": "object",
           "properties": {
+            "debug": {
+              "description": "Enable debug logging for Beyla BPF component",
+              "type": "boolean"
+            },
             "enabled": {
               "description": "Enable Beyla integration (requires prometheusRemoteWrite.enabled=true)",
               "type": "boolean"
@@ -295,6 +299,30 @@
             "enabled": {
               "description": "Enable collection of Kubernetes events",
               "type": "boolean"
+            }
+          }
+        },
+        "logging": {
+          "description": "Logging configuration for Alloy",
+          "type": "object",
+          "properties": {
+            "format": {
+              "description": "Log format for Alloy",
+              "type": "string",
+              "enum": [
+                "logfmt",
+                "json"
+              ]
+            },
+            "level": {
+              "description": "Log level for Alloy",
+              "type": "string",
+              "enum": [
+                "debug",
+                "info",
+                "warn",
+                "error"
+              ]
             }
           }
         },
