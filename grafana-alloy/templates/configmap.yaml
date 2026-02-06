@@ -436,6 +436,7 @@ data:
         target_label  = "region"
         replacement   = "$1"
       }
+
       rule {
         source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
         separator     = ";"
@@ -509,6 +510,7 @@ data:
         target_label  = "region"
         replacement   = "$1"
       }
+      
       rule {
         source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
         separator     = ";"
