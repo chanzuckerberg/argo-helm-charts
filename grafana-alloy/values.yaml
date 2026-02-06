@@ -42,6 +42,12 @@ prometheusRemoteWrite:
     enabled: false # @schema description: Enable metrics filtering
     regex: "" # @schema description: Regex pattern to match metric names to keep
 
+  # Scrape kube-state-metrics so kubernetes_* metrics (e.g. kubernetes_build_info) flow to Mimir.
+  scrapeKubeStateMetrics: # @schema description: Scrape kube-state-metrics service for kubernetes_* metrics
+    enabled: true # @schema description: Enable scraping kube-state-metrics (requires metrics.enabled and prometheusRemoteWrite.enabled)
+    namespace: "kube-system" # @schema description: Namespace where kube-state-metrics service runs
+    serviceLabel: "app.kubernetes.io/name=kube-state-metrics" # @schema description: Label selector to find the kube-state-metrics service
+
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
 alloyConfig:
