@@ -7,22 +7,21 @@
       rule {
         action        = "labelmap"
         regex         = "__meta_kubernetes_node_label_(.+)"
-        replacement   = "$1"
+        replacement   = "__tmp_node_label_$1"
       }
 
-      // Canonical region/zone from topology.* or failure_domain.beta.* (see grafana/k8s-monitoring-helm node-labels example)
       rule {
         source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_region", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_region"]
         separator     = ";"
         regex         = "^(?:;*)?([^;]+).*$"
-        target_label  = "region"
+        target_label  = "__tmp_region"
         replacement   = "$1"
       }
       rule {
         source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
         separator     = ";"
         regex         = "^(?:;*)?([^;]+).*$"
-        target_label  = "zone"
+        target_label  = "__tmp_zone"
         replacement   = "$1"
       }
 {{- end -}}
@@ -532,6 +531,28 @@ data:
       rule {
         target_label = "cluster"
         replacement  = {{ .Values.clusterName | quote }}
+      }
+
+      rule {
+        action      = "labelmap"
+        regex       = "__tmp_node_label_(.+)"
+        replacement = "$1"
+      }
+      rule {
+        source_labels = ["__name__", "__tmp_region"]
+        regex         = "^kubernetes_build_info;(.+)$"
+        target_label  = "region"
+        replacement   = "$1"
+      }
+      rule {
+        source_labels = ["__name__", "__tmp_zone"]
+        regex         = "^kubernetes_build_info;(.+)$"
+        target_label  = "zone"
+        replacement   = "$1"
+      }
+      rule {
+        action = "labeldrop"
+        regex  = "^__tmp_.*$"
       }
 
       {{- if .Values.prometheusRemoteWrite.metricsFilter.enabled }}
