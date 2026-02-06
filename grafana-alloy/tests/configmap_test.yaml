@@ -681,7 +681,7 @@ tests:
           path: data["config.alloy"]
           pattern: 'names = \["kube-system"\]'
 
-  - it: should use custom serviceLabel for scrapeKubeStateMetrics
+  - it: should use custom serviceSelector for scrapeKubeStateMetrics
     set:
       enabled: true
       clusterName: test-cluster
@@ -692,7 +692,7 @@ tests:
         enabled: true
         scrapeKubeStateMetrics:
           enabled: true
-          serviceLabel: "app=custom-ksm"
+          serviceSelector: "app=custom-ksm"
         endpoints:
           - url: http://prometheus.svc/api/v1/write
     asserts:
@@ -703,7 +703,7 @@ tests:
           path: data["config.alloy"]
           pattern: 'label = "app\.kubernetes\.io/name=kube-state-metrics"'
 
-  - it: should configure scrapeKubeStateMetrics with custom namespace and serviceLabel
+  - it: should configure scrapeKubeStateMetrics with custom namespace and serviceSelector
     set:
       enabled: true
       clusterName: test-cluster
@@ -715,7 +715,7 @@ tests:
         scrapeKubeStateMetrics:
           enabled: true
           namespace: "observability"
-          serviceLabel: "app.kubernetes.io/instance=ksm-prod"
+          serviceSelector: "app.kubernetes.io/instance=ksm-prod"
         endpoints:
           - url: http://prometheus.svc/api/v1/write
     asserts:
