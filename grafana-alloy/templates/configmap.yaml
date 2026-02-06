@@ -358,6 +358,45 @@ data:
       scrape_timeout  = "10s"
     }
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubeStateMetrics .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.enabled }}
+    discovery.kubernetes "kube_state_metrics_svc" {
+      role = "service"
+      namespaces {
+        names = [{{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.namespace | default "kube-system") | quote }}]
+      }
+      selectors {
+        role  = "service"
+        label = {{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.serviceLabel | default "app.kubernetes.io/name=kube-state-metrics") | quote }}
+      }
+    }
+
+    discovery.relabel "kube_state_metrics" {
+      targets = discovery.kubernetes.kube_state_metrics_svc.targets
+
+      rule {
+        target_label = "__metrics_path__"
+        replacement  = "/metrics"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "job"
+      }
+    }
+
+    prometheus.scrape "kube_state_metrics" {
+      targets         = discovery.relabel.kube_state_metrics.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = "1m"
+      scrape_timeout  = "10s"
+    }
+    {{- end }}
+
     prometheus.relabel "filter_metrics" {
       {{- if .Values.prometheusRemoteWrite.enabled }}
       forward_to = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]

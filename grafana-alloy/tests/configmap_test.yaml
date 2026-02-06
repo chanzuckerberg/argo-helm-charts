@@ -569,3 +569,162 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'debug = false'
+
+  - it: should enable scrapeKubeStateMetrics by default when metrics and prometheusRemoteWrite are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "kube_state_metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["kube-system"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app\.kubernetes\.io/name=kube-state-metrics"'
+
+  - it: should disable scrapeKubeStateMetrics when explicitly set to false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+
+  - it: should not render scrapeKubeStateMetrics when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+
+  - it: should not render scrapeKubeStateMetrics when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeKubeStateMetrics:
+          enabled: true
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+
+  - it: should use custom namespace for scrapeKubeStateMetrics
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+          namespace: "monitoring"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["monitoring"\]'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["kube-system"\]'
+
+  - it: should use custom serviceLabel for scrapeKubeStateMetrics
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+          serviceLabel: "app=custom-ksm"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app=custom-ksm"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app\.kubernetes\.io/name=kube-state-metrics"'
+
+  - it: should configure scrapeKubeStateMetrics with custom namespace and serviceLabel
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+          namespace: "observability"
+          serviceLabel: "app.kubernetes.io/instance=ksm-prod"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["observability"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app\.kubernetes\.io/instance=ksm-prod"'

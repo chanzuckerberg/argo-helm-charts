@@ -398,6 +398,24 @@
               "type": "string"
             }
           }
+        },
+        "scrapeKubeStateMetrics": {
+          "description": "Scrape kube-state-metrics service for kube_* and kubernetes_build_info metrics",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            },
+            "namespace": {
+              "description": "Namespace where kube-state-metrics service runs",
+              "type": "string"
+            },
+            "serviceLabel": {
+              "description": "Label selector to find the kube-state-metrics service",
+              "type": "string"
+            }
+          }
         }
       }
     }
