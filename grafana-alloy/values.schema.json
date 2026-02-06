@@ -400,7 +400,7 @@
           }
         },
         "scrapeKubeStateMetrics": {
-          "description": "Scrape kube-state-metrics service for kube_* and kubernetes_build_info metrics",
+          "description": "Scrape kube-state-metrics service for kube_* metrics",
           "type": "object",
           "properties": {
             "enabled": {
@@ -414,6 +414,26 @@
             "serviceSelector": {
               "description": "Label selector (key=value) to find the kube-state-metrics service",
               "type": "string"
+            }
+          }
+        },
+        "scrapeKubelet": {
+          "description": "Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            }
+          }
+        },
+        "scrapeCadvisor": {
+          "description": "Scrape cadvisor metrics from each node (container_*)",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
             }
           }
         }

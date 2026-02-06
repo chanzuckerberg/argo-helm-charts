@@ -728,3 +728,270 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'label = "app\.kubernetes\.io/instance=ksm-prod"'
+
+  # scrapeKubelet tests
+  - it: should enable scrapeKubelet by default when metrics and prometheusRemoteWrite are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  - it: should disable scrapeKubelet when explicitly set to false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubelet:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  - it: should configure scrapeKubelet with proper settings
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'role = "node"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job_name\s*=\s*"integrations/kubernetes/kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scheme\s*=\s*"https"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'credentials_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"'
+
+  - it: should not render scrapeKubelet when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubelet:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  - it: should not render scrapeKubelet when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeKubelet:
+          enabled: true
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  # scrapeCadvisor tests
+  - it: should enable scrapeCadvisor by default when metrics and prometheusRemoteWrite are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should disable scrapeCadvisor when explicitly set to false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeCadvisor:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should configure scrapeCadvisor with proper settings
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'role = "node"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics/cadvisor'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job_name\s*=\s*"integrations/kubernetes/cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scheme\s*=\s*"https"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'ca_file\s*=\s*"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"'
+
+  - it: should not render scrapeCadvisor when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeCadvisor:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should not render scrapeCadvisor when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeCadvisor:
+          enabled: true
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should enable both scrapeKubelet and scrapeCadvisor by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics/cadvisor'
