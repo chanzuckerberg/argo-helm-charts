@@ -42,11 +42,19 @@ prometheusRemoteWrite:
     enabled: false # @schema description: Enable metrics filtering
     regex: "" # @schema description: Regex pattern to match metric names to keep
 
-  # Scrape kube-state-metrics for kube_* metrics (e.g. kube_pod_status_phase) and kubernetes_build_info.
-  scrapeKubeStateMetrics: # @schema description: Scrape kube-state-metrics service for kube_* and kubernetes_build_info metrics
+  # Scrape kube-state-metrics for kube_* metrics (e.g. kube_pod_status_phase).
+  scrapeKubeStateMetrics: # @schema description: Scrape kube-state-metrics service for kube_* metrics
     enabled: true # @schema description: Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
     namespace: "kube-system" # @schema description: Namespace where kube-state-metrics service runs
     serviceSelector: "app.kubernetes.io/name=kube-state-metrics" # @schema description: Label selector (key=value) to find the kube-state-metrics service
+
+  # Scrape kubelet for kubelet_* and kubernetes_build_info metrics.
+  scrapeKubelet: # @schema description: Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)
+    enabled: true # @schema description: Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+  # Scrape cadvisor for container_* metrics (CPU, memory, network, filesystem).
+  scrapeCadvisor: # @schema description: Scrape cadvisor metrics from each node (container_*)
+    enabled: true # @schema description: Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
 
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
