@@ -46,7 +46,7 @@ prometheusRemoteWrite:
   scrapeKubeStateMetrics: # @schema description: Scrape kube-state-metrics service for kube_* and kubernetes_build_info metrics
     enabled: true # @schema description: Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
     namespace: "kube-system" # @schema description: Namespace where kube-state-metrics service runs
-    serviceLabel: "app.kubernetes.io/name=kube-state-metrics" # @schema description: Label selector to find the kube-state-metrics service
+    serviceSelector: "app.kubernetes.io/name=kube-state-metrics" # @schema description: Label selector (key=value) to find the kube-state-metrics service
 
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap

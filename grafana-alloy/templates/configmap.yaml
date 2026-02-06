@@ -366,7 +366,7 @@ data:
       }
       selectors {
         role  = "service"
-        label = {{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.serviceLabel | default "app.kubernetes.io/name=kube-state-metrics") | quote }}
+        label = {{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.serviceSelector | default "app.kubernetes.io/name=kube-state-metrics") | quote }}
       }
     }
 

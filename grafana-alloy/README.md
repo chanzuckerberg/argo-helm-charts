@@ -1027,11 +1027,11 @@ Must be one of:
 
 **Description:** Scrape kube-state-metrics service for kube_* and kubernetes_build_info metrics
 
-| Property                                                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                           |
-| ----------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_scrapeKubeStateMetrics_enabled )           | No      | boolean | No         | -          | Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
-| - [namespace](#prometheusRemoteWrite_scrapeKubeStateMetrics_namespace )       | No      | string  | No         | -          | Namespace where kube-state-metrics service runs                                                             |
-| - [serviceLabel](#prometheusRemoteWrite_scrapeKubeStateMetrics_serviceLabel ) | No      | string  | No         | -          | Label selector to find the kube-state-metrics service                                                       |
+| Property                                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                           |
+| ----------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeKubeStateMetrics_enabled )                 | No      | boolean | No         | -          | Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| - [namespace](#prometheusRemoteWrite_scrapeKubeStateMetrics_namespace )             | No      | string  | No         | -          | Namespace where kube-state-metrics service runs                                                             |
+| - [serviceSelector](#prometheusRemoteWrite_scrapeKubeStateMetrics_serviceSelector ) | No      | string  | No         | -          | Label selector (key=value) to find the kube-state-metrics service                                           |
 
 #### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_enabled"></a>6.4.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > enabled`
 
@@ -1051,13 +1051,13 @@ Must be one of:
 
 **Description:** Namespace where kube-state-metrics service runs
 
-#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_serviceLabel"></a>6.4.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > serviceLabel`
+#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_serviceSelector"></a>6.4.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > serviceSelector`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Label selector to find the kube-state-metrics service
+**Description:** Label selector (key=value) to find the kube-state-metrics service
 
 ----------------------------------------------------------------------------------------------------------------------------
