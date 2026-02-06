@@ -411,8 +411,8 @@
               "description": "Namespace where kube-state-metrics service runs",
               "type": "string"
             },
-            "serviceLabel": {
-              "description": "Label selector to find the kube-state-metrics service",
+            "serviceSelector": {
+              "description": "Label selector (key=value) to find the kube-state-metrics service",
               "type": "string"
             }
           }
