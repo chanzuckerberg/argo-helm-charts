@@ -1,3 +1,31 @@
+{{- define "alloy.nodeLabelRelabelRules" -}}
+      rule {
+        source_labels = ["__meta_kubernetes_node_name"]
+        target_label  = "node"
+      }
+
+      rule {
+        action        = "labelmap"
+        regex         = "__meta_kubernetes_node_label_(.+)"
+        replacement   = "__tmp_node_label_$1"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_region", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_region"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "__tmp_region"
+        replacement   = "$1"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "__tmp_zone"
+        replacement   = "$1"
+      }
+{{- end -}}
+
 {{- if .Values.enabled }}
 apiVersion: v1
 kind: ConfigMap
@@ -418,10 +446,7 @@ data:
         replacement   = "/api/v1/nodes/$1/proxy/metrics"
       }
 
-      rule {
-        source_labels = ["__meta_kubernetes_node_name"]
-        target_label  = "node"
-      }
+      {{- include "alloy.nodeLabelRelabelRules" . | nindent 6 }}
 
       rule {
         target_label = "job"
@@ -443,8 +468,8 @@ data:
       }
 
       tls_config {
-        ca_file     = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-        server_name = "kubernetes"
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        insecure_skip_verify = true
       }
     }
     {{- end }}
@@ -470,10 +495,7 @@ data:
         replacement   = "/api/v1/nodes/$1/proxy/metrics/cadvisor"
       }
 
-      rule {
-        source_labels = ["__meta_kubernetes_node_name"]
-        target_label  = "node"
-      }
+      {{- include "alloy.nodeLabelRelabelRules" . | nindent 6 }}
 
       rule {
         target_label = "job"
@@ -495,8 +517,8 @@ data:
       }
 
       tls_config {
-        ca_file     = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-        server_name = "kubernetes"
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        insecure_skip_verify = true
       }
     }
     {{- end }}
@@ -509,6 +531,28 @@ data:
       rule {
         target_label = "cluster"
         replacement  = {{ .Values.clusterName | quote }}
+      }
+
+      rule {
+        action      = "labelmap"
+        regex       = "__tmp_node_label_(.+)"
+        replacement = "$1"
+      }
+      rule {
+        source_labels = ["__name__", "__tmp_region"]
+        regex         = "^kubernetes_build_info;(.+)$"
+        target_label  = "region"
+        replacement   = "$1"
+      }
+      rule {
+        source_labels = ["__name__", "__tmp_zone"]
+        regex         = "^kubernetes_build_info;(.+)$"
+        target_label  = "zone"
+        replacement   = "$1"
+      }
+      rule {
+        action = "labeldrop"
+        regex  = "^__tmp_.*$"
       }
 
       {{- if .Values.prometheusRemoteWrite.metricsFilter.enabled }}
