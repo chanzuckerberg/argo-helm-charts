@@ -7,21 +7,21 @@
       rule {
         action        = "labelmap"
         regex         = "__meta_kubernetes_node_label_(.+)"
-        replacement   = "__tmp_node_label_$1"
+        replacement   = "$1"
       }
 
       rule {
         source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_region", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_region"]
         separator     = ";"
         regex         = "^(?:;*)?([^;]+).*$"
-        target_label  = "__tmp_region"
+        target_label  = "region"
         replacement   = "$1"
       }
       rule {
         source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
         separator     = ";"
         regex         = "^(?:;*)?([^;]+).*$"
-        target_label  = "__tmp_zone"
+        target_label  = "zone"
         replacement   = "$1"
       }
 {{- end -}}
@@ -426,7 +426,6 @@ data:
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}
-    // Kubelet metrics scraping - provides kubelet_* and kubernetes_build_info metrics
     discovery.kubernetes "kubelet" {
       role = "node"
     }
@@ -475,7 +474,6 @@ data:
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeCadvisor .Values.prometheusRemoteWrite.scrapeCadvisor.enabled }}
-    // Cadvisor metrics scraping - provides container_* metrics (CPU, memory, network, filesystem)
     discovery.kubernetes "cadvisor" {
       role = "node"
     }
@@ -531,28 +529,6 @@ data:
       rule {
         target_label = "cluster"
         replacement  = {{ .Values.clusterName | quote }}
-      }
-
-      rule {
-        action      = "labelmap"
-        regex       = "__tmp_node_label_(.+)"
-        replacement = "$1"
-      }
-      rule {
-        source_labels = ["__name__", "__tmp_region"]
-        regex         = "^kubernetes_build_info;(.+)$"
-        target_label  = "region"
-        replacement   = "$1"
-      }
-      rule {
-        source_labels = ["__name__", "__tmp_zone"]
-        regex         = "^kubernetes_build_info;(.+)$"
-        target_label  = "zone"
-        replacement   = "$1"
-      }
-      rule {
-        action = "labeldrop"
-        regex  = "^__tmp_.*$"
       }
 
       {{- if .Values.prometheusRemoteWrite.metricsFilter.enabled }}
