@@ -424,6 +424,27 @@ data:
       }
 
       rule {
+        action        = "labelmap"
+        regex         = "__meta_kubernetes_node_label_(.+)"
+        replacement   = "$1"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_region", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_region"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "region"
+        replacement   = "$1"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "zone"
+        replacement   = "$1"
+      }
+
+      rule {
         target_label = "job"
         replacement  = "integrations/kubernetes/kubelet"
       }
@@ -443,8 +464,8 @@ data:
       }
 
       tls_config {
-        ca_file     = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-        server_name = "kubernetes"
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        insecure_skip_verify = true
       }
     }
     {{- end }}
@@ -476,6 +497,27 @@ data:
       }
 
       rule {
+        action        = "labelmap"
+        regex         = "__meta_kubernetes_node_label_(.+)"
+        replacement   = "$1"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_region", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_region"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "region"
+        replacement   = "$1"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "zone"
+        replacement   = "$1"
+      }
+
+      rule {
         target_label = "job"
         replacement  = "integrations/kubernetes/cadvisor"
       }
@@ -495,8 +537,8 @@ data:
       }
 
       tls_config {
-        ca_file     = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-        server_name = "kubernetes"
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        insecure_skip_verify = true
       }
     }
     {{- end }}
