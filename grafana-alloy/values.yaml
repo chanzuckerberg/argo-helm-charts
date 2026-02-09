@@ -57,10 +57,39 @@ prometheusRemoteWrite:
     enabled: true # @schema description: Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
 
   # Scrape Kubernetes service endpoints (e.g., hubble-metrics, cilium-agent) for metrics.
+  # NOTE: If you're migrating from loki-stack's Prometheus server, you should disable endpoint scraping there.
+  # In loki-stack values, set: prometheus.server.extraScrapeConfigs: [] or remove endpoint scraping configs.
   scrapeEndpoints: # @schema description: Scrape Kubernetes service endpoints with prometheus.io/scrape annotations
     enabled: true # @schema description: Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
     scrapeInterval: "1m" # @schema description: Scrape interval for endpoint scraping
     scrapeTimeout: "10s" # @schema description: Scrape timeout for endpoint scraping
+
+  # Scrape Kubernetes service endpoints using blackbox exporter (e.g., HTTP, HTTPS, TCP, ICMP probes).
+  # NOTE: If you're migrating from loki-stack's Prometheus server, you should disable blackbox scraping there.
+  # In loki-stack values, remove any blackbox exporter scrape configs from prometheus.server.extraScrapeConfigs.
+  scrapeBlackbox: # @schema description: Scrape Kubernetes service endpoints with prometheus.io/blackbox-scrape annotations using blackbox exporter
+    enabled: false # @schema description: Enable blackbox scraping of service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+    scrapeInterval: "1m" # @schema description: Scrape interval for blackbox endpoint scraping
+    scrapeTimeout: "10s" # @schema description: Scrape timeout for blackbox endpoint scraping
+    config: | # @schema description: Blackbox exporter configuration in YAML format
+      modules:
+        http_2xx:
+          prober: http
+          timeout: 5s
+          http:
+            valid_status_codes: []
+            method: GET
+        http_post_2xx:
+          prober: http
+          timeout: 5s
+          http:
+            method: POST
+        tcp_connect:
+          prober: tcp
+          timeout: 5s
+        icmp:
+          prober: icmp
+          timeout: 5s
 
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
