@@ -328,7 +328,7 @@ data:
 
       rule {
         source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
-        regex         = "true"
+        regex         = "(?i)^\\s*true\\s*$"
         action        = "keep"
       }
 
@@ -340,7 +340,7 @@ data:
 
       rule {
         source_labels = ["__address__", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
-        regex         = "([^:]+)(?::\\d+)?;(\\d+)"
+        regex         = "(\\[[^\\]]+\\]|[^:]+)(?::\\d+)?;(\\d+)"
         replacement   = "$1:$2"
         target_label  = "__address__"
       }
@@ -399,7 +399,8 @@ data:
       }
 
       rule {
-        source_labels = ["__meta_kubernetes_service_name"]
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
+        separator     = "/"
         target_label  = "job"
       }
     }
@@ -412,7 +413,9 @@ data:
     }
     {{- end }}
 
-    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeEndpoints .Values.prometheusRemoteWrite.scrapeEndpoints.enabled }}
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeEndpoints }}
+    {{- if .enabled }}
     discovery.kubernetes "endpoints" {
       role = "endpoints"
     }
@@ -422,7 +425,7 @@ data:
 
       rule {
         source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scrape"]
-        regex         = "true"
+        regex         = "(?i)^\\s*true\\s*$"
         action        = "keep"
       }
 
@@ -434,7 +437,7 @@ data:
 
       rule {
         source_labels = ["__address__", "__meta_kubernetes_service_annotation_prometheus_io_port"]
-        regex         = "([^:]+)(?::\\d+)?;(\\d+)"
+        regex         = "(\\[[^\\]]+\\]|[^:]+)(?::\\d+)?;(\\d+)"
         replacement   = "$1:$2"
         target_label  = "__address__"
       }
@@ -450,7 +453,8 @@ data:
       }
 
       rule {
-        source_labels = ["__meta_kubernetes_service_name"]
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
+        separator     = "/"
         target_label  = "job"
       }
 
@@ -463,9 +467,11 @@ data:
     prometheus.scrape "endpoints" {
       targets         = discovery.relabel.endpoints.output
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ .scrapeInterval | default "1m" | quote }}
+      scrape_timeout  = {{ .scrapeTimeout | default "10s" | quote }}
     }
+    {{- end }}
+    {{- end }}
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}

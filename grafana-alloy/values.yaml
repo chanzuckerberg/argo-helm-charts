@@ -59,6 +59,8 @@ prometheusRemoteWrite:
   # Scrape Kubernetes service endpoints (e.g., hubble-metrics, cilium-agent) for metrics.
   scrapeEndpoints: # @schema description: Scrape Kubernetes service endpoints with prometheus.io/scrape annotations
     enabled: true # @schema description: Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+    scrapeInterval: "1m" # @schema description: Scrape interval for endpoint scraping
+    scrapeTimeout: "10s" # @schema description: Scrape timeout for endpoint scraping
 
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
