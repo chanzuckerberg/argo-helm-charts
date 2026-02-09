@@ -399,6 +399,32 @@
             }
           }
         },
+        "scrapeBlackboxStatic": {
+          "description": "Scrape static targets using blackbox exporter",
+          "type": "object",
+          "properties": {
+            "config": {
+              "description": "Blackbox exporter configuration in YAML format (defaults to standard modules if not provided)",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable static blackbox scraping (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            },
+            "scrapeInterval": {
+              "description": "Scrape interval for static blackbox scraping",
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "description": "Scrape timeout for static blackbox scraping",
+              "type": "string"
+            },
+            "targets": {
+              "description": "List of static blackbox targets to probe",
+              "type": "array"
+            }
+          }
+        },
         "scrapeCadvisor": {
           "description": "Scrape cadvisor metrics from each node (container_*)",
           "type": "object",
