@@ -1053,9 +1053,11 @@ Must be one of:
 
 **Description:** Scrape Kubernetes service endpoints with prometheus.io/scrape annotations
 
-| Property                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                          |
-| ------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_scrapeEndpoints_enabled ) | No      | boolean | No         | -          | Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| Property                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                          |
+| -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeEndpoints_enabled )               | No      | boolean | No         | -          | Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapeEndpoints_scrapeInterval ) | No      | string  | No         | -          | Scrape interval for endpoint scraping                                                                      |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapeEndpoints_scrapeTimeout )   | No      | string  | No         | -          | Scrape timeout for endpoint scraping                                                                       |
 
 #### <a name="prometheusRemoteWrite_scrapeEndpoints_enabled"></a>6.5.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > enabled`
 
@@ -1065,6 +1067,24 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+#### <a name="prometheusRemoteWrite_scrapeEndpoints_scrapeInterval"></a>6.5.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > scrapeInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape interval for endpoint scraping
+
+#### <a name="prometheusRemoteWrite_scrapeEndpoints_scrapeTimeout"></a>6.5.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > scrapeTimeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape timeout for endpoint scraping
 
 ### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics"></a>6.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics`
 
