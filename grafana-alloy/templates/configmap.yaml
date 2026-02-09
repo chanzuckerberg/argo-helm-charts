@@ -484,6 +484,7 @@ data:
     }
     {{- end }}
     {{- end }}
+    {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}
     discovery.kubernetes "kubelet" {
@@ -579,6 +580,62 @@ data:
         insecure_skip_verify = true
       }
     }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeBlackboxStatic .Values.prometheusRemoteWrite.scrapeBlackboxStatic.enabled }}
+    {{- range $idx, $job := .Values.prometheusRemoteWrite.scrapeBlackboxStatic.targets }}
+    prometheus.exporter.blackbox "static_{{ $idx }}" {
+      {{- if $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.config }}
+      config = {{ $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.config | quote }}
+      {{- else }}
+      config = "modules:\n  http_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      valid_status_codes: []\n      method: GET\n  https_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      valid_status_codes: []\n      method: GET\n  tcp_connect:\n    prober: tcp\n    timeout: 5s\n  icmp:\n    prober: icmp\n    timeout: 5s\n"
+      {{- end }}
+      targets = [
+        {{- range $job.targets }}
+        { __address__ = {{ . | quote }}, module = {{ $job.module | default "http_2xx" | quote }} },
+        {{- end }}
+      ]
+    }
+
+    discovery.relabel "blackbox_static_{{ $idx }}" {
+      targets = prometheus.exporter.blackbox.static_{{ $idx }}.targets
+
+      rule {
+        source_labels = ["__address__"]
+        target_label  = "__param_target"
+      }
+
+      rule {
+        source_labels = ["__param_target"]
+        target_label  = "instance"
+      }
+
+      rule {
+        target_label = "__address__"
+        replacement  = {{ $job.blackboxExporterAddress | default "blackbox-exporter.loki.svc.cluster.local:9115" | quote }}
+      }
+
+      rule {
+        target_label = "job"
+        replacement  = {{ $job.job_name | quote }}
+      }
+
+      {{- if $job.probe_type }}
+      rule {
+        target_label = "probe_type"
+        replacement  = {{ $job.probe_type | quote }}
+      }
+      {{- end }}
+    }
+
+    prometheus.scrape "blackbox_static_{{ $idx }}" {
+      targets         = discovery.relabel.blackbox_static_{{ $idx }}.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.scrapeInterval | default "1m" | quote }}
+      scrape_timeout  = {{ $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.scrapeTimeout | default "10s" | quote }}
+      metrics_path    = "/probe"
+    }
+    {{- end }}
     {{- end }}
 
     prometheus.relabel "filter_metrics" {
