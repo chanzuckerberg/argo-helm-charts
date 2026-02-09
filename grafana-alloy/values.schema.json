@@ -409,6 +409,16 @@
             }
           }
         },
+        "scrapeEndpoints": {
+          "description": "Scrape Kubernetes service endpoints with prometheus.io/scrape annotations",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            }
+          }
+        },
         "scrapeKubeStateMetrics": {
           "description": "Scrape kube-state-metrics service for kube_* metrics",
           "type": "object",
