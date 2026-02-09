@@ -591,8 +591,8 @@ data:
       config = "modules:\n  http_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      valid_status_codes: []\n      method: GET\n  https_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      valid_status_codes: []\n      method: GET\n  tcp_connect:\n    prober: tcp\n    timeout: 5s\n  icmp:\n    prober: icmp\n    timeout: 5s\n"
       {{- end }}
       targets = [
-        {{- range $job.targets }}
-        { __address__ = {{ . | quote }}, module = {{ $job.module | default "http_2xx" | quote }} },
+        {{- range $targetIdx, $target := $job.targets }}
+        { name = "{{ $job.job_name }}_{{ $targetIdx }}", __address__ = {{ $target | quote }}, module = {{ $job.module | default "http_2xx" | quote }} },
         {{- end }}
       ]
     }
