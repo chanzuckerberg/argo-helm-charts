@@ -5,10 +5,23 @@
       }
 
       rule {
+        action        = "labelmap"
+        regex         = "__meta_kubernetes_node_label_(.+)"
+        replacement   = "$1"
+      }
+
+      rule {
         source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_region", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_region"]
         separator     = ";"
         regex         = "^(?:;*)?([^;]+).*$"
-        target_label  = "topology_kubernetes_io_region"
+        target_label  = "region"
+        replacement   = "$1"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_zone", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_zone"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "zone"
         replacement   = "$1"
       }
 {{- end -}}
@@ -406,6 +419,62 @@ data:
 
     prometheus.scrape "kube_state_metrics" {
       targets         = discovery.relabel.kube_state_metrics.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = "1m"
+      scrape_timeout  = "10s"
+    }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeEndpoints .Values.prometheusRemoteWrite.scrapeEndpoints.enabled }}
+    discovery.kubernetes "endpoints" {
+      role = "endpoints"
+    }
+
+    discovery.relabel "endpoints" {
+      targets = discovery.kubernetes.endpoints.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scrape"]
+        regex         = "true"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_path"]
+        regex         = "(.+)"
+        target_label  = "__metrics_path__"
+      }
+
+      rule {
+        source_labels = ["__address__", "__meta_kubernetes_service_annotation_prometheus_io_port"]
+        regex         = "([^:]+)(?::\\d+)?;(\\d+)"
+        replacement   = "$1:$2"
+        target_label  = "__address__"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "service"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "job"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_endpoint_node_name"]
+        target_label  = "node"
+      }
+    }
+
+    prometheus.scrape "endpoints" {
+      targets         = discovery.relabel.endpoints.output
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
       scrape_interval = "1m"
       scrape_timeout  = "10s"
