@@ -557,11 +557,7 @@ data:
     }
 
     prometheus.exporter.blackbox "endpoints" {
-      {{- if .config }}
       config = {{ .config | quote }}
-      {{- else }}
-      config = "modules:\n  http_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      valid_status_codes: []\n      method: GET\n  http_post_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      method: POST\n  tcp_connect:\n    prober: tcp\n    timeout: 5s\n  icmp:\n    prober: icmp\n    timeout: 5s\n"
-      {{- end }}
       targets = discovery.relabel.blackbox_endpoints.output
     }
 
