@@ -951,14 +951,16 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
-| -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
-| - [enabled](#prometheusRemoteWrite_enabled )                               | No      | boolean | No         | -          | Enable Prometheus remote write                                           |
-| - [endpoints](#prometheusRemoteWrite_endpoints )                           | No      | array   | No         | -          | Array of remote write endpoints                                          |
-| - [metricsFilter](#prometheusRemoteWrite_metricsFilter )                   | No      | object  | No         | -          | Metrics filtering configuration                                          |
-| - [scrapeCadvisor](#prometheusRemoteWrite_scrapeCadvisor )                 | No      | object  | No         | -          | Scrape cadvisor metrics from each node (container_*)                     |
-| - [scrapeKubeStateMetrics](#prometheusRemoteWrite_scrapeKubeStateMetrics ) | No      | object  | No         | -          | Scrape kube-state-metrics service for kube_* metrics                     |
-| - [scrapeKubelet](#prometheusRemoteWrite_scrapeKubelet )                   | No      | object  | No         | -          | Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info) |
+| Property                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_enabled )                               | No      | boolean | No         | -          | Enable Prometheus remote write                                            |
+| - [endpoints](#prometheusRemoteWrite_endpoints )                           | No      | array   | No         | -          | Array of remote write endpoints                                           |
+| - [metricsFilter](#prometheusRemoteWrite_metricsFilter )                   | No      | object  | No         | -          | Metrics filtering configuration                                           |
+| - [scrapeBlackboxStatic](#prometheusRemoteWrite_scrapeBlackboxStatic )     | No      | object  | No         | -          | Scrape static targets using blackbox exporter                             |
+| - [scrapeCadvisor](#prometheusRemoteWrite_scrapeCadvisor )                 | No      | object  | No         | -          | Scrape cadvisor metrics from each node (container_*)                      |
+| - [scrapeEndpoints](#prometheusRemoteWrite_scrapeEndpoints )               | No      | object  | No         | -          | Scrape Kubernetes service endpoints with prometheus.io/scrape annotations |
+| - [scrapeKubeStateMetrics](#prometheusRemoteWrite_scrapeKubeStateMetrics ) | No      | object  | No         | -          | Scrape kube-state-metrics service for kube_* metrics                      |
+| - [scrapeKubelet](#prometheusRemoteWrite_scrapeKubelet )                   | No      | object  | No         | -          | Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)  |
 
 ### <a name="prometheusRemoteWrite_enabled"></a>6.1. Property `grafana-alloy > prometheusRemoteWrite > enabled`
 
@@ -1019,7 +1021,78 @@ Must be one of:
 
 **Description:** Regex pattern to match metric names to keep
 
-### <a name="prometheusRemoteWrite_scrapeCadvisor"></a>6.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeCadvisor`
+### <a name="prometheusRemoteWrite_scrapeBlackboxStatic"></a>6.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeBlackboxStatic`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Scrape static targets using blackbox exporter
+
+| Property                                                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                        |
+| ------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| - [config](#prometheusRemoteWrite_scrapeBlackboxStatic_config )                 | No      | string  | No         | -          | Blackbox exporter configuration in YAML format (defaults to standard modules if not provided)            |
+| - [enabled](#prometheusRemoteWrite_scrapeBlackboxStatic_enabled )               | No      | boolean | No         | -          | Enable static blackbox scraping (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapeBlackboxStatic_scrapeInterval ) | No      | string  | No         | -          | Scrape interval for static blackbox scraping                                                             |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapeBlackboxStatic_scrapeTimeout )   | No      | string  | No         | -          | Scrape timeout for static blackbox scraping                                                              |
+| - [targets](#prometheusRemoteWrite_scrapeBlackboxStatic_targets )               | No      | array   | No         | -          | List of static blackbox targets to probe                                                                 |
+
+#### <a name="prometheusRemoteWrite_scrapeBlackboxStatic_config"></a>6.4.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeBlackboxStatic > config`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Blackbox exporter configuration in YAML format (defaults to standard modules if not provided)
+
+#### <a name="prometheusRemoteWrite_scrapeBlackboxStatic_enabled"></a>6.4.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeBlackboxStatic > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable static blackbox scraping (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+#### <a name="prometheusRemoteWrite_scrapeBlackboxStatic_scrapeInterval"></a>6.4.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeBlackboxStatic > scrapeInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape interval for static blackbox scraping
+
+#### <a name="prometheusRemoteWrite_scrapeBlackboxStatic_scrapeTimeout"></a>6.4.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeBlackboxStatic > scrapeTimeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape timeout for static blackbox scraping
+
+#### <a name="prometheusRemoteWrite_scrapeBlackboxStatic_targets"></a>6.4.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeBlackboxStatic > targets`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** List of static blackbox targets to probe
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+### <a name="prometheusRemoteWrite_scrapeCadvisor"></a>6.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeCadvisor`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1033,7 +1106,7 @@ Must be one of:
 | ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------- |
 | - [enabled](#prometheusRemoteWrite_scrapeCadvisor_enabled ) | No      | boolean | No         | -          | Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
 
-#### <a name="prometheusRemoteWrite_scrapeCadvisor_enabled"></a>6.4.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeCadvisor > enabled`
+#### <a name="prometheusRemoteWrite_scrapeCadvisor_enabled"></a>6.5.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeCadvisor > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1042,7 +1115,50 @@ Must be one of:
 
 **Description:** Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
 
-### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics"></a>6.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics`
+### <a name="prometheusRemoteWrite_scrapeEndpoints"></a>6.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Scrape Kubernetes service endpoints with prometheus.io/scrape annotations
+
+| Property                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                          |
+| -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeEndpoints_enabled )               | No      | boolean | No         | -          | Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapeEndpoints_scrapeInterval ) | No      | string  | No         | -          | Scrape interval for endpoint scraping                                                                      |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapeEndpoints_scrapeTimeout )   | No      | string  | No         | -          | Scrape timeout for endpoint scraping                                                                       |
+
+#### <a name="prometheusRemoteWrite_scrapeEndpoints_enabled"></a>6.6.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+#### <a name="prometheusRemoteWrite_scrapeEndpoints_scrapeInterval"></a>6.6.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > scrapeInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape interval for endpoint scraping
+
+#### <a name="prometheusRemoteWrite_scrapeEndpoints_scrapeTimeout"></a>6.6.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > scrapeTimeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape timeout for endpoint scraping
+
+### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics"></a>6.7. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1058,7 +1174,7 @@ Must be one of:
 | - [namespace](#prometheusRemoteWrite_scrapeKubeStateMetrics_namespace )             | No      | string  | No         | -          | Namespace where kube-state-metrics service runs                                                             |
 | - [serviceSelector](#prometheusRemoteWrite_scrapeKubeStateMetrics_serviceSelector ) | No      | string  | No         | -          | Label selector (key=value) to find the kube-state-metrics service                                           |
 
-#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_enabled"></a>6.5.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > enabled`
+#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_enabled"></a>6.7.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1067,7 +1183,7 @@ Must be one of:
 
 **Description:** Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
 
-#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_namespace"></a>6.5.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > namespace`
+#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_namespace"></a>6.7.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > namespace`
 
 |              |          |
 | ------------ | -------- |
@@ -1076,7 +1192,7 @@ Must be one of:
 
 **Description:** Namespace where kube-state-metrics service runs
 
-#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_serviceSelector"></a>6.5.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > serviceSelector`
+#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_serviceSelector"></a>6.7.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > serviceSelector`
 
 |              |          |
 | ------------ | -------- |
@@ -1085,7 +1201,7 @@ Must be one of:
 
 **Description:** Label selector (key=value) to find the kube-state-metrics service
 
-### <a name="prometheusRemoteWrite_scrapeKubelet"></a>6.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubelet`
+### <a name="prometheusRemoteWrite_scrapeKubelet"></a>6.8. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubelet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1099,7 +1215,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------- |
 | - [enabled](#prometheusRemoteWrite_scrapeKubelet_enabled ) | No      | boolean | No         | -          | Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
 
-#### <a name="prometheusRemoteWrite_scrapeKubelet_enabled"></a>6.6.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubelet > enabled`
+#### <a name="prometheusRemoteWrite_scrapeKubelet_enabled"></a>6.8.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubelet > enabled`
 
 |              |           |
 | ------------ | --------- |

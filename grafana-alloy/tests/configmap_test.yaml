@@ -995,3 +995,294 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: '/api/v1/nodes/\$1/proxy/metrics/cadvisor'
+
+  # scrapeBlackboxStatic tests
+  - it: should not render scrapeBlackboxStatic when not enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "blackbox_static_'
+
+  - it: should not render scrapeBlackboxStatic when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_'
+
+  - it: should not render scrapeBlackboxStatic when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_'
+
+  - it: should render scrapeBlackboxStatic with single target
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "internal-healthcheck"
+              targets:
+                - "http://loki.loki.svc.cluster.local:3100/ready"
+              module: "http_2xx"
+              blackboxExporterAddress: "blackbox-exporter.loki.svc.cluster.local:9115"
+              probe_type: "internal"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "http://loki\.loki\.svc\.cluster\.local:3100/ready"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'module = "http_2xx"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "blackbox_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "blackbox-exporter\.loki\.svc\.cluster\.local:9115"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "internal-healthcheck"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "internal"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "blackbox_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'metrics_path    = "/probe"'
+
+  - it: should render scrapeBlackboxStatic with multiple targets
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "internal-services"
+              targets:
+                - "http://loki.loki.svc.cluster.local:3100/ready"
+                - "http://tempo.loki.svc.cluster.local:3100/ready"
+              module: "http_2xx"
+              probe_type: "internal"
+            - job_name: "external-services"
+              targets:
+                - "https://example.com/health"
+              module: "https_2xx"
+              probe_type: "external"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_1"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "http://loki\.loki\.svc\.cluster\.local:3100/ready"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "http://tempo\.loki\.svc\.cluster\.local:3100/ready"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "https://example\.com/health"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "internal-services"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "external-services"'
+
+  - it: should use custom scrape intervals and timeouts for scrapeBlackboxStatic
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          scrapeInterval: "2m"
+          scrapeTimeout: "30s"
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scrape_interval = "2m"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scrape_timeout  = "30s"'
+
+  - it: should use default blackbox exporter address when not specified
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "blackbox-exporter\.loki\.svc\.cluster\.local:9115"'
+
+  - it: should not include probe_type label when not specified
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+              module: "http_2xx"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "test-job"'
+
+  - it: should use custom blackbox exporter config when provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          config: |
+            modules:
+              custom_http:
+                prober: http
+                timeout: 10s
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'custom_http'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'timeout: 10s'
+
+  - it: should forward scrapeBlackboxStatic metrics to filter_metrics
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "blackbox_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'forward_to\s*=\s*\[prometheus\.relabel\.filter_metrics\.receiver\]'
