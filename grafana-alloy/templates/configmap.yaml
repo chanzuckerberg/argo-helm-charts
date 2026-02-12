@@ -400,11 +400,6 @@ data:
       }
 
       rule {
-        source_labels = ["__meta_kubernetes_namespace"]
-        target_label  = "namespace"
-      }
-
-      rule {
         source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
         separator     = "/"
         target_label  = "job"
@@ -416,6 +411,7 @@ data:
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
       scrape_interval = "1m"
       scrape_timeout  = "10s"
+      honor_labels    = true
     }
     {{- end }}
 
@@ -521,6 +517,7 @@ data:
       scheme          = "https"
       scrape_interval = "1m"
       scrape_timeout  = "10s"
+      honor_labels    = true
 
       authorization {
         type             = "Bearer"
@@ -569,6 +566,7 @@ data:
       scheme          = "https"
       scrape_interval = "1m"
       scrape_timeout  = "10s"
+      honor_labels    = true
 
       authorization {
         type             = "Bearer"
