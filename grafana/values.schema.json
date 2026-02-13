@@ -7,6 +7,11 @@
     "clusterName"
   ],
   "properties": {
+    "accessMode": {
+      "type": "string",
+      "enum": ["sso", "anonymous"],
+      "description": "Access mode for Grafana. Options: 'sso' (SSO with ingress, production), 'anonymous' (anonymous access without ingress, development)."
+    },
     "allow_embedding": {
       "description": "Allow embedding of Grafana dashboards in other applications.",
       "type": "string"
