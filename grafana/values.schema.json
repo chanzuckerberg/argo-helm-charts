@@ -8,9 +8,12 @@
   ],
   "properties": {
     "accessMode": {
+      "description": "Access mode for Grafana. Options: \"sso\" (SSO with ingress, production), \"anonymous\" (anonymous access without ingress, development).",
       "type": "string",
-      "enum": ["sso", "anonymous"],
-      "description": "Access mode for Grafana. Options: 'sso' (SSO with ingress, production), 'anonymous' (anonymous access without ingress, development)."
+      "enum": [
+        "sso",
+        "anonymous"
+      ]
     },
     "allow_embedding": {
       "description": "Allow embedding of Grafana dashboards in other applications.",
