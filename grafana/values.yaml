@@ -1,6 +1,8 @@
 enabled: true # @schema description: Enable the Grafana instance.
 
-grafanaBaseImage: "docker.io/grafana/grafana:11.3.0" # @schema description: Base image for the Grafana instance.
+accessMode: "sso" # @schema description: Access mode for Grafana. Options: "sso" (SSO with ingress, production), "anonymous" (anonymous access without ingress, development).; enum: ["sso", "anonymous"]
+
+grafanaBaseImage: "docker.io/grafana/grafana:12.3" # @schema description: Base image for the Grafana instance.
 
 clusterName: "" # @schema description: Name of the cluster to configure the platform Grafana for. This value is required.; required: true
 

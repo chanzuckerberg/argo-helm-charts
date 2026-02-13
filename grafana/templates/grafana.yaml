@@ -24,11 +24,15 @@ spec:
     users:
       viewers_can_edit: "true"
     auth:
-      disable_login_form: "true"
+      disable_login_form: {{ eq .Values.accessMode "sso" | quote }}
     auth.basic:
       enabled: "true"
     auth.anonymous:
-      enabled: "false"
+      enabled: {{ eq .Values.accessMode "anonymous" | quote }}
+      {{- if eq .Values.accessMode "anonymous" }}
+      org_role: "Viewer"
+      {{- end }}
+    {{- if eq .Values.accessMode "sso" }}
     auth.okta:
       enabled: "true"
       name: Okta
@@ -41,6 +45,7 @@ spec:
       client_id: $__file{/etc/secrets/client-id}
       client_secret: $__file{/etc/secrets/client-secret}
       role_attribute_path: {{ .Values.roleAttributePath | quote }}
+    {{- end }}
     server:
       root_url: "https://{{ .Values.grafanaSubdomain }}.{{ .Values.baseDomain }}"
     security:
@@ -51,10 +56,12 @@ spec:
       template:
         spec:
           volumes:
+            {{- if eq .Values.accessMode "sso" }}
             - name: secrets
               secret:
                 secretName: {{ .Values.grafanaName }}-sso-secret
                 defaultMode: 0444
+            {{- end }}
             {{- if gt (len .Values.extraSecretVolumes) 0 }}
             {{- toYaml .Values.extraSecretVolumes | nindent 12 }}
             {{- end }}
@@ -69,9 +76,11 @@ spec:
                 {{- end }}
               {{- end }}
               volumeMounts:
+                {{- if eq .Values.accessMode "sso" }}
                 - name: secrets
                   mountPath: /etc/secrets
                   readOnly: true
+                {{- end }}
                 {{- range $extraVolume := .Values.extraSecretVolumes }}
                 - name: {{ $extraVolume.name }}
                   mountPath: {{ printf "/etc/%s" $extraVolume.name }}
@@ -83,6 +92,7 @@ spec:
         - name: http
           port: 80
           targetPort: 3000
+  {{- if ne .Values.accessMode "anonymous" }}
   ingress:
     spec:
       ingressClassName: nginx
@@ -111,4 +121,5 @@ spec:
         nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
         nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
         nginx.ingress.kubernetes.io/session-cookie-name: grafana_sticky_session
+  {{- end }}
 {{ end }}
