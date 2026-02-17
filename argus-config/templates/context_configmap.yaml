@@ -6,6 +6,9 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: {{ .appContext.stackContextConfigMapName }}
+  annotations:
+    # Ensure this is deployed before anything else since it is a critical dependency for the stack
+    argocd.argoproj.io/sync-wave: "-100"
 data:
   {{- if and (ne .ingress nil) .ingress.host }}
   __ARGUS_STACK_INGRESS_HOST: {{ .ingress.host | quote }}
