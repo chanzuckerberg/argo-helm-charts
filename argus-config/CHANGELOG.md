@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.6.1...argus-config-v1.7.0) (2026-02-17)
+
+
+### Features
+
+* set sync-wave annotation on critical resources to a very low number to ensure they are created first ([#383](https://github.com/chanzuckerberg/argo-helm-charts/issues/383)) ([fa5c6ac](https://github.com/chanzuckerberg/argo-helm-charts/commit/fa5c6acae8e9f2cfc49fa680e4d52b8ebe157475))
+
 ## [1.6.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.6.0...argus-config-v1.6.1) (2025-11-14)
 
 
