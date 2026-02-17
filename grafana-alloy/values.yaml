@@ -7,22 +7,125 @@ clusterName: "" # @schema description: Name of the cluster where this chart is d
 
 # Loki endpoints configuration
 loki:
-  # @schema description: Local Loki endpoint configuration
-  local:
-    url: "http://loki.loki.svc:3100/loki/api/v1/push" # @schema description: URL of the local Loki instance
+  endpoints: # @schema description: List of Loki endpoints to send logs to
+    - url: "http://loki.loki.svc:3100/loki/api/v1/push" # @schema description: URL of the Loki endpoint
+      # basicAuth: # @schema description: Basic authentication configuration (optional)
+      #   envVar: "BASIC_AUTH_CREDENTIALS" # @schema description: Name of the environment variable containing basic auth credentials
 
-# Central Loki endpoint configuration (e.g., Argus metrics gateway)
-centralLoki:
-  enabled: false # @schema description: Enable central Loki endpoint
-  url: "" # @schema description: URL of the central Loki endpoint
-  basicAuthEnvVar: "BASIC_AUTH_CREDENTIALS" # @schema description: Name of the environment variable containing basic auth credentials
+# Example with multiple endpoints:
+# loki:
+#   endpoints:
+#     - url: "http://loki.loki.svc:3100/loki/api/v1/push"
+#     - url: "https://loki.prod-central-o11y.prod.czi.team/loki/api/v1/push"
+#       basicAuth:
+#         envVar: "BASIC_AUTH_CREDENTIALS"
+
+# Prometheus remote write configuration
+prometheusRemoteWrite:
+  enabled: false # @schema description: Enable Prometheus remote write
+  endpoints: [] # @schema description: Array of remote write endpoints
+    # - url: "" # @schema description: URL of the Prometheus remote write endpoint
+    #   basicAuth: # @schema description: Basic authentication configuration (optional)
+    #     usernameEnvVar: "MIMIR_USERNAME" # @schema description: Name of the environment variable containing username
+    #     passwordEnvVar: "MIMIR_PASSWORD" # @schema description: Name of the environment variable containing password
+    #   externalLabels: {} # @schema description: External labels to add to all metrics for this endpoint
+    #   queueConfig: # @schema description: Queue configuration for remote write
+    #     maxSamplesPerSend: 3000 # @schema description: Maximum samples per send
+    #     batchSendDeadline: "10s" # @schema description: Batch send deadline
+    #     minShards: 4 # @schema description: Minimum shards
+    #     maxShards: 200 # @schema description: Maximum shards
+    #     capacity: 10000 # @schema description: Queue capacity
+    #   sigv4: # @schema description: SigV4 configuration for AWS authentication
+    #     enabled: false # @schema description: Enable SigV4 authentication
+    #     region: "" # @schema description: AWS region for SigV4
+  metricsFilter: # @schema description: Metrics filtering configuration
+    enabled: false # @schema description: Enable metrics filtering
+    regex: "" # @schema description: Regex pattern to match metric names to keep
+
+  # Scrape kube-state-metrics for kube_* metrics (e.g. kube_pod_status_phase).
+  scrapeKubeStateMetrics: # @schema description: Scrape kube-state-metrics service for kube_* metrics
+    enabled: true # @schema description: Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+    namespace: "kube-system" # @schema description: Namespace where kube-state-metrics service runs
+    serviceSelector: "app.kubernetes.io/name=kube-state-metrics" # @schema description: Label selector (key=value) to find the kube-state-metrics service
+
+  # Scrape kubelet for kubelet_* and kubernetes_build_info metrics.
+  scrapeKubelet: # @schema description: Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)
+    enabled: true # @schema description: Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+  # Scrape cadvisor for container_* metrics (CPU, memory, network, filesystem).
+  scrapeCadvisor: # @schema description: Scrape cadvisor metrics from each node (container_*)
+    enabled: true # @schema description: Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+  # Scrape Kubernetes service endpoints (e.g., hubble-metrics, cilium-agent) for metrics.
+  # NOTE: If you're migrating from loki-stack's Prometheus server, you should disable endpoint scraping there.
+  # In loki-stack values, set: prometheus.server.extraScrapeConfigs: [] or remove endpoint scraping configs.
+  scrapeEndpoints: # @schema description: Scrape Kubernetes service endpoints with prometheus.io/scrape annotations
+    enabled: true # @schema description: Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+    scrapeInterval: "1m" # @schema description: Scrape interval for endpoint scraping
+    scrapeTimeout: "10s" # @schema description: Scrape timeout for endpoint scraping
+
+  # Static blackbox exporter targets (for targets not discovered via Kubernetes service annotations)
+  scrapeBlackboxStatic: # @schema description: Scrape static targets using blackbox exporter
+    enabled: false # @schema description: Enable static blackbox scraping (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+    scrapeInterval: "1m" # @schema description: Scrape interval for static blackbox scraping
+    scrapeTimeout: "10s" # @schema description: Scrape timeout for static blackbox scraping
+    config: | # @schema description: Blackbox exporter configuration in YAML format (defaults to standard modules if not provided)
+      modules:
+        http_2xx:
+          prober: http
+          timeout: 5s
+          http:
+            valid_status_codes: []
+            method: GET
+        https_2xx:
+          prober: http
+          timeout: 5s
+          http:
+            valid_status_codes: []
+            method: GET
+        tcp_connect:
+          prober: tcp
+          timeout: 5s
+        icmp:
+          prober: icmp
+          timeout: 5s
+    targets: [] # @schema description: List of static blackbox targets to probe
+      # Example:
+      # - job_name: "blackbox-internal"
+      #   targets:
+      #     - "http://loki.loki.svc.cluster.local:3100/ready"
+      #   module: "http_2xx"
+      #   blackboxExporterAddress: "blackbox-exporter.loki.svc.cluster.local:9115"
+      #   probe_type: "internal"
 
 # Custom Alloy configuration to merge/override the default configmap
 # This will be used to create a custom grafana-alloy-config ConfigMap
 alloyConfig:
-  # @schema description: Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.
+  # @schema description: Custom Alloy configuration content (River format). If empty, uses default collection config.
   # See https://grafana.com/docs/alloy/latest/reference/config-blocks/
   content: ""
+
+  # @schema description: Logging configuration for Alloy
+  logging:
+    level: info # @schema enum: [debug, info, warn, error]; description: Log level for Alloy
+    format: logfmt # @schema enum: [logfmt, json]; description: Log format for Alloy
+  
+  # @schema description: Enable pod log collection
+  podLogs:
+    enabled: true # @schema description: Enable collection of pod logs from all nodes
+  
+  # @schema description: Enable Kubernetes events collection
+  events:
+    enabled: true # @schema description: Enable collection of Kubernetes events
+  
+  # @schema description: Enable Prometheus metrics collection
+  metrics:
+    enabled: false # @schema description: Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)
+
+  # @schema description: Enable Beyla integration for eBPF-based application instrumentation
+  beyla:
+    enabled: false # @schema description: Enable Beyla integration (requires prometheusRemoteWrite.enabled=true)
+    debug: false # @schema description: Enable debug logging for Beyla BPF component
 
 # Alloy subchart configuration
 # Reference: https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy
@@ -94,10 +197,10 @@ alloy:
   # @schema description: Resource requests and limits
   resources:
     requests:
-      cpu: 1 # @schema description: CPU request
+      cpu: 1 # @schema description: CPU request (e.g., "200m", "1", "2"); anyOf: [{"type": "string"}, {"type": "number"}]
       memory: 1Gi # @schema description: Memory request
     limits:
-      cpu: 2 # @schema description: CPU limit
+      cpu: 2 # @schema description: CPU limit (e.g., "200m", "1", "2"); anyOf: [{"type": "string"}, {"type": "number"}]
       memory: 4Gi # @schema description: Memory limit
 
   # @schema description: Node selector for pod assignment

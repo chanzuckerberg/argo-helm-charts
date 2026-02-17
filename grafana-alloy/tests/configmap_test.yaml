@@ -63,9 +63,12 @@ tests:
     set:
       enabled: true
       clusterName: test-cluster
-      centralLoki:
-        enabled: true
-        url: "https://loki-gateway.example.com/loki/api/v1/push"
+      loki:
+        endpoints:
+          - url: "http://loki.loki.svc:3100/loki/api/v1/push"
+          - url: "https://loki-gateway.example.com/loki/api/v1/push"
+            basicAuth:
+              envVar: "BASIC_AUTH_CREDENTIALS"
     asserts:
       - matchRegex:
           path: data["config.alloy"]
@@ -78,8 +81,9 @@ tests:
     set:
       enabled: true
       clusterName: test-cluster
-      centralLoki:
-        enabled: false
+      loki:
+        endpoints:
+          - url: "http://loki.loki.svc:3100/loki/api/v1/push"
     asserts:
       - notMatchRegex:
           path: data["config.alloy"]
@@ -89,10 +93,12 @@ tests:
     set:
       enabled: true
       clusterName: test-cluster
-      centralLoki:
-        enabled: true
-        url: "https://loki-gateway.example.com/loki/api/v1/push"
-        basicAuthEnvVar: "CUSTOM_AUTH_CREDENTIALS"
+      loki:
+        endpoints:
+          - url: "http://loki.loki.svc:3100/loki/api/v1/push"
+          - url: "https://loki-gateway.example.com/loki/api/v1/push"
+            basicAuth:
+              envVar: "CUSTOM_AUTH_CREDENTIALS"
     asserts:
       - matchRegex:
           path: data["config.alloy"]
@@ -132,7 +138,7 @@ tests:
     asserts:
       - matchRegex:
           path: data["config.alloy"]
-          pattern: 'loki\.process "add_labels"'
+          pattern: 'loki\.process "add_event_labels"'
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'exporter = "grafana-alloy"'
@@ -172,3 +178,1111 @@ tests:
       - notMatchRegex:
           path: data["config.alloy"]
           pattern: 'loki\.source\.kubernetes_events'
+  - it: should not enable beyla when alloyConfig.beyla.enabled is not set
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        podLogs:
+          enabled: false
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf'
+  - it: should not enable beyla when alloyConfig.beyla.enabled is set but prometheusRemoteWrite is not enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf'
+  - it: should enable beyla when alloyConfig.beyla.enabled and prometheusRemoteWrite.enabled are true
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+          namespace: "my-app-ns"
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+          - url: http://central-loki-stack
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'namespace = "my-app-ns"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[\]'
+  - it: should allow all namespace if alloyConfig.beyla.namespace is not set
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'namespace = ".*"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'traces = \[\]'
+  - it: should configure basic_auth for prometheusRemoteWrite when basicAuth is provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://local-prometheus.svc/api/v1/write
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+              passwordEnvVar: "MIMIR_PASSWORD"
+            externalLabels:
+              exporter: grafana-alloy
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR_USERNAME"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR_PASSWORD"\)'
+  - it: should not include basic_auth when basicAuth is not provided for prometheusRemoteWrite
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+
+  - it: should support mixed basic auth configuration across multiple prometheusRemoteWrite endpoints
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://local-prometheus.svc/api/v1/write
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+              passwordEnvVar: "MIMIR_PASSWORD"
+          - url: http://another-local.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write "endpoint_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write "endpoint_1"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write "endpoint_2"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'http://local-prometheus\.svc/api/v1/write'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'https://mimir\.example\.com/api/v1/push'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'http://another-local\.svc/api/v1/write'
+      # Basic auth should be present for the endpoint that has it configured
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR_USERNAME"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR_PASSWORD"\)'
+
+  - it: should use custom environment variable names for prometheusRemoteWrite basic auth
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://cortex.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "CORTEX_USER"
+              passwordEnvVar: "CORTEX_PASS"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("CORTEX_USER"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("CORTEX_PASS"\)'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'MIMIR_USERNAME'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'MIMIR_PASSWORD'
+
+  - it: should not include basic_auth when only usernameEnvVar is provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+
+  - it: should not include basic_auth when only passwordEnvVar is provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              passwordEnvVar: "MIMIR_PASSWORD"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+
+  - it: should configure basic auth for all endpoints when all have basicAuth configured
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://mimir-1.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR1_USER"
+              passwordEnvVar: "MIMIR1_PASS"
+          - url: https://mimir-2.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR2_USER"
+              passwordEnvVar: "MIMIR2_PASS"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR1_USER"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR1_PASS"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'username = env\("MIMIR2_USER"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'password = env\("MIMIR2_PASS"\)'
+
+  - it: should not render prometheusRemoteWrite endpoints when prometheusRemoteWrite.enabled is false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: false
+        endpoints:
+          - url: https://mimir.example.com/api/v1/push
+            basicAuth:
+              usernameEnvVar: "MIMIR_USERNAME"
+              passwordEnvVar: "MIMIR_PASSWORD"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.remote_write'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'basic_auth'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'MIMIR_USERNAME'
+
+  - it: should use default logging level (info) when not specified
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"info"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'format\s*=\s*"logfmt"'
+
+  - it: should configure custom logging level
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: error
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"error"'
+
+  - it: should configure debug logging level
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: debug
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"debug"'
+
+  - it: should configure warn logging level
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: warn
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"warn"'
+
+  - it: should configure json log format
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          format: json
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'format\s*=\s*"json"'
+
+  - it: should configure both logging level and format
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        logging:
+          level: error
+          format: json
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'level\s*=\s*"error"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'format\s*=\s*"json"'
+
+  - it: should disable beyla debug by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'debug = false'
+
+  - it: should enable beyla debug when configured
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+          debug: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'beyla\.ebpf\s+"default"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'debug = true'
+
+  - it: should explicitly disable beyla debug
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        beyla:
+          enabled: true
+          debug: false
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'debug = false'
+
+  - it: should enable scrapeKubeStateMetrics by default when metrics and prometheusRemoteWrite are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "kube_state_metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["kube-system"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app\.kubernetes\.io/name=kube-state-metrics"'
+
+  - it: should disable scrapeKubeStateMetrics when explicitly set to false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+
+  - it: should not render scrapeKubeStateMetrics when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+
+  - it: should not render scrapeKubeStateMetrics when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeKubeStateMetrics:
+          enabled: true
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics"'
+
+  - it: should use custom namespace for scrapeKubeStateMetrics
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+          namespace: "monitoring"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["monitoring"\]'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["kube-system"\]'
+
+  - it: should use custom serviceSelector for scrapeKubeStateMetrics
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+          serviceSelector: "app=custom-ksm"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app=custom-ksm"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app\.kubernetes\.io/name=kube-state-metrics"'
+
+  - it: should configure scrapeKubeStateMetrics with custom namespace and serviceSelector
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+          namespace: "observability"
+          serviceSelector: "app.kubernetes.io/instance=ksm-prod"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["observability"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'label = "app\.kubernetes\.io/instance=ksm-prod"'
+
+  # scrapeKubelet tests
+  - it: should enable scrapeKubelet by default when metrics and prometheusRemoteWrite are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  - it: should disable scrapeKubelet when explicitly set to false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubelet:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  - it: should configure scrapeKubelet with proper settings
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'role = "node"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job_name\s*=\s*"integrations/kubernetes/kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scheme\s*=\s*"https"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'credentials_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"'
+
+  - it: should not render scrapeKubelet when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubelet:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  - it: should not render scrapeKubelet when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeKubelet:
+          enabled: true
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+
+  # scrapeCadvisor tests
+  - it: should enable scrapeCadvisor by default when metrics and prometheusRemoteWrite are enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should disable scrapeCadvisor when explicitly set to false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeCadvisor:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should configure scrapeCadvisor with proper settings
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'role = "node"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics/cadvisor'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job_name\s*=\s*"integrations/kubernetes/cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scheme\s*=\s*"https"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'ca_file\s*=\s*"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"'
+
+  - it: should not render scrapeCadvisor when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeCadvisor:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should not render scrapeCadvisor when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeCadvisor:
+          enabled: true
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+
+  - it: should enable both scrapeKubelet and scrapeCadvisor by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kubelet"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "cadvisor"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '/api/v1/nodes/\$1/proxy/metrics/cadvisor'
+
+  # scrapeBlackboxStatic tests
+  - it: should not render scrapeBlackboxStatic when not enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "blackbox_static_'
+
+  - it: should not render scrapeBlackboxStatic when metrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_'
+
+  - it: should not render scrapeBlackboxStatic when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_'
+
+  - it: should render scrapeBlackboxStatic with single target
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "internal-healthcheck"
+              targets:
+                - "http://loki.loki.svc.cluster.local:3100/ready"
+              module: "http_2xx"
+              blackboxExporterAddress: "blackbox-exporter.loki.svc.cluster.local:9115"
+              probe_type: "internal"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "http://loki\.loki\.svc\.cluster\.local:3100/ready"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'module = "http_2xx"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "blackbox_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "blackbox-exporter\.loki\.svc\.cluster\.local:9115"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "internal-healthcheck"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "internal"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "blackbox_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'metrics_path    = "/probe"'
+
+  - it: should render scrapeBlackboxStatic with multiple targets
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "internal-services"
+              targets:
+                - "http://loki.loki.svc.cluster.local:3100/ready"
+                - "http://tempo.loki.svc.cluster.local:3100/ready"
+              module: "http_2xx"
+              probe_type: "internal"
+            - job_name: "external-services"
+              targets:
+                - "https://example.com/health"
+              module: "https_2xx"
+              probe_type: "external"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_1"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "http://loki\.loki\.svc\.cluster\.local:3100/ready"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "http://tempo\.loki\.svc\.cluster\.local:3100/ready"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "https://example\.com/health"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "internal-services"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "external-services"'
+
+  - it: should use custom scrape intervals and timeouts for scrapeBlackboxStatic
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          scrapeInterval: "2m"
+          scrapeTimeout: "30s"
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scrape_interval = "2m"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scrape_timeout  = "30s"'
+
+  - it: should use default blackbox exporter address when not specified
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "blackbox-exporter\.loki\.svc\.cluster\.local:9115"'
+
+  - it: should not include probe_type label when not specified
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+              module: "http_2xx"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.blackbox "static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement  = "test-job"'
+
+  - it: should use custom blackbox exporter config when provided
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          config: |
+            modules:
+              custom_http:
+                prober: http
+                timeout: 10s
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'custom_http'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'timeout: 10s'
+
+  - it: should forward scrapeBlackboxStatic metrics to filter_metrics
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeBlackboxStatic:
+          enabled: true
+          targets:
+            - job_name: "test-job"
+              targets:
+                - "http://example.com/health"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "blackbox_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'forward_to\s*=\s*\[prometheus\.relabel\.filter_metrics\.receiver\]'

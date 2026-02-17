@@ -177,8 +177,15 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "description": "CPU limit",
-                  "type": "integer"
+                  "description": "CPU limit (e.g., \"200m\", \"1\", \"2\")",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
                 },
                 "memory": {
                   "description": "Memory limit",
@@ -190,8 +197,15 @@
               "type": "object",
               "properties": {
                 "cpu": {
-                  "description": "CPU request",
-                  "type": "integer"
+                  "description": "CPU request (e.g., \"200m\", \"1\", \"2\")",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
                 },
                 "memory": {
                   "description": "Memory request",
@@ -260,26 +274,77 @@
     "alloyConfig": {
       "type": "object",
       "properties": {
+        "beyla": {
+          "description": "Enable Beyla integration for eBPF-based application instrumentation",
+          "type": "object",
+          "properties": {
+            "debug": {
+              "description": "Enable debug logging for Beyla BPF component",
+              "type": "boolean"
+            },
+            "enabled": {
+              "description": "Enable Beyla integration (requires prometheusRemoteWrite.enabled=true)",
+              "type": "boolean"
+            }
+          }
+        },
         "content": {
-          "description": "Custom Alloy configuration content (River format). If empty, uses default Kubernetes events collection config.",
-          "type": "string"
-        }
-      }
-    },
-    "centralLoki": {
-      "type": "object",
-      "properties": {
-        "basicAuthEnvVar": {
-          "description": "Name of the environment variable containing basic auth credentials",
+          "description": "Custom Alloy configuration content (River format). If empty, uses default collection config.",
           "type": "string"
         },
-        "enabled": {
-          "description": "Enable central Loki endpoint",
-          "type": "boolean"
+        "events": {
+          "description": "Enable Kubernetes events collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable collection of Kubernetes events",
+              "type": "boolean"
+            }
+          }
         },
-        "url": {
-          "description": "URL of the central Loki endpoint",
-          "type": "string"
+        "logging": {
+          "description": "Logging configuration for Alloy",
+          "type": "object",
+          "properties": {
+            "format": {
+              "description": "Log format for Alloy",
+              "type": "string",
+              "enum": [
+                "logfmt",
+                "json"
+              ]
+            },
+            "level": {
+              "description": "Log level for Alloy",
+              "type": "string",
+              "enum": [
+                "debug",
+                "info",
+                "warn",
+                "error"
+              ]
+            }
+          }
+        },
+        "metrics": {
+          "description": "Enable Prometheus metrics collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)",
+              "type": "boolean"
+            }
+          }
+        },
+        "podLogs": {
+          "description": "Enable pod log collection",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable collection of pod logs from all nodes",
+              "type": "boolean"
+            }
+          }
         }
       }
     },
@@ -294,13 +359,125 @@
     "loki": {
       "type": "object",
       "properties": {
-        "local": {
-          "description": "Local Loki endpoint configuration",
+        "endpoints": {
+          "description": "List of Loki endpoints to send logs to",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "description": "URL of the Loki endpoint",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "prometheusRemoteWrite": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Enable Prometheus remote write",
+          "type": "boolean"
+        },
+        "endpoints": {
+          "description": "Array of remote write endpoints",
+          "type": "array"
+        },
+        "metricsFilter": {
+          "description": "Metrics filtering configuration",
           "type": "object",
           "properties": {
-            "url": {
-              "description": "URL of the local Loki instance",
+            "enabled": {
+              "description": "Enable metrics filtering",
+              "type": "boolean"
+            },
+            "regex": {
+              "description": "Regex pattern to match metric names to keep",
               "type": "string"
+            }
+          }
+        },
+        "scrapeBlackboxStatic": {
+          "description": "Scrape static targets using blackbox exporter",
+          "type": "object",
+          "properties": {
+            "config": {
+              "description": "Blackbox exporter configuration in YAML format (defaults to standard modules if not provided)",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable static blackbox scraping (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            },
+            "scrapeInterval": {
+              "description": "Scrape interval for static blackbox scraping",
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "description": "Scrape timeout for static blackbox scraping",
+              "type": "string"
+            },
+            "targets": {
+              "description": "List of static blackbox targets to probe",
+              "type": "array"
+            }
+          }
+        },
+        "scrapeCadvisor": {
+          "description": "Scrape cadvisor metrics from each node (container_*)",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            }
+          }
+        },
+        "scrapeEndpoints": {
+          "description": "Scrape Kubernetes service endpoints with prometheus.io/scrape annotations",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            },
+            "scrapeInterval": {
+              "description": "Scrape interval for endpoint scraping",
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "description": "Scrape timeout for endpoint scraping",
+              "type": "string"
+            }
+          }
+        },
+        "scrapeKubeStateMetrics": {
+          "description": "Scrape kube-state-metrics service for kube_* metrics",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            },
+            "namespace": {
+              "description": "Namespace where kube-state-metrics service runs",
+              "type": "string"
+            },
+            "serviceSelector": {
+              "description": "Label selector (key=value) to find the kube-state-metrics service",
+              "type": "string"
+            }
+          }
+        },
+        "scrapeKubelet": {
+          "description": "Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
             }
           }
         }

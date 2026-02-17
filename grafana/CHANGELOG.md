@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.8.1...grafana-v0.8.2) (2026-02-17)
+
+
+### Bug Fixes
+
+* passing tests so that we start with a clean slate ([#362](https://github.com/chanzuckerberg/argo-helm-charts/issues/362)) ([b9f6518](https://github.com/chanzuckerberg/argo-helm-charts/commit/b9f6518745eb5996ef86014944bf160e5eed0949))
+
 ## [0.8.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.8.0...grafana-v0.8.1) (2025-11-19)
 
 

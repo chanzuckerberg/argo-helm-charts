@@ -1,3 +1,18 @@
+{{- define "alloy.nodeLabelRelabelRules" -}}
+      rule {
+        source_labels = ["__meta_kubernetes_node_name"]
+        target_label  = "node"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_label_topology_kubernetes_io_region", "__meta_kubernetes_node_label_failure_domain_beta_kubernetes_io_region"]
+        separator     = ";"
+        regex         = "^(?:;*)?([^;]+).*$"
+        target_label  = "topology_kubernetes_io_region"
+        replacement   = "$1"
+      }
+{{- end -}}
+
 {{- if .Values.enabled }}
 apiVersion: v1
 kind: ConfigMap
@@ -10,11 +25,245 @@ data:
 {{- if .Values.alloyConfig.content }}
 {{- .Values.alloyConfig.content | nindent 4 }}
 {{- else }}
-    // Grafana Alloy configuration for Kubernetes events collection
     logging {
-      level = "info"
+      level  = {{ .Values.alloyConfig.logging.level | default "info" | quote }}
+      format = {{ .Values.alloyConfig.logging.format | default "logfmt" | quote }}
     }
 
+    {{- if .Values.alloyConfig.podLogs.enabled }}
+    discovery.kubernetes "pods" {
+      role = "pod"
+      selectors {
+        role  = "pod"
+        field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
+      }
+    }
+
+    discovery.relabel "pod_logs" {
+      targets = discovery.kubernetes.pods.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        action        = "replace"
+        target_label  = "pod"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        action        = "replace"
+        target_label  = "node_name"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        action        = "replace"
+        target_label  = "container"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        target_label  = "app"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        target_label  = "job"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_component"]
+        target_label  = "component"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_service", "__meta_kubernetes_pod_label_service"]
+        regex         = "^;*([^;]+)(;.*)?$"
+        target_label  = "service"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_workflowName"]
+        regex         = "(.+)"
+        target_label  = "workflowName"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_workflowVersion"]
+        regex         = "(.+)"
+        target_label  = "workflowVersion"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+        action        = "replace"
+        target_label  = "__path__"
+        separator     = "/"
+        replacement   = "/var/log/pods/*$1/*.log"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_id"]
+        action        = "replace"
+        target_label  = "container_runtime"
+        regex         = "^(\\S+):\\/\\/.+$"
+        replacement   = "$1"
+      }
+    }
+
+    local.file_match "pod_logs" {
+      path_targets = discovery.relabel.pod_logs.output
+    }
+
+    loki.source.file "pod_logs" {
+      targets    = local.file_match.pod_logs.targets
+      forward_to = [loki.process.pod_logs.receiver]
+    }
+
+    loki.process "pod_logs" {
+      stage.match {
+        selector = "{namespace=\"loki\",container=~\"promtail|alloy\"}"
+        action   = "drop"
+      }
+
+      stage.drop {
+        older_than          = "1h"
+        drop_counter_reason = "log_too_old"
+      }
+
+      stage.cri {}
+
+      stage.labels {
+        values = {
+          stream = "",
+        }
+      }
+
+      stage.label_drop {
+        values = ["filename", "flags"]
+      }
+
+      stage.static_labels {
+        values = {
+          cluster  = {{ .Values.clusterName | quote }},
+          exporter = "grafana-alloy",
+        }
+      }
+
+      stage.replace {
+        expression = "\\x1b\\[[0-9;]*m"
+        replace    = ""
+      }
+
+      stage.regex {
+        expression = "(?i)(?:^|[\\s\"'\\[{(,:=])(?P<level>\\b(?:trace|debug|dbg|trc|verbose|info|inf|information|notice|informational|warn|warning|wrn|error|err|fail|failure|severe|exception|critical|crit|fatal|ftl|panic|emerg|alert)\\b)(?:[\\s\"'\\]}),.:=]|$)"
+      }
+
+      stage.labels {
+        values = {
+          level = "",
+        }
+      }
+
+      stage.match {
+        selector = "{namespace=\"nginx-encrypted-ingress\",container=\"controller\"}"
+        
+        stage.regex {
+          expression = "^\\S+ \\S+ \\S+ \\[[^\\]]+\\] \"(?P<verb>\\S+) (?P<uri>\\/[^\\s\\?\"]+)(?:\\?\\S*)? (?P<http_version>[^\"]+)\" (?P<status>\\d{3}) \\d+ \"[^\"]*\" \"[^\"]*\" \\d+ [\\d.]+ \\[(?P<destination>[^\\]]+)\\]"
+        }
+
+        stage.labels {
+          values = {
+            verb         = "",
+            uri          = "",
+            status       = "",
+            http_version = "",
+            destination  = "",
+          }
+        }
+      }
+
+      forward_to = [loki.relabel.normalize_level.receiver]
+    }
+
+    loki.relabel "normalize_level" {
+      forward_to = [loki.write.endpoints.receiver]
+
+      rule {
+        source_labels = ["level"]
+        regex         = "(?i)\\s*(debug|dbg|trace|verbose|trc)\\s*"
+        target_label  = "level"
+        replacement   = "debug"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["level"]
+        regex         = "(?i)\\s*(info|information|notice|informational|inf)\\s*"
+        target_label  = "level"
+        replacement   = "info"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["level"]
+        regex         = "(?i)\\s*(warn|warning|wrn)\\s*"
+        target_label  = "level"
+        replacement   = "warning"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["level"]
+        regex         = "(?i)\\s*(err|error|fail|failure|severe|exception)\\s*"
+        target_label  = "level"
+        replacement   = "error"
+        action        = "replace"
+      }
+
+      rule {
+        source_labels = ["level"]
+        regex         = "(?i)\\s*(crit|critical|fatal|panic|emerg|alert|ftl|crt)\\s*"
+        target_label  = "level"
+        replacement   = "critical"
+        action        = "replace"
+      }
+
+      rule {
+        action        = "lowercase"
+        source_labels = ["level"]
+        target_label  = "level"
+      }
+    }
+
+    loki.write "endpoints" {
+      {{- range $idx, $endpoint := .Values.loki.endpoints }}
+      endpoint {
+        url = {{ $endpoint.url | quote }}
+        {{- if $endpoint.basicAuth }}
+        {{- if $endpoint.basicAuth.envVar }}
+        headers = {
+          "Authorization" = "Basic " + env({{ $endpoint.basicAuth.envVar | quote }}),
+        }
+        {{- end }}
+        {{- end }}
+      }
+      {{- end }}
+    }
+    {{- end }}
+
+    {{- if .Values.alloyConfig.events.enabled }}
     loki.source.kubernetes_events "k8s_events" {
       forward_to = [loki.relabel.rename_namespace.receiver]
       log_format = "json"
@@ -22,16 +271,16 @@ data:
     }
 
     loki.relabel "rename_namespace" {
-      forward_to = [loki.process.add_labels.receiver]
+      forward_to = [loki.process.add_event_labels.receiver]
       
       rule {
         source_labels = ["namespace"]
-        action = "replace"
+        action        = "replace"
         target_label  = "event_namespace"
       }
     }
 
-    loki.process "add_labels" {
+    loki.process "add_event_labels" {
       stage.static_labels {
         values = {
           cluster  = {{ .Values.clusterName | quote }},
@@ -65,22 +314,425 @@ data:
         values = ["job","cluster","exporter","level","event_message","event_reason","event_type","event_kind","event_namespace","event_host"]
       }
 
-      forward_to = [loki.write.events.receiver]
+      forward_to = [loki.write.endpoints.receiver]
+    }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    discovery.kubernetes "pods_metrics" {
+      role = "pod"
     }
 
-    loki.write "events" {
-      endpoint {
-        url = {{ .Values.loki.local.url | quote }}
-      }
-      {{- if and .Values.centralLoki.enabled .Values.centralLoki.url }}
+    discovery.relabel "pods_metrics" {
+      targets = discovery.kubernetes.pods_metrics.targets
 
-      endpoint {
-        url = {{ .Values.centralLoki.url | quote }}
-        headers = {
-          "Authorization" = "Basic " + env({{ .Values.centralLoki.basicAuthEnvVar | quote }}),
-        }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
+        regex         = "(?i)^\\s*true\\s*$"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
+        regex         = "(.+)"
+        target_label  = "__metrics_path__"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scheme"]
+        regex         = "(.+)"
+        target_label  = "__scheme__"
+      }
+
+      rule {
+        source_labels = ["__address__", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
+        regex         = "(\\[[^\\]]+\\]|[^:]+)(?::\\d+)?;(\\d+)"
+        replacement   = "$1:$2"
+        target_label  = "__address__"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        target_label  = "job"
+      }
+    }
+
+    prometheus.scrape "pods" {
+      targets         = discovery.relabel.pods_metrics.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = "1m"
+      scrape_timeout  = "10s"
+    }
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubeStateMetrics .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.enabled }}
+    discovery.kubernetes "kube_state_metrics_svc" {
+      role = "service"
+      namespaces {
+        names = [{{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.namespace | default "kube-system") | quote }}]
+      }
+      selectors {
+        role  = "service"
+        label = {{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.serviceSelector | default "app.kubernetes.io/name=kube-state-metrics") | quote }}
+      }
+    }
+
+    discovery.relabel "kube_state_metrics" {
+      targets = discovery.kubernetes.kube_state_metrics_svc.targets
+
+      rule {
+        target_label = "__metrics_path__"
+        replacement  = "/metrics"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
+        separator     = "/"
+        target_label  = "job"
+      }
+    }
+
+    prometheus.scrape "kube_state_metrics" {
+      targets         = discovery.relabel.kube_state_metrics.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = "1m"
+      scrape_timeout  = "10s"
+      honor_labels    = true
+    }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeEndpoints }}
+    {{- if .enabled }}
+    discovery.kubernetes "endpoints" {
+      role = "endpoints"
+    }
+
+    discovery.relabel "endpoints" {
+      targets = discovery.kubernetes.endpoints.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scrape"]
+        regex         = "(?i)^\\s*true\\s*$"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_path"]
+        regex         = "(.+)"
+        target_label  = "__metrics_path__"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scheme"]
+        regex         = "(.+)"
+        target_label  = "__scheme__"
+      }
+
+      rule {
+        source_labels = ["__address__", "__meta_kubernetes_service_annotation_prometheus_io_port"]
+        regex         = "(\\[[^\\]]+\\]|[^:]+)(?::\\d+)?;(\\d+)"
+        replacement   = "$1:$2"
+        target_label  = "__address__"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "service"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
+        separator     = "/"
+        target_label  = "job"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_endpoint_node_name"]
+        target_label  = "node"
+      }
+    }
+
+    prometheus.scrape "endpoints" {
+      targets         = discovery.relabel.endpoints.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ .scrapeInterval | default "1m" | quote }}
+      scrape_timeout  = {{ .scrapeTimeout | default "10s" | quote }}
+    }
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}
+    discovery.kubernetes "kubelet" {
+      role = "node"
+    }
+
+    discovery.relabel "kubelet" {
+      targets = discovery.kubernetes.kubelet.targets
+
+      rule {
+        target_label = "__address__"
+        replacement  = "kubernetes.default.svc.cluster.local:443"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_name"]
+        regex         = "(.+)"
+        target_label  = "__metrics_path__"
+        replacement   = "/api/v1/nodes/$1/proxy/metrics"
+      }
+
+      {{- include "alloy.nodeLabelRelabelRules" . | nindent 6 }}
+
+      rule {
+        target_label = "job"
+        replacement  = "integrations/kubernetes/kubelet"
+      }
+    }
+
+    prometheus.scrape "kubelet" {
+      targets         = discovery.relabel.kubelet.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      job_name        = "integrations/kubernetes/kubelet"
+      scheme          = "https"
+      scrape_interval = "1m"
+      scrape_timeout  = "10s"
+      honor_labels    = true
+
+      authorization {
+        type             = "Bearer"
+        credentials_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      }
+
+      tls_config {
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        insecure_skip_verify = true
+      }
+    }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeCadvisor .Values.prometheusRemoteWrite.scrapeCadvisor.enabled }}
+    discovery.kubernetes "cadvisor" {
+      role = "node"
+    }
+
+    discovery.relabel "cadvisor" {
+      targets = discovery.kubernetes.cadvisor.targets
+
+      rule {
+        target_label = "__address__"
+        replacement  = "kubernetes.default.svc.cluster.local:443"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_node_name"]
+        regex         = "(.+)"
+        target_label  = "__metrics_path__"
+        replacement   = "/api/v1/nodes/$1/proxy/metrics/cadvisor"
+      }
+
+      {{- include "alloy.nodeLabelRelabelRules" . | nindent 6 }}
+
+      rule {
+        target_label = "job"
+        replacement  = "integrations/kubernetes/cadvisor"
+      }
+    }
+
+    prometheus.scrape "cadvisor" {
+      targets         = discovery.relabel.cadvisor.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      job_name        = "integrations/kubernetes/cadvisor"
+      scheme          = "https"
+      scrape_interval = "1m"
+      scrape_timeout  = "10s"
+      honor_labels    = true
+
+      authorization {
+        type             = "Bearer"
+        credentials_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      }
+
+      tls_config {
+        ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        insecure_skip_verify = true
+      }
+    }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeBlackboxStatic .Values.prometheusRemoteWrite.scrapeBlackboxStatic.enabled }}
+    {{- range $idx, $job := .Values.prometheusRemoteWrite.scrapeBlackboxStatic.targets }}
+    prometheus.exporter.blackbox "static_{{ $idx }}" {
+      {{- if $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.config }}
+      config = {{ $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.config | quote }}
+      {{- else }}
+      config = "modules:\n  http_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      valid_status_codes: []\n      method: GET\n  https_2xx:\n    prober: http\n    timeout: 5s\n    http:\n      valid_status_codes: []\n      method: GET\n  tcp_connect:\n    prober: tcp\n    timeout: 5s\n  icmp:\n    prober: icmp\n    timeout: 5s\n"
+      {{- end }}
+      targets = [
+        {{- range $targetIdx, $target := $job.targets }}
+        { name = "{{ $job.job_name }}_{{ $targetIdx }}", __address__ = {{ $target | quote }}, module = {{ $job.module | default "http_2xx" | quote }} },
+        {{- end }}
+      ]
+    }
+
+    discovery.relabel "blackbox_static_{{ $idx }}" {
+      targets = prometheus.exporter.blackbox.static_{{ $idx }}.targets
+
+      rule {
+        source_labels = ["__address__"]
+        target_label  = "__param_target"
+      }
+
+      rule {
+        source_labels = ["__param_target"]
+        target_label  = "instance"
+      }
+
+      rule {
+        target_label = "__address__"
+        replacement  = {{ $job.blackboxExporterAddress | default "blackbox-exporter.loki.svc.cluster.local:9115" | quote }}
+      }
+
+      rule {
+        target_label = "job"
+        replacement  = {{ $job.job_name | quote }}
+      }
+
+      {{- if $job.probe_type }}
+      rule {
+        target_label = "probe_type"
+        replacement  = {{ $job.probe_type | quote }}
       }
       {{- end }}
     }
+
+    prometheus.scrape "blackbox_static_{{ $idx }}" {
+      targets         = discovery.relabel.blackbox_static_{{ $idx }}.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.scrapeInterval | default "1m" | quote }}
+      scrape_timeout  = {{ $.Values.prometheusRemoteWrite.scrapeBlackboxStatic.scrapeTimeout | default "10s" | quote }}
+      metrics_path    = "/probe"
+    }
+    {{- end }}
+    {{- end }}
+
+    prometheus.relabel "filter_metrics" {
+      {{- if .Values.prometheusRemoteWrite.enabled }}
+      forward_to = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
+      {{- end }}
+
+      rule {
+        target_label = "cluster"
+        replacement  = {{ .Values.clusterName | quote }}
+      }
+
+      {{- if .Values.prometheusRemoteWrite.metricsFilter.enabled }}
+      rule {
+        source_labels = ["__name__"]
+        regex         = {{ .Values.prometheusRemoteWrite.metricsFilter.regex | quote }}
+        action        = "keep"
+      }
+      {{- end }}
+    }
+    {{- end }}
+
+    {{- if .Values.prometheusRemoteWrite.enabled }}
+    {{- range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}
+    prometheus.remote_write "endpoint_{{ $idx }}" {
+      endpoint {
+        url = {{ $endpoint.url | quote }}
+        
+
+        {{- if $endpoint.basicAuth }}
+        {{- if and $endpoint.basicAuth.usernameEnvVar $endpoint.basicAuth.passwordEnvVar }}
+        basic_auth {
+          username = env({{ $endpoint.basicAuth.usernameEnvVar | quote }})
+          password = env({{ $endpoint.basicAuth.passwordEnvVar | quote }})
+        }
+        {{- end }}
+        {{- end }}
+        {{- if $endpoint.queueConfig }}
+        queue_config {
+          max_samples_per_send = {{ $endpoint.queueConfig.maxSamplesPerSend }}
+          batch_send_deadline  = {{ $endpoint.queueConfig.batchSendDeadline | quote }}
+          min_shards           = {{ $endpoint.queueConfig.minShards }}
+          max_shards           = {{ $endpoint.queueConfig.maxShards }}
+          capacity             = {{ $endpoint.queueConfig.capacity }}
+        }
+        {{- end }}
+
+        {{- if $endpoint.sigv4 }}
+        {{- if $endpoint.sigv4.enabled }}
+        sigv4 {
+          region = {{ $endpoint.sigv4.region | quote }}
+        }
+        {{- end }}
+        {{- end }}
+      }
+
+      {{- if $endpoint.externalLabels }}
+      external_labels = {
+        {{- range $key, $value := $endpoint.externalLabels }}
+        {{ $key }} = {{ $value | quote }},
+        {{- end }}
+      }
+      {{- end }}
+    }
+    {{- end }}
+    {{- end }}
+    {{- if and .Values.alloyConfig.beyla.enabled .Values.prometheusRemoteWrite.enabled }}
+    beyla.ebpf "default" {
+      debug = {{ .Values.alloyConfig.beyla.debug | default false }}
+
+      attributes {
+        kubernetes {
+          enable = "true"
+        }
+      }
+      discovery {
+        exclude_otel_instrumented_services = false
+        skip_go_specific_tracers = true
+        instrument {
+          kubernetes {
+            namespace = {{ .Values.alloyConfig.beyla.namespace | default ".*" | quote }}
+          }
+        }
+      }
+      metrics {
+        features = [
+        "application", 
+        "network",
+        ]
+      }
+      output {
+        traces = []
+      }
+    }
+    prometheus.scrape "beyla_metrics" {
+      targets    = beyla.ebpf.default.targets
+      forward_to = [prometheus.remote_write.endpoint_0.receiver]
+      scrape_interval = "15s"
+    }
+    {{- end }}
 {{- end }}
 {{- end }}
