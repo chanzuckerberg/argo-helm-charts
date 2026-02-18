@@ -659,20 +659,29 @@ data:
       }
 
       rule {
-        source_labels = ["__meta_kubernetes_service_annotation_tailscale_com_tailnet_fqdn"]
+        source_labels = ["__meta_kubernetes_service_annotation_tailscale_com_tailnet_ip"]
         regex         = "(.+)"
         action        = "keep"
       }
 
       rule {
-        source_labels = ["__meta_kubernetes_service_annotation_tailscale_com_tailnet_fqdn", "__meta_kubernetes_service_port_number"]
-        separator     = ":"
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "__param_target"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_tailscale_com_tailnet_ip"]
+        target_label  = "__param_host"
+      }
+
+      rule {
         target_label  = "__address__"
+        replacement   = {{ .relayAddress | default "metrics-relay.tailscale.svc:8080" | quote }}
       }
 
       rule {
         target_label = "__metrics_path__"
-        replacement  = {{ .metricsPath | default "/metrics" | quote }}
+        replacement  = "/probe"
       }
 
       rule {
