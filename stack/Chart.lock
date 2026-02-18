@@ -1,6 +1,6 @@
 dependencies:
 - name: argus-config
   repository: https://chanzuckerberg.github.io/argo-helm-charts
-  version: 1.6.1
-digest: sha256:0dd31c869f4d3b000cef683026aa2f296f3ca08a0dabbb4c5bd58f8204cf6c97
-generated: "2025-11-14T21:37:44.21935899Z"
+  version: 1.7.0
+digest: sha256:1566ae28bcf5db37ee0aeb2ad96c54eb49fd4fbf8749537c567384b9d7c8da60
+generated: "2026-02-17T22:44:57.555326375Z"
