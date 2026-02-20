@@ -1,0 +1,397 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test Gateway API HTTPRoute
+templates:
+  - httproute.yaml
+tests:
+  - it: should not create HTTPRoute when gateway.enabled is false (default)
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create HTTPRoute when gateway.enabled is true
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+                namespace: gateway-system
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+                pathType: PathPrefix
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HTTPRoute
+      - isAPIVersion:
+          of: gateway.networking.k8s.io/v1
+
+  - it: should set correct metadata name and labels
+    set:
+      global:
+        fullnameOverride: my-app
+      services:
+        api:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-app-api
+      - equal:
+          path: metadata.labels["app.kubernetes.io/service"]
+          value: my-app-api
+
+  - it: should set parentRefs correctly
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+                namespace: gateway-system
+                sectionName: https
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+    asserts:
+      - equal:
+          path: spec.parentRefs[0].name
+          value: my-gateway
+      - equal:
+          path: spec.parentRefs[0].namespace
+          value: gateway-system
+      - equal:
+          path: spec.parentRefs[0].sectionName
+          value: https
+
+  - it: should set multiple parentRefs
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: gateway-1
+                namespace: ns1
+              - name: gateway-2
+                namespace: ns2
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+    asserts:
+      - lengthEqual:
+          path: spec.parentRefs
+          count: 2
+      - equal:
+          path: spec.parentRefs[0].name
+          value: gateway-1
+      - equal:
+          path: spec.parentRefs[1].name
+          value: gateway-2
+
+  - it: should set hostnames correctly
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+              - www.example.com
+            rules:
+              - path: /
+    asserts:
+      - lengthEqual:
+          path: spec.hostnames
+          count: 2
+      - contains:
+          path: spec.hostnames
+          content: "api.example.com"
+      - contains:
+          path: spec.hostnames
+          content: "www.example.com"
+
+  - it: should not include hostnames when not specified
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            rules:
+              - path: /
+    asserts:
+      - notExists:
+          path: spec.hostnames
+
+  - it: should set rules with path matching
+    set:
+      services:
+        service1:
+          service:
+            port: 8080
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /api
+                pathType: PathPrefix
+              - path: /health
+                pathType: Exact
+    asserts:
+      - lengthEqual:
+          path: spec.rules
+          count: 2
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: PathPrefix
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api
+      - equal:
+          path: spec.rules[1].matches[0].path.type
+          value: Exact
+      - equal:
+          path: spec.rules[1].matches[0].path.value
+          value: /health
+
+  - it: should set backendRefs correctly
+    set:
+      global:
+        fullnameOverride: my-app
+      services:
+        api:
+          service:
+            port: 8080
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: my-app-api
+      - equal:
+          path: spec.rules[0].backendRefs[0].port
+          value: 8080
+
+  - it: should support header matching in rules
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /api
+                pathType: PathPrefix
+                headers:
+                  - name: X-Custom-Header
+                    value: custom-value
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].headers[0].name
+          value: X-Custom-Header
+      - equal:
+          path: spec.rules[0].matches[0].headers[0].value
+          value: custom-value
+
+  - it: should support method matching in rules
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /api
+                pathType: PathPrefix
+                method: POST
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].method
+          value: POST
+
+  - it: should support filters
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+            filters:
+              - type: RequestHeaderModifier
+                requestHeaderModifier:
+                  add:
+                    - name: X-Forwarded-Proto
+                      value: https
+    asserts:
+      - equal:
+          path: spec.rules[0].filters[0].type
+          value: RequestHeaderModifier
+      - equal:
+          path: spec.rules[0].filters[0].requestHeaderModifier.add[0].name
+          value: X-Forwarded-Proto
+
+  - it: should create multiple HTTPRoutes for multiple services
+    set:
+      global:
+        fullnameOverride: my-app
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api1.example.com
+            rules:
+              - path: /
+        service2:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api2.example.com
+            rules:
+              - path: /
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        isKind:
+          of: HTTPRoute
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: my-app-service1
+      - documentIndex: 1
+        isKind:
+          of: HTTPRoute
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: my-app-service2
+
+  - it: should merge global and service-level annotations
+    set:
+      global:
+        annotations:
+          global-annotation: global-value
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+            annotations:
+              gateway-annotation: gateway-value
+    asserts:
+      - equal:
+          path: metadata.annotations["global-annotation"]
+          value: global-value
+      - equal:
+          path: metadata.annotations["gateway-annotation"]
+          value: gateway-value
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: production
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: production
+
+  - it: gateway and ingress are independent - only gateway enabled
+    set:
+      services:
+        service1:
+          ingress:
+            enabled: false
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - gateway.example.com
+            rules:
+              - path: /
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HTTPRoute
+
+  - it: should use default PathPrefix when pathType not specified
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: my-gateway
+            hostnames:
+              - api.example.com
+            rules:
+              - path: /api
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: PathPrefix
