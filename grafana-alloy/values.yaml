@@ -64,6 +64,20 @@ prometheusRemoteWrite:
     scrapeInterval: "1m" # @schema description: Scrape interval for endpoint scraping
     scrapeTimeout: "10s" # @schema description: Scrape timeout for endpoint scraping
 
+  # Scrape Tailscale client metrics via ExternalName Services managed by the tailscalesd syncer.
+  # These Services are discovered using Kubernetes service discovery (role: service) and
+  # routed through a Tailscale ProxyGroup for egress access to the tailnet.
+  scrapeTailscaleServices: # @schema description: Scrape Tailscale client metrics via ExternalName Services (requires tailscalesd syncer)
+    enabled: false # @schema description: Enable scraping Tailscale client metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+    namespace: "tailscale" # @schema description: Namespace where Tailscale ExternalName Services are created
+    labelSelector: "tailscale-sync=true" # @schema description: Label selector to find Tailscale ExternalName Services
+    scrapeInterval: "30s" # @schema description: Scrape interval for Tailscale client metrics
+    scrapeTimeout: "15s" # @schema description: Scrape timeout for Tailscale client metrics
+    metricsPath: "/metrics" # @schema description: Path to scrape metrics from on each target
+    portName: "metrics" # @schema description: Service port name to scrape (filters targets to only this port)
+    jobLabel: "tailscale-client-metrics" # @schema description: Job label for scraped metrics
+    relayAddress: "metrics-relay.tailscale.svc:8080" # @schema description: Address of the metrics relay that rewrites the Host header for Tailscale web client compatibility
+
   # Static blackbox exporter targets (for targets not discovered via Kubernetes service annotations)
   scrapeBlackboxStatic: # @schema description: Scrape static targets using blackbox exporter
     enabled: false # @schema description: Enable static blackbox scraping (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)

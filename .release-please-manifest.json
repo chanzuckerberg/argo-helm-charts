@@ -1,11 +1,11 @@
 {
-  "stack": "2.24.1",
-  "argus-config": "1.6.1",
+  "stack": "2.25.0",
+  "argus-config": "1.7.0",
   "sso-secret": "0.2.0",
-  "grafana": "0.8.1",
+  "grafana": "0.8.2",
   "argo-project": "1.0.1",
   "basic-auth-secret": "0.3.0",
   "prom2parquet": "0.3.1",
   "karpenter-gpu-nodepool": "0.3.0",
-  "grafana-alloy": "0.4.0"
+  "grafana-alloy": "0.5.0"
 }

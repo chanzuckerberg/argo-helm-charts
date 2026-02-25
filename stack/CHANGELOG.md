@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.25.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.24.1...stack-v2.25.0) (2026-02-18)
+
+
+### Features
+
+* set sync-wave annotation on critical resources to a very low number to ensure they are created first ([#384](https://github.com/chanzuckerberg/argo-helm-charts/issues/384)) ([44673a6](https://github.com/chanzuckerberg/argo-helm-charts/commit/44673a6b991ce58bdce15341f34fbd3ff028e3b3))
+
 ## [2.24.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.24.0...stack-v2.24.1) (2026-01-16)
 
 
