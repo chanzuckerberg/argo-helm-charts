@@ -23,6 +23,8 @@ tests:
           path: spec.config
 
   - it: should have an okta auth config
+    set:
+      accessMode: "sso"
     asserts:
       - isNotEmpty:
           path: spec.config["auth.okta"]
@@ -65,6 +67,8 @@ tests:
           path: spec.config["auth.okta"]
 
   - it: should have a valid deployment configuration
+    set:
+      accessMode: "sso"
     asserts:
       - isNotEmpty:
           path: spec.deployment.spec.template.spec.volumes
@@ -125,6 +129,8 @@ tests:
           value: "https://grafana.example.com"
 
   - it: should include volume mounts for secrets
+    set:
+      accessMode: "sso"
     asserts:
       - isNotEmpty:
           path: spec.deployment.spec.template.spec.volumes
@@ -163,6 +169,7 @@ tests:
 
   - it: should include extra secret volumes when provided
     set:
+      accessMode: "sso"
       extraSecretVolumes:
         - name: slack-webhook-secret
           secret:
@@ -192,6 +199,7 @@ tests:
 
   - it: should not include extra secret volumes when not provided
     set:
+      accessMode: "sso"
       extraSecretVolumes: []
     asserts:
       - equal:
@@ -207,3 +215,56 @@ tests:
             - name: secrets
               mountPath: /etc/secrets
               readOnly: true
+
+  - it: should work in sso mode (default)
+    set:
+      accessMode: "sso"
+    asserts:
+      - isNotEmpty:
+          path: spec.ingress
+      - equal:
+          path: spec.config.auth.disable_login_form
+          value: "true"
+      - equal:
+          path: spec.config["auth.anonymous"].enabled
+          value: "false"
+      - isNotEmpty:
+          path: spec.config["auth.okta"]
+
+  - it: should work in anonymous mode
+    set:
+      accessMode: "anonymous"
+    asserts:
+      - notExists:
+          path: spec.ingress
+      - equal:
+          path: spec.config.auth.disable_login_form
+          value: "false"
+      - equal:
+          path: spec.config["auth.anonymous"].enabled
+          value: "true"
+      - equal:
+          path: spec.config["auth.anonymous"].org_role
+          value: "Viewer"
+      - notExists:
+          path: spec.config["auth.okta"]
+
+  - it: should not mount sso-secret volume in anonymous mode
+    set:
+      accessMode: "anonymous"
+      extraSecretVolumes: []
+    asserts:
+      - isEmpty:
+          path: spec.deployment.spec.template.spec.volumes
+
+  - it: should mount sso-secret volume in sso mode
+    set:
+      accessMode: "sso"
+    asserts:
+      - contains:
+          path: spec.deployment.spec.template.spec.volumes
+          content:
+            name: secrets
+            secret:
+              secretName: grafana-sso-secret
+              defaultMode: 0444
