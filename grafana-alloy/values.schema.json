@@ -480,6 +480,48 @@
               "type": "boolean"
             }
           }
+        },
+        "scrapeTailscaleServices": {
+          "description": "Scrape Tailscale client metrics via ExternalName Services (requires tailscalesd syncer)",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping Tailscale client metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            },
+            "jobLabel": {
+              "description": "Job label for scraped metrics",
+              "type": "string"
+            },
+            "labelSelector": {
+              "description": "Label selector to find Tailscale ExternalName Services",
+              "type": "string"
+            },
+            "metricsPath": {
+              "description": "Path to scrape metrics from on each target",
+              "type": "string"
+            },
+            "namespace": {
+              "description": "Namespace where Tailscale ExternalName Services are created",
+              "type": "string"
+            },
+            "portName": {
+              "description": "Service port name to scrape (filters targets to only this port)",
+              "type": "string"
+            },
+            "relayAddress": {
+              "description": "Address of the metrics relay that rewrites the Host header for Tailscale web client compatibility",
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "description": "Scrape interval for Tailscale client metrics",
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "description": "Scrape timeout for Tailscale client metrics",
+              "type": "string"
+            }
+          }
         }
       }
     }

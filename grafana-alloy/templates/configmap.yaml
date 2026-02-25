@@ -636,6 +636,79 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeTailscaleServices .Values.prometheusRemoteWrite.scrapeTailscaleServices.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeTailscaleServices }}
+    discovery.kubernetes "tailscale_services" {
+      role = "service"
+      namespaces {
+        names = [{{ .namespace | default "tailscale" | quote }}]
+      }
+      selectors {
+        role  = "service"
+        label = {{ .labelSelector | default "tailscale-sync=true" | quote }}
+      }
+    }
+
+    discovery.relabel "tailscale_services" {
+      targets = discovery.kubernetes.tailscale_services.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_port_name"]
+        regex         = {{ .portName | default "metrics" | quote }}
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_monitoring_czi_team_tailnet_ip"]
+        regex         = "(.+)"
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "__param_target"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_monitoring_czi_team_tailnet_ip"]
+        target_label  = "__param_host"
+      }
+
+      rule {
+        target_label  = "__address__"
+        replacement   = {{ .relayAddress | default "metrics-relay.tailscale.svc:8080" | quote }}
+      }
+
+      rule {
+        target_label = "__metrics_path__"
+        replacement  = "/probe"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_annotation_tailscale_com_tailnet_fqdn"]
+        target_label  = "tailnet_device"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_name"]
+        target_label  = "instance"
+      }
+
+      rule {
+        target_label = "job"
+        replacement  = {{ .jobLabel | default "tailscale-client-metrics" | quote }}
+      }
+    }
+
+    prometheus.scrape "tailscale_services" {
+      targets         = discovery.relabel.tailscale_services.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ .scrapeInterval | default "30s" | quote }}
+      scrape_timeout  = {{ .scrapeTimeout | default "15s" | quote }}
+    }
+    {{- end }}
+    {{- end }}
+
     prometheus.relabel "filter_metrics" {
       {{- if .Values.prometheusRemoteWrite.enabled }}
       forward_to = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
