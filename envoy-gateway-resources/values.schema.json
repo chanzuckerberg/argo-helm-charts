@@ -4,6 +4,9 @@
   "title": "envoy-gateway-resources",
   "type": "object",
   "properties": {
+    "alternateNames": {
+      "type": "array"
+    },
     "baseDomain": {
       "type": "string"
     },
