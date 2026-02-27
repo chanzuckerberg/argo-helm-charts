@@ -1,4 +1,4 @@
-# Injected by ApplicationSet from cluster generator
 clusterName: ""
 baseDomain: "dev.czi.team"
 gatewayName: "envoy-gateway"
+alternateNames: []

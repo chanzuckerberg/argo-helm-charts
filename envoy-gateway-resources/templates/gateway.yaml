@@ -49,6 +49,8 @@ spec:
       - selector:
           dnsZones:
             - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+          dnsNames:
+            - "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
         dns01:
           route53: {}
       - selector: {}
@@ -59,4 +61,29 @@ spec:
                 name: {{ .Values.gatewayName }}
                 namespace: envoy-gateway
                 kind: Gateway
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.gatewayName }}-wildcard-cert
+  namespace: envoy-gateway
+spec:
+  commonName: "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+  dnsNames:
+    - "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+    - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+{{- range .Values.alternateNames }}
+    - "{{ . }}"
+{{- end }}
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt-prod-eg
+  privateKey:
+    algorithm: RSA
+    size: 4096
+  secretName: {{ .Values.gatewayName }}-tls
+  usages:
+    - digital signature
+    - key encipherment
 ---
