@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.5.0...grafana-alloy-v0.6.0) (2026-02-27)
+
+
+### Features
+
+* Enable tailscale metric scraping ([#386](https://github.com/chanzuckerberg/argo-helm-charts/issues/386)) ([86bc9fe](https://github.com/chanzuckerberg/argo-helm-charts/commit/86bc9fe2d8d0ef82ba0c222ea6fcd611537c57ce))
+
 ## [0.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.4.0...grafana-alloy-v0.5.0) (2026-02-17)
 
 

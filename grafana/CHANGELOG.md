@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.8.2...grafana-v0.9.0) (2026-02-27)
+
+
+### Features
+
+* Allow anonymous access when ingress is disabled ([#382](https://github.com/chanzuckerberg/argo-helm-charts/issues/382)) ([4f2cbd3](https://github.com/chanzuckerberg/argo-helm-charts/commit/4f2cbd3d78497d317490e833148eac3770e00371))
+
 ## [0.8.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.8.1...grafana-v0.8.2) (2026-02-17)
 
 
