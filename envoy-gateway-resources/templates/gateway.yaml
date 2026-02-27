@@ -49,8 +49,6 @@ spec:
       - selector:
           dnsZones:
             - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
-          dnsNames:
-            - "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
         dns01:
           route53: {}
       - selector: {}
