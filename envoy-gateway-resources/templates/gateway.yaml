@@ -8,7 +8,7 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: cluster-proxy
+  name: {{ .Values.gatewayName }}
   namespace: envoy-gateway
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod-eg"
@@ -33,7 +33,7 @@ spec:
         certificateRefs:
           - group: ''
             kind: Secret
-            name: cluster-proxy-tls
+            name: {{ .Values.gatewayName }}-tls
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -56,7 +56,7 @@ spec:
           gatewayHTTPRoute:
             parentRefs:
               - group: gateway.networking.k8s.io
-                name: cluster-proxy
+                name: {{ .Values.gatewayName }}
                 namespace: envoy-gateway
                 kind: Gateway
 ---
