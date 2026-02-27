@@ -9,6 +9,9 @@
     },
     "clusterName": {
       "type": "string"
+    },
+    "gatewayName": {
+      "type": "string"
     }
   }
 }
