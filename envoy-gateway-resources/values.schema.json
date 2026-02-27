@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/envoy-gateway-resources",
+  "title": "envoy-gateway-resources",
+  "type": "object",
+  "properties": {
+    "baseDomain": {
+      "type": "string"
+    },
+    "clusterName": {
+      "type": "string"
+    }
+  }
+}
