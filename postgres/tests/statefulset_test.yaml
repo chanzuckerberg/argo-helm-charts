@@ -1,0 +1,179 @@
+suite: test statefulset
+templates:
+  - charts/postgresql/templates/statefulset.yaml
+
+tests:
+  - it: should render a StatefulSet
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: StatefulSet
+
+  - it: should set the correct name
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql
+
+  - it: should use the hardened image
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "postgres:18-alpine3.22-dev$"
+
+  - it: should set imagePullPolicy to IfNotPresent
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+
+  - it: should pass custom args for config_file
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "-c"
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: "config_file=/etc/postgresql/postgresql.conf"
+
+  - it: should set pod-level fsGroup to 70
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 70
+
+  - it: should run the main container as non-root user 70
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 70
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsGroup
+          value: 70
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsNonRoot
+          value: true
+
+  - it: should disallow privilege escalation and drop all capabilities
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+      - contains:
+          path: spec.template.spec.containers[0].securityContext.capabilities.drop
+          content: ALL
+
+  - it: should have an init container for permissions and TLS
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].name
+          value: init-permissions-and-tls
+
+  - it: should run the init container as root
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].securityContext.runAsUser
+          value: 0
+      - equal:
+          path: spec.template.spec.initContainers[0].securityContext.runAsNonRoot
+          value: false
+
+  - it: should mount tls-secret as read-only in init container
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[0].volumeMounts
+          content:
+            name: tls-secret
+            mountPath: /tls-secret
+            readOnly: true
+
+  - it: should mount tls-certs in init container
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[0].volumeMounts
+          content:
+            name: tls-certs
+            mountPath: /tls
+
+  - it: should mount tls-certs as read-only in main container
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: tls-certs
+            mountPath: /tls
+            readOnly: true
+
+  - it: should define a tls-secret volume from the postgresql-tls secret
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: tls-secret
+            secret:
+              secretName: postgresql-tls
+
+  - it: should define a tls-certs emptyDir volume
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: tls-certs
+            emptyDir: {}
+
+  - it: should have liveness, readiness, and startup probes
+    asserts:
+      - isNotEmpty:
+          path: spec.template.spec.containers[0].livenessProbe
+      - isNotEmpty:
+          path: spec.template.spec.containers[0].readinessProbe
+      - isNotEmpty:
+          path: spec.template.spec.containers[0].startupProbe
+
+  - it: should expose port 5432
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].ports
+          content:
+            name: postgresql
+            containerPort: 5432
+            protocol: TCP
+
+  - it: should have a PVC for data with 8Gi default
+    asserts:
+      - equal:
+          path: spec.volumeClaimTemplates[0].metadata.name
+          value: data
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.resources.requests.storage
+          value: "8Gi"
+
+  - it: should use RollingUpdate strategy
+    asserts:
+      - equal:
+          path: spec.updateStrategy.type
+          value: RollingUpdate
+
+  - it: should default to 1 replica
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 1
+
+  - it: should disable automounting of service account token
+    asserts:
+      - equal:
+          path: spec.template.spec.automountServiceAccountToken
+          value: false
+
+  - it: should use a custom image when overridden
+    set:
+      postgresql:
+        image:
+          repository: my-registry/custom-postgres
+          tag: "16-custom"
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "my-registry/custom-postgres:16-custom$"

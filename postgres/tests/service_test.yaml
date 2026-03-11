@@ -1,0 +1,54 @@
+suite: test service
+templates:
+  - charts/postgresql/templates/service.yaml
+
+tests:
+  - it: should render both ClusterIP and headless services
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: should create a ClusterIP service
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.type
+          value: ClusterIP
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql
+
+  - it: should create a headless service
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.clusterIP
+          value: None
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql-headless
+
+  - it: should expose port 5432 on the ClusterIP service
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.ports
+          content:
+            port: 5432
+            targetPort: 5432
+            protocol: TCP
+            name: postgresql
+
+  - it: should select the correct pods
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.selector["app.kubernetes.io/name"]
+          value: postgresql
+      - equal:
+          path: spec.selector["app.kubernetes.io/instance"]
+          value: RELEASE-NAME

@@ -1,0 +1,91 @@
+suite: integration tests
+templates:
+  - charts/postgresql/templates/statefulset.yaml
+  - charts/postgresql/templates/service.yaml
+  - charts/postgresql/templates/configmap.yaml
+  - charts/postgresql/templates/secret.yaml
+  - charts/postgresql/templates/extraobjects.yaml
+
+tests:
+  - it: should create a Secret
+    template: charts/postgresql/templates/secret.yaml
+    asserts:
+      - isKind:
+          of: Secret
+      - equal:
+          path: type
+          value: Opaque
+
+  - it: should include connection details in the secret
+    template: charts/postgresql/templates/secret.yaml
+    asserts:
+      - exists:
+          path: data["postgres-password"]
+      - exists:
+          path: data.host
+      - exists:
+          path: data.port
+      - exists:
+          path: data.username
+      - exists:
+          path: data.database
+      - exists:
+          path: data.uri
+
+  - it: should have consistent naming across resources
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql
+        template: charts/postgresql/templates/statefulset.yaml
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql
+        template: charts/postgresql/templates/service.yaml
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql
+        template: charts/postgresql/templates/configmap.yaml
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql
+        template: charts/postgresql/templates/secret.yaml
+
+  - it: statefulset should reference the headless service
+    template: charts/postgresql/templates/statefulset.yaml
+    asserts:
+      - equal:
+          path: spec.serviceName
+          value: RELEASE-NAME-postgresql-headless
+
+  - it: should have consistent labels across all resources
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: postgresql
+        template: charts/postgresql/templates/statefulset.yaml
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: postgresql
+        template: charts/postgresql/templates/service.yaml
+        documentIndex: 0
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: postgresql
+        template: charts/postgresql/templates/configmap.yaml
+
+  - it: TLS secret name should match between certificate and statefulset volume
+    asserts:
+      - equal:
+          path: spec.secretName
+          value: postgresql-tls
+        template: charts/postgresql/templates/extraobjects.yaml
+        documentIndex: 1
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: tls-secret
+            secret:
+              secretName: postgresql-tls
+        template: charts/postgresql/templates/statefulset.yaml

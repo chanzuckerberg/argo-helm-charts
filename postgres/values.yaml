@@ -1,0 +1,101 @@
+postgresql:
+  image:
+    registry: "533267185808.dkr.ecr.us-west-2.amazonaws.com"
+    repository: docker.io/central/library/postgres
+    tag: "18-alpine3.22-dev"
+    imagePullPolicy: IfNotPresent
+    useHardenedImage: true
+
+  args:
+    - "-c"
+    - "config_file=/etc/postgresql/postgresql.conf"
+
+  podSecurityContext:
+    fsGroup: 70
+
+  containerSecurityContext:
+    runAsUser: 70
+    runAsGroup: 70
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+
+  config:
+    extraConfig:
+      - "ssl = on"
+      - "ssl_cert_file = '/tls/server.crt'"
+      - "ssl_key_file = '/tls/server.key'"
+      - "ssl_ca_file = '/tls/ca.crt'"
+      - "ssl_min_protocol_version = 'TLSv1.2'"
+
+  initContainers:
+    - name: init-permissions-and-tls
+      image: busybox:1.37
+      command:
+        - sh
+        - -c
+        - |
+          chown -R 70:70 /var/lib/postgresql
+          find /var/lib/postgresql -type d -exec chmod 750 {} \;
+          cp /tls-secret/tls.crt /tls/server.crt
+          cp /tls-secret/tls.key /tls/server.key
+          cp /tls-secret/ca.crt /tls/ca.crt
+          chown 70:70 /tls/*
+          chmod 600 /tls/server.key
+          chmod 644 /tls/server.crt /tls/ca.crt
+      securityContext:
+        runAsUser: 0
+        runAsNonRoot: false
+      volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql
+        - name: tls-secret
+          mountPath: /tls-secret
+          readOnly: true
+        - name: tls-certs
+          mountPath: /tls
+
+  extraVolumes:
+    - name: tls-secret
+      secret:
+        secretName: postgresql-tls
+    - name: tls-certs
+      emptyDir: {}
+
+  extraVolumeMounts:
+    - name: tls-certs
+      mountPath: /tls
+      readOnly: true
+
+  extraObjects:
+    - apiVersion: cert-manager.io/v1
+      kind: Issuer
+      metadata:
+        name: postgresql-selfsigned
+        namespace: "{{ .Release.Namespace }}"
+      spec:
+        selfSigned: {}
+    - apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: postgresql-tls
+        namespace: "{{ .Release.Namespace }}"
+      spec:
+        secretName: postgresql-tls
+        issuerRef:
+          name: postgresql-selfsigned
+          kind: Issuer
+        dnsNames:
+          - "{{ include \"postgres.fullname\" . }}"
+          - "{{ include \"postgres.fullname\" . }}.{{ .Release.Namespace }}.svc"
+          - "{{ include \"postgres.fullname\" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+        duration: 8760h
+        renewBefore: 720h
+        privateKey:
+          algorithm: RSA
+          size: 2048
+
+  auth: {}

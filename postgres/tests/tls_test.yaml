@@ -1,0 +1,89 @@
+suite: test TLS resources (Certificate and Issuer)
+templates:
+  - charts/postgresql/templates/extraobjects.yaml
+
+tests:
+  - it: should render both Certificate and Issuer
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: should create a self-signed Issuer
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: Issuer
+      - equal:
+          path: metadata.name
+          value: postgresql-selfsigned
+      - exists:
+          path: spec.selfSigned
+
+  - it: should create a Certificate referencing the Issuer
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: Certificate
+      - equal:
+          path: metadata.name
+          value: postgresql-tls
+      - equal:
+          path: spec.issuerRef.name
+          value: postgresql-selfsigned
+      - equal:
+          path: spec.issuerRef.kind
+          value: Issuer
+
+  - it: should set the correct secret name for TLS
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.secretName
+          value: postgresql-tls
+
+  - it: should include service DNS names in the certificate
+    documentIndex: 1
+    asserts:
+      - contains:
+          path: spec.dnsNames
+          content: RELEASE-NAME-postgresql
+      - contains:
+          path: spec.dnsNames
+          content: RELEASE-NAME-postgresql.NAMESPACE.svc
+      - contains:
+          path: spec.dnsNames
+          content: RELEASE-NAME-postgresql.NAMESPACE.svc.cluster.local
+
+  - it: should use RSA 2048 private key
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.privateKey.algorithm
+          value: RSA
+      - equal:
+          path: spec.privateKey.size
+          value: 2048
+
+  - it: should set certificate duration to 1 year and renew 30 days before
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.duration
+          value: 8760h
+      - equal:
+          path: spec.renewBefore
+          value: 720h
+
+  - it: should set Certificate namespace to the release namespace
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
+
+  - it: should set Issuer namespace to the release namespace
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: NAMESPACE
