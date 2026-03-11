@@ -1,0 +1,76 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+
+{{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "service.fullname" .  }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                (.Values.annotations)
+                (.Values.gateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.gatewayName }}
+      namespace: {{ .Values.gateway.gatewayNamespace }}
+      {{- if .Values.gateway.sectionName }}
+      sectionName: {{ .Values.gateway.sectionName }}
+      {{- end }}
+  hostnames:
+    - {{ $service.Values.gateway.host }}
+  {{- range $i, $rule := .Values.gateway.rules }}
+    - {{ $rule.host }}
+  {{- end }}
+  rules:
+    {{- range $service.Values.gateway.paths }}
+    - matches:
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path }}
+      backendRefs:
+        - name: {{ include "service.backend.name" $service }}
+          port: {{ include "service.backend.port" $service }}
+          {{- if .weight }}
+          weight: {{ .weight }}
+          {{- end }}
+    {{- end }}
+    {{- range $i, $rule := .Values.gateway.rules -}}
+    {{- $ruleValues := mergeOverwrite (dict "host" $service.Values.gateway.host "paths" $service.Values.gateway.paths) $rule -}}
+    {{- range $ruleValues.paths }}
+    - matches:
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path }}
+      backendRefs:
+        - name: {{ include "service.backend.name" $service }}
+          port: {{ include "service.backend.port" $service }}
+          {{- if .weight }}
+          weight: {{ .weight }}
+          {{- end }}
+    {{- end }}
+    {{- end }}
+{{ end }}
+{{- end }}
+{{- end }}

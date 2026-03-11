@@ -21,6 +21,22 @@ port:
 {{- end -}}
 {{- end -}}
 
+{{- define "service.backend.name" -}}
+{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
+{{- include "oidcProxy.name" . }}
+{{- else }}
+{{- include "service.fullname" . }}
+{{- end -}}
+{{- end -}}
+
+{{- define "service.backend.port" -}}
+{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
+{{- include "oidcProxy.port" . }}
+{{- else }}
+{{- .Values.service.port | int }}
+{{- end -}}
+{{- end -}}
+
 
 {{/*
 Create a default fully qualified app name.

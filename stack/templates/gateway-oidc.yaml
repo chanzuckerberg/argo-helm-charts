@@ -1,0 +1,141 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+
+{{- if and .Values.gateway.enabled .Values.gateway.oidcProtected -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "service.fullname" .  }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                (.Values.annotations)
+                (.Values.gateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.gatewayName }}
+      namespace: {{ .Values.gateway.gatewayNamespace }}
+      {{- if .Values.gateway.sectionName }}
+      sectionName: {{ .Values.gateway.sectionName }}
+      {{- end }}
+  hostnames:
+    - {{ $service.Values.gateway.host }}
+  {{- range $i, $rule := .Values.gateway.rules }}
+    - {{ $rule.host }}
+  {{- end }}
+  rules:
+    {{- range $service.Values.gateway.paths }}
+    - matches:
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path }}
+      backendRefs:
+        - name: {{ include "service.fullname" $service }}
+          port: {{ $service.Values.service.port | int }}
+          {{- if .weight }}
+          weight: {{ .weight }}
+          {{- end }}
+    {{- end }}
+    {{- range $i, $rule := .Values.gateway.rules -}}
+    {{- $ruleValues := mergeOverwrite (dict "host" $service.Values.gateway.host "paths" $service.Values.gateway.paths) $rule -}}
+    {{- range $ruleValues.paths }}
+    - matches:
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path }}
+      backendRefs:
+        - name: {{ include "service.fullname" $service }}
+          port: {{ $service.Values.service.port | int }}
+          {{- if .weight }}
+          weight: {{ .weight }}
+          {{- end }}
+    {{- end }}
+    {{- end }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ include "service.fullname" . }}-oidc
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                (.Values.annotations)
+                (.Values.oidcProxyGateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ include "service.fullname" . }}
+  oidc:
+    provider:
+      issuer: {{ .Values.oidcProxyGateway.provider.issuer | quote }}
+      {{- if .Values.oidcProxyGateway.provider.authorizationEndpoint }}
+      authorizationEndpoint: {{ .Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
+      {{- end }}
+      {{- if .Values.oidcProxyGateway.provider.tokenEndpoint }}
+      tokenEndpoint: {{ .Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
+      {{- end }}
+    clientID: {{ .Values.oidcProxyGateway.clientID | quote }}
+    clientSecret:
+      name: {{ .Values.oidcProxyGateway.clientSecret.name | quote }}
+      {{- if .Values.oidcProxyGateway.clientSecret.key }}
+      key: {{ .Values.oidcProxyGateway.clientSecret.key | quote }}
+      {{- end }}
+    redirectURL: {{ .Values.oidcProxyGateway.redirectURL | quote }}
+    {{- if .Values.oidcProxyGateway.logoutPath }}
+    logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}
+    {{- end }}
+    {{- if .Values.oidcProxyGateway.forwardAccessToken }}
+    forwardAccessToken: {{ .Values.oidcProxyGateway.forwardAccessToken }}
+    {{- end }}
+    {{- if .Values.oidcProxyGateway.refreshToken }}
+    refreshToken: {{ .Values.oidcProxyGateway.refreshToken }}
+    {{- end }}
+    {{- if .Values.oidcProxyGateway.cookieDomain }}
+    cookieDomain: {{ .Values.oidcProxyGateway.cookieDomain | quote }}
+    {{- end }}
+    {{- if .Values.oidcProxyGateway.cookieNames }}
+    cookieNames:
+      {{- if .Values.oidcProxyGateway.cookieNames.accessToken }}
+      accessToken: {{ .Values.oidcProxyGateway.cookieNames.accessToken | quote }}
+      {{- end }}
+      {{- if .Values.oidcProxyGateway.cookieNames.idToken }}
+      idToken: {{ .Values.oidcProxyGateway.cookieNames.idToken | quote }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.oidcProxyGateway.scopes }}
+    scopes:
+      {{- toYaml .Values.oidcProxyGateway.scopes | nindent 6 }}
+    {{- end }}
+    {{- if .Values.oidcProxyGateway.resources }}
+    resources:
+      {{- toYaml .Values.oidcProxyGateway.resources | nindent 6 }}
+    {{- end }}
+{{ end }}
+{{- end }}
+{{- end }}
