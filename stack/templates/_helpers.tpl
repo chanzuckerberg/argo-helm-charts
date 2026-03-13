@@ -247,6 +247,78 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
+Build list of secrets to check for OIDC credentials (appSecrets + oidcProxy.additionalSecrets)
+*/}}
+{{- define "oidcProxyGateway.secretsToCheck" -}}
+{{- $secretsToCheck := list -}}
+{{- if .Values.appSecrets.envSecret.secretName -}}
+  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.envSecret.secretName -}}
+{{- end -}}
+{{- if .Values.appSecrets.stackSecret.secretName -}}
+  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.stackSecret.secretName -}}
+{{- end -}}
+{{- if .Values.appSecrets.clusterSecret.secretName -}}
+  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.clusterSecret.secretName -}}
+{{- end -}}
+{{- range .Values.oidcProxy.additionalSecrets -}}
+  {{- if and .secretRef .secretRef.name -}}
+    {{- $secretsToCheck = append $secretsToCheck .secretRef.name -}}
+  {{- end -}}
+{{- end -}}
+{{- $secretsToCheck | toJson -}}
+{{- end -}}
+
+{{/*
+Discover and return the OIDC client ID from secrets
+*/}}
+{{- define "oidcProxyGateway.clientID" -}}
+{{- $global := . -}}
+{{- $clientID := "" -}}
+{{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
+{{- range $secretName := $secretsList -}}
+  {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
+  {{- if $secret -}}
+    {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
+      {{- if not $clientID -}}
+        {{- $clientID = index $secret.data "OAUTH2_PROXY_CLIENT_ID" | b64dec -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $clientID -}}
+  {{- fail "No secret found with OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET. Configure appSecrets or oidcProxy.additionalSecrets with these credentials." -}}
+{{- end -}}
+{{- $clientID -}}
+{{- end -}}
+
+{{/*
+Return the name of the secret containing OIDC client secret
+*/}}
+{{- define "oidcProxyGateway.clientSecretName" -}}
+{{- $global := . -}}
+{{- $secretName := "" -}}
+{{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
+{{- range $name := $secretsList -}}
+  {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $name -}}
+  {{- if $secret -}}
+    {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
+      {{- if not $secretName -}}
+        {{- $secretName = $name -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $secretName -}}
+{{- end -}}
+
+{{/*
+Return the key name for OIDC client secret (always OAUTH2_PROXY_CLIENT_SECRET)
+*/}}
+{{- define "oidcProxyGateway.clientSecretKey" -}}
+OAUTH2_PROXY_CLIENT_SECRET
+{{- end -}}
+
+{{/*
 Create the full dashboard data structure as a Helm dictionary and return it as a JSON string.
 */}}
 {{- define "stack.grafanaDashboard.json" -}}

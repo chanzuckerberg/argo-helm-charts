@@ -8,41 +8,6 @@
 {{- with $service }}
 
 {{- if and .Values.gateway.enabled .Values.gateway.oidcProtected -}}
-{{- /* Automatically discover OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets */ -}}
-{{- $clientID := "" -}}
-{{- $clientSecretName := "" -}}
-{{- $clientSecretKey := "OAUTH2_PROXY_CLIENT_SECRET" -}}
-{{- /* Build list of secrets to check: appSecrets + oidcProxy.additionalSecrets */ -}}
-{{- $secretsToCheck := list -}}
-{{- if .Values.appSecrets.envSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.envSecret.secretName -}}
-{{- end -}}
-{{- if .Values.appSecrets.stackSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.stackSecret.secretName -}}
-{{- end -}}
-{{- if .Values.appSecrets.clusterSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.clusterSecret.secretName -}}
-{{- end -}}
-{{- range .Values.oidcProxy.additionalSecrets -}}
-  {{- if and .secretRef .secretRef.name -}}
-    {{- $secretsToCheck = append $secretsToCheck .secretRef.name -}}
-  {{- end -}}
-{{- end -}}
-{{- /* Look through all secrets for OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET */ -}}
-{{- range $secretName := $secretsToCheck -}}
-  {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
-  {{- if $secret -}}
-    {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
-      {{- if not $clientID -}}
-        {{- $clientID = index $secret.data "OAUTH2_PROXY_CLIENT_ID" | b64dec -}}
-        {{- $clientSecretName = $secretName -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-{{- if not $clientID -}}
-  {{- fail "No secret found with OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET. Configure appSecrets or oidcProxy.additionalSecrets with these credentials." -}}
-{{- end -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -135,10 +100,10 @@ spec:
       {{- if .Values.oidcProxyGateway.provider.tokenEndpoint }}
       tokenEndpoint: {{ .Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
       {{- end }}
-    clientID: {{ $clientID | quote }}
+    clientID: {{ include "oidcProxyGateway.clientID" . | quote }}
     clientSecret:
-      name: {{ $clientSecretName | quote }}
-      key: {{ $clientSecretKey | quote }}
+      name: {{ include "oidcProxyGateway.clientSecretName" . | quote }}
+      key: {{ include "oidcProxyGateway.clientSecretKey" . | quote }}
     redirectURL: {{ .Values.oidcProxyGateway.redirectURL | quote }}
     {{- if .Values.oidcProxyGateway.logoutPath }}
     logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}
