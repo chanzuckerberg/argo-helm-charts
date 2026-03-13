@@ -657,27 +657,13 @@
           "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)",
           "type": "object",
           "properties": {
+            "additionalSecrets": {
+              "description": "Additional secrets to read OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from",
+              "type": "array"
+            },
             "annotations": {
               "description": "Annotations to add to SecurityPolicy resources",
               "type": "object"
-            },
-            "clientID": {
-              "description": "OIDC client ID (required when gateway.oidcProtected is true)",
-              "type": "string"
-            },
-            "clientSecret": {
-              "description": "Kubernetes secret containing OIDC client secret",
-              "type": "object",
-              "properties": {
-                "key": {
-                  "description": "Key in the secret containing the client secret",
-                  "type": "string"
-                },
-                "name": {
-                  "description": "Name of the secret",
-                  "type": "string"
-                }
-              }
             },
             "cookieDomain": {
               "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
