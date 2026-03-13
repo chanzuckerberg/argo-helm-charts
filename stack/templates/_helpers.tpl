@@ -9,15 +9,41 @@ Expand the name of the chart.
 {{- .Values.name | trunc 63 | trimSuffix "-" }}
 {{- end -}}
 
-{{- define "service.backend" -}}
+{{- define "service.backend.name.ingress" -}}
 {{- if .Values.ingress.oidcProtected -}}
-name: {{ include "oidcProxy.name" . }}
-port:
-    number:  {{ include "oidcProxy.port" .}}
+{{- include "oidcProxy.name" . }}
 {{- else }}
-name: {{ include "service.fullname" . }}
+{{- include "service.fullname" . }}
+{{- end -}}
+{{- end -}}
+
+{{- define "service.backend.port.ingress" -}}
+{{- if .Values.ingress.oidcProtected -}}
+{{- include "oidcProxy.port" . }}
+{{- else }}
+{{- .Values.service.port | int }}
+{{- end -}}
+{{- end -}}
+
+{{- define "service.backend" -}}
+name: {{ include "service.backend.name.ingress" . }}
 port:
-    number: {{  .Values.service.port | int}}
+    number: {{ include "service.backend.port.ingress" . }}
+{{- end -}}
+
+{{- define "service.backend.name" -}}
+{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
+{{- include "oidcProxy.name" . }}
+{{- else }}
+{{- include "service.fullname" . }}
+{{- end -}}
+{{- end -}}
+
+{{- define "service.backend.port" -}}
+{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
+{{- include "oidcProxy.port" . }}
+{{- else }}
+{{- .Values.service.port | int }}
 {{- end -}}
 {{- end -}}
 

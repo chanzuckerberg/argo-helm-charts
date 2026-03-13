@@ -174,7 +174,7 @@ metadata:
   name: {{ include "oidcProxy.name" . }}
   {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
   annotations:
-  {{- with (mergeOverwrite 
+  {{- with (mergeOverwrite
               (dict)
               ($certManagerAnnotations)
               (.Values.annotations)
