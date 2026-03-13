@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.26.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.25.0...stack-v2.26.0) (2026-03-13)
+
+
+### Features
+
+* HTTPRoute support for stack chart ([#391](https://github.com/chanzuckerberg/argo-helm-charts/issues/391)) ([0599b22](https://github.com/chanzuckerberg/argo-helm-charts/commit/0599b22e1dbb34a8ccbab51f06dc6e9c98af26eb))
+
 ## [2.25.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.24.1...stack-v2.25.0) (2026-02-18)
 
 

@@ -951,16 +951,17 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
-| -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_enabled )                               | No      | boolean | No         | -          | Enable Prometheus remote write                                            |
-| - [endpoints](#prometheusRemoteWrite_endpoints )                           | No      | array   | No         | -          | Array of remote write endpoints                                           |
-| - [metricsFilter](#prometheusRemoteWrite_metricsFilter )                   | No      | object  | No         | -          | Metrics filtering configuration                                           |
-| - [scrapeBlackboxStatic](#prometheusRemoteWrite_scrapeBlackboxStatic )     | No      | object  | No         | -          | Scrape static targets using blackbox exporter                             |
-| - [scrapeCadvisor](#prometheusRemoteWrite_scrapeCadvisor )                 | No      | object  | No         | -          | Scrape cadvisor metrics from each node (container_*)                      |
-| - [scrapeEndpoints](#prometheusRemoteWrite_scrapeEndpoints )               | No      | object  | No         | -          | Scrape Kubernetes service endpoints with prometheus.io/scrape annotations |
-| - [scrapeKubeStateMetrics](#prometheusRemoteWrite_scrapeKubeStateMetrics ) | No      | object  | No         | -          | Scrape kube-state-metrics service for kube_* metrics                      |
-| - [scrapeKubelet](#prometheusRemoteWrite_scrapeKubelet )                   | No      | object  | No         | -          | Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)  |
+| Property                                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                       |
+| ---------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_enabled )                                 | No      | boolean | No         | -          | Enable Prometheus remote write                                                          |
+| - [endpoints](#prometheusRemoteWrite_endpoints )                             | No      | array   | No         | -          | Array of remote write endpoints                                                         |
+| - [metricsFilter](#prometheusRemoteWrite_metricsFilter )                     | No      | object  | No         | -          | Metrics filtering configuration                                                         |
+| - [scrapeBlackboxStatic](#prometheusRemoteWrite_scrapeBlackboxStatic )       | No      | object  | No         | -          | Scrape static targets using blackbox exporter                                           |
+| - [scrapeCadvisor](#prometheusRemoteWrite_scrapeCadvisor )                   | No      | object  | No         | -          | Scrape cadvisor metrics from each node (container_*)                                    |
+| - [scrapeEndpoints](#prometheusRemoteWrite_scrapeEndpoints )                 | No      | object  | No         | -          | Scrape Kubernetes service endpoints with prometheus.io/scrape annotations               |
+| - [scrapeKubeStateMetrics](#prometheusRemoteWrite_scrapeKubeStateMetrics )   | No      | object  | No         | -          | Scrape kube-state-metrics service for kube_* metrics                                    |
+| - [scrapeKubelet](#prometheusRemoteWrite_scrapeKubelet )                     | No      | object  | No         | -          | Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)                |
+| - [scrapeTailscaleServices](#prometheusRemoteWrite_scrapeTailscaleServices ) | No      | object  | No         | -          | Scrape Tailscale client metrics via ExternalName Services (requires tailscalesd syncer) |
 
 ### <a name="prometheusRemoteWrite_enabled"></a>6.1. Property `grafana-alloy > prometheusRemoteWrite > enabled`
 
@@ -1223,5 +1224,108 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+### <a name="prometheusRemoteWrite_scrapeTailscaleServices"></a>6.9. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Scrape Tailscale client metrics via ExternalName Services (requires tailscalesd syncer)
+
+| Property                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                 |
+| ---------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeTailscaleServices_enabled )               | No      | boolean | No         | -          | Enable scraping Tailscale client metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| - [jobLabel](#prometheusRemoteWrite_scrapeTailscaleServices_jobLabel )             | No      | string  | No         | -          | Job label for scraped metrics                                                                                     |
+| - [labelSelector](#prometheusRemoteWrite_scrapeTailscaleServices_labelSelector )   | No      | string  | No         | -          | Label selector to find Tailscale ExternalName Services                                                            |
+| - [metricsPath](#prometheusRemoteWrite_scrapeTailscaleServices_metricsPath )       | No      | string  | No         | -          | Path to scrape metrics from on each target                                                                        |
+| - [namespace](#prometheusRemoteWrite_scrapeTailscaleServices_namespace )           | No      | string  | No         | -          | Namespace where Tailscale ExternalName Services are created                                                       |
+| - [portName](#prometheusRemoteWrite_scrapeTailscaleServices_portName )             | No      | string  | No         | -          | Service port name to scrape (filters targets to only this port)                                                   |
+| - [relayAddress](#prometheusRemoteWrite_scrapeTailscaleServices_relayAddress )     | No      | string  | No         | -          | Address of the metrics relay that rewrites the Host header for Tailscale web client compatibility                 |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapeTailscaleServices_scrapeInterval ) | No      | string  | No         | -          | Scrape interval for Tailscale client metrics                                                                      |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapeTailscaleServices_scrapeTimeout )   | No      | string  | No         | -          | Scrape timeout for Tailscale client metrics                                                                       |
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_enabled"></a>6.9.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable scraping Tailscale client metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_jobLabel"></a>6.9.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > jobLabel`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Job label for scraped metrics
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_labelSelector"></a>6.9.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > labelSelector`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Label selector to find Tailscale ExternalName Services
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_metricsPath"></a>6.9.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > metricsPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Path to scrape metrics from on each target
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_namespace"></a>6.9.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > namespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Namespace where Tailscale ExternalName Services are created
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_portName"></a>6.9.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > portName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Service port name to scrape (filters targets to only this port)
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_relayAddress"></a>6.9.7. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > relayAddress`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Address of the metrics relay that rewrites the Host header for Tailscale web client compatibility
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_scrapeInterval"></a>6.9.8. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > scrapeInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape interval for Tailscale client metrics
+
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_scrapeTimeout"></a>6.9.9. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > scrapeTimeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Scrape timeout for Tailscale client metrics
 
 ----------------------------------------------------------------------------------------------------------------------------

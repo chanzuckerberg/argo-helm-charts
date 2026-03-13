@@ -241,6 +241,61 @@
           "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
           "type": "string"
         },
+        "gateway": {
+          "description": "Gateway API HTTPRoute configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to HTTPRoute resources",
+              "type": "object"
+            },
+            "enabled": {
+              "description": "Enable Gateway API HTTPRoute (alternative to Ingress)",
+              "type": "boolean"
+            },
+            "gatewayName": {
+              "description": "Name of the Gateway resource to attach to",
+              "type": "string"
+            },
+            "gatewayNamespace": {
+              "description": "Namespace of the Gateway resource",
+              "type": "string"
+            },
+            "host": {
+              "description": "Hostname for HTTPRoute",
+              "type": "string"
+            },
+            "oidcProtected": {
+              "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)",
+              "type": "boolean"
+            },
+            "paths": {
+              "description": "List of HTTPRoute paths",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "description": "HTTPRoute path",
+                    "type": "string"
+                  },
+                  "pathType": {
+                    "description": "HTTPRoute path type (Exact or Prefix)",
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "rules": {
+              "description": "List of additional HTTPRoute rules with custom hosts",
+              "type": "array"
+            },
+            "sectionName": {
+              "description": "Optional section name (listener name) on the Gateway",
+              "type": "string"
+            }
+          }
+        },
         "grafanaDashboard": {
           "type": "object",
           "properties": {
@@ -387,7 +442,7 @@
               "type": "string"
             },
             "oidcProtected": {
-              "description": "Enable OIDC protection",
+              "description": "Enable OIDC protection (route to oauth2-proxy when using Ingress)",
               "type": "boolean"
             },
             "paths": {
@@ -595,6 +650,97 @@
             "volumeMounts": {
               "description": "Volume mounts for the OIDC proxy",
               "type": "array"
+            }
+          }
+        },
+        "oidcProxyGateway": {
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to SecurityPolicy resources",
+              "type": "object"
+            },
+            "clientID": {
+              "description": "OIDC client ID (required when gateway.oidcProtected is true)",
+              "type": "string"
+            },
+            "clientSecret": {
+              "description": "Kubernetes secret containing OIDC client secret",
+              "type": "object",
+              "properties": {
+                "key": {
+                  "description": "Key in the secret containing the client secret",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Name of the secret",
+                  "type": "string"
+                }
+              }
+            },
+            "cookieDomain": {
+              "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
+              "type": "string"
+            },
+            "cookieNames": {
+              "description": "Customize cookie names",
+              "type": "object",
+              "properties": {
+                "accessToken": {
+                  "description": "Custom name for access token cookie",
+                  "type": "string"
+                },
+                "idToken": {
+                  "description": "Custom name for ID token cookie",
+                  "type": "string"
+                }
+              }
+            },
+            "forwardAccessToken": {
+              "description": "Forward access token to backend service",
+              "type": "boolean"
+            },
+            "logoutPath": {
+              "description": "Path for logout operations",
+              "type": "string"
+            },
+            "provider": {
+              "description": "OIDC provider configuration",
+              "type": "object",
+              "properties": {
+                "authorizationEndpoint": {
+                  "description": "Optional authorization endpoint (auto-discovered if empty)",
+                  "type": "string"
+                },
+                "issuer": {
+                  "description": "OIDC provider issuer URL",
+                  "type": "string"
+                },
+                "tokenEndpoint": {
+                  "description": "Optional token endpoint (auto-discovered if empty)",
+                  "type": "string"
+                }
+              }
+            },
+            "redirectURL": {
+              "description": "OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)",
+              "type": "string"
+            },
+            "refreshToken": {
+              "description": "Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)",
+              "type": "boolean"
+            },
+            "resources": {
+              "description": "Optional OAuth2 resources parameter",
+              "type": "array"
+            },
+            "scopes": {
+              "description": "OIDC scopes to request",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         },

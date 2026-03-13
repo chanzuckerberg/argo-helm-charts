@@ -195,11 +195,11 @@ global: # @schema description: Global configuration for the stack - this serves 
     className: nginx # @schema description: Ingress class name
     host: chart-example.local # @schema description: Ingress host
     paths: # @schema description: List of ingress paths
-      - 
+      -
         path: / # @schema description: Ingress path
         pathType: Prefix # @schema description: Ingress path type
     rules: [] # @schema description: List of ingress rules
-    oidcProtected: false # @schema description: Enable OIDC protection
+    oidcProtected: false # @schema description: Enable OIDC protection (route to oauth2-proxy when using Ingress)
     annotations:
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
@@ -211,6 +211,20 @@ global: # @schema description: Global configuration for the stack - this serves 
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
+
+  gateway: # @schema description: Gateway API HTTPRoute configuration
+    enabled: false # @schema description: Enable Gateway API HTTPRoute (alternative to Ingress)
+    gatewayName: envoy-gateway # @schema description: Name of the Gateway resource to attach to
+    gatewayNamespace: envoy-gateway # @schema description: Namespace of the Gateway resource
+    sectionName: "" # @schema description: Optional section name (listener name) on the Gateway
+    host: chart-example.local # @schema description: Hostname for HTTPRoute
+    paths: # @schema description: List of HTTPRoute paths
+      -
+        path: / # @schema description: HTTPRoute path
+        pathType: Prefix # @schema description: HTTPRoute path type (Exact or Prefix)
+    rules: [] # @schema description: List of additional HTTPRoute rules with custom hosts
+    oidcProtected: false # @schema description: Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)
+    annotations: {} # @schema description: Annotations to add to HTTPRoute resources
   
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
@@ -303,6 +317,31 @@ global: # @schema description: Global configuration for the stack - this serves 
       requests:
         cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 4Gi # @schema description: Memory request
+
+  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)
+    provider: # @schema description: OIDC provider configuration
+      issuer: "https://czi-prod.okta.com/oauth2/v1" # @schema description: OIDC provider issuer URL
+      authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered if empty)
+      tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered if empty)
+    clientID: "" # @schema description: OIDC client ID (required when gateway.oidcProtected is true)
+    clientSecret: # @schema description: Kubernetes secret containing OIDC client secret
+      name: "oidc-client-secret" # @schema description: Name of the secret
+      key: "client-secret" # @schema description: Key in the secret containing the client secret
+    redirectURL: "" # @schema description: OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)
+    logoutPath: "/logout" # @schema description: Path for logout operations
+    forwardAccessToken: false # @schema description: Forward access token to backend service
+    refreshToken: true # @schema description: Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
+    cookieDomain: "" # @schema description: Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
+    cookieNames: # @schema description: Customize cookie names
+      accessToken: "" # @schema description: Custom name for access token cookie
+      idToken: "" # @schema description: Custom name for ID token cookie
+    scopes: # @schema description: OIDC scopes to request
+      - "openid"
+      - "profile"
+      - "email"
+      - "groups"
+    resources: [] # @schema description: Optional OAuth2 resources parameter
+    annotations: {} # @schema description: Annotations to add to SecurityPolicy resources
 
   grafanaDashboard:
     enabled: true # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
