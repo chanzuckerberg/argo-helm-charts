@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/postgres",
+  "title": "postgres",
+  "type": "object",
+  "properties": {
+    "postgresql": {
+      "type": "object",
+      "properties": {
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "auth": {
+          "type": "object"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "extraConfig": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "containerSecurityContext": {
+          "type": "object",
+          "properties": {
+            "allowPrivilegeEscalation": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "object",
+              "properties": {
+                "drop": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "readOnlyRootFilesystem": {
+              "type": "boolean"
+            },
+            "runAsGroup": {
+              "type": "integer"
+            },
+            "runAsNonRoot": {
+              "type": "boolean"
+            },
+            "runAsUser": {
+              "type": "integer"
+            }
+          }
+        },
+        "extraObjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "apiVersion": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  }
+                }
+              },
+              "spec": {
+                "type": "object",
+                "properties": {
+                  "dnsNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "duration": {
+                    "type": "string"
+                  },
+                  "issuerRef": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "privateKey": {
+                    "type": "object",
+                    "properties": {
+                      "algorithm": {
+                        "type": "string"
+                      },
+                      "size": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "renewBefore": {
+                    "type": "string"
+                  },
+                  "secretName": {
+                    "type": "string"
+                  },
+                  "selfSigned": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "extraVolumeMounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mountPath": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "readOnly": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "extraVolumes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "emptyDir": {
+                "type": "object"
+              },
+              "name": {
+                "type": "string"
+              },
+              "secret": {
+                "type": "object",
+                "properties": {
+                  "secretName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "imagePullPolicy": {
+              "type": "string"
+            },
+            "registry": {
+              "type": "string"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            },
+            "useHardenedImage": {
+              "type": "boolean"
+            }
+          }
+        },
+        "initContainers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "image": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "securityContext": {
+                "type": "object",
+                "properties": {
+                  "runAsNonRoot": {
+                    "type": "boolean"
+                  },
+                  "runAsUser": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "volumeMounts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "mountPath": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "readOnly": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "podSecurityContext": {
+          "type": "object",
+          "properties": {
+            "fsGroup": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
+}

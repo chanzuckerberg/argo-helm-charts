@@ -47,6 +47,9 @@
     },
     "grafana-alloy": {
       "package-name": "grafana-alloy"
+    },
+    "postgres": {
+      "package-name": "postgres"
     }
   }
 }

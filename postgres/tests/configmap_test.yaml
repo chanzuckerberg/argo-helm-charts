@@ -1,0 +1,69 @@
+suite: test configmap (postgresql.conf)
+templates:
+  - charts/postgresql/templates/configmap.yaml
+
+tests:
+  - it: should render a ConfigMap
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+
+  - it: should have the correct name
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-postgresql
+
+  - it: should contain postgresql.conf
+    asserts:
+      - isNotEmpty:
+          path: data["postgresql.conf"]
+
+  - it: should contain pg_hba.conf
+    asserts:
+      - isNotEmpty:
+          path: data["pg_hba.conf"]
+
+  - it: should enable SSL in postgresql.conf
+    asserts:
+      - matchRegex:
+          path: data["postgresql.conf"]
+          pattern: "ssl = on"
+
+  - it: should configure TLS certificate paths
+    asserts:
+      - matchRegex:
+          path: data["postgresql.conf"]
+          pattern: "ssl_cert_file = '/tls/server.crt'"
+      - matchRegex:
+          path: data["postgresql.conf"]
+          pattern: "ssl_key_file = '/tls/server.key'"
+      - matchRegex:
+          path: data["postgresql.conf"]
+          pattern: "ssl_ca_file = '/tls/ca.crt'"
+
+  - it: should enforce TLSv1.2 minimum protocol
+    asserts:
+      - matchRegex:
+          path: data["postgresql.conf"]
+          pattern: "ssl_min_protocol_version = 'TLSv1.2'"
+
+  - it: should listen on all addresses
+    asserts:
+      - matchRegex:
+          path: data["postgresql.conf"]
+          pattern: "listen_addresses = '\\*'"
+
+  - it: should use UTC timezone
+    asserts:
+      - matchRegex:
+          path: data["postgresql.conf"]
+          pattern: "timezone = 'UTC'"
+
+  - it: should allow md5 authentication from any host in pg_hba.conf
+    asserts:
+      - matchRegex:
+          path: data["pg_hba.conf"]
+          pattern: "host\\s+all\\s+all\\s+all\\s+md5"
