@@ -654,13 +654,9 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)",
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets.",
           "type": "object",
           "properties": {
-            "additionalSecrets": {
-              "description": "Additional secrets to read OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from",
-              "type": "array"
-            },
             "annotations": {
               "description": "Annotations to add to SecurityPolicy resources",
               "type": "object"

@@ -318,12 +318,11 @@ global: # @schema description: Global configuration for the stack - this serves 
         cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 4Gi # @schema description: Memory request
 
-  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)
+  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets.
     provider: # @schema description: OIDC provider configuration
       issuer: "https://czi-prod.okta.com/oauth2/v1" # @schema description: OIDC provider issuer URL
       authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered if empty)
       tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered if empty)
-    additionalSecrets: [] # @schema description: Additional secrets to read OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from
     redirectURL: "" # @schema description: OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)
     logoutPath: "/logout" # @schema description: Path for logout operations
     forwardAccessToken: false # @schema description: Forward access token to backend service
