@@ -487,7 +487,7 @@ Expects a dict with keys: global, service
 {{- $global := .global -}}
 {{- $service := .service -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
