@@ -688,11 +688,11 @@
               "type": "string"
             },
             "provider": {
-              "description": "OIDC provider configuration",
+              "description": "OIDC provider configuration (all fields auto-discovered from secrets if not specified)",
               "type": "object",
               "properties": {
                 "authorizationEndpoint": {
-                  "description": "Optional authorization endpoint (auto-discovered if empty)",
+                  "description": "Optional authorization endpoint (auto-discovered by provider if empty)",
                   "type": "string"
                 },
                 "issuer": {
@@ -700,7 +700,7 @@
                   "type": "string"
                 },
                 "tokenEndpoint": {
-                  "description": "Optional token endpoint (auto-discovered if empty)",
+                  "description": "Optional token endpoint (auto-discovered by provider if empty)",
                   "type": "string"
                 }
               }
