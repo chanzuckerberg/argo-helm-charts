@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.26.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.26.0...stack-v2.26.1) (2026-03-16)
+
+
+### Bug Fixes
+
+* use on() group_left for error percent chart ([#393](https://github.com/chanzuckerberg/argo-helm-charts/issues/393)) ([191e390](https://github.com/chanzuckerberg/argo-helm-charts/commit/191e390923c7b390e65adbc0fdc603ce90311a7a))
+
 ## [2.26.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.25.0...stack-v2.26.0) (2026-03-13)
 
 
