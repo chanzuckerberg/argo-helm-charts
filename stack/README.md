@@ -1846,6 +1846,7 @@ Must be one of:
 | - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)    |
 | - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                    |
 | - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
+| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
 ##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>2.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
@@ -2008,6 +2009,54 @@ Must be one of:
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.26.9.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>2.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths to skip authentication (creates separate public HTTPRoute)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                      | Description |
+| -------------------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>2.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>2.1.26.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>2.1.26.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -5033,6 +5082,7 @@ Must be one of:
 | - [refreshToken](#global_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)    |
 | - [resources](#global_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                    |
 | - [scopes](#global_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
+| - [skipAuth](#global_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
 #### <a name="global_oidcProxyGateway_annotations"></a>3.26.1. Property `stack > global > oidcProxyGateway > annotations`
 
@@ -5195,6 +5245,54 @@ Must be one of:
 | [scopes items](#global_oidcProxyGateway_scopes_items) | -           |
 
 ##### <a name="global_oidcProxyGateway_scopes_items"></a>3.26.9.1. stack > global > oidcProxyGateway > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="global_oidcProxyGateway_skipAuth"></a>3.26.10. Property `stack > global > oidcProxyGateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths to skip authentication (creates separate public HTTPRoute)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                           | Description |
+| --------------------------------------------------------- | ----------- |
+| [skipAuth items](#global_oidcProxyGateway_skipAuth_items) | -           |
+
+##### <a name="global_oidcProxyGateway_skipAuth_items"></a>3.26.10.1. stack > global > oidcProxyGateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#global_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#global_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="global_oidcProxyGateway_skipAuth_items_method"></a>3.26.10.1.1. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_oidcProxyGateway_skipAuth_items_path"></a>3.26.10.1.2. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -8238,6 +8336,7 @@ Must be one of:
 | - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)    |
 | - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                    |
 | - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
+| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
 ##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>4.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
@@ -8400,6 +8499,54 @@ Must be one of:
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.26.9.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>4.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths to skip authentication (creates separate public HTTPRoute)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                      | Description |
+| -------------------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>4.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>4.1.26.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>4.1.26.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -11907,6 +12054,7 @@ Must be one of:
 | - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)    |
 | - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                    |
 | - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
+| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
 ##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>7.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
@@ -12069,6 +12217,54 @@ Must be one of:
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.26.9.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>7.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths to skip authentication (creates separate public HTTPRoute)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                      | Description |
+| -------------------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>7.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>7.1.26.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>7.1.26.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |

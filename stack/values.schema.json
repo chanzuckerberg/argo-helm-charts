@@ -721,7 +721,7 @@
               }
             },
             "skipAuth": {
-              "description": "Paths to skip authentication (creates separate public HTTPRoute without SecurityPolicy)",
+              "description": "Paths to skip authentication (creates separate public HTTPRoute)",
               "type": "array",
               "items": {
                 "type": "object",
