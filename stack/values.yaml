@@ -323,6 +323,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       issuer: "" # @schema description: OIDC provider issuer URL (auto-discovered from OAUTH2_PROXY_OIDC_ISSUER_URL if empty)
       authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered by provider if empty)
       tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered by provider if empty)
+    skipAuth: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "method": {"type": "string"}}; description: Paths to skip authentication (creates separate public HTTPRoute)
     logoutPath: "/logout" # @schema description: Path for logout operations
     forwardAccessToken: false # @schema description: Forward access token to backend service
     refreshToken: true # @schema description: Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
