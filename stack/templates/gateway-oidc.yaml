@@ -36,6 +36,23 @@ spec:
     - {{ $rule.host }}
   {{- end }}
   rules:
+    {{- /* When OIDC is enabled, ensure we have a route that covers /oauth2/callback */ -}}
+    {{- $hasRootPath := false -}}
+    {{- range $service.Values.gateway.paths -}}
+      {{- if and (eq .path "/") (ne .pathType "Exact") -}}
+        {{- $hasRootPath = true -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $hasRootPath -}}
+    {{- /* Add a default / route to ensure /oauth2/callback works */ -}}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: {{ include "service.fullname" $service }}
+          port: {{ $service.Values.service.port | int }}
+    {{- end }}
     {{- range $service.Values.gateway.paths }}
     - matches:
         - path:
@@ -104,7 +121,7 @@ spec:
     clientSecret:
       name: {{ include "oidcProxyGateway.clientSecretName" . | quote }}
       key: {{ include "oidcProxyGateway.clientSecretKey" . | quote }}
-    redirectURL: {{ .Values.oidcProxyGateway.redirectURL | quote }}
+    redirectURL: {{ include "oidcProxyGateway.redirectURL" . | quote }}
     {{- if .Values.oidcProxyGateway.logoutPath }}
     logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}
     {{- end }}

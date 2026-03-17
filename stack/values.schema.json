@@ -654,7 +654,7 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets.",
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets. Automatically generates redirectURL as https://\u003cgateway.host\u003e/oauth2/callback and ensures a root path (/) route exists to handle the callback.",
           "type": "object",
           "properties": {
             "annotations": {
@@ -704,10 +704,6 @@
                   "type": "string"
                 }
               }
-            },
-            "redirectURL": {
-              "description": "OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)",
-              "type": "string"
             },
             "refreshToken": {
               "description": "Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)",
