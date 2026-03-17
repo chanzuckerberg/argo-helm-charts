@@ -104,7 +104,7 @@ spec:
     clientSecret:
       name: {{ include "oidcProxyGateway.clientSecretName" . | quote }}
       key: {{ include "oidcProxyGateway.clientSecretKey" . | quote }}
-    redirectURL: {{ .Values.oidcProxyGateway.redirectURL | quote }}
+    redirectURL: {{ include "oidcProxyGateway.redirectURL" . | quote }}
     {{- if .Values.oidcProxyGateway.logoutPath }}
     logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}
     {{- end }}

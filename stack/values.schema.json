@@ -705,10 +705,6 @@
                 }
               }
             },
-            "redirectURL": {
-              "description": "OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)",
-              "type": "string"
-            },
             "refreshToken": {
               "description": "Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)",
               "type": "boolean"
