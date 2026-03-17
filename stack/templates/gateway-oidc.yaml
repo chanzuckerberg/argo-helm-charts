@@ -110,7 +110,7 @@ spec:
       name: {{ include "service.fullname" . }}
   oidc:
     provider:
-      issuer: {{ .Values.oidcProxyGateway.provider.issuer | quote }}
+      issuer: {{ include "oidcProxyGateway.issuer" . | quote }}
       {{- if .Values.oidcProxyGateway.provider.authorizationEndpoint }}
       authorizationEndpoint: {{ .Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
       {{- end }}
