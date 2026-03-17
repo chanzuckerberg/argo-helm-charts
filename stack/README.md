@@ -56,55 +56,55 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
-| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                      |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                         |
-| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)                                            |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
-| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                             |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                       |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                     |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                        |
+| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                           |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                        |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                          |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                              |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                 |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                           |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                 |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                            |
+| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                              |
+| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                            |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                          |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                     |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                       |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets. |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                       |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                 |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                             |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                      |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                    |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                               |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                           |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                       |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                 |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                            |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                    |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                          |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                 |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                      |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                          |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                          |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                     |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                           |
 
 #### <a name="cronJobs_pattern1_affinity"></a>2.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -1833,13 +1833,11 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)
+**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets.
 
 | Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                      |
 | ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------- |
 | - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                         |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID (required when gateway.oidcProtected is true)                           |
-| - [clientSecret](#cronJobs_pattern1_oidcProxyGateway_clientSecret )             | No      | object          | No         | -          | Kubernetes secret containing OIDC client secret                                        |
 | - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team) |
 | - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names                                                                 |
 | - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                |
@@ -1860,49 +1858,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID (required when gateway.oidcProtected is true)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret"></a>2.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Kubernetes secret containing OIDC client secret
-
-| Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                              |
-| ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------- |
-| - [key](#cronJobs_pattern1_oidcProxyGateway_clientSecret_key )   | No      | string | No         | -          | Key in the secret containing the client secret |
-| - [name](#cronJobs_pattern1_oidcProxyGateway_clientSecret_name ) | No      | string | No         | -          | Name of the secret                             |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret_key"></a>2.1.26.3.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret > key`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Key in the secret containing the client secret
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret_name"></a>2.1.26.3.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the secret
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>2.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -1911,7 +1867,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>2.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>2.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1926,7 +1882,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>2.1.26.5.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>2.1.26.3.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -1935,7 +1891,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>2.1.26.5.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>2.1.26.3.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -1944,7 +1900,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>2.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>2.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -1953,7 +1909,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>2.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>2.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -1962,7 +1918,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>2.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>2.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1978,7 +1934,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered if empty)         |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>2.1.26.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>2.1.26.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -1987,7 +1943,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>2.1.26.8.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>2.1.26.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -1996,7 +1952,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>2.1.26.8.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>2.1.26.6.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -2005,7 +1961,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_redirectURL"></a>2.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > redirectURL`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_redirectURL"></a>2.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > redirectURL`
 
 |              |          |
 | ------------ | -------- |
@@ -2014,7 +1970,7 @@ Must be one of:
 
 **Description:** OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>2.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>2.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -2023,7 +1979,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>2.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>2.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -2040,7 +1996,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>2.1.26.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>2.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2061,7 +2017,7 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.26.12.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -3297,55 +3253,55 @@ Must be one of:
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                          | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
-| ----------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#global_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
-| - [annotations](#global_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#global_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [appSecrets](#global_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [argoBuildEnv](#global_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                |
-| - [args](#global_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
-| - [argusMetadata](#global_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                      |
-| - [autoscaling](#global_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
-| - [command](#global_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#global_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#global_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#global_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
-| - [env](#global_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
-| - [envFrom](#global_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#global_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [gateway](#global_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                         |
-| - [grafanaDashboard](#global_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [image](#global_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [imagePullSecrets](#global_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
-| - [ingress](#global_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
-| - [initContainers](#global_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
-| - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxyGateway](#global_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)                                            |
-| - [persistence](#global_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [podAnnotations](#global_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#global_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#global_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#global_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#global_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#global_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
-| - [resources](#global_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#global_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
-| - [rollout](#global_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
-| - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [securityContext](#global_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
-| - [service](#global_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
-| - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
-| - [sidecars](#global_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
-| - [startupProbe](#global_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
-| - [tolerations](#global_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#global_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                          | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                |
+| ----------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#global_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                             |
+| - [annotations](#global_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                       |
+| - [appContext](#global_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [appSecrets](#global_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [argoBuildEnv](#global_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                     |
+| - [args](#global_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                        |
+| - [argusMetadata](#global_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                           |
+| - [autoscaling](#global_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                        |
+| - [command](#global_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                          |
+| - [deploymentKind](#global_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                              |
+| - [deploymentStage](#global_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                 |
+| - [dnsPolicy](#global_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                           |
+| - [env](#global_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [envFrom](#global_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                 |
+| - [fullnameOverride](#global_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                            |
+| - [gateway](#global_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                              |
+| - [grafanaDashboard](#global_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [image](#global_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [imagePullSecrets](#global_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [ingress](#global_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                            |
+| - [initContainers](#global_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                          |
+| - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                     |
+| - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                       |
+| - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxyGateway](#global_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets. |
+| - [persistence](#global_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [podAnnotations](#global_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                       |
+| - [podLabels](#global_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                 |
+| - [podSecurityContext](#global_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                             |
+| - [progressDeadlineSeconds](#global_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                      |
+| - [readinessProbe](#global_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                    |
+| - [replicaCount](#global_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                               |
+| - [resources](#global_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                           |
+| - [restartPolicy](#global_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                       |
+| - [rollout](#global_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                |
+| - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [securityContext](#global_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                 |
+| - [service](#global_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                            |
+| - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                    |
+| - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                          |
+| - [sidecars](#global_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                 |
+| - [startupProbe](#global_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                      |
+| - [tolerations](#global_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                          |
+| - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                          |
+| - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                     |
+| - [volumes](#global_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                           |
 
 ### <a name="global_affinity"></a>3.1. Property `stack > global > affinity`
 
@@ -5074,13 +5030,11 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)
+**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets.
 
 | Property                                                             | Pattern | Type            | Deprecated | Definition | Title/Description                                                                      |
 | -------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------- |
 | - [annotations](#global_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                         |
-| - [clientID](#global_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID (required when gateway.oidcProtected is true)                           |
-| - [clientSecret](#global_oidcProxyGateway_clientSecret )             | No      | object          | No         | -          | Kubernetes secret containing OIDC client secret                                        |
 | - [cookieDomain](#global_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team) |
 | - [cookieNames](#global_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names                                                                 |
 | - [forwardAccessToken](#global_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                |
@@ -5101,49 +5055,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-#### <a name="global_oidcProxyGateway_clientID"></a>3.26.2. Property `stack > global > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID (required when gateway.oidcProtected is true)
-
-#### <a name="global_oidcProxyGateway_clientSecret"></a>3.26.3. Property `stack > global > oidcProxyGateway > clientSecret`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Kubernetes secret containing OIDC client secret
-
-| Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description                              |
-| ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------- |
-| - [key](#global_oidcProxyGateway_clientSecret_key )   | No      | string | No         | -          | Key in the secret containing the client secret |
-| - [name](#global_oidcProxyGateway_clientSecret_name ) | No      | string | No         | -          | Name of the secret                             |
-
-##### <a name="global_oidcProxyGateway_clientSecret_key"></a>3.26.3.1. Property `stack > global > oidcProxyGateway > clientSecret > key`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Key in the secret containing the client secret
-
-##### <a name="global_oidcProxyGateway_clientSecret_name"></a>3.26.3.2. Property `stack > global > oidcProxyGateway > clientSecret > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the secret
-
-#### <a name="global_oidcProxyGateway_cookieDomain"></a>3.26.4. Property `stack > global > oidcProxyGateway > cookieDomain`
+#### <a name="global_oidcProxyGateway_cookieDomain"></a>3.26.2. Property `stack > global > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -5152,7 +5064,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-#### <a name="global_oidcProxyGateway_cookieNames"></a>3.26.5. Property `stack > global > oidcProxyGateway > cookieNames`
+#### <a name="global_oidcProxyGateway_cookieNames"></a>3.26.3. Property `stack > global > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5167,7 +5079,7 @@ Must be one of:
 | - [accessToken](#global_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#global_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-##### <a name="global_oidcProxyGateway_cookieNames_accessToken"></a>3.26.5.1. Property `stack > global > oidcProxyGateway > cookieNames > accessToken`
+##### <a name="global_oidcProxyGateway_cookieNames_accessToken"></a>3.26.3.1. Property `stack > global > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -5176,7 +5088,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-##### <a name="global_oidcProxyGateway_cookieNames_idToken"></a>3.26.5.2. Property `stack > global > oidcProxyGateway > cookieNames > idToken`
+##### <a name="global_oidcProxyGateway_cookieNames_idToken"></a>3.26.3.2. Property `stack > global > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -5185,7 +5097,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-#### <a name="global_oidcProxyGateway_forwardAccessToken"></a>3.26.6. Property `stack > global > oidcProxyGateway > forwardAccessToken`
+#### <a name="global_oidcProxyGateway_forwardAccessToken"></a>3.26.4. Property `stack > global > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -5194,7 +5106,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-#### <a name="global_oidcProxyGateway_logoutPath"></a>3.26.7. Property `stack > global > oidcProxyGateway > logoutPath`
+#### <a name="global_oidcProxyGateway_logoutPath"></a>3.26.5. Property `stack > global > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -5203,7 +5115,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-#### <a name="global_oidcProxyGateway_provider"></a>3.26.8. Property `stack > global > oidcProxyGateway > provider`
+#### <a name="global_oidcProxyGateway_provider"></a>3.26.6. Property `stack > global > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5219,7 +5131,7 @@ Must be one of:
 | - [issuer](#global_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                   |
 | - [tokenEndpoint](#global_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered if empty)         |
 
-##### <a name="global_oidcProxyGateway_provider_authorizationEndpoint"></a>3.26.8.1. Property `stack > global > oidcProxyGateway > provider > authorizationEndpoint`
+##### <a name="global_oidcProxyGateway_provider_authorizationEndpoint"></a>3.26.6.1. Property `stack > global > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -5228,7 +5140,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered if empty)
 
-##### <a name="global_oidcProxyGateway_provider_issuer"></a>3.26.8.2. Property `stack > global > oidcProxyGateway > provider > issuer`
+##### <a name="global_oidcProxyGateway_provider_issuer"></a>3.26.6.2. Property `stack > global > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -5237,7 +5149,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-##### <a name="global_oidcProxyGateway_provider_tokenEndpoint"></a>3.26.8.3. Property `stack > global > oidcProxyGateway > provider > tokenEndpoint`
+##### <a name="global_oidcProxyGateway_provider_tokenEndpoint"></a>3.26.6.3. Property `stack > global > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -5246,7 +5158,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered if empty)
 
-#### <a name="global_oidcProxyGateway_redirectURL"></a>3.26.9. Property `stack > global > oidcProxyGateway > redirectURL`
+#### <a name="global_oidcProxyGateway_redirectURL"></a>3.26.7. Property `stack > global > oidcProxyGateway > redirectURL`
 
 |              |          |
 | ------------ | -------- |
@@ -5255,7 +5167,7 @@ Must be one of:
 
 **Description:** OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)
 
-#### <a name="global_oidcProxyGateway_refreshToken"></a>3.26.10. Property `stack > global > oidcProxyGateway > refreshToken`
+#### <a name="global_oidcProxyGateway_refreshToken"></a>3.26.8. Property `stack > global > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -5264,7 +5176,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-#### <a name="global_oidcProxyGateway_resources"></a>3.26.11. Property `stack > global > oidcProxyGateway > resources`
+#### <a name="global_oidcProxyGateway_resources"></a>3.26.9. Property `stack > global > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -5281,7 +5193,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_oidcProxyGateway_scopes"></a>3.26.12. Property `stack > global > oidcProxyGateway > scopes`
+#### <a name="global_oidcProxyGateway_scopes"></a>3.26.10. Property `stack > global > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -5302,7 +5214,7 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [scopes items](#global_oidcProxyGateway_scopes_items) | -           |
 
-##### <a name="global_oidcProxyGateway_scopes_items"></a>3.26.12.1. stack > global > oidcProxyGateway > scopes > scopes items
+##### <a name="global_oidcProxyGateway_scopes_items"></a>3.26.10.1. stack > global > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -6556,55 +6468,55 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
-| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                      |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                         |
-| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)                                            |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
-| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                             |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                       |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                     |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                        |
+| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                           |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                        |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                          |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                              |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                 |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                           |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                 |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                            |
+| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                              |
+| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                            |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                          |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                     |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                       |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets. |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                       |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                 |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                             |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                      |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                    |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                               |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                           |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                       |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                 |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                            |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                    |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                          |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                 |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                      |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                          |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                          |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                     |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                           |
 
 #### <a name="cronJobs_pattern1_affinity"></a>4.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -8333,13 +8245,11 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)
+**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets.
 
 | Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                      |
 | ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------- |
 | - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                         |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID (required when gateway.oidcProtected is true)                           |
-| - [clientSecret](#cronJobs_pattern1_oidcProxyGateway_clientSecret )             | No      | object          | No         | -          | Kubernetes secret containing OIDC client secret                                        |
 | - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team) |
 | - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names                                                                 |
 | - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                |
@@ -8360,49 +8270,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID (required when gateway.oidcProtected is true)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret"></a>4.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Kubernetes secret containing OIDC client secret
-
-| Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                              |
-| ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------- |
-| - [key](#cronJobs_pattern1_oidcProxyGateway_clientSecret_key )   | No      | string | No         | -          | Key in the secret containing the client secret |
-| - [name](#cronJobs_pattern1_oidcProxyGateway_clientSecret_name ) | No      | string | No         | -          | Name of the secret                             |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret_key"></a>4.1.26.3.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret > key`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Key in the secret containing the client secret
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret_name"></a>4.1.26.3.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the secret
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>4.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -8411,7 +8279,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>4.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>4.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8426,7 +8294,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>4.1.26.5.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>4.1.26.3.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -8435,7 +8303,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>4.1.26.5.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>4.1.26.3.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -8444,7 +8312,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>4.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>4.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -8453,7 +8321,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>4.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>4.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -8462,7 +8330,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>4.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>4.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8478,7 +8346,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered if empty)         |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>4.1.26.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>4.1.26.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -8487,7 +8355,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>4.1.26.8.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>4.1.26.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -8496,7 +8364,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>4.1.26.8.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>4.1.26.6.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -8505,7 +8373,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_redirectURL"></a>4.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > redirectURL`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_redirectURL"></a>4.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > redirectURL`
 
 |              |          |
 | ------------ | -------- |
@@ -8514,7 +8382,7 @@ Must be one of:
 
 **Description:** OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>4.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>4.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -8523,7 +8391,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>4.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>4.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -8540,7 +8408,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>4.1.26.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>4.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8561,7 +8429,7 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.26.12.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -10279,55 +10147,55 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                           |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                        |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                  |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                   |
-| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                      |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                   |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                     |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                         |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                            |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                      |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                           |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                            |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                       |
-| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                         |
-| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                           |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                       |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                     |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                  |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)                                            |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                  |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                            |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                        |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                               |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                          |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                      |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                  |
-| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                           |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                           |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                            |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                       |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                               |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                     |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                            |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                 |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                     |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                     |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                      |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                             |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                       |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                     |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                        |
+| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                           |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                        |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                          |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                              |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                 |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                           |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                 |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                            |
+| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                              |
+| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                            |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                          |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                     |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                       |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets. |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                       |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                 |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                             |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                      |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                    |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                               |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                           |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                       |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                 |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                            |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                    |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                          |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                 |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                      |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                          |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                          |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                     |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                           |
 
 #### <a name="cronJobs_pattern1_affinity"></a>7.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -12056,13 +11924,11 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true)
+**Description:** Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets.
 
 | Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                      |
 | ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------- |
 | - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                         |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID (required when gateway.oidcProtected is true)                           |
-| - [clientSecret](#cronJobs_pattern1_oidcProxyGateway_clientSecret )             | No      | object          | No         | -          | Kubernetes secret containing OIDC client secret                                        |
 | - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team) |
 | - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names                                                                 |
 | - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                |
@@ -12083,49 +11949,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID (required when gateway.oidcProtected is true)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret"></a>7.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Kubernetes secret containing OIDC client secret
-
-| Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                              |
-| ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------- |
-| - [key](#cronJobs_pattern1_oidcProxyGateway_clientSecret_key )   | No      | string | No         | -          | Key in the secret containing the client secret |
-| - [name](#cronJobs_pattern1_oidcProxyGateway_clientSecret_name ) | No      | string | No         | -          | Name of the secret                             |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret_key"></a>7.1.26.3.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret > key`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Key in the secret containing the client secret
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecret_name"></a>7.1.26.3.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecret > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the secret
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>7.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -12134,7 +11958,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>7.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>7.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12149,7 +11973,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>7.1.26.5.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>7.1.26.3.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -12158,7 +11982,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>7.1.26.5.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>7.1.26.3.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -12167,7 +11991,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>7.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>7.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -12176,7 +12000,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>7.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>7.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -12185,7 +12009,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>7.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>7.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12201,7 +12025,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered if empty)         |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>7.1.26.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>7.1.26.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -12210,7 +12034,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>7.1.26.8.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>7.1.26.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -12219,7 +12043,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>7.1.26.8.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>7.1.26.6.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -12228,7 +12052,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_redirectURL"></a>7.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > redirectURL`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_redirectURL"></a>7.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > redirectURL`
 
 |              |          |
 | ------------ | -------- |
@@ -12237,7 +12061,7 @@ Must be one of:
 
 **Description:** OIDC redirect URL (e.g., https://yourapp.cluster.dev.czi.team/oauth2/callback)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>7.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>7.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -12246,7 +12070,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>7.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>7.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -12263,7 +12087,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>7.1.26.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>7.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12284,7 +12108,7 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.26.12.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |

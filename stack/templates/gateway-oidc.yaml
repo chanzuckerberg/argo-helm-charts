@@ -100,12 +100,10 @@ spec:
       {{- if .Values.oidcProxyGateway.provider.tokenEndpoint }}
       tokenEndpoint: {{ .Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
       {{- end }}
-    clientID: {{ .Values.oidcProxyGateway.clientID | quote }}
+    clientID: {{ include "oidcProxyGateway.clientID" . | quote }}
     clientSecret:
-      name: {{ .Values.oidcProxyGateway.clientSecret.name | quote }}
-      {{- if .Values.oidcProxyGateway.clientSecret.key }}
-      key: {{ .Values.oidcProxyGateway.clientSecret.key | quote }}
-      {{- end }}
+      name: {{ include "oidcProxyGateway.clientSecretName" . | quote }}
+      key: {{ include "oidcProxyGateway.clientSecretKey" . | quote }}
     redirectURL: {{ .Values.oidcProxyGateway.redirectURL | quote }}
     {{- if .Values.oidcProxyGateway.logoutPath }}
     logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}
