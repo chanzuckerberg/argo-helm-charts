@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.27.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.26.1...stack-v2.27.0) (2026-03-17)
+
+
+### Features
+
+* redo client id and secret entry for envoy oidc ([#392](https://github.com/chanzuckerberg/argo-helm-charts/issues/392)) ([7dc154f](https://github.com/chanzuckerberg/argo-helm-charts/commit/7dc154fdcd46f34b03a56d033503ad7af5b41eef))
+
 ## [2.26.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.26.0...stack-v2.26.1) (2026-03-16)
 
 
