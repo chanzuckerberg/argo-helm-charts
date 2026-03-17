@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.28.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.27.0...stack-v2.28.0) (2026-03-17)
+
+
+### Features
+
+* Auto-generate redirectURL for oidcProxyGateway ([#396](https://github.com/chanzuckerberg/argo-helm-charts/issues/396)) ([5931bab](https://github.com/chanzuckerberg/argo-helm-charts/commit/5931babc1dc3e194b3277eb62edad20c7a7b6c5a))
+
 ## [2.27.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.26.1...stack-v2.27.0) (2026-03-17)
 
 

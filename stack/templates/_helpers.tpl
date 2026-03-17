@@ -319,6 +319,14 @@ OAUTH2_PROXY_CLIENT_SECRET
 {{- end -}}
 
 {{/*
+Auto-generate the OIDC redirect URL based on gateway host (matches oauth2-proxy behavior)
+Returns: https://<gateway.host>/oauth2/callback
+*/}}
+{{- define "oidcProxyGateway.redirectURL" -}}
+https://{{ .Values.gateway.host }}/oauth2/callback
+{{- end -}}
+
+{{/*
 Create the full dashboard data structure as a Helm dictionary and return it as a JSON string.
 */}}
 {{- define "stack.grafanaDashboard.json" -}}
