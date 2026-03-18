@@ -654,12 +654,16 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID, OAUTH2_PROXY_CLIENT_SECRET, and OAUTH2_PROXY_OIDC_ISSUER_URL from appSecrets and oidcProxy.additionalSecrets. Automatically generates redirectURL as https://\u003cgateway.host\u003e/oauth2/callback and ensures a root path (/) route exists to handle the callback.",
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). For ArgoCD deployments, clientID and issuer must be explicitly configured. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://\u003cgateway.host\u003e/oauth2/callback.",
           "type": "object",
           "properties": {
             "annotations": {
               "description": "Annotations to add to SecurityPolicy resources",
               "type": "object"
+            },
+            "clientID": {
+              "description": "OIDC client ID (auto-discovered from OAUTH2_PROXY_CLIENT_ID if empty, but requires 'helm install/upgrade' not 'helm template'. For ArgoCD, set explicitly.)",
+              "type": "string"
             },
             "cookieDomain": {
               "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
@@ -688,7 +692,7 @@
               "type": "string"
             },
             "provider": {
-              "description": "OIDC provider configuration (all fields auto-discovered from secrets if not specified)",
+              "description": "OIDC provider configuration",
               "type": "object",
               "properties": {
                 "authorizationEndpoint": {
@@ -696,7 +700,7 @@
                   "type": "string"
                 },
                 "issuer": {
-                  "description": "OIDC provider issuer URL (auto-discovered from OAUTH2_PROXY_OIDC_ISSUER_URL if empty)",
+                  "description": "OIDC provider issuer URL (auto-discovered from OAUTH2_PROXY_OIDC_ISSUER_URL if empty, but requires 'helm install/upgrade' not 'helm template'. For ArgoCD, set explicitly.)",
                   "type": "string"
                 },
                 "tokenEndpoint": {

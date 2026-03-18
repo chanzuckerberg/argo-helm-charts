@@ -269,44 +269,60 @@ Build list of secrets to check for OIDC credentials (appSecrets + oidcProxy.addi
 {{- end -}}
 
 {{/*
-Discover and return the OIDC client ID from secrets
+Discover and return the OIDC client ID from secrets or use explicit value
 */}}
 {{- define "oidcProxyGateway.clientID" -}}
 {{- $global := . -}}
 {{- $clientID := "" -}}
-{{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
-{{- range $secretName := $secretsList -}}
-  {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
-  {{- if $secret -}}
-    {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
-      {{- if not $clientID -}}
-        {{- $clientID = index $secret.data "OAUTH2_PROXY_CLIENT_ID" | b64dec -}}
+{{- /* Use explicit value if provided */ -}}
+{{- if .Values.oidcProxyGateway.clientID -}}
+  {{- $clientID = .Values.oidcProxyGateway.clientID -}}
+{{- else -}}
+  {{- /* Otherwise try to discover from secrets (requires helm install/upgrade, not helm template) */ -}}
+  {{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
+  {{- range $secretName := $secretsList -}}
+    {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
+    {{- if $secret -}}
+      {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
+        {{- if not $clientID -}}
+          {{- $clientID = index $secret.data "OAUTH2_PROXY_CLIENT_ID" | b64dec -}}
+        {{- end -}}
       {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- if not $clientID -}}
-  {{- fail "No secret found with OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET. Configure appSecrets or oidcProxy.additionalSecrets with these credentials." -}}
+  {{- fail "No OIDC client ID found. Either set oidcProxyGateway.clientID or add OAUTH2_PROXY_CLIENT_ID to appSecrets/oidcProxy.additionalSecrets (note: auto-discovery via lookup only works with 'helm install/upgrade', not ArgoCD's 'helm template')." -}}
 {{- end -}}
 {{- $clientID -}}
 {{- end -}}
 
 {{/*
 Return the name of the secret containing OIDC client secret
+Uses the first available secret from appSecrets (clusterSecret, clusterCLISecret, stackSecret, or envSecret)
+Falls back to oidcProxy.additionalSecrets if appSecrets are not configured
 */}}
 {{- define "oidcProxyGateway.clientSecretName" -}}
 {{- $global := . -}}
 {{- $secretName := "" -}}
-{{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
-{{- range $name := $secretsList -}}
-  {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $name -}}
-  {{- if $secret -}}
-    {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
-      {{- if not $secretName -}}
-        {{- $secretName = $name -}}
-      {{- end -}}
-    {{- end -}}
+{{- /* Prefer clusterCLISecret, then clusterSecret, then stackSecret, then envSecret */ -}}
+{{- if and .Values.appSecrets.clusterCLISecret .Values.appSecrets.clusterCLISecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.clusterCLISecret.secretName -}}
+{{- else if and .Values.appSecrets.clusterSecret .Values.appSecrets.clusterSecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.clusterSecret.secretName -}}
+{{- else if and .Values.appSecrets.stackSecret .Values.appSecrets.stackSecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.stackSecret.secretName -}}
+{{- else if and .Values.appSecrets.envSecret .Values.appSecrets.envSecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.envSecret.secretName -}}
+{{- else if gt (len .Values.oidcProxy.additionalSecrets) 0 -}}
+  {{- /* Fallback to first oidcProxy.additionalSecrets */ -}}
+  {{- $firstSecret := index .Values.oidcProxy.additionalSecrets 0 -}}
+  {{- if and $firstSecret.secretRef $firstSecret.secretRef.name -}}
+    {{- $secretName = $firstSecret.secretRef.name -}}
   {{- end -}}
+{{- end -}}
+{{- if not $secretName -}}
+  {{- fail "No secret configured for OIDC client credentials. Configure appSecrets or oidcProxy.additionalSecrets." -}}
 {{- end -}}
 {{- $secretName -}}
 {{- end -}}
@@ -342,7 +358,7 @@ Discover and return the OIDC issuer URL from secrets (or use explicit value if p
   {{- end -}}
 {{- end -}}
 {{- if not $issuer -}}
-  {{- fail "No OIDC issuer URL found. Either set oidcProxyGateway.provider.issuer or add OAUTH2_PROXY_OIDC_ISSUER_URL to appSecrets/oidcProxy.additionalSecrets." -}}
+  {{- fail "No OIDC issuer URL found. Either set oidcProxyGateway.provider.issuer or add OAUTH2_PROXY_OIDC_ISSUER_URL to appSecrets/oidcProxy.additionalSecrets (note: auto-discovery via lookup only works with 'helm install/upgrade', not ArgoCD's 'helm template')." -}}
 {{- end -}}
 {{- $issuer -}}
 {{- end -}}
