@@ -654,7 +654,7 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET from appSecrets and oidcProxy.additionalSecrets. Automatically generates redirectURL as https://\u003cgateway.host\u003e/oauth2/callback and ensures a root path (/) route exists to handle the callback.",
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID, OAUTH2_PROXY_CLIENT_SECRET, and OAUTH2_PROXY_OIDC_ISSUER_URL from appSecrets and oidcProxy.additionalSecrets. Automatically generates redirectURL as https://\u003cgateway.host\u003e/oauth2/callback and ensures a root path (/) route exists to handle the callback.",
           "type": "object",
           "properties": {
             "annotations": {
@@ -688,19 +688,19 @@
               "type": "string"
             },
             "provider": {
-              "description": "OIDC provider configuration",
+              "description": "OIDC provider configuration (all fields auto-discovered from secrets if not specified)",
               "type": "object",
               "properties": {
                 "authorizationEndpoint": {
-                  "description": "Optional authorization endpoint (auto-discovered if empty)",
+                  "description": "Optional authorization endpoint (auto-discovered by provider if empty)",
                   "type": "string"
                 },
                 "issuer": {
-                  "description": "OIDC provider issuer URL",
+                  "description": "OIDC provider issuer URL (auto-discovered from OAUTH2_PROXY_OIDC_ISSUER_URL if empty)",
                   "type": "string"
                 },
                 "tokenEndpoint": {
-                  "description": "Optional token endpoint (auto-discovered if empty)",
+                  "description": "Optional token endpoint (auto-discovered by provider if empty)",
                   "type": "string"
                 }
               }
@@ -718,6 +718,21 @@
               "type": "array",
               "items": {
                 "type": "string"
+              }
+            },
+            "skipAuth": {
+              "description": "Paths to skip authentication (creates separate public HTTPRoute)",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
