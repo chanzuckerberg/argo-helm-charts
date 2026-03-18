@@ -176,7 +176,7 @@ spec:
     {{- if .Values.oidcProxyGateway.cookieDomain }}
     cookieDomain: {{ .Values.oidcProxyGateway.cookieDomain | quote }}
     {{- end }}
-    {{- if .Values.oidcProxyGateway.cookieNames }}
+    {{- if or .Values.oidcProxyGateway.cookieNames.accessToken .Values.oidcProxyGateway.cookieNames.idToken }}
     cookieNames:
       {{- if .Values.oidcProxyGateway.cookieNames.accessToken }}
       accessToken: {{ .Values.oidcProxyGateway.cookieNames.accessToken | quote }}
