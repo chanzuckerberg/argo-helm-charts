@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.1...stack-v2.29.2) (2026-03-18)
+
+
+### Bug Fixes
+
+* Remove clientSecret.key and create ExternalSecret for Envoy Gateway OIDC ([#402](https://github.com/chanzuckerberg/argo-helm-charts/issues/402)) ([8389785](https://github.com/chanzuckerberg/argo-helm-charts/commit/83897859fd908b9737e1af90e91ccfbb26c213fb))
+
 ## [2.29.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.0...stack-v2.29.1) (2026-03-18)
 
 
