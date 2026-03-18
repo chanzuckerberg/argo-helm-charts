@@ -798,13 +798,28 @@ data:
         ]
       }
       output {
-        traces = []
+        traces = [otelcol.processor.batch.default.input]
       }
     }
     prometheus.scrape "beyla_metrics" {
       targets    = beyla.ebpf.default.targets
       forward_to = [prometheus.remote_write.endpoint_0.receiver]
-      scrape_interval = "15s"
+      scrape_interval = "1m"
+    }
+
+    otelcol.processor.batch "default" {
+      output {
+        traces  = [otelcol.exporter.otlp.tempo.input]
+      }
+    }
+    otelcol.exporter.otlp "tempo" {
+      client {
+        endpoint = "tempo-distributor.cw-tempo.svc.cluster.local:4317" 
+        tls {
+          insecure = true
+          insecure_skip_verify = true
+        }
+      }
     }
     {{- end }}
 {{- end }}
