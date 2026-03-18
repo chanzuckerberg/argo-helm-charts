@@ -162,8 +162,7 @@ spec:
       {{- end }}
     clientID: {{ include "oidcProxyGateway.clientID" . | quote }}
     clientSecret:
-      name: {{ include "oidcProxyGateway.clientSecretName" . | quote }}
-      key: {{ include "oidcProxyGateway.clientSecretKey" . | quote }}
+      name: {{ include "service.fullname" . }}-oidc-client-secret
     redirectURL: {{ include "oidcProxyGateway.redirectURL" . | quote }}
     {{- if .Values.oidcProxyGateway.logoutPath }}
     logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}

@@ -257,43 +257,6 @@ Return the OIDC client ID (must be explicitly configured)
 {{- end -}}
 
 {{/*
-Return the name of the secret containing OIDC client secret
-Uses the first available secret from appSecrets (clusterSecret, clusterCLISecret, stackSecret, or envSecret)
-Falls back to oidcProxy.additionalSecrets if appSecrets are not configured
-*/}}
-{{- define "oidcProxyGateway.clientSecretName" -}}
-{{- $global := . -}}
-{{- $secretName := "" -}}
-{{- /* Prefer clusterCLISecret, then clusterSecret, then stackSecret, then envSecret */ -}}
-{{- if and .Values.appSecrets.clusterCLISecret .Values.appSecrets.clusterCLISecret.secretName -}}
-  {{- $secretName = .Values.appSecrets.clusterCLISecret.secretName -}}
-{{- else if and .Values.appSecrets.clusterSecret .Values.appSecrets.clusterSecret.secretName -}}
-  {{- $secretName = .Values.appSecrets.clusterSecret.secretName -}}
-{{- else if and .Values.appSecrets.stackSecret .Values.appSecrets.stackSecret.secretName -}}
-  {{- $secretName = .Values.appSecrets.stackSecret.secretName -}}
-{{- else if and .Values.appSecrets.envSecret .Values.appSecrets.envSecret.secretName -}}
-  {{- $secretName = .Values.appSecrets.envSecret.secretName -}}
-{{- else if gt (len .Values.oidcProxy.additionalSecrets) 0 -}}
-  {{- /* Fallback to first oidcProxy.additionalSecrets */ -}}
-  {{- $firstSecret := index .Values.oidcProxy.additionalSecrets 0 -}}
-  {{- if and $firstSecret.secretRef $firstSecret.secretRef.name -}}
-    {{- $secretName = $firstSecret.secretRef.name -}}
-  {{- end -}}
-{{- end -}}
-{{- if not $secretName -}}
-  {{- fail "No secret configured for OIDC client credentials. Configure appSecrets or oidcProxy.additionalSecrets." -}}
-{{- end -}}
-{{- $secretName -}}
-{{- end -}}
-
-{{/*
-Return the key name for OIDC client secret (always OAUTH2_PROXY_CLIENT_SECRET)
-*/}}
-{{- define "oidcProxyGateway.clientSecretKey" -}}
-OAUTH2_PROXY_CLIENT_SECRET
-{{- end -}}
-
-{{/*
 Return the OIDC issuer URL (must be explicitly configured)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
