@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.0...stack-v2.29.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* Require explicit clientID/issuer config for oidcProxyGateway ([#400](https://github.com/chanzuckerberg/argo-helm-charts/issues/400)) ([036ea23](https://github.com/chanzuckerberg/argo-helm-charts/commit/036ea23019d0f81f199144ebb8ba56f4b09abcb4))
+
 ## [2.29.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.28.0...stack-v2.29.0) (2026-03-18)
 
 
