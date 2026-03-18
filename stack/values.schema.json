@@ -654,7 +654,7 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). For ArgoCD deployments, clientID and issuer must be explicitly configured. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://\u003cgateway.host\u003e/oauth2/callback.",
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://\u003cgateway.host\u003e/oauth2/callback.",
           "type": "object",
           "properties": {
             "annotations": {
@@ -662,7 +662,7 @@
               "type": "object"
             },
             "clientID": {
-              "description": "OIDC client ID (auto-discovered from OAUTH2_PROXY_CLIENT_ID if empty, but requires 'helm install/upgrade' not 'helm template'. For ArgoCD, set explicitly.)",
+              "description": "OIDC client ID (required when gateway.oidcProtected is enabled)",
               "type": "string"
             },
             "cookieDomain": {
@@ -700,7 +700,7 @@
                   "type": "string"
                 },
                 "issuer": {
-                  "description": "OIDC provider issuer URL (auto-discovered from OAUTH2_PROXY_OIDC_ISSUER_URL if empty, but requires 'helm install/upgrade' not 'helm template'. For ArgoCD, set explicitly.)",
+                  "description": "OIDC provider issuer URL (required when gateway.oidcProtected is enabled)",
                   "type": "string"
                 },
                 "tokenEndpoint": {

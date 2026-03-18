@@ -247,54 +247,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
-Build list of secrets to check for OIDC credentials (appSecrets + oidcProxy.additionalSecrets)
-*/}}
-{{- define "oidcProxyGateway.secretsToCheck" -}}
-{{- $secretsToCheck := list -}}
-{{- if .Values.appSecrets.envSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.envSecret.secretName -}}
-{{- end -}}
-{{- if .Values.appSecrets.stackSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.stackSecret.secretName -}}
-{{- end -}}
-{{- if .Values.appSecrets.clusterSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.clusterSecret.secretName -}}
-{{- end -}}
-{{- range .Values.oidcProxy.additionalSecrets -}}
-  {{- if and .secretRef .secretRef.name -}}
-    {{- $secretsToCheck = append $secretsToCheck .secretRef.name -}}
-  {{- end -}}
-{{- end -}}
-{{- $secretsToCheck | toJson -}}
-{{- end -}}
-
-{{/*
-Discover and return the OIDC client ID from secrets or use explicit value
+Return the OIDC client ID (must be explicitly configured)
 */}}
 {{- define "oidcProxyGateway.clientID" -}}
-{{- $global := . -}}
-{{- $clientID := "" -}}
-{{- /* Use explicit value if provided */ -}}
-{{- if .Values.oidcProxyGateway.clientID -}}
-  {{- $clientID = .Values.oidcProxyGateway.clientID -}}
-{{- else -}}
-  {{- /* Otherwise try to discover from secrets (requires helm install/upgrade, not helm template) */ -}}
-  {{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
-  {{- range $secretName := $secretsList -}}
-    {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
-    {{- if $secret -}}
-      {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
-        {{- if not $clientID -}}
-          {{- $clientID = index $secret.data "OAUTH2_PROXY_CLIENT_ID" | b64dec -}}
-        {{- end -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
+{{- if not .Values.oidcProxyGateway.clientID -}}
+  {{- fail "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
 {{- end -}}
-{{- if not $clientID -}}
-  {{- fail "No OIDC client ID found. Either set oidcProxyGateway.clientID or add OAUTH2_PROXY_CLIENT_ID to appSecrets/oidcProxy.additionalSecrets (note: auto-discovery via lookup only works with 'helm install/upgrade', not ArgoCD's 'helm template')." -}}
-{{- end -}}
-{{- $clientID -}}
+{{- .Values.oidcProxyGateway.clientID -}}
 {{- end -}}
 
 {{/*
@@ -335,32 +294,13 @@ OAUTH2_PROXY_CLIENT_SECRET
 {{- end -}}
 
 {{/*
-Discover and return the OIDC issuer URL from secrets (or use explicit value if provided)
+Return the OIDC issuer URL (must be explicitly configured)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
-{{- $global := . -}}
-{{- $issuer := "" -}}
-{{- /* Use explicit value if provided */ -}}
-{{- if .Values.oidcProxyGateway.provider.issuer -}}
-  {{- $issuer = .Values.oidcProxyGateway.provider.issuer -}}
-{{- else -}}
-  {{- /* Otherwise discover from secrets */ -}}
-  {{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
-  {{- range $secretName := $secretsList -}}
-    {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
-    {{- if $secret -}}
-      {{- if hasKey $secret.data "OAUTH2_PROXY_OIDC_ISSUER_URL" -}}
-        {{- if not $issuer -}}
-          {{- $issuer = index $secret.data "OAUTH2_PROXY_OIDC_ISSUER_URL" | b64dec -}}
-        {{- end -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
+{{- if not .Values.oidcProxyGateway.provider.issuer -}}
+  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
 {{- end -}}
-{{- if not $issuer -}}
-  {{- fail "No OIDC issuer URL found. Either set oidcProxyGateway.provider.issuer or add OAUTH2_PROXY_OIDC_ISSUER_URL to appSecrets/oidcProxy.additionalSecrets (note: auto-discovery via lookup only works with 'helm install/upgrade', not ArgoCD's 'helm template')." -}}
-{{- end -}}
-{{- $issuer -}}
+{{- .Values.oidcProxyGateway.provider.issuer -}}
 {{- end -}}
 
 {{/*
