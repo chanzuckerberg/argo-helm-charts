@@ -318,9 +318,10 @@ global: # @schema description: Global configuration for the stack - this serves 
         cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 4Gi # @schema description: Memory request
 
-  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Automatically discovers OAUTH2_PROXY_CLIENT_ID, OAUTH2_PROXY_CLIENT_SECRET, and OAUTH2_PROXY_OIDC_ISSUER_URL from appSecrets and oidcProxy.additionalSecrets. Automatically generates redirectURL as https://<gateway.host>/oauth2/callback and ensures a root path (/) route exists to handle the callback.
-    provider: # @schema description: OIDC provider configuration (all fields auto-discovered from secrets if not specified)
-      issuer: "" # @schema description: OIDC provider issuer URL (auto-discovered from OAUTH2_PROXY_OIDC_ISSUER_URL if empty)
+  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://<gateway.host>/oauth2/callback.
+    clientID: "" # @schema description: OIDC client ID (required when gateway.oidcProtected is enabled)
+    provider: # @schema description: OIDC provider configuration
+      issuer: "" # @schema description: OIDC provider issuer URL (required when gateway.oidcProtected is enabled)
       authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered by provider if empty)
       tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered by provider if empty)
     skipAuth: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "method": {"type": "string"}}; description: Paths to skip authentication (creates separate public HTTPRoute)

@@ -247,66 +247,41 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
-Build list of secrets to check for OIDC credentials (appSecrets + oidcProxy.additionalSecrets)
-*/}}
-{{- define "oidcProxyGateway.secretsToCheck" -}}
-{{- $secretsToCheck := list -}}
-{{- if .Values.appSecrets.envSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.envSecret.secretName -}}
-{{- end -}}
-{{- if .Values.appSecrets.stackSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.stackSecret.secretName -}}
-{{- end -}}
-{{- if .Values.appSecrets.clusterSecret.secretName -}}
-  {{- $secretsToCheck = append $secretsToCheck .Values.appSecrets.clusterSecret.secretName -}}
-{{- end -}}
-{{- range .Values.oidcProxy.additionalSecrets -}}
-  {{- if and .secretRef .secretRef.name -}}
-    {{- $secretsToCheck = append $secretsToCheck .secretRef.name -}}
-  {{- end -}}
-{{- end -}}
-{{- $secretsToCheck | toJson -}}
-{{- end -}}
-
-{{/*
-Discover and return the OIDC client ID from secrets
+Return the OIDC client ID (must be explicitly configured)
 */}}
 {{- define "oidcProxyGateway.clientID" -}}
-{{- $global := . -}}
-{{- $clientID := "" -}}
-{{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
-{{- range $secretName := $secretsList -}}
-  {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
-  {{- if $secret -}}
-    {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
-      {{- if not $clientID -}}
-        {{- $clientID = index $secret.data "OAUTH2_PROXY_CLIENT_ID" | b64dec -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
+{{- if not .Values.oidcProxyGateway.clientID -}}
+  {{- fail "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
 {{- end -}}
-{{- if not $clientID -}}
-  {{- fail "No secret found with OAUTH2_PROXY_CLIENT_ID and OAUTH2_PROXY_CLIENT_SECRET. Configure appSecrets or oidcProxy.additionalSecrets with these credentials." -}}
-{{- end -}}
-{{- $clientID -}}
+{{- .Values.oidcProxyGateway.clientID -}}
 {{- end -}}
 
 {{/*
 Return the name of the secret containing OIDC client secret
+Uses the first available secret from appSecrets (clusterSecret, clusterCLISecret, stackSecret, or envSecret)
+Falls back to oidcProxy.additionalSecrets if appSecrets are not configured
 */}}
 {{- define "oidcProxyGateway.clientSecretName" -}}
 {{- $global := . -}}
 {{- $secretName := "" -}}
-{{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
-{{- range $name := $secretsList -}}
-  {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $name -}}
-  {{- if $secret -}}
-    {{- if and (hasKey $secret.data "OAUTH2_PROXY_CLIENT_ID") (hasKey $secret.data "OAUTH2_PROXY_CLIENT_SECRET") -}}
-      {{- if not $secretName -}}
-        {{- $secretName = $name -}}
-      {{- end -}}
-    {{- end -}}
+{{- /* Prefer clusterCLISecret, then clusterSecret, then stackSecret, then envSecret */ -}}
+{{- if and .Values.appSecrets.clusterCLISecret .Values.appSecrets.clusterCLISecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.clusterCLISecret.secretName -}}
+{{- else if and .Values.appSecrets.clusterSecret .Values.appSecrets.clusterSecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.clusterSecret.secretName -}}
+{{- else if and .Values.appSecrets.stackSecret .Values.appSecrets.stackSecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.stackSecret.secretName -}}
+{{- else if and .Values.appSecrets.envSecret .Values.appSecrets.envSecret.secretName -}}
+  {{- $secretName = .Values.appSecrets.envSecret.secretName -}}
+{{- else if gt (len .Values.oidcProxy.additionalSecrets) 0 -}}
+  {{- /* Fallback to first oidcProxy.additionalSecrets */ -}}
+  {{- $firstSecret := index .Values.oidcProxy.additionalSecrets 0 -}}
+  {{- if and $firstSecret.secretRef $firstSecret.secretRef.name -}}
+    {{- $secretName = $firstSecret.secretRef.name -}}
   {{- end -}}
+{{- end -}}
+{{- if not $secretName -}}
+  {{- fail "No secret configured for OIDC client credentials. Configure appSecrets or oidcProxy.additionalSecrets." -}}
 {{- end -}}
 {{- $secretName -}}
 {{- end -}}
@@ -319,32 +294,13 @@ OAUTH2_PROXY_CLIENT_SECRET
 {{- end -}}
 
 {{/*
-Discover and return the OIDC issuer URL from secrets (or use explicit value if provided)
+Return the OIDC issuer URL (must be explicitly configured)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
-{{- $global := . -}}
-{{- $issuer := "" -}}
-{{- /* Use explicit value if provided */ -}}
-{{- if .Values.oidcProxyGateway.provider.issuer -}}
-  {{- $issuer = .Values.oidcProxyGateway.provider.issuer -}}
-{{- else -}}
-  {{- /* Otherwise discover from secrets */ -}}
-  {{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
-  {{- range $secretName := $secretsList -}}
-    {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
-    {{- if $secret -}}
-      {{- if hasKey $secret.data "OAUTH2_PROXY_OIDC_ISSUER_URL" -}}
-        {{- if not $issuer -}}
-          {{- $issuer = index $secret.data "OAUTH2_PROXY_OIDC_ISSUER_URL" | b64dec -}}
-        {{- end -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
+{{- if not .Values.oidcProxyGateway.provider.issuer -}}
+  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
 {{- end -}}
-{{- if not $issuer -}}
-  {{- fail "No OIDC issuer URL found. Either set oidcProxyGateway.provider.issuer or add OAUTH2_PROXY_OIDC_ISSUER_URL to appSecrets/oidcProxy.additionalSecrets." -}}
-{{- end -}}
-{{- $issuer -}}
+{{- .Values.oidcProxyGateway.provider.issuer -}}
 {{- end -}}
 
 {{/*
