@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.28.0...stack-v2.29.0) (2026-03-18)
+
+
+### Features
+
+* Auto-discover OIDC issuer and add skipAuth support for oidcProxyGateway ([#398](https://github.com/chanzuckerberg/argo-helm-charts/issues/398)) ([6fcfce3](https://github.com/chanzuckerberg/argo-helm-charts/commit/6fcfce3a0d32d016d4deea19531deee7336caafc))
+
 ## [2.28.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.27.0...stack-v2.28.0) (2026-03-17)
 
 

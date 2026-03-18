@@ -319,6 +319,35 @@ OAUTH2_PROXY_CLIENT_SECRET
 {{- end -}}
 
 {{/*
+Discover and return the OIDC issuer URL from secrets (or use explicit value if provided)
+*/}}
+{{- define "oidcProxyGateway.issuer" -}}
+{{- $global := . -}}
+{{- $issuer := "" -}}
+{{- /* Use explicit value if provided */ -}}
+{{- if .Values.oidcProxyGateway.provider.issuer -}}
+  {{- $issuer = .Values.oidcProxyGateway.provider.issuer -}}
+{{- else -}}
+  {{- /* Otherwise discover from secrets */ -}}
+  {{- $secretsList := fromJsonArray (include "oidcProxyGateway.secretsToCheck" .) -}}
+  {{- range $secretName := $secretsList -}}
+    {{- $secret := lookup "v1" "Secret" $global.Release.Namespace $secretName -}}
+    {{- if $secret -}}
+      {{- if hasKey $secret.data "OAUTH2_PROXY_OIDC_ISSUER_URL" -}}
+        {{- if not $issuer -}}
+          {{- $issuer = index $secret.data "OAUTH2_PROXY_OIDC_ISSUER_URL" | b64dec -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $issuer -}}
+  {{- fail "No OIDC issuer URL found. Either set oidcProxyGateway.provider.issuer or add OAUTH2_PROXY_OIDC_ISSUER_URL to appSecrets/oidcProxy.additionalSecrets." -}}
+{{- end -}}
+{{- $issuer -}}
+{{- end -}}
+
+{{/*
 Auto-generate the OIDC redirect URL based on gateway host (matches oauth2-proxy behavior)
 Returns: https://<gateway.host>/oauth2/callback
 */}}
