@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.2...stack-v2.29.3) (2026-03-19)
+
+
+### Bug Fixes
+
+* Use data field in ExternalSecret and fix cookieNames null value ([#404](https://github.com/chanzuckerberg/argo-helm-charts/issues/404)) ([d9e524b](https://github.com/chanzuckerberg/argo-helm-charts/commit/d9e524bb97b8231ab6e794068ae980bddfc1f295))
+
 ## [2.29.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.1...stack-v2.29.2) (2026-03-18)
 
 
