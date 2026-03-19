@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.29.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.3...stack-v2.29.4) (2026-03-19)
+
+
+### Bug Fixes
+
+* Enforce mutual exclusivity between gateway and ingress ([#406](https://github.com/chanzuckerberg/argo-helm-charts/issues/406)) ([0bb9060](https://github.com/chanzuckerberg/argo-helm-charts/commit/0bb90606d1b4a0086d9c244228ac7aa3d9ad35ac))
+
 ## [2.29.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.2...stack-v2.29.3) (2026-03-19)
 
 

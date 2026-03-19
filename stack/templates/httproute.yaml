@@ -6,6 +6,7 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
+{{- include "validate.gatewayIngressMutualExclusion" . -}}
 
 {{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) -}}
 ---
