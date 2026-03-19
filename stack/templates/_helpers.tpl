@@ -247,6 +247,15 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
+Validate that gateway and ingress are not both enabled
+*/}}
+{{- define "validate.gatewayIngressMutualExclusion" -}}
+{{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
+  {{- fail "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress." -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the OIDC client ID (must be explicitly configured)
 */}}
 {{- define "oidcProxyGateway.clientID" -}}
