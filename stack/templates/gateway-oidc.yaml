@@ -33,7 +33,7 @@ spec:
       sectionName: {{ .Values.gateway.sectionName }}
       {{- end }}
   hostnames:
-    - {{ $service.Values.gateway.host }}
+    - {{ .Values.gateway.host }}
   {{- range $i, $rule := .Values.gateway.rules }}
     - {{ $rule.host }}
   {{- end }}
@@ -74,7 +74,7 @@ spec:
       sectionName: {{ .Values.gateway.sectionName }}
       {{- end }}
   hostnames:
-    - {{ $service.Values.gateway.host }}
+    - {{ .Values.gateway.host }}
   {{- range $i, $rule := .Values.gateway.rules }}
     - {{ $rule.host }}
   {{- end }}
