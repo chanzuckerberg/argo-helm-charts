@@ -1,4 +1,6 @@
+# Injected by ApplicationSet from cluster generator
 clusterName: ""
 baseDomain: "dev.czi.team"
-gatewayName: "envoy-gateway"
+gatewayName: "ingress-gateway"
+# Additional domain names to include in the wildcard certificate
 alternateNames: []
