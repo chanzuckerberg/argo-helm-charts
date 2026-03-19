@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.6.0...grafana-alloy-v0.7.0) (2026-03-19)
+
+
+### Features
+
+* Add shardByNode option for kubelet and cadvisor scraping ([#407](https://github.com/chanzuckerberg/argo-helm-charts/issues/407)) ([493d52e](https://github.com/chanzuckerberg/argo-helm-charts/commit/493d52e476f45326e2a44897bd2723ae6bc2e816))
+
 ## [0.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.5.0...grafana-alloy-v0.6.0) (2026-03-13)
 
 
