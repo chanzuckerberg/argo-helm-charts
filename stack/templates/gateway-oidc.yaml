@@ -7,6 +7,7 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressMutualExclusion" . -}}
+{{- include "validate.gatewayRuleHost" . -}}
 
 {{- if and .Values.gateway.enabled .Values.gateway.oidcProtected -}}
 {{- /* Create public HTTPRoute for skipAuth paths if configured */ -}}
@@ -76,9 +77,6 @@ spec:
       {{- end }}
   hostnames:
     - {{ .Values.gateway.host }}
-  {{- range $i, $rule := .Values.gateway.rules }}
-    - {{ $rule.host }}
-  {{- end }}
   rules:
     {{- /* When OIDC is enabled, ensure we have a route that covers /oauth2/callback */ -}}
     {{- $hasRootPath := false -}}
@@ -113,8 +111,50 @@ spec:
           weight: {{ .weight }}
           {{- end }}
     {{- end }}
-    {{- range $i, $rule := .Values.gateway.rules -}}
-    {{- $ruleValues := mergeOverwrite (dict "host" $service.Values.gateway.host "paths" $service.Values.gateway.paths) $rule -}}
+{{- range $i, $rule := .Values.gateway.rules }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "service.fullname" $service }}-rule-{{ $i }}
+  labels:
+    {{- include "service.labels" $service | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                ($service.Values.annotations)
+                ($service.Values.gateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ $service.Values.gateway.gatewayName }}
+      namespace: {{ $service.Values.gateway.gatewayNamespace }}
+      {{- if $service.Values.gateway.sectionName }}
+      sectionName: {{ $service.Values.gateway.sectionName }}
+      {{- end }}
+  hostnames:
+    - {{ $rule.host }}
+  rules:
+    {{- /* When OIDC is enabled, ensure we have a route that covers /oauth2/callback */ -}}
+    {{- $hasRootPath := false -}}
+    {{- $ruleValues := mergeOverwrite (dict "paths" $service.Values.gateway.paths) $rule -}}
+    {{- range $ruleValues.paths -}}
+      {{- if and (eq .path "/") (ne .pathType "Exact") -}}
+        {{- $hasRootPath = true -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $hasRootPath -}}
+    {{- /* Add a default / route to ensure /oauth2/callback works */ -}}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: {{ include "service.fullname" $service }}
+          port: {{ $service.Values.service.port | int }}
+    {{- end }}
     {{- range $ruleValues.paths }}
     - matches:
         - path:
@@ -131,7 +171,7 @@ spec:
           weight: {{ .weight }}
           {{- end }}
     {{- end }}
-    {{- end }}
+{{- end }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
@@ -152,6 +192,11 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: {{ include "service.fullname" . }}
+  {{- range $i, $rule := .Values.gateway.rules }}
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ include "service.fullname" . }}-rule-{{ $i }}
+  {{- end }}
   oidc:
     provider:
       issuer: {{ include "oidcProxyGateway.issuer" . | quote }}
