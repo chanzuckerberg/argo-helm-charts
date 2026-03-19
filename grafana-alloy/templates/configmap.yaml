@@ -485,6 +485,12 @@ data:
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}
     discovery.kubernetes "kubelet" {
       role = "node"
+      {{- if .Values.prometheusRemoteWrite.scrapeKubelet.shardByNode }}
+      selectors {
+        role  = "node"
+        field = "metadata.name=" + coalesce(sys.env("NODE_NAME"), sys.env("HOSTNAME"), constants.hostname)
+      }
+      {{- end }}
     }
 
     discovery.relabel "kubelet" {
@@ -534,6 +540,12 @@ data:
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeCadvisor .Values.prometheusRemoteWrite.scrapeCadvisor.enabled }}
     discovery.kubernetes "cadvisor" {
       role = "node"
+      {{- if .Values.prometheusRemoteWrite.scrapeCadvisor.shardByNode }}
+      selectors {
+        role  = "node"
+        field = "metadata.name=" + coalesce(sys.env("NODE_NAME"), sys.env("HOSTNAME"), constants.hostname)
+      }
+      {{- end }}
     }
 
     discovery.relabel "cadvisor" {

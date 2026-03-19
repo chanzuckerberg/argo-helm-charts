@@ -432,6 +432,10 @@
             "enabled": {
               "description": "Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
               "type": "boolean"
+            },
+            "shardByNode": {
+              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid duplication and high AMP ingestion",
+              "type": "boolean"
             }
           }
         },
@@ -477,6 +481,10 @@
           "properties": {
             "enabled": {
               "description": "Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
+              "type": "boolean"
+            },
+            "shardByNode": {
+              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid duplication and high AMP ingestion",
               "type": "boolean"
             }
           }
