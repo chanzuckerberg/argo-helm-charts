@@ -434,7 +434,7 @@
               "type": "boolean"
             },
             "shardByNode": {
-              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid duplication and high AMP ingestion",
+              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion",
               "type": "boolean"
             }
           }
@@ -484,7 +484,7 @@
               "type": "boolean"
             },
             "shardByNode": {
-              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid duplication and high AMP ingestion",
+              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion",
               "type": "boolean"
             }
           }

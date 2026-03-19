@@ -1103,9 +1103,10 @@ Must be one of:
 
 **Description:** Scrape cadvisor metrics from each node (container_*)
 
-| Property                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                         |
-| ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_scrapeCadvisor_enabled ) | No      | boolean | No         | -          | Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| Property                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                         |
+| ------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeCadvisor_enabled )         | No      | boolean | No         | -          | Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)                 |
+| - [shardByNode](#prometheusRemoteWrite_scrapeCadvisor_shardByNode ) | No      | boolean | No         | -          | When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion |
 
 #### <a name="prometheusRemoteWrite_scrapeCadvisor_enabled"></a>6.5.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeCadvisor > enabled`
 
@@ -1115,6 +1116,15 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+#### <a name="prometheusRemoteWrite_scrapeCadvisor_shardByNode"></a>6.5.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeCadvisor > shardByNode`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion
 
 ### <a name="prometheusRemoteWrite_scrapeEndpoints"></a>6.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints`
 
@@ -1212,9 +1222,10 @@ Must be one of:
 
 **Description:** Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)
 
-| Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                        |
-| ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_scrapeKubelet_enabled ) | No      | boolean | No         | -          | Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
+| Property                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                         |
+| ------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeKubelet_enabled )         | No      | boolean | No         | -          | Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)                  |
+| - [shardByNode](#prometheusRemoteWrite_scrapeKubelet_shardByNode ) | No      | boolean | No         | -          | When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion |
 
 #### <a name="prometheusRemoteWrite_scrapeKubelet_enabled"></a>6.8.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubelet > enabled`
 
@@ -1224,6 +1235,15 @@ Must be one of:
 | **Required** | No        |
 
 **Description:** Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
+
+#### <a name="prometheusRemoteWrite_scrapeKubelet_shardByNode"></a>6.8.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubelet > shardByNode`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion
 
 ### <a name="prometheusRemoteWrite_scrapeTailscaleServices"></a>6.9. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices`
 
