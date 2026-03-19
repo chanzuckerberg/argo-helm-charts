@@ -9,41 +9,15 @@ Expand the name of the chart.
 {{- .Values.name | trunc 63 | trimSuffix "-" }}
 {{- end -}}
 
-{{- define "service.backend.name.ingress" -}}
-{{- if .Values.ingress.oidcProtected -}}
-{{- include "oidcProxy.name" . }}
-{{- else }}
-{{- include "service.fullname" . }}
-{{- end -}}
-{{- end -}}
-
-{{- define "service.backend.port.ingress" -}}
-{{- if .Values.ingress.oidcProtected -}}
-{{- include "oidcProxy.port" . }}
-{{- else }}
-{{- .Values.service.port | int }}
-{{- end -}}
-{{- end -}}
-
 {{- define "service.backend" -}}
-name: {{ include "service.backend.name.ingress" . }}
+{{- if .Values.ingress.oidcProtected -}}
+name: {{ include "oidcProxy.name" . }}
 port:
-    number: {{ include "service.backend.port.ingress" . }}
-{{- end -}}
-
-{{- define "service.backend.name" -}}
-{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
-{{- include "oidcProxy.name" . }}
+    number:  {{ include "oidcProxy.port" .}}
 {{- else }}
-{{- include "service.fullname" . }}
-{{- end -}}
-{{- end -}}
-
-{{- define "service.backend.port" -}}
-{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
-{{- include "oidcProxy.port" . }}
-{{- else }}
-{{- .Values.service.port | int }}
+name: {{ include "service.fullname" . }}
+port:
+    number: {{  .Values.service.port | int}}
 {{- end -}}
 {{- end -}}
 
@@ -253,35 +227,6 @@ Validate that gateway and ingress are not both enabled
 {{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
   {{- fail "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress." -}}
 {{- end -}}
-{{- end -}}
-
-{{/*
-Return the OIDC client ID (must be explicitly configured)
-*/}}
-{{- define "oidcProxyGateway.clientID" -}}
-{{- if not .Values.oidcProxyGateway.clientID -}}
-  {{- fail "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
-{{- end -}}
-{{- .Values.oidcProxyGateway.clientID -}}
-{{- end -}}
-
-{{/*
-Return the OIDC issuer URL (must be explicitly configured)
-*/}}
-{{- define "oidcProxyGateway.issuer" -}}
-{{- if not .Values.oidcProxyGateway.provider.issuer -}}
-  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
-{{- end -}}
-{{- .Values.oidcProxyGateway.provider.issuer -}}
-{{- end -}}
-
-{{/*
-Auto-generate the OIDC redirect URL based on gateway host (matches oauth2-proxy behavior)
-Returns: https://<gateway.host>/oauth2/callback
-Note: gateway.host is auto-injected by Argus at global.gateway.host (similar to ingress.host)
-*/}}
-{{- define "oidcProxyGateway.redirectURL" -}}
-https://{{ .Values.gateway.host }}/oauth2/callback
 {{- end -}}
 
 {{/*
@@ -525,7 +470,7 @@ Expects a dict with keys: global, service
 {{- $global := .global -}}
 {{- $service := .service -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\", status!~\"2..\"}[5m])) by (status)\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", service=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
