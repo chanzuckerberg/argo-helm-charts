@@ -269,6 +269,7 @@ Return the OIDC issuer URL (must be explicitly configured)
 {{/*
 Auto-generate the OIDC redirect URL based on gateway host (matches oauth2-proxy behavior)
 Returns: https://<gateway.host>/oauth2/callback
+Note: gateway.host is auto-injected by Argus at global.gateway.host (similar to ingress.host)
 */}}
 {{- define "oidcProxyGateway.redirectURL" -}}
 https://{{ .Values.gateway.host }}/oauth2/callback
