@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway validation
+templates:
+  - httproute.yaml
+  - gateway-oidc.yaml
+tests:
+  - it: should fail when gateway rule is missing host (non-OIDC)
+    template: httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          rules:
+            - paths:
+                - path: /api
+                  pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.rules[0].host is required. Each rule must specify a host."
+
+  - it: should fail when multiple rules are missing host
+    template: httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          rules:
+            - host: api2.example.com
+            - paths:
+                - path: /api
+                  pathType: Prefix
+            - host: api3.example.com
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.rules[1].host is required. Each rule must specify a host."
+
+  - it: should succeed when all rules have host
+    template: httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          rules:
+            - host: api2.example.com
+            - host: api3.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 3
+
+  - it: should fail when oidcProxyGateway.clientID is missing
+    template: gateway-oidc.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml."
+
+  - it: should fail when oidcProxyGateway.provider.issuer is missing
+    template: gateway-oidc.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml."
+
+  - it: should fail when both gateway and ingress are enabled
+    template: httproute.yaml
+    set:
+      global:
+        gateway:
+          enabled: true
+          host: api.example.com
+        ingress:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress."

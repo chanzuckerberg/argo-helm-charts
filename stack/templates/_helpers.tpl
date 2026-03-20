@@ -256,6 +256,17 @@ Validate that gateway and ingress are not both enabled
 {{- end -}}
 
 {{/*
+Validate that each gateway rule has a host specified
+*/}}
+{{- define "validate.gatewayRuleHost" -}}
+{{- range $i, $rule := .Values.gateway.rules -}}
+  {{- if not $rule.host -}}
+    {{- fail (printf "gateway.rules[%d].host is required. Each rule must specify a host." $i) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the OIDC client ID (must be explicitly configured)
 */}}
 {{- define "oidcProxyGateway.clientID" -}}

@@ -1,0 +1,350 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway HTTPRoute
+templates:
+  - httproute.yaml
+tests:
+  - it: should not create HTTPRoute when gateway.enabled=false
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: false
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create primary HTTPRoute for gateway.host
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          paths:
+            - path: /api
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: HTTPRoute
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1
+      - documentIndex: 0
+        equal:
+          path: spec.hostnames[0]
+          value: api.example.com
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.hostnames
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.type
+          value: PathPrefix
+
+  - it: should create separate HTTPRoute per gateway.rules host
+    set:
+      global:
+        fullnameOverride: myapp
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          paths:
+            - path: /api
+              pathType: Prefix
+          rules:
+            - host: api2.example.com
+            - host: api3.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 3
+      # Primary HTTPRoute
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: myapp-service1
+      - documentIndex: 0
+        equal:
+          path: spec.hostnames[0]
+          value: api.example.com
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.hostnames
+          count: 1
+      # Rule 0 HTTPRoute
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: myapp-service1-rule-0
+      - documentIndex: 1
+        equal:
+          path: spec.hostnames[0]
+          value: api2.example.com
+      - documentIndex: 1
+        lengthEqual:
+          path: spec.hostnames
+          count: 1
+      # Rule 1 HTTPRoute
+      - documentIndex: 2
+        equal:
+          path: metadata.name
+          value: myapp-service1-rule-1
+      - documentIndex: 2
+        equal:
+          path: spec.hostnames[0]
+          value: api3.example.com
+      - documentIndex: 2
+        lengthEqual:
+          path: spec.hostnames
+          count: 1
+
+  - it: should inherit default paths when rule doesn't specify paths
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          paths:
+            - path: /api
+              pathType: Prefix
+            - path: /v1
+              pathType: Exact
+          rules:
+            - host: api2.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      # Primary HTTPRoute has 2 rules (one per path)
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api
+      - documentIndex: 0
+        equal:
+          path: spec.rules[1].matches[0].path.value
+          value: /v1
+      # Rule HTTPRoute also has 2 rules (inherited paths)
+      - documentIndex: 1
+        lengthEqual:
+          path: spec.rules
+          count: 2
+      - documentIndex: 1
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api
+      - documentIndex: 1
+        equal:
+          path: spec.rules[1].matches[0].path.value
+          value: /v1
+
+  - it: should use custom paths when rule specifies paths
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          paths:
+            - path: /api
+              pathType: Prefix
+          rules:
+            - host: api2.example.com
+              paths:
+                - path: /v2
+                  pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      # Primary HTTPRoute has /api path
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api
+      # Rule HTTPRoute has custom /v2 path
+      - documentIndex: 1
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /v2
+
+  - it: should set parentRefs correctly for all HTTPRoutes
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: my-gateway
+          gatewayNamespace: gateway-ns
+          sectionName: https
+          rules:
+            - host: api2.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      # Primary HTTPRoute
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0].name
+          value: my-gateway
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0].namespace
+          value: gateway-ns
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0].sectionName
+          value: https
+      # Rule HTTPRoute
+      - documentIndex: 1
+        equal:
+          path: spec.parentRefs[0].name
+          value: my-gateway
+      - documentIndex: 1
+        equal:
+          path: spec.parentRefs[0].namespace
+          value: gateway-ns
+      - documentIndex: 1
+        equal:
+          path: spec.parentRefs[0].sectionName
+          value: https
+
+  - it: should include labels and annotations on all HTTPRoutes
+    set:
+      global:
+        ingress:
+          enabled: false
+        annotations:
+          global-annotation: "global-value"
+        gateway:
+          enabled: true
+          host: api.example.com
+          annotations:
+            gateway-annotation: "gateway-value"
+          rules:
+            - host: api2.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      # Primary HTTPRoute annotations
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["global-annotation"]
+          value: "global-value"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["gateway-annotation"]
+          value: "gateway-value"
+      # Rule HTTPRoute annotations
+      - documentIndex: 1
+        equal:
+          path: metadata.annotations["global-annotation"]
+          value: "global-value"
+      - documentIndex: 1
+        equal:
+          path: metadata.annotations["gateway-annotation"]
+          value: "gateway-value"
+
+  - it: should support weight in path configuration
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          paths:
+            - path: /api
+              pathType: Prefix
+              weight: 100
+          rules:
+            - host: api2.example.com
+              paths:
+                - path: /v2
+                  pathType: Prefix
+                  weight: 50
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      # Primary HTTPRoute weight
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].backendRefs[0].weight
+          value: 100
+      # Rule HTTPRoute weight
+      - documentIndex: 1
+        equal:
+          path: spec.rules[0].backendRefs[0].weight
+          value: 50
+
+  - it: should not create HTTPRoute when oidcProtected=true (handled by gateway-oidc.yaml)
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should include service labels
+    set:
+      global:
+        ingress:
+          enabled: false
+        argusMetadata:
+          envName: "production"
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["argus/env-name"]
+          value: "production"
