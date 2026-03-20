@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.30.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.4...stack-v2.30.0) (2026-03-20)
+
+
+### Features
+
+* allow vanity urls ([#410](https://github.com/chanzuckerberg/argo-helm-charts/issues/410)) ([9ad847c](https://github.com/chanzuckerberg/argo-helm-charts/commit/9ad847c5f362ba1eb05d9d0ac0457cd1e89bd70c))
+
 ## [2.29.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.3...stack-v2.29.4) (2026-03-19)
 
 
