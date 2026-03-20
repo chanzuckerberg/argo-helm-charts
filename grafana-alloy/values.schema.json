@@ -399,6 +399,10 @@
             }
           }
         },
+        "relabelNamespace": {
+          "description": "When true, copy exported_namespace to namespace for metrics that have it (fixes kube-state-metrics, nginx, etc. showing namespace=loki)",
+          "type": "boolean"
+        },
         "scrapeBlackboxStatic": {
           "description": "Scrape static targets using blackbox exporter",
           "type": "object",
