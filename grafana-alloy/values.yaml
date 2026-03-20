@@ -42,6 +42,8 @@ prometheusRemoteWrite:
     enabled: false # @schema description: Enable metrics filtering
     regex: "" # @schema description: Regex pattern to match metric names to keep
 
+  relabelNamespace: true # @schema description: When true, copy exported_namespace to namespace for metrics that have it (fixes kube-state-metrics, nginx, etc. showing namespace="loki")
+
   # Scrape kube-state-metrics for kube_* metrics (e.g. kube_pod_status_phase).
   scrapeKubeStateMetrics: # @schema description: Scrape kube-state-metrics service for kube_* metrics
     enabled: true # @schema description: Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
