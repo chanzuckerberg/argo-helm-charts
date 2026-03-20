@@ -192,11 +192,6 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: {{ include "service.fullname" . }}
-  {{- range $i, $rule := .Values.gateway.rules }}
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: {{ include "service.fullname" . }}-rule-{{ $i }}
-  {{- end }}
   oidc:
     provider:
       issuer: {{ include "oidcProxyGateway.issuer" . | quote }}
@@ -209,7 +204,7 @@ spec:
     clientID: {{ include "oidcProxyGateway.clientID" . | quote }}
     clientSecret:
       name: {{ include "service.fullname" . }}-oidc-client-secret
-    redirectURL: {{ include "oidcProxyGateway.redirectURL" . | quote }}
+    redirectURL: https://{{ .Values.gateway.host }}/oauth2/callback
     {{- if .Values.oidcProxyGateway.logoutPath }}
     logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}
     {{- end }}
@@ -239,6 +234,70 @@ spec:
     resources:
       {{- toYaml .Values.oidcProxyGateway.resources | nindent 6 }}
     {{- end }}
+{{- range $i, $rule := .Values.gateway.rules }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ include "service.fullname" $service }}-rule-{{ $i }}-oidc
+  labels:
+    {{- include "service.labels" $service | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                ($service.Values.annotations)
+                ($service.Values.oidcProxyGateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ include "service.fullname" $service }}-rule-{{ $i }}
+  oidc:
+    provider:
+      issuer: {{ include "oidcProxyGateway.issuer" $service | quote }}
+      {{- if $service.Values.oidcProxyGateway.provider.authorizationEndpoint }}
+      authorizationEndpoint: {{ $service.Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
+      {{- end }}
+      {{- if $service.Values.oidcProxyGateway.provider.tokenEndpoint }}
+      tokenEndpoint: {{ $service.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
+      {{- end }}
+    clientID: {{ include "oidcProxyGateway.clientID" $service | quote }}
+    clientSecret:
+      name: {{ include "service.fullname" $service }}-oidc-client-secret
+    redirectURL: https://{{ $rule.host }}/oauth2/callback
+    {{- if $service.Values.oidcProxyGateway.logoutPath }}
+    logoutPath: {{ $service.Values.oidcProxyGateway.logoutPath | quote }}
+    {{- end }}
+    {{- if $service.Values.oidcProxyGateway.forwardAccessToken }}
+    forwardAccessToken: {{ $service.Values.oidcProxyGateway.forwardAccessToken }}
+    {{- end }}
+    {{- if $service.Values.oidcProxyGateway.refreshToken }}
+    refreshToken: {{ $service.Values.oidcProxyGateway.refreshToken }}
+    {{- end }}
+    {{- if $service.Values.oidcProxyGateway.cookieDomain }}
+    cookieDomain: {{ $service.Values.oidcProxyGateway.cookieDomain | quote }}
+    {{- end }}
+    {{- if or $service.Values.oidcProxyGateway.cookieNames.accessToken $service.Values.oidcProxyGateway.cookieNames.idToken }}
+    cookieNames:
+      {{- if $service.Values.oidcProxyGateway.cookieNames.accessToken }}
+      accessToken: {{ $service.Values.oidcProxyGateway.cookieNames.accessToken | quote }}
+      {{- end }}
+      {{- if $service.Values.oidcProxyGateway.cookieNames.idToken }}
+      idToken: {{ $service.Values.oidcProxyGateway.cookieNames.idToken | quote }}
+      {{- end }}
+    {{- end }}
+    {{- if $service.Values.oidcProxyGateway.scopes }}
+    scopes:
+      {{- toYaml $service.Values.oidcProxyGateway.scopes | nindent 6 }}
+    {{- end }}
+    {{- if $service.Values.oidcProxyGateway.resources }}
+    resources:
+      {{- toYaml $service.Values.oidcProxyGateway.resources | nindent 6 }}
+    {{- end }}
+{{- end }}
 {{ end }}
 {{- end }}
 {{- end }}
