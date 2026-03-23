@@ -4,6 +4,21 @@
   {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
+
+  {{/* Auto-disable ingress when gateway is explicitly enabled at service level */}}
+  {{- if and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled") $serviceValues.gateway.enabled -}}
+    {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled")) -}}
+      {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
+  {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
+    {{- if not (and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled")) -}}
+      {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
+    {{- end -}}
+  {{- end -}}
+
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressMutualExclusion" . -}}
