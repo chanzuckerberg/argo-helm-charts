@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.31.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.30.0...stack-v2.31.0) (2026-03-23)
+
+
+### Features
+
+* Auto-disable conflicting routing methods per service ([#413](https://github.com/chanzuckerberg/argo-helm-charts/issues/413)) ([68f46c5](https://github.com/chanzuckerberg/argo-helm-charts/commit/68f46c5e73aebb534c95a48c19fadc6fde20c988))
+
 ## [2.30.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.29.4...stack-v2.30.0) (2026-03-20)
 
 
