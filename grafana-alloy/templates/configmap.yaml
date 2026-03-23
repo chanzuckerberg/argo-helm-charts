@@ -738,6 +738,16 @@ data:
         action        = "keep"
       }
       {{- end }}
+
+      {{- if .Values.prometheusRemoteWrite.relabelNamespace }}
+      rule {
+        source_labels = ["exported_namespace"]
+        regex         = "(.+)"
+        target_label  = "namespace"
+        replacement   = "$1"
+        action        = "replace"
+      }
+      {{- end }}
     }
     {{- end }}
 
