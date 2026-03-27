@@ -19,18 +19,6 @@
     "geoip": {
       "type": "object",
       "properties": {
-        "blockedCountries": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "blockedResponseBody": {
-          "type": "string"
-        },
-        "blockedStatusCode": {
-          "type": "integer"
-        },
         "enabled": {
           "type": "boolean"
         }

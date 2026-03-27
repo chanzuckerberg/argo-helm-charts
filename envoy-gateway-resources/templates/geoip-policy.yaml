@@ -32,7 +32,7 @@ spec:
                   country: "x-envoy-geoip-country-code"
                   city: "x-envoy-geoip-city"
                   region: "x-envoy-geoip-region"
-              city_db_path: /etc/envoy/geoip/{{ .Values.geoip.maxmind.editionId }}.mmdb
+              city_db_path: /etc/envoy/geoip/GeoLite2-Country.mmdb
 ---
 # EnvoyExtensionPolicy for Lua country blocking filter
 apiVersion: gateway.envoyproxy.io/v1alpha1

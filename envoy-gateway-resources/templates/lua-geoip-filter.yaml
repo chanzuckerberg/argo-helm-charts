@@ -13,9 +13,32 @@ data:
     function envoy_on_request(request_handle)
       -- List of blocked country codes (ISO 3166-1 alpha-2)
       local blocked_countries = {
-      {{- range .Values.geoip.blockedCountries }}
-        ["{{ . }}"] = true,
-      {{- end }}
+        ["AF"] = true,
+        ["BY"] = true,
+        ["BF"] = true,
+        ["CF"] = true,
+        ["CN"] = true,
+        ["CU"] = true,
+        ["ER"] = true,
+        ["PS"] = true,
+        ["HT"] = true,
+        ["HK"] = true,
+        ["IR"] = true,
+        ["KZ"] = true,
+        ["KG"] = true,
+        ["LY"] = true,
+        ["ML"] = true,
+        ["MM"] = true,
+        ["KP"] = true,
+        ["RU"] = true,
+        ["SD"] = true,
+        ["SS"] = true,
+        ["SY"] = true,
+        ["SO"] = true,
+        ["TJ"] = true,
+        ["UA"] = true,
+        ["VE"] = true,
+        ["YE"] = true,
       }
 
       -- Get country code from GeoIP filter header
@@ -25,10 +48,10 @@ data:
       if country_code and blocked_countries[country_code] then
         request_handle:respond(
           {
-            [":status"] = "{{ .Values.geoip.blockedStatusCode }}",
+            [":status"] = "451",
             ["content-type"] = "text/plain"
           },
-          "{{ .Values.geoip.blockedResponseBody }}"
+          "Access from your country is not permitted"
         )
       end
     end

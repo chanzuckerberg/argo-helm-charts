@@ -5,34 +5,3 @@ alternateNames: []
 
 geoip:
   enabled: true
-  blockedCountries:
-    - "AF"
-    - "BY"
-    - "BF"
-    - "CF"
-    - "CN"
-    - "CU"
-    - "ER"
-    - "PS"
-    - "HT"
-    - "HK"
-    - "IR"
-    - "KZ"
-    - "KG"
-    - "LY"
-    - "ML"
-    - "MM"
-    - "KP"
-    - "RU"
-    - "SD"
-    - "SS"
-    - "SY"
-    - "SO"
-    - "TJ"
-    - "UA"
-    - "VE"
-    - "YE"
-
-  # HTTP status code to return for blocked requests
-  blockedStatusCode: 451
-  blockedResponseBody: "Access from your country is not permitted"
