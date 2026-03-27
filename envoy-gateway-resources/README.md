@@ -66,7 +66,7 @@
 | - [blockedResponseBody](#geoip_blockedResponseBody ) | No      | string          | No         | -          | -                 |
 | - [blockedStatusCode](#geoip_blockedStatusCode )     | No      | integer         | No         | -          | -                 |
 | - [enabled](#geoip_enabled )                         | No      | boolean         | No         | -          | -                 |
-| - [maxmind](#geoip_maxmind )                         | No      | object          | No         | -          | -                 |
+| - [s3](#geoip_s3 )                                   | No      | object          | No         | -          | -                 |
 
 ### <a name="geoip_blockedCountries"></a>5.1. Property `envoy-gateway-resources > geoip > blockedCountries`
 
@@ -115,7 +115,7 @@
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="geoip_maxmind"></a>5.5. Property `envoy-gateway-resources > geoip > maxmind`
+### <a name="geoip_s3"></a>5.5. Property `envoy-gateway-resources > geoip > s3`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -123,23 +123,39 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                             | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [editionId](#geoip_maxmind_editionId )             | No      | string  | No         | -          | -                 |
-| - [updateFrequency](#geoip_maxmind_updateFrequency ) | No      | integer | No         | -          | -                 |
+| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [bucketPath](#geoip_s3_bucketPath )          | No      | string | No         | -          | -                 |
+| - [dbFileName](#geoip_s3_dbFileName )          | No      | string | No         | -          | -                 |
+| - [iamRoleArn](#geoip_s3_iamRoleArn )          | No      | string | No         | -          | -                 |
+| - [awsCliImage](#geoip_s3_awsCliImage )        | No      | string | No         | -          | -                 |
 
-#### <a name="geoip_maxmind_editionId"></a>5.5.1. Property `envoy-gateway-resources > geoip > maxmind > editionId`
+#### <a name="geoip_s3_bucketPath"></a>5.5.1. Property `envoy-gateway-resources > geoip > s3 > bucketPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="geoip_maxmind_updateFrequency"></a>5.5.2. Property `envoy-gateway-resources > geoip > maxmind > updateFrequency`
+#### <a name="geoip_s3_dbFileName"></a>5.5.2. Property `envoy-gateway-resources > geoip > s3 > dbFileName`
 
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="geoip_s3_iamRoleArn"></a>5.5.3. Property `envoy-gateway-resources > geoip > s3 > iamRoleArn`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="geoip_s3_awsCliImage"></a>5.5.4. Property `envoy-gateway-resources > geoip > s3 > awsCliImage`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------

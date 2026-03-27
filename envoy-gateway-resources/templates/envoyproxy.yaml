@@ -15,30 +15,23 @@ spec:
             spec:
               template:
                 spec:
-                  # Init container to download MaxMind GeoIP database
+{{- if .Values.geoip.s3.iamRoleArn }}
+                  serviceAccountName: {{ .Values.gatewayName }}-envoy
+{{- end }}
+                  # Init container to download GeoIP database from S3
                   initContainers:
                   - name: geoip-db-downloader
-                    image: ghcr.io/maxmind/geoipupdate:v7.0.1
-                    env:
-                    - name: GEOIPUPDATE_ACCOUNT_ID
-                      valueFrom:
-                        secretKeyRef:
-                          name: maxmind-license
-                          key: MAXMIND_ACCOUNT_ID
-                    - name: GEOIPUPDATE_LICENSE_KEY
-                      valueFrom:
-                        secretKeyRef:
-                          name: maxmind-license
-                          key: MAXMIND_LICENSE_KEY
-                    - name: GEOIPUPDATE_EDITION_IDS
-                      value: {{ .Values.geoip.maxmind.editionId | quote }}
-                    - name: GEOIPUPDATE_FREQUENCY
-                      value: {{ .Values.geoip.maxmind.updateFrequency | quote }}
-                    - name: GEOIPUPDATE_DB_DIR
-                      value: /usr/share/GeoIP
+                    image: {{ .Values.geoip.s3.awsCliImage }}
+                    command:
+                    - sh
+                    - -c
+                    - |
+                      set -e
+                      mkdir -p /etc/envoy/geoip
+                      aws s3 cp {{ .Values.geoip.s3.bucketPath }} /etc/envoy/geoip/{{ .Values.geoip.s3.dbFileName }}
                     volumeMounts:
                     - name: geoip-db
-                      mountPath: /usr/share/GeoIP
+                      mountPath: /etc/envoy/geoip
 
                   # Add volume mount to Envoy container
                   containers:
