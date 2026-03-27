@@ -37,6 +37,9 @@
         "s3": {
           "type": "object",
           "properties": {
+            "awsCliImage": {
+              "type": "string"
+            },
             "bucketPath": {
               "type": "string"
             },
@@ -44,9 +47,6 @@
               "type": "string"
             },
             "iamRoleArn": {
-              "type": "string"
-            },
-            "awsCliImage": {
               "type": "string"
             }
           }

@@ -123,35 +123,35 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [bucketPath](#geoip_s3_bucketPath )          | No      | string | No         | -          | -                 |
-| - [dbFileName](#geoip_s3_dbFileName )          | No      | string | No         | -          | -                 |
-| - [iamRoleArn](#geoip_s3_iamRoleArn )          | No      | string | No         | -          | -                 |
-| - [awsCliImage](#geoip_s3_awsCliImage )        | No      | string | No         | -          | -                 |
+| Property                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [awsCliImage](#geoip_s3_awsCliImage ) | No      | string | No         | -          | -                 |
+| - [bucketPath](#geoip_s3_bucketPath )   | No      | string | No         | -          | -                 |
+| - [dbFileName](#geoip_s3_dbFileName )   | No      | string | No         | -          | -                 |
+| - [iamRoleArn](#geoip_s3_iamRoleArn )   | No      | string | No         | -          | -                 |
 
-#### <a name="geoip_s3_bucketPath"></a>5.5.1. Property `envoy-gateway-resources > geoip > s3 > bucketPath`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="geoip_s3_dbFileName"></a>5.5.2. Property `envoy-gateway-resources > geoip > s3 > dbFileName`
+#### <a name="geoip_s3_awsCliImage"></a>5.5.1. Property `envoy-gateway-resources > geoip > s3 > awsCliImage`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="geoip_s3_iamRoleArn"></a>5.5.3. Property `envoy-gateway-resources > geoip > s3 > iamRoleArn`
+#### <a name="geoip_s3_bucketPath"></a>5.5.2. Property `envoy-gateway-resources > geoip > s3 > bucketPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="geoip_s3_awsCliImage"></a>5.5.4. Property `envoy-gateway-resources > geoip > s3 > awsCliImage`
+#### <a name="geoip_s3_dbFileName"></a>5.5.3. Property `envoy-gateway-resources > geoip > s3 > dbFileName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="geoip_s3_iamRoleArn"></a>5.5.4. Property `envoy-gateway-resources > geoip > s3 > iamRoleArn`
 
 |              |          |
 | ------------ | -------- |
