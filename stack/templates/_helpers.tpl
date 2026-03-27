@@ -296,6 +296,21 @@ https://{{ .Values.gateway.host }}/oauth2/callback
 {{- end -}}
 
 {{/*
+Check if gateway config keys are provided (auto-enable detection)
+Returns: "true" if any gateway.* keys exist (excluding just "enabled")
+*/}}
+{{- define "gateway.hasConfigKeys" -}}
+{{- $hasKeys := false -}}
+{{- if .Values.gateway -}}
+  {{- $gatewayKeys := keys (omit .Values.gateway "enabled") -}}
+  {{- if gt (len $gatewayKeys) 0 -}}
+    {{- $hasKeys = true -}}
+  {{- end -}}
+{{- end -}}
+{{- $hasKeys -}}
+{{- end -}}
+
+{{/*
 Create the full dashboard data structure as a Helm dictionary and return it as a JSON string.
 */}}
 {{- define "stack.grafanaDashboard.json" -}}

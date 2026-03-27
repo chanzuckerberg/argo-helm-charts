@@ -5,6 +5,14 @@
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
 
+  {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
+  {{- if hasKey $serviceValues "gateway" -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
+      {{- $_ := set $values.gateway "enabled" true -}}
+    {{- end -}}
+  {{- end -}}
+
   {{/* Auto-disable ingress when gateway is explicitly enabled at service level */}}
   {{- if and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled") $serviceValues.gateway.enabled -}}
     {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled")) -}}

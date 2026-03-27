@@ -15,6 +15,20 @@
     },
     "gatewayName": {
       "type": "string"
+    },
+    "geoip": {
+      "type": "object",
+      "properties": {
+        "blockedCountries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
     }
   }
 }

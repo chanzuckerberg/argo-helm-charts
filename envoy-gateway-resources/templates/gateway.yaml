@@ -14,6 +14,13 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod-eg"
 spec:
   gatewayClassName: eg
+{{- if .Values.geoip.enabled }}
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: {{ .Values.gatewayName }}-proxy
+{{- end }}
   listeners:
     - name: http
       protocol: HTTP
