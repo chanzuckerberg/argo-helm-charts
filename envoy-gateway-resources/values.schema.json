@@ -15,6 +15,37 @@
     },
     "gatewayName": {
       "type": "string"
+    },
+    "geoip": {
+      "type": "object",
+      "properties": {
+        "blockedCountries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blockedResponseBody": {
+          "type": "string"
+        },
+        "blockedStatusCode": {
+          "type": "integer"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "maxmind": {
+          "type": "object",
+          "properties": {
+            "editionId": {
+              "type": "string"
+            },
+            "updateFrequency": {
+              "type": "integer"
+            }
+          }
+        }
+      }
     }
   }
 }
