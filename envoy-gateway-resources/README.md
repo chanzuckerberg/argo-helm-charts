@@ -60,9 +60,9 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                             | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [enabled](#geoip_enabled )         | No      | boolean | No         | -          | -                 |
+| Property                     | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ---------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#geoip_enabled ) | No      | boolean | No         | -          | -                 |
 
 ### <a name="geoip_enabled"></a>5.1. Property `envoy-gateway-resources > geoip > enabled`
 
