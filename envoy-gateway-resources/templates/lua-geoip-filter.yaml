@@ -1,0 +1,35 @@
+{{- if .Values.geoip.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.gatewayName }}-geoip-lua
+  namespace: envoy-gateway
+data:
+  geoip-filter.lua: |
+    -- MaxMind GeoIP Country Blocking Filter
+    -- Checks x-envoy-geoip-country-code header set by GeoIP filter
+    -- Returns HTTP 451 for blocked countries
+
+    function envoy_on_request(request_handle)
+      -- List of blocked country codes (ISO 3166-1 alpha-2)
+      local blocked_countries = {
+      {{- range .Values.geoip.blockedCountries }}
+        ["{{ . }}"] = true,
+      {{- end }}
+      }
+
+      -- Get country code from GeoIP filter header
+      local country_code = request_handle:headers():get("x-envoy-geoip-country-code")
+
+      -- If country code exists and is blocked, return 451
+      if country_code and blocked_countries[country_code] then
+        request_handle:respond(
+          {
+            [":status"] = "{{ .Values.geoip.blockedStatusCode }}",
+            ["content-type"] = "text/plain"
+          },
+          "{{ .Values.geoip.blockedResponseBody }}"
+        )
+      end
+    end
+{{- end }}

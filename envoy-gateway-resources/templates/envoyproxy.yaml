@@ -1,0 +1,55 @@
+{{- if .Values.geoip.enabled }}
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: {{ .Values.gatewayName }}-proxy
+  namespace: envoy-gateway
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        patch:
+          type: StrategicMerge
+          value:
+            spec:
+              template:
+                spec:
+                  # Init container to download MaxMind GeoIP database
+                  initContainers:
+                  - name: geoip-db-downloader
+                    image: ghcr.io/maxmind/geoipupdate:v7.0.1
+                    env:
+                    - name: GEOIPUPDATE_ACCOUNT_ID
+                      valueFrom:
+                        secretKeyRef:
+                          name: maxmind-license
+                          key: MAXMIND_ACCOUNT_ID
+                    - name: GEOIPUPDATE_LICENSE_KEY
+                      valueFrom:
+                        secretKeyRef:
+                          name: maxmind-license
+                          key: MAXMIND_LICENSE_KEY
+                    - name: GEOIPUPDATE_EDITION_IDS
+                      value: {{ .Values.geoip.maxmind.editionId | quote }}
+                    - name: GEOIPUPDATE_FREQUENCY
+                      value: {{ .Values.geoip.maxmind.updateFrequency | quote }}
+                    - name: GEOIPUPDATE_DB_DIR
+                      value: /usr/share/GeoIP
+                    volumeMounts:
+                    - name: geoip-db
+                      mountPath: /usr/share/GeoIP
+
+                  # Add volume mount to Envoy container
+                  containers:
+                  - name: envoy
+                    volumeMounts:
+                    - name: geoip-db
+                      mountPath: /etc/envoy/geoip
+                      readOnly: true
+
+                  # Shared emptyDir volume for GeoIP database
+                  volumes:
+                  - name: geoip-db
+                    emptyDir: {}
+{{- end }}

@@ -2,3 +2,43 @@ clusterName: ""
 baseDomain: "dev.czi.team"
 gatewayName: "envoy-gateway"
 alternateNames: []
+
+geoip:
+  enabled: true
+  maxmind:
+    # License key will be sourced from cluster secret (MAXMIND_LICENSE_KEY)
+    # Account ID will be sourced from cluster secret (MAXMIND_ACCOUNT_ID)
+    editionId: "GeoLite2-Country"
+    # Database update frequency (in hours, 0 = download once at startup)
+    updateFrequency: 0
+  blockedCountries:
+    - "AF"
+    - "BY"
+    - "BF"
+    - "CF"
+    - "CN"
+    - "CU"
+    - "ER"
+    - "PS"
+    - "HT"
+    - "HK"
+    - "IR"
+    - "KZ"
+    - "KG"
+    - "LY"
+    - "ML"
+    - "MM"
+    - "KP"
+    - "RU"
+    - "SD"
+    - "SS"
+    - "SY"
+    - "SO"
+    - "TJ"
+    - "UA"
+    - "VE"
+    - "YE"
+
+  # HTTP status code to return for blocked requests
+  blockedStatusCode: 451
+  blockedResponseBody: "Access from your country is not permitted"
