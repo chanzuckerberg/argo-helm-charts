@@ -33,23 +33,6 @@
         },
         "enabled": {
           "type": "boolean"
-        },
-        "s3": {
-          "type": "object",
-          "properties": {
-            "awsCliImage": {
-              "type": "string"
-            },
-            "bucketPath": {
-              "type": "string"
-            },
-            "dbFileName": {
-              "type": "string"
-            },
-            "iamRoleArn": {
-              "type": "string"
-            }
-          }
         }
       }
     }

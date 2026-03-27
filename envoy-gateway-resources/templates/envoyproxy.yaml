@@ -15,20 +15,17 @@ spec:
             spec:
               template:
                 spec:
-{{- if .Values.geoip.s3.iamRoleArn }}
-                  serviceAccountName: {{ .Values.gatewayName }}-envoy
-{{- end }}
                   # Init container to download GeoIP database from S3
                   initContainers:
                   - name: geoip-db-downloader
-                    image: {{ .Values.geoip.s3.awsCliImage }}
+                    image: 533267185808.dkr.ecr.us-west-2.amazonaws.com/docker.io/central/amazon/aws-cli:2.31.28
                     command:
                     - sh
                     - -c
                     - |
                       set -e
                       mkdir -p /etc/envoy/geoip
-                      aws s3 cp {{ .Values.geoip.s3.bucketPath }} /etc/envoy/geoip/{{ .Values.geoip.s3.dbFileName }}
+                      aws s3 cp s3://argus-maxminddb/GeoLite2-Country.mmdb /etc/envoy/geoip/GeoLite2-Country.mmdb
                     volumeMounts:
                     - name: geoip-db
                       mountPath: /etc/envoy/geoip
