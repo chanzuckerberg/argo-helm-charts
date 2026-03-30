@@ -15,6 +15,7 @@
 | - [clusterName](#clusterName )       | No      | string | No         | -          | -                 |
 | - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
 | - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
+| - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
 
 ## <a name="alternateNames"></a>1. Property `envoy-gateway-resources > alternateNames`
 
@@ -97,5 +98,33 @@
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
+
+## <a name="serviceAccount"></a>6. Property `envoy-gateway-resources > serviceAccount`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | -                 |
+| - [name](#serviceAccount_name )               | No      | string | No         | -          | -                 |
+
+### <a name="serviceAccount_annotations"></a>6.1. Property `envoy-gateway-resources > serviceAccount > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+### <a name="serviceAccount_name"></a>6.2. Property `envoy-gateway-resources > serviceAccount > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ----------------------------------------------------------------------------------------------------------------------------
