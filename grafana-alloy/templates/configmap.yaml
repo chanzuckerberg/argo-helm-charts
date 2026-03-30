@@ -319,6 +319,8 @@ data:
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- $si := .Values.prometheusRemoteWrite.scrapeInterval | default "1m" }}
+    {{- $st := .Values.prometheusRemoteWrite.scrapeTimeout | default "10s" }}
     discovery.kubernetes "pods_metrics" {
       role = "pod"
     }
@@ -375,8 +377,8 @@ data:
     prometheus.scrape "pods" {
       targets         = discovery.relabel.pods_metrics.output
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
     }
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubeStateMetrics .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.enabled }}
@@ -409,8 +411,8 @@ data:
     prometheus.scrape "kube_state_metrics" {
       targets         = discovery.relabel.kube_state_metrics.output
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
       honor_labels    = true
     }
     {{- end }}
@@ -521,8 +523,8 @@ data:
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
       job_name        = "integrations/kubernetes/kubelet"
       scheme          = "https"
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
       honor_labels    = true
 
       authorization {
@@ -576,8 +578,8 @@ data:
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
       job_name        = "integrations/kubernetes/cadvisor"
       scheme          = "https"
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
       honor_labels    = true
 
       authorization {
@@ -779,9 +781,34 @@ data:
         {{- if $endpoint.sigv4 }}
         {{- if $endpoint.sigv4.enabled }}
         sigv4 {
+          {{- if $endpoint.sigv4.region }}
           region = {{ $endpoint.sigv4.region | quote }}
+          {{- end }}
+          {{- with $endpoint.sigv4.roleArn }}
+          role_arn = {{ . | quote }}
+          {{- end }}
         }
         {{- end }}
+        {{- end }}
+
+        {{- range $endpoint.writeRelabelConfigs }}
+        write_relabel_config {
+          {{- if .source_labels }}
+          source_labels = [{{- range $i, $l := .source_labels }}{{ if $i }}, {{ end }}{{ $l | quote }}{{- end }}]
+          {{- end }}
+          {{- if .regex }}
+          regex         = {{ .regex | quote }}
+          {{- end }}
+          {{- if .target_label }}
+          target_label  = {{ .target_label | quote }}
+          {{- end }}
+          {{- with .replacement }}
+          replacement   = {{ . | quote }}
+          {{- end }}
+          {{- if .action }}
+          action        = {{ .action | quote }}
+          {{- end }}
+        }
         {{- end }}
       }
 

@@ -1286,3 +1286,116 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'forward_to\s*=\s*\[prometheus\.relabel\.filter_metrics\.receiver\]'
+
+  - it: should apply prometheusRemoteWrite scrapeInterval and scrapeTimeout to pods, kube_state_metrics, kubelet, and cadvisor
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeInterval: "88s"
+        scrapeTimeout: "7s"
+        scrapeEndpoints:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "pods" \{[\s\S]*?scrape_interval = "88s"[\s\S]*?scrape_timeout  = "7s"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics" \{[\s\S]*?scrape_interval = "88s"[\s\S]*?scrape_timeout  = "7s"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job_name\s*=\s*"integrations/kubernetes/kubelet"[\s\S]*?scrape_interval = "88s"[\s\S]*?scrape_timeout  = "7s"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job_name\s*=\s*"integrations/kubernetes/cadvisor"[\s\S]*?scrape_interval = "88s"[\s\S]*?scrape_timeout  = "7s"'
+
+  - it: should render sigv4 region and role_arn for prometheusRemoteWrite when configured
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://aps.workspaces.example/api/v1/remote_write
+            sigv4:
+              enabled: true
+              region: us-west-2
+              roleArn: arn:aws:iam::123456789012:role/AMPRemoteWrite
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'region = "us-west-2"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'role_arn = "arn:aws:iam::123456789012:role/AMPRemoteWrite"'
+
+  - it: should render sigv4 role_arn without region when region is omitted
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://aps.workspaces.example/api/v1/remote_write
+            sigv4:
+              enabled: true
+              roleArn: arn:aws:iam::999888777666:role/AssumeOnly
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'role_arn = "arn:aws:iam::999888777666:role/AssumeOnly"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'region = "'
+
+  - it: should render write_relabel_config blocks for prometheusRemoteWrite writeRelabelConfigs
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+            writeRelabelConfigs:
+              - source_labels:
+                  - __name__
+                regex: "expensive_.*"
+                action: drop
+              - source_labels:
+                  - __name__
+                regex: "keep_me"
+                target_label: kept
+                replacement: "true"
+                action: replace
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'write_relabel_config'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'source_labels = \["__name__"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'regex         = "expensive_.*"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'action        = "drop"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'regex         = "keep_me"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'target_label  = "kept"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement   = "true"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'action        = "replace"'
