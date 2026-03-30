@@ -1,0 +1,153 @@
+suite: test geoip-policy.yaml
+templates:
+  - geoip-policy.yaml
+
+tests:
+  # Tests for when geoip is disabled
+  - it: should not render any documents when geoip.enabled is false
+    set:
+      geoip.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # Tests for geoip-policy.yaml (EnvoyPatchPolicy)
+  - it: should render EnvoyPatchPolicy when geoip.enabled is true
+    set:
+      geoip.enabled: true
+      gatewayName: test-gateway
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: EnvoyPatchPolicy
+      - equal:
+          path: apiVersion
+          value: gateway.envoyproxy.io/v1alpha1
+      - equal:
+          path: metadata.name
+          value: test-gateway-geoip-filter
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway
+
+  - it: should have correct targetRef pointing to Gateway
+    set:
+      geoip.enabled: true
+      gatewayName: test-gateway
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.targetRef.group
+          value: gateway.networking.k8s.io
+      - equal:
+          path: spec.targetRef.kind
+          value: Gateway
+      - equal:
+          path: spec.targetRef.name
+          value: test-gateway
+
+  - it: should use JSONPatch operation type
+    set:
+      geoip.enabled: true
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.type
+          value: JSONPatch
+
+  - it: should configure Envoy GeoIP filter with MaxMind provider
+    set:
+      geoip.enabled: true
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.jsonPatches[0].type
+          value: type.googleapis.com/envoy.config.listener.v3.Listener
+      - equal:
+          path: spec.jsonPatches[0].operation.op
+          value: add
+      - equal:
+          path: spec.jsonPatches[0].operation.value.name
+          value: envoy.filters.http.geoip
+      - equal:
+          path: spec.jsonPatches[0].operation.value.typed_config.provider.name
+          value: envoy.geoip_providers.maxmind
+
+  - it: should set correct database path in GeoIP filter
+    set:
+      geoip.enabled: true
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.jsonPatches[0].operation.value.typed_config.provider.typed_config.city_db_path
+          value: /etc/envoy/geoip/GeoLite2-Country.mmdb
+
+  - it: should configure all three geo headers
+    set:
+      geoip.enabled: true
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.jsonPatches[0].operation.value.typed_config.provider.typed_config.common_provider_config.geo_headers_to_add.country
+          value: x-envoy-geoip-country-code
+      - equal:
+          path: spec.jsonPatches[0].operation.value.typed_config.provider.typed_config.common_provider_config.geo_headers_to_add.city
+          value: x-envoy-geoip-city
+      - equal:
+          path: spec.jsonPatches[0].operation.value.typed_config.provider.typed_config.common_provider_config.geo_headers_to_add.region
+          value: x-envoy-geoip-region
+
+  # Tests for geoip-policy.yaml (EnvoyExtensionPolicy)
+  - it: should render EnvoyExtensionPolicy for Lua filter when geoip.enabled is true
+    set:
+      geoip.enabled: true
+      gatewayName: test-gateway
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: EnvoyExtensionPolicy
+      - equal:
+          path: apiVersion
+          value: gateway.envoyproxy.io/v1alpha1
+      - equal:
+          path: metadata.name
+          value: test-gateway-geoip-lua
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway
+
+  - it: should reference Gateway in EnvoyExtensionPolicy
+    set:
+      geoip.enabled: true
+      gatewayName: test-gateway
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.targetRefs[0].group
+          value: gateway.networking.k8s.io
+      - equal:
+          path: spec.targetRefs[0].kind
+          value: Gateway
+      - equal:
+          path: spec.targetRefs[0].name
+          value: test-gateway
+
+  - it: should reference ConfigMap for Lua script
+    set:
+      geoip.enabled: true
+      gatewayName: test-gateway
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.lua[0].type
+          value: ValueRef
+      - equal:
+          path: spec.lua[0].valueRef.name
+          value: test-gateway-geoip-lua
+      - equal:
+          path: spec.lua[0].valueRef.kind
+          value: ConfigMap
+      - equal:
+          path: spec.lua[0].valueRef.group
+          value: ""
+

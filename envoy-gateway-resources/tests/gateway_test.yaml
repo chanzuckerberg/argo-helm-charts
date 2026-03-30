@@ -1,0 +1,375 @@
+suite: test gateway.yaml
+templates:
+  - gateway.yaml
+
+tests:
+  # Basic document count and structure tests
+  - it: should render all gateway resources
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+      baseDomain: dev.czi.team
+    asserts:
+      - hasDocuments:
+          count: 4
+
+  - it: should render GatewayClass as first document
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: GatewayClass
+      - equal:
+          path: metadata.name
+          value: eg
+      - equal:
+          path: spec.controllerName
+          value: gateway.envoyproxy.io/gatewayclass-controller
+
+  # Gateway resource basic tests
+  - it: should render Gateway as second document
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: Gateway
+      - equal:
+          path: apiVersion
+          value: gateway.networking.k8s.io/v1
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway
+
+  - it: should use correct gateway name
+    set:
+      gatewayName: my-custom-gateway
+      clusterName: test-cluster
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-custom-gateway
+
+  - it: should have cert-manager annotation
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt-prod-eg
+
+  - it: should use eg GatewayClass
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.gatewayClassName
+          value: eg
+
+  # GeoIP infrastructure parametersRef tests
+  - it: should not include infrastructure parametersRef when geoip.enabled is false
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+      geoip.enabled: false
+    documentIndex: 1
+    asserts:
+      - notExists:
+          path: spec.infrastructure
+
+  - it: should include infrastructure parametersRef when geoip.enabled is true
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+      geoip.enabled: true
+    documentIndex: 1
+    asserts:
+      - isNotEmpty:
+          path: spec.infrastructure.parametersRef
+
+  - it: should reference EnvoyProxy resource when geoip.enabled is true
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+      geoip.enabled: true
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.infrastructure.parametersRef.group
+          value: gateway.envoyproxy.io
+      - equal:
+          path: spec.infrastructure.parametersRef.kind
+          value: EnvoyProxy
+      - equal:
+          path: spec.infrastructure.parametersRef.name
+          value: test-gateway-proxy
+
+  - it: should use correct EnvoyProxy name matching gatewayName
+    set:
+      gatewayName: my-custom-gateway
+      clusterName: test-cluster
+      geoip.enabled: true
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.infrastructure.parametersRef.name
+          value: my-custom-gateway-proxy
+
+  # Gateway listeners tests
+  - it: should have HTTP listener on port 80
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.listeners[0].name
+          value: http
+      - equal:
+          path: spec.listeners[0].protocol
+          value: HTTP
+      - equal:
+          path: spec.listeners[0].port
+          value: 80
+      - equal:
+          path: spec.listeners[0].allowedRoutes.namespaces.from
+          value: All
+
+  - it: should have HTTPS listener on port 443
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+      baseDomain: dev.czi.team
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.listeners[1].name
+          value: https
+      - equal:
+          path: spec.listeners[1].protocol
+          value: HTTPS
+      - equal:
+          path: spec.listeners[1].port
+          value: 443
+      - equal:
+          path: spec.listeners[1].allowedRoutes.namespaces.from
+          value: All
+
+  - it: should configure HTTPS hostname from clusterName and baseDomain
+    set:
+      gatewayName: test-gateway
+      clusterName: my-cluster
+      baseDomain: example.com
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.listeners[1].hostname
+          value: "*.my-cluster.example.com"
+
+  - it: should configure TLS with Terminate mode
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.listeners[1].tls.mode
+          value: Terminate
+
+  - it: should reference correct TLS secret
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.listeners[1].tls.certificateRefs[0].group
+          value: ""
+      - equal:
+          path: spec.listeners[1].tls.certificateRefs[0].kind
+          value: Secret
+      - equal:
+          path: spec.listeners[1].tls.certificateRefs[0].name
+          value: test-gateway-tls
+
+  # ClusterIssuer tests
+  - it: should render ClusterIssuer as third document
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 2
+    asserts:
+      - isKind:
+          of: ClusterIssuer
+      - equal:
+          path: metadata.name
+          value: letsencrypt-prod-eg
+
+  - it: should use Let's Encrypt production server
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.server
+          value: https://acme-v02.api.letsencrypt.org/directory
+
+  - it: should have correct email for Let's Encrypt
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.email
+          value: infra-eng@chanzuckerberg.com
+
+  - it: should configure DNS01 solver with Route53
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+      baseDomain: example.com
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.solvers[0].selector.dnsZones[0]
+          value: test-cluster.example.com
+      - exists:
+          path: spec.acme.solvers[0].dns01.route53
+
+  - it: should configure HTTP01 solver with gateway reference
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.solvers[1].http01.gatewayHTTPRoute.parentRefs[0].group
+          value: gateway.networking.k8s.io
+      - equal:
+          path: spec.acme.solvers[1].http01.gatewayHTTPRoute.parentRefs[0].name
+          value: test-gateway
+      - equal:
+          path: spec.acme.solvers[1].http01.gatewayHTTPRoute.parentRefs[0].namespace
+          value: envoy-gateway
+      - equal:
+          path: spec.acme.solvers[1].http01.gatewayHTTPRoute.parentRefs[0].kind
+          value: Gateway
+
+  # Certificate tests
+  - it: should render Certificate as fourth document
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 3
+    asserts:
+      - isKind:
+          of: Certificate
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway
+
+  - it: should use correct certificate name
+    set:
+      gatewayName: my-gateway
+      clusterName: test-cluster
+    documentIndex: 3
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-gateway-wildcard-cert
+
+  - it: should configure wildcard certificate for cluster domain
+    set:
+      gatewayName: test-gateway
+      clusterName: my-cluster
+      baseDomain: example.com
+    documentIndex: 3
+    asserts:
+      - equal:
+          path: spec.commonName
+          value: "*.my-cluster.example.com"
+      - contains:
+          path: spec.dnsNames
+          content: "*.my-cluster.example.com"
+      - contains:
+          path: spec.dnsNames
+          content: my-cluster.example.com
+
+  - it: should include alternate names in certificate
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+      baseDomain: example.com
+      alternateNames:
+        - alt1.example.com
+        - alt2.example.com
+    documentIndex: 3
+    asserts:
+      - contains:
+          path: spec.dnsNames
+          content: alt1.example.com
+      - contains:
+          path: spec.dnsNames
+          content: alt2.example.com
+
+  - it: should reference ClusterIssuer in certificate
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 3
+    asserts:
+      - equal:
+          path: spec.issuerRef.group
+          value: cert-manager.io
+      - equal:
+          path: spec.issuerRef.kind
+          value: ClusterIssuer
+      - equal:
+          path: spec.issuerRef.name
+          value: letsencrypt-prod-eg
+
+  - it: should use RSA 4096 private key
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 3
+    asserts:
+      - equal:
+          path: spec.privateKey.algorithm
+          value: RSA
+      - equal:
+          path: spec.privateKey.size
+          value: 4096
+
+  - it: should use correct secret name for certificate
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 3
+    asserts:
+      - equal:
+          path: spec.secretName
+          value: test-gateway-tls
+
+  - it: should include required usages
+    set:
+      gatewayName: test-gateway
+      clusterName: test-cluster
+    documentIndex: 3
+    asserts:
+      - contains:
+          path: spec.usages
+          content: digital signature
+      - contains:
+          path: spec.usages
+          content: key encipherment

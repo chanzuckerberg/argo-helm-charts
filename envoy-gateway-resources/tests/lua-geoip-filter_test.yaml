@@ -1,0 +1,106 @@
+suite: test lua-geoip-filter.yaml
+templates:
+  - lua-geoip-filter.yaml
+
+tests:
+  # Tests for when geoip is disabled
+  - it: should not render when geoip.enabled is false
+    set:
+      geoip.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # Tests for lua-geoip-filter.yaml (ConfigMap)
+  - it: should render ConfigMap with Lua script when geoip.enabled is true
+    set:
+      geoip.enabled: true
+      gatewayName: test-gateway
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: apiVersion
+          value: v1
+      - equal:
+          path: metadata.name
+          value: test-gateway-geoip-lua
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway
+
+  - it: should contain geoip-filter.lua data key
+    set:
+      geoip.enabled: true
+    asserts:
+      - isNotEmpty:
+          path: data["geoip-filter.lua"]
+
+  - it: should include all default blocked countries in Lua script
+    set:
+      geoip.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '\["AF"\] = true'
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '\["CN"\] = true'
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '\["RU"\] = true'
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '\["IR"\] = true'
+
+  - it: should include custom blocked countries in Lua script
+    set:
+      geoip.enabled: true
+      geoip.blockedCountries:
+        - "US"
+        - "GB"
+        - "FR"
+    asserts:
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '\["US"\] = true'
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '\["GB"\] = true'
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '\["FR"\] = true'
+
+  - it: should reference x-envoy-geoip-country-code header in Lua script
+    set:
+      geoip.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: 'x-envoy-geoip-country-code'
+
+  - it: should return HTTP 451 status in Lua script
+    set:
+      geoip.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: '":status".*451'
+
+  - it: should include blocking message in Lua script
+    set:
+      geoip.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: 'Access from your country is not permitted'
+
+  - it: should have MaxMind comment in Lua script
+    set:
+      geoip.enabled: true
+    asserts:
+      - matchRegex:
+          path: data["geoip-filter.lua"]
+          pattern: 'MaxMind GeoIP Country Blocking Filter'
