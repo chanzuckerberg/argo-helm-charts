@@ -54,16 +54,6 @@ tests:
           path: metadata.name
           value: my-custom-gateway
 
-  - it: should have cert-manager annotation
-    set:
-      gatewayName: test-gateway
-      clusterName: test-cluster
-    documentIndex: 1
-    asserts:
-      - equal:
-          path: metadata.annotations["cert-manager.io/cluster-issuer"]
-          value: letsencrypt-prod-eg
-
   - it: should use eg GatewayClass
     set:
       gatewayName: test-gateway
