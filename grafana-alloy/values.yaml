@@ -79,7 +79,7 @@ prometheusRemoteWrite:
     scrapeInterval: "15s"
     scrapeTimeout: "10s"
 
-  scrapeHostNodeExporter: # @schema description: Scrape node exporter on the local node (hostNetwork DaemonSet; e.g. 127.0.0.1:9101 for Andromeda-style port)
+  scrapeHostNodeExporter: # @schema description: Scrape node exporter on the local node for hostNetwork DaemonSet pods. Typical address 127.0.0.1:9101 (Andromeda-style port).
     enabled: false
     address: "127.0.0.1:9101"
     jobLabel: "node-exporter"

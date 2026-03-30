@@ -385,6 +385,10 @@
           "description": "Array of remote write endpoints",
           "type": "array"
         },
+        "extraFilterRelabelRules": {
+          "description": "Extra prometheus.relabel rules applied in filter_metrics before the cluster label (e.g. Andromeda-style job/service drops)",
+          "type": "array"
+        },
         "metricsFilter": {
           "description": "Metrics filtering configuration",
           "type": "object",
@@ -443,6 +447,33 @@
             }
           }
         },
+        "scrapeDcgmExporter": {
+          "description": "Scrape NVIDIA DCGM exporter endpoints (VMAgent VMServiceScrape-style)",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "namespaces": {
+              "description": "Kubernetes namespaces to search (e.g. nvidia-gpu-operator, gpu-operator)",
+              "type": "array"
+            },
+            "portName": {
+              "description": "Endpoint port name to keep",
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "type": "string"
+            },
+            "serviceAppLabelValue": {
+              "description": "Value of the Service label app=...",
+              "type": "string"
+            }
+          }
+        },
         "scrapeEndpoints": {
           "description": "Scrape Kubernetes service endpoints with prometheus.io/scrape annotations",
           "type": "object",
@@ -461,6 +492,60 @@
             }
           }
         },
+        "scrapeHostNodeExporter": {
+          "description": "Scrape node exporter on the local node for hostNetwork DaemonSet pods. Typical address 127.0.0.1:9101 (Andromeda-style port).",
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "jobLabel": {
+              "type": "string"
+            },
+            "metricRelabelConfigs": {
+              "type": "array"
+            },
+            "metricsPath": {
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "type": "string"
+            }
+          }
+        },
+        "scrapeHostNodeExporterInfinibandFast": {
+          "description": "Fast scrape of local node exporter keeping only InfiniBand metrics (VMNodeScrape-style)",
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "jobLabel": {
+              "type": "string"
+            },
+            "metricKeepRegex": {
+              "type": "string"
+            },
+            "metricsPath": {
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "type": "string"
+            }
+          }
+        },
         "scrapeInterval": {
           "description": "Scrape interval for pods, kube-state-metrics, kubelet, and cadvisor scrapes",
           "type": "string"
@@ -473,8 +558,24 @@
               "description": "Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)",
               "type": "boolean"
             },
+            "metricRelabelConfigs": {
+              "description": "Optional metric relabel rules after scraping kube-state-metrics (Prometheus-style maps with source_labels, regex, action, target_label, replacement)",
+              "type": "array"
+            },
             "namespace": {
               "description": "Namespace where kube-state-metrics service runs",
+              "type": "string"
+            },
+            "portName": {
+              "description": "Optional Kubernetes Service port name to scrape only (e.g. http for VMServiceScrape parity)",
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "description": "Optional scrape interval override (defaults to prometheusRemoteWrite.scrapeInterval)",
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "description": "Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)",
               "type": "string"
             },
             "serviceSelector": {
