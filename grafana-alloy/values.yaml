@@ -46,6 +46,8 @@ prometheusRemoteWrite:
 
   relabelNamespace: true # @schema description: When true, copy exported_namespace to namespace for metrics that have it (fixes kube-state-metrics, nginx, etc. showing namespace="loki")
 
+  extraFilterRelabelRules: [] # @schema description: Extra prometheus.relabel rules applied in filter_metrics before the cluster label (e.g. Andromeda-style job/service drops)
+
   scrapeInterval: "1m" # @schema description: Scrape interval for pods, kube-state-metrics, kubelet, and cadvisor scrapes
   scrapeTimeout: "10s" # @schema description: Scrape timeout for pods, kube-state-metrics, kubelet, and cadvisor scrapes
 
@@ -54,6 +56,10 @@ prometheusRemoteWrite:
     enabled: true # @schema description: Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
     namespace: "kube-system" # @schema description: Namespace where kube-state-metrics service runs
     serviceSelector: "app.kubernetes.io/name=kube-state-metrics" # @schema description: Label selector (key=value) to find the kube-state-metrics service
+    scrapeInterval: "" # @schema description: Optional scrape interval override (defaults to prometheusRemoteWrite.scrapeInterval)
+    scrapeTimeout: "" # @schema description: Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)
+    portName: "" # @schema description: Optional Kubernetes Service port name to scrape only (e.g. http for VMServiceScrape parity)
+    metricRelabelConfigs: [] # @schema description: Optional metric relabel rules after scraping kube-state-metrics (Prometheus-style maps with source_labels, regex, action, target_label, replacement)
 
   # Scrape kubelet for kubelet_* and kubernetes_build_info metrics.
   scrapeKubelet: # @schema description: Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)
@@ -64,6 +70,32 @@ prometheusRemoteWrite:
   scrapeCadvisor: # @schema description: Scrape cadvisor metrics from each node (container_*)
     enabled: true # @schema description: Enable scraping cadvisor metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
     shardByNode: false # @schema description: When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion
+
+  scrapeDcgmExporter: # @schema description: Scrape NVIDIA DCGM exporter endpoints (VMAgent VMServiceScrape-style)
+    enabled: false
+    namespaces: [] # @schema description: Kubernetes namespaces to search (e.g. nvidia-gpu-operator, gpu-operator)
+    serviceAppLabelValue: "nvidia-dcgm-exporter" # @schema description: Value of the Service label app=...
+    portName: "gpu-metrics" # @schema description: Endpoint port name to keep
+    scrapeInterval: "15s"
+    scrapeTimeout: "10s"
+
+  scrapeHostNodeExporter: # @schema description: Scrape node exporter on the local node (hostNetwork DaemonSet; e.g. 127.0.0.1:9101 for Andromeda-style port)
+    enabled: false
+    address: "127.0.0.1:9101"
+    jobLabel: "node-exporter"
+    metricsPath: "/metrics"
+    scrapeInterval: "15s"
+    scrapeTimeout: "10s"
+    metricRelabelConfigs: []
+
+  scrapeHostNodeExporterInfinibandFast: # @schema description: Fast scrape of local node exporter keeping only InfiniBand metrics (VMNodeScrape-style)
+    enabled: false
+    address: "127.0.0.1:9101"
+    jobLabel: "node-exporter-ib-fast"
+    metricsPath: "/metrics"
+    scrapeInterval: "5s"
+    scrapeTimeout: "4s"
+    metricKeepRegex: "node_infiniband_.+"
 
   # Scrape Kubernetes service endpoints (e.g., hubble-metrics, cilium-agent) for metrics.
   # NOTE: If you're migrating from loki-stack's Prometheus server, you should disable endpoint scraping there.

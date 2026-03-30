@@ -1399,3 +1399,223 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'action        = "replace"'
+
+  - it: should add kube_state_metrics_post when scrapeKubeStateMetrics.metricRelabelConfigs is non-empty
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeKubeStateMetrics:
+          metricRelabelConfigs:
+            - source_labels:
+                - __name__
+              regex: "kube_pod_.*"
+              action: drop
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics" \{[\s\S]*?forward_to\s*=\s*\[prometheus\.relabel\.kube_state_metrics_post\.receiver\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "kube_state_metrics_post" \{[\s\S]*?forward_to = \[prometheus\.relabel\.filter_metrics\.receiver\][\s\S]*?regex         = "kube_pod_\.\*"[\s\S]*?action        = "drop"'
+
+  - it: should not render kube_state_metrics_post when scrapeKubeStateMetrics.metricRelabelConfigs is empty
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeKubeStateMetrics:
+          metricRelabelConfigs: []
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics" \{[\s\S]*?forward_to\s*=\s*\[prometheus\.relabel\.filter_metrics\.receiver\]'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "kube_state_metrics_post"'
+
+  - it: should inject extraFilterRelabelRules into filter_metrics before the cluster label rule
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        extraFilterRelabelRules:
+          - source_labels:
+              - job
+            regex: "extra_filter_drop_me"
+            action: drop
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "filter_metrics" \{[\s\S]*?regex         = "extra_filter_drop_me"[\s\S]*?target_label = "cluster"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'source_labels = \["job"\]'
+
+  - it: should render scrapeDcgmExporter discovery and scrape when enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeDcgmExporter:
+          enabled: true
+          namespaces:
+            - gpu-operator
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "dcgm_exporter_endpoints"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'names = \["gpu-operator"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "dcgm_exporter"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__meta_kubernetes_service_label_app'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "dcgm_exporter" \{[\s\S]*?forward_to\s*=\s*\[prometheus\.relabel\.filter_metrics\.receiver\][\s\S]*?scrape_interval = "15s"[\s\S]*?scrape_timeout  = "10s"'
+
+  - it: should not render scrapeDcgmExporter when disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'dcgm_exporter_endpoints'
+
+  - it: should render scrapeHostNodeExporter with local address and NODE_NAME labels
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeHostNodeExporter:
+          enabled: true
+          address: "127.0.0.1:9101"
+          jobLabel: "node-exporter"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "host_node_exporter"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__ = "127\.0\.0\.1:9101"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job         = "node-exporter"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "host_node_exporter_labels" \{[\s\S]*?forward_to = \[prometheus\.relabel\.filter_metrics\.receiver\][\s\S]*?replacement   = sys\.env\("NODE_NAME"\)'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "host_node_exporter_post"'
+
+  - it: should add host_node_exporter_post when scrapeHostNodeExporter.metricRelabelConfigs is non-empty
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeHostNodeExporter:
+          enabled: true
+          metricRelabelConfigs:
+            - source_labels:
+                - __name__
+              regex: "node_cpu.*"
+              action: keep
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "host_node_exporter_labels" \{[\s\S]*?forward_to = \[prometheus\.relabel\.host_node_exporter_post\.receiver\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "host_node_exporter_post" \{[\s\S]*?regex         = "node_cpu\.\*"[\s\S]*?action        = "keep"'
+
+  - it: should render scrapeHostNodeExporterInfinibandFast with fast interval and metric keep regex
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeHostNodeExporterInfinibandFast:
+          enabled: true
+          metricKeepRegex: "node_infiniband_custom_.+"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "host_node_exporter_ib_fast" \{[\s\S]*?scrape_interval = "5s"[\s\S]*?scrape_timeout  = "4s"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job         = "node-exporter-ib-fast"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'regex         = "node_infiniband_custom_\.\+"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "host_node_exporter_ib_fast"'
