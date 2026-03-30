@@ -14,7 +14,6 @@
 | - [baseDomain](#baseDomain )         | No      | string | No         | -          | -                 |
 | - [clusterName](#clusterName )       | No      | string | No         | -          | -                 |
 | - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
-| - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
 
 ## <a name="alternateNames"></a>1. Property `envoy-gateway-resources > alternateNames`
 
@@ -51,51 +50,5 @@
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
-
-## <a name="geoip"></a>5. Property `envoy-gateway-resources > geoip`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                       | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ---------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [blockedCountries](#geoip_blockedCountries ) | No      | array of string | No         | -          | -                 |
-| - [enabled](#geoip_enabled )                   | No      | boolean         | No         | -          | -                 |
-
-### <a name="geoip_blockedCountries"></a>5.1. Property `envoy-gateway-resources > geoip > blockedCountries`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                         | Description |
-| ------------------------------------------------------- | ----------- |
-| [blockedCountries items](#geoip_blockedCountries_items) | -           |
-
-#### <a name="geoip_blockedCountries_items"></a>5.1.1. envoy-gateway-resources > geoip > blockedCountries > blockedCountries items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-### <a name="geoip_enabled"></a>5.2. Property `envoy-gateway-resources > geoip > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
 
 ----------------------------------------------------------------------------------------------------------------------------
