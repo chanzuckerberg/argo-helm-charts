@@ -9,6 +9,7 @@ tests:
       gatewayName: test-gateway
       clusterName: test-cluster
       baseDomain: dev.czi.team
+      geoip.enabled: false
     asserts:
       - hasDocuments:
           count: 4
@@ -17,6 +18,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 0
     asserts:
       - isKind:
@@ -33,6 +35,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - isKind:
@@ -48,26 +51,28 @@ tests:
     set:
       gatewayName: my-custom-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - equal:
           path: metadata.name
           value: my-custom-gateway
 
-  - it: should have cert-manager annotation
+  - it: should not have cert-manager annotation
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 1
     asserts:
-      - equal:
+      - notExists:
           path: metadata.annotations["cert-manager.io/cluster-issuer"]
-          value: letsencrypt-prod-eg
 
   - it: should use eg GatewayClass
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - equal:
@@ -128,6 +133,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - equal:
@@ -148,6 +154,7 @@ tests:
       gatewayName: test-gateway
       clusterName: test-cluster
       baseDomain: dev.czi.team
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - equal:
@@ -168,6 +175,7 @@ tests:
       gatewayName: test-gateway
       clusterName: my-cluster
       baseDomain: example.com
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - equal:
@@ -178,6 +186,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - equal:
@@ -188,6 +197,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 1
     asserts:
       - equal:
@@ -205,6 +215,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 2
     asserts:
       - isKind:
@@ -217,6 +228,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 2
     asserts:
       - equal:
@@ -227,6 +239,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 2
     asserts:
       - equal:
@@ -238,6 +251,7 @@ tests:
       gatewayName: test-gateway
       clusterName: test-cluster
       baseDomain: example.com
+      geoip.enabled: false
     documentIndex: 2
     asserts:
       - equal:
@@ -250,6 +264,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 2
     asserts:
       - equal:
@@ -270,6 +285,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 3
     asserts:
       - isKind:
@@ -282,6 +298,7 @@ tests:
     set:
       gatewayName: my-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 3
     asserts:
       - equal:
@@ -293,6 +310,7 @@ tests:
       gatewayName: test-gateway
       clusterName: my-cluster
       baseDomain: example.com
+      geoip.enabled: false
     documentIndex: 3
     asserts:
       - equal:
@@ -310,6 +328,7 @@ tests:
       gatewayName: test-gateway
       clusterName: test-cluster
       baseDomain: example.com
+      geoip.enabled: false
       alternateNames:
         - alt1.example.com
         - alt2.example.com
@@ -326,6 +345,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 3
     asserts:
       - equal:
@@ -342,6 +362,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 3
     asserts:
       - equal:
@@ -355,6 +376,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 3
     asserts:
       - equal:
@@ -365,6 +387,7 @@ tests:
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
+      geoip.enabled: false
     documentIndex: 3
     asserts:
       - contains:

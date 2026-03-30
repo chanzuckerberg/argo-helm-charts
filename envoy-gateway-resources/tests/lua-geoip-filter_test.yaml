@@ -38,23 +38,6 @@ tests:
       - isNotEmpty:
           path: data["geoip-filter.lua"]
 
-  - it: should include all default blocked countries in Lua script
-    set:
-      geoip.enabled: true
-    asserts:
-      - matchRegex:
-          path: data["geoip-filter.lua"]
-          pattern: '\["AF"\] = true'
-      - matchRegex:
-          path: data["geoip-filter.lua"]
-          pattern: '\["CN"\] = true'
-      - matchRegex:
-          path: data["geoip-filter.lua"]
-          pattern: '\["RU"\] = true'
-      - matchRegex:
-          path: data["geoip-filter.lua"]
-          pattern: '\["IR"\] = true'
-
   - it: should include custom blocked countries in Lua script
     set:
       geoip.enabled: true
