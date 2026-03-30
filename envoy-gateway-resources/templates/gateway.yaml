@@ -10,6 +10,8 @@ kind: Gateway
 metadata:
   name: {{ .Values.gatewayName }}
   namespace: envoy-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod-eg"
 spec:
   gatewayClassName: eg
 {{- if .Values.geoip.enabled }}
