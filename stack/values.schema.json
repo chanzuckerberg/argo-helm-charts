@@ -183,43 +183,6 @@
             "type": "string"
           }
         },
-        "kedaAutoscaling": {
-          "description": "KEDA autoscaling configuration (creates a ScaledObject instead of HPA)",
-          "type": "object",
-          "properties": {
-            "enabled": {
-              "description": "Enable KEDA autoscaling",
-              "type": "boolean"
-            },
-            "minReplicas": {
-              "description": "Minimum number of replicas",
-              "type": "integer"
-            },
-            "maxReplicas": {
-              "description": "Maximum number of replicas",
-              "type": "integer"
-            },
-            "pollingInterval": {
-              "description": "Interval in seconds to check each trigger",
-              "type": "integer"
-            },
-            "cooldownPeriod": {
-              "description": "Period in seconds to wait after the last trigger fires before scaling back to minReplicas",
-              "type": "integer"
-            },
-            "triggers": {
-              "description": "List of KEDA triggers (e.g. prometheus, cpu, memory, cron)",
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            "advanced": {
-              "description": "Advanced KEDA ScaledObject configuration",
-              "type": "object"
-            }
-          }
-        },
         "deploymentKind": {
           "description": "Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).",
           "default": "Deployment",
@@ -512,6 +475,43 @@
         "initContainers": {
           "description": "List of init containers",
           "type": "array"
+        },
+        "kedaAutoscaling": {
+          "description": "KEDA autoscaling configuration (creates a ScaledObject instead of HPA)",
+          "type": "object",
+          "properties": {
+            "advanced": {
+              "description": "Advanced KEDA ScaledObject configuration",
+              "type": "object"
+            },
+            "cooldownPeriod": {
+              "description": "Period in seconds to wait after the last trigger fires before scaling back to minReplicas",
+              "type": "integer"
+            },
+            "enabled": {
+              "description": "Enable KEDA autoscaling",
+              "type": "boolean"
+            },
+            "maxReplicas": {
+              "description": "Maximum number of replicas",
+              "type": "integer"
+            },
+            "minReplicas": {
+              "description": "Minimum number of replicas",
+              "type": "integer"
+            },
+            "pollingInterval": {
+              "description": "Interval in seconds to check each trigger",
+              "type": "integer"
+            },
+            "triggers": {
+              "description": "List of KEDA triggers (e.g. prometheus, cpu, memory, cron)",
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
         },
         "livenessProbe": {
           "description": "Liveness probe configuration",
