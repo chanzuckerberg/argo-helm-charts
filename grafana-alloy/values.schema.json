@@ -377,6 +377,10 @@
     "prometheusRemoteWrite": {
       "type": "object",
       "properties": {
+        "additionalStaticScrapes": {
+          "description": "Extra prometheus.scrape blocks with static __address__ targets (forward_to filter_metrics). Each item: jobName, optional metricsPath, scrapeInterval, scrapeTimeout, targets: [{ address, optional job, optional namespace }]",
+          "type": "array"
+        },
         "enabled": {
           "description": "Enable Prometheus remote write",
           "type": "boolean"
@@ -489,44 +493,6 @@
             "scrapeTimeout": {
               "description": "Scrape timeout for endpoint scraping",
               "type": "string"
-            }
-          }
-        },
-        "additionalStaticScrapes": {
-          "description": "Extra prometheus.scrape blocks with static targets forwarded to filter_metrics",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "jobName": {
-                "type": "string"
-              },
-              "metricsPath": {
-                "type": "string"
-              },
-              "scrapeInterval": {
-                "type": "string"
-              },
-              "scrapeTimeout": {
-                "type": "string"
-              },
-              "targets": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "address": {
-                      "type": "string"
-                    },
-                    "job": {
-                      "type": "string"
-                    },
-                    "namespace": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
             }
           }
         },
