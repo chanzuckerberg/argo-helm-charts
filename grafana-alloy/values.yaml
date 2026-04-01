@@ -107,6 +107,15 @@ prometheusRemoteWrite:
 
   additionalStaticScrapes: [] # @schema description: Extra prometheus.scrape blocks with static __address__ targets (forward_to filter_metrics). Each item: jobName, optional metricsPath, scrapeInterval, scrapeTimeout, targets: [{ address, optional job, optional namespace }]
 
+  scrapeSelfRemoteWriteMetrics: # @schema description: Scrape this Alloy process /metrics (prometheus_remote_storage_* queue debug metrics) and send to remote_write for AMP cost/ingestion dashboards
+    enabled: false
+    address: "127.0.0.1:12345"
+    jobLabel: "grafana-alloy"
+    namespace: "loki"
+    metricsPath: "/metrics"
+    scrapeInterval: ""
+    scrapeTimeout: ""
+
   # Scrape Tailscale client metrics via ExternalName Services managed by the tailscalesd syncer.
   # These Services are discovered using Kubernetes service discovery (role: service) and
   # routed through a Tailscale ProxyGroup for egress access to the tailnet.

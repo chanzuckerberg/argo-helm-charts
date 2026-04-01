@@ -1631,6 +1631,8 @@ tests:
         enabled: true
         scrapeEndpoints:
           enabled: false
+        scrapeSelfRemoteWriteMetrics:
+          enabled: false
         additionalStaticScrapes:
           - jobName: sonar-test
             scrapeInterval: 2m
@@ -1676,6 +1678,8 @@ tests:
           enabled: true
       prometheusRemoteWrite:
         enabled: false
+        scrapeSelfRemoteWriteMetrics:
+          enabled: false
         additionalStaticScrapes:
           - jobName: ghost
             targets:
@@ -1696,6 +1700,8 @@ tests:
       prometheusRemoteWrite:
         enabled: true
         scrapeEndpoints:
+          enabled: false
+        scrapeSelfRemoteWriteMetrics:
           enabled: false
         additionalStaticScrapes:
           - jobName: ghost
@@ -1719,6 +1725,8 @@ tests:
         enabled: true
         scrapeEndpoints:
           enabled: false
+        scrapeSelfRemoteWriteMetrics:
+          enabled: false
         additionalStaticScrapes: []
         endpoints:
           - url: http://prometheus.svc/api/v1/write
@@ -1737,6 +1745,8 @@ tests:
       prometheusRemoteWrite:
         enabled: true
         scrapeEndpoints:
+          enabled: false
+        scrapeSelfRemoteWriteMetrics:
           enabled: false
         scrapeInterval: 45s
         scrapeTimeout: 9s
@@ -1761,6 +1771,8 @@ tests:
       prometheusRemoteWrite:
         enabled: true
         scrapeEndpoints:
+          enabled: false
+        scrapeSelfRemoteWriteMetrics:
           enabled: false
         additionalStaticScrapes:
           - jobName: first-job
@@ -1797,6 +1809,8 @@ tests:
         enabled: true
         scrapeEndpoints:
           enabled: false
+        scrapeSelfRemoteWriteMetrics:
+          enabled: false
         additionalStaticScrapes:
           - jobName: multi
             targets:
@@ -1818,3 +1832,58 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: '"job"\s*=\s*"b-override"'
+
+  - it: should render self_remote_write scrape when scrapeSelfRemoteWriteMetrics is enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeSelfRemoteWriteMetrics:
+          enabled: true
+          address: "127.0.0.1:9999"
+          namespace: "monitoring"
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "self_remote_write"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'forward_to      = \[prometheus\.relabel\.self_remote_write_labels\.receiver\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "self_remote_write_labels"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'forward_to = \[prometheus\.relabel\.filter_metrics\.receiver\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '__address__\s*=\s*"127\.0\.0\.1:9999"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'replacement   = "monitoring"'
+
+  - it: should not render self_remote_write when scrapeSelfRemoteWriteMetrics is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeSelfRemoteWriteMetrics:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "self_remote_write"'

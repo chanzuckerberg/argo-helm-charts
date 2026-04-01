@@ -878,6 +878,37 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeSelfRemoteWriteMetrics .Values.prometheusRemoteWrite.scrapeSelfRemoteWriteMetrics.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeSelfRemoteWriteMetrics }}
+    {{- $si := .scrapeInterval | default $.Values.prometheusRemoteWrite.scrapeInterval | default "1m" }}
+    {{- $st := .scrapeTimeout | default $.Values.prometheusRemoteWrite.scrapeTimeout | default "10s" }}
+    prometheus.scrape "self_remote_write" {
+      targets = [{
+        __address__ = {{ .address | default "127.0.0.1:12345" | quote }},
+        job         = {{ .jobLabel | default "grafana-alloy" | quote }},
+      }]
+      forward_to      = [prometheus.relabel.self_remote_write_labels.receiver]
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
+      metrics_path    = {{ .metricsPath | default "/metrics" | quote }}
+    }
+
+    prometheus.relabel "self_remote_write_labels" {
+      forward_to = [prometheus.relabel.filter_metrics.receiver]
+      rule {
+        target_label  = "namespace"
+        replacement   = {{ .namespace | default "loki" | quote }}
+        action        = "replace"
+      }
+      rule {
+        target_label  = "node"
+        replacement   = sys.env("NODE_NAME")
+        action        = "replace"
+      }
+    }
+    {{- end }}
+    {{- end }}
+
     prometheus.relabel "filter_metrics" {
       {{- if .Values.prometheusRemoteWrite.enabled }}
       forward_to = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
