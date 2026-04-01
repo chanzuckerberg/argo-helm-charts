@@ -492,6 +492,44 @@
             }
           }
         },
+        "additionalStaticScrapes": {
+          "description": "Extra prometheus.scrape blocks with static targets forwarded to filter_metrics",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "jobName": {
+                "type": "string"
+              },
+              "metricsPath": {
+                "type": "string"
+              },
+              "scrapeInterval": {
+                "type": "string"
+              },
+              "scrapeTimeout": {
+                "type": "string"
+              },
+              "targets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "type": "string"
+                    },
+                    "job": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "scrapeHostNodeExporter": {
           "description": "Scrape node exporter on the local node for hostNetwork DaemonSet pods. Typical address 127.0.0.1:9101 (Andromeda-style port).",
           "type": "object",

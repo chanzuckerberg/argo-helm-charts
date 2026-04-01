@@ -502,6 +502,31 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- $prw := .Values.prometheusRemoteWrite }}
+    {{- $defaultSi := $prw.scrapeInterval | default "1m" }}
+    {{- $defaultSt := $prw.scrapeTimeout | default "10s" }}
+    {{- range $idx, $scrape := ($prw.additionalStaticScrapes | default list) }}
+    prometheus.scrape "additional_static_{{ $idx }}" {
+      targets = [
+{{- range $t := $scrape.targets }}
+        {
+          "__address__" = {{ $t.address | quote }},
+          "job"         = {{ coalesce $t.job $scrape.jobName (printf "additional_static_%d" $idx) | quote }},
+{{- if $t.namespace }}
+          "namespace"   = {{ $t.namespace | quote }},
+{{- end }}
+        },
+{{- end }}
+      ]
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ $scrape.scrapeInterval | default $defaultSi | quote }}
+      scrape_timeout  = {{ $scrape.scrapeTimeout | default $defaultSt | quote }}
+      metrics_path    = {{ $scrape.metricsPath | default "/metrics" | quote }}
+    }
+    {{- end }}
+    {{- end }}
+
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}
     discovery.kubernetes "kubelet" {
       role = "node"

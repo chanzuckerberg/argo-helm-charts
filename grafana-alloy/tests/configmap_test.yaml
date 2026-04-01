@@ -1619,3 +1619,202 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'prometheus\.relabel "host_node_exporter_ib_fast"'
+
+  - it: should render prometheus.scrape additional_static blocks for additionalStaticScrapes
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        additionalStaticScrapes:
+          - jobName: sonar-test
+            scrapeInterval: 2m
+            scrapeTimeout: 20s
+            metricsPath: /custom/metrics
+            targets:
+              - address: svc.ns.svc.cluster.local:9090
+                namespace: ns
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "additional_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"__address__"\s*=\s*"svc\.ns\.svc\.cluster\.local:9090"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"job"\s*=\s*"sonar-test"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"namespace"\s*=\s*"ns"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scrape_interval = "2m"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'scrape_timeout  = "20s"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'metrics_path    = "/custom/metrics"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'forward_to      = \[prometheus\.relabel\.filter_metrics\.receiver\]'
+
+  - it: should not render additional_static scrapes when prometheusRemoteWrite is disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: false
+        additionalStaticScrapes:
+          - jobName: ghost
+            targets:
+              - address: ghost:9090
+        endpoints: []
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "additional_static_'
+
+  - it: should not render additional_static scrapes when metrics are disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: false
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        additionalStaticScrapes:
+          - jobName: ghost
+            targets:
+              - address: ghost:9090
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "additional_static_'
+
+  - it: should not render additional_static when additionalStaticScrapes is empty
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        additionalStaticScrapes: []
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "additional_static_'
+
+  - it: should use prometheusRemoteWrite scrape defaults when additionalStaticScrape omits interval timeout and metricsPath
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        scrapeInterval: 45s
+        scrapeTimeout: 9s
+        additionalStaticScrapes:
+          - jobName: defaults-job
+            targets:
+              - address: 10.0.0.1:9090
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "additional_static_0" \{[\s\S]*?scrape_interval = "45s"[\s\S]*?scrape_timeout  = "9s"[\s\S]*?metrics_path    = "/metrics"'
+
+  - it: should render additional_static_1 and per-target job overriding jobName
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        additionalStaticScrapes:
+          - jobName: first-job
+            targets:
+              - address: first:9090
+          - jobName: ignored-for-second
+            targets:
+              - address: second:9090
+                job: per-target-job
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "additional_static_0"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "additional_static_1"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"__address__"\s*=\s*"first:9090"[\s\S]*?"job"\s*=\s*"first-job"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"__address__"\s*=\s*"second:9090"[\s\S]*?"job"\s*=\s*"per-target-job"'
+
+  - it: should render multiple targets in one additional_static scrape
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        additionalStaticScrapes:
+          - jobName: multi
+            targets:
+              - address: a.metrics.svc:8080
+              - address: b.metrics.svc:8080
+                job: b-override
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"__address__"\s*=\s*"a\.metrics\.svc:8080"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"__address__"\s*=\s*"b\.metrics\.svc:8080"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"job"\s*=\s*"multi"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"job"\s*=\s*"b-override"'

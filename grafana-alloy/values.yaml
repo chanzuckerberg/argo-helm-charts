@@ -105,6 +105,8 @@ prometheusRemoteWrite:
     scrapeInterval: "1m" # @schema description: Scrape interval for endpoint scraping
     scrapeTimeout: "10s" # @schema description: Scrape timeout for endpoint scraping
 
+  additionalStaticScrapes: [] # @schema description: Extra prometheus.scrape blocks with static __address__ targets (forward_to filter_metrics). Each item: jobName, optional metricsPath, scrapeInterval, scrapeTimeout, targets: [{ address, optional job, optional namespace }]
+
   # Scrape Tailscale client metrics via ExternalName Services managed by the tailscalesd syncer.
   # These Services are discovered using Kubernetes service discovery (role: service) and
   # routed through a Tailscale ProxyGroup for egress access to the tailnet.
