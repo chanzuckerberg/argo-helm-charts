@@ -377,6 +377,13 @@
     "prometheusRemoteWrite": {
       "type": "object",
       "properties": {
+        "additionalPodDiscoveryScrapes": {
+          "type": "array"
+        },
+        "additionalStaticScrapes": {
+          "description": "Extra prometheus.scrape blocks with static __address__ targets (forward_to filter_metrics). Each item: jobName, optional metricsPath, scrapeInterval, scrapeTimeout, targets: [{ address, optional job, optional namespace }]",
+          "type": "array"
+        },
         "enabled": {
           "description": "Enable Prometheus remote write",
           "type": "boolean"
@@ -388,10 +395,6 @@
         "extraFilterRelabelRules": {
           "description": "Extra prometheus.relabel rules applied in filter_metrics before the cluster label (e.g. Andromeda-style job/service drops)",
           "type": "array"
-        },
-        "stripDiscoveryJobLastSegment": {
-          "description": "When true, strip job to last / segment for built-in discovery scrapes before filter_metrics",
-          "type": "boolean"
         },
         "metricsFilter": {
           "description": "Metrics filtering configuration",
@@ -492,108 +495,6 @@
             },
             "scrapeTimeout": {
               "description": "Scrape timeout for endpoint scraping",
-              "type": "string"
-            }
-          }
-        },
-        "additionalStaticScrapes": {
-          "description": "Extra prometheus.scrape blocks with static targets forwarded to filter_metrics",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "jobName": {
-                "type": "string"
-              },
-              "metricsPath": {
-                "type": "string"
-              },
-              "scrapeInterval": {
-                "type": "string"
-              },
-              "scrapeTimeout": {
-                "type": "string"
-              },
-              "targets": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "address": {
-                      "type": "string"
-                    },
-                    "job": {
-                      "type": "string"
-                    },
-                    "namespace": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "additionalPodDiscoveryScrapes": {
-          "description": "Dynamic pod discovery scrapes using node-sharded Kubernetes discovery",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["jobName", "matchLabels", "port"],
-            "properties": {
-              "jobName": {
-                "type": "string"
-              },
-              "namespaces": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "matchLabels": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "string"
-                }
-              },
-              "port": {
-                "type": "string"
-              },
-              "path": {
-                "type": "string"
-              },
-              "scrapeInterval": {
-                "type": "string"
-              },
-              "scrapeTimeout": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "scrapeSelfRemoteWriteMetrics": {
-          "description": "Scrape Alloy /metrics for prometheus_remote_storage_* debug metrics",
-          "type": "object",
-          "properties": {
-            "address": {
-              "type": "string"
-            },
-            "enabled": {
-              "type": "boolean"
-            },
-            "jobLabel": {
-              "type": "string"
-            },
-            "metricsPath": {
-              "type": "string"
-            },
-            "namespace": {
-              "type": "string"
-            },
-            "scrapeInterval": {
-              "type": "string"
-            },
-            "scrapeTimeout": {
               "type": "string"
             }
           }
@@ -701,6 +602,33 @@
             "shardByNode": {
               "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion",
               "type": "boolean"
+            }
+          }
+        },
+        "scrapeSelfRemoteWriteMetrics": {
+          "description": "Scrape this Alloy process /metrics (prometheus_remote_storage_* queue debug metrics) and send to remote_write for AMP cost/ingestion dashboards",
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "jobLabel": {
+              "type": "string"
+            },
+            "metricsPath": {
+              "type": "string"
+            },
+            "namespace": {
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "type": "string"
             }
           }
         },
