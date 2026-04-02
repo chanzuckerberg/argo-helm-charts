@@ -50,6 +50,7 @@ nodepool:
             - p4d
             - p4de
             - p5
+            - p5ens
         - key: karpenter.k8s.aws/instance-gpu-count
           operator: NotIn
           values:
