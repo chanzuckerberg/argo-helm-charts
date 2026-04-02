@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.33.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.32.0...stack-v2.33.0) (2026-04-02)
+
+
+### Features
+
+* **stack:** support Helm templating in KEDA trigger metadata ([#427](https://github.com/chanzuckerberg/argo-helm-charts/issues/427)) ([1af2f49](https://github.com/chanzuckerberg/argo-helm-charts/commit/1af2f499c9f6aae9a516cc4fc15b674889cf84cd))
+
 ## [2.32.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.31.0...stack-v2.32.0) (2026-04-02)
 
 
