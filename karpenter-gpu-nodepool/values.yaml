@@ -40,6 +40,7 @@ nodepool:
           operator: In
           values:
             - on-demand
+            - reserved
         - key: karpenter.k8s.aws/instance-family
           operator: In
           values:
@@ -50,6 +51,7 @@ nodepool:
             - p4d
             - p4de
             - p5
+            - p5en
             - p5ens
         - key: karpenter.k8s.aws/instance-gpu-count
           operator: NotIn

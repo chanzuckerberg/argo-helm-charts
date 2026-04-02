@@ -1,0 +1,8 @@
+nodepool:
+  enabled: true
+  template:
+    spec:
+      nodeClassRef:
+        name: odcr
+nvidiaDriver:
+  enabled: true

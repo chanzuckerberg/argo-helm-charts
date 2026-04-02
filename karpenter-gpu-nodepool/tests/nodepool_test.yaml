@@ -147,6 +147,7 @@ tests:
               - p4d
               - p4de
               - p5
+              - p5en
               - p5ens
 
   - it: should have GPU count requirement
@@ -168,6 +169,7 @@ tests:
             operator: In
             values:
               - on-demand
+              - reserved
 
   - it: should allow custom requirements
     set:
