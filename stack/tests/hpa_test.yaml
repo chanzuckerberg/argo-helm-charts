@@ -26,6 +26,30 @@ tests:
           path: spec.maxReplicas
           value: 10
 
+  - it: should not create HPA when kedaAutoscaling is enabled
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+          kedaAutoscaling:
+            enabled: true
+            minReplicas: 1
+            maxReplicas: 5
+            pollingInterval: 30
+            cooldownPeriod: 300
+            triggers:
+              - type: prometheus
+                metadata:
+                  serverAddress: http://prometheus.svc
+                  query: some_metric
+                  threshold: "5"
+    asserts:
+      - hasDocuments:
+          count: 0
+
   - it: should include argus/env-name label when argusMetadata.envName is set
     set:
       global:

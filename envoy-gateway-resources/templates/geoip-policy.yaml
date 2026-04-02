@@ -1,0 +1,55 @@
+{{- if .Values.geoip.enabled }}
+---
+# EnvoyPatchPolicy to inject native Envoy GeoIP filter
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyPatchPolicy
+metadata:
+  name: {{ .Values.gatewayName }}-geoip-filter
+  namespace: envoy-gateway
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ .Values.gatewayName }}
+  type: JSONPatch
+  jsonPatches:
+  - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+    # Patch the HTTP connection manager to add GeoIP filter
+    name: envoy-gateway/{{ .Values.gatewayName }}/http
+    operation:
+      op: add
+      path: "/default_filter_chain/filters/0/typed_config/http_filters/0"
+      value:
+        name: envoy.filters.http.geoip
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.geoip.v3.Geoip
+          provider:
+            name: envoy.geoip_providers.maxmind
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.geoip_providers.maxmind.v3.MaxMindConfig
+              common_provider_config:
+                geo_headers_to_add:
+                  country: "x-envoy-geoip-country-code"
+                  city: "x-envoy-geoip-city"
+                  region: "x-envoy-geoip-region"
+              city_db_path: /etc/envoy/geoip/GeoLite2-Country.mmdb
+---
+# EnvoyExtensionPolicy for Lua country blocking filter
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyExtensionPolicy
+metadata:
+  name: {{ .Values.gatewayName }}-geoip-lua
+  namespace: envoy-gateway
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ .Values.gatewayName }}
+
+  lua:
+  - type: ValueRef
+    valueRef:
+      name: {{ .Values.gatewayName }}-geoip-lua
+      kind: ConfigMap
+      group: ""
+{{- end }}

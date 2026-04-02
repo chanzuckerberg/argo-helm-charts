@@ -55,16 +55,22 @@ spec:
       replicas: {{ .Values.replicas }}
       template:
         spec:
+          {{- $hasSso := eq .Values.accessMode "sso" }}
+          {{- $hasExtra := gt (len .Values.extraSecretVolumes) 0 }}
+          {{- if and (not $hasSso) (not $hasExtra) }}
+          volumes: []
+          {{- else }}
           volumes:
-            {{- if eq .Values.accessMode "sso" }}
+            {{- if $hasSso }}
             - name: secrets
               secret:
                 secretName: {{ .Values.grafanaName }}-sso-secret
                 defaultMode: 0444
             {{- end }}
-            {{- if gt (len .Values.extraSecretVolumes) 0 }}
+            {{- if $hasExtra }}
             {{- toYaml .Values.extraSecretVolumes | nindent 12 }}
             {{- end }}
+          {{- end }}
           containers:
             - name: grafana
               image: {{ .Values.grafanaBaseImage }}
@@ -75,8 +81,11 @@ spec:
                   value: {{ $value | quote }}
                 {{- end }}
               {{- end }}
+              {{- if and (not $hasSso) (not $hasExtra) }}
+              volumeMounts: []
+              {{- else }}
               volumeMounts:
-                {{- if eq .Values.accessMode "sso" }}
+                {{- if $hasSso }}
                 - name: secrets
                   mountPath: /etc/secrets
                   readOnly: true
@@ -86,6 +95,7 @@ spec:
                   mountPath: {{ printf "/etc/%s" $extraVolume.name }}
                   readOnly: true
                 {{- end }}
+              {{- end }}
   service:
     spec:
       ports:

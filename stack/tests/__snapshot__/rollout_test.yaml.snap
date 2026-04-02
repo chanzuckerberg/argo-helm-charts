@@ -14,7 +14,6 @@ should work and render a Rollout with default values:
         helm.sh/chart: stack-0.1.0-test
       name: release-name-stack-service1
     spec:
-      replicas: 2
       revisionHistoryLimit: 3
       selector:
         matchLabels:
@@ -121,7 +120,6 @@ should work and render a Rollout with supplied values:
         helm.sh/chart: stack-0.1.0-test
       name: release-name-stack-service1
     spec:
-      replicas: 2
       revisionHistoryLimit: 3
       selector:
         matchLabels:
