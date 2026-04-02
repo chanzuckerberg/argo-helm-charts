@@ -147,6 +147,7 @@ tests:
               - p4d
               - p4de
               - p5
+              - p5ens
 
   - it: should have GPU count requirement
     asserts:
