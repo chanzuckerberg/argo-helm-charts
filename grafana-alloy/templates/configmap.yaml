@@ -322,6 +322,11 @@ data:
     {{- $si := .Values.prometheusRemoteWrite.scrapeInterval | default "1m" }}
     {{- $st := .Values.prometheusRemoteWrite.scrapeTimeout | default "10s" }}
     {{- $stripJob := .Values.prometheusRemoteWrite.stripDiscoveryJobLastSegment | default true }}
+    {{- $scrapeAnnotatedPodsEnabled := true }}
+    {{- if and .Values.prometheusRemoteWrite.scrapeAnnotatedPods (hasKey .Values.prometheusRemoteWrite.scrapeAnnotatedPods "enabled") }}
+    {{- $scrapeAnnotatedPodsEnabled = .Values.prometheusRemoteWrite.scrapeAnnotatedPods.enabled }}
+    {{- end }}
+    {{- if $scrapeAnnotatedPodsEnabled }}
     discovery.kubernetes "pods_metrics" {
       role = "pod"
     }
@@ -385,6 +390,7 @@ data:
       scrape_interval = {{ $si | quote }}
       scrape_timeout  = {{ $st | quote }}
     }
+    {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubeStateMetrics .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.enabled }}
     {{- $ksmMetricRelabel := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.metricRelabelConfigs | default list }}
