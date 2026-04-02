@@ -28,7 +28,22 @@ spec:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   triggers:
-    {{- toYaml .Values.kedaAutoscaling.triggers | nindent 4 }}
+    {{- range .Values.kedaAutoscaling.triggers }}
+    - type: {{ .type }}
+      {{- if .metadata }}
+      metadata:
+        {{- range $k, $v := .metadata }}
+        {{ $k }}: {{ tpl (toString $v) $global | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if .authenticationRef }}
+      authenticationRef:
+        {{- toYaml .authenticationRef | nindent 8 }}
+      {{- end }}
+      {{- if .metricType }}
+      metricType: {{ .metricType }}
+      {{- end }}
+    {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
