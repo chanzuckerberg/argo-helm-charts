@@ -319,6 +319,8 @@ data:
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- $si := .Values.prometheusRemoteWrite.scrapeInterval | default "1m" }}
+    {{- $st := .Values.prometheusRemoteWrite.scrapeTimeout | default "10s" }}
     discovery.kubernetes "pods_metrics" {
       role = "pod"
     }
@@ -375,11 +377,14 @@ data:
     prometheus.scrape "pods" {
       targets         = discovery.relabel.pods_metrics.output
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
     }
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubeStateMetrics .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.enabled }}
+    {{- $ksmMetricRelabel := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.metricRelabelConfigs | default list }}
+    {{- $ksmSi := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.scrapeInterval | default $si }}
+    {{- $ksmSt := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.scrapeTimeout | default $st }}
     discovery.kubernetes "kube_state_metrics_svc" {
       role = "service"
       namespaces {
@@ -404,15 +409,30 @@ data:
         separator     = "/"
         target_label  = "job"
       }
+
+      {{- with .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.portName }}
+      rule {
+        source_labels = ["__meta_kubernetes_service_port_name"]
+        regex         = {{ . | quote }}
+        action        = "keep"
+      }
+      {{- end }}
     }
 
     prometheus.scrape "kube_state_metrics" {
       targets         = discovery.relabel.kube_state_metrics.output
-      forward_to      = [prometheus.relabel.filter_metrics.receiver]
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      forward_to      = [{{ if gt (len $ksmMetricRelabel) 0 }}prometheus.relabel.kube_state_metrics_post.receiver{{ else }}prometheus.relabel.filter_metrics.receiver{{ end }}]
+      scrape_interval = {{ $ksmSi | quote }}
+      scrape_timeout  = {{ $ksmSt | quote }}
       honor_labels    = true
     }
+
+    {{- if gt (len $ksmMetricRelabel) 0 }}
+    prometheus.relabel "kube_state_metrics_post" {
+      forward_to = [prometheus.relabel.filter_metrics.receiver]
+{{ include "grafana-alloy.promRelabelRules" $ksmMetricRelabel }}
+    }
+    {{- end }}
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
@@ -482,6 +502,31 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- $prw := .Values.prometheusRemoteWrite }}
+    {{- $defaultSi := $prw.scrapeInterval | default "1m" }}
+    {{- $defaultSt := $prw.scrapeTimeout | default "10s" }}
+    {{- range $idx, $scrape := ($prw.additionalStaticScrapes | default list) }}
+    prometheus.scrape "additional_static_{{ $idx }}" {
+      targets = [
+{{- range $t := $scrape.targets }}
+        {
+          "__address__" = {{ $t.address | quote }},
+          "job"         = {{ coalesce $t.job $scrape.jobName (printf "additional_static_%d" $idx) | quote }},
+{{- if $t.namespace }}
+          "namespace"   = {{ $t.namespace | quote }},
+{{- end }}
+        },
+{{- end }}
+      ]
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ $scrape.scrapeInterval | default $defaultSi | quote }}
+      scrape_timeout  = {{ $scrape.scrapeTimeout | default $defaultSt | quote }}
+      metrics_path    = {{ $scrape.metricsPath | default "/metrics" | quote }}
+    }
+    {{- end }}
+    {{- end }}
+
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}
     discovery.kubernetes "kubelet" {
       role = "node"
@@ -521,8 +566,8 @@ data:
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
       job_name        = "integrations/kubernetes/kubelet"
       scheme          = "https"
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
       honor_labels    = true
 
       authorization {
@@ -576,8 +621,8 @@ data:
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
       job_name        = "integrations/kubernetes/cadvisor"
       scheme          = "https"
-      scrape_interval = "1m"
-      scrape_timeout  = "10s"
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
       honor_labels    = true
 
       authorization {
@@ -590,6 +635,118 @@ data:
         insecure_skip_verify = true
       }
     }
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeDcgmExporter .Values.prometheusRemoteWrite.scrapeDcgmExporter.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeDcgmExporter }}
+    discovery.kubernetes "dcgm_exporter_endpoints" {
+      role = "endpoints"
+      namespaces {
+        names = [{{ range $i, $ns := .namespaces }}{{ if $i }}, {{ end }}{{ $ns | quote }}{{ end }}]
+      }
+    }
+
+    discovery.relabel "dcgm_exporter" {
+      targets = discovery.kubernetes.dcgm_exporter_endpoints.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_service_label_app"]
+        regex         = {{ .serviceAppLabelValue | default "nvidia-dcgm-exporter" | quote }}
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_endpoint_port_name"]
+        regex         = {{ .portName | default "gpu-metrics" | quote }}
+        action        = "keep"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
+        separator     = "/"
+        target_label  = "job"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_endpoint_node_name"]
+        target_label  = "node"
+      }
+    }
+
+    prometheus.scrape "dcgm_exporter" {
+      targets         = discovery.relabel.dcgm_exporter.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ .scrapeInterval | default "15s" | quote }}
+      scrape_timeout  = {{ .scrapeTimeout | default "10s" | quote }}
+      honor_labels    = true
+    }
+    {{- end }}
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeHostNodeExporter .Values.prometheusRemoteWrite.scrapeHostNodeExporter.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeHostNodeExporter }}
+    {{- $hneRelabel := .metricRelabelConfigs | default list }}
+    prometheus.scrape "host_node_exporter" {
+      targets = [{
+        __address__ = {{ .address | default "127.0.0.1:9101" | quote }},
+        job         = {{ .jobLabel | default "node-exporter" | quote }},
+      }]
+      forward_to      = [prometheus.relabel.host_node_exporter_labels.receiver]
+      scrape_interval = {{ .scrapeInterval | default "15s" | quote }}
+      scrape_timeout  = {{ .scrapeTimeout | default "10s" | quote }}
+      metrics_path    = {{ .metricsPath | default "/metrics" | quote }}
+    }
+
+    prometheus.relabel "host_node_exporter_labels" {
+      forward_to = [{{ if gt (len $hneRelabel) 0 }}prometheus.relabel.host_node_exporter_post.receiver{{ else }}prometheus.relabel.filter_metrics.receiver{{ end }}]
+      rule {
+        target_label  = "node"
+        replacement   = sys.env("NODE_NAME")
+        action        = "replace"
+      }
+      rule {
+        target_label  = "k8s_node"
+        replacement   = sys.env("NODE_NAME")
+        action        = "replace"
+      }
+    }
+
+    {{- if gt (len $hneRelabel) 0 }}
+    prometheus.relabel "host_node_exporter_post" {
+      forward_to = [prometheus.relabel.filter_metrics.receiver]
+{{ include "grafana-alloy.promRelabelRules" $hneRelabel }}
+    }
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeHostNodeExporterInfinibandFast .Values.prometheusRemoteWrite.scrapeHostNodeExporterInfinibandFast.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeHostNodeExporterInfinibandFast }}
+    prometheus.scrape "host_node_exporter_ib_fast" {
+      targets = [{
+        __address__ = {{ .address | default "127.0.0.1:9101" | quote }},
+        job         = {{ .jobLabel | default "node-exporter-ib-fast" | quote }},
+      }]
+      forward_to      = [prometheus.relabel.host_node_exporter_ib_fast.receiver]
+      scrape_interval = {{ .scrapeInterval | default "5s" | quote }}
+      scrape_timeout  = {{ .scrapeTimeout | default "4s" | quote }}
+      metrics_path    = {{ .metricsPath | default "/metrics" | quote }}
+    }
+
+    prometheus.relabel "host_node_exporter_ib_fast" {
+      forward_to = [prometheus.relabel.filter_metrics.receiver]
+      rule {
+        target_label  = "node"
+        replacement   = sys.env("NODE_NAME")
+        action        = "replace"
+      }
+      rule {
+        source_labels = ["__name__"]
+        regex         = {{ .metricKeepRegex | default "node_infiniband_.+" | quote }}
+        action        = "keep"
+      }
+    }
+    {{- end }}
     {{- end }}
 
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeBlackboxStatic .Values.prometheusRemoteWrite.scrapeBlackboxStatic.enabled }}
@@ -721,9 +878,45 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeSelfRemoteWriteMetrics .Values.prometheusRemoteWrite.scrapeSelfRemoteWriteMetrics.enabled }}
+    {{- with .Values.prometheusRemoteWrite.scrapeSelfRemoteWriteMetrics }}
+    {{- $si := .scrapeInterval | default $.Values.prometheusRemoteWrite.scrapeInterval | default "1m" }}
+    {{- $st := .scrapeTimeout | default $.Values.prometheusRemoteWrite.scrapeTimeout | default "10s" }}
+    prometheus.scrape "self_remote_write" {
+      targets = [{
+        __address__ = {{ .address | default "127.0.0.1:12345" | quote }},
+        job         = {{ .jobLabel | default "grafana-alloy" | quote }},
+      }]
+      forward_to      = [prometheus.relabel.self_remote_write_labels.receiver]
+      scrape_interval = {{ $si | quote }}
+      scrape_timeout  = {{ $st | quote }}
+      metrics_path    = {{ .metricsPath | default "/metrics" | quote }}
+    }
+
+    prometheus.relabel "self_remote_write_labels" {
+      forward_to = [prometheus.relabel.filter_metrics.receiver]
+      rule {
+        target_label  = "namespace"
+        replacement   = {{ .namespace | default "loki" | quote }}
+        action        = "replace"
+      }
+      rule {
+        target_label  = "node"
+        replacement   = sys.env("NODE_NAME")
+        action        = "replace"
+      }
+    }
+    {{- end }}
+    {{- end }}
+
     prometheus.relabel "filter_metrics" {
       {{- if .Values.prometheusRemoteWrite.enabled }}
       forward_to = [{{ range $idx, $endpoint := .Values.prometheusRemoteWrite.endpoints }}{{ if $idx }}, {{ end }}prometheus.remote_write.endpoint_{{ $idx }}.receiver{{ end }}]
+      {{- end }}
+
+      {{- $extraFilter := .Values.prometheusRemoteWrite.extraFilterRelabelRules | default list }}
+      {{- if gt (len $extraFilter) 0 }}
+{{ include "grafana-alloy.promRelabelRules" $extraFilter }}
       {{- end }}
 
       rule {
@@ -779,9 +972,34 @@ data:
         {{- if $endpoint.sigv4 }}
         {{- if $endpoint.sigv4.enabled }}
         sigv4 {
+          {{- if $endpoint.sigv4.region }}
           region = {{ $endpoint.sigv4.region | quote }}
+          {{- end }}
+          {{- with $endpoint.sigv4.roleArn }}
+          role_arn = {{ . | quote }}
+          {{- end }}
         }
         {{- end }}
+        {{- end }}
+
+        {{- range $endpoint.writeRelabelConfigs }}
+        write_relabel_config {
+          {{- if .source_labels }}
+          source_labels = [{{- range $i, $l := .source_labels }}{{ if $i }}, {{ end }}{{ $l | quote }}{{- end }}]
+          {{- end }}
+          {{- if .regex }}
+          regex         = {{ .regex | quote }}
+          {{- end }}
+          {{- if .target_label }}
+          target_label  = {{ .target_label | quote }}
+          {{- end }}
+          {{- with .replacement }}
+          replacement   = {{ . | quote }}
+          {{- end }}
+          {{- if .action }}
+          action        = {{ .action | quote }}
+          {{- end }}
+        }
         {{- end }}
       }
 
