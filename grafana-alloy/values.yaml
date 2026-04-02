@@ -107,6 +107,8 @@ prometheusRemoteWrite:
 
   additionalStaticScrapes: [] # @schema description: Extra prometheus.scrape blocks with static __address__ targets (forward_to filter_metrics). Each item: jobName, optional metricsPath, scrapeInterval, scrapeTimeout, targets: [{ address, optional job, optional namespace }]
 
+  additionalPodDiscoveryScrapes: []
+
   scrapeSelfRemoteWriteMetrics: # @schema description: Scrape this Alloy process /metrics (prometheus_remote_storage_* queue debug metrics) and send to remote_write for AMP cost/ingestion dashboards
     enabled: false
     address: "127.0.0.1:12345"

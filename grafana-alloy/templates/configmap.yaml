@@ -321,6 +321,7 @@ data:
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
     {{- $si := .Values.prometheusRemoteWrite.scrapeInterval | default "1m" }}
     {{- $st := .Values.prometheusRemoteWrite.scrapeTimeout | default "10s" }}
+    {{- $stripJob := .Values.prometheusRemoteWrite.stripDiscoveryJobLastSegment | default true }}
     discovery.kubernetes "pods_metrics" {
       role = "pod"
     }
@@ -372,6 +373,10 @@ data:
         source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
         target_label  = "job"
       }
+
+      {{- if $stripJob }}
+{{- include "grafana-alloy.stripDiscoveryJobLastSegmentRule" . | nindent 6 }}
+      {{- end }}
     }
 
     prometheus.scrape "pods" {
@@ -409,6 +414,10 @@ data:
         separator     = "/"
         target_label  = "job"
       }
+
+      {{- if $stripJob }}
+{{- include "grafana-alloy.stripDiscoveryJobLastSegmentRule" . | nindent 6 }}
+      {{- end }}
 
       {{- with .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.portName }}
       rule {
@@ -486,6 +495,10 @@ data:
         target_label  = "job"
       }
 
+      {{- if $stripJob }}
+{{- include "grafana-alloy.stripDiscoveryJobLastSegmentRule" . | nindent 6 }}
+      {{- end }}
+
       rule {
         source_labels = ["__meta_kubernetes_endpoint_node_name"]
         target_label  = "node"
@@ -527,6 +540,75 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- $prw := .Values.prometheusRemoteWrite }}
+    {{- $defaultSi := $prw.scrapeInterval | default "1m" }}
+    {{- $defaultSt := $prw.scrapeTimeout | default "10s" }}
+    {{- $podScrapes := $prw.additionalPodDiscoveryScrapes | default list }}
+    {{- if $podScrapes }}
+    discovery.kubernetes "additional_pods" {
+      role = "pod"
+      selectors {
+        role  = "pod"
+        field = join("", ["spec.nodeName=", coalesce(sys.env("NODE_NAME"), sys.env("HOSTNAME"), constants.hostname)])
+      }
+    }
+    {{- range $idx, $scrape := $podScrapes }}
+    discovery.relabel "pod_scrape_{{ $idx }}" {
+      targets = discovery.kubernetes.additional_pods.targets
+      {{- if $scrape.namespaces }}
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        regex         = {{ join "|" $scrape.namespaces | quote }}
+        action        = "keep"
+      }
+      {{- end }}
+      {{- range $key, $val := $scrape.matchLabels }}
+      rule {
+        source_labels = [{{ printf "__meta_kubernetes_pod_label_%s" (include "grafana-alloy.normalizeLabel" $key) | quote }}]
+        regex         = {{ $val | quote }}
+        action        = "keep"
+      }
+      {{- end }}
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_port_number"]
+        regex         = {{ $scrape.port | quote }}
+        action        = "keep"
+      }
+      rule {
+        source_labels = ["__address__"]
+        regex         = "([^:]+)(?::\\d+)?"
+        replacement   = join("", ["$1", ":", {{ $scrape.port | quote }}])
+        target_label  = "__address__"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+      }
+      rule {
+        target_label  = "job"
+        replacement   = {{ $scrape.jobName | quote }}
+      }
+    }
+    prometheus.scrape "pod_scrape_{{ $idx }}" {
+      targets         = discovery.relabel.pod_scrape_{{ $idx }}.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ $scrape.scrapeInterval | default $defaultSi | quote }}
+      scrape_timeout  = {{ $scrape.scrapeTimeout | default $defaultSt | quote }}
+      metrics_path    = {{ $scrape.path | default "/metrics" | quote }}
+    }
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeKubelet .Values.prometheusRemoteWrite.scrapeKubelet.enabled }}
     discovery.kubernetes "kubelet" {
       role = "node"
@@ -559,6 +641,10 @@ data:
         target_label = "job"
         replacement  = "integrations/kubernetes/kubelet"
       }
+
+      {{- if $stripJob }}
+{{- include "grafana-alloy.stripDiscoveryJobLastSegmentRule" . | nindent 6 }}
+      {{- end }}
     }
 
     prometheus.scrape "kubelet" {
@@ -614,6 +700,10 @@ data:
         target_label = "job"
         replacement  = "integrations/kubernetes/cadvisor"
       }
+
+      {{- if $stripJob }}
+{{- include "grafana-alloy.stripDiscoveryJobLastSegmentRule" . | nindent 6 }}
+      {{- end }}
     }
 
     prometheus.scrape "cadvisor" {
@@ -666,6 +756,10 @@ data:
         separator     = "/"
         target_label  = "job"
       }
+
+      {{- if $stripJob }}
+{{- include "grafana-alloy.stripDiscoveryJobLastSegmentRule" . | nindent 6 }}
+      {{- end }}
 
       rule {
         source_labels = ["__meta_kubernetes_endpoint_node_name"]
