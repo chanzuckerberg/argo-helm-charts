@@ -155,6 +155,16 @@ tests:
           path: spec.updateStrategy.type
           value: RollingUpdate
 
+  - it: should allow custom update strategy
+    set:
+      nvidiaDriver:
+        updateStrategy:
+          type: OnDelete
+    asserts:
+      - equal:
+          path: spec.updateStrategy.type
+          value: OnDelete
+
   - it: should have correct pod labels
     asserts:
       - equal:
@@ -245,6 +255,17 @@ tests:
     asserts:
       - isNull:
           path: spec.template.spec.priorityClassName
+
+  - it: should use explicit priorityClassName when chart PriorityClass is disabled
+    set:
+      priorityClass:
+        enabled: false
+      nvidiaDriver:
+        priorityClassName: system-node-critical
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: system-node-critical
 
   - it: should allow custom priorityClassName
     set:
