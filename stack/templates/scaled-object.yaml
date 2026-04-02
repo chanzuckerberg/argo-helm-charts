@@ -1,0 +1,34 @@
+{{ $global := . }}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service -}}
+{{- if .Values.kedaAutoscaling.enabled }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- include "stack.annotations" $service | nindent 4 }}
+spec:
+  scaleTargetRef:
+    name: {{ include "service.fullname" . }}
+  minReplicaCount: {{ .Values.kedaAutoscaling.minReplicas }}
+  maxReplicaCount: {{ .Values.kedaAutoscaling.maxReplicas }}
+  pollingInterval: {{ .Values.kedaAutoscaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.kedaAutoscaling.cooldownPeriod }}
+  {{- with .Values.kedaAutoscaling.advanced }}
+  advanced:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  triggers:
+    {{- toYaml .Values.kedaAutoscaling.triggers | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- end }}
