@@ -79,6 +79,7 @@ must respect the following conditions
 | - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                |
 | - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                            |
 | - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                          |
+| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                           |
 | - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                     |
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                       |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                |
@@ -1336,7 +1337,111 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_livenessProbe"></a>2.1.22. Property `stack > cronJobs > ^.*$ > livenessProbe`
+#### <a name="cronJobs_pattern1_kedaAutoscaling"></a>2.1.22. Property `stack > cronJobs > ^.*$ > kedaAutoscaling`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** KEDA autoscaling configuration (creates a ScaledObject instead of HPA)
+
+| Property                                                                 | Pattern | Type            | Deprecated | Definition | Title/Description                                                                         |
+| ------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------- |
+| - [advanced](#cronJobs_pattern1_kedaAutoscaling_advanced )               | No      | object          | No         | -          | Advanced KEDA ScaledObject configuration                                                  |
+| - [cooldownPeriod](#cronJobs_pattern1_kedaAutoscaling_cooldownPeriod )   | No      | integer         | No         | -          | Period in seconds to wait after the last trigger fires before scaling back to minReplicas |
+| - [enabled](#cronJobs_pattern1_kedaAutoscaling_enabled )                 | No      | boolean         | No         | -          | Enable KEDA autoscaling                                                                   |
+| - [maxReplicas](#cronJobs_pattern1_kedaAutoscaling_maxReplicas )         | No      | integer         | No         | -          | Maximum number of replicas                                                                |
+| - [minReplicas](#cronJobs_pattern1_kedaAutoscaling_minReplicas )         | No      | integer         | No         | -          | Minimum number of replicas                                                                |
+| - [pollingInterval](#cronJobs_pattern1_kedaAutoscaling_pollingInterval ) | No      | integer         | No         | -          | Interval in seconds to check each trigger                                                 |
+| - [triggers](#cronJobs_pattern1_kedaAutoscaling_triggers )               | No      | array of object | No         | -          | List of KEDA triggers (e.g. prometheus, cpu, memory, cron)                                |
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_advanced"></a>2.1.22.1. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > advanced`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Advanced KEDA ScaledObject configuration
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_cooldownPeriod"></a>2.1.22.2. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > cooldownPeriod`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Period in seconds to wait after the last trigger fires before scaling back to minReplicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_enabled"></a>2.1.22.3. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable KEDA autoscaling
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_maxReplicas"></a>2.1.22.4. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > maxReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of replicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_minReplicas"></a>2.1.22.5. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > minReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Minimum number of replicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_pollingInterval"></a>2.1.22.6. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > pollingInterval`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Interval in seconds to check each trigger
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_triggers"></a>2.1.22.7. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > triggers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of KEDA triggers (e.g. prometheus, cpu, memory, cron)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                     | Description |
+| ------------------------------------------------------------------- | ----------- |
+| [triggers items](#cronJobs_pattern1_kedaAutoscaling_triggers_items) | -           |
+
+###### <a name="cronJobs_pattern1_kedaAutoscaling_triggers_items"></a>2.1.22.7.1. stack > cronJobs > ^.*$ > kedaAutoscaling > triggers > triggers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+#### <a name="cronJobs_pattern1_livenessProbe"></a>2.1.23. Property `stack > cronJobs > ^.*$ > livenessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1355,7 +1460,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_livenessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_livenessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_livenessProbe_failureThreshold"></a>2.1.22.1. Property `stack > cronJobs > ^.*$ > livenessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_livenessProbe_failureThreshold"></a>2.1.23.1. Property `stack > cronJobs > ^.*$ > livenessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -1364,7 +1469,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>2.1.22.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
+##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>2.1.23.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1380,7 +1485,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_livenessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_livenessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_path"></a>2.1.22.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_path"></a>2.1.23.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -1389,7 +1494,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port"></a>2.1.22.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port"></a>2.1.23.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1404,21 +1509,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0"></a>2.1.22.2.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0"></a>2.1.23.2.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1"></a>2.1.22.2.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1"></a>2.1.23.2.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_scheme"></a>2.1.22.2.3. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_scheme"></a>2.1.23.2.3. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -1427,7 +1532,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_livenessProbe_initialDelaySeconds"></a>2.1.22.3. Property `stack > cronJobs > ^.*$ > livenessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_initialDelaySeconds"></a>2.1.23.3. Property `stack > cronJobs > ^.*$ > livenessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -1436,7 +1541,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_livenessProbe_periodSeconds"></a>2.1.22.4. Property `stack > cronJobs > ^.*$ > livenessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_periodSeconds"></a>2.1.23.4. Property `stack > cronJobs > ^.*$ > livenessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -1445,7 +1550,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_livenessProbe_successThreshold"></a>2.1.22.5. Property `stack > cronJobs > ^.*$ > livenessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_livenessProbe_successThreshold"></a>2.1.23.5. Property `stack > cronJobs > ^.*$ > livenessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -1454,7 +1559,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_livenessProbe_timeoutSeconds"></a>2.1.22.6. Property `stack > cronJobs > ^.*$ > livenessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_timeoutSeconds"></a>2.1.23.6. Property `stack > cronJobs > ^.*$ > livenessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -1463,7 +1568,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_nameOverride"></a>2.1.23. Property `stack > cronJobs > ^.*$ > nameOverride`
+#### <a name="cronJobs_pattern1_nameOverride"></a>2.1.24. Property `stack > cronJobs > ^.*$ > nameOverride`
 
 |              |          |
 | ------------ | -------- |
@@ -1472,7 +1577,7 @@ Must be one of:
 
 **Description:** Name to prefix the K8s resources with, combined with the stack name prefix
 
-#### <a name="cronJobs_pattern1_nodeSelector"></a>2.1.24. Property `stack > cronJobs > ^.*$ > nodeSelector`
+#### <a name="cronJobs_pattern1_nodeSelector"></a>2.1.25. Property `stack > cronJobs > ^.*$ > nodeSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1484,7 +1589,7 @@ Must be one of:
 | -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
 | - [kubernetes.io/arch](#cronJobs_pattern1_nodeSelector_kubernetesio/arch ) | No      | string | No         | -          | Node selector for architecture |
 
-##### <a name="cronJobs_pattern1_nodeSelector_kubernetesio/arch"></a>2.1.24.1. Property `stack > cronJobs > ^.*$ > nodeSelector > kubernetes.io/arch`
+##### <a name="cronJobs_pattern1_nodeSelector_kubernetesio/arch"></a>2.1.25.1. Property `stack > cronJobs > ^.*$ > nodeSelector > kubernetes.io/arch`
 
 |              |          |
 | ------------ | -------- |
@@ -1493,7 +1598,7 @@ Must be one of:
 
 **Description:** Node selector for architecture
 
-#### <a name="cronJobs_pattern1_oidcProxy"></a>2.1.25. Property `stack > cronJobs > ^.*$ > oidcProxy`
+#### <a name="cronJobs_pattern1_oidcProxy"></a>2.1.26. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1515,7 +1620,7 @@ Must be one of:
 | - [skipAuth](#cronJobs_pattern1_oidcProxy_skipAuth )                   | No      | array of object | No         | -          | Paths to skip authentication                 |
 | - [volumeMounts](#cronJobs_pattern1_oidcProxy_volumeMounts )           | No      | array           | No         | -          | Volume mounts for the OIDC proxy             |
 
-##### <a name="cronJobs_pattern1_oidcProxy_additionalHeaders"></a>2.1.25.1. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalHeaders`
+##### <a name="cronJobs_pattern1_oidcProxy_additionalHeaders"></a>2.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalHeaders`
 
 |              |         |
 | ------------ | ------- |
@@ -1532,7 +1637,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxy_additionalSecrets"></a>2.1.25.2. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalSecrets`
+##### <a name="cronJobs_pattern1_oidcProxy_additionalSecrets"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalSecrets`
 
 |              |         |
 | ------------ | ------- |
@@ -1549,7 +1654,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxy_annotations"></a>2.1.25.3. Property `stack > cronJobs > ^.*$ > oidcProxy > annotations`
+##### <a name="cronJobs_pattern1_oidcProxy_annotations"></a>2.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxy > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1559,7 +1664,7 @@ Must be one of:
 
 **Description:** Annotations to add to the OIDC proxy
 
-##### <a name="cronJobs_pattern1_oidcProxy_cookieRefresh"></a>2.1.25.4. Property `stack > cronJobs > ^.*$ > oidcProxy > cookieRefresh`
+##### <a name="cronJobs_pattern1_oidcProxy_cookieRefresh"></a>2.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxy > cookieRefresh`
 
 |              |          |
 | ------------ | -------- |
@@ -1568,7 +1673,7 @@ Must be one of:
 
 **Description:** Refresh tokens and cookies after this period
 
-##### <a name="cronJobs_pattern1_oidcProxy_enabled"></a>2.1.25.5. Property `stack > cronJobs > ^.*$ > oidcProxy > enabled`
+##### <a name="cronJobs_pattern1_oidcProxy_enabled"></a>2.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxy > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1577,7 +1682,7 @@ Must be one of:
 
 **Description:** Enable OIDC proxy
 
-##### <a name="cronJobs_pattern1_oidcProxy_extraArgs"></a>2.1.25.6. Property `stack > cronJobs > ^.*$ > oidcProxy > extraArgs`
+##### <a name="cronJobs_pattern1_oidcProxy_extraArgs"></a>2.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxy > extraArgs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1598,14 +1703,14 @@ Must be one of:
 | --------------------------------------------------------------- | ----------- |
 | [extraArgs items](#cronJobs_pattern1_oidcProxy_extraArgs_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxy_extraArgs_items"></a>2.1.25.6.1. stack > cronJobs > ^.*$ > oidcProxy > extraArgs > extraArgs items
+###### <a name="cronJobs_pattern1_oidcProxy_extraArgs_items"></a>2.1.26.6.1. stack > cronJobs > ^.*$ > oidcProxy > extraArgs > extraArgs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxy_image"></a>2.1.25.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
+##### <a name="cronJobs_pattern1_oidcProxy_image"></a>2.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1618,7 +1723,7 @@ Must be one of:
 | - [repository](#cronJobs_pattern1_oidcProxy_image_repository ) | No      | string | No         | -          | Image repository  |
 | - [tag](#cronJobs_pattern1_oidcProxy_image_tag )               | No      | string | No         | -          | Image tag         |
 
-###### <a name="cronJobs_pattern1_oidcProxy_image_repository"></a>2.1.25.7.1. Property `stack > cronJobs > ^.*$ > oidcProxy > image > repository`
+###### <a name="cronJobs_pattern1_oidcProxy_image_repository"></a>2.1.26.7.1. Property `stack > cronJobs > ^.*$ > oidcProxy > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -1627,7 +1732,7 @@ Must be one of:
 
 **Description:** Image repository
 
-###### <a name="cronJobs_pattern1_oidcProxy_image_tag"></a>2.1.25.7.2. Property `stack > cronJobs > ^.*$ > oidcProxy > image > tag`
+###### <a name="cronJobs_pattern1_oidcProxy_image_tag"></a>2.1.26.7.2. Property `stack > cronJobs > ^.*$ > oidcProxy > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -1636,7 +1741,7 @@ Must be one of:
 
 **Description:** Image tag
 
-##### <a name="cronJobs_pattern1_oidcProxy_replicaCount"></a>2.1.25.8. Property `stack > cronJobs > ^.*$ > oidcProxy > replicaCount`
+##### <a name="cronJobs_pattern1_oidcProxy_replicaCount"></a>2.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxy > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -1645,7 +1750,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>2.1.25.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
+##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>2.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1658,7 +1763,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_oidcProxy_resources_limits )     | No      | object | No         | -          | -                 |
 | - [requests](#cronJobs_pattern1_oidcProxy_resources_requests ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>2.1.25.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>2.1.26.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1671,7 +1776,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_oidcProxy_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_oidcProxy_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu"></a>2.1.25.9.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu"></a>2.1.26.9.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1686,21 +1791,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0"></a>2.1.25.9.1.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0"></a>2.1.26.9.1.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1"></a>2.1.25.9.1.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1"></a>2.1.26.9.1.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_memory"></a>2.1.25.9.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > memory`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_memory"></a>2.1.26.9.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -1709,7 +1814,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>2.1.25.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>2.1.26.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1722,7 +1827,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_oidcProxy_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_oidcProxy_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu"></a>2.1.25.9.2.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu"></a>2.1.26.9.2.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1737,21 +1842,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0"></a>2.1.25.9.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0"></a>2.1.26.9.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1"></a>2.1.25.9.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1"></a>2.1.26.9.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_memory"></a>2.1.25.9.2.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > memory`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_memory"></a>2.1.26.9.2.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -1760,7 +1865,7 @@ Must be one of:
 
 **Description:** Memory request
 
-##### <a name="cronJobs_pattern1_oidcProxy_skipAuth"></a>2.1.25.10. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxy_skipAuth"></a>2.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1781,7 +1886,7 @@ Must be one of:
 | ------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxy_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>2.1.25.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>2.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1794,21 +1899,21 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxy_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxy_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_method"></a>2.1.25.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_method"></a>2.1.26.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_path"></a>2.1.25.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_path"></a>2.1.26.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxy_volumeMounts"></a>2.1.25.11. Property `stack > cronJobs > ^.*$ > oidcProxy > volumeMounts`
+##### <a name="cronJobs_pattern1_oidcProxy_volumeMounts"></a>2.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxy > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -1825,7 +1930,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>2.1.26. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
+#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>2.1.27. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1849,7 +1954,7 @@ Must be one of:
 | - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
 | - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>2.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>2.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1859,7 +1964,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>2.1.27.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
 
 |              |          |
 | ------------ | -------- |
@@ -1868,7 +1973,7 @@ Must be one of:
 
 **Description:** OIDC client ID (required when gateway.oidcProtected is enabled)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>2.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>2.1.27.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -1877,7 +1982,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>2.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>2.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1892,7 +1997,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>2.1.26.4.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>2.1.27.4.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -1901,7 +2006,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>2.1.26.4.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>2.1.27.4.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -1910,7 +2015,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>2.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>2.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -1919,7 +2024,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>2.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>2.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -1928,7 +2033,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>2.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>2.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1944,7 +2049,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL (required when gateway.oidcProtected is enabled) |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)            |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>2.1.26.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>2.1.27.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -1953,7 +2058,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>2.1.26.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>2.1.27.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -1962,7 +2067,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL (required when gateway.oidcProtected is enabled)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>2.1.26.7.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>2.1.27.7.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -1971,7 +2076,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>2.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>2.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -1980,7 +2085,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>2.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>2.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -1997,7 +2102,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>2.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>2.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2018,14 +2123,14 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.27.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>2.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>2.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2046,7 +2151,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>2.1.26.11.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>2.1.27.11.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2059,21 +2164,21 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>2.1.26.11.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>2.1.27.11.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>2.1.26.11.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>2.1.27.11.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="cronJobs_pattern1_persistence"></a>2.1.27. Property `stack > cronJobs > ^.*$ > persistence`
+#### <a name="cronJobs_pattern1_persistence"></a>2.1.28. Property `stack > cronJobs > ^.*$ > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2088,7 +2193,7 @@ Must be one of:
 | - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-##### <a name="cronJobs_pattern1_persistence_enabled"></a>2.1.27.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
+##### <a name="cronJobs_pattern1_persistence_enabled"></a>2.1.28.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -2097,7 +2202,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>2.1.27.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
+##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>2.1.28.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -2106,7 +2211,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-##### <a name="cronJobs_pattern1_persistence_mountPath"></a>2.1.27.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
+##### <a name="cronJobs_pattern1_persistence_mountPath"></a>2.1.28.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -2115,7 +2220,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-##### <a name="cronJobs_pattern1_persistence_pvc"></a>2.1.27.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
+##### <a name="cronJobs_pattern1_persistence_pvc"></a>2.1.28.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2130,7 +2235,7 @@ Must be one of:
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>2.1.27.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>2.1.28.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -2151,7 +2256,7 @@ Must be one of:
 | ------------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>2.1.27.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>2.1.28.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -2164,7 +2269,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>2.1.27.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>2.1.28.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2178,7 +2283,7 @@ Must be one of:
 | - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>2.1.27.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>2.1.28.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -2187,7 +2292,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>2.1.27.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>2.1.28.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -2196,7 +2301,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>2.1.27.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>2.1.28.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -2205,7 +2310,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>2.1.27.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>2.1.28.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2217,7 +2322,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>2.1.27.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>2.1.28.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2231,7 +2336,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>2.1.27.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>2.1.28.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -2240,7 +2345,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>2.1.27.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>2.1.28.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -2249,7 +2354,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-#### <a name="cronJobs_pattern1_podAnnotations"></a>2.1.28. Property `stack > cronJobs > ^.*$ > podAnnotations`
+#### <a name="cronJobs_pattern1_podAnnotations"></a>2.1.29. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2259,7 +2364,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-#### <a name="cronJobs_pattern1_podLabels"></a>2.1.29. Property `stack > cronJobs > ^.*$ > podLabels`
+#### <a name="cronJobs_pattern1_podLabels"></a>2.1.30. Property `stack > cronJobs > ^.*$ > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2269,7 +2374,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-#### <a name="cronJobs_pattern1_podSecurityContext"></a>2.1.30. Property `stack > cronJobs > ^.*$ > podSecurityContext`
+#### <a name="cronJobs_pattern1_podSecurityContext"></a>2.1.31. Property `stack > cronJobs > ^.*$ > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2279,7 +2384,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>2.1.31. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
+#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>2.1.32. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -2288,7 +2393,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-#### <a name="cronJobs_pattern1_readinessProbe"></a>2.1.32. Property `stack > cronJobs > ^.*$ > readinessProbe`
+#### <a name="cronJobs_pattern1_readinessProbe"></a>2.1.33. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2307,7 +2412,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>2.1.32.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>2.1.33.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -2316,7 +2421,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>2.1.32.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
+##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>2.1.33.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2332,7 +2437,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>2.1.32.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>2.1.33.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -2341,7 +2446,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>2.1.32.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>2.1.33.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2356,21 +2461,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>2.1.32.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>2.1.33.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>2.1.32.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>2.1.33.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>2.1.32.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>2.1.33.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -2379,7 +2484,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>2.1.32.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>2.1.33.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -2388,7 +2493,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>2.1.32.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>2.1.33.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -2397,7 +2502,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>2.1.32.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>2.1.33.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -2406,7 +2511,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>2.1.32.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>2.1.33.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -2415,7 +2520,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_replicaCount"></a>2.1.33. Property `stack > cronJobs > ^.*$ > replicaCount`
+#### <a name="cronJobs_pattern1_replicaCount"></a>2.1.34. Property `stack > cronJobs > ^.*$ > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -2424,7 +2529,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-#### <a name="cronJobs_pattern1_resources"></a>2.1.34. Property `stack > cronJobs > ^.*$ > resources`
+#### <a name="cronJobs_pattern1_resources"></a>2.1.35. Property `stack > cronJobs > ^.*$ > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2439,7 +2544,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#cronJobs_pattern1_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-##### <a name="cronJobs_pattern1_resources_limits"></a>2.1.34.1. Property `stack > cronJobs > ^.*$ > resources > limits`
+##### <a name="cronJobs_pattern1_resources_limits"></a>2.1.35.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2454,7 +2559,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>2.1.34.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>2.1.35.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2469,21 +2574,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>2.1.34.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>2.1.35.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>2.1.34.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>2.1.35.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_memory"></a>2.1.34.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
+###### <a name="cronJobs_pattern1_resources_limits_memory"></a>2.1.35.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -2492,7 +2597,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-##### <a name="cronJobs_pattern1_resources_requests"></a>2.1.34.2. Property `stack > cronJobs > ^.*$ > resources > requests`
+##### <a name="cronJobs_pattern1_resources_requests"></a>2.1.35.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2507,7 +2612,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>2.1.34.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>2.1.35.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2522,21 +2627,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>2.1.34.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>2.1.35.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>2.1.34.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>2.1.35.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_memory"></a>2.1.34.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
+###### <a name="cronJobs_pattern1_resources_requests_memory"></a>2.1.35.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -2545,7 +2650,7 @@ Must be one of:
 
 **Description:** Memory request
 
-#### <a name="cronJobs_pattern1_restartPolicy"></a>2.1.35. Property `stack > cronJobs > ^.*$ > restartPolicy`
+#### <a name="cronJobs_pattern1_restartPolicy"></a>2.1.36. Property `stack > cronJobs > ^.*$ > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -2559,7 +2664,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_rollout"></a>2.1.36. Property `stack > cronJobs > ^.*$ > rollout`
+#### <a name="cronJobs_pattern1_rollout"></a>2.1.37. Property `stack > cronJobs > ^.*$ > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -2573,7 +2678,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-##### <a name="cronJobs_pattern1_rollout_strategy"></a>2.1.36.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>2.1.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2588,7 +2693,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>2.1.36.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>2.1.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2604,7 +2709,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>2.1.36.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>2.1.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -2613,7 +2718,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>2.1.36.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>2.1.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -2622,7 +2727,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>2.1.36.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>2.1.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -2640,7 +2745,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>2.1.36.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>2.1.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2655,7 +2760,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>2.1.36.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>2.1.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2665,7 +2770,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>2.1.36.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>2.1.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2675,7 +2780,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>2.1.36.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>2.1.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2696,7 +2801,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>2.1.36.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>2.1.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2710,21 +2815,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>2.1.36.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>2.1.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>2.1.36.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>2.1.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>2.1.36.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>2.1.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2737,7 +2842,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>2.1.36.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>2.1.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2749,14 +2854,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>2.1.36.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>2.1.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>2.1.36.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>2.1.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -2767,7 +2872,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>2.1.36.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>2.1.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2788,7 +2893,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>2.1.36.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>2.1.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2801,7 +2906,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>2.1.36.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>2.1.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -2810,7 +2915,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>2.1.36.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>2.1.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -2819,7 +2924,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>2.1.36.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>2.1.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -2828,7 +2933,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>2.1.37. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_s3Storage"></a>2.1.38. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2851,7 +2956,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.37.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.38.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -2872,7 +2977,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>2.1.37.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>2.1.38.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -2885,7 +2990,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>2.1.37.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>2.1.38.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2895,7 +3000,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>2.1.37.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>2.1.38.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -2904,7 +3009,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>2.1.37.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>2.1.38.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -2913,7 +3018,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>2.1.37.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>2.1.38.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -2922,7 +3027,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>2.1.37.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>2.1.38.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2932,7 +3037,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.37.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.38.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -2941,7 +3046,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.37.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.38.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -2950,7 +3055,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.37.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.38.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -2959,7 +3064,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.37.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.38.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -2968,7 +3073,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.37.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.38.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2978,7 +3083,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.37.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.38.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -2987,7 +3092,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>2.1.38. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>2.1.39. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2997,7 +3102,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>2.1.39. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>2.1.40. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3012,7 +3117,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>2.1.39.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>2.1.40.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -3021,7 +3126,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>2.1.39.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>2.1.40.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -3030,7 +3135,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.40. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.41. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3047,7 +3152,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.40.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.41.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3057,7 +3162,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.40.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.41.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -3066,7 +3171,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.40.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.41.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -3075,7 +3180,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.40.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.41.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -3084,7 +3189,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.41. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.42. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -3093,7 +3198,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>2.1.42. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>2.1.43. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -3110,7 +3215,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.43. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.44. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3130,7 +3235,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.43.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.44.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -3139,7 +3244,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.43.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.44.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3153,7 +3258,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.43.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.44.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -3172,14 +3277,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.43.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.44.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.43.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.44.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -3188,7 +3293,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.43.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.44.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -3197,7 +3302,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.43.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.44.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -3206,7 +3311,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.43.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.44.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -3215,7 +3320,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.43.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.44.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -3224,7 +3329,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>2.1.44. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>2.1.45. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -3241,7 +3346,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.45. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.46. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -3258,7 +3363,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.46. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.47. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -3275,7 +3380,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>2.1.47. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>2.1.48. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -3325,6 +3430,7 @@ Must be one of:
 | - [imagePullSecrets](#global_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                |
 | - [ingress](#global_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                            |
 | - [initContainers](#global_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                          |
+| - [kedaAutoscaling](#global_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                           |
 | - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                     |
 | - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                       |
 | - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                |
@@ -4582,7 +4688,111 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_livenessProbe"></a>3.22. Property `stack > global > livenessProbe`
+### <a name="global_kedaAutoscaling"></a>3.22. Property `stack > global > kedaAutoscaling`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** KEDA autoscaling configuration (creates a ScaledObject instead of HPA)
+
+| Property                                                      | Pattern | Type            | Deprecated | Definition | Title/Description                                                                         |
+| ------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------- |
+| - [advanced](#global_kedaAutoscaling_advanced )               | No      | object          | No         | -          | Advanced KEDA ScaledObject configuration                                                  |
+| - [cooldownPeriod](#global_kedaAutoscaling_cooldownPeriod )   | No      | integer         | No         | -          | Period in seconds to wait after the last trigger fires before scaling back to minReplicas |
+| - [enabled](#global_kedaAutoscaling_enabled )                 | No      | boolean         | No         | -          | Enable KEDA autoscaling                                                                   |
+| - [maxReplicas](#global_kedaAutoscaling_maxReplicas )         | No      | integer         | No         | -          | Maximum number of replicas                                                                |
+| - [minReplicas](#global_kedaAutoscaling_minReplicas )         | No      | integer         | No         | -          | Minimum number of replicas                                                                |
+| - [pollingInterval](#global_kedaAutoscaling_pollingInterval ) | No      | integer         | No         | -          | Interval in seconds to check each trigger                                                 |
+| - [triggers](#global_kedaAutoscaling_triggers )               | No      | array of object | No         | -          | List of KEDA triggers (e.g. prometheus, cpu, memory, cron)                                |
+
+#### <a name="global_kedaAutoscaling_advanced"></a>3.22.1. Property `stack > global > kedaAutoscaling > advanced`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Advanced KEDA ScaledObject configuration
+
+#### <a name="global_kedaAutoscaling_cooldownPeriod"></a>3.22.2. Property `stack > global > kedaAutoscaling > cooldownPeriod`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Period in seconds to wait after the last trigger fires before scaling back to minReplicas
+
+#### <a name="global_kedaAutoscaling_enabled"></a>3.22.3. Property `stack > global > kedaAutoscaling > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable KEDA autoscaling
+
+#### <a name="global_kedaAutoscaling_maxReplicas"></a>3.22.4. Property `stack > global > kedaAutoscaling > maxReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of replicas
+
+#### <a name="global_kedaAutoscaling_minReplicas"></a>3.22.5. Property `stack > global > kedaAutoscaling > minReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Minimum number of replicas
+
+#### <a name="global_kedaAutoscaling_pollingInterval"></a>3.22.6. Property `stack > global > kedaAutoscaling > pollingInterval`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Interval in seconds to check each trigger
+
+#### <a name="global_kedaAutoscaling_triggers"></a>3.22.7. Property `stack > global > kedaAutoscaling > triggers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of KEDA triggers (e.g. prometheus, cpu, memory, cron)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                          | Description |
+| -------------------------------------------------------- | ----------- |
+| [triggers items](#global_kedaAutoscaling_triggers_items) | -           |
+
+##### <a name="global_kedaAutoscaling_triggers_items"></a>3.22.7.1. stack > global > kedaAutoscaling > triggers > triggers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+### <a name="global_livenessProbe"></a>3.23. Property `stack > global > livenessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4601,7 +4811,7 @@ Must be one of:
 | - [successThreshold](#global_livenessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#global_livenessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-#### <a name="global_livenessProbe_failureThreshold"></a>3.22.1. Property `stack > global > livenessProbe > failureThreshold`
+#### <a name="global_livenessProbe_failureThreshold"></a>3.23.1. Property `stack > global > livenessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -4610,7 +4820,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-#### <a name="global_livenessProbe_httpGet"></a>3.22.2. Property `stack > global > livenessProbe > httpGet`
+#### <a name="global_livenessProbe_httpGet"></a>3.23.2. Property `stack > global > livenessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4626,7 +4836,7 @@ Must be one of:
 | - [port](#global_livenessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#global_livenessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-##### <a name="global_livenessProbe_httpGet_path"></a>3.22.2.1. Property `stack > global > livenessProbe > httpGet > path`
+##### <a name="global_livenessProbe_httpGet_path"></a>3.23.2.1. Property `stack > global > livenessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -4635,7 +4845,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-##### <a name="global_livenessProbe_httpGet_port"></a>3.22.2.2. Property `stack > global > livenessProbe > httpGet > port`
+##### <a name="global_livenessProbe_httpGet_port"></a>3.23.2.2. Property `stack > global > livenessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4650,21 +4860,21 @@ Must be one of:
 | [item 0](#global_livenessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#global_livenessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="global_livenessProbe_httpGet_port_oneOf_i0"></a>3.22.2.2.1. Property `stack > global > livenessProbe > httpGet > port > oneOf > item 0`
+###### <a name="global_livenessProbe_httpGet_port_oneOf_i0"></a>3.23.2.2.1. Property `stack > global > livenessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_livenessProbe_httpGet_port_oneOf_i1"></a>3.22.2.2.2. Property `stack > global > livenessProbe > httpGet > port > oneOf > item 1`
+###### <a name="global_livenessProbe_httpGet_port_oneOf_i1"></a>3.23.2.2.2. Property `stack > global > livenessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-##### <a name="global_livenessProbe_httpGet_scheme"></a>3.22.2.3. Property `stack > global > livenessProbe > httpGet > scheme`
+##### <a name="global_livenessProbe_httpGet_scheme"></a>3.23.2.3. Property `stack > global > livenessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -4673,7 +4883,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-#### <a name="global_livenessProbe_initialDelaySeconds"></a>3.22.3. Property `stack > global > livenessProbe > initialDelaySeconds`
+#### <a name="global_livenessProbe_initialDelaySeconds"></a>3.23.3. Property `stack > global > livenessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -4682,7 +4892,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-#### <a name="global_livenessProbe_periodSeconds"></a>3.22.4. Property `stack > global > livenessProbe > periodSeconds`
+#### <a name="global_livenessProbe_periodSeconds"></a>3.23.4. Property `stack > global > livenessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -4691,7 +4901,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-#### <a name="global_livenessProbe_successThreshold"></a>3.22.5. Property `stack > global > livenessProbe > successThreshold`
+#### <a name="global_livenessProbe_successThreshold"></a>3.23.5. Property `stack > global > livenessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -4700,7 +4910,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-#### <a name="global_livenessProbe_timeoutSeconds"></a>3.22.6. Property `stack > global > livenessProbe > timeoutSeconds`
+#### <a name="global_livenessProbe_timeoutSeconds"></a>3.23.6. Property `stack > global > livenessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -4709,7 +4919,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_nameOverride"></a>3.23. Property `stack > global > nameOverride`
+### <a name="global_nameOverride"></a>3.24. Property `stack > global > nameOverride`
 
 |              |          |
 | ------------ | -------- |
@@ -4718,7 +4928,7 @@ Must be one of:
 
 **Description:** Name to prefix the K8s resources with, combined with the stack name prefix
 
-### <a name="global_nodeSelector"></a>3.24. Property `stack > global > nodeSelector`
+### <a name="global_nodeSelector"></a>3.25. Property `stack > global > nodeSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4730,7 +4940,7 @@ Must be one of:
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
 | - [kubernetes.io/arch](#global_nodeSelector_kubernetesio/arch ) | No      | string | No         | -          | Node selector for architecture |
 
-#### <a name="global_nodeSelector_kubernetesio/arch"></a>3.24.1. Property `stack > global > nodeSelector > kubernetes.io/arch`
+#### <a name="global_nodeSelector_kubernetesio/arch"></a>3.25.1. Property `stack > global > nodeSelector > kubernetes.io/arch`
 
 |              |          |
 | ------------ | -------- |
@@ -4739,7 +4949,7 @@ Must be one of:
 
 **Description:** Node selector for architecture
 
-### <a name="global_oidcProxy"></a>3.25. Property `stack > global > oidcProxy`
+### <a name="global_oidcProxy"></a>3.26. Property `stack > global > oidcProxy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4761,7 +4971,7 @@ Must be one of:
 | - [skipAuth](#global_oidcProxy_skipAuth )                   | No      | array of object | No         | -          | Paths to skip authentication                 |
 | - [volumeMounts](#global_oidcProxy_volumeMounts )           | No      | array           | No         | -          | Volume mounts for the OIDC proxy             |
 
-#### <a name="global_oidcProxy_additionalHeaders"></a>3.25.1. Property `stack > global > oidcProxy > additionalHeaders`
+#### <a name="global_oidcProxy_additionalHeaders"></a>3.26.1. Property `stack > global > oidcProxy > additionalHeaders`
 
 |              |         |
 | ------------ | ------- |
@@ -4778,7 +4988,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_oidcProxy_additionalSecrets"></a>3.25.2. Property `stack > global > oidcProxy > additionalSecrets`
+#### <a name="global_oidcProxy_additionalSecrets"></a>3.26.2. Property `stack > global > oidcProxy > additionalSecrets`
 
 |              |         |
 | ------------ | ------- |
@@ -4795,7 +5005,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_oidcProxy_annotations"></a>3.25.3. Property `stack > global > oidcProxy > annotations`
+#### <a name="global_oidcProxy_annotations"></a>3.26.3. Property `stack > global > oidcProxy > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4805,7 +5015,7 @@ Must be one of:
 
 **Description:** Annotations to add to the OIDC proxy
 
-#### <a name="global_oidcProxy_cookieRefresh"></a>3.25.4. Property `stack > global > oidcProxy > cookieRefresh`
+#### <a name="global_oidcProxy_cookieRefresh"></a>3.26.4. Property `stack > global > oidcProxy > cookieRefresh`
 
 |              |          |
 | ------------ | -------- |
@@ -4814,7 +5024,7 @@ Must be one of:
 
 **Description:** Refresh tokens and cookies after this period
 
-#### <a name="global_oidcProxy_enabled"></a>3.25.5. Property `stack > global > oidcProxy > enabled`
+#### <a name="global_oidcProxy_enabled"></a>3.26.5. Property `stack > global > oidcProxy > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -4823,7 +5033,7 @@ Must be one of:
 
 **Description:** Enable OIDC proxy
 
-#### <a name="global_oidcProxy_extraArgs"></a>3.25.6. Property `stack > global > oidcProxy > extraArgs`
+#### <a name="global_oidcProxy_extraArgs"></a>3.26.6. Property `stack > global > oidcProxy > extraArgs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4844,14 +5054,14 @@ Must be one of:
 | ---------------------------------------------------- | ----------- |
 | [extraArgs items](#global_oidcProxy_extraArgs_items) | -           |
 
-##### <a name="global_oidcProxy_extraArgs_items"></a>3.25.6.1. stack > global > oidcProxy > extraArgs > extraArgs items
+##### <a name="global_oidcProxy_extraArgs_items"></a>3.26.6.1. stack > global > oidcProxy > extraArgs > extraArgs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_oidcProxy_image"></a>3.25.7. Property `stack > global > oidcProxy > image`
+#### <a name="global_oidcProxy_image"></a>3.26.7. Property `stack > global > oidcProxy > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4864,7 +5074,7 @@ Must be one of:
 | - [repository](#global_oidcProxy_image_repository ) | No      | string | No         | -          | Image repository  |
 | - [tag](#global_oidcProxy_image_tag )               | No      | string | No         | -          | Image tag         |
 
-##### <a name="global_oidcProxy_image_repository"></a>3.25.7.1. Property `stack > global > oidcProxy > image > repository`
+##### <a name="global_oidcProxy_image_repository"></a>3.26.7.1. Property `stack > global > oidcProxy > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -4873,7 +5083,7 @@ Must be one of:
 
 **Description:** Image repository
 
-##### <a name="global_oidcProxy_image_tag"></a>3.25.7.2. Property `stack > global > oidcProxy > image > tag`
+##### <a name="global_oidcProxy_image_tag"></a>3.26.7.2. Property `stack > global > oidcProxy > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -4882,7 +5092,7 @@ Must be one of:
 
 **Description:** Image tag
 
-#### <a name="global_oidcProxy_replicaCount"></a>3.25.8. Property `stack > global > oidcProxy > replicaCount`
+#### <a name="global_oidcProxy_replicaCount"></a>3.26.8. Property `stack > global > oidcProxy > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -4891,7 +5101,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-#### <a name="global_oidcProxy_resources"></a>3.25.9. Property `stack > global > oidcProxy > resources`
+#### <a name="global_oidcProxy_resources"></a>3.26.9. Property `stack > global > oidcProxy > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4904,7 +5114,7 @@ Must be one of:
 | - [limits](#global_oidcProxy_resources_limits )     | No      | object | No         | -          | -                 |
 | - [requests](#global_oidcProxy_resources_requests ) | No      | object | No         | -          | -                 |
 
-##### <a name="global_oidcProxy_resources_limits"></a>3.25.9.1. Property `stack > global > oidcProxy > resources > limits`
+##### <a name="global_oidcProxy_resources_limits"></a>3.26.9.1. Property `stack > global > oidcProxy > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4917,7 +5127,7 @@ Must be one of:
 | - [cpu](#global_oidcProxy_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#global_oidcProxy_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="global_oidcProxy_resources_limits_cpu"></a>3.25.9.1.1. Property `stack > global > oidcProxy > resources > limits > cpu`
+###### <a name="global_oidcProxy_resources_limits_cpu"></a>3.26.9.1.1. Property `stack > global > oidcProxy > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4932,21 +5142,21 @@ Must be one of:
 | [item 0](#global_oidcProxy_resources_limits_cpu_oneOf_i0) |
 | [item 1](#global_oidcProxy_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="global_oidcProxy_resources_limits_cpu_oneOf_i0"></a>3.25.9.1.1.1. Property `stack > global > oidcProxy > resources > limits > cpu > oneOf > item 0`
+###### <a name="global_oidcProxy_resources_limits_cpu_oneOf_i0"></a>3.26.9.1.1.1. Property `stack > global > oidcProxy > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_oidcProxy_resources_limits_cpu_oneOf_i1"></a>3.25.9.1.1.2. Property `stack > global > oidcProxy > resources > limits > cpu > oneOf > item 1`
+###### <a name="global_oidcProxy_resources_limits_cpu_oneOf_i1"></a>3.26.9.1.1.2. Property `stack > global > oidcProxy > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="global_oidcProxy_resources_limits_memory"></a>3.25.9.1.2. Property `stack > global > oidcProxy > resources > limits > memory`
+###### <a name="global_oidcProxy_resources_limits_memory"></a>3.26.9.1.2. Property `stack > global > oidcProxy > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -4955,7 +5165,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-##### <a name="global_oidcProxy_resources_requests"></a>3.25.9.2. Property `stack > global > oidcProxy > resources > requests`
+##### <a name="global_oidcProxy_resources_requests"></a>3.26.9.2. Property `stack > global > oidcProxy > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4968,7 +5178,7 @@ Must be one of:
 | - [cpu](#global_oidcProxy_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#global_oidcProxy_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="global_oidcProxy_resources_requests_cpu"></a>3.25.9.2.1. Property `stack > global > oidcProxy > resources > requests > cpu`
+###### <a name="global_oidcProxy_resources_requests_cpu"></a>3.26.9.2.1. Property `stack > global > oidcProxy > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4983,21 +5193,21 @@ Must be one of:
 | [item 0](#global_oidcProxy_resources_requests_cpu_oneOf_i0) |
 | [item 1](#global_oidcProxy_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="global_oidcProxy_resources_requests_cpu_oneOf_i0"></a>3.25.9.2.1.1. Property `stack > global > oidcProxy > resources > requests > cpu > oneOf > item 0`
+###### <a name="global_oidcProxy_resources_requests_cpu_oneOf_i0"></a>3.26.9.2.1.1. Property `stack > global > oidcProxy > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_oidcProxy_resources_requests_cpu_oneOf_i1"></a>3.25.9.2.1.2. Property `stack > global > oidcProxy > resources > requests > cpu > oneOf > item 1`
+###### <a name="global_oidcProxy_resources_requests_cpu_oneOf_i1"></a>3.26.9.2.1.2. Property `stack > global > oidcProxy > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="global_oidcProxy_resources_requests_memory"></a>3.25.9.2.2. Property `stack > global > oidcProxy > resources > requests > memory`
+###### <a name="global_oidcProxy_resources_requests_memory"></a>3.26.9.2.2. Property `stack > global > oidcProxy > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -5006,7 +5216,7 @@ Must be one of:
 
 **Description:** Memory request
 
-#### <a name="global_oidcProxy_skipAuth"></a>3.25.10. Property `stack > global > oidcProxy > skipAuth`
+#### <a name="global_oidcProxy_skipAuth"></a>3.26.10. Property `stack > global > oidcProxy > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -5027,7 +5237,7 @@ Must be one of:
 | -------------------------------------------------- | ----------- |
 | [skipAuth items](#global_oidcProxy_skipAuth_items) | -           |
 
-##### <a name="global_oidcProxy_skipAuth_items"></a>3.25.10.1. stack > global > oidcProxy > skipAuth > skipAuth items
+##### <a name="global_oidcProxy_skipAuth_items"></a>3.26.10.1. stack > global > oidcProxy > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5040,21 +5250,21 @@ Must be one of:
 | - [method](#global_oidcProxy_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#global_oidcProxy_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="global_oidcProxy_skipAuth_items_method"></a>3.25.10.1.1. Property `stack > global > oidcProxy > skipAuth > skipAuth items > method`
+###### <a name="global_oidcProxy_skipAuth_items_method"></a>3.26.10.1.1. Property `stack > global > oidcProxy > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_oidcProxy_skipAuth_items_path"></a>3.25.10.1.2. Property `stack > global > oidcProxy > skipAuth > skipAuth items > path`
+###### <a name="global_oidcProxy_skipAuth_items_path"></a>3.26.10.1.2. Property `stack > global > oidcProxy > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_oidcProxy_volumeMounts"></a>3.25.11. Property `stack > global > oidcProxy > volumeMounts`
+#### <a name="global_oidcProxy_volumeMounts"></a>3.26.11. Property `stack > global > oidcProxy > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -5071,7 +5281,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_oidcProxyGateway"></a>3.26. Property `stack > global > oidcProxyGateway`
+### <a name="global_oidcProxyGateway"></a>3.27. Property `stack > global > oidcProxyGateway`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5095,7 +5305,7 @@ Must be one of:
 | - [scopes](#global_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
 | - [skipAuth](#global_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
-#### <a name="global_oidcProxyGateway_annotations"></a>3.26.1. Property `stack > global > oidcProxyGateway > annotations`
+#### <a name="global_oidcProxyGateway_annotations"></a>3.27.1. Property `stack > global > oidcProxyGateway > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5105,7 +5315,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-#### <a name="global_oidcProxyGateway_clientID"></a>3.26.2. Property `stack > global > oidcProxyGateway > clientID`
+#### <a name="global_oidcProxyGateway_clientID"></a>3.27.2. Property `stack > global > oidcProxyGateway > clientID`
 
 |              |          |
 | ------------ | -------- |
@@ -5114,7 +5324,7 @@ Must be one of:
 
 **Description:** OIDC client ID (required when gateway.oidcProtected is enabled)
 
-#### <a name="global_oidcProxyGateway_cookieDomain"></a>3.26.3. Property `stack > global > oidcProxyGateway > cookieDomain`
+#### <a name="global_oidcProxyGateway_cookieDomain"></a>3.27.3. Property `stack > global > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -5123,7 +5333,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-#### <a name="global_oidcProxyGateway_cookieNames"></a>3.26.4. Property `stack > global > oidcProxyGateway > cookieNames`
+#### <a name="global_oidcProxyGateway_cookieNames"></a>3.27.4. Property `stack > global > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5138,7 +5348,7 @@ Must be one of:
 | - [accessToken](#global_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#global_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-##### <a name="global_oidcProxyGateway_cookieNames_accessToken"></a>3.26.4.1. Property `stack > global > oidcProxyGateway > cookieNames > accessToken`
+##### <a name="global_oidcProxyGateway_cookieNames_accessToken"></a>3.27.4.1. Property `stack > global > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -5147,7 +5357,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-##### <a name="global_oidcProxyGateway_cookieNames_idToken"></a>3.26.4.2. Property `stack > global > oidcProxyGateway > cookieNames > idToken`
+##### <a name="global_oidcProxyGateway_cookieNames_idToken"></a>3.27.4.2. Property `stack > global > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -5156,7 +5366,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-#### <a name="global_oidcProxyGateway_forwardAccessToken"></a>3.26.5. Property `stack > global > oidcProxyGateway > forwardAccessToken`
+#### <a name="global_oidcProxyGateway_forwardAccessToken"></a>3.27.5. Property `stack > global > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -5165,7 +5375,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-#### <a name="global_oidcProxyGateway_logoutPath"></a>3.26.6. Property `stack > global > oidcProxyGateway > logoutPath`
+#### <a name="global_oidcProxyGateway_logoutPath"></a>3.27.6. Property `stack > global > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -5174,7 +5384,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-#### <a name="global_oidcProxyGateway_provider"></a>3.26.7. Property `stack > global > oidcProxyGateway > provider`
+#### <a name="global_oidcProxyGateway_provider"></a>3.27.7. Property `stack > global > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5190,7 +5400,7 @@ Must be one of:
 | - [issuer](#global_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL (required when gateway.oidcProtected is enabled) |
 | - [tokenEndpoint](#global_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)            |
 
-##### <a name="global_oidcProxyGateway_provider_authorizationEndpoint"></a>3.26.7.1. Property `stack > global > oidcProxyGateway > provider > authorizationEndpoint`
+##### <a name="global_oidcProxyGateway_provider_authorizationEndpoint"></a>3.27.7.1. Property `stack > global > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -5199,7 +5409,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-##### <a name="global_oidcProxyGateway_provider_issuer"></a>3.26.7.2. Property `stack > global > oidcProxyGateway > provider > issuer`
+##### <a name="global_oidcProxyGateway_provider_issuer"></a>3.27.7.2. Property `stack > global > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -5208,7 +5418,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL (required when gateway.oidcProtected is enabled)
 
-##### <a name="global_oidcProxyGateway_provider_tokenEndpoint"></a>3.26.7.3. Property `stack > global > oidcProxyGateway > provider > tokenEndpoint`
+##### <a name="global_oidcProxyGateway_provider_tokenEndpoint"></a>3.27.7.3. Property `stack > global > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -5217,7 +5427,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-#### <a name="global_oidcProxyGateway_refreshToken"></a>3.26.8. Property `stack > global > oidcProxyGateway > refreshToken`
+#### <a name="global_oidcProxyGateway_refreshToken"></a>3.27.8. Property `stack > global > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -5226,7 +5436,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-#### <a name="global_oidcProxyGateway_resources"></a>3.26.9. Property `stack > global > oidcProxyGateway > resources`
+#### <a name="global_oidcProxyGateway_resources"></a>3.27.9. Property `stack > global > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -5243,7 +5453,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_oidcProxyGateway_scopes"></a>3.26.10. Property `stack > global > oidcProxyGateway > scopes`
+#### <a name="global_oidcProxyGateway_scopes"></a>3.27.10. Property `stack > global > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -5264,14 +5474,14 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [scopes items](#global_oidcProxyGateway_scopes_items) | -           |
 
-##### <a name="global_oidcProxyGateway_scopes_items"></a>3.26.10.1. stack > global > oidcProxyGateway > scopes > scopes items
+##### <a name="global_oidcProxyGateway_scopes_items"></a>3.27.10.1. stack > global > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_oidcProxyGateway_skipAuth"></a>3.26.11. Property `stack > global > oidcProxyGateway > skipAuth`
+#### <a name="global_oidcProxyGateway_skipAuth"></a>3.27.11. Property `stack > global > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -5292,7 +5502,7 @@ Must be one of:
 | --------------------------------------------------------- | ----------- |
 | [skipAuth items](#global_oidcProxyGateway_skipAuth_items) | -           |
 
-##### <a name="global_oidcProxyGateway_skipAuth_items"></a>3.26.11.1. stack > global > oidcProxyGateway > skipAuth > skipAuth items
+##### <a name="global_oidcProxyGateway_skipAuth_items"></a>3.27.11.1. stack > global > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5305,21 +5515,21 @@ Must be one of:
 | - [method](#global_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#global_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="global_oidcProxyGateway_skipAuth_items_method"></a>3.26.11.1.1. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="global_oidcProxyGateway_skipAuth_items_method"></a>3.27.11.1.1. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_oidcProxyGateway_skipAuth_items_path"></a>3.26.11.1.2. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="global_oidcProxyGateway_skipAuth_items_path"></a>3.27.11.1.2. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="global_persistence"></a>3.27. Property `stack > global > persistence`
+### <a name="global_persistence"></a>3.28. Property `stack > global > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5334,7 +5544,7 @@ Must be one of:
 | - [mountPath](#global_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#global_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-#### <a name="global_persistence_enabled"></a>3.27.1. Property `stack > global > persistence > enabled`
+#### <a name="global_persistence_enabled"></a>3.28.1. Property `stack > global > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5343,7 +5553,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-#### <a name="global_persistence_existingClaim"></a>3.27.2. Property `stack > global > persistence > existingClaim`
+#### <a name="global_persistence_existingClaim"></a>3.28.2. Property `stack > global > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -5352,7 +5562,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-#### <a name="global_persistence_mountPath"></a>3.27.3. Property `stack > global > persistence > mountPath`
+#### <a name="global_persistence_mountPath"></a>3.28.3. Property `stack > global > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -5361,7 +5571,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-#### <a name="global_persistence_pvc"></a>3.27.4. Property `stack > global > persistence > pvc`
+#### <a name="global_persistence_pvc"></a>3.28.4. Property `stack > global > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5376,7 +5586,7 @@ Must be one of:
 | - [resources](#global_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#global_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-##### <a name="global_persistence_pvc_accessModes"></a>3.27.4.1. Property `stack > global > persistence > pvc > accessModes`
+##### <a name="global_persistence_pvc_accessModes"></a>3.28.4.1. Property `stack > global > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -5397,7 +5607,7 @@ Must be one of:
 | -------------------------------------------------------------- | ----------- |
 | [accessModes items](#global_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="global_persistence_pvc_accessModes_items"></a>3.27.4.1.1. stack > global > persistence > pvc > accessModes > accessModes items
+###### <a name="global_persistence_pvc_accessModes_items"></a>3.28.4.1.1. stack > global > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -5410,7 +5620,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="global_persistence_pvc_dataSource"></a>3.27.4.2. Property `stack > global > persistence > pvc > dataSource`
+##### <a name="global_persistence_pvc_dataSource"></a>3.28.4.2. Property `stack > global > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5424,7 +5634,7 @@ Must be one of:
 | - [kind](#global_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#global_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="global_persistence_pvc_dataSource_apiGroup"></a>3.27.4.2.1. Property `stack > global > persistence > pvc > dataSource > apiGroup`
+###### <a name="global_persistence_pvc_dataSource_apiGroup"></a>3.28.4.2.1. Property `stack > global > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -5433,7 +5643,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="global_persistence_pvc_dataSource_kind"></a>3.27.4.2.2. Property `stack > global > persistence > pvc > dataSource > kind`
+###### <a name="global_persistence_pvc_dataSource_kind"></a>3.28.4.2.2. Property `stack > global > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -5442,7 +5652,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="global_persistence_pvc_dataSource_name"></a>3.27.4.2.3. Property `stack > global > persistence > pvc > dataSource > name`
+###### <a name="global_persistence_pvc_dataSource_name"></a>3.28.4.2.3. Property `stack > global > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -5451,7 +5661,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-##### <a name="global_persistence_pvc_resources"></a>3.27.4.3. Property `stack > global > persistence > pvc > resources`
+##### <a name="global_persistence_pvc_resources"></a>3.28.4.3. Property `stack > global > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5463,7 +5673,7 @@ Must be one of:
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#global_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="global_persistence_pvc_resources_requests"></a>3.27.4.3.1. Property `stack > global > persistence > pvc > resources > requests`
+###### <a name="global_persistence_pvc_resources_requests"></a>3.28.4.3.1. Property `stack > global > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5477,7 +5687,7 @@ Must be one of:
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#global_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="global_persistence_pvc_resources_requests_storage"></a>3.27.4.3.1.1. Property `stack > global > persistence > pvc > resources > requests > storage`
+###### <a name="global_persistence_pvc_resources_requests_storage"></a>3.28.4.3.1.1. Property `stack > global > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -5486,7 +5696,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-##### <a name="global_persistence_pvc_storageClassName"></a>3.27.4.4. Property `stack > global > persistence > pvc > storageClassName`
+##### <a name="global_persistence_pvc_storageClassName"></a>3.28.4.4. Property `stack > global > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -5495,7 +5705,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-### <a name="global_podAnnotations"></a>3.28. Property `stack > global > podAnnotations`
+### <a name="global_podAnnotations"></a>3.29. Property `stack > global > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5505,7 +5715,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-### <a name="global_podLabels"></a>3.29. Property `stack > global > podLabels`
+### <a name="global_podLabels"></a>3.30. Property `stack > global > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5515,7 +5725,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-### <a name="global_podSecurityContext"></a>3.30. Property `stack > global > podSecurityContext`
+### <a name="global_podSecurityContext"></a>3.31. Property `stack > global > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5525,7 +5735,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-### <a name="global_progressDeadlineSeconds"></a>3.31. Property `stack > global > progressDeadlineSeconds`
+### <a name="global_progressDeadlineSeconds"></a>3.32. Property `stack > global > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -5534,7 +5744,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-### <a name="global_readinessProbe"></a>3.32. Property `stack > global > readinessProbe`
+### <a name="global_readinessProbe"></a>3.33. Property `stack > global > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5553,7 +5763,7 @@ Must be one of:
 | - [successThreshold](#global_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#global_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-#### <a name="global_readinessProbe_failureThreshold"></a>3.32.1. Property `stack > global > readinessProbe > failureThreshold`
+#### <a name="global_readinessProbe_failureThreshold"></a>3.33.1. Property `stack > global > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -5562,7 +5772,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-#### <a name="global_readinessProbe_httpGet"></a>3.32.2. Property `stack > global > readinessProbe > httpGet`
+#### <a name="global_readinessProbe_httpGet"></a>3.33.2. Property `stack > global > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5578,7 +5788,7 @@ Must be one of:
 | - [port](#global_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#global_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-##### <a name="global_readinessProbe_httpGet_path"></a>3.32.2.1. Property `stack > global > readinessProbe > httpGet > path`
+##### <a name="global_readinessProbe_httpGet_path"></a>3.33.2.1. Property `stack > global > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -5587,7 +5797,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-##### <a name="global_readinessProbe_httpGet_port"></a>3.32.2.2. Property `stack > global > readinessProbe > httpGet > port`
+##### <a name="global_readinessProbe_httpGet_port"></a>3.33.2.2. Property `stack > global > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5602,21 +5812,21 @@ Must be one of:
 | [item 0](#global_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#global_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="global_readinessProbe_httpGet_port_oneOf_i0"></a>3.32.2.2.1. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="global_readinessProbe_httpGet_port_oneOf_i0"></a>3.33.2.2.1. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_readinessProbe_httpGet_port_oneOf_i1"></a>3.32.2.2.2. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="global_readinessProbe_httpGet_port_oneOf_i1"></a>3.33.2.2.2. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-##### <a name="global_readinessProbe_httpGet_scheme"></a>3.32.2.3. Property `stack > global > readinessProbe > httpGet > scheme`
+##### <a name="global_readinessProbe_httpGet_scheme"></a>3.33.2.3. Property `stack > global > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -5625,7 +5835,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-#### <a name="global_readinessProbe_initialDelaySeconds"></a>3.32.3. Property `stack > global > readinessProbe > initialDelaySeconds`
+#### <a name="global_readinessProbe_initialDelaySeconds"></a>3.33.3. Property `stack > global > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -5634,7 +5844,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-#### <a name="global_readinessProbe_periodSeconds"></a>3.32.4. Property `stack > global > readinessProbe > periodSeconds`
+#### <a name="global_readinessProbe_periodSeconds"></a>3.33.4. Property `stack > global > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -5643,7 +5853,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-#### <a name="global_readinessProbe_successThreshold"></a>3.32.5. Property `stack > global > readinessProbe > successThreshold`
+#### <a name="global_readinessProbe_successThreshold"></a>3.33.5. Property `stack > global > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -5652,7 +5862,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-#### <a name="global_readinessProbe_timeoutSeconds"></a>3.32.6. Property `stack > global > readinessProbe > timeoutSeconds`
+#### <a name="global_readinessProbe_timeoutSeconds"></a>3.33.6. Property `stack > global > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -5661,7 +5871,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_replicaCount"></a>3.33. Property `stack > global > replicaCount`
+### <a name="global_replicaCount"></a>3.34. Property `stack > global > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -5670,7 +5880,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-### <a name="global_resources"></a>3.34. Property `stack > global > resources`
+### <a name="global_resources"></a>3.35. Property `stack > global > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5685,7 +5895,7 @@ Must be one of:
 | - [limits](#global_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#global_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-#### <a name="global_resources_limits"></a>3.34.1. Property `stack > global > resources > limits`
+#### <a name="global_resources_limits"></a>3.35.1. Property `stack > global > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5700,7 +5910,7 @@ Must be one of:
 | - [cpu](#global_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#global_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-##### <a name="global_resources_limits_cpu"></a>3.34.1.1. Property `stack > global > resources > limits > cpu`
+##### <a name="global_resources_limits_cpu"></a>3.35.1.1. Property `stack > global > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5715,21 +5925,21 @@ Must be one of:
 | [item 0](#global_resources_limits_cpu_oneOf_i0) |
 | [item 1](#global_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="global_resources_limits_cpu_oneOf_i0"></a>3.34.1.1.1. Property `stack > global > resources > limits > cpu > oneOf > item 0`
+###### <a name="global_resources_limits_cpu_oneOf_i0"></a>3.35.1.1.1. Property `stack > global > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_resources_limits_cpu_oneOf_i1"></a>3.34.1.1.2. Property `stack > global > resources > limits > cpu > oneOf > item 1`
+###### <a name="global_resources_limits_cpu_oneOf_i1"></a>3.35.1.1.2. Property `stack > global > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-##### <a name="global_resources_limits_memory"></a>3.34.1.2. Property `stack > global > resources > limits > memory`
+##### <a name="global_resources_limits_memory"></a>3.35.1.2. Property `stack > global > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -5738,7 +5948,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-#### <a name="global_resources_requests"></a>3.34.2. Property `stack > global > resources > requests`
+#### <a name="global_resources_requests"></a>3.35.2. Property `stack > global > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5753,7 +5963,7 @@ Must be one of:
 | - [cpu](#global_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#global_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-##### <a name="global_resources_requests_cpu"></a>3.34.2.1. Property `stack > global > resources > requests > cpu`
+##### <a name="global_resources_requests_cpu"></a>3.35.2.1. Property `stack > global > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5768,21 +5978,21 @@ Must be one of:
 | [item 0](#global_resources_requests_cpu_oneOf_i0) |
 | [item 1](#global_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="global_resources_requests_cpu_oneOf_i0"></a>3.34.2.1.1. Property `stack > global > resources > requests > cpu > oneOf > item 0`
+###### <a name="global_resources_requests_cpu_oneOf_i0"></a>3.35.2.1.1. Property `stack > global > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_resources_requests_cpu_oneOf_i1"></a>3.34.2.1.2. Property `stack > global > resources > requests > cpu > oneOf > item 1`
+###### <a name="global_resources_requests_cpu_oneOf_i1"></a>3.35.2.1.2. Property `stack > global > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-##### <a name="global_resources_requests_memory"></a>3.34.2.2. Property `stack > global > resources > requests > memory`
+##### <a name="global_resources_requests_memory"></a>3.35.2.2. Property `stack > global > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -5791,7 +6001,7 @@ Must be one of:
 
 **Description:** Memory request
 
-### <a name="global_restartPolicy"></a>3.35. Property `stack > global > restartPolicy`
+### <a name="global_restartPolicy"></a>3.36. Property `stack > global > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -5805,7 +6015,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-### <a name="global_rollout"></a>3.36. Property `stack > global > rollout`
+### <a name="global_rollout"></a>3.37. Property `stack > global > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -5819,7 +6029,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-#### <a name="cronJobs_pattern1_rollout_strategy"></a>3.36.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+#### <a name="cronJobs_pattern1_rollout_strategy"></a>3.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5834,7 +6044,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-##### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>3.36.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+##### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>3.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5850,7 +6060,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>3.36.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>3.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -5859,7 +6069,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>3.36.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>3.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5868,7 +6078,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>3.36.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>3.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -5886,7 +6096,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>3.36.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>3.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5901,7 +6111,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>3.36.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>3.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5911,7 +6121,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>3.36.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>3.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5921,7 +6131,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>3.36.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>3.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -5942,7 +6152,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>3.36.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>3.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5956,21 +6166,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>3.36.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>3.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>3.36.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>3.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>3.36.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>3.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5983,7 +6193,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>3.36.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>3.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5995,14 +6205,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>3.36.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>3.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>3.36.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>3.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -6013,7 +6223,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>3.36.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>3.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6034,7 +6244,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>3.36.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>3.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6047,7 +6257,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>3.36.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>3.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -6056,7 +6266,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>3.36.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>3.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -6065,7 +6275,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>3.36.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>3.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -6074,7 +6284,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-### <a name="global_s3Storage"></a>3.37. Property `stack > global > s3Storage`
+### <a name="global_s3Storage"></a>3.38. Property `stack > global > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6097,7 +6307,7 @@ Must be one of:
 | - [volumeAttributes](#global_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#global_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-#### <a name="global_s3Storage_accessModes"></a>3.37.1. Property `stack > global > s3Storage > accessModes`
+#### <a name="global_s3Storage_accessModes"></a>3.38.1. Property `stack > global > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -6118,7 +6328,7 @@ Must be one of:
 | -------------------------------------------------------- | ----------- |
 | [accessModes items](#global_s3Storage_accessModes_items) | -           |
 
-##### <a name="global_s3Storage_accessModes_items"></a>3.37.1.1. stack > global > s3Storage > accessModes > accessModes items
+##### <a name="global_s3Storage_accessModes_items"></a>3.38.1.1. stack > global > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -6131,7 +6341,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-#### <a name="global_s3Storage_annotations"></a>3.37.2. Property `stack > global > s3Storage > annotations`
+#### <a name="global_s3Storage_annotations"></a>3.38.2. Property `stack > global > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6141,7 +6351,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-#### <a name="global_s3Storage_bucketName"></a>3.37.3. Property `stack > global > s3Storage > bucketName`
+#### <a name="global_s3Storage_bucketName"></a>3.38.3. Property `stack > global > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -6150,7 +6360,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-#### <a name="global_s3Storage_capacity"></a>3.37.4. Property `stack > global > s3Storage > capacity`
+#### <a name="global_s3Storage_capacity"></a>3.38.4. Property `stack > global > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -6159,7 +6369,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-#### <a name="global_s3Storage_enabled"></a>3.37.5. Property `stack > global > s3Storage > enabled`
+#### <a name="global_s3Storage_enabled"></a>3.38.5. Property `stack > global > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6168,7 +6378,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-#### <a name="global_s3Storage_labels"></a>3.37.6. Property `stack > global > s3Storage > labels`
+#### <a name="global_s3Storage_labels"></a>3.38.6. Property `stack > global > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6178,7 +6388,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-#### <a name="global_s3Storage_pvName"></a>3.37.7. Property `stack > global > s3Storage > pvName`
+#### <a name="global_s3Storage_pvName"></a>3.38.7. Property `stack > global > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -6187,7 +6397,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-#### <a name="global_s3Storage_pvcName"></a>3.37.8. Property `stack > global > s3Storage > pvcName`
+#### <a name="global_s3Storage_pvcName"></a>3.38.8. Property `stack > global > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -6196,7 +6406,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-#### <a name="global_s3Storage_reclaimPolicy"></a>3.37.9. Property `stack > global > s3Storage > reclaimPolicy`
+#### <a name="global_s3Storage_reclaimPolicy"></a>3.38.9. Property `stack > global > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -6205,7 +6415,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-#### <a name="global_s3Storage_region"></a>3.37.10. Property `stack > global > s3Storage > region`
+#### <a name="global_s3Storage_region"></a>3.38.10. Property `stack > global > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -6214,7 +6424,7 @@ Must be one of:
 
 **Description:** AWS region
 
-#### <a name="global_s3Storage_volumeAttributes"></a>3.37.11. Property `stack > global > s3Storage > volumeAttributes`
+#### <a name="global_s3Storage_volumeAttributes"></a>3.38.11. Property `stack > global > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6224,7 +6434,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-#### <a name="global_s3Storage_volumeHandle"></a>3.37.12. Property `stack > global > s3Storage > volumeHandle`
+#### <a name="global_s3Storage_volumeHandle"></a>3.38.12. Property `stack > global > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -6233,7 +6443,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-### <a name="global_securityContext"></a>3.38. Property `stack > global > securityContext`
+### <a name="global_securityContext"></a>3.39. Property `stack > global > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6243,7 +6453,7 @@ Must be one of:
 
 **Description:** Security context
 
-### <a name="global_service"></a>3.39. Property `stack > global > service`
+### <a name="global_service"></a>3.40. Property `stack > global > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6258,7 +6468,7 @@ Must be one of:
 | - [port](#global_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#global_service_type ) | No      | string | No         | -          | Service type      |
 
-#### <a name="global_service_port"></a>3.39.1. Property `stack > global > service > port`
+#### <a name="global_service_port"></a>3.40.1. Property `stack > global > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -6267,7 +6477,7 @@ Must be one of:
 
 **Description:** Service port
 
-#### <a name="global_service_type"></a>3.39.2. Property `stack > global > service > type`
+#### <a name="global_service_type"></a>3.40.2. Property `stack > global > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -6276,7 +6486,7 @@ Must be one of:
 
 **Description:** Service type
 
-### <a name="global_serviceAccount"></a>3.40. Property `stack > global > serviceAccount`
+### <a name="global_serviceAccount"></a>3.41. Property `stack > global > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6293,7 +6503,7 @@ Must be one of:
 | - [create](#global_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#global_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-#### <a name="global_serviceAccount_annotations"></a>3.40.1. Property `stack > global > serviceAccount > annotations`
+#### <a name="global_serviceAccount_annotations"></a>3.41.1. Property `stack > global > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6303,7 +6513,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-#### <a name="global_serviceAccount_automount"></a>3.40.2. Property `stack > global > serviceAccount > automount`
+#### <a name="global_serviceAccount_automount"></a>3.41.2. Property `stack > global > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -6312,7 +6522,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-#### <a name="global_serviceAccount_create"></a>3.40.3. Property `stack > global > serviceAccount > create`
+#### <a name="global_serviceAccount_create"></a>3.41.3. Property `stack > global > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -6321,7 +6531,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-#### <a name="global_serviceAccount_name"></a>3.40.4. Property `stack > global > serviceAccount > name`
+#### <a name="global_serviceAccount_name"></a>3.41.4. Property `stack > global > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -6330,7 +6540,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-### <a name="global_shareProcessNamespace"></a>3.41. Property `stack > global > shareProcessNamespace`
+### <a name="global_shareProcessNamespace"></a>3.42. Property `stack > global > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -6339,7 +6549,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-### <a name="global_sidecars"></a>3.42. Property `stack > global > sidecars`
+### <a name="global_sidecars"></a>3.43. Property `stack > global > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -6356,7 +6566,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_startupProbe"></a>3.43. Property `stack > global > startupProbe`
+### <a name="global_startupProbe"></a>3.44. Property `stack > global > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6376,7 +6586,7 @@ Must be one of:
 | - [successThreshold](#global_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#global_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-#### <a name="global_startupProbe_enabled"></a>3.43.1. Property `stack > global > startupProbe > enabled`
+#### <a name="global_startupProbe_enabled"></a>3.44.1. Property `stack > global > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6385,7 +6595,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-#### <a name="global_startupProbe_exec"></a>3.43.2. Property `stack > global > startupProbe > exec`
+#### <a name="global_startupProbe_exec"></a>3.44.2. Property `stack > global > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6399,7 +6609,7 @@ Must be one of:
 | ----------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#global_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-##### <a name="global_startupProbe_exec_command"></a>3.43.2.1. Property `stack > global > startupProbe > exec > command`
+##### <a name="global_startupProbe_exec_command"></a>3.44.2.1. Property `stack > global > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6418,14 +6628,14 @@ Must be one of:
 | -------------------------------------------------------- | ----------- |
 | [command items](#global_startupProbe_exec_command_items) | -           |
 
-###### <a name="global_startupProbe_exec_command_items"></a>3.43.2.1.1. stack > global > startupProbe > exec > command > command items
+###### <a name="global_startupProbe_exec_command_items"></a>3.44.2.1.1. stack > global > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_startupProbe_failureThreshold"></a>3.43.3. Property `stack > global > startupProbe > failureThreshold`
+#### <a name="global_startupProbe_failureThreshold"></a>3.44.3. Property `stack > global > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -6434,7 +6644,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-#### <a name="global_startupProbe_initialDelaySeconds"></a>3.43.4. Property `stack > global > startupProbe > initialDelaySeconds`
+#### <a name="global_startupProbe_initialDelaySeconds"></a>3.44.4. Property `stack > global > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6443,7 +6653,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-#### <a name="global_startupProbe_periodSeconds"></a>3.43.5. Property `stack > global > startupProbe > periodSeconds`
+#### <a name="global_startupProbe_periodSeconds"></a>3.44.5. Property `stack > global > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6452,7 +6662,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-#### <a name="global_startupProbe_successThreshold"></a>3.43.6. Property `stack > global > startupProbe > successThreshold`
+#### <a name="global_startupProbe_successThreshold"></a>3.44.6. Property `stack > global > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -6461,7 +6671,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-#### <a name="global_startupProbe_timeoutSeconds"></a>3.43.7. Property `stack > global > startupProbe > timeoutSeconds`
+#### <a name="global_startupProbe_timeoutSeconds"></a>3.44.7. Property `stack > global > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -6470,7 +6680,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_tolerations"></a>3.44. Property `stack > global > tolerations`
+### <a name="global_tolerations"></a>3.45. Property `stack > global > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -6487,7 +6697,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_topologySpreadConstraints"></a>3.45. Property `stack > global > topologySpreadConstraints`
+### <a name="global_topologySpreadConstraints"></a>3.46. Property `stack > global > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -6504,7 +6714,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumeMounts"></a>3.46. Property `stack > global > volumeMounts`
+### <a name="global_volumeMounts"></a>3.47. Property `stack > global > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -6521,7 +6731,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumes"></a>3.47. Property `stack > global > volumes`
+### <a name="global_volumes"></a>3.48. Property `stack > global > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -6589,6 +6799,7 @@ must respect the following conditions
 | - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                |
 | - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                            |
 | - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                          |
+| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                           |
 | - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                     |
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                       |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                |
@@ -7846,7 +8057,111 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_livenessProbe"></a>4.1.22. Property `stack > cronJobs > ^.*$ > livenessProbe`
+#### <a name="cronJobs_pattern1_kedaAutoscaling"></a>4.1.22. Property `stack > cronJobs > ^.*$ > kedaAutoscaling`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** KEDA autoscaling configuration (creates a ScaledObject instead of HPA)
+
+| Property                                                                 | Pattern | Type            | Deprecated | Definition | Title/Description                                                                         |
+| ------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------- |
+| - [advanced](#cronJobs_pattern1_kedaAutoscaling_advanced )               | No      | object          | No         | -          | Advanced KEDA ScaledObject configuration                                                  |
+| - [cooldownPeriod](#cronJobs_pattern1_kedaAutoscaling_cooldownPeriod )   | No      | integer         | No         | -          | Period in seconds to wait after the last trigger fires before scaling back to minReplicas |
+| - [enabled](#cronJobs_pattern1_kedaAutoscaling_enabled )                 | No      | boolean         | No         | -          | Enable KEDA autoscaling                                                                   |
+| - [maxReplicas](#cronJobs_pattern1_kedaAutoscaling_maxReplicas )         | No      | integer         | No         | -          | Maximum number of replicas                                                                |
+| - [minReplicas](#cronJobs_pattern1_kedaAutoscaling_minReplicas )         | No      | integer         | No         | -          | Minimum number of replicas                                                                |
+| - [pollingInterval](#cronJobs_pattern1_kedaAutoscaling_pollingInterval ) | No      | integer         | No         | -          | Interval in seconds to check each trigger                                                 |
+| - [triggers](#cronJobs_pattern1_kedaAutoscaling_triggers )               | No      | array of object | No         | -          | List of KEDA triggers (e.g. prometheus, cpu, memory, cron)                                |
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_advanced"></a>4.1.22.1. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > advanced`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Advanced KEDA ScaledObject configuration
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_cooldownPeriod"></a>4.1.22.2. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > cooldownPeriod`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Period in seconds to wait after the last trigger fires before scaling back to minReplicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_enabled"></a>4.1.22.3. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable KEDA autoscaling
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_maxReplicas"></a>4.1.22.4. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > maxReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of replicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_minReplicas"></a>4.1.22.5. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > minReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Minimum number of replicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_pollingInterval"></a>4.1.22.6. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > pollingInterval`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Interval in seconds to check each trigger
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_triggers"></a>4.1.22.7. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > triggers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of KEDA triggers (e.g. prometheus, cpu, memory, cron)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                     | Description |
+| ------------------------------------------------------------------- | ----------- |
+| [triggers items](#cronJobs_pattern1_kedaAutoscaling_triggers_items) | -           |
+
+###### <a name="cronJobs_pattern1_kedaAutoscaling_triggers_items"></a>4.1.22.7.1. stack > cronJobs > ^.*$ > kedaAutoscaling > triggers > triggers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+#### <a name="cronJobs_pattern1_livenessProbe"></a>4.1.23. Property `stack > cronJobs > ^.*$ > livenessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7865,7 +8180,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_livenessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_livenessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_livenessProbe_failureThreshold"></a>4.1.22.1. Property `stack > cronJobs > ^.*$ > livenessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_livenessProbe_failureThreshold"></a>4.1.23.1. Property `stack > cronJobs > ^.*$ > livenessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -7874,7 +8189,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>4.1.22.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
+##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>4.1.23.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7890,7 +8205,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_livenessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_livenessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_path"></a>4.1.22.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_path"></a>4.1.23.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -7899,7 +8214,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port"></a>4.1.22.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port"></a>4.1.23.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7914,21 +8229,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0"></a>4.1.22.2.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0"></a>4.1.23.2.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1"></a>4.1.22.2.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1"></a>4.1.23.2.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_scheme"></a>4.1.22.2.3. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_scheme"></a>4.1.23.2.3. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -7937,7 +8252,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_livenessProbe_initialDelaySeconds"></a>4.1.22.3. Property `stack > cronJobs > ^.*$ > livenessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_initialDelaySeconds"></a>4.1.23.3. Property `stack > cronJobs > ^.*$ > livenessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -7946,7 +8261,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_livenessProbe_periodSeconds"></a>4.1.22.4. Property `stack > cronJobs > ^.*$ > livenessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_periodSeconds"></a>4.1.23.4. Property `stack > cronJobs > ^.*$ > livenessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -7955,7 +8270,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_livenessProbe_successThreshold"></a>4.1.22.5. Property `stack > cronJobs > ^.*$ > livenessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_livenessProbe_successThreshold"></a>4.1.23.5. Property `stack > cronJobs > ^.*$ > livenessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -7964,7 +8279,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_livenessProbe_timeoutSeconds"></a>4.1.22.6. Property `stack > cronJobs > ^.*$ > livenessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_timeoutSeconds"></a>4.1.23.6. Property `stack > cronJobs > ^.*$ > livenessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -7973,7 +8288,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_nameOverride"></a>4.1.23. Property `stack > cronJobs > ^.*$ > nameOverride`
+#### <a name="cronJobs_pattern1_nameOverride"></a>4.1.24. Property `stack > cronJobs > ^.*$ > nameOverride`
 
 |              |          |
 | ------------ | -------- |
@@ -7982,7 +8297,7 @@ Must be one of:
 
 **Description:** Name to prefix the K8s resources with, combined with the stack name prefix
 
-#### <a name="cronJobs_pattern1_nodeSelector"></a>4.1.24. Property `stack > cronJobs > ^.*$ > nodeSelector`
+#### <a name="cronJobs_pattern1_nodeSelector"></a>4.1.25. Property `stack > cronJobs > ^.*$ > nodeSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7994,7 +8309,7 @@ Must be one of:
 | -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
 | - [kubernetes.io/arch](#cronJobs_pattern1_nodeSelector_kubernetesio/arch ) | No      | string | No         | -          | Node selector for architecture |
 
-##### <a name="cronJobs_pattern1_nodeSelector_kubernetesio/arch"></a>4.1.24.1. Property `stack > cronJobs > ^.*$ > nodeSelector > kubernetes.io/arch`
+##### <a name="cronJobs_pattern1_nodeSelector_kubernetesio/arch"></a>4.1.25.1. Property `stack > cronJobs > ^.*$ > nodeSelector > kubernetes.io/arch`
 
 |              |          |
 | ------------ | -------- |
@@ -8003,7 +8318,7 @@ Must be one of:
 
 **Description:** Node selector for architecture
 
-#### <a name="cronJobs_pattern1_oidcProxy"></a>4.1.25. Property `stack > cronJobs > ^.*$ > oidcProxy`
+#### <a name="cronJobs_pattern1_oidcProxy"></a>4.1.26. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8025,7 +8340,7 @@ Must be one of:
 | - [skipAuth](#cronJobs_pattern1_oidcProxy_skipAuth )                   | No      | array of object | No         | -          | Paths to skip authentication                 |
 | - [volumeMounts](#cronJobs_pattern1_oidcProxy_volumeMounts )           | No      | array           | No         | -          | Volume mounts for the OIDC proxy             |
 
-##### <a name="cronJobs_pattern1_oidcProxy_additionalHeaders"></a>4.1.25.1. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalHeaders`
+##### <a name="cronJobs_pattern1_oidcProxy_additionalHeaders"></a>4.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalHeaders`
 
 |              |         |
 | ------------ | ------- |
@@ -8042,7 +8357,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxy_additionalSecrets"></a>4.1.25.2. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalSecrets`
+##### <a name="cronJobs_pattern1_oidcProxy_additionalSecrets"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalSecrets`
 
 |              |         |
 | ------------ | ------- |
@@ -8059,7 +8374,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxy_annotations"></a>4.1.25.3. Property `stack > cronJobs > ^.*$ > oidcProxy > annotations`
+##### <a name="cronJobs_pattern1_oidcProxy_annotations"></a>4.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxy > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8069,7 +8384,7 @@ Must be one of:
 
 **Description:** Annotations to add to the OIDC proxy
 
-##### <a name="cronJobs_pattern1_oidcProxy_cookieRefresh"></a>4.1.25.4. Property `stack > cronJobs > ^.*$ > oidcProxy > cookieRefresh`
+##### <a name="cronJobs_pattern1_oidcProxy_cookieRefresh"></a>4.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxy > cookieRefresh`
 
 |              |          |
 | ------------ | -------- |
@@ -8078,7 +8393,7 @@ Must be one of:
 
 **Description:** Refresh tokens and cookies after this period
 
-##### <a name="cronJobs_pattern1_oidcProxy_enabled"></a>4.1.25.5. Property `stack > cronJobs > ^.*$ > oidcProxy > enabled`
+##### <a name="cronJobs_pattern1_oidcProxy_enabled"></a>4.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxy > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8087,7 +8402,7 @@ Must be one of:
 
 **Description:** Enable OIDC proxy
 
-##### <a name="cronJobs_pattern1_oidcProxy_extraArgs"></a>4.1.25.6. Property `stack > cronJobs > ^.*$ > oidcProxy > extraArgs`
+##### <a name="cronJobs_pattern1_oidcProxy_extraArgs"></a>4.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxy > extraArgs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8108,14 +8423,14 @@ Must be one of:
 | --------------------------------------------------------------- | ----------- |
 | [extraArgs items](#cronJobs_pattern1_oidcProxy_extraArgs_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxy_extraArgs_items"></a>4.1.25.6.1. stack > cronJobs > ^.*$ > oidcProxy > extraArgs > extraArgs items
+###### <a name="cronJobs_pattern1_oidcProxy_extraArgs_items"></a>4.1.26.6.1. stack > cronJobs > ^.*$ > oidcProxy > extraArgs > extraArgs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxy_image"></a>4.1.25.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
+##### <a name="cronJobs_pattern1_oidcProxy_image"></a>4.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8128,7 +8443,7 @@ Must be one of:
 | - [repository](#cronJobs_pattern1_oidcProxy_image_repository ) | No      | string | No         | -          | Image repository  |
 | - [tag](#cronJobs_pattern1_oidcProxy_image_tag )               | No      | string | No         | -          | Image tag         |
 
-###### <a name="cronJobs_pattern1_oidcProxy_image_repository"></a>4.1.25.7.1. Property `stack > cronJobs > ^.*$ > oidcProxy > image > repository`
+###### <a name="cronJobs_pattern1_oidcProxy_image_repository"></a>4.1.26.7.1. Property `stack > cronJobs > ^.*$ > oidcProxy > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -8137,7 +8452,7 @@ Must be one of:
 
 **Description:** Image repository
 
-###### <a name="cronJobs_pattern1_oidcProxy_image_tag"></a>4.1.25.7.2. Property `stack > cronJobs > ^.*$ > oidcProxy > image > tag`
+###### <a name="cronJobs_pattern1_oidcProxy_image_tag"></a>4.1.26.7.2. Property `stack > cronJobs > ^.*$ > oidcProxy > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -8146,7 +8461,7 @@ Must be one of:
 
 **Description:** Image tag
 
-##### <a name="cronJobs_pattern1_oidcProxy_replicaCount"></a>4.1.25.8. Property `stack > cronJobs > ^.*$ > oidcProxy > replicaCount`
+##### <a name="cronJobs_pattern1_oidcProxy_replicaCount"></a>4.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxy > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -8155,7 +8470,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>4.1.25.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
+##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>4.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8168,7 +8483,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_oidcProxy_resources_limits )     | No      | object | No         | -          | -                 |
 | - [requests](#cronJobs_pattern1_oidcProxy_resources_requests ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>4.1.25.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>4.1.26.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8181,7 +8496,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_oidcProxy_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_oidcProxy_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu"></a>4.1.25.9.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu"></a>4.1.26.9.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8196,21 +8511,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0"></a>4.1.25.9.1.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0"></a>4.1.26.9.1.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1"></a>4.1.25.9.1.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1"></a>4.1.26.9.1.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_memory"></a>4.1.25.9.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > memory`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_memory"></a>4.1.26.9.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -8219,7 +8534,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>4.1.25.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>4.1.26.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8232,7 +8547,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_oidcProxy_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_oidcProxy_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu"></a>4.1.25.9.2.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu"></a>4.1.26.9.2.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8247,21 +8562,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0"></a>4.1.25.9.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0"></a>4.1.26.9.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1"></a>4.1.25.9.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1"></a>4.1.26.9.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_memory"></a>4.1.25.9.2.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > memory`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_memory"></a>4.1.26.9.2.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -8270,7 +8585,7 @@ Must be one of:
 
 **Description:** Memory request
 
-##### <a name="cronJobs_pattern1_oidcProxy_skipAuth"></a>4.1.25.10. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxy_skipAuth"></a>4.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8291,7 +8606,7 @@ Must be one of:
 | ------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxy_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>4.1.25.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>4.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8304,21 +8619,21 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxy_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxy_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_method"></a>4.1.25.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_method"></a>4.1.26.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_path"></a>4.1.25.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_path"></a>4.1.26.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxy_volumeMounts"></a>4.1.25.11. Property `stack > cronJobs > ^.*$ > oidcProxy > volumeMounts`
+##### <a name="cronJobs_pattern1_oidcProxy_volumeMounts"></a>4.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxy > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -8335,7 +8650,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>4.1.26. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
+#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>4.1.27. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8359,7 +8674,7 @@ Must be one of:
 | - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
 | - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>4.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>4.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8369,7 +8684,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>4.1.27.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
 
 |              |          |
 | ------------ | -------- |
@@ -8378,7 +8693,7 @@ Must be one of:
 
 **Description:** OIDC client ID (required when gateway.oidcProtected is enabled)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>4.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>4.1.27.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -8387,7 +8702,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>4.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>4.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8402,7 +8717,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>4.1.26.4.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>4.1.27.4.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -8411,7 +8726,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>4.1.26.4.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>4.1.27.4.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -8420,7 +8735,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>4.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>4.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -8429,7 +8744,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>4.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>4.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -8438,7 +8753,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>4.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>4.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8454,7 +8769,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL (required when gateway.oidcProtected is enabled) |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)            |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>4.1.26.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>4.1.27.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -8463,7 +8778,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>4.1.26.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>4.1.27.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -8472,7 +8787,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL (required when gateway.oidcProtected is enabled)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>4.1.26.7.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>4.1.27.7.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -8481,7 +8796,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>4.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>4.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -8490,7 +8805,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>4.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>4.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -8507,7 +8822,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>4.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>4.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8528,14 +8843,14 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.27.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>4.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>4.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8556,7 +8871,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>4.1.26.11.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>4.1.27.11.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8569,21 +8884,21 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>4.1.26.11.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>4.1.27.11.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>4.1.26.11.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>4.1.27.11.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="cronJobs_pattern1_persistence"></a>4.1.27. Property `stack > cronJobs > ^.*$ > persistence`
+#### <a name="cronJobs_pattern1_persistence"></a>4.1.28. Property `stack > cronJobs > ^.*$ > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8598,7 +8913,7 @@ Must be one of:
 | - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-##### <a name="cronJobs_pattern1_persistence_enabled"></a>4.1.27.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
+##### <a name="cronJobs_pattern1_persistence_enabled"></a>4.1.28.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8607,7 +8922,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>4.1.27.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
+##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>4.1.28.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -8616,7 +8931,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-##### <a name="cronJobs_pattern1_persistence_mountPath"></a>4.1.27.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
+##### <a name="cronJobs_pattern1_persistence_mountPath"></a>4.1.28.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -8625,7 +8940,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-##### <a name="cronJobs_pattern1_persistence_pvc"></a>4.1.27.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
+##### <a name="cronJobs_pattern1_persistence_pvc"></a>4.1.28.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8640,7 +8955,7 @@ Must be one of:
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>4.1.27.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>4.1.28.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -8661,7 +8976,7 @@ Must be one of:
 | ------------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>4.1.27.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>4.1.28.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -8674,7 +8989,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>4.1.27.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>4.1.28.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8688,7 +9003,7 @@ Must be one of:
 | - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>4.1.27.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>4.1.28.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -8697,7 +9012,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>4.1.27.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>4.1.28.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -8706,7 +9021,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>4.1.27.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>4.1.28.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -8715,7 +9030,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>4.1.27.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>4.1.28.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8727,7 +9042,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>4.1.27.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>4.1.28.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8741,7 +9056,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>4.1.27.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>4.1.28.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -8750,7 +9065,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>4.1.27.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>4.1.28.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -8759,7 +9074,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-#### <a name="cronJobs_pattern1_podAnnotations"></a>4.1.28. Property `stack > cronJobs > ^.*$ > podAnnotations`
+#### <a name="cronJobs_pattern1_podAnnotations"></a>4.1.29. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8769,7 +9084,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-#### <a name="cronJobs_pattern1_podLabels"></a>4.1.29. Property `stack > cronJobs > ^.*$ > podLabels`
+#### <a name="cronJobs_pattern1_podLabels"></a>4.1.30. Property `stack > cronJobs > ^.*$ > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8779,7 +9094,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-#### <a name="cronJobs_pattern1_podSecurityContext"></a>4.1.30. Property `stack > cronJobs > ^.*$ > podSecurityContext`
+#### <a name="cronJobs_pattern1_podSecurityContext"></a>4.1.31. Property `stack > cronJobs > ^.*$ > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8789,7 +9104,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>4.1.31. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
+#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>4.1.32. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -8798,7 +9113,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-#### <a name="cronJobs_pattern1_readinessProbe"></a>4.1.32. Property `stack > cronJobs > ^.*$ > readinessProbe`
+#### <a name="cronJobs_pattern1_readinessProbe"></a>4.1.33. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8817,7 +9132,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>4.1.32.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>4.1.33.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -8826,7 +9141,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>4.1.32.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
+##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>4.1.33.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8842,7 +9157,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>4.1.32.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>4.1.33.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -8851,7 +9166,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>4.1.32.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>4.1.33.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8866,21 +9181,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>4.1.32.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>4.1.33.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>4.1.32.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>4.1.33.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>4.1.32.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>4.1.33.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -8889,7 +9204,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>4.1.32.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>4.1.33.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -8898,7 +9213,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>4.1.32.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>4.1.33.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -8907,7 +9222,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>4.1.32.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>4.1.33.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -8916,7 +9231,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>4.1.32.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>4.1.33.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -8925,7 +9240,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_replicaCount"></a>4.1.33. Property `stack > cronJobs > ^.*$ > replicaCount`
+#### <a name="cronJobs_pattern1_replicaCount"></a>4.1.34. Property `stack > cronJobs > ^.*$ > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -8934,7 +9249,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-#### <a name="cronJobs_pattern1_resources"></a>4.1.34. Property `stack > cronJobs > ^.*$ > resources`
+#### <a name="cronJobs_pattern1_resources"></a>4.1.35. Property `stack > cronJobs > ^.*$ > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8949,7 +9264,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#cronJobs_pattern1_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-##### <a name="cronJobs_pattern1_resources_limits"></a>4.1.34.1. Property `stack > cronJobs > ^.*$ > resources > limits`
+##### <a name="cronJobs_pattern1_resources_limits"></a>4.1.35.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8964,7 +9279,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>4.1.34.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>4.1.35.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8979,21 +9294,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>4.1.34.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>4.1.35.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>4.1.34.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>4.1.35.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_memory"></a>4.1.34.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
+###### <a name="cronJobs_pattern1_resources_limits_memory"></a>4.1.35.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -9002,7 +9317,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-##### <a name="cronJobs_pattern1_resources_requests"></a>4.1.34.2. Property `stack > cronJobs > ^.*$ > resources > requests`
+##### <a name="cronJobs_pattern1_resources_requests"></a>4.1.35.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9017,7 +9332,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>4.1.34.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>4.1.35.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9032,21 +9347,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>4.1.34.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>4.1.35.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>4.1.34.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>4.1.35.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_memory"></a>4.1.34.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
+###### <a name="cronJobs_pattern1_resources_requests_memory"></a>4.1.35.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -9055,7 +9370,7 @@ Must be one of:
 
 **Description:** Memory request
 
-#### <a name="cronJobs_pattern1_restartPolicy"></a>4.1.35. Property `stack > cronJobs > ^.*$ > restartPolicy`
+#### <a name="cronJobs_pattern1_restartPolicy"></a>4.1.36. Property `stack > cronJobs > ^.*$ > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -9069,7 +9384,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_rollout"></a>4.1.36. Property `stack > cronJobs > ^.*$ > rollout`
+#### <a name="cronJobs_pattern1_rollout"></a>4.1.37. Property `stack > cronJobs > ^.*$ > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -9083,7 +9398,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-##### <a name="cronJobs_pattern1_rollout_strategy"></a>4.1.36.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>4.1.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9098,7 +9413,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>4.1.36.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>4.1.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9114,7 +9429,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>4.1.36.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>4.1.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -9123,7 +9438,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>4.1.36.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>4.1.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -9132,7 +9447,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>4.1.36.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>4.1.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -9150,7 +9465,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>4.1.36.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>4.1.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9165,7 +9480,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>4.1.36.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>4.1.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9175,7 +9490,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>4.1.36.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>4.1.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9185,7 +9500,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>4.1.36.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>4.1.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -9206,7 +9521,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>4.1.36.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>4.1.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9220,21 +9535,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>4.1.36.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>4.1.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>4.1.36.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>4.1.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>4.1.36.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>4.1.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9247,7 +9562,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>4.1.36.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>4.1.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9259,14 +9574,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>4.1.36.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>4.1.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>4.1.36.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>4.1.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -9277,7 +9592,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>4.1.36.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>4.1.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -9298,7 +9613,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>4.1.36.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>4.1.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9311,7 +9626,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>4.1.36.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>4.1.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -9320,7 +9635,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>4.1.36.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>4.1.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -9329,7 +9644,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>4.1.36.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>4.1.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -9338,7 +9653,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>4.1.37. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_s3Storage"></a>4.1.38. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9361,7 +9676,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.37.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.38.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -9382,7 +9697,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>4.1.37.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>4.1.38.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -9395,7 +9710,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>4.1.37.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>4.1.38.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9405,7 +9720,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>4.1.37.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>4.1.38.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -9414,7 +9729,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>4.1.37.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>4.1.38.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -9423,7 +9738,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>4.1.37.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>4.1.38.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -9432,7 +9747,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>4.1.37.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>4.1.38.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9442,7 +9757,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.37.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.38.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -9451,7 +9766,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.37.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.38.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -9460,7 +9775,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.37.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.38.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -9469,7 +9784,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.37.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.38.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -9478,7 +9793,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.37.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.38.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9488,7 +9803,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.37.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.38.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -9497,7 +9812,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>4.1.38. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>4.1.39. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9507,7 +9822,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>4.1.39. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>4.1.40. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9522,7 +9837,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>4.1.39.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>4.1.40.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -9531,7 +9846,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>4.1.39.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>4.1.40.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -9540,7 +9855,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.40. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.41. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9557,7 +9872,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.40.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.41.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9567,7 +9882,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.40.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.41.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -9576,7 +9891,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.40.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.41.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -9585,7 +9900,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.40.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.41.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -9594,7 +9909,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.41. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.42. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -9603,7 +9918,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>4.1.42. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>4.1.43. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -9620,7 +9935,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.43. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.44. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9640,7 +9955,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.43.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.44.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -9649,7 +9964,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.43.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.44.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9663,7 +9978,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.43.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.44.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -9682,14 +9997,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.43.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.44.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.43.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.44.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -9698,7 +10013,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.43.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.44.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -9707,7 +10022,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.43.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.44.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -9716,7 +10031,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.43.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.44.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -9725,7 +10040,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.43.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.44.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -9734,7 +10049,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>4.1.44. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>4.1.45. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -9751,7 +10066,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.45. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.46. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -9768,7 +10083,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.46. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.47. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -9785,7 +10100,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>4.1.47. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>4.1.48. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -10317,6 +10632,7 @@ must respect the following conditions
 | - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                |
 | - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                            |
 | - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                          |
+| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                           |
 | - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                     |
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                       |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                |
@@ -11574,7 +11890,111 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_livenessProbe"></a>7.1.22. Property `stack > cronJobs > ^.*$ > livenessProbe`
+#### <a name="cronJobs_pattern1_kedaAutoscaling"></a>7.1.22. Property `stack > cronJobs > ^.*$ > kedaAutoscaling`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** KEDA autoscaling configuration (creates a ScaledObject instead of HPA)
+
+| Property                                                                 | Pattern | Type            | Deprecated | Definition | Title/Description                                                                         |
+| ------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------- |
+| - [advanced](#cronJobs_pattern1_kedaAutoscaling_advanced )               | No      | object          | No         | -          | Advanced KEDA ScaledObject configuration                                                  |
+| - [cooldownPeriod](#cronJobs_pattern1_kedaAutoscaling_cooldownPeriod )   | No      | integer         | No         | -          | Period in seconds to wait after the last trigger fires before scaling back to minReplicas |
+| - [enabled](#cronJobs_pattern1_kedaAutoscaling_enabled )                 | No      | boolean         | No         | -          | Enable KEDA autoscaling                                                                   |
+| - [maxReplicas](#cronJobs_pattern1_kedaAutoscaling_maxReplicas )         | No      | integer         | No         | -          | Maximum number of replicas                                                                |
+| - [minReplicas](#cronJobs_pattern1_kedaAutoscaling_minReplicas )         | No      | integer         | No         | -          | Minimum number of replicas                                                                |
+| - [pollingInterval](#cronJobs_pattern1_kedaAutoscaling_pollingInterval ) | No      | integer         | No         | -          | Interval in seconds to check each trigger                                                 |
+| - [triggers](#cronJobs_pattern1_kedaAutoscaling_triggers )               | No      | array of object | No         | -          | List of KEDA triggers (e.g. prometheus, cpu, memory, cron)                                |
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_advanced"></a>7.1.22.1. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > advanced`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Advanced KEDA ScaledObject configuration
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_cooldownPeriod"></a>7.1.22.2. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > cooldownPeriod`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Period in seconds to wait after the last trigger fires before scaling back to minReplicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_enabled"></a>7.1.22.3. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable KEDA autoscaling
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_maxReplicas"></a>7.1.22.4. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > maxReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum number of replicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_minReplicas"></a>7.1.22.5. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > minReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Minimum number of replicas
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_pollingInterval"></a>7.1.22.6. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > pollingInterval`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Interval in seconds to check each trigger
+
+##### <a name="cronJobs_pattern1_kedaAutoscaling_triggers"></a>7.1.22.7. Property `stack > cronJobs > ^.*$ > kedaAutoscaling > triggers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** List of KEDA triggers (e.g. prometheus, cpu, memory, cron)
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                     | Description |
+| ------------------------------------------------------------------- | ----------- |
+| [triggers items](#cronJobs_pattern1_kedaAutoscaling_triggers_items) | -           |
+
+###### <a name="cronJobs_pattern1_kedaAutoscaling_triggers_items"></a>7.1.22.7.1. stack > cronJobs > ^.*$ > kedaAutoscaling > triggers > triggers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+#### <a name="cronJobs_pattern1_livenessProbe"></a>7.1.23. Property `stack > cronJobs > ^.*$ > livenessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11593,7 +12013,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_livenessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_livenessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_livenessProbe_failureThreshold"></a>7.1.22.1. Property `stack > cronJobs > ^.*$ > livenessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_livenessProbe_failureThreshold"></a>7.1.23.1. Property `stack > cronJobs > ^.*$ > livenessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -11602,7 +12022,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>7.1.22.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
+##### <a name="cronJobs_pattern1_livenessProbe_httpGet"></a>7.1.23.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11618,7 +12038,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_livenessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_livenessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_path"></a>7.1.22.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_path"></a>7.1.23.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -11627,7 +12047,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port"></a>7.1.22.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port"></a>7.1.23.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11642,21 +12062,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0"></a>7.1.22.2.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i0"></a>7.1.23.2.2.1. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1"></a>7.1.22.2.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_port_oneOf_i1"></a>7.1.23.2.2.2. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_livenessProbe_httpGet_scheme"></a>7.1.22.2.3. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_livenessProbe_httpGet_scheme"></a>7.1.23.2.3. Property `stack > cronJobs > ^.*$ > livenessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -11665,7 +12085,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_livenessProbe_initialDelaySeconds"></a>7.1.22.3. Property `stack > cronJobs > ^.*$ > livenessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_initialDelaySeconds"></a>7.1.23.3. Property `stack > cronJobs > ^.*$ > livenessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -11674,7 +12094,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_livenessProbe_periodSeconds"></a>7.1.22.4. Property `stack > cronJobs > ^.*$ > livenessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_periodSeconds"></a>7.1.23.4. Property `stack > cronJobs > ^.*$ > livenessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -11683,7 +12103,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_livenessProbe_successThreshold"></a>7.1.22.5. Property `stack > cronJobs > ^.*$ > livenessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_livenessProbe_successThreshold"></a>7.1.23.5. Property `stack > cronJobs > ^.*$ > livenessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -11692,7 +12112,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_livenessProbe_timeoutSeconds"></a>7.1.22.6. Property `stack > cronJobs > ^.*$ > livenessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_livenessProbe_timeoutSeconds"></a>7.1.23.6. Property `stack > cronJobs > ^.*$ > livenessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -11701,7 +12121,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_nameOverride"></a>7.1.23. Property `stack > cronJobs > ^.*$ > nameOverride`
+#### <a name="cronJobs_pattern1_nameOverride"></a>7.1.24. Property `stack > cronJobs > ^.*$ > nameOverride`
 
 |              |          |
 | ------------ | -------- |
@@ -11710,7 +12130,7 @@ Must be one of:
 
 **Description:** Name to prefix the K8s resources with, combined with the stack name prefix
 
-#### <a name="cronJobs_pattern1_nodeSelector"></a>7.1.24. Property `stack > cronJobs > ^.*$ > nodeSelector`
+#### <a name="cronJobs_pattern1_nodeSelector"></a>7.1.25. Property `stack > cronJobs > ^.*$ > nodeSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11722,7 +12142,7 @@ Must be one of:
 | -------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------ |
 | - [kubernetes.io/arch](#cronJobs_pattern1_nodeSelector_kubernetesio/arch ) | No      | string | No         | -          | Node selector for architecture |
 
-##### <a name="cronJobs_pattern1_nodeSelector_kubernetesio/arch"></a>7.1.24.1. Property `stack > cronJobs > ^.*$ > nodeSelector > kubernetes.io/arch`
+##### <a name="cronJobs_pattern1_nodeSelector_kubernetesio/arch"></a>7.1.25.1. Property `stack > cronJobs > ^.*$ > nodeSelector > kubernetes.io/arch`
 
 |              |          |
 | ------------ | -------- |
@@ -11731,7 +12151,7 @@ Must be one of:
 
 **Description:** Node selector for architecture
 
-#### <a name="cronJobs_pattern1_oidcProxy"></a>7.1.25. Property `stack > cronJobs > ^.*$ > oidcProxy`
+#### <a name="cronJobs_pattern1_oidcProxy"></a>7.1.26. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11753,7 +12173,7 @@ Must be one of:
 | - [skipAuth](#cronJobs_pattern1_oidcProxy_skipAuth )                   | No      | array of object | No         | -          | Paths to skip authentication                 |
 | - [volumeMounts](#cronJobs_pattern1_oidcProxy_volumeMounts )           | No      | array           | No         | -          | Volume mounts for the OIDC proxy             |
 
-##### <a name="cronJobs_pattern1_oidcProxy_additionalHeaders"></a>7.1.25.1. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalHeaders`
+##### <a name="cronJobs_pattern1_oidcProxy_additionalHeaders"></a>7.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalHeaders`
 
 |              |         |
 | ------------ | ------- |
@@ -11770,7 +12190,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxy_additionalSecrets"></a>7.1.25.2. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalSecrets`
+##### <a name="cronJobs_pattern1_oidcProxy_additionalSecrets"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxy > additionalSecrets`
 
 |              |         |
 | ------------ | ------- |
@@ -11787,7 +12207,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxy_annotations"></a>7.1.25.3. Property `stack > cronJobs > ^.*$ > oidcProxy > annotations`
+##### <a name="cronJobs_pattern1_oidcProxy_annotations"></a>7.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxy > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11797,7 +12217,7 @@ Must be one of:
 
 **Description:** Annotations to add to the OIDC proxy
 
-##### <a name="cronJobs_pattern1_oidcProxy_cookieRefresh"></a>7.1.25.4. Property `stack > cronJobs > ^.*$ > oidcProxy > cookieRefresh`
+##### <a name="cronJobs_pattern1_oidcProxy_cookieRefresh"></a>7.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxy > cookieRefresh`
 
 |              |          |
 | ------------ | -------- |
@@ -11806,7 +12226,7 @@ Must be one of:
 
 **Description:** Refresh tokens and cookies after this period
 
-##### <a name="cronJobs_pattern1_oidcProxy_enabled"></a>7.1.25.5. Property `stack > cronJobs > ^.*$ > oidcProxy > enabled`
+##### <a name="cronJobs_pattern1_oidcProxy_enabled"></a>7.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxy > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -11815,7 +12235,7 @@ Must be one of:
 
 **Description:** Enable OIDC proxy
 
-##### <a name="cronJobs_pattern1_oidcProxy_extraArgs"></a>7.1.25.6. Property `stack > cronJobs > ^.*$ > oidcProxy > extraArgs`
+##### <a name="cronJobs_pattern1_oidcProxy_extraArgs"></a>7.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxy > extraArgs`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -11836,14 +12256,14 @@ Must be one of:
 | --------------------------------------------------------------- | ----------- |
 | [extraArgs items](#cronJobs_pattern1_oidcProxy_extraArgs_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxy_extraArgs_items"></a>7.1.25.6.1. stack > cronJobs > ^.*$ > oidcProxy > extraArgs > extraArgs items
+###### <a name="cronJobs_pattern1_oidcProxy_extraArgs_items"></a>7.1.26.6.1. stack > cronJobs > ^.*$ > oidcProxy > extraArgs > extraArgs items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxy_image"></a>7.1.25.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
+##### <a name="cronJobs_pattern1_oidcProxy_image"></a>7.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxy > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11856,7 +12276,7 @@ Must be one of:
 | - [repository](#cronJobs_pattern1_oidcProxy_image_repository ) | No      | string | No         | -          | Image repository  |
 | - [tag](#cronJobs_pattern1_oidcProxy_image_tag )               | No      | string | No         | -          | Image tag         |
 
-###### <a name="cronJobs_pattern1_oidcProxy_image_repository"></a>7.1.25.7.1. Property `stack > cronJobs > ^.*$ > oidcProxy > image > repository`
+###### <a name="cronJobs_pattern1_oidcProxy_image_repository"></a>7.1.26.7.1. Property `stack > cronJobs > ^.*$ > oidcProxy > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -11865,7 +12285,7 @@ Must be one of:
 
 **Description:** Image repository
 
-###### <a name="cronJobs_pattern1_oidcProxy_image_tag"></a>7.1.25.7.2. Property `stack > cronJobs > ^.*$ > oidcProxy > image > tag`
+###### <a name="cronJobs_pattern1_oidcProxy_image_tag"></a>7.1.26.7.2. Property `stack > cronJobs > ^.*$ > oidcProxy > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -11874,7 +12294,7 @@ Must be one of:
 
 **Description:** Image tag
 
-##### <a name="cronJobs_pattern1_oidcProxy_replicaCount"></a>7.1.25.8. Property `stack > cronJobs > ^.*$ > oidcProxy > replicaCount`
+##### <a name="cronJobs_pattern1_oidcProxy_replicaCount"></a>7.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxy > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -11883,7 +12303,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>7.1.25.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
+##### <a name="cronJobs_pattern1_oidcProxy_resources"></a>7.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxy > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11896,7 +12316,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_oidcProxy_resources_limits )     | No      | object | No         | -          | -                 |
 | - [requests](#cronJobs_pattern1_oidcProxy_resources_requests ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>7.1.25.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits"></a>7.1.26.9.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11909,7 +12329,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_oidcProxy_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_oidcProxy_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu"></a>7.1.25.9.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu"></a>7.1.26.9.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11924,21 +12344,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0"></a>7.1.25.9.1.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i0"></a>7.1.26.9.1.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1"></a>7.1.25.9.1.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_cpu_oneOf_i1"></a>7.1.26.9.1.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_memory"></a>7.1.25.9.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > memory`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_limits_memory"></a>7.1.26.9.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -11947,7 +12367,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>7.1.25.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests"></a>7.1.26.9.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11960,7 +12380,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_oidcProxy_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_oidcProxy_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu"></a>7.1.25.9.2.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu"></a>7.1.26.9.2.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11975,21 +12395,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0"></a>7.1.25.9.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i0"></a>7.1.26.9.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1"></a>7.1.25.9.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_cpu_oneOf_i1"></a>7.1.26.9.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_memory"></a>7.1.25.9.2.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > memory`
+###### <a name="cronJobs_pattern1_oidcProxy_resources_requests_memory"></a>7.1.26.9.2.2. Property `stack > cronJobs > ^.*$ > oidcProxy > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -11998,7 +12418,7 @@ Must be one of:
 
 **Description:** Memory request
 
-##### <a name="cronJobs_pattern1_oidcProxy_skipAuth"></a>7.1.25.10. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxy_skipAuth"></a>7.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12019,7 +12439,7 @@ Must be one of:
 | ------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxy_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>7.1.25.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items"></a>7.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12032,21 +12452,21 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxy_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxy_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_method"></a>7.1.25.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_method"></a>7.1.26.10.1.1. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_path"></a>7.1.25.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxy_skipAuth_items_path"></a>7.1.26.10.1.2. Property `stack > cronJobs > ^.*$ > oidcProxy > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxy_volumeMounts"></a>7.1.25.11. Property `stack > cronJobs > ^.*$ > oidcProxy > volumeMounts`
+##### <a name="cronJobs_pattern1_oidcProxy_volumeMounts"></a>7.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxy > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -12063,7 +12483,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>7.1.26. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
+#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>7.1.27. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12087,7 +12507,7 @@ Must be one of:
 | - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                 |
 | - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>7.1.26.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>7.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12097,7 +12517,7 @@ Must be one of:
 
 **Description:** Annotations to add to SecurityPolicy resources
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>7.1.27.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
 
 |              |          |
 | ------------ | -------- |
@@ -12106,7 +12526,7 @@ Must be one of:
 
 **Description:** OIDC client ID (required when gateway.oidcProtected is enabled)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>7.1.26.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>7.1.27.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -12115,7 +12535,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>7.1.26.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>7.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12130,7 +12550,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>7.1.26.4.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>7.1.27.4.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -12139,7 +12559,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>7.1.26.4.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>7.1.27.4.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -12148,7 +12568,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>7.1.26.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>7.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -12157,7 +12577,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>7.1.26.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>7.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -12166,7 +12586,7 @@ Must be one of:
 
 **Description:** Path for logout operations
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>7.1.26.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>7.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12182,7 +12602,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL (required when gateway.oidcProtected is enabled) |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)            |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>7.1.26.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>7.1.27.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -12191,7 +12611,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>7.1.26.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>7.1.27.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -12200,7 +12620,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL (required when gateway.oidcProtected is enabled)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>7.1.26.7.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>7.1.27.7.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -12209,7 +12629,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>7.1.26.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>7.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -12218,7 +12638,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>7.1.26.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>7.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -12235,7 +12655,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>7.1.26.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>7.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12256,14 +12676,14 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.26.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.27.10.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>7.1.26.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>7.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12284,7 +12704,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>7.1.26.11.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>7.1.27.11.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12297,21 +12717,21 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>7.1.26.11.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>7.1.27.11.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>7.1.26.11.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>7.1.27.11.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="cronJobs_pattern1_persistence"></a>7.1.27. Property `stack > cronJobs > ^.*$ > persistence`
+#### <a name="cronJobs_pattern1_persistence"></a>7.1.28. Property `stack > cronJobs > ^.*$ > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12326,7 +12746,7 @@ Must be one of:
 | - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-##### <a name="cronJobs_pattern1_persistence_enabled"></a>7.1.27.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
+##### <a name="cronJobs_pattern1_persistence_enabled"></a>7.1.28.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -12335,7 +12755,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>7.1.27.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
+##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>7.1.28.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -12344,7 +12764,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-##### <a name="cronJobs_pattern1_persistence_mountPath"></a>7.1.27.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
+##### <a name="cronJobs_pattern1_persistence_mountPath"></a>7.1.28.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -12353,7 +12773,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-##### <a name="cronJobs_pattern1_persistence_pvc"></a>7.1.27.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
+##### <a name="cronJobs_pattern1_persistence_pvc"></a>7.1.28.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12368,7 +12788,7 @@ Must be one of:
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>7.1.27.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>7.1.28.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -12389,7 +12809,7 @@ Must be one of:
 | ------------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>7.1.27.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>7.1.28.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -12402,7 +12822,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>7.1.27.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>7.1.28.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12416,7 +12836,7 @@ Must be one of:
 | - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>7.1.27.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>7.1.28.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -12425,7 +12845,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>7.1.27.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>7.1.28.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -12434,7 +12854,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>7.1.27.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>7.1.28.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -12443,7 +12863,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>7.1.27.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>7.1.28.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12455,7 +12875,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>7.1.27.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>7.1.28.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12469,7 +12889,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>7.1.27.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>7.1.28.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -12478,7 +12898,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>7.1.27.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>7.1.28.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -12487,7 +12907,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-#### <a name="cronJobs_pattern1_podAnnotations"></a>7.1.28. Property `stack > cronJobs > ^.*$ > podAnnotations`
+#### <a name="cronJobs_pattern1_podAnnotations"></a>7.1.29. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12497,7 +12917,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-#### <a name="cronJobs_pattern1_podLabels"></a>7.1.29. Property `stack > cronJobs > ^.*$ > podLabels`
+#### <a name="cronJobs_pattern1_podLabels"></a>7.1.30. Property `stack > cronJobs > ^.*$ > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12507,7 +12927,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-#### <a name="cronJobs_pattern1_podSecurityContext"></a>7.1.30. Property `stack > cronJobs > ^.*$ > podSecurityContext`
+#### <a name="cronJobs_pattern1_podSecurityContext"></a>7.1.31. Property `stack > cronJobs > ^.*$ > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12517,7 +12937,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>7.1.31. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
+#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>7.1.32. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -12526,7 +12946,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-#### <a name="cronJobs_pattern1_readinessProbe"></a>7.1.32. Property `stack > cronJobs > ^.*$ > readinessProbe`
+#### <a name="cronJobs_pattern1_readinessProbe"></a>7.1.33. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12545,7 +12965,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>7.1.32.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>7.1.33.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -12554,7 +12974,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>7.1.32.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
+##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>7.1.33.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12570,7 +12990,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>7.1.32.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>7.1.33.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -12579,7 +12999,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>7.1.32.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>7.1.33.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12594,21 +13014,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>7.1.32.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>7.1.33.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>7.1.32.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>7.1.33.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>7.1.32.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>7.1.33.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -12617,7 +13037,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>7.1.32.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>7.1.33.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -12626,7 +13046,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>7.1.32.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>7.1.33.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -12635,7 +13055,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>7.1.32.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>7.1.33.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -12644,7 +13064,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>7.1.32.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>7.1.33.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -12653,7 +13073,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_replicaCount"></a>7.1.33. Property `stack > cronJobs > ^.*$ > replicaCount`
+#### <a name="cronJobs_pattern1_replicaCount"></a>7.1.34. Property `stack > cronJobs > ^.*$ > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -12662,7 +13082,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-#### <a name="cronJobs_pattern1_resources"></a>7.1.34. Property `stack > cronJobs > ^.*$ > resources`
+#### <a name="cronJobs_pattern1_resources"></a>7.1.35. Property `stack > cronJobs > ^.*$ > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12677,7 +13097,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#cronJobs_pattern1_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-##### <a name="cronJobs_pattern1_resources_limits"></a>7.1.34.1. Property `stack > cronJobs > ^.*$ > resources > limits`
+##### <a name="cronJobs_pattern1_resources_limits"></a>7.1.35.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12692,7 +13112,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>7.1.34.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>7.1.35.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12707,21 +13127,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>7.1.34.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>7.1.35.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>7.1.34.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>7.1.35.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_memory"></a>7.1.34.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
+###### <a name="cronJobs_pattern1_resources_limits_memory"></a>7.1.35.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -12730,7 +13150,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-##### <a name="cronJobs_pattern1_resources_requests"></a>7.1.34.2. Property `stack > cronJobs > ^.*$ > resources > requests`
+##### <a name="cronJobs_pattern1_resources_requests"></a>7.1.35.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12745,7 +13165,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>7.1.34.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>7.1.35.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12760,21 +13180,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>7.1.34.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>7.1.35.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>7.1.34.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>7.1.35.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_memory"></a>7.1.34.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
+###### <a name="cronJobs_pattern1_resources_requests_memory"></a>7.1.35.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -12783,7 +13203,7 @@ Must be one of:
 
 **Description:** Memory request
 
-#### <a name="cronJobs_pattern1_restartPolicy"></a>7.1.35. Property `stack > cronJobs > ^.*$ > restartPolicy`
+#### <a name="cronJobs_pattern1_restartPolicy"></a>7.1.36. Property `stack > cronJobs > ^.*$ > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -12797,7 +13217,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_rollout"></a>7.1.36. Property `stack > cronJobs > ^.*$ > rollout`
+#### <a name="cronJobs_pattern1_rollout"></a>7.1.37. Property `stack > cronJobs > ^.*$ > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -12811,7 +13231,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-##### <a name="cronJobs_pattern1_rollout_strategy"></a>7.1.36.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>7.1.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12826,7 +13246,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>7.1.36.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>7.1.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12842,7 +13262,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>7.1.36.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>7.1.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -12851,7 +13271,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>7.1.36.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>7.1.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -12860,7 +13280,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>7.1.36.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>7.1.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -12878,7 +13298,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>7.1.36.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>7.1.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12893,7 +13313,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>7.1.36.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>7.1.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12903,7 +13323,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>7.1.36.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>7.1.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12913,7 +13333,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>7.1.36.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>7.1.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12934,7 +13354,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>7.1.36.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>7.1.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12948,21 +13368,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>7.1.36.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>7.1.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>7.1.36.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>7.1.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>7.1.36.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>7.1.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12975,7 +13395,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>7.1.36.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>7.1.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12987,14 +13407,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>7.1.36.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>7.1.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>7.1.36.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>7.1.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -13005,7 +13425,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>7.1.36.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>7.1.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -13026,7 +13446,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>7.1.36.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>7.1.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13039,7 +13459,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>7.1.36.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>7.1.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -13048,7 +13468,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>7.1.36.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>7.1.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -13057,7 +13477,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>7.1.36.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>7.1.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -13066,7 +13486,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>7.1.37. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_s3Storage"></a>7.1.38. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13089,7 +13509,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>7.1.37.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>7.1.38.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -13110,7 +13530,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>7.1.37.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>7.1.38.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -13123,7 +13543,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>7.1.37.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>7.1.38.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13133,7 +13553,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>7.1.37.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>7.1.38.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -13142,7 +13562,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>7.1.37.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>7.1.38.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -13151,7 +13571,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>7.1.37.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>7.1.38.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -13160,7 +13580,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>7.1.37.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>7.1.38.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13170,7 +13590,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>7.1.37.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>7.1.38.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -13179,7 +13599,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>7.1.37.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>7.1.38.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -13188,7 +13608,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>7.1.37.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>7.1.38.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -13197,7 +13617,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>7.1.37.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>7.1.38.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -13206,7 +13626,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>7.1.37.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>7.1.38.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13216,7 +13636,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>7.1.37.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>7.1.38.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -13225,7 +13645,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>7.1.38. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>7.1.39. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13235,7 +13655,7 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>7.1.39. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_service"></a>7.1.40. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13250,7 +13670,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>7.1.39.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>7.1.40.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -13259,7 +13679,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>7.1.39.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>7.1.40.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -13268,7 +13688,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>7.1.40. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>7.1.41. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13285,7 +13705,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>7.1.40.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>7.1.41.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13295,7 +13715,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>7.1.40.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>7.1.41.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -13304,7 +13724,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>7.1.40.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>7.1.41.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -13313,7 +13733,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.40.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.41.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -13322,7 +13742,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>7.1.41. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>7.1.42. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -13331,7 +13751,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>7.1.42. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>7.1.43. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -13348,7 +13768,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>7.1.43. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>7.1.44. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13368,7 +13788,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>7.1.43.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>7.1.44.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -13377,7 +13797,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>7.1.43.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>7.1.44.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -13391,7 +13811,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>7.1.43.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>7.1.44.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -13410,14 +13830,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>7.1.43.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>7.1.44.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>7.1.43.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>7.1.44.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -13426,7 +13846,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>7.1.43.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>7.1.44.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -13435,7 +13855,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>7.1.43.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>7.1.44.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -13444,7 +13864,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>7.1.43.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>7.1.44.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -13453,7 +13873,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>7.1.43.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>7.1.44.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -13462,7 +13882,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>7.1.44. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>7.1.45. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -13479,7 +13899,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.45. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.46. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -13496,7 +13916,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.46. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.47. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -13513,7 +13933,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>7.1.47. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>7.1.48. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
