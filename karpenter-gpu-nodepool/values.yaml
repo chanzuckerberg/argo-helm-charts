@@ -40,7 +40,6 @@ nodepool:
           operator: In
           values:
             - on-demand
-            - reserved
         - key: karpenter.k8s.aws/instance-family
           operator: In
           values:

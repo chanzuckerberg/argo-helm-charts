@@ -169,7 +169,7 @@ tests:
             operator: In
             values:
               - on-demand
-              - reserved
+              
 
   - it: should allow custom requirements
     set:
