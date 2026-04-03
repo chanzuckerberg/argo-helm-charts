@@ -2,6 +2,8 @@ nodepool:
   enabled: true # @schema description: Enable deployment of NodePool.
   name: gpu-workloads # @schema description: Name of the NodePool.
   
+  limits: {} # @schema description: Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1").; patternProperties: { "^.*$": { "type": "string" } }
+
   disruption:
     consolidationPolicy: WhenEmptyOrUnderutilized # @schema description: Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty).
     consolidateAfter: 30s # @schema description: Time to wait before consolidating nodes.
@@ -50,6 +52,8 @@ nodepool:
             - p4d
             - p4de
             - p5
+            - p5en
+            - p5ens
         - key: karpenter.k8s.aws/instance-gpu-count
           operator: NotIn
           values:

@@ -147,6 +147,8 @@ tests:
               - p4d
               - p4de
               - p5
+              - p5en
+              - p5ens
 
   - it: should have GPU count requirement
     asserts:
@@ -212,6 +214,40 @@ tests:
       - equal:
           path: spec.template.spec.expireAfter
           value: 48h
+
+  - it: should not render limits when empty (default)
+    asserts:
+      - notExists:
+          path: spec.limits
+
+  - it: should render limits when set
+    set:
+      nodepool:
+        limits:
+          nvidia.com/gpu: "8"
+    asserts:
+      - equal:
+          path: spec.limits
+          value:
+            nvidia.com/gpu: "8"
+
+  - it: should render multiple limits
+    set:
+      nodepool:
+        limits:
+          nvidia.com/gpu: "16"
+          cpu: "100"
+          memory: 1000Gi
+    asserts:
+      - equal:
+          path: spec.limits["nvidia.com/gpu"]
+          value: "16"
+      - equal:
+          path: spec.limits.cpu
+          value: "100"
+      - equal:
+          path: spec.limits.memory
+          value: 1000Gi
 
   - it: should use custom NodePool name
     set:
