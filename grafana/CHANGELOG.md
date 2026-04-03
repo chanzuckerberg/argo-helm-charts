@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.9.0...grafana-v0.9.1) (2026-04-02)
+
+
+### Bug Fixes
+
+* Add a fixed uid for the loki data source ([#418](https://github.com/chanzuckerberg/argo-helm-charts/issues/418)) ([7578c0e](https://github.com/chanzuckerberg/argo-helm-charts/commit/7578c0e8e9ea74b94fef79b68f9323d13e9f4a83))
+* avoid null volumes in Grafana CR when no mounts are defined ([#416](https://github.com/chanzuckerberg/argo-helm-charts/issues/416)) ([e71b180](https://github.com/chanzuckerberg/argo-helm-charts/commit/e71b180236a16d4f6d969beab7e20758cee5141e))
+
 ## [0.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.8.2...grafana-v0.9.0) (2026-03-13)
 
 

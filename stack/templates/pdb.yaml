@@ -14,7 +14,7 @@ metadata:
   labels:
   {{- include "service.labels" . | nindent 4 }}
 spec:
-  {{- if .Values.autoscaling.enabled }}
+  {{- if or .Values.autoscaling.enabled .Values.kedaAutoscaling.enabled }}
   maxUnavailable: {{ .Values.autoscaling.maxUnavailable | default 1 }}
   {{- else }}
   maxUnavailable: 1

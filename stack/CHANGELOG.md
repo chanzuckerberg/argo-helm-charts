@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.33.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.32.0...stack-v2.33.0) (2026-04-02)
+
+
+### Features
+
+* **stack:** support Helm templating in KEDA trigger metadata ([#427](https://github.com/chanzuckerberg/argo-helm-charts/issues/427)) ([1af2f49](https://github.com/chanzuckerberg/argo-helm-charts/commit/1af2f499c9f6aae9a516cc4fc15b674889cf84cd))
+
+## [2.32.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.31.0...stack-v2.32.0) (2026-04-02)
+
+
+### Features
+
+* Add MaxMind GeoIP blocking and gateway auto-enable logic ([#417](https://github.com/chanzuckerberg/argo-helm-charts/issues/417)) ([f34e01e](https://github.com/chanzuckerberg/argo-helm-charts/commit/f34e01ef7c42e272589ca39eaf47ba038fb0d604))
+* **stack:** add native KEDA autoscaling support ([#424](https://github.com/chanzuckerberg/argo-helm-charts/issues/424)) ([6ebbb43](https://github.com/chanzuckerberg/argo-helm-charts/commit/6ebbb43cfd93febf53353b60c134db0e62f104c8))
+
 ## [2.31.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.30.0...stack-v2.31.0) (2026-03-23)
 
 

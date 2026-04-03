@@ -29,7 +29,9 @@ metadata:
                 (dict "argocd.argoproj.io/sync-options" "ServerSideApply=false")
     ) | nindent 4 }}
 spec:
+  {{- if and (not .Values.autoscaling.enabled) (not .Values.kedaAutoscaling.enabled) }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   revisionHistoryLimit: 3
   selector:
     matchLabels:

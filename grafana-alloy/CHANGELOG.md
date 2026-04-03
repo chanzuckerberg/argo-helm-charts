@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.7.0...grafana-alloy-v0.8.0) (2026-04-02)
+
+
+### Features
+
+* add relabelNamespace to copy exported_namespace to namespace ([#412](https://github.com/chanzuckerberg/argo-helm-charts/issues/412)) ([12004f1](https://github.com/chanzuckerberg/argo-helm-charts/commit/12004f198253c3984c6a4d6ce0f76156c48f9579))
+* remote write, scrapes, and relabeling ([#420](https://github.com/chanzuckerberg/argo-helm-charts/issues/420)) ([f2578f0](https://github.com/chanzuckerberg/argo-helm-charts/commit/f2578f07b2fcc83f98f5895cee44eaf287859884))
+
 ## [0.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.6.0...grafana-alloy-v0.7.0) (2026-03-19)
 
 

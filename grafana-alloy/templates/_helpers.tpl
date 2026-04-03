@@ -49,3 +49,25 @@ app.kubernetes.io/name: {{ include "grafana-alloy.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "grafana-alloy.promRelabelRules" -}}
+{{- range . }}
+      rule {
+        {{- if .source_labels }}
+        source_labels = [{{- range $i, $l := .source_labels }}{{ if $i }}, {{ end }}{{ $l | quote }}{{- end }}]
+        {{- end }}
+        {{- if .regex }}
+        regex         = {{ .regex | quote }}
+        {{- end }}
+        {{- if .target_label }}
+        target_label  = {{ .target_label | quote }}
+        {{- end }}
+        {{- with .replacement }}
+        replacement   = {{ . | quote }}
+        {{- end }}
+        {{- if .action }}
+        action        = {{ .action | quote }}
+        {{- end }}
+      }
+{{- end }}
+{{- end }}
+

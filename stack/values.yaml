@@ -239,6 +239,29 @@ global: # @schema description: Global configuration for the stack - this serves 
     targetCPUUtilizationPercentage: 80 # @schema description: Target CPU utilization percentage
     targetMemoryUtilizationPercentage: 80 # @schema description: Target memory utilization percentage
 
+  kedaAutoscaling: # @schema description: KEDA autoscaling configuration (creates a ScaledObject instead of HPA)
+    enabled: false # @schema description: Enable KEDA autoscaling
+    minReplicas: 1 # @schema description: Minimum number of replicas
+    maxReplicas: 10 # @schema description: Maximum number of replicas
+    pollingInterval: 30 # @schema description: Interval in seconds to check each trigger
+    cooldownPeriod: 300 # @schema description: Period in seconds to wait after the last trigger fires before scaling back to minReplicas
+    # @schema type: array; item: object; description: List of KEDA triggers (e.g. prometheus, cpu, memory, cron)
+    triggers: []
+    # triggers:
+    #   - type: prometheus
+    #     metadata:
+    #       serverAddress: http://loki-stack-prometheus-server.loki.svc
+    #       query: avg(bhp_inference_batch_size{model_name="esmc-tiny-dev"})
+    #       threshold: "0.8"
+    # @schema type: object; description: Advanced KEDA ScaledObject configuration
+    advanced: {}
+    # advanced:
+    #   restoreToOriginalReplicaCount: true
+    #   horizontalPodAutoscalerConfig:
+    #     behavior:
+    #       scaleDown:
+    #         stabilizationWindowSeconds: 300
+
   volumes: [] # @schema description: Additional volumes on the output Deployment definition
   # - name: foo
   #   secret:
