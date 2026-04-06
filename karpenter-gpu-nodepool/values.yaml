@@ -163,10 +163,10 @@ dcgmExporter:
         path: /var/lib/kubelet/pod-resources
   resources:
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 500m
+      memory: 1Gi
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 512Mi
   updateStrategy:
     type: RollingUpdate
