@@ -1,0 +1,89 @@
+suite: test dcgm exporter
+templates:
+  - dcgm-exporter.yaml
+tests:
+  - it: should create DaemonSet and Service when nvidia driver and dcgm enabled
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        isKind:
+          of: DaemonSet
+      - documentIndex: 1
+        isKind:
+          of: Service
+
+  - it: should not create resources when nvidia driver disabled
+    set:
+      nvidiaDriver:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create resources when dcgm disabled
+    set:
+      dcgmExporter:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create resources when dcgmExporter is null
+    set:
+      dcgmExporter: null
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should use Alloy contract on Service
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.labels.app
+          value: nvidia-dcgm-exporter
+      - equal:
+          path: spec.ports[0].name
+          value: gpu-metrics
+      - equal:
+          path: spec.selector.app
+          value: nvidia-dcgm-exporter
+
+  - it: should match nvidia driver scheduling
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            key: "workload.gpu"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+
+  - it: should use same namespace as nvidia driver
+    set:
+      nvidiaDriver:
+        namespace: gpu-system
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: gpu-system
+        documentIndex: 0
+      - equal:
+          path: metadata.namespace
+          value: gpu-system
+        documentIndex: 1
+
+  - it: should use chart priority class by default
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: gpu-device-plugin-critical
+
+  - it: should expose gpu-metrics port on container
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].name
+          value: gpu-metrics
