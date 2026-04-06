@@ -59,6 +59,23 @@ tests:
             operator: "Equal"
             value: "true"
             effect: "NoSchedule"
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            karpenter.k8s.aws/instance-gpu-manufacturer: nvidia
+
+  - it: should merge nvidiaDriver nodeSelector with dcgm gpu selector
+    set:
+      nvidiaDriver:
+        nodeSelector:
+          topology.kubernetes.io/zone: us-west-2a
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            karpenter.k8s.aws/instance-gpu-manufacturer: nvidia
+            topology.kubernetes.io/zone: us-west-2a
 
   - it: should use same namespace as nvidia driver
     set:

@@ -22,7 +22,10 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.nvidiaDriver.nodeSelector }}
+      {{- $dcgmNodeSel := .Values.dcgmExporter.nodeSelector | default dict }}
+      {{- $nvidiaNodeSel := .Values.nvidiaDriver.nodeSelector | default dict }}
+      {{- $nodeSel := merge (dict) $nvidiaNodeSel $dcgmNodeSel }}
+      {{- with $nodeSel }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
