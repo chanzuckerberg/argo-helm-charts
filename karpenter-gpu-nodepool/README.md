@@ -29,6 +29,7 @@
 | - [image](#dcgmExporter_image )                     | No      | object          | No         | -          | -                                                                                                                             |
 | - [listenPort](#dcgmExporter_listenPort )           | No      | integer         | No         | -          | Container and Service port for Prometheus metrics (Alloy expects port name gpu-metrics).                                      |
 | - [name](#dcgmExporter_name )                       | No      | string          | No         | -          | Name of the DCGM exporter DaemonSet and Service.                                                                              |
+| - [nodeSelector](#dcgmExporter_nodeSelector )       | No      | object          | No         | -          | -                                                                                                                             |
 | - [resources](#dcgmExporter_resources )             | No      | object          | No         | -          | -                                                                                                                             |
 | - [securityContext](#dcgmExporter_securityContext ) | No      | object          | No         | -          | -                                                                                                                             |
 | - [updateStrategy](#dcgmExporter_updateStrategy )   | No      | object          | No         | -          | -                                                                                                                             |
@@ -103,7 +104,28 @@
 
 **Description:** Name of the DCGM exporter DaemonSet and Service.
 
-### <a name="dcgmExporter_resources"></a>1.5. Property `karpenter-gpu-nodepool > dcgmExporter > resources`
+### <a name="dcgmExporter_nodeSelector"></a>1.5. Property `karpenter-gpu-nodepool > dcgmExporter > nodeSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                              |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
+| - [karpenter.k8s.aws/instance-gpu-manufacturer](#dcgmExporter_nodeSelector_karpenterk8saws/instance-gpu-manufacturer ) | No      | string | No         | -          | Restrict DCGM pods to GPU nodes. Merged with nvidiaDriver.nodeSelector. Override for non-AWS or custom labels. |
+
+#### <a name="dcgmExporter_nodeSelector_karpenterk8saws/instance-gpu-manufacturer"></a>1.5.1. Property `karpenter-gpu-nodepool > dcgmExporter > nodeSelector > karpenter.k8s.aws/instance-gpu-manufacturer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Restrict DCGM pods to GPU nodes. Merged with nvidiaDriver.nodeSelector. Override for non-AWS or custom labels.
+
+### <a name="dcgmExporter_resources"></a>1.6. Property `karpenter-gpu-nodepool > dcgmExporter > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -116,7 +138,7 @@
 | - [limits](#dcgmExporter_resources_limits )     | No      | object | No         | -          | -                 |
 | - [requests](#dcgmExporter_resources_requests ) | No      | object | No         | -          | -                 |
 
-#### <a name="dcgmExporter_resources_limits"></a>1.5.1. Property `karpenter-gpu-nodepool > dcgmExporter > resources > limits`
+#### <a name="dcgmExporter_resources_limits"></a>1.6.1. Property `karpenter-gpu-nodepool > dcgmExporter > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -129,21 +151,21 @@
 | - [cpu](#dcgmExporter_resources_limits_cpu )       | No      | string | No         | -          | -                 |
 | - [memory](#dcgmExporter_resources_limits_memory ) | No      | string | No         | -          | -                 |
 
-##### <a name="dcgmExporter_resources_limits_cpu"></a>1.5.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > resources > limits > cpu`
+##### <a name="dcgmExporter_resources_limits_cpu"></a>1.6.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > resources > limits > cpu`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="dcgmExporter_resources_limits_memory"></a>1.5.1.2. Property `karpenter-gpu-nodepool > dcgmExporter > resources > limits > memory`
+##### <a name="dcgmExporter_resources_limits_memory"></a>1.6.1.2. Property `karpenter-gpu-nodepool > dcgmExporter > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="dcgmExporter_resources_requests"></a>1.5.2. Property `karpenter-gpu-nodepool > dcgmExporter > resources > requests`
+#### <a name="dcgmExporter_resources_requests"></a>1.6.2. Property `karpenter-gpu-nodepool > dcgmExporter > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -156,21 +178,21 @@
 | - [cpu](#dcgmExporter_resources_requests_cpu )       | No      | string | No         | -          | -                 |
 | - [memory](#dcgmExporter_resources_requests_memory ) | No      | string | No         | -          | -                 |
 
-##### <a name="dcgmExporter_resources_requests_cpu"></a>1.5.2.1. Property `karpenter-gpu-nodepool > dcgmExporter > resources > requests > cpu`
+##### <a name="dcgmExporter_resources_requests_cpu"></a>1.6.2.1. Property `karpenter-gpu-nodepool > dcgmExporter > resources > requests > cpu`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="dcgmExporter_resources_requests_memory"></a>1.5.2.2. Property `karpenter-gpu-nodepool > dcgmExporter > resources > requests > memory`
+##### <a name="dcgmExporter_resources_requests_memory"></a>1.6.2.2. Property `karpenter-gpu-nodepool > dcgmExporter > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="dcgmExporter_securityContext"></a>1.6. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext`
+### <a name="dcgmExporter_securityContext"></a>1.7. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -185,14 +207,14 @@
 | - [runAsNonRoot](#dcgmExporter_securityContext_runAsNonRoot )                         | No      | boolean | No         | -          | -                 |
 | - [runAsUser](#dcgmExporter_securityContext_runAsUser )                               | No      | integer | No         | -          | -                 |
 
-#### <a name="dcgmExporter_securityContext_allowPrivilegeEscalation"></a>1.6.1. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > allowPrivilegeEscalation`
+#### <a name="dcgmExporter_securityContext_allowPrivilegeEscalation"></a>1.7.1. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > allowPrivilegeEscalation`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-#### <a name="dcgmExporter_securityContext_capabilities"></a>1.6.2. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities`
+#### <a name="dcgmExporter_securityContext_capabilities"></a>1.7.2. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -205,7 +227,7 @@
 | - [add](#dcgmExporter_securityContext_capabilities_add )   | No      | array of string | No         | -          | -                 |
 | - [drop](#dcgmExporter_securityContext_capabilities_drop ) | No      | array of string | No         | -          | -                 |
 
-##### <a name="dcgmExporter_securityContext_capabilities_add"></a>1.6.2.1. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > add`
+##### <a name="dcgmExporter_securityContext_capabilities_add"></a>1.7.2.1. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > add`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -224,14 +246,14 @@
 | ----------------------------------------------------------------- | ----------- |
 | [add items](#dcgmExporter_securityContext_capabilities_add_items) | -           |
 
-###### <a name="dcgmExporter_securityContext_capabilities_add_items"></a>1.6.2.1.1. karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > add > add items
+###### <a name="dcgmExporter_securityContext_capabilities_add_items"></a>1.7.2.1.1. karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > add > add items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="dcgmExporter_securityContext_capabilities_drop"></a>1.6.2.2. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > drop`
+##### <a name="dcgmExporter_securityContext_capabilities_drop"></a>1.7.2.2. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > drop`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -250,28 +272,28 @@
 | ------------------------------------------------------------------- | ----------- |
 | [drop items](#dcgmExporter_securityContext_capabilities_drop_items) | -           |
 
-###### <a name="dcgmExporter_securityContext_capabilities_drop_items"></a>1.6.2.2.1. karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > drop > drop items
+###### <a name="dcgmExporter_securityContext_capabilities_drop_items"></a>1.7.2.2.1. karpenter-gpu-nodepool > dcgmExporter > securityContext > capabilities > drop > drop items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="dcgmExporter_securityContext_runAsNonRoot"></a>1.6.3. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > runAsNonRoot`
+#### <a name="dcgmExporter_securityContext_runAsNonRoot"></a>1.7.3. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > runAsNonRoot`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-#### <a name="dcgmExporter_securityContext_runAsUser"></a>1.6.4. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > runAsUser`
+#### <a name="dcgmExporter_securityContext_runAsUser"></a>1.7.4. Property `karpenter-gpu-nodepool > dcgmExporter > securityContext > runAsUser`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `integer` |
 | **Required** | No        |
 
-### <a name="dcgmExporter_updateStrategy"></a>1.7. Property `karpenter-gpu-nodepool > dcgmExporter > updateStrategy`
+### <a name="dcgmExporter_updateStrategy"></a>1.8. Property `karpenter-gpu-nodepool > dcgmExporter > updateStrategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -283,14 +305,14 @@
 | -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [type](#dcgmExporter_updateStrategy_type ) | No      | string | No         | -          | -                 |
 
-#### <a name="dcgmExporter_updateStrategy_type"></a>1.7.1. Property `karpenter-gpu-nodepool > dcgmExporter > updateStrategy > type`
+#### <a name="dcgmExporter_updateStrategy_type"></a>1.8.1. Property `karpenter-gpu-nodepool > dcgmExporter > updateStrategy > type`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="dcgmExporter_volumeMounts"></a>1.8. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts`
+### <a name="dcgmExporter_volumeMounts"></a>1.9. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -309,7 +331,7 @@
 | ------------------------------------------------------ | ----------- |
 | [volumeMounts items](#dcgmExporter_volumeMounts_items) | -           |
 
-#### <a name="dcgmExporter_volumeMounts_items"></a>1.8.1. karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items
+#### <a name="dcgmExporter_volumeMounts_items"></a>1.9.1. karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -323,28 +345,28 @@
 | - [name](#dcgmExporter_volumeMounts_items_name )           | No      | string  | No         | -          | -                 |
 | - [readOnly](#dcgmExporter_volumeMounts_items_readOnly )   | No      | boolean | No         | -          | -                 |
 
-##### <a name="dcgmExporter_volumeMounts_items_mountPath"></a>1.8.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items > mountPath`
+##### <a name="dcgmExporter_volumeMounts_items_mountPath"></a>1.9.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items > mountPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="dcgmExporter_volumeMounts_items_name"></a>1.8.1.2. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items > name`
+##### <a name="dcgmExporter_volumeMounts_items_name"></a>1.9.1.2. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="dcgmExporter_volumeMounts_items_readOnly"></a>1.8.1.3. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items > readOnly`
+##### <a name="dcgmExporter_volumeMounts_items_readOnly"></a>1.9.1.3. Property `karpenter-gpu-nodepool > dcgmExporter > volumeMounts > volumeMounts items > readOnly`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="dcgmExporter_volumes"></a>1.9. Property `karpenter-gpu-nodepool > dcgmExporter > volumes`
+### <a name="dcgmExporter_volumes"></a>1.10. Property `karpenter-gpu-nodepool > dcgmExporter > volumes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -363,7 +385,7 @@
 | -------------------------------------------- | ----------- |
 | [volumes items](#dcgmExporter_volumes_items) | -           |
 
-#### <a name="dcgmExporter_volumes_items"></a>1.9.1. karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items
+#### <a name="dcgmExporter_volumes_items"></a>1.10.1. karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -376,7 +398,7 @@
 | - [hostPath](#dcgmExporter_volumes_items_hostPath ) | No      | object | No         | -          | -                 |
 | - [name](#dcgmExporter_volumes_items_name )         | No      | string | No         | -          | -                 |
 
-##### <a name="dcgmExporter_volumes_items_hostPath"></a>1.9.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items > hostPath`
+##### <a name="dcgmExporter_volumes_items_hostPath"></a>1.10.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items > hostPath`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -388,14 +410,14 @@
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [path](#dcgmExporter_volumes_items_hostPath_path ) | No      | string | No         | -          | -                 |
 
-###### <a name="dcgmExporter_volumes_items_hostPath_path"></a>1.9.1.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items > hostPath > path`
+###### <a name="dcgmExporter_volumes_items_hostPath_path"></a>1.10.1.1.1. Property `karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items > hostPath > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="dcgmExporter_volumes_items_name"></a>1.9.1.2. Property `karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items > name`
+##### <a name="dcgmExporter_volumes_items_name"></a>1.10.1.2. Property `karpenter-gpu-nodepool > dcgmExporter > volumes > volumes items > name`
 
 |              |          |
 | ------------ | -------- |

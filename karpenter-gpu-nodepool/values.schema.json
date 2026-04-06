@@ -36,6 +36,15 @@
           "description": "Name of the DCGM exporter DaemonSet and Service.",
           "type": "string"
         },
+        "nodeSelector": {
+          "type": "object",
+          "properties": {
+            "karpenter.k8s.aws/instance-gpu-manufacturer": {
+              "description": "Restrict DCGM pods to GPU nodes. Merged with nvidiaDriver.nodeSelector. Override for non-AWS or custom labels.",
+              "type": "string"
+            }
+          }
+        },
         "resources": {
           "type": "object",
           "properties": {
