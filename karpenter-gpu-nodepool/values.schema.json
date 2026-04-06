@@ -4,6 +4,142 @@
   "title": "karpenter-gpu-nodepool",
   "type": "object",
   "properties": {
+    "dcgmExporter": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Deploy DCGM metrics exporter. Defaults to the same value as nvidiaDriver.enabled. Ignored when nvidiaDriver.enabled is false.",
+          "type": "boolean"
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "description": "Image pull policy (IfNotPresent, Always, or Never).",
+              "type": "string"
+            },
+            "repository": {
+              "description": "DCGM exporter image repository.",
+              "type": "string"
+            },
+            "tag": {
+              "description": "DCGM exporter image tag.",
+              "type": "string"
+            }
+          }
+        },
+        "listenPort": {
+          "description": "Container and Service port for Prometheus metrics (Alloy expects port name gpu-metrics).",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Name of the DCGM exporter DaemonSet and Service.",
+          "type": "string"
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "securityContext": {
+          "type": "object",
+          "properties": {
+            "allowPrivilegeEscalation": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "object",
+              "properties": {
+                "add": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "drop": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "runAsNonRoot": {
+              "type": "boolean"
+            },
+            "runAsUser": {
+              "type": "integer"
+            }
+          }
+        },
+        "updateStrategy": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            }
+          }
+        },
+        "volumeMounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mountPath": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "readOnly": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "volumes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hostPath": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
     "nodepool": {
       "type": "object",
       "properties": {
