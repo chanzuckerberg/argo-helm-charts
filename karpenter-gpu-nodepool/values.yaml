@@ -135,3 +135,40 @@ nvidiaDriver:
     #   memory: 64Mi
   
   env: [] # @schema description: Additional environment variables for the NVIDIA device plugin container.
+
+dcgmExporter:
+  enabled: true # @schema description: Deploy DCGM metrics exporter. Defaults to the same value as nvidiaDriver.enabled. Ignored when nvidiaDriver.enabled is false.
+  name: dcgm-exporter # @schema description: Name of the DCGM exporter DaemonSet and Service.
+  listenPort: 9400 # @schema description: Container and Service port for Prometheus metrics (Alloy expects port name gpu-metrics).
+  nodeSelector:
+    karpenter.k8s.aws/instance-gpu-manufacturer: nvidia # @schema description: Restrict DCGM pods to GPU nodes. Merged with nvidiaDriver.nodeSelector. Override for non-AWS or custom labels.
+  image:
+    repository: nvcr.io/nvidia/k8s/dcgm-exporter # @schema description: DCGM exporter image repository.
+    tag: 4.5.2-4.8.1-distroless # @schema description: DCGM exporter image tag.
+    pullPolicy: IfNotPresent # @schema description: Image pull policy (IfNotPresent, Always, or Never).
+  securityContext:
+    runAsNonRoot: false
+    runAsUser: 0
+    capabilities:
+      add:
+        - SYS_ADMIN
+      drop:
+        - ALL
+    allowPrivilegeEscalation: false
+  volumeMounts:
+    - name: pod-gpu-resources
+      readOnly: true
+      mountPath: /var/lib/kubelet/pod-resources
+  volumes:
+    - name: pod-gpu-resources
+      hostPath:
+        path: /var/lib/kubelet/pod-resources
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  updateStrategy:
+    type: RollingUpdate

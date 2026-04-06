@@ -61,3 +61,25 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
+{{/*
+DCGM exporter DaemonSet labels
+*/}}
+{{- define "karpenter-gpu-nodepool.dcgm.labels" -}}
+helm.sh/chart: {{ include "karpenter-gpu-nodepool.chart" . }}
+app.kubernetes.io/name: {{ include "karpenter-gpu-nodepool.name" . }}-dcgm-exporter
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{- define "karpenter-gpu-nodepool.dcgmExporter.enabled" -}}
+{{- if kindIs "map" .Values.dcgmExporter -}}
+{{- $dcgm := .Values.nvidiaDriver.enabled -}}
+{{- if hasKey .Values.dcgmExporter "enabled" -}}
+{{- $dcgm = index .Values.dcgmExporter "enabled" -}}
+{{- end -}}
+{{- if and .Values.nvidiaDriver.enabled $dcgm -}}true{{- end -}}
+{{- end -}}
+{{- end }}

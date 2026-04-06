@@ -2,6 +2,7 @@ suite: integration tests
 templates:
   - nodepool.yaml
   - nvidia-daemonset.yaml
+  - dcgm-exporter.yaml
   - priorityclass.yaml
 tests:
   - it: should create NodePool by default
@@ -179,6 +180,7 @@ tests:
     templates:
       - nodepool.yaml
       - nvidia-daemonset.yaml
+      - dcgm-exporter.yaml
       - priorityclass.yaml
     asserts:
       - isKind:
@@ -187,6 +189,14 @@ tests:
       - isKind:
           of: DaemonSet
         template: nvidia-daemonset.yaml
+      - isKind:
+          of: DaemonSet
+        documentIndex: 0
+        template: dcgm-exporter.yaml
+      - isKind:
+          of: Service
+        documentIndex: 1
+        template: dcgm-exporter.yaml
       - isKind:
           of: PriorityClass
         template: priorityclass.yaml
@@ -202,6 +212,7 @@ tests:
     templates:
       - nodepool.yaml
       - nvidia-daemonset.yaml
+      - dcgm-exporter.yaml
       - priorityclass.yaml
     asserts:
       - equal:
@@ -216,6 +227,16 @@ tests:
           path: spec.template.spec.priorityClassName
           value: custom-priority
         template: nvidia-daemonset.yaml
+      - equal:
+          path: metadata.namespace
+          value: gpu-system
+        documentIndex: 0
+        template: dcgm-exporter.yaml
+      - equal:
+          path: metadata.namespace
+          value: gpu-system
+        documentIndex: 1
+        template: dcgm-exporter.yaml
       - equal:
           path: metadata.name
           value: custom-priority
