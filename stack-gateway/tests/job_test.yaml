@@ -1,0 +1,137 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test jobs
+templates:
+  - job.yaml
+tests:
+  - it: should work
+    set:
+      jobs:
+        job1:
+          activeDeadlineSeconds: 300
+          backoffLimit: 2
+          completions: 5
+          parallelism: 3
+          serviceAccount:
+            create: true
+            annotations:
+              "eks.amazonaws.com/role-arn": some-role
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: batch/v1
+          kind: Job
+          name: "release-name-stack-gateway-job1"
+        template: job.yaml
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: "release-name-stack-gateway-job1"
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].image
+          value: "my-repo:sha-mytag"
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].command
+          value: ["hello-world"]
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].args
+          value: ["arg1", "arg2"]
+      - documentIndex: 0
+        equal:
+          path: spec.activeDeadlineSeconds
+          value: 300
+      - documentIndex: 0
+        equal:
+          path: spec.backoffLimit
+          value: 2
+      - documentIndex: 0
+        equal:
+          path: spec.completions
+          value: 5
+      - documentIndex: 0
+        equal:
+          path: spec.parallelism
+          value: 3
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: v1
+          kind: ServiceAccount
+          name: "release-name-stack-gateway-job1"
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: "release-name-stack-gateway-job1"
+      - documentIndex: 1
+        equal:
+          path: metadata.annotations["eks.amazonaws.com/role-arn"]
+          value: "some-role"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: "stack-gateway"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: "RELEASE-NAME"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/version"]
+          value: "1.16.0"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: "Helm"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/service"]
+          value: "release-name-stack-gateway-job1"
+      - documentIndex: 1
+        equal:
+          path: automountServiceAccountToken
+          value: true
+  - it: should not make service account for job
+    set:
+      jobs:
+        job2:
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - containsDocument:
+          apiVersion: batch/v1
+          kind: Job
+          name: "release-name-stack-gateway-job2"
+        template: job.yaml
+      - containsDocument:
+          apiVersion: v1
+          kind: ServiceAccount
+          name: "release-name-stack-gateway-job2"
+        not: true
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "test"
+      jobs:
+        test-job:
+          image:
+            repository: test-repo
+            tag: latest
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "test"

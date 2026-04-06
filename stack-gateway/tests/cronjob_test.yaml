@@ -1,0 +1,232 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test cronjobs
+templates:
+  - cronjob.yaml
+tests:
+  - it: should work
+    set:
+      cronJobs:
+        job1:
+          concurrencyPolicy: Forbid
+          schedule: "*/3 * * * *"
+          serviceAccount:
+            create: true
+            annotations:
+              "eks.amazonaws.com/role-arn": some-role
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          sidecars:
+          - name: event-receiver
+            image:
+              repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/argus/core/api/test-event-receiver/event-receiver
+              tag: sgtstgs
+            ports:
+              - containerPort: 3000
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /
+                port: 3000
+                scheme: HTTP
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 1
+            readinessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /
+                port: 3000
+                scheme: HTTP
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 1
+            resources:
+              limits:
+                cpu: "1"
+                memory: "512Mi"
+              requests:
+                cpu: "100m"
+                memory: "128Mi"
+
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: batch/v1
+          kind: CronJob
+          name: "release-name-stack-gateway-job1"
+        template: cronjob.yaml
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: "release-name-stack-gateway-job1"
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].image
+          value: "my-repo:sha-mytag"
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].command
+          value: ["hello-world"]
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].args
+          value: ["arg1", "arg2"]
+      - documentIndex: 0
+        equal:
+          path: spec.schedule
+          value: "*/3 * * * *"
+      - documentIndex: 0
+        equal:
+          path: spec.concurrencyPolicy
+          value: Forbid
+      - documentIndex: 0
+        lengthEqual:
+          path:  spec.jobTemplate.spec.template.spec.containers
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].livenessProbe.failureThreshold
+          value: 5
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].readinessProbe.failureThreshold
+          value: 3
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[1].image
+          value: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/argus/core/api/test-event-receiver/event-receiver:sgtstgs
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[1].name
+          value: event-receiver
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: v1
+          kind: ServiceAccount
+          name: "release-name-stack-gateway-job1"
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: "release-name-stack-gateway-job1"
+      - documentIndex: 1
+        equal:
+          path: metadata.annotations["eks.amazonaws.com/role-arn"]
+          value: "some-role"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: "stack-gateway"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: "RELEASE-NAME"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/version"]
+          value: "1.16.0"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: "Helm"
+      - documentIndex: 1
+        equal:
+          path: metadata.labels["app.kubernetes.io/service"]
+          value: "release-name-stack-gateway-job1"
+      - documentIndex: 1
+        equal:
+          path: automountServiceAccountToken
+          value: true
+  - it: should not make service account for cronjob
+    set:
+      cronJobs:
+        job2:
+          enabled: true
+          concurrencyPolicy: Forbid
+          schedule: "*/3 * * * *"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - containsDocument:
+          apiVersion: batch/v1
+          kind: CronJob
+          name: "release-name-stack-gateway-job2"
+        template: cronjob.yaml
+      - containsDocument:
+          apiVersion: v1
+          kind: ServiceAccount
+          name: "release-name-stack-gateway-job2"
+        not: true
+  - it: should not create cronjob when enable is false
+    set:
+      cronJobs:
+        disabled-job:
+          enabled: false
+          concurrencyPolicy: Forbid
+          schedule: "*/3 * * * *"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: should create cronjob when enable is not specified
+    set:
+      cronJobs:
+        default-enabled-job:
+          concurrencyPolicy: Forbid
+          schedule: "*/3 * * * *"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+          args: ["arg1", "arg2"]
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "staging"
+      cronJobs:
+        test-job:
+          schedule: "0 0 * * *"
+          image:
+            repository: test-repo
+            tag: latest
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        exists:
+          path: metadata.labels["argus/env-name"]
+      - documentIndex: 0
+        equal:
+          path: metadata.labels["argus/env-name"]
+          value: "staging"
