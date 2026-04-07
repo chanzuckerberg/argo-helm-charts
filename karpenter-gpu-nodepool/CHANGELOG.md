@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.3.0...karpenter-gpu-nodepool-v0.4.0) (2026-04-07)
+
+
+### Features
+
+* add nodepool limits and expand GPU instance families ([#429](https://github.com/chanzuckerberg/argo-helm-charts/issues/429)) ([4732321](https://github.com/chanzuckerberg/argo-helm-charts/commit/4732321998d1219e5730b82ff06e5d6c76f9680d))
+* Add support for gpu node readiness ([#433](https://github.com/chanzuckerberg/argo-helm-charts/issues/433)) ([02839eb](https://github.com/chanzuckerberg/argo-helm-charts/commit/02839ebde2e162ce2877217f4b2c727c555c4887))
+* Enable DCGM exporter for the karpenter-gpu-nodepool ([#431](https://github.com/chanzuckerberg/argo-helm-charts/issues/431)) ([6a132bd](https://github.com/chanzuckerberg/argo-helm-charts/commit/6a132bd956d31828bb3b99e1a509e9241db1fd40))
+
 ## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.2.0...karpenter-gpu-nodepool-v0.3.0) (2026-01-05)
 
 

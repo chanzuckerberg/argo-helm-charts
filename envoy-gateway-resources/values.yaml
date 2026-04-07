@@ -3,6 +3,10 @@ baseDomain: "dev.czi.team"
 gatewayName: "envoy-gateway"
 alternateNames: []
 
+serviceAccount:
+  name: envoy-gateway-proxy
+  annotations: {}
+
 geoip:
   enabled: true
   blockedCountries:

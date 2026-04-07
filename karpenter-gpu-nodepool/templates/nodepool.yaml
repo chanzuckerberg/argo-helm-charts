@@ -9,6 +9,10 @@ spec:
   disruption:
     consolidationPolicy: {{ .Values.nodepool.disruption.consolidationPolicy }}
     consolidateAfter: {{ .Values.nodepool.disruption.consolidateAfter }}
+  {{- with .Values.nodepool.limits }}
+  limits:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:

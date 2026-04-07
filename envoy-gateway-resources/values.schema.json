@@ -29,6 +29,17 @@
           "type": "boolean"
         }
       }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     }
   }
 }
