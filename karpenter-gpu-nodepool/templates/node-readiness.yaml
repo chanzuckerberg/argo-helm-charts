@@ -72,6 +72,8 @@ spec:
             - /bin/sh
             - -c
             - |
+              echo "Ensuring startup taint {{ .Values.nodeReadiness.startupTaintKey }}:NoSchedule is present on $NODE_NAME"
+              kubectl taint node "$NODE_NAME" {{ .Values.nodeReadiness.startupTaintKey }}:NoSchedule --overwrite
               until [ -n "$(kubectl get node "$NODE_NAME" -o jsonpath='{.status.allocatable.nvidia\.com/gpu}')" ]; do
                 echo "Waiting for nvidia.com/gpu to appear in node allocatable resources..."
                 sleep 5
