@@ -164,11 +164,11 @@
               "type": "string"
             },
             "repository": {
-              "description": "Image with bash and kubectl for taint removal.",
+              "description": "Official Kubernetes kubectl image for taint removal.",
               "type": "string"
             },
             "tag": {
-              "description": "Image tag — pin to a specific kubectl minor version.",
+              "description": "Image tag — pin to match your cluster's Kubernetes version.",
               "type": "string"
             }
           }
@@ -178,10 +178,10 @@
           "type": "string"
         },
         "nodeSelector": {
-          "description": "Restrict to GPU nodes. Should match dcgmExporter.nodeSelector.",
           "type": "object",
-          "patternProperties": {
-            "^.*$": {
+          "properties": {
+            "karpenter.k8s.aws/instance-gpu-manufacturer": {
+              "description": "Restrict to GPU nodes. Should match dcgmExporter.nodeSelector.",
               "type": "string"
             }
           }
@@ -326,7 +326,7 @@
                   }
                 },
                 "startupTaints": {
-                  "description": "Startup taints applied during node initialization to prevent scheduling until CSI and GPU drivers are ready.",
+                  "description": "Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready.",
                   "type": "array",
                   "items": {
                     "type": "object",
