@@ -64,21 +64,55 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      containers:
-        - name: wait-and-untaint
+      initContainers:
+        - name: wait-for-gpu
           image: "{{ .Values.nodeReadiness.image.repository }}:{{ .Values.nodeReadiness.image.tag }}"
           imagePullPolicy: {{ .Values.nodeReadiness.image.pullPolicy }}
           command:
-            - /bin/bash
-            - -c
-            - |
-              until [ -n "$(kubectl get node "$NODE_NAME" -o jsonpath='{.status.allocatable.nvidia\.com/gpu}')" ]; do
-                echo "Waiting for nvidia.com/gpu to appear in node allocatable resources..."
-                sleep 5
-              done
-              echo "GPUs allocatable on $NODE_NAME, removing startup taint {{ .Values.nodeReadiness.startupTaintKey }}"
-              kubectl taint node "$NODE_NAME" {{ .Values.nodeReadiness.startupTaintKey }}:NoSchedule- || true
-              sleep infinity
+            - kubectl
+            - wait
+            - 'node/$(NODE_NAME)'
+            - '--for=jsonpath={.status.allocatable.nvidia\.com/gpu}'
+            - --timeout=30m
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          {{- with .Values.nodeReadiness.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        - name: remove-startup-taint
+          image: "{{ .Values.nodeReadiness.image.repository }}:{{ .Values.nodeReadiness.image.tag }}"
+          imagePullPolicy: {{ .Values.nodeReadiness.image.pullPolicy }}
+          command:
+            - kubectl
+            - patch
+            - node
+            - $(NODE_NAME)
+            - --type=strategic
+            - -p
+            - '{"spec":{"taints":[{"key":"{{ .Values.nodeReadiness.startupTaintKey }}","effect":"NoSchedule","$patch":"delete"}]}}'
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          {{- with .Values.nodeReadiness.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      containers:
+        - name: idle
+          image: "{{ .Values.nodeReadiness.image.repository }}:{{ .Values.nodeReadiness.image.tag }}"
+          imagePullPolicy: {{ .Values.nodeReadiness.image.pullPolicy }}
+          command:
+            - kubectl
+            - wait
+            - --for=delete
+            - 'node/$(NODE_NAME)'
+            - --timeout=96h
           env:
             - name: NODE_NAME
               valueFrom:
