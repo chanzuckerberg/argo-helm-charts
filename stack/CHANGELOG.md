@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.33.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.0...stack-v2.33.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* add sync waves to fix 'Dashboard could not be read' errors ([#432](https://github.com/chanzuckerberg/argo-helm-charts/issues/432)) ([ea5238d](https://github.com/chanzuckerberg/argo-helm-charts/commit/ea5238d3b2efe6e6a4412cc61c17c3fb1112e6ac))
+
 ## [2.33.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.32.0...stack-v2.33.0) (2026-04-02)
 
 
