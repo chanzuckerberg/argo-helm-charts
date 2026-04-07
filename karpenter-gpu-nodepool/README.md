@@ -459,11 +459,11 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                           |
-| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------- |
-| - [pullPolicy](#nodeReadiness_image_pullPolicy ) | No      | string | No         | -          | Image pull policy (IfNotPresent, Always, or Never).         |
-| - [repository](#nodeReadiness_image_repository ) | No      | string | No         | -          | Official Kubernetes kubectl image for taint removal.        |
-| - [tag](#nodeReadiness_image_tag )               | No      | string | No         | -          | Image tag — pin to match your cluster's Kubernetes version. |
+| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                 |
+| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------- |
+| - [pullPolicy](#nodeReadiness_image_pullPolicy ) | No      | string | No         | -          | Image pull policy (IfNotPresent, Always, or Never).               |
+| - [repository](#nodeReadiness_image_repository ) | No      | string | No         | -          | Alpine-based image with kubectl and sh for taint removal.         |
+| - [tag](#nodeReadiness_image_tag )               | No      | string | No         | -          | Image tag — pin to match your cluster's Kubernetes minor version. |
 
 #### <a name="nodeReadiness_image_pullPolicy"></a>2.2.1. Property `karpenter-gpu-nodepool > nodeReadiness > image > pullPolicy`
 
@@ -481,7 +481,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Official Kubernetes kubectl image for taint removal.
+**Description:** Alpine-based image with kubectl and sh for taint removal.
 
 #### <a name="nodeReadiness_image_tag"></a>2.2.3. Property `karpenter-gpu-nodepool > nodeReadiness > image > tag`
 
@@ -490,7 +490,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Image tag — pin to match your cluster's Kubernetes version.
+**Description:** Image tag — pin to match your cluster's Kubernetes minor version.
 
 ### <a name="nodeReadiness_name"></a>2.3. Property `karpenter-gpu-nodepool > nodeReadiness > name`
 

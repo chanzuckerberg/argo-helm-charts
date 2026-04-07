@@ -164,11 +164,11 @@
               "type": "string"
             },
             "repository": {
-              "description": "Official Kubernetes kubectl image for taint removal.",
+              "description": "Alpine-based image with kubectl and sh for taint removal.",
               "type": "string"
             },
             "tag": {
-              "description": "Image tag — pin to match your cluster's Kubernetes version.",
+              "description": "Image tag — pin to match your cluster's Kubernetes minor version.",
               "type": "string"
             }
           }
