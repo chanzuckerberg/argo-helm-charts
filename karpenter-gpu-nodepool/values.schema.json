@@ -149,6 +149,76 @@
         }
       }
     },
+    "nodeReadiness": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Deploy a DaemonSet that removes the nvidia.com/gpu-not-ready startup taint once nvidia-smi reports GPUs as healthy.",
+          "type": "boolean"
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "description": "Image pull policy (IfNotPresent, Always, or Never).",
+              "type": "string"
+            },
+            "repository": {
+              "description": "Image with bash and kubectl for taint removal.",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Image tag — pin to a specific kubectl minor version.",
+              "type": "string"
+            }
+          }
+        },
+        "name": {
+          "description": "Name for the DaemonSet, ServiceAccount, ClusterRole, and ClusterRoleBinding.",
+          "type": "string"
+        },
+        "nodeSelector": {
+          "description": "Restrict to GPU nodes. Should match dcgmExporter.nodeSelector.",
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          }
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "startupTaintKey": {
+          "description": "Taint key to remove once the driver is ready. Must match the key added to nodepool.template.spec.startupTaints.",
+          "type": "string"
+        }
+      }
+    },
     "nodepool": {
       "type": "object",
       "properties": {
@@ -256,7 +326,7 @@
                   }
                 },
                 "startupTaints": {
-                  "description": "Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready.",
+                  "description": "Startup taints applied during node initialization to prevent scheduling until CSI and GPU drivers are ready.",
                   "type": "array",
                   "items": {
                     "type": "object",
