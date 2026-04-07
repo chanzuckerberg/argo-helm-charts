@@ -11,6 +11,7 @@
 | Property                           | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ---------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [dcgmExporter](#dcgmExporter )   | No      | object | No         | -          | -                 |
+| - [nodeReadiness](#nodeReadiness ) | No      | object | No         | -          | -                 |
 | - [nodepool](#nodepool )           | No      | object | No         | -          | -                 |
 | - [nvidiaDriver](#nvidiaDriver )   | No      | object | No         | -          | -                 |
 | - [priorityClass](#priorityClass ) | No      | object | No         | -          | -                 |
@@ -424,7 +425,180 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="nodepool"></a>2. Property `karpenter-gpu-nodepool > nodepool`
+## <a name="nodeReadiness"></a>2. Property `karpenter-gpu-nodepool > nodeReadiness`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                             | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                   |
+| ---------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#nodeReadiness_enabled )                 | No      | boolean | No         | -          | Deploy a DaemonSet that removes the nvidia.com/gpu-not-ready startup taint once nvidia-smi reports GPUs as healthy. |
+| - [image](#nodeReadiness_image )                     | No      | object  | No         | -          | -                                                                                                                   |
+| - [name](#nodeReadiness_name )                       | No      | string  | No         | -          | Name for the DaemonSet, ServiceAccount, ClusterRole, and ClusterRoleBinding.                                        |
+| - [nodeSelector](#nodeReadiness_nodeSelector )       | No      | object  | No         | -          | -                                                                                                                   |
+| - [resources](#nodeReadiness_resources )             | No      | object  | No         | -          | -                                                                                                                   |
+| - [startupTaintKey](#nodeReadiness_startupTaintKey ) | No      | string  | No         | -          | Taint key to remove once the driver is ready. Must match the key added to nodepool.template.spec.startupTaints.     |
+
+### <a name="nodeReadiness_enabled"></a>2.1. Property `karpenter-gpu-nodepool > nodeReadiness > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Deploy a DaemonSet that removes the nvidia.com/gpu-not-ready startup taint once nvidia-smi reports GPUs as healthy.
+
+### <a name="nodeReadiness_image"></a>2.2. Property `karpenter-gpu-nodepool > nodeReadiness > image`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                 |
+| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------- |
+| - [pullPolicy](#nodeReadiness_image_pullPolicy ) | No      | string | No         | -          | Image pull policy (IfNotPresent, Always, or Never).               |
+| - [repository](#nodeReadiness_image_repository ) | No      | string | No         | -          | Alpine-based image with kubectl and sh for taint removal.         |
+| - [tag](#nodeReadiness_image_tag )               | No      | string | No         | -          | Image tag — pin to match your cluster's Kubernetes minor version. |
+
+#### <a name="nodeReadiness_image_pullPolicy"></a>2.2.1. Property `karpenter-gpu-nodepool > nodeReadiness > image > pullPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Image pull policy (IfNotPresent, Always, or Never).
+
+#### <a name="nodeReadiness_image_repository"></a>2.2.2. Property `karpenter-gpu-nodepool > nodeReadiness > image > repository`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Alpine-based image with kubectl and sh for taint removal.
+
+#### <a name="nodeReadiness_image_tag"></a>2.2.3. Property `karpenter-gpu-nodepool > nodeReadiness > image > tag`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Image tag — pin to match your cluster's Kubernetes minor version.
+
+### <a name="nodeReadiness_name"></a>2.3. Property `karpenter-gpu-nodepool > nodeReadiness > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name for the DaemonSet, ServiceAccount, ClusterRole, and ClusterRoleBinding.
+
+### <a name="nodeReadiness_nodeSelector"></a>2.4. Property `karpenter-gpu-nodepool > nodeReadiness > nodeSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description                                              |
+| ----------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------- |
+| - [karpenter.k8s.aws/instance-gpu-manufacturer](#nodeReadiness_nodeSelector_karpenterk8saws/instance-gpu-manufacturer ) | No      | string | No         | -          | Restrict to GPU nodes. Should match dcgmExporter.nodeSelector. |
+
+#### <a name="nodeReadiness_nodeSelector_karpenterk8saws/instance-gpu-manufacturer"></a>2.4.1. Property `karpenter-gpu-nodepool > nodeReadiness > nodeSelector > karpenter.k8s.aws/instance-gpu-manufacturer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Restrict to GPU nodes. Should match dcgmExporter.nodeSelector.
+
+### <a name="nodeReadiness_resources"></a>2.5. Property `karpenter-gpu-nodepool > nodeReadiness > resources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [limits](#nodeReadiness_resources_limits )     | No      | object | No         | -          | -                 |
+| - [requests](#nodeReadiness_resources_requests ) | No      | object | No         | -          | -                 |
+
+#### <a name="nodeReadiness_resources_limits"></a>2.5.1. Property `karpenter-gpu-nodepool > nodeReadiness > resources > limits`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [cpu](#nodeReadiness_resources_limits_cpu )       | No      | string | No         | -          | -                 |
+| - [memory](#nodeReadiness_resources_limits_memory ) | No      | string | No         | -          | -                 |
+
+##### <a name="nodeReadiness_resources_limits_cpu"></a>2.5.1.1. Property `karpenter-gpu-nodepool > nodeReadiness > resources > limits > cpu`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="nodeReadiness_resources_limits_memory"></a>2.5.1.2. Property `karpenter-gpu-nodepool > nodeReadiness > resources > limits > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="nodeReadiness_resources_requests"></a>2.5.2. Property `karpenter-gpu-nodepool > nodeReadiness > resources > requests`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [cpu](#nodeReadiness_resources_requests_cpu )       | No      | string | No         | -          | -                 |
+| - [memory](#nodeReadiness_resources_requests_memory ) | No      | string | No         | -          | -                 |
+
+##### <a name="nodeReadiness_resources_requests_cpu"></a>2.5.2.1. Property `karpenter-gpu-nodepool > nodeReadiness > resources > requests > cpu`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="nodeReadiness_resources_requests_memory"></a>2.5.2.2. Property `karpenter-gpu-nodepool > nodeReadiness > resources > requests > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="nodeReadiness_startupTaintKey"></a>2.6. Property `karpenter-gpu-nodepool > nodeReadiness > startupTaintKey`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Taint key to remove once the driver is ready. Must match the key added to nodepool.template.spec.startupTaints.
+
+## <a name="nodepool"></a>3. Property `karpenter-gpu-nodepool > nodepool`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -440,7 +614,7 @@
 | - [name](#nodepool_name )             | No      | string  | No         | -          | Name of the NodePool.                                                                           |
 | - [template](#nodepool_template )     | No      | object  | No         | -          | -                                                                                               |
 
-### <a name="nodepool_disruption"></a>2.1. Property `karpenter-gpu-nodepool > nodepool > disruption`
+### <a name="nodepool_disruption"></a>3.1. Property `karpenter-gpu-nodepool > nodepool > disruption`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -453,7 +627,7 @@
 | - [consolidateAfter](#nodepool_disruption_consolidateAfter )       | No      | string | No         | -          | Time to wait before consolidating nodes.                                       |
 | - [consolidationPolicy](#nodepool_disruption_consolidationPolicy ) | No      | string | No         | -          | Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty). |
 
-#### <a name="nodepool_disruption_consolidateAfter"></a>2.1.1. Property `karpenter-gpu-nodepool > nodepool > disruption > consolidateAfter`
+#### <a name="nodepool_disruption_consolidateAfter"></a>3.1.1. Property `karpenter-gpu-nodepool > nodepool > disruption > consolidateAfter`
 
 |              |          |
 | ------------ | -------- |
@@ -462,7 +636,7 @@
 
 **Description:** Time to wait before consolidating nodes.
 
-#### <a name="nodepool_disruption_consolidationPolicy"></a>2.1.2. Property `karpenter-gpu-nodepool > nodepool > disruption > consolidationPolicy`
+#### <a name="nodepool_disruption_consolidationPolicy"></a>3.1.2. Property `karpenter-gpu-nodepool > nodepool > disruption > consolidationPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -471,7 +645,7 @@
 
 **Description:** Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty).
 
-### <a name="nodepool_enabled"></a>2.2. Property `karpenter-gpu-nodepool > nodepool > enabled`
+### <a name="nodepool_enabled"></a>3.2. Property `karpenter-gpu-nodepool > nodepool > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -480,7 +654,7 @@
 
 **Description:** Enable deployment of NodePool.
 
-### <a name="nodepool_limits"></a>2.3. Property `karpenter-gpu-nodepool > nodepool > limits`
+### <a name="nodepool_limits"></a>3.3. Property `karpenter-gpu-nodepool > nodepool > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -494,7 +668,7 @@
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#nodepool_limits_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="nodepool_limits_pattern1"></a>2.3.1. Pattern Property `karpenter-gpu-nodepool > nodepool > limits > ^.*$`
+#### <a name="nodepool_limits_pattern1"></a>3.3.1. Pattern Property `karpenter-gpu-nodepool > nodepool > limits > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -504,7 +678,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nodepool_name"></a>2.4. Property `karpenter-gpu-nodepool > nodepool > name`
+### <a name="nodepool_name"></a>3.4. Property `karpenter-gpu-nodepool > nodepool > name`
 
 |              |          |
 | ------------ | -------- |
@@ -513,7 +687,7 @@ must respect the following conditions
 
 **Description:** Name of the NodePool.
 
-### <a name="nodepool_template"></a>2.5. Property `karpenter-gpu-nodepool > nodepool > template`
+### <a name="nodepool_template"></a>3.5. Property `karpenter-gpu-nodepool > nodepool > template`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -526,7 +700,7 @@ must respect the following conditions
 | - [metadata](#nodepool_template_metadata ) | No      | object | No         | -          | -                 |
 | - [spec](#nodepool_template_spec )         | No      | object | No         | -          | -                 |
 
-#### <a name="nodepool_template_metadata"></a>2.5.1. Property `karpenter-gpu-nodepool > nodepool > template > metadata`
+#### <a name="nodepool_template_metadata"></a>3.5.1. Property `karpenter-gpu-nodepool > nodepool > template > metadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -538,7 +712,7 @@ must respect the following conditions
 | ----------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------- |
 | - [labels](#nodepool_template_metadata_labels ) | No      | object | No         | -          | Labels to apply to nodes created by this NodePool. |
 
-##### <a name="nodepool_template_metadata_labels"></a>2.5.1.1. Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels`
+##### <a name="nodepool_template_metadata_labels"></a>3.5.1.1. Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -554,21 +728,21 @@ must respect the following conditions
 | - [workload.type](#nodepool_template_metadata_labels_workloadtype )                 | No      | string | No         | -          | -                 |
 | - [^.*$](#nodepool_template_metadata_labels_pattern1 )                              | Yes     | string | No         | -          | -                 |
 
-###### <a name="nodepool_template_metadata_labels_workloadnode-purpose"></a>2.5.1.1.1. Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels > workload.node-purpose`
+###### <a name="nodepool_template_metadata_labels_workloadnode-purpose"></a>3.5.1.1.1. Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels > workload.node-purpose`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepool_template_metadata_labels_workloadtype"></a>2.5.1.1.2. Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels > workload.type`
+###### <a name="nodepool_template_metadata_labels_workloadtype"></a>3.5.1.1.2. Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels > workload.type`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepool_template_metadata_labels_pattern1"></a>2.5.1.1.3. Pattern Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels > ^.*$`
+###### <a name="nodepool_template_metadata_labels_pattern1"></a>3.5.1.1.3. Pattern Property `karpenter-gpu-nodepool > nodepool > template > metadata > labels > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -578,7 +752,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="nodepool_template_spec"></a>2.5.2. Property `karpenter-gpu-nodepool > nodepool > template > spec`
+#### <a name="nodepool_template_spec"></a>3.5.2. Property `karpenter-gpu-nodepool > nodepool > template > spec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -594,7 +768,7 @@ must respect the following conditions
 | - [startupTaints](#nodepool_template_spec_startupTaints ) | No      | array of object | No         | -          | Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready. |
 | - [taints](#nodepool_template_spec_taints )               | No      | array of object | No         | -          | Taints to apply to nodes to prevent non-GPU workloads from scheduling.                               |
 
-##### <a name="nodepool_template_spec_expireAfter"></a>2.5.2.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > expireAfter`
+##### <a name="nodepool_template_spec_expireAfter"></a>3.5.2.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > expireAfter`
 
 |              |          |
 | ------------ | -------- |
@@ -603,7 +777,7 @@ must respect the following conditions
 
 **Description:** Time after which nodes will expire and be replaced (e.g., 24h, 48h).
 
-##### <a name="nodepool_template_spec_nodeClassRef"></a>2.5.2.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef`
+##### <a name="nodepool_template_spec_nodeClassRef"></a>3.5.2.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -617,7 +791,7 @@ must respect the following conditions
 | - [kind](#nodepool_template_spec_nodeClassRef_kind )   | No      | string | No         | -          | Kind of NodeClass (typically EC2NodeClass).              |
 | + [name](#nodepool_template_spec_nodeClassRef_name )   | No      | string | No         | -          | Name of the EC2NodeClass to use. This value is required. |
 
-###### <a name="nodepool_template_spec_nodeClassRef_group"></a>2.5.2.2.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef > group`
+###### <a name="nodepool_template_spec_nodeClassRef_group"></a>3.5.2.2.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef > group`
 
 |              |          |
 | ------------ | -------- |
@@ -626,7 +800,7 @@ must respect the following conditions
 
 **Description:** Group for the NodeClass reference.
 
-###### <a name="nodepool_template_spec_nodeClassRef_kind"></a>2.5.2.2.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef > kind`
+###### <a name="nodepool_template_spec_nodeClassRef_kind"></a>3.5.2.2.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -635,7 +809,7 @@ must respect the following conditions
 
 **Description:** Kind of NodeClass (typically EC2NodeClass).
 
-###### <a name="nodepool_template_spec_nodeClassRef_name"></a>2.5.2.2.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef > name`
+###### <a name="nodepool_template_spec_nodeClassRef_name"></a>3.5.2.2.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > nodeClassRef > name`
 
 |              |          |
 | ------------ | -------- |
@@ -644,7 +818,7 @@ must respect the following conditions
 
 **Description:** Name of the EC2NodeClass to use. This value is required.
 
-##### <a name="nodepool_template_spec_requirements"></a>2.5.2.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements`
+##### <a name="nodepool_template_spec_requirements"></a>3.5.2.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -665,7 +839,7 @@ must respect the following conditions
 | ---------------------------------------------------------------- | ----------- |
 | [requirements items](#nodepool_template_spec_requirements_items) | -           |
 
-###### <a name="nodepool_template_spec_requirements_items"></a>2.5.2.3.1. karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items
+###### <a name="nodepool_template_spec_requirements_items"></a>3.5.2.3.1. karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -679,21 +853,21 @@ must respect the following conditions
 | - [operator](#nodepool_template_spec_requirements_items_operator ) | No      | string          | No         | -          | -                 |
 | - [values](#nodepool_template_spec_requirements_items_values )     | No      | array of string | No         | -          | -                 |
 
-###### <a name="nodepool_template_spec_requirements_items_key"></a>2.5.2.3.1.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > key`
+###### <a name="nodepool_template_spec_requirements_items_key"></a>3.5.2.3.1.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > key`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepool_template_spec_requirements_items_operator"></a>2.5.2.3.1.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > operator`
+###### <a name="nodepool_template_spec_requirements_items_operator"></a>3.5.2.3.1.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > operator`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepool_template_spec_requirements_items_values"></a>2.5.2.3.1.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > values`
+###### <a name="nodepool_template_spec_requirements_items_values"></a>3.5.2.3.1.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > values`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -712,14 +886,14 @@ must respect the following conditions
 | ----------------------------------------------------------------------- | ----------- |
 | [values items](#nodepool_template_spec_requirements_items_values_items) | -           |
 
-###### <a name="nodepool_template_spec_requirements_items_values_items"></a>2.5.2.3.1.3.1. karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > values > values items
+###### <a name="nodepool_template_spec_requirements_items_values_items"></a>3.5.2.3.1.3.1. karpenter-gpu-nodepool > nodepool > template > spec > requirements > requirements items > values > values items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nodepool_template_spec_startupTaints"></a>2.5.2.4. Property `karpenter-gpu-nodepool > nodepool > template > spec > startupTaints`
+##### <a name="nodepool_template_spec_startupTaints"></a>3.5.2.4. Property `karpenter-gpu-nodepool > nodepool > template > spec > startupTaints`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -740,7 +914,7 @@ must respect the following conditions
 | ------------------------------------------------------------------ | ----------- |
 | [startupTaints items](#nodepool_template_spec_startupTaints_items) | -           |
 
-###### <a name="nodepool_template_spec_startupTaints_items"></a>2.5.2.4.1. karpenter-gpu-nodepool > nodepool > template > spec > startupTaints > startupTaints items
+###### <a name="nodepool_template_spec_startupTaints_items"></a>3.5.2.4.1. karpenter-gpu-nodepool > nodepool > template > spec > startupTaints > startupTaints items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -753,21 +927,21 @@ must respect the following conditions
 | - [effect](#nodepool_template_spec_startupTaints_items_effect ) | No      | string | No         | -          | -                 |
 | - [key](#nodepool_template_spec_startupTaints_items_key )       | No      | string | No         | -          | -                 |
 
-###### <a name="nodepool_template_spec_startupTaints_items_effect"></a>2.5.2.4.1.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > startupTaints > startupTaints items > effect`
+###### <a name="nodepool_template_spec_startupTaints_items_effect"></a>3.5.2.4.1.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > startupTaints > startupTaints items > effect`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepool_template_spec_startupTaints_items_key"></a>2.5.2.4.1.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > startupTaints > startupTaints items > key`
+###### <a name="nodepool_template_spec_startupTaints_items_key"></a>3.5.2.4.1.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > startupTaints > startupTaints items > key`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nodepool_template_spec_taints"></a>2.5.2.5. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints`
+##### <a name="nodepool_template_spec_taints"></a>3.5.2.5. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -788,7 +962,7 @@ must respect the following conditions
 | ---------------------------------------------------- | ----------- |
 | [taints items](#nodepool_template_spec_taints_items) | -           |
 
-###### <a name="nodepool_template_spec_taints_items"></a>2.5.2.5.1. karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items
+###### <a name="nodepool_template_spec_taints_items"></a>3.5.2.5.1. karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -802,28 +976,28 @@ must respect the following conditions
 | - [key](#nodepool_template_spec_taints_items_key )       | No      | string | No         | -          | -                 |
 | - [value](#nodepool_template_spec_taints_items_value )   | No      | string | No         | -          | -                 |
 
-###### <a name="nodepool_template_spec_taints_items_effect"></a>2.5.2.5.1.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items > effect`
+###### <a name="nodepool_template_spec_taints_items_effect"></a>3.5.2.5.1.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items > effect`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepool_template_spec_taints_items_key"></a>2.5.2.5.1.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items > key`
+###### <a name="nodepool_template_spec_taints_items_key"></a>3.5.2.5.1.2. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items > key`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepool_template_spec_taints_items_value"></a>2.5.2.5.1.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items > value`
+###### <a name="nodepool_template_spec_taints_items_value"></a>3.5.2.5.1.3. Property `karpenter-gpu-nodepool > nodepool > template > spec > taints > taints items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="nvidiaDriver"></a>3. Property `karpenter-gpu-nodepool > nvidiaDriver`
+## <a name="nvidiaDriver"></a>4. Property `karpenter-gpu-nodepool > nvidiaDriver`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -850,7 +1024,7 @@ must respect the following conditions
 | - [volumeMounts](#nvidiaDriver_volumeMounts )           | No      | array of object | No         | -          | Volume mounts for the container to access device plugin socket path.                                                    |
 | - [volumes](#nvidiaDriver_volumes )                     | No      | array of object | No         | -          | Volumes for the DaemonSet to access host device plugin directory.                                                       |
 
-### <a name="nvidiaDriver_affinity"></a>3.1. Property `karpenter-gpu-nodepool > nvidiaDriver > affinity`
+### <a name="nvidiaDriver_affinity"></a>4.1. Property `karpenter-gpu-nodepool > nvidiaDriver > affinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -860,7 +1034,7 @@ must respect the following conditions
 
 **Description:** Affinity rules for the DaemonSet pods. Can be used for advanced scheduling like avoiding Fargate nodes.
 
-### <a name="nvidiaDriver_args"></a>3.2. Property `karpenter-gpu-nodepool > nvidiaDriver > args`
+### <a name="nvidiaDriver_args"></a>4.2. Property `karpenter-gpu-nodepool > nvidiaDriver > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -881,14 +1055,14 @@ must respect the following conditions
 | -------------------------------------- | ----------- |
 | [args items](#nvidiaDriver_args_items) | -           |
 
-#### <a name="nvidiaDriver_args_items"></a>3.2.1. karpenter-gpu-nodepool > nvidiaDriver > args > args items
+#### <a name="nvidiaDriver_args_items"></a>4.2.1. karpenter-gpu-nodepool > nvidiaDriver > args > args items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_enabled"></a>3.3. Property `karpenter-gpu-nodepool > nvidiaDriver > enabled`
+### <a name="nvidiaDriver_enabled"></a>4.3. Property `karpenter-gpu-nodepool > nvidiaDriver > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -897,7 +1071,7 @@ must respect the following conditions
 
 **Description:** Enable deployment of NVIDIA device plugin DaemonSet.
 
-### <a name="nvidiaDriver_env"></a>3.4. Property `karpenter-gpu-nodepool > nvidiaDriver > env`
+### <a name="nvidiaDriver_env"></a>4.4. Property `karpenter-gpu-nodepool > nvidiaDriver > env`
 
 |              |         |
 | ------------ | ------- |
@@ -914,7 +1088,7 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="nvidiaDriver_image"></a>3.5. Property `karpenter-gpu-nodepool > nvidiaDriver > image`
+### <a name="nvidiaDriver_image"></a>4.5. Property `karpenter-gpu-nodepool > nvidiaDriver > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -928,7 +1102,7 @@ must respect the following conditions
 | - [repository](#nvidiaDriver_image_repository ) | No      | string | No         | -          | NVIDIA device plugin image repository.              |
 | - [tag](#nvidiaDriver_image_tag )               | No      | string | No         | -          | Image tag for the NVIDIA device plugin.             |
 
-#### <a name="nvidiaDriver_image_pullPolicy"></a>3.5.1. Property `karpenter-gpu-nodepool > nvidiaDriver > image > pullPolicy`
+#### <a name="nvidiaDriver_image_pullPolicy"></a>4.5.1. Property `karpenter-gpu-nodepool > nvidiaDriver > image > pullPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -937,7 +1111,7 @@ must respect the following conditions
 
 **Description:** Image pull policy (IfNotPresent, Always, or Never).
 
-#### <a name="nvidiaDriver_image_repository"></a>3.5.2. Property `karpenter-gpu-nodepool > nvidiaDriver > image > repository`
+#### <a name="nvidiaDriver_image_repository"></a>4.5.2. Property `karpenter-gpu-nodepool > nvidiaDriver > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -946,7 +1120,7 @@ must respect the following conditions
 
 **Description:** NVIDIA device plugin image repository.
 
-#### <a name="nvidiaDriver_image_tag"></a>3.5.3. Property `karpenter-gpu-nodepool > nvidiaDriver > image > tag`
+#### <a name="nvidiaDriver_image_tag"></a>4.5.3. Property `karpenter-gpu-nodepool > nvidiaDriver > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -955,7 +1129,7 @@ must respect the following conditions
 
 **Description:** Image tag for the NVIDIA device plugin.
 
-### <a name="nvidiaDriver_name"></a>3.6. Property `karpenter-gpu-nodepool > nvidiaDriver > name`
+### <a name="nvidiaDriver_name"></a>4.6. Property `karpenter-gpu-nodepool > nvidiaDriver > name`
 
 |              |          |
 | ------------ | -------- |
@@ -964,7 +1138,7 @@ must respect the following conditions
 
 **Description:** Name of the DaemonSet.
 
-### <a name="nvidiaDriver_namespace"></a>3.7. Property `karpenter-gpu-nodepool > nvidiaDriver > namespace`
+### <a name="nvidiaDriver_namespace"></a>4.7. Property `karpenter-gpu-nodepool > nvidiaDriver > namespace`
 
 |              |          |
 | ------------ | -------- |
@@ -973,7 +1147,7 @@ must respect the following conditions
 
 **Description:** Namespace where the DaemonSet will be deployed.
 
-### <a name="nvidiaDriver_nodeSelector"></a>3.8. Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector`
+### <a name="nvidiaDriver_nodeSelector"></a>4.8. Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -987,7 +1161,7 @@ must respect the following conditions
 | ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#nvidiaDriver_nodeSelector_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_nodeSelector_pattern1"></a>3.8.1. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector > ^.*$`
+#### <a name="nvidiaDriver_nodeSelector_pattern1"></a>4.8.1. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -997,7 +1171,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_podLabels"></a>3.9. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels`
+### <a name="nvidiaDriver_podLabels"></a>4.9. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1012,14 +1186,14 @@ must respect the following conditions
 | - [name](#nvidiaDriver_podLabels_name )     | No      | string | No         | -          | -                 |
 | - [^.*$](#nvidiaDriver_podLabels_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_podLabels_name"></a>3.9.1. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > name`
+#### <a name="nvidiaDriver_podLabels_name"></a>4.9.1. Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="nvidiaDriver_podLabels_pattern1"></a>3.9.2. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > ^.*$`
+#### <a name="nvidiaDriver_podLabels_pattern1"></a>4.9.2. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > podLabels > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -1029,7 +1203,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_priorityClassName"></a>3.10. Property `karpenter-gpu-nodepool > nvidiaDriver > priorityClassName`
+### <a name="nvidiaDriver_priorityClassName"></a>4.10. Property `karpenter-gpu-nodepool > nvidiaDriver > priorityClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -1038,7 +1212,7 @@ must respect the following conditions
 
 **Description:** Priority class name for the DaemonSet pods. If empty and priorityClass.enabled is true, uses the chart's PriorityClass.
 
-### <a name="nvidiaDriver_resources"></a>3.11. Property `karpenter-gpu-nodepool > nvidiaDriver > resources`
+### <a name="nvidiaDriver_resources"></a>4.11. Property `karpenter-gpu-nodepool > nvidiaDriver > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1048,7 +1222,7 @@ must respect the following conditions
 
 **Description:** Resources for the NVIDIA device plugin container. Can be used to set limits and requests.
 
-### <a name="nvidiaDriver_securityContext"></a>3.12. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext`
+### <a name="nvidiaDriver_securityContext"></a>4.12. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1063,14 +1237,14 @@ must respect the following conditions
 | - [allowPrivilegeEscalation](#nvidiaDriver_securityContext_allowPrivilegeEscalation ) | No      | boolean | No         | -          | -                 |
 | - [capabilities](#nvidiaDriver_securityContext_capabilities )                         | No      | object  | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_securityContext_allowPrivilegeEscalation"></a>3.12.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > allowPrivilegeEscalation`
+#### <a name="nvidiaDriver_securityContext_allowPrivilegeEscalation"></a>4.12.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > allowPrivilegeEscalation`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-#### <a name="nvidiaDriver_securityContext_capabilities"></a>3.12.2. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities`
+#### <a name="nvidiaDriver_securityContext_capabilities"></a>4.12.2. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1082,7 +1256,7 @@ must respect the following conditions
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [drop](#nvidiaDriver_securityContext_capabilities_drop ) | No      | array of string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_securityContext_capabilities_drop"></a>3.12.2.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop`
+##### <a name="nvidiaDriver_securityContext_capabilities_drop"></a>4.12.2.1. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1101,14 +1275,14 @@ must respect the following conditions
 | ------------------------------------------------------------------- | ----------- |
 | [drop items](#nvidiaDriver_securityContext_capabilities_drop_items) | -           |
 
-###### <a name="nvidiaDriver_securityContext_capabilities_drop_items"></a>3.12.2.1.1. karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop > drop items
+###### <a name="nvidiaDriver_securityContext_capabilities_drop_items"></a>4.12.2.1.1. karpenter-gpu-nodepool > nvidiaDriver > securityContext > capabilities > drop > drop items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_tolerations"></a>3.13. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations`
+### <a name="nvidiaDriver_tolerations"></a>4.13. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1129,7 +1303,7 @@ must respect the following conditions
 | ---------------------------------------------------- | ----------- |
 | [tolerations items](#nvidiaDriver_tolerations_items) | -           |
 
-#### <a name="nvidiaDriver_tolerations_items"></a>3.13.1. karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items
+#### <a name="nvidiaDriver_tolerations_items"></a>4.13.1. karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1144,35 +1318,35 @@ must respect the following conditions
 | - [operator](#nvidiaDriver_tolerations_items_operator ) | No      | string | No         | -          | -                 |
 | - [value](#nvidiaDriver_tolerations_items_value )       | No      | string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_tolerations_items_effect"></a>3.13.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > effect`
+##### <a name="nvidiaDriver_tolerations_items_effect"></a>4.13.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > effect`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_tolerations_items_key"></a>3.13.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > key`
+##### <a name="nvidiaDriver_tolerations_items_key"></a>4.13.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > key`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_tolerations_items_operator"></a>3.13.1.3. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > operator`
+##### <a name="nvidiaDriver_tolerations_items_operator"></a>4.13.1.3. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > operator`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_tolerations_items_value"></a>3.13.1.4. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > value`
+##### <a name="nvidiaDriver_tolerations_items_value"></a>4.13.1.4. Property `karpenter-gpu-nodepool > nvidiaDriver > tolerations > tolerations items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_updateStrategy"></a>3.14. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy`
+### <a name="nvidiaDriver_updateStrategy"></a>4.14. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1186,14 +1360,14 @@ must respect the following conditions
 | -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [type](#nvidiaDriver_updateStrategy_type ) | No      | string | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_updateStrategy_type"></a>3.14.1. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy > type`
+#### <a name="nvidiaDriver_updateStrategy_type"></a>4.14.1. Property `karpenter-gpu-nodepool > nvidiaDriver > updateStrategy > type`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_volumeMounts"></a>3.15. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts`
+### <a name="nvidiaDriver_volumeMounts"></a>4.15. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1214,7 +1388,7 @@ must respect the following conditions
 | ------------------------------------------------------ | ----------- |
 | [volumeMounts items](#nvidiaDriver_volumeMounts_items) | -           |
 
-#### <a name="nvidiaDriver_volumeMounts_items"></a>3.15.1. karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items
+#### <a name="nvidiaDriver_volumeMounts_items"></a>4.15.1. karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1227,21 +1401,21 @@ must respect the following conditions
 | - [mountPath](#nvidiaDriver_volumeMounts_items_mountPath ) | No      | string | No         | -          | -                 |
 | - [name](#nvidiaDriver_volumeMounts_items_name )           | No      | string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_volumeMounts_items_mountPath"></a>3.15.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > mountPath`
+##### <a name="nvidiaDriver_volumeMounts_items_mountPath"></a>4.15.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > mountPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_volumeMounts_items_name"></a>3.15.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > name`
+##### <a name="nvidiaDriver_volumeMounts_items_name"></a>4.15.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumeMounts > volumeMounts items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nvidiaDriver_volumes"></a>3.16. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes`
+### <a name="nvidiaDriver_volumes"></a>4.16. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1262,7 +1436,7 @@ must respect the following conditions
 | -------------------------------------------- | ----------- |
 | [volumes items](#nvidiaDriver_volumes_items) | -           |
 
-#### <a name="nvidiaDriver_volumes_items"></a>3.16.1. karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items
+#### <a name="nvidiaDriver_volumes_items"></a>4.16.1. karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1275,7 +1449,7 @@ must respect the following conditions
 | - [hostPath](#nvidiaDriver_volumes_items_hostPath ) | No      | object | No         | -          | -                 |
 | - [name](#nvidiaDriver_volumes_items_name )         | No      | string | No         | -          | -                 |
 
-##### <a name="nvidiaDriver_volumes_items_hostPath"></a>3.16.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath`
+##### <a name="nvidiaDriver_volumes_items_hostPath"></a>4.16.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1287,21 +1461,21 @@ must respect the following conditions
 | ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [path](#nvidiaDriver_volumes_items_hostPath_path ) | No      | string | No         | -          | -                 |
 
-###### <a name="nvidiaDriver_volumes_items_hostPath_path"></a>3.16.1.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath > path`
+###### <a name="nvidiaDriver_volumes_items_hostPath_path"></a>4.16.1.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > hostPath > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nvidiaDriver_volumes_items_name"></a>3.16.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > name`
+##### <a name="nvidiaDriver_volumes_items_name"></a>4.16.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > volumes > volumes items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="priorityClass"></a>4. Property `karpenter-gpu-nodepool > priorityClass`
+## <a name="priorityClass"></a>5. Property `karpenter-gpu-nodepool > priorityClass`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1318,7 +1492,7 @@ must respect the following conditions
 | - [preemptionPolicy](#priorityClass_preemptionPolicy ) | No      | string  | No         | -          | Policy for preempting lower priority pods (PreemptLowerPriority or Never). |
 | - [value](#priorityClass_value )                       | No      | integer | No         | -          | Priority value (higher = more important).                                  |
 
-### <a name="priorityClass_description"></a>4.1. Property `karpenter-gpu-nodepool > priorityClass > description`
+### <a name="priorityClass_description"></a>5.1. Property `karpenter-gpu-nodepool > priorityClass > description`
 
 |              |          |
 | ------------ | -------- |
@@ -1327,7 +1501,7 @@ must respect the following conditions
 
 **Description:** Human-readable description of when to use this priority class.
 
-### <a name="priorityClass_enabled"></a>4.2. Property `karpenter-gpu-nodepool > priorityClass > enabled`
+### <a name="priorityClass_enabled"></a>5.2. Property `karpenter-gpu-nodepool > priorityClass > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1336,7 +1510,7 @@ must respect the following conditions
 
 **Description:** Enable creation of PriorityClass for critical GPU infrastructure.
 
-### <a name="priorityClass_globalDefault"></a>4.3. Property `karpenter-gpu-nodepool > priorityClass > globalDefault`
+### <a name="priorityClass_globalDefault"></a>5.3. Property `karpenter-gpu-nodepool > priorityClass > globalDefault`
 
 |              |           |
 | ------------ | --------- |
@@ -1345,7 +1519,7 @@ must respect the following conditions
 
 **Description:** Whether this PriorityClass should be the default for all pods.
 
-### <a name="priorityClass_name"></a>4.4. Property `karpenter-gpu-nodepool > priorityClass > name`
+### <a name="priorityClass_name"></a>5.4. Property `karpenter-gpu-nodepool > priorityClass > name`
 
 |              |          |
 | ------------ | -------- |
@@ -1354,7 +1528,7 @@ must respect the following conditions
 
 **Description:** Name of the PriorityClass.
 
-### <a name="priorityClass_preemptionPolicy"></a>4.5. Property `karpenter-gpu-nodepool > priorityClass > preemptionPolicy`
+### <a name="priorityClass_preemptionPolicy"></a>5.5. Property `karpenter-gpu-nodepool > priorityClass > preemptionPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -1363,7 +1537,7 @@ must respect the following conditions
 
 **Description:** Policy for preempting lower priority pods (PreemptLowerPriority or Never).
 
-### <a name="priorityClass_value"></a>4.6. Property `karpenter-gpu-nodepool > priorityClass > value`
+### <a name="priorityClass_value"></a>5.6. Property `karpenter-gpu-nodepool > priorityClass > value`
 
 |              |           |
 | ------------ | --------- |

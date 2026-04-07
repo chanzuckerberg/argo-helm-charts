@@ -27,6 +27,8 @@ nodepool:
           effect: NoSchedule
         - key: efs.csi.aws.com/agent-not-ready
           effect: NoSchedule
+        - key: nvidia.com/gpu-not-ready
+          effect: NoSchedule
       
       requirements: # @schema description: Node requirements for scheduling. Defines constraints for instance selection.
         - key: kubernetes.io/arch
@@ -135,6 +137,28 @@ nvidiaDriver:
     #   memory: 64Mi
   
   env: [] # @schema description: Additional environment variables for the NVIDIA device plugin container.
+
+nodeReadiness:
+  enabled: true # @schema description: Deploy a DaemonSet that removes the nvidia.com/gpu-not-ready startup taint once nvidia-smi reports GPUs as healthy.
+  name: nvidia-gpu-node-ready # @schema description: Name for the DaemonSet, ServiceAccount, ClusterRole, and ClusterRoleBinding.
+
+  image:
+    repository: alpine/k8s # @schema description: Alpine-based image with kubectl and sh for taint removal.
+    tag: "1.33.10" # @schema description: Image tag — pin to match your cluster's Kubernetes minor version.
+    pullPolicy: IfNotPresent # @schema description: Image pull policy (IfNotPresent, Always, or Never).
+
+  startupTaintKey: nvidia.com/gpu-not-ready # @schema description: Taint key to remove once the driver is ready. Must match the key added to nodepool.template.spec.startupTaints.
+
+  nodeSelector:
+    karpenter.k8s.aws/instance-gpu-manufacturer: nvidia # @schema description: Restrict to GPU nodes. Should match dcgmExporter.nodeSelector.
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
 
 dcgmExporter:
   enabled: true # @schema description: Deploy DCGM metrics exporter. Defaults to the same value as nvidiaDriver.enabled. Ignored when nvidiaDriver.enabled is false.
