@@ -96,69 +96,23 @@ tests:
           path: metadata.namespace
           value: kube-system
 
-  - it: should use correct image on all containers
+  - it: should use correct image
     asserts:
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[0].image
-          value: registry.k8s.io/kubectl:v1.33.0
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[1].image
-          value: registry.k8s.io/kubectl:v1.33.0
       - documentIndex: 3
         equal:
           path: spec.template.spec.containers[0].image
-          value: registry.k8s.io/kubectl:v1.33.0
+          value: alpine/k8s:1.33.10
 
-  - it: should have wait-for-gpu init container with kubectl wait command
+  - it: should use sh as entrypoint
     asserts:
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[0].name
-          value: wait-for-gpu
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[0].command[0]
-          value: kubectl
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[0].command[1]
-          value: wait
-
-  - it: should have remove-startup-taint init container with kubectl patch command
-    asserts:
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[1].name
-          value: remove-startup-taint
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[1].command[0]
-          value: kubectl
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[1].command[1]
-          value: patch
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[1].command[4]
-          value: --type=strategic
-
-  - it: should have idle main container waiting for node deletion
-    asserts:
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.containers[0].name
-          value: idle
       - documentIndex: 3
         equal:
           path: spec.template.spec.containers[0].command[0]
-          value: kubectl
+          value: /bin/sh
       - documentIndex: 3
         equal:
-          path: spec.template.spec.containers[0].command[2]
-          value: --for=delete
+          path: spec.template.spec.containers[0].command[1]
+          value: -c
 
   - it: should inherit nvidiaDriver tolerations including wildcard
     asserts:
@@ -185,24 +139,8 @@ tests:
         isNull:
           path: spec.template.spec.tolerations
 
-  - it: should inject NODE_NAME from downward API in all containers
+  - it: should inject NODE_NAME from downward API
     asserts:
-      - documentIndex: 3
-        contains:
-          path: spec.template.spec.initContainers[0].env
-          content:
-            name: NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
-      - documentIndex: 3
-        contains:
-          path: spec.template.spec.initContainers[1].env
-          content:
-            name: NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
       - documentIndex: 3
         contains:
           path: spec.template.spec.containers[0].env
@@ -281,17 +219,13 @@ tests:
           path: metadata.namespace
           value: gpu-system
 
-  - it: should set resource limits on all containers
+  - it: should set resource limits and requests
     asserts:
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[0].resources.limits.cpu
-          value: 100m
-      - documentIndex: 3
-        equal:
-          path: spec.template.spec.initContainers[1].resources.requests.cpu
-          value: 10m
       - documentIndex: 3
         equal:
           path: spec.template.spec.containers[0].resources.limits.cpu
           value: 100m
+      - documentIndex: 3
+        equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 10m
