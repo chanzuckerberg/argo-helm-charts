@@ -50,7 +50,7 @@ tests:
           content:
             apiGroups: [""]
             resources: ["nodes"]
-            verbs: ["get", "patch"]
+            verbs: ["get", "list", "watch", "patch"]
 
   - it: should create ClusterRoleBinding as third document
     asserts:
