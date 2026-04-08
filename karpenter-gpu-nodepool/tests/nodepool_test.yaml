@@ -117,6 +117,26 @@ tests:
           path: spec.template.spec.nodeClassRef.name
           value: custom-nodeclass
 
+  - it: should allow custom nodeClassRef group and kind
+    set:
+      nodepool:
+        template:
+          spec:
+            nodeClassRef:
+              group: karpenter.test.io
+              kind: CustomNodeClass
+              name: custom-ref
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeClassRef.group
+          value: karpenter.test.io
+      - equal:
+          path: spec.template.spec.nodeClassRef.kind
+          value: CustomNodeClass
+      - equal:
+          path: spec.template.spec.nodeClassRef.name
+          value: custom-ref
+
   - it: should have startup taints
     asserts:
       - isNotEmpty:
@@ -159,6 +179,24 @@ tests:
             operator: NotIn
             values:
               - "0"
+
+  - it: should have arch and os requirements
+    asserts:
+      - contains:
+          path: spec.template.spec.requirements
+          content:
+            key: kubernetes.io/arch
+            operator: In
+            values:
+              - amd64
+              - arm64
+      - contains:
+          path: spec.template.spec.requirements
+          content:
+            key: kubernetes.io/os
+            operator: In
+            values:
+              - linux
 
   - it: should have capacity type requirement
     asserts:

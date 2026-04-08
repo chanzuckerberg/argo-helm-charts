@@ -377,6 +377,9 @@
     "prometheusRemoteWrite": {
       "type": "object",
       "properties": {
+        "additionalPodDiscoveryScrapes": {
+          "type": "array"
+        },
         "additionalStaticScrapes": {
           "description": "Extra prometheus.scrape blocks with static __address__ targets (forward_to filter_metrics). Each item: jobName, optional metricsPath, scrapeInterval, scrapeTimeout, targets: [{ address, optional job, optional namespace }]",
           "type": "array"

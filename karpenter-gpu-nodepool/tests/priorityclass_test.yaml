@@ -47,20 +47,18 @@ tests:
 
   - it: should use default priority value
     asserts:
-      - isNotNull:
+      - equal:
           path: value
-      - isKind:
-          of: PriorityClass
+          value: 9.00002e+08
 
   - it: should allow custom priority value
     set:
       priorityClass:
         value: 500000000
     asserts:
-      - isNotNull:
+      - equal:
           path: value
-      - isKind:
-          of: PriorityClass
+          value: 5e+08
 
   - it: should not be global default by default
     asserts:

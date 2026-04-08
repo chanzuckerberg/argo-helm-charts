@@ -49,6 +49,16 @@ app.kubernetes.io/name: {{ include "grafana-alloy.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "grafana-alloy.stripDiscoveryJobLastSegmentRule" }}
+rule {
+  source_labels = ["job"]
+  regex         = ".+/(.+)"
+  target_label  = "job"
+  replacement   = "$1"
+  action        = "replace"
+}
+{{- end }}
+
 {{- define "grafana-alloy.promRelabelRules" -}}
 {{- range . }}
       rule {
@@ -70,4 +80,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
       }
 {{- end }}
 {{- end }}
+
+{{- define "grafana-alloy.normalizeLabel" -}}
+{{- regexReplaceAll "[^a-zA-Z0-9_]" . "_" -}}
+{{- end -}}
 
