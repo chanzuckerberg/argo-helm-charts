@@ -15,6 +15,7 @@ metadata:
   name: {{ $rootFolderName }}
   annotations:
     argocd.argoproj.io/sync-wave: "1"
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -29,6 +30,7 @@ metadata:
   name: {{ $appFolderName }}
   annotations:
     argocd.argoproj.io/sync-wave: "2"
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -44,6 +46,7 @@ metadata:
   name: {{ $envFolderName }}
   annotations:
     argocd.argoproj.io/sync-wave: "3"
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
