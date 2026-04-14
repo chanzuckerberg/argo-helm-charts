@@ -14,23 +14,22 @@ kind: GrafanaFolder
 metadata:
   name: {{ $rootFolderName }}
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
-    grafana.integreatly.org/preserve-resources-on-deletion: "true"
+  # annotations:
+    # grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   title: {{ $rootFolderTitle }}
-  uid: {{ $rootFolderTitle | lower }}
+  uid: {{ printf "%s-%s" ($rootFolderTitle | lower) .Values.argusMetadata.stackName }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $appFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-    grafana.integreatly.org/preserve-resources-on-deletion: "true"
+  # annotations:
+    # grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -38,15 +37,14 @@ spec:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $rootFolderName }}
   title: {{ $appFolderTitle }}
-  uid: {{ $appFolderTitle | lower }}
+  uid: {{ printf "%s-%s" ($appFolderTitle | lower) .Values.argusMetadata.stackName }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $envFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-    grafana.integreatly.org/preserve-resources-on-deletion: "true"
+  # annotations:
+    # grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -54,14 +52,12 @@ spec:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $appFolderName }}
   title: {{ $envFolderTitle }}
-  uid: {{ printf "%s-%s" $appFolderTitle $envFolderTitle | lower }}
+  uid: {{ printf "%s-%s-%s" ($appFolderTitle | lower) ($envFolderTitle | lower) .Values.argusMetadata.stackName }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
   name: {{ include "stack.fullname" . | lower }}-dashboard
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
