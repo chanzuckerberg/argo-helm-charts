@@ -13,7 +13,6 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $rootFolderName }}
-  annotations:
   # annotations:
     # grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
