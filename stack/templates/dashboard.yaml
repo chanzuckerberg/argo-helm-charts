@@ -13,8 +13,6 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $rootFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -27,8 +25,6 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $appFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -42,8 +38,6 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $envFolderName }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -57,8 +51,6 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
   name: {{ include "stack.fullname" . | lower }}-dashboard
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
