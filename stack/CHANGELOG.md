@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.33.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.2...stack-v2.33.3) (2026-04-14)
+
+
+### Bug Fixes
+
+* remove sync waves that didn't have intended fix ([#438](https://github.com/chanzuckerberg/argo-helm-charts/issues/438)) ([50aca54](https://github.com/chanzuckerberg/argo-helm-charts/commit/50aca545592aba161752924ac77c1b31e3e04a6a))
+
+## [2.33.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.1...stack-v2.33.2) (2026-04-14)
+
+
+### Bug Fixes
+
+* use ingress label instead of service label so panels still work when oidc is used ([#437](https://github.com/chanzuckerberg/argo-helm-charts/issues/437)) ([b028f77](https://github.com/chanzuckerberg/argo-helm-charts/commit/b028f77328283abb0b5a3a8d75cf4cb42bbd8188))
+
 ## [2.33.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.0...stack-v2.33.1) (2026-04-07)
 
 
