@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.33.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.2...stack-v2.33.3) (2026-04-14)
+
+
+### Bug Fixes
+
+* remove sync waves that didn't have intended fix ([#438](https://github.com/chanzuckerberg/argo-helm-charts/issues/438)) ([50aca54](https://github.com/chanzuckerberg/argo-helm-charts/commit/50aca545592aba161752924ac77c1b31e3e04a6a))
+
 ## [2.33.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.1...stack-v2.33.2) (2026-04-14)
 
 
