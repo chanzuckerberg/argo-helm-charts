@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.0...karpenter-gpu-nodepool-v0.4.1) (2026-04-14)
+
+
+### Bug Fixes
+
+* re-apply gpu-not-ready taint on startup and wait for stable GPU health ([#434](https://github.com/chanzuckerberg/argo-helm-charts/issues/434)) ([14bb299](https://github.com/chanzuckerberg/argo-helm-charts/commit/14bb299a3166036c44d802c2859c7eb1c16a5fe6))
+
 ## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.3.0...karpenter-gpu-nodepool-v0.4.0) (2026-04-07)
 
 

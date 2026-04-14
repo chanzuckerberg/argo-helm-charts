@@ -3,7 +3,7 @@ name: karpenter-gpu-nodepool
 description: A Helm chart for deploying Karpenter NodePool with GPU support,
   NVIDIA device plugin, and optional DCGM exporter
 type: application
-version: 0.4.0
+version: 0.4.1
 appVersion: "1.0"
 keywords:
   - karpenter
