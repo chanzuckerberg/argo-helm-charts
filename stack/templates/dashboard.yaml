@@ -13,22 +13,22 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $rootFolderName }}
-  # annotations:
-    # grafana.integreatly.org/preserve-resources-on-deletion: "true"
+  annotations:
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   title: {{ $rootFolderTitle }}
-  uid: {{ printf "%s-%s" ($rootFolderTitle | lower) .Values.argusMetadata.stackName }}
+  uid: {{ $rootFolderTitle | lower }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $appFolderName }}
-  # annotations:
-    # grafana.integreatly.org/preserve-resources-on-deletion: "true"
+  annotations:
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -36,14 +36,14 @@ spec:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $rootFolderName }}
   title: {{ $appFolderTitle }}
-  uid: {{ printf "%s-%s" ($appFolderTitle | lower) .Values.argusMetadata.stackName }}
+  uid: {{ $appFolderTitle | lower }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $envFolderName }}
-  # annotations:
-    # grafana.integreatly.org/preserve-resources-on-deletion: "true"
+  annotations:
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -51,7 +51,7 @@ spec:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $appFolderName }}
   title: {{ $envFolderTitle }}
-  uid: {{ printf "%s-%s-%s" ($appFolderTitle | lower) ($envFolderTitle | lower) .Values.argusMetadata.stackName }}
+  uid: {{ printf "%s-%s" $appFolderTitle $envFolderTitle | lower }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
