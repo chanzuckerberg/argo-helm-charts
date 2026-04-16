@@ -13,6 +13,8 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $rootFolderName }}
+  annotations:
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -25,6 +27,8 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $appFolderName }}
+  annotations:
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
@@ -38,6 +42,8 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: {{ $envFolderName }}
+  annotations:
+    grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
   resyncPeriod: 30s
