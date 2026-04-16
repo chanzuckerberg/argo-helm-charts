@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.33.4](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.3...stack-v2.33.4) (2026-04-16)
+
+
+### Bug Fixes
+
+* prevent grafana folder deletion ([#436](https://github.com/chanzuckerberg/argo-helm-charts/issues/436)) ([28c9a54](https://github.com/chanzuckerberg/argo-helm-charts/commit/28c9a54efb721a0e4c9a814b24cdee6d229d2f63))
+
 ## [2.33.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.2...stack-v2.33.3) (2026-04-14)
 
 
