@@ -46,6 +46,10 @@
           "description": "Name of the Grafana instance to create.",
           "type": "string"
         },
+        "tenantNamespace": {
+          "description": "Namespace used by the Grafana operator for reconciling resources associated with this external Grafana instance.",
+          "type": "string"
+        },
         "url": {
           "description": "URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.",
           "type": "string",
