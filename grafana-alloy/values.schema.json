@@ -602,6 +602,16 @@
             }
           }
         },
+        "scrapePodsAnnotated": {
+          "description": "Scrape pods annotated with prometheus.io/scrape=true",
+          "type": "object",
+          "properties": {
+            "shardByNode": {
+              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 321x duplication and high AMP ingestion",
+              "type": "boolean"
+            }
+          }
+        },
         "scrapeSelfRemoteWriteMetrics": {
           "description": "Scrape this Alloy process /metrics (prometheus_remote_storage_* queue debug metrics) and send to remote_write for AMP cost/ingestion dashboards",
           "type": "object",

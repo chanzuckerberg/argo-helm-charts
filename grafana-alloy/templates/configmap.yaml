@@ -323,6 +323,12 @@ data:
     {{- $st := .Values.prometheusRemoteWrite.scrapeTimeout | default "10s" }}
     discovery.kubernetes "pods_metrics" {
       role = "pod"
+      {{- if (.Values.prometheusRemoteWrite.scrapePodsAnnotated).shardByNode }}
+      selectors {
+        role  = "pod"
+        field = "spec.nodeName=" + coalesce(sys.env("NODE_NAME"), sys.env("HOSTNAME"), constants.hostname)
+      }
+      {{- end }}
     }
 
     discovery.relabel "pods_metrics" {

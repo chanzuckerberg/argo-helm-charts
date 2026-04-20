@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.8.0...grafana-alloy-v0.8.1) (2026-04-20)
+
+
+### Features
+
+* Add shardByNode option for annotated pod scraping to fix cluster-wide discovery on DaemonSet ([#TODO](https://github.com/chanzuckerberg/argo-helm-charts/issues/TODO))
+
 ## [0.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.7.0...grafana-alloy-v0.8.0) (2026-04-02)
 
 
