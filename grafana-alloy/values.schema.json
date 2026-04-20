@@ -437,16 +437,6 @@
             }
           }
         },
-        "scrapePodsAnnotated": {
-          "description": "Scrape pods annotated with prometheus.io/scrape=true",
-          "type": "object",
-          "properties": {
-            "shardByNode": {
-              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 321x duplication and high AMP ingestion",
-              "type": "boolean"
-            }
-          }
-        },
         "scrapeCadvisor": {
           "description": "Scrape cadvisor metrics from each node (container_*)",
           "type": "object",
@@ -608,6 +598,16 @@
             },
             "shardByNode": {
               "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion",
+              "type": "boolean"
+            }
+          }
+        },
+        "scrapePodsAnnotated": {
+          "description": "Scrape pods annotated with prometheus.io/scrape=true",
+          "type": "object",
+          "properties": {
+            "shardByNode": {
+              "description": "When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 321x duplication and high AMP ingestion",
               "type": "boolean"
             }
           }
