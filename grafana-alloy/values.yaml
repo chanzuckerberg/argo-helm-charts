@@ -61,6 +61,10 @@ prometheusRemoteWrite:
     portName: "" # @schema description: Optional Kubernetes Service port name to scrape only (e.g. http for VMServiceScrape parity)
     metricRelabelConfigs: [] # @schema description: Optional metric relabel rules after scraping kube-state-metrics (Prometheus-style maps with source_labels, regex, action, target_label, replacement)
 
+  # Scrape pods with prometheus.io/scrape=true annotation for custom application metrics.
+  scrapePodsAnnotated: # @schema description: Scrape pods annotated with prometheus.io/scrape=true
+    shardByNode: false # @schema description: When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 321x duplication and high AMP ingestion
+
   # Scrape kubelet for kubelet_* and kubernetes_build_info metrics.
   scrapeKubelet: # @schema description: Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)
     enabled: true # @schema description: Enable scraping kubelet metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
