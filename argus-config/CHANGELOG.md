@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.7.0...argus-config-v1.7.1) (2026-04-21)
+
+
+### Bug Fixes
+
+* release please version release broken ([#443](https://github.com/chanzuckerberg/argo-helm-charts/issues/443)) ([1ae5eb1](https://github.com/chanzuckerberg/argo-helm-charts/commit/1ae5eb12be74719b571b443f0bff2c97ad3a58df))
+
 ## [1.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.6.1...argus-config-v1.7.0) (2026-02-17)
 
 
