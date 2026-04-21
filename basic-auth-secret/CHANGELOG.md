@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/basic-auth-secret-v0.3.0...basic-auth-secret-v0.3.1) (2026-04-21)
+
+
+### Bug Fixes
+
+* release please version release broken ([#443](https://github.com/chanzuckerberg/argo-helm-charts/issues/443)) ([1ae5eb1](https://github.com/chanzuckerberg/argo-helm-charts/commit/1ae5eb12be74719b571b443f0bff2c97ad3a58df))
+* release please version release broken ([#445](https://github.com/chanzuckerberg/argo-helm-charts/issues/445)) ([2b4815d](https://github.com/chanzuckerberg/argo-helm-charts/commit/2b4815dee8058a61e8d312b51f99eac1282b0511))
+
 ## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/basic-auth-secret-v0.2.0...basic-auth-secret-v0.3.0) (2025-10-21)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/sso-secret-v0.2.0...sso-secret-v0.2.1) (2026-04-21)
+
+
+### Bug Fixes
+
+* release please version release broken ([#443](https://github.com/chanzuckerberg/argo-helm-charts/issues/443)) ([1ae5eb1](https://github.com/chanzuckerberg/argo-helm-charts/commit/1ae5eb12be74719b571b443f0bff2c97ad3a58df))
+
 ## [0.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/sso-secret-v0.1.0...sso-secret-v0.2.0) (2025-04-08)
 
 

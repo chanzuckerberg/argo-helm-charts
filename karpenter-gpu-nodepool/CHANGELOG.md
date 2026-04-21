@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.1...karpenter-gpu-nodepool-v0.4.2) (2026-04-21)
+
+
+### Bug Fixes
+
+* release please version release broken ([#443](https://github.com/chanzuckerberg/argo-helm-charts/issues/443)) ([1ae5eb1](https://github.com/chanzuckerberg/argo-helm-charts/commit/1ae5eb12be74719b571b443f0bff2c97ad3a58df))
+
 ## [0.4.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.0...karpenter-gpu-nodepool-v0.4.1) (2026-04-14)
 
 
