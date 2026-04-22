@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.34.0...stack-v2.35.0) (2026-04-22)
+
+
+### Features
+
+* upgrade ESO api versions in stack chart dependencies ([#448](https://github.com/chanzuckerberg/argo-helm-charts/issues/448)) ([6f42fc0](https://github.com/chanzuckerberg/argo-helm-charts/commit/6f42fc01382fbdf673ed9cc77312beded9f8e3ac))
+
 ## [2.34.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.33.5...stack-v2.34.0) (2026-04-22)
 
 
