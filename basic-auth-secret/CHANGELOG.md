@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/basic-auth-secret-v0.3.1...basic-auth-secret-v0.4.0) (2026-04-22)
+
+
+### Features
+
+* upgrade ESO api versions ([#447](https://github.com/chanzuckerberg/argo-helm-charts/issues/447)) ([325aee1](https://github.com/chanzuckerberg/argo-helm-charts/commit/325aee13e3e48a37f66faab84dd3d36e9ed0029e))
+
 ## [0.3.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/basic-auth-secret-v0.3.0...basic-auth-secret-v0.3.1) (2026-04-21)
 
 

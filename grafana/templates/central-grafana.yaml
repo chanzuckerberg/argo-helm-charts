@@ -13,6 +13,7 @@ spec:
     apiKey:
       key: {{ $apiKeySecret.key | default "GF_SECURITY_ADMIN_APIKEY" | quote }}
       name: {{ $apiKeySecret.name | default "central-grafana-admin-api-key" | quote }}
+    tenantNamespace: {{ $centralGrafana.tenantNamespace | default "default" | quote }}
     url: {{ $centralGrafana.url | default "https://example.grafana-workspace.region.amazonaws.com" | quote }}
 {{- end }}
 {{- end }}
