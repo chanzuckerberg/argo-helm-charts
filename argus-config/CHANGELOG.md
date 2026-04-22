@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.7.1...argus-config-v1.8.0) (2026-04-22)
+
+
+### Features
+
+* upgrade ESO api versions ([#447](https://github.com/chanzuckerberg/argo-helm-charts/issues/447)) ([325aee1](https://github.com/chanzuckerberg/argo-helm-charts/commit/325aee13e3e48a37f66faab84dd3d36e9ed0029e))
+
 ## [1.7.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/argus-config-v1.7.0...argus-config-v1.7.1) (2026-04-21)
 
 
