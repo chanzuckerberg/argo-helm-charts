@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.9.2...grafana-v0.10.0) (2026-04-22)
+
+
+### Features
+
+* Add support for tenantNamespace field on grafana CRDs ([#442](https://github.com/chanzuckerberg/argo-helm-charts/issues/442)) ([5dc53a2](https://github.com/chanzuckerberg/argo-helm-charts/commit/5dc53a20aedc1b727f3038b7617a3c922f6ccfc2))
+* upgrade ESO api versions ([#447](https://github.com/chanzuckerberg/argo-helm-charts/issues/447)) ([325aee1](https://github.com/chanzuckerberg/argo-helm-charts/commit/325aee13e3e48a37f66faab84dd3d36e9ed0029e))
+
 ## [0.9.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.9.1...grafana-v0.9.2) (2026-04-21)
 
 
