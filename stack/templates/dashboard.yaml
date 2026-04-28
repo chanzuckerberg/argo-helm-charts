@@ -8,6 +8,10 @@
 {{- $appFolderTitle := .Values.argusMetadata.appName -}}
 {{- $envFolderName := printf "%s-%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.envName .Values.argusMetadata.stackName }}
 {{- $envFolderTitle := .Values.argusMetadata.envName -}}
+{{- $appUid := $appFolderTitle | lower -}}
+{{- if gt (len $appUid) 40 }}{{ $appUid = $appUid | sha256sum | trunc 40 }}{{ end -}}
+{{- $envUid := printf "%s-%s" $appFolderTitle $envFolderTitle | lower -}}
+{{- if gt (len $envUid) 40 }}{{ $envUid = $envUid | sha256sum | trunc 40 }}{{ end -}}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
@@ -36,7 +40,7 @@ spec:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $rootFolderName }}
   title: {{ $appFolderTitle }}
-  uid: {{ $appFolderTitle | lower }}
+  uid: {{ $appUid }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
@@ -51,7 +55,7 @@ spec:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderRef: {{ $appFolderName }}
   title: {{ $envFolderTitle }}
-  uid: {{ printf "%s-%s" $appFolderTitle $envFolderTitle | lower }}
+  uid: {{ $envUid }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
