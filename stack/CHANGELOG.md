@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.35.1...stack-v2.35.2) (2026-04-28)
+
+
+### Misc
+
+* use uids for referencing folders ([#452](https://github.com/chanzuckerberg/argo-helm-charts/issues/452)) ([912bd00](https://github.com/chanzuckerberg/argo-helm-charts/commit/912bd008fe9d95b23720a69b38aa17ebc1e97b8f))
+
 ## [2.35.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.35.0...stack-v2.35.1) (2026-04-28)
 
 
