@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.35.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.35.0...stack-v2.35.1) (2026-04-28)
+
+
+### Bug Fixes
+
+* replace grafana folder uid with checksum when it is too long ([#450](https://github.com/chanzuckerberg/argo-helm-charts/issues/450)) ([b4defa7](https://github.com/chanzuckerberg/argo-helm-charts/commit/b4defa7eb063b162154e72a2381596044f353066))
+
 ## [2.35.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.34.0...stack-v2.35.0) (2026-04-22)
 
 
