@@ -1,0 +1,159 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test Grafana dashboard and folders
+templates:
+  - dashboard.yaml
+set:
+  global:
+    grafanaDashboard:
+      enabled: true
+      instanceSelector:
+        matchLabels:
+          dashboards: central-grafana
+    argusMetadata:
+      stackName: test-stack
+      appName: my-app
+      envName: rdev
+  services:
+    service1:
+      command: ["serve"]
+tests:
+  - it: should create 4 documents (3 folders + 1 dashboard)
+    asserts:
+      - hasDocuments:
+          count: 4
+
+  - it: should create root folder with correct metadata
+    documentIndex: 0
+    asserts:
+      - containsDocument:
+          apiVersion: grafana.integreatly.org/v1beta1
+          kind: GrafanaFolder
+      - equal:
+          path: metadata.name
+          value: argus-folder-test-stack
+      - equal:
+          path: metadata.annotations["grafana.integreatly.org/preserve-resources-on-deletion"]
+          value: "true"
+      - equal:
+          path: spec.title
+          value: Argus
+      - equal:
+          path: spec.uid
+          value: argus
+      - notExists:
+          path: spec.parentFolderUID
+
+  - it: should create app folder with correct parent UID
+    documentIndex: 1
+    asserts:
+      - containsDocument:
+          apiVersion: grafana.integreatly.org/v1beta1
+          kind: GrafanaFolder
+      - equal:
+          path: metadata.name
+          value: app-folder-test-stack
+      - equal:
+          path: metadata.annotations["grafana.integreatly.org/preserve-resources-on-deletion"]
+          value: "true"
+      - equal:
+          path: spec.title
+          value: my-app
+      - equal:
+          path: spec.uid
+          value: my-app
+      - equal:
+          path: spec.parentFolderUID
+          value: argus
+
+  - it: should create env folder with correct parent UID
+    documentIndex: 2
+    asserts:
+      - containsDocument:
+          apiVersion: grafana.integreatly.org/v1beta1
+          kind: GrafanaFolder
+      - equal:
+          path: metadata.name
+          value: env-folder-test-stack
+      - equal:
+          path: metadata.annotations["grafana.integreatly.org/preserve-resources-on-deletion"]
+          value: "true"
+      - equal:
+          path: spec.title
+          value: rdev
+      - equal:
+          path: spec.uid
+          value: my-app-rdev
+      - equal:
+          path: spec.parentFolderUID
+          value: my-app
+
+  - it: should create dashboard in the env folder
+    documentIndex: 3
+    asserts:
+      - containsDocument:
+          apiVersion: grafana.integreatly.org/v1beta1
+          kind: GrafanaDashboard
+      - equal:
+          path: spec.folderUID
+          value: my-app-rdev
+      - notExists:
+          path: spec.folderRef
+
+  - it: should set allowCrossNamespaceImport on all resources
+    asserts:
+      - equal:
+          path: spec.allowCrossNamespaceImport
+          value: true
+        documentIndex: 0
+      - equal:
+          path: spec.allowCrossNamespaceImport
+          value: true
+        documentIndex: 1
+      - equal:
+          path: spec.allowCrossNamespaceImport
+          value: true
+        documentIndex: 2
+      - equal:
+          path: spec.allowCrossNamespaceImport
+          value: true
+        documentIndex: 3
+
+  - it: should not render when grafanaDashboard is disabled
+    set:
+      global:
+        grafanaDashboard:
+          enabled: false
+        argusMetadata:
+          stackName: test-stack
+          appName: my-app
+          envName: rdev
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should hash app folder UID when appName exceeds 40 chars
+    set:
+      global:
+        argusMetadata:
+          appName: this-is-a-very-long-application-name-that-exceeds-forty-characters
+    asserts:
+      - documentIndex: 1
+        notEqual:
+          path: spec.uid
+          value: this-is-a-very-long-application-name-that-exceeds-forty-characters
+      - documentIndex: 1
+        matchRegex:
+          path: spec.uid
+          pattern: "^[a-f0-9]{40}$"
+
+  - it: should hash env folder UID when combined name exceeds 40 chars
+    set:
+      global:
+        argusMetadata:
+          appName: this-is-a-very-long-application-name-that-exceeds-forty-characters
+          envName: staging
+    asserts:
+      - documentIndex: 2
+        matchRegex:
+          path: spec.uid
+          pattern: "^[a-f0-9]{40}$"
