@@ -2,16 +2,17 @@
 {{- $globalValues := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global }}
 {{- with $globalValues }}
 {{- if and .Values.grafanaDashboard .Values.grafanaDashboard.enabled .Values.argusMetadata .Values.argusMetadata.stackName .Values.argusMetadata.appName .Values.argusMetadata.envName }}
-{{- $rootFolderName := printf "argus-%s" .Values.argusMetadata.stackName }}
+{{- $rootFolderName := printf "argus-folder-%s" .Values.argusMetadata.stackName }}
 {{- $rootFolderTitle := "Argus" }}
-{{- $appFolderName := printf "%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.stackName }}
+{{- $appFolderName := printf "app-folder-%s" .Values.argusMetadata.stackName }}
 {{- $appFolderTitle := .Values.argusMetadata.appName -}}
-{{- $envFolderName := printf "%s-%s-%s" .Values.argusMetadata.appName .Values.argusMetadata.envName .Values.argusMetadata.stackName }}
+{{- $envFolderName := printf "env-folder-%s" .Values.argusMetadata.stackName }}
 {{- $envFolderTitle := .Values.argusMetadata.envName -}}
-{{- $appUid := $appFolderTitle | lower -}}
-{{- if gt (len $appUid) 40 }}{{ $appUid = $appUid | sha256sum | trunc 40 }}{{ end -}}
-{{- $envUid := printf "%s-%s" $appFolderTitle $envFolderTitle | lower -}}
-{{- if gt (len $envUid) 40 }}{{ $envUid = $envUid | sha256sum | trunc 40 }}{{ end -}}
+{{- $rootFolderUid := $rootFolderTitle | lower -}}
+{{- $appFolderUid := $appFolderTitle | lower -}}
+{{- if gt (len $appFolderUid) 40 }}{{ $appFolderUid = $appFolderUid | sha256sum | trunc 40 }}{{ end -}}
+{{- $envFolderUid := printf "%s-%s" $appFolderTitle $envFolderTitle | lower -}}
+{{- if gt (len $envFolderUid) 40 }}{{ $envFolderUid = $envFolderUid | sha256sum | trunc 40 }}{{ end -}}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
@@ -25,7 +26,7 @@ spec:
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   title: {{ $rootFolderTitle }}
-  uid: {{ $rootFolderTitle | lower }}
+  uid: {{ $rootFolderUid }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
@@ -38,9 +39,9 @@ spec:
   resyncPeriod: 30s
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
-  parentFolderRef: {{ $rootFolderName }}
+  parentFolderUID: {{ $rootFolderUid }}
   title: {{ $appFolderTitle }}
-  uid: {{ $appUid }}
+  uid: {{ $appFolderUid }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
@@ -53,9 +54,9 @@ spec:
   resyncPeriod: 30s
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
-  parentFolderRef: {{ $appFolderName }}
+  parentFolderUID: {{ $appFolderUid }}
   title: {{ $envFolderTitle }}
-  uid: {{ $envUid }}
+  uid: {{ $envFolderUid }}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -66,7 +67,7 @@ spec:
   resyncPeriod: 30s
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
-  folderRef: {{ $envFolderName }}
+  folderUID: {{ $envFolderUid }}
   json: |
     {{- include "stack.grafanaDashboard.json" $global | nindent 4 }}
 {{- end }}
