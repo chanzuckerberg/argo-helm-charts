@@ -46,6 +46,14 @@
           "description": "Name of the Grafana instance to create.",
           "type": "string"
         },
+        "clientTimeout": {
+          "description": "HTTP client timeout in seconds for the grafana-operator when talking to the Central Grafana workspace. When null (default), the operator uses its built-in default of 10s. Increase (e.g. 120) if folder finalization times out against AWS Managed Grafana.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
         "tenantNamespace": {
           "description": "Namespace used by the Grafana operator for reconciling resources associated with this external Grafana instance.",
           "type": "string"
