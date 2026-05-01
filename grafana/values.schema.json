@@ -38,6 +38,14 @@
             }
           }
         },
+        "clientTimeout": {
+          "description": "HTTP client timeout in seconds for the grafana-operator when talking to the Central Grafana workspace. When null (default), the operator uses its built-in default of 10s. Increase (e.g. 120) if folder finalization times out against AWS Managed Grafana.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
         "enabled": {
           "description": "Enable the resource provisioning into the Central Grafana workspace.",
           "type": "boolean"

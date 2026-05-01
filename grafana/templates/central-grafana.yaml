@@ -9,6 +9,10 @@ metadata:
     name: {{ $centralGrafana.grafanaName | default "central-grafana" | quote }}
   name: {{ $centralGrafana.grafanaName | default "central-grafana" | quote }}
 spec:
+  {{- if $centralGrafana.clientTimeout }}
+  client:
+    timeout: {{ $centralGrafana.clientTimeout }}
+  {{- end }}
   external:
     apiKey:
       key: {{ $apiKeySecret.key | default "GF_SECURITY_ADMIN_APIKEY" | quote }}
