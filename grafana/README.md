@@ -65,13 +65,14 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                              | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                |
-| ----------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
-| - [apiKeySecret](#centralGrafana_apiKeySecret )       | No      | object  | No         | -          | -                                                                                                                |
-| - [enabled](#centralGrafana_enabled )                 | No      | boolean | No         | -          | Enable the resource provisioning into the Central Grafana workspace.                                             |
-| - [grafanaName](#centralGrafana_grafanaName )         | No      | string  | No         | -          | Name of the Grafana instance to create.                                                                          |
-| - [tenantNamespace](#centralGrafana_tenantNamespace ) | No      | string  | No         | -          | Namespace used by the Grafana operator for reconciling resources associated with this external Grafana instance. |
-| - [url](#centralGrafana_url )                         | No      | string  | No         | -          | URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.  |
+| Property                                              | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                            |
+| ----------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [apiKeySecret](#centralGrafana_apiKeySecret )       | No      | object          | No         | -          | -                                                                                                                                                                                                                                                            |
+| - [clientTimeout](#centralGrafana_clientTimeout )     | No      | integer or null | No         | -          | HTTP client timeout in seconds for the grafana-operator when talking to the Central Grafana workspace. When null (default), the operator uses its built-in default of 10s. Increase (e.g. 120) if folder finalization times out against AWS Managed Grafana. |
+| - [enabled](#centralGrafana_enabled )                 | No      | boolean         | No         | -          | Enable the resource provisioning into the Central Grafana workspace.                                                                                                                                                                                         |
+| - [grafanaName](#centralGrafana_grafanaName )         | No      | string          | No         | -          | Name of the Grafana instance to create.                                                                                                                                                                                                                      |
+| - [tenantNamespace](#centralGrafana_tenantNamespace ) | No      | string          | No         | -          | Namespace used by the Grafana operator for reconciling resources associated with this external Grafana instance.                                                                                                                                             |
+| - [url](#centralGrafana_url )                         | No      | string          | No         | -          | URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.                                                                                                                                              |
 
 ### <a name="centralGrafana_apiKeySecret"></a>4.1. Property `grafana > centralGrafana > apiKeySecret`
 
@@ -104,7 +105,20 @@ Must be one of:
 
 **Description:** Name of the secret containing the Admin API key for the Central Grafana instance.
 
-### <a name="centralGrafana_enabled"></a>4.2. Property `grafana > centralGrafana > enabled`
+### <a name="centralGrafana_clientTimeout"></a>4.2. Property `grafana > centralGrafana > clientTimeout`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `integer or null` |
+| **Required** | No                |
+
+**Description:** HTTP client timeout in seconds for the grafana-operator when talking to the Central Grafana workspace. When null (default), the operator uses its built-in default of 10s. Increase (e.g. 120) if folder finalization times out against AWS Managed Grafana.
+
+| Restrictions |        |
+| ------------ | ------ |
+| **Minimum**  | &ge; 1 |
+
+### <a name="centralGrafana_enabled"></a>4.3. Property `grafana > centralGrafana > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -113,7 +127,7 @@ Must be one of:
 
 **Description:** Enable the resource provisioning into the Central Grafana workspace.
 
-### <a name="centralGrafana_grafanaName"></a>4.3. Property `grafana > centralGrafana > grafanaName`
+### <a name="centralGrafana_grafanaName"></a>4.4. Property `grafana > centralGrafana > grafanaName`
 
 |              |          |
 | ------------ | -------- |
@@ -122,7 +136,7 @@ Must be one of:
 
 **Description:** Name of the Grafana instance to create.
 
-### <a name="centralGrafana_tenantNamespace"></a>4.4. Property `grafana > centralGrafana > tenantNamespace`
+### <a name="centralGrafana_tenantNamespace"></a>4.5. Property `grafana > centralGrafana > tenantNamespace`
 
 |              |          |
 | ------------ | -------- |
@@ -131,7 +145,7 @@ Must be one of:
 
 **Description:** Namespace used by the Grafana operator for reconciling resources associated with this external Grafana instance.
 
-### <a name="centralGrafana_url"></a>4.5. Property `grafana > centralGrafana > url`
+### <a name="centralGrafana_url"></a>4.6. Property `grafana > centralGrafana > url`
 
 |              |          |
 | ------------ | -------- |

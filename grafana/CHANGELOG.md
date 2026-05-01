@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.10.0...grafana-v0.11.0) (2026-05-01)
+
+
+### Features
+
+* **grafana:** add configurable HTTP client timeout for central Grafana CR ([#454](https://github.com/chanzuckerberg/argo-helm-charts/issues/454)) ([4a2083e](https://github.com/chanzuckerberg/argo-helm-charts/commit/4a2083ed9e35a8f3a8edc5501bd64b3e5eaa614c))
+
 ## [0.10.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.9.2...grafana-v0.10.0) (2026-04-22)
 
 

@@ -62,3 +62,4 @@ centralGrafana:
     key: GF_SECURITY_ADMIN_APIKEY # @schema description: Key of the secret containing the Admin API key for the Central Grafana instance.
   url: https://g-0000000000.grafana-workspace.us-west-2.amazonaws.com # @schema description: URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.; pattern: ^https://g-[a-f0-9]+\.grafana-workspace\.[a-z0-9]+(-[a-z0-9]+)*\.amazonaws\.com$
   tenantNamespace: default # @schema description: Namespace used by the Grafana operator for reconciling resources associated with this external Grafana instance.
+  clientTimeout: null # @schema description: HTTP client timeout in seconds for the grafana-operator when talking to the Central Grafana workspace. When null (default), the operator uses its built-in default of 10s. Increase (e.g. 120) if folder finalization times out against AWS Managed Grafana.; type: ["integer", "null"]; minimum: 1
