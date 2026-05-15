@@ -720,6 +720,58 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.unixExporter .Values.prometheusRemoteWrite.unixExporter.enabled }}
+    {{- with .Values.prometheusRemoteWrite.unixExporter }}
+    {{- $unixRelabel := .metricRelabelConfigs | default list }}
+    prometheus.exporter.unix "node" {
+      rootfs_path              = {{ .rootfsPath              | default "/"                | quote }}
+      procfs_path              = {{ .procfsPath              | default "/proc"            | quote }}
+      sysfs_path               = {{ .sysfsPath               | default "/sys"             | quote }}
+      udev_data_path           = {{ .udevDataPath            | default "/run/udev/data"   | quote }}
+      include_exporter_metrics = {{ .includeExporterMetrics  | default false }}
+      {{- with .setCollectors }}
+      set_collectors     = [{{ range $i, $c := . }}{{ if $i }}, {{ end }}{{ $c | quote }}{{ end }}]
+      {{- end }}
+      {{- with .enableCollectors }}
+      enable_collectors  = [{{ range $i, $c := . }}{{ if $i }}, {{ end }}{{ $c | quote }}{{ end }}]
+      {{- end }}
+      {{- with .disableCollectors }}
+      disable_collectors = [{{ range $i, $c := . }}{{ if $i }}, {{ end }}{{ $c | quote }}{{ end }}]
+      {{- end }}
+    }
+
+    prometheus.scrape "unix_exporter" {
+      targets         = prometheus.exporter.unix.node.targets
+      forward_to      = [prometheus.relabel.unix_exporter_labels.receiver]
+      scrape_interval = {{ .scrapeInterval | default "15s" | quote }}
+      scrape_timeout  = {{ .scrapeTimeout  | default "10s" | quote }}
+      job_name        = {{ .jobLabel       | default "node-exporter" | quote }}
+      honor_labels    = true
+    }
+
+    prometheus.relabel "unix_exporter_labels" {
+      forward_to = [{{ if gt (len $unixRelabel) 0 }}prometheus.relabel.unix_exporter_post.receiver{{ else }}prometheus.relabel.filter_metrics.receiver{{ end }}]
+      rule {
+        target_label  = "node"
+        replacement   = sys.env("NODE_NAME")
+        action        = "replace"
+      }
+      rule {
+        target_label  = "k8s_node"
+        replacement   = sys.env("NODE_NAME")
+        action        = "replace"
+      }
+    }
+
+    {{- if gt (len $unixRelabel) 0 }}
+    prometheus.relabel "unix_exporter_post" {
+      forward_to = [prometheus.relabel.filter_metrics.receiver]
+{{ include "grafana-alloy.promRelabelRules" $unixRelabel }}
+    }
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeHostNodeExporterInfinibandFast .Values.prometheusRemoteWrite.scrapeHostNodeExporterInfinibandFast.enabled }}
     {{- with .Values.prometheusRemoteWrite.scrapeHostNodeExporterInfinibandFast }}
     prometheus.scrape "host_node_exporter_ib_fast" {

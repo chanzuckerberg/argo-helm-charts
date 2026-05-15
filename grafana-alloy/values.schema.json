@@ -674,6 +674,64 @@
         "scrapeTimeout": {
           "description": "Scrape timeout for pods, kube-state-metrics, kubelet, and cadvisor scrapes",
           "type": "string"
+        },
+        "unixExporter": {
+          "description": "Run prometheus.exporter.unix in-process so Alloy emits node_* (node-exporter) metrics natively. Removes the need for a separate prometheus-node-exporter DaemonSet. Requires the Alloy controller to mount procfs/sysfs (and optionally the host root) and to run on hostNetwork/hostPID for full coverage. Designed for daemonset deployments. Do not enable with Alloy clustering.",
+          "type": "object",
+          "properties": {
+            "disableCollectors": {
+              "description": "Collectors to disable. Takes precedence over enableCollectors on conflict.",
+              "type": "array"
+            },
+            "enableCollectors": {
+              "description": "Collectors to enable in addition to the defaults (or in addition to setCollectors when also set).",
+              "type": "array"
+            },
+            "enabled": {
+              "description": "Enable the in-process unix/node exporter",
+              "type": "boolean"
+            },
+            "includeExporterMetrics": {
+              "description": "Whether the exporter exposes its own self-metrics.",
+              "type": "boolean"
+            },
+            "jobLabel": {
+              "description": "Job label applied to scraped metrics so they are indistinguishable from a separate node-exporter DaemonSet.",
+              "type": "string"
+            },
+            "metricRelabelConfigs": {
+              "description": "Optional metric relabel rules applied after scraping the unix exporter (Prometheus-style maps with source_labels, regex, action, target_label, replacement).",
+              "type": "array"
+            },
+            "procfsPath": {
+              "description": "Path inside the Alloy container that maps to the host /proc.",
+              "type": "string"
+            },
+            "rootfsPath": {
+              "description": "Path inside the Alloy container that maps to the host root filesystem. Set to /host/rootfs (or similar) when the host root is mounted into the container so filesystem collectors see real device sizes.",
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "description": "Scrape interval for the in-process unix exporter.",
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "description": "Scrape timeout for the in-process unix exporter.",
+              "type": "string"
+            },
+            "setCollectors": {
+              "description": "If non-empty, overrides the default collector set entirely. Anything not in this list is disabled.",
+              "type": "array"
+            },
+            "sysfsPath": {
+              "description": "Path inside the Alloy container that maps to the host /sys.",
+              "type": "string"
+            },
+            "udevDataPath": {
+              "description": "Path inside the Alloy container that maps to the host /run/udev/data.",
+              "type": "string"
+            }
+          }
         }
       }
     }
