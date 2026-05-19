@@ -451,6 +451,7 @@ jobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "ty
   #   backoffLimit: 2
   #   completions: 5
   #   parallelism: 3
+  #   completionMode: Indexed  # set to "Indexed" to make Kubernetes inject JOB_COMPLETION_INDEX into each pod
   #   serviceAccount:
   #     create: true
   #     annotations:
