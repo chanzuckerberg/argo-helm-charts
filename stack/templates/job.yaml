@@ -34,6 +34,9 @@ spec:
   {{- if .Values.parallelism }}
   parallelism: {{ .Values.parallelism }}
   {{- end }}
+  {{- if .Values.completionMode }}
+  completionMode: {{ .Values.completionMode }}
+  {{- end }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}

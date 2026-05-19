@@ -11,6 +11,7 @@ tests:
           backoffLimit: 2
           completions: 5
           parallelism: 3
+          completionMode: Indexed
           serviceAccount:
             create: true
             annotations:
@@ -61,6 +62,10 @@ tests:
         equal:
           path: spec.parallelism
           value: 3
+      - documentIndex: 0
+        equal:
+          path: spec.completionMode
+          value: Indexed
       - documentIndex: 1
         containsDocument:
           apiVersion: v1
