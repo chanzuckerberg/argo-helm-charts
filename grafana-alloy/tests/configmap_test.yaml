@@ -1590,6 +1590,104 @@ tests:
           path: data["config.alloy"]
           pattern: 'prometheus\.relabel "host_node_exporter_post" \{[\s\S]*?regex         = "node_cpu\.\*"[\s\S]*?action        = "keep"'
 
+  - it: should render unixExporter (prometheus.exporter.unix) with default paths and NODE_NAME labels
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        unixExporter:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.unix "node" \{[\s\S]*?rootfs_path\s*=\s*"/"[\s\S]*?procfs_path\s*=\s*"/proc"[\s\S]*?sysfs_path\s*=\s*"/sys"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "unix_exporter" \{[\s\S]*?targets\s*=\s*prometheus\.exporter\.unix\.node\.targets[\s\S]*?job_name\s*=\s*"node-exporter"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "unix_exporter_labels" \{[\s\S]*?forward_to = \[prometheus\.relabel\.filter_metrics\.receiver\][\s\S]*?replacement   = sys\.env\("NODE_NAME"\)'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "unix_exporter_post"'
+
+  - it: should render unixExporter with custom paths, collectors and metricRelabelConfigs
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        unixExporter:
+          enabled: true
+          rootfsPath: "/host/rootfs"
+          procfsPath: "/host/proc"
+          sysfsPath: "/host/sys"
+          jobLabel: "host-node-exporter"
+          enableCollectors:
+            - systemd
+          disableCollectors:
+            - mdadm
+          metricRelabelConfigs:
+            - source_labels:
+                - __name__
+              regex: "node_cpu.*"
+              action: keep
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'rootfs_path\s*=\s*"/host/rootfs"[\s\S]*?procfs_path\s*=\s*"/host/proc"[\s\S]*?sysfs_path\s*=\s*"/host/sys"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'enable_collectors\s*=\s*\["systemd"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'disable_collectors\s*=\s*\["mdadm"\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'job_name\s*=\s*"host-node-exporter"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "unix_exporter_labels" \{[\s\S]*?forward_to = \[prometheus\.relabel\.unix_exporter_post\.receiver\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "unix_exporter_post" \{[\s\S]*?regex         = "node_cpu\.\*"[\s\S]*?action        = "keep"'
+
+  - it: should not render unixExporter when disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeEndpoints:
+          enabled: false
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.exporter\.unix'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "unix_exporter"'
+
   - it: should render scrapeHostNodeExporterInfinibandFast with fast interval and metric keep regex
     set:
       enabled: true

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.8.1...grafana-alloy-v0.9.0) (2026-05-19)
+
+
+### Features
+
+* Allow node level metric scraping ([#456](https://github.com/chanzuckerberg/argo-helm-charts/issues/456)) ([ee6b899](https://github.com/chanzuckerberg/argo-helm-charts/commit/ee6b8992132df639b2b073b6ba489b773e9b8ae7))
+
 ## [0.8.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.8.0...grafana-alloy-v0.8.1) (2026-04-21)
 
 

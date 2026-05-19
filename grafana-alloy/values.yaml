@@ -88,6 +88,21 @@ prometheusRemoteWrite:
     scrapeTimeout: "10s"
     metricRelabelConfigs: []
 
+  unixExporter: # @schema description: Run prometheus.exporter.unix in-process so Alloy emits node_* (node-exporter) metrics natively. Removes the need for a separate prometheus-node-exporter DaemonSet. Requires the Alloy controller to mount procfs/sysfs (and optionally the host root) and to run on hostNetwork/hostPID for full coverage. Designed for daemonset deployments. Do not enable with Alloy clustering.
+    enabled: false # @schema description: Enable the in-process unix/node exporter
+    rootfsPath: "/" # @schema description: Path inside the Alloy container that maps to the host root filesystem. Set to /host/rootfs (or similar) when the host root is mounted into the container so filesystem collectors see real device sizes.
+    procfsPath: "/proc" # @schema description: Path inside the Alloy container that maps to the host /proc.
+    sysfsPath: "/sys" # @schema description: Path inside the Alloy container that maps to the host /sys.
+    udevDataPath: "/run/udev/data" # @schema description: Path inside the Alloy container that maps to the host /run/udev/data.
+    scrapeInterval: "15s" # @schema description: Scrape interval for the in-process unix exporter.
+    scrapeTimeout: "10s" # @schema description: Scrape timeout for the in-process unix exporter.
+    jobLabel: "node-exporter" # @schema description: Job label applied to scraped metrics so they are indistinguishable from a separate node-exporter DaemonSet.
+    setCollectors: [] # @schema description: If non-empty, overrides the default collector set entirely. Anything not in this list is disabled.
+    enableCollectors: [] # @schema description: Collectors to enable in addition to the defaults (or in addition to setCollectors when also set).
+    disableCollectors: [] # @schema description: Collectors to disable. Takes precedence over enableCollectors on conflict.
+    includeExporterMetrics: false # @schema description: Whether the exporter exposes its own self-metrics.
+    metricRelabelConfigs: [] # @schema description: Optional metric relabel rules applied after scraping the unix exporter (Prometheus-style maps with source_labels, regex, action, target_label, replacement).
+
   scrapeHostNodeExporterInfinibandFast: # @schema description: Fast scrape of local node exporter keeping only InfiniBand metrics (VMNodeScrape-style)
     enabled: false
     address: "127.0.0.1:9101"

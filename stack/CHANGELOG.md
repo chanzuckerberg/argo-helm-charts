@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.36.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.35.2...stack-v2.36.0) (2026-05-19)
+
+
+### Features
+
+* **stack:** expose Job spec.completionMode ([#458](https://github.com/chanzuckerberg/argo-helm-charts/issues/458)) ([7abc479](https://github.com/chanzuckerberg/argo-helm-charts/commit/7abc47996f4f8467f63f1b756bbc6655b3cabbf5))
+
 ## [2.35.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.35.1...stack-v2.35.2) (2026-04-28)
 
 
