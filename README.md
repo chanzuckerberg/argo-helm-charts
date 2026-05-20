@@ -13,23 +13,32 @@ The `stack` chart is the standard chart for used when deploying an Argus applica
 
 ### Pre-commit hooks (recommended)
 
-This repo uses [pre-commit](https://pre-commit.com/) with [gitleaks](https://github.com/gitleaks/gitleaks) to prevent credential leaks. Set up once per clone:
+This repo uses [pre-commit](https://pre-commit.com/) with [gitleaks](https://github.com/gitleaks/gitleaks) to prevent credential leaks. Install both tools once per clone, then activate the hooks:
 
 ```shell
+# macOS
 brew install pre-commit gitleaks
+
+# Linux / Windows — see upstream install docs:
+#   https://pre-commit.com/#installation
+#   https://github.com/gitleaks/gitleaks#installing
+
 pre-commit install
 ```
 
-Hooks then run automatically on `git commit` and scan the working tree (staged, unstaged, and untracked files). On a finding, the hook prints the rule ID, file, and line; the secret itself is redacted to keep it out of terminal scrollback and screenshots.
+Hooks then run automatically on `git commit` and scan the working tree (staged, unstaged, and untracked files) against the rules in [`.gitleaks.toml`](./.gitleaks.toml). On a finding, the hook prints the rule ID, file, and line; the secret itself is redacted to keep it out of terminal scrollback and screenshots.
 
 To run scans manually:
 
 ```shell
-pre-commit run --all-files            # working tree — matches what the commit hook does
-gitleaks detect --no-banner --redact  # full git history — catches anything already committed
+# Working tree scan — same as the commit hook (uses .gitleaks.toml)
+pre-commit run --all-files
+
+# Full git history scan — catches anything already committed
+gitleaks detect --no-banner --redact --config .gitleaks.toml
 ```
 
-The same gitleaks scan runs in CI on every PR and blocks merge on any finding.
+CI runs the same `gitleaks detect` against the full git history on every PR and on pushes to `main`, using the same [`.gitleaks.toml`](./.gitleaks.toml). The check fails on any finding; whether that blocks merge depends on branch protection rules. Note that the CI scan covers git history while the local pre-commit hook covers the working tree — so each catches things the other can't, and you should run both.
 
 ### Testing an un-published chart in Argus
 

@@ -3,29 +3,53 @@ title = "argo-helm-charts gitleaks config"
 [extend]
 useDefault = true
 
-# Custom rule — fills a gap in gitleaks defaults.
-# Anthropic, OpenAI, AWS, GitHub, Slack, Datadog, Grafana legacy/cloud, etc.
-# are all already covered by gitleaks' built-in rules.
-
 [[rules]]
 id = "grafana-service-account-token"
 description = "Grafana service account token (glsa_<id>_<crc32>)"
 regex = '''\bglsa_[A-Za-z0-9]{22}_[a-fA-F0-9]{8}\b'''
 keywords = ["glsa_"]
 
+[[rules]]
+id = "url-userinfo-password"
+description = "Credential embedded in a URL (scheme://user:password@host)"
+regex = '''\b[a-zA-Z][a-zA-Z0-9+.-]{1,15}:\/\/[^\s:\/@'"]+:([^\s@\/'"]{4,})@'''
+secretGroup = 1
+keywords = ["://"]
+
+[[rules]]
+id = "authorization-bearer-token"
+description = "Opaque bearer token in an Authorization header"
+regex = '''(?i)\bauthorization\s*[:=]\s*["']?bearer\s+([A-Za-z0-9._\-]{20,})'''
+secretGroup = 1
+keywords = ["bearer"]
+
+[[rules]]
+id = "password-assignment-dq"
+description = "Hardcoded password/passwd/pwd assignment (double-quoted)"
+regex = '''(?i)\b(?:password|passwd|pwd)\s*[:=]\s*"([^"]{8,})"'''
+secretGroup = 1
+keywords = ["password", "passwd", "pwd"]
+
+[[rules]]
+id = "password-assignment-sq"
+description = "Hardcoded password/passwd/pwd assignment (single-quoted)"
+regex = '''(?i)\b(?:password|passwd|pwd)\s*[:=]\s*'([^']{8,})\''''
+secretGroup = 1
+keywords = ["password", "passwd", "pwd"]
+
 [allowlist]
 description = "argo-helm-charts allowlist"
-regexTarget = "line"
+regexTarget = "secret"
 
 paths = [
   '''(?i)^test-fixtures/''',
   '''(?i)^.*/tests/.*''',
-  '''(?i)^.*/values\.schema\.json$''',
   '''(?i)^.*/CHANGELOG\.md$''',
-  '''(?i)^\.release-please-manifest\.json$''',
 ]
 
 regexes = [
-  '''\{\{[^}]*\}\}''',
-  '''\$__file\{[^}]*\}''',
+  '''^(?:\{\{[^}]+\}\}\s*)+$''',
+  '''^\$__file\{[^}]+\}$''',
+  '''^\$\{[^}]+\}$''',
+  '''^<path:[^>]+>$''',
 ]
