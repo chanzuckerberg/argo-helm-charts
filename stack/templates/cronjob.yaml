@@ -21,10 +21,22 @@ spec:
   {{- if .Values.concurrencyPolicy }}
   concurrencyPolicy: {{ .Values.concurrencyPolicy }}
   {{- end }}
+  {{- if hasKey .Values "suspend" }}
+  suspend: {{ .Values.suspend }}
+  {{- end }}
   jobTemplate:
     spec:
       {{- if hasKey .Values "backoffLimit" }}
       backoffLimit: {{ .Values.backoffLimit }}
+      {{- end }}
+      {{- if .Values.completionMode }}
+      completionMode: {{ .Values.completionMode }}
+      {{- end }}
+      {{- if hasKey .Values "completions" }}
+      completions: {{ .Values.completions }}
+      {{- end }}
+      {{- if hasKey .Values "parallelism" }}
+      parallelism: {{ .Values.parallelism }}
       {{- end }}
       template:
         spec:

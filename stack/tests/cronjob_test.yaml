@@ -209,6 +209,62 @@ tests:
       - hasDocuments:
           count: 1
 
+  - it: should forward suspend/completions/parallelism/completionMode
+    set:
+      cronJobs:
+        indexed-job:
+          schedule: "0 0 1 1 *"
+          suspend: true
+          completions: 4
+          parallelism: 4
+          completionMode: Indexed
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.suspend
+          value: true
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.completions
+          value: 4
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.parallelism
+          value: 4
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.completionMode
+          value: Indexed
+
+  - it: should omit suspend/completions/parallelism/completionMode when unset
+    set:
+      cronJobs:
+        plain-job:
+          schedule: "*/5 * * * *"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+    asserts:
+      - documentIndex: 0
+        notExists:
+          path: spec.suspend
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.completions
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.parallelism
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.completionMode
+
   - it: should include argus/env-name label when argusMetadata.envName is set
     set:
       global:

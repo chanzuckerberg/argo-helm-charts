@@ -435,6 +435,10 @@ cronJobs: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global",
   # cronJob1:
   #   concurrencyPolicy: Forbid
   #   schedule: "* * * * *"
+  #   suspend: false          # set to true to pause scheduled runs (on-demand-only CronJobs paired with `kubectl create job --from=cronjob/...`)
+  #   completions: 4          # forwarded to spec.jobTemplate.spec.completions
+  #   parallelism: 4          # forwarded to spec.jobTemplate.spec.parallelism
+  #   completionMode: Indexed # forwarded to spec.jobTemplate.spec.completionMode (Kubernetes injects JOB_COMPLETION_INDEX into each pod)
   #   serviceAccount:
   #     create: true
   #   image:
