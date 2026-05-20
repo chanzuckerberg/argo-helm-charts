@@ -64,28 +64,17 @@ tests:
           path: spec.gatewayClassName
           value: eg
 
-  # GeoIP infrastructure parametersRef tests
-  - it: should not include infrastructure parametersRef when geoip.enabled is false
+  - it: should always include infrastructure parametersRef (regardless of geoip)
     set:
       gatewayName: test-gateway
       clusterName: test-cluster
       geoip.enabled: false
     documentIndex: 1
     asserts:
-      - notExists:
-          path: spec.infrastructure
-
-  - it: should include infrastructure parametersRef when geoip.enabled is true
-    set:
-      gatewayName: test-gateway
-      clusterName: test-cluster
-      geoip.enabled: true
-    documentIndex: 1
-    asserts:
       - isNotEmpty:
           path: spec.infrastructure.parametersRef
 
-  - it: should reference EnvoyProxy resource when geoip.enabled is true
+  - it: should reference EnvoyProxy resource
     set:
       gatewayName: test-gateway
       clusterName: test-cluster

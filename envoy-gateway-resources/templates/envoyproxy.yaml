@@ -1,4 +1,3 @@
-{{- if .Values.geoip.enabled }}
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
 metadata:
@@ -10,6 +9,9 @@ spec:
     kubernetes:
       envoyServiceAccount:
         name: {{ .Values.serviceAccount.name }}
+      envoyService:
+        type: ClusterIP
+      {{- if .Values.geoip.enabled }}
       envoyDeployment:
         patch:
           type: StrategicMerge
@@ -44,4 +46,4 @@ spec:
                   volumes:
                   - name: geoip-db
                     emptyDir: {}
-{{- end }}
+      {{- end }}
