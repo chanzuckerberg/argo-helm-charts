@@ -3,8 +3,8 @@ repos:
     hooks:
       - id: gitleaks
         name: Detect hardcoded secrets
-        description: Run gitleaks against staged changes (uses the brew-installed binary)
-        entry: gitleaks git --pre-commit --redact --staged --verbose
+        description: Scan the working tree for secrets (catches unstaged edits too, not just staged)
+        entry: gitleaks detect --no-banner --redact --verbose --no-git --source .
         language: system
         pass_filenames: false
 

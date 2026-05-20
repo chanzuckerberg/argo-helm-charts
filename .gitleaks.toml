@@ -3,6 +3,16 @@ title = "argo-helm-charts gitleaks config"
 [extend]
 useDefault = true
 
+# Custom rule — fills a gap in gitleaks defaults.
+# Anthropic, OpenAI, AWS, GitHub, Slack, Datadog, Grafana legacy/cloud, etc.
+# are all already covered by gitleaks' built-in rules.
+
+[[rules]]
+id = "grafana-service-account-token"
+description = "Grafana service account token (glsa_<id>_<crc32>)"
+regex = '''\bglsa_[A-Za-z0-9]{22}_[a-fA-F0-9]{8}\b'''
+keywords = ["glsa_"]
+
 [allowlist]
 description = "argo-helm-charts allowlist"
 regexTarget = "line"

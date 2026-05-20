@@ -20,11 +20,13 @@ brew install pre-commit gitleaks
 pre-commit install
 ```
 
-Hooks then run automatically on `git commit`. To scan the whole repo manually:
+Hooks then run automatically on `git commit` and scan the working tree (staged, unstaged, and untracked files). On a finding, the hook prints the rule ID, file, and line; the secret itself is redacted to keep it out of terminal scrollback and screenshots.
+
+To run scans manually:
 
 ```shell
-pre-commit run --all-files
-gitleaks detect --no-banner --redact
+pre-commit run --all-files            # working tree — matches what the commit hook does
+gitleaks detect --no-banner --redact  # full git history — catches anything already committed
 ```
 
 The same gitleaks scan runs in CI on every PR and blocks merge on any finding.
