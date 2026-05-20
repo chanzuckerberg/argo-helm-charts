@@ -37,19 +37,37 @@ regex = '''(?i)\b(?:password|passwd|pwd)\s*[:=]\s*'([^']{8,})\''''
 secretGroup = 1
 keywords = ["password", "passwd", "pwd"]
 
-[allowlist]
-description = "argo-helm-charts allowlist"
-regexTarget = "secret"
-
+[[allowlists]]
+description = "exempt fixture and changelog paths"
 paths = [
   '''(?i)^test-fixtures/''',
   '''(?i)^.*/tests/.*''',
   '''(?i)^.*/CHANGELOG\.md$''',
 ]
 
+[[allowlists]]
+description = "exempt pure interpolation values"
+regexTarget = "secret"
 regexes = [
   '''^(?:\{\{[^}]+\}\}\s*)+$''',
   '''^\$__file\{[^}]+\}$''',
   '''^\$\{[^}]+\}$''',
   '''^<path:[^>]+>$''',
+]
+
+[[allowlists]]
+description = "exempt well-known documentation placeholder values"
+stopwords = [
+  "my-password",
+  "my_password",
+  "your-password",
+  "your_password",
+  "changeme",
+  "change-me",
+  "change_me",
+  "placeholder",
+  "redacted",
+  "<password",
+  "REPLACE_ME",
+  "REPLACE-ME",
 ]
