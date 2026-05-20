@@ -1,0 +1,21 @@
+title = "argo-helm-charts gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "argo-helm-charts allowlist"
+regexTarget = "line"
+
+paths = [
+  '''(?i)^test-fixtures/''',
+  '''(?i)^.*/tests/.*''',
+  '''(?i)^.*/values\.schema\.json$''',
+  '''(?i)^.*/CHANGELOG\.md$''',
+  '''(?i)^\.release-please-manifest\.json$''',
+]
+
+regexes = [
+  '''\{\{[^}]*\}\}''',
+  '''\$__file\{[^}]*\}''',
+]

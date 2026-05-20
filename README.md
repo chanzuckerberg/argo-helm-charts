@@ -11,6 +11,24 @@ The `stack` chart is the standard chart for used when deploying an Argus applica
     - this can be run from the root directory to run tests for all charts
     - or from any helm chart directory to run tests just for that chart
 
+### Pre-commit hooks (recommended)
+
+This repo uses [pre-commit](https://pre-commit.com/) with [gitleaks](https://github.com/gitleaks/gitleaks) to prevent credential leaks. Set up once per clone:
+
+```shell
+brew install pre-commit gitleaks
+pre-commit install
+```
+
+Hooks then run automatically on `git commit`. To scan the whole repo manually:
+
+```shell
+pre-commit run --all-files
+gitleaks detect --no-banner --redact
+```
+
+The same gitleaks scan runs in CI on every PR and blocks merge on any finding.
+
 ### Testing an un-published chart in Argus
 
 You can create a stack from a chart that has not been published.
