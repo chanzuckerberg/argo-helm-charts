@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.37.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.36.0...stack-v2.37.0) (2026-05-20)
+
+
+### Features
+
+* **stack:** forward suspend/completions/parallelism/completionMode to CronJob ([#460](https://github.com/chanzuckerberg/argo-helm-charts/issues/460)) ([9ec53f7](https://github.com/chanzuckerberg/argo-helm-charts/commit/9ec53f788894bd4225cd44518caec3c80a9e872b))
+
 ## [2.36.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.35.2...stack-v2.36.0) (2026-05-19)
 
 
