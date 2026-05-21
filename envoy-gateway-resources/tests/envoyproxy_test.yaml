@@ -22,7 +22,7 @@ tests:
           path: metadata.namespace
           value: envoy-gateway
 
-  - it: should set envoyService.type to ClusterIP
+  - it: should default envoyService.type to ClusterIP
     set:
       geoip.enabled: false
     asserts:
@@ -30,13 +30,22 @@ tests:
           path: spec.provider.kubernetes.envoyService.type
           value: ClusterIP
 
-  - it: should set envoyService.type to ClusterIP when geoip is enabled too
+  - it: should default envoyService.type to ClusterIP when geoip is enabled too
     set:
       geoip.enabled: true
     asserts:
       - equal:
           path: spec.provider.kubernetes.envoyService.type
           value: ClusterIP
+
+  - it: should honor envoyService.type override
+    set:
+      geoip.enabled: false
+      envoyService.type: LoadBalancer
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyService.type
+          value: LoadBalancer
 
   - it: should omit envoyDeployment patch when geoip is disabled
     set:

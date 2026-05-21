@@ -10,7 +10,7 @@ spec:
       envoyServiceAccount:
         name: {{ .Values.serviceAccount.name }}
       envoyService:
-        type: ClusterIP
+        type: {{ .Values.envoyService.type }}
       {{- if .Values.geoip.enabled }}
       envoyDeployment:
         patch:

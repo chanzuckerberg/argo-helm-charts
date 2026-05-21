@@ -7,6 +7,9 @@ serviceAccount:
   name: envoy-gateway-proxy
   annotations: {}
 
+envoyService:
+  type: ClusterIP
+
 geoip:
   enabled: true
   blockedCountries:
