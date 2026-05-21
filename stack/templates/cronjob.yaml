@@ -39,6 +39,16 @@ spec:
       parallelism: {{ .Values.parallelism }}
       {{- end }}
       template:
+        metadata:
+          {{- with .Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+            {{- include "service.labels" . | nindent 12 }}
+            {{- with .Values.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         spec:
           serviceAccountName: {{ include "service.serviceAccountName" . }}
           containers:
