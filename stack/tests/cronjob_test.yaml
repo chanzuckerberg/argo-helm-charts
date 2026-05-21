@@ -265,6 +265,34 @@ tests:
         notExists:
           path: spec.jobTemplate.spec.completionMode
 
+  - it: should forward podAnnotations + podLabels to jobTemplate pod metadata
+    set:
+      cronJobs:
+        annotated-job:
+          schedule: "*/5 * * * *"
+          podAnnotations:
+            karpenter.sh/do-not-disrupt: "true"
+            custom-annotation: "value"
+          podLabels:
+            custom-label: "value"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          command: ["hello-world"]
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.metadata.annotations["karpenter.sh/do-not-disrupt"]
+          value: "true"
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.metadata.annotations["custom-annotation"]
+          value: "value"
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.metadata.labels["custom-label"]
+          value: "value"
+
   - it: should include argus/env-name label when argusMetadata.envName is set
     set:
       global:
