@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.38.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.37.0...stack-v2.38.0) (2026-05-21)
+
+
+### Features
+
+* **stack:** render podAnnotations + podLabels on CronJob jobTemplate ([#463](https://github.com/chanzuckerberg/argo-helm-charts/issues/463)) ([d049da3](https://github.com/chanzuckerberg/argo-helm-charts/commit/d049da3f20c8f3fcb371321be25b35e40c80a1aa))
+
 ## [2.37.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.36.0...stack-v2.37.0) (2026-05-20)
 
 
