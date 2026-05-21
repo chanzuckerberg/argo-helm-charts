@@ -13,6 +13,7 @@
 | - [alternateNames](#alternateNames ) | No      | array  | No         | -          | -                 |
 | - [baseDomain](#baseDomain )         | No      | string | No         | -          | -                 |
 | - [clusterName](#clusterName )       | No      | string | No         | -          | -                 |
+| - [envoyService](#envoyService )     | No      | object | No         | -          | -                 |
 | - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
 | - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
 | - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
@@ -46,14 +47,33 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="gatewayName"></a>4. Property `envoy-gateway-resources > gatewayName`
+## <a name="envoyService"></a>4. Property `envoy-gateway-resources > envoyService`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [type](#envoyService_type ) | No      | string | No         | -          | -                 |
+
+### <a name="envoyService_type"></a>4.1. Property `envoy-gateway-resources > envoyService > type`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="geoip"></a>5. Property `envoy-gateway-resources > geoip`
+## <a name="gatewayName"></a>5. Property `envoy-gateway-resources > gatewayName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="geoip"></a>6. Property `envoy-gateway-resources > geoip`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -66,7 +86,7 @@
 | - [blockedCountries](#geoip_blockedCountries ) | No      | array of string | No         | -          | -                 |
 | - [enabled](#geoip_enabled )                   | No      | boolean         | No         | -          | -                 |
 
-### <a name="geoip_blockedCountries"></a>5.1. Property `envoy-gateway-resources > geoip > blockedCountries`
+### <a name="geoip_blockedCountries"></a>6.1. Property `envoy-gateway-resources > geoip > blockedCountries`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -85,21 +105,21 @@
 | ------------------------------------------------------- | ----------- |
 | [blockedCountries items](#geoip_blockedCountries_items) | -           |
 
-#### <a name="geoip_blockedCountries_items"></a>5.1.1. envoy-gateway-resources > geoip > blockedCountries > blockedCountries items
+#### <a name="geoip_blockedCountries_items"></a>6.1.1. envoy-gateway-resources > geoip > blockedCountries > blockedCountries items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="geoip_enabled"></a>5.2. Property `envoy-gateway-resources > geoip > enabled`
+### <a name="geoip_enabled"></a>6.2. Property `envoy-gateway-resources > geoip > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="serviceAccount"></a>6. Property `envoy-gateway-resources > serviceAccount`
+## <a name="serviceAccount"></a>7. Property `envoy-gateway-resources > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -112,7 +132,7 @@
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | -                 |
 | - [name](#serviceAccount_name )               | No      | string | No         | -          | -                 |
 
-### <a name="serviceAccount_annotations"></a>6.1. Property `envoy-gateway-resources > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>7.1. Property `envoy-gateway-resources > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -120,7 +140,7 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-### <a name="serviceAccount_name"></a>6.2. Property `envoy-gateway-resources > serviceAccount > name`
+### <a name="serviceAccount_name"></a>7.2. Property `envoy-gateway-resources > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
