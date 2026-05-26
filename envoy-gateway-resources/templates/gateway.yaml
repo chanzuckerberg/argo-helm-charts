@@ -12,13 +12,11 @@ metadata:
   namespace: envoy-gateway
 spec:
   gatewayClassName: eg
-{{- if .Values.geoip.enabled }}
   infrastructure:
     parametersRef:
       group: gateway.envoyproxy.io
       kind: EnvoyProxy
       name: {{ .Values.gatewayName }}-proxy
-{{- end }}
   listeners:
     - name: http
       protocol: HTTP
