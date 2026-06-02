@@ -47,12 +47,36 @@
               }
             },
             "extraArgs": {
-              "description": "Extra arguments to pass to Alloy",
-              "type": "array"
+              "description": "Extra arguments to pass to Alloy. The default advertises the node IP (POD_IP env below) for clustering, required on hostNetwork/Cilium nodes where Alloy interface auto-detection otherwise falls back to 127.0.0.1. Consumers overriding this list must re-include the advertise-address arg when clustering is enabled.",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "extraEnv": {
-              "description": "Extra environment variables",
-              "type": "array"
+              "description": "Extra environment variables. POD_IP (status.podIP) backs the --cluster.advertise-address arg. Consumers overriding this list must re-include POD_IP when clustering is enabled.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "valueFrom": {
+                    "type": "object",
+                    "properties": {
+                      "fieldRef": {
+                        "type": "object",
+                        "properties": {
+                          "fieldPath": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             },
             "extraPorts": {
               "description": "Extra ports to expose",
