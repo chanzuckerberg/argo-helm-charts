@@ -2001,3 +2001,55 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'discovery\.kubernetes "pods_metrics" \{\s*role = "pod"\s*selectors \{\s*role  = "pod"\s*field = "spec\.nodeName='
+
+  - it: should not emit clustering blocks when alloy.clustering.enabled is false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+        scrapeEndpoints:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'clustering \{'
+
+  - it: should distribute cluster-wide scrapes via clustering when alloy.clustering.enabled is true
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloy:
+        clustering:
+          enabled: true
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+        scrapeEndpoints:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      # kube_state_metrics (role=service) and endpoints (role=endpoints) are cluster-wide -> clustered
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "kube_state_metrics" \{[\s\S]*?honor_labels    = true\s*clustering \{\s*enabled = true'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "endpoints" \{[\s\S]*?scrape_timeout  = "[^"]*"\s*clustering \{\s*enabled = true'
+      # node-local pods scrape must NOT be clustered: its block closes right after
+      # scrape_timeout with no clustering block inserted (each node keeps its own targets)
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "pods" \{[\s\S]*?scrape_timeout  = "10s"\s*\}'

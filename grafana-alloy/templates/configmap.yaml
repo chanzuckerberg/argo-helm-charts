@@ -429,6 +429,7 @@ data:
       scrape_interval = {{ $ksmSi | quote }}
       scrape_timeout  = {{ $ksmSt | quote }}
       honor_labels    = true
+{{- include "grafana-alloy.scrapeClustering" $ }}
     }
 
     {{- if gt (len $ksmMetricRelabel) 0 }}
@@ -501,6 +502,7 @@ data:
       forward_to      = [prometheus.relabel.filter_metrics.receiver]
       scrape_interval = {{ .scrapeInterval | default "1m" | quote }}
       scrape_timeout  = {{ .scrapeTimeout | default "10s" | quote }}
+{{- include "grafana-alloy.scrapeClustering" $ }}
     }
     {{- end }}
     {{- end }}
@@ -683,6 +685,7 @@ data:
       scrape_interval = {{ .scrapeInterval | default "15s" | quote }}
       scrape_timeout  = {{ .scrapeTimeout | default "10s" | quote }}
       honor_labels    = true
+{{- include "grafana-alloy.scrapeClustering" $ }}
     }
     {{- end }}
     {{- end }}

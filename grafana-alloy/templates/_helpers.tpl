@@ -71,3 +71,23 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- end }}
 
+{{/*
+Emit a prometheus.scrape clustering block when Alloy clustering is enabled.
+
+Pairs with alloy.clustering.enabled (which makes the alloy subchart add
+--cluster.enabled and the headless peer-discovery service). Apply ONLY to
+scrapes whose discovery is cluster-wide (service/endpoints), so the target is
+owned by a single peer and scraped once instead of by every DaemonSet pod.
+Do NOT apply to node-local scrapes (pods/kubelet/cadvisor/unix_exporter) — those
+already restrict discovery to the local node and must run on every node.
+
+Pass the root context ($).
+*/}}
+{{- define "grafana-alloy.scrapeClustering" -}}
+{{- if dig "clustering" "enabled" false (.Values.alloy | default dict) }}
+      clustering {
+        enabled = true
+      }
+{{- end }}
+{{- end -}}
+
