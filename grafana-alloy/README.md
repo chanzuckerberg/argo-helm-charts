@@ -63,15 +63,15 @@
 
 **Description:** Alloy deployment configuration
 
-| Property                                         | Pattern | Type             | Deprecated | Definition | Title/Description                   |
-| ------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------------------------- |
-| - [clustering](#alloy_alloy_clustering )         | No      | object           | No         | -          | Clustering configuration            |
-| - [configMap](#alloy_alloy_configMap )           | No      | object           | No         | -          | ConfigMap configuration for Alloy   |
-| - [extraArgs](#alloy_alloy_extraArgs )           | No      | array            | No         | -          | Extra arguments to pass to Alloy    |
-| - [extraEnv](#alloy_alloy_extraEnv )             | No      | array            | No         | -          | Extra environment variables         |
-| - [extraPorts](#alloy_alloy_extraPorts )         | No      | array            | No         | -          | Extra ports to expose               |
-| - [image](#alloy_alloy_image )                   | No      | object           | No         | -          | Alloy container image configuration |
-| - [stabilityLevel](#alloy_alloy_stabilityLevel ) | No      | enum (of string) | No         | -          | Stability level for Alloy features  |
+| Property                                         | Pattern | Type             | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [clustering](#alloy_alloy_clustering )         | No      | object           | No         | -          | Clustering configuration                                                                                                                                                                                                                                                                                                  |
+| - [configMap](#alloy_alloy_configMap )           | No      | object           | No         | -          | ConfigMap configuration for Alloy                                                                                                                                                                                                                                                                                         |
+| - [extraArgs](#alloy_alloy_extraArgs )           | No      | array of string  | No         | -          | Extra arguments to pass to Alloy. The default advertises the node IP (POD_IP env below) for clustering, required on hostNetwork/Cilium nodes where Alloy interface auto-detection otherwise falls back to 127.0.0.1. Consumers overriding this list must re-include the advertise-address arg when clustering is enabled. |
+| - [extraEnv](#alloy_alloy_extraEnv )             | No      | array of object  | No         | -          | Extra environment variables. POD_IP (status.podIP) backs the --cluster.advertise-address arg. Consumers overriding this list must re-include POD_IP when clustering is enabled.                                                                                                                                           |
+| - [extraPorts](#alloy_alloy_extraPorts )         | No      | array            | No         | -          | Extra ports to expose                                                                                                                                                                                                                                                                                                     |
+| - [image](#alloy_alloy_image )                   | No      | object           | No         | -          | Alloy container image configuration                                                                                                                                                                                                                                                                                       |
+| - [stabilityLevel](#alloy_alloy_stabilityLevel ) | No      | enum (of string) | No         | -          | Stability level for Alloy features                                                                                                                                                                                                                                                                                        |
 
 #### <a name="alloy_alloy_clustering"></a>1.2.1. Property `grafana-alloy > alloy > alloy > clustering`
 
@@ -141,12 +141,12 @@
 
 #### <a name="alloy_alloy_extraArgs"></a>1.2.3. Property `grafana-alloy > alloy > alloy > extraArgs`
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
 
-**Description:** Extra arguments to pass to Alloy
+**Description:** Extra arguments to pass to Alloy. The default advertises the node IP (POD_IP env below) for clustering, required on hostNetwork/Cilium nodes where Alloy interface auto-detection otherwise falls back to 127.0.0.1. Consumers overriding this list must re-include the advertise-address arg when clustering is enabled.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -154,16 +154,27 @@
 | **Max items**        | N/A                |
 | **Items unicity**    | False              |
 | **Additional items** | False              |
-| **Tuple validation** | N/A                |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                 | Description |
+| ----------------------------------------------- | ----------- |
+| [extraArgs items](#alloy_alloy_extraArgs_items) | -           |
+
+##### <a name="alloy_alloy_extraArgs_items"></a>1.2.3.1. grafana-alloy > alloy > alloy > extraArgs > extraArgs items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="alloy_alloy_extraEnv"></a>1.2.4. Property `grafana-alloy > alloy > alloy > extraEnv`
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
 
-**Description:** Extra environment variables
+**Description:** Extra environment variables. POD_IP (status.podIP) backs the --cluster.advertise-address arg. Consumers overriding this list must re-include POD_IP when clustering is enabled.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -171,7 +182,62 @@
 | **Max items**        | N/A                |
 | **Items unicity**    | False              |
 | **Additional items** | False              |
-| **Tuple validation** | N/A                |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be               | Description |
+| --------------------------------------------- | ----------- |
+| [extraEnv items](#alloy_alloy_extraEnv_items) | -           |
+
+##### <a name="alloy_alloy_extraEnv_items"></a>1.2.4.1. grafana-alloy > alloy > alloy > extraEnv > extraEnv items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#alloy_alloy_extraEnv_items_name )           | No      | string | No         | -          | -                 |
+| - [valueFrom](#alloy_alloy_extraEnv_items_valueFrom ) | No      | object | No         | -          | -                 |
+
+###### <a name="alloy_alloy_extraEnv_items_name"></a>1.2.4.1.1. Property `grafana-alloy > alloy > alloy > extraEnv > extraEnv items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="alloy_alloy_extraEnv_items_valueFrom"></a>1.2.4.1.2. Property `grafana-alloy > alloy > alloy > extraEnv > extraEnv items > valueFrom`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fieldRef](#alloy_alloy_extraEnv_items_valueFrom_fieldRef ) | No      | object | No         | -          | -                 |
+
+###### <a name="alloy_alloy_extraEnv_items_valueFrom_fieldRef"></a>1.2.4.1.2.1. Property `grafana-alloy > alloy > alloy > extraEnv > extraEnv items > valueFrom > fieldRef`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [fieldPath](#alloy_alloy_extraEnv_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
+
+###### <a name="alloy_alloy_extraEnv_items_valueFrom_fieldRef_fieldPath"></a>1.2.4.1.2.1.1. Property `grafana-alloy > alloy > alloy > extraEnv > extraEnv items > valueFrom > fieldRef > fieldPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="alloy_alloy_extraPorts"></a>1.2.5. Property `grafana-alloy > alloy > alloy > extraPorts`
 
