@@ -2022,13 +2022,14 @@ tests:
           path: data["config.alloy"]
           pattern: 'clustering \{'
 
-  - it: should distribute cluster-wide scrapes via clustering when alloy.clustering.enabled is true
+  - it: should distribute cluster-wide scrapes via clustering when alloy.alloy.clustering.enabled is true
     set:
       enabled: true
       clusterName: test-cluster
       alloy:
-        clustering:
-          enabled: true
+        alloy:
+          clustering:
+            enabled: true
       alloyConfig:
         metrics:
           enabled: true

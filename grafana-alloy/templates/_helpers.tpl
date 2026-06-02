@@ -73,7 +73,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{/* Clustering block for cluster-wide scrapes (service/endpoints). Pass root ($). */}}
 {{- define "grafana-alloy.scrapeClustering" -}}
-{{- if dig "clustering" "enabled" false (.Values.alloy | default dict) }}
+{{- if dig "alloy" "clustering" "enabled" false (.Values.alloy | default dict) }}
       clustering {
         enabled = true
       }
