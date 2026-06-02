@@ -3,15 +3,58 @@ templates:
   - envoyproxy.yaml
 
 tests:
-  # Test when geoip is disabled
-  - it: should not render when geoip.enabled is false
+  - it: should render EnvoyProxy regardless of geoip.enabled
+    set:
+      geoip.enabled: false
+      gatewayName: test-gateway
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EnvoyProxy
+      - equal:
+          path: apiVersion
+          value: gateway.envoyproxy.io/v1alpha1
+      - equal:
+          path: metadata.name
+          value: test-gateway-proxy
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway
+
+  - it: should default envoyService.type to ClusterIP
     set:
       geoip.enabled: false
     asserts:
-      - hasDocuments:
-          count: 0
+      - equal:
+          path: spec.provider.kubernetes.envoyService.type
+          value: ClusterIP
 
-  # Basic EnvoyProxy resource tests
+  - it: should default envoyService.type to ClusterIP when geoip is enabled too
+    set:
+      geoip.enabled: true
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyService.type
+          value: ClusterIP
+
+  - it: should honor envoyService.type override
+    set:
+      geoip.enabled: false
+      envoyService.type: LoadBalancer
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyService.type
+          value: LoadBalancer
+
+  - it: should omit envoyDeployment patch when geoip is disabled
+    set:
+      geoip.enabled: false
+    asserts:
+      - notExists:
+          path: spec.provider.kubernetes.envoyDeployment
+
+  # Basic EnvoyProxy resource tests when geoip enabled
   - it: should render EnvoyProxy when geoip.enabled is true
     set:
       geoip.enabled: true
@@ -39,7 +82,7 @@ tests:
           path: spec.provider.type
           value: Kubernetes
 
-  - it: should use StrategicMerge patch type
+  - it: should use StrategicMerge patch type when geoip enabled
     set:
       geoip.enabled: true
     asserts:

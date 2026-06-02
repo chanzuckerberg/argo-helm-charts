@@ -209,7 +209,7 @@ tests:
       - hasDocuments:
           count: 1
 
-  - it: should forward suspend/completions/parallelism/completionMode
+  - it: should forward suspend/completions/parallelism/completionMode/ttlSecondsAfterFinished
     set:
       cronJobs:
         indexed-job:
@@ -218,6 +218,7 @@ tests:
           completions: 4
           parallelism: 4
           completionMode: Indexed
+          ttlSecondsAfterFinished: 3600
           image:
             repository: my-repo
             tag: sha-mytag
@@ -241,8 +242,12 @@ tests:
         equal:
           path: spec.jobTemplate.spec.completionMode
           value: Indexed
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.ttlSecondsAfterFinished
+          value: 3600
 
-  - it: should omit suspend/completions/parallelism/completionMode when unset
+  - it: should omit suspend/completions/parallelism/completionMode/ttlSecondsAfterFinished when unset
     set:
       cronJobs:
         plain-job:
@@ -264,6 +269,9 @@ tests:
       - documentIndex: 0
         notExists:
           path: spec.jobTemplate.spec.completionMode
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.ttlSecondsAfterFinished
 
   - it: should forward podAnnotations + podLabels to jobTemplate pod metadata
     set:

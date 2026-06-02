@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.39.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.38.0...stack-v2.39.0) (2026-06-02)
+
+
+### Features
+
+* **stack:** forward ttlSecondsAfterFinished to CronJob jobTemplate ([#466](https://github.com/chanzuckerberg/argo-helm-charts/issues/466)) ([26ba225](https://github.com/chanzuckerberg/argo-helm-charts/commit/26ba22508651c79ae41ab0c5fa890219b52abaaa))
+
 ## [2.38.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.37.0...stack-v2.38.0) (2026-05-21)
 
 
