@@ -71,7 +71,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- end }}
 
-{{/* Keep only role=endpoints targets backed by a pod on this node (node-shard). Pass root ($). */}}
 {{- define "grafana-alloy.shardByEndpointNode" -}}
 rule {
   target_label = "__tmp_local_node"
