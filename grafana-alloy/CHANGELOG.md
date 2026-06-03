@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.9.0...grafana-alloy-v0.10.0) (2026-06-03)
+
+
+### Features
+
+* node-shard cluster-wide scrapes (avoids grafana-alloy clustering) ([#471](https://github.com/chanzuckerberg/argo-helm-charts/issues/471)) ([086a1ab](https://github.com/chanzuckerberg/argo-helm-charts/commit/086a1aba658baa3ef1dd5be8d99d2a252f2ccd15))
+
+
+### Bug Fixes
+
+* shard pods_metrics discovery by node to stop duplicate scrapes ([#468](https://github.com/chanzuckerberg/argo-helm-charts/issues/468)) ([328f12e](https://github.com/chanzuckerberg/argo-helm-charts/commit/328f12e5874f264563181bf858329ad487966f94))
+
 ## [0.9.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.8.1...grafana-alloy-v0.9.0) (2026-05-19)
 
 
