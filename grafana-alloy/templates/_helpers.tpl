@@ -71,13 +71,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- end }}
 
-{{/*
-Node-shard a role=endpoints scrape: keep only targets whose backing pod runs on THIS
-Alloy's node, so a DaemonSet scrapes each cluster-wide endpoint exactly once instead of
-once per node. Exact node-name match via keepequal (no regex/wildcard ambiguity).
-Targets with no endpoint node name (e.g. external/headless) are dropped — only use where
-all scrape targets are pod-backed.
-*/}}
+{{/* Keep only role=endpoints targets backed by a pod on this node (node-shard). Pass root ($). */}}
 {{- define "grafana-alloy.shardByEndpointNode" -}}
 rule {
   target_label = "__tmp_local_node"
