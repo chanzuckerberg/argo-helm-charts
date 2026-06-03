@@ -389,13 +389,14 @@ data:
     {{- $ksmMetricRelabel := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.metricRelabelConfigs | default list }}
     {{- $ksmSi := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.scrapeInterval | default $si }}
     {{- $ksmSt := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.scrapeTimeout | default $st }}
+    {{- $ksmShard := .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.shardByNode }}
     discovery.kubernetes "kube_state_metrics_svc" {
-      role = "service"
+      role = {{ if $ksmShard }}"endpoints"{{ else }}"service"{{ end }}
       namespaces {
         names = [{{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.namespace | default "kube-system") | quote }}]
       }
       selectors {
-        role  = "service"
+        role  = {{ if $ksmShard }}"endpoints"{{ else }}"service"{{ end }}
         label = {{ (.Values.prometheusRemoteWrite.scrapeKubeStateMetrics.serviceSelector | default "app.kubernetes.io/name=kube-state-metrics") | quote }}
       }
     }
@@ -416,10 +417,13 @@ data:
 
       {{- with .Values.prometheusRemoteWrite.scrapeKubeStateMetrics.portName }}
       rule {
-        source_labels = ["__meta_kubernetes_service_port_name"]
+        source_labels = [{{ if $ksmShard }}"__meta_kubernetes_endpoint_port_name"{{ else }}"__meta_kubernetes_service_port_name"{{ end }}]
         regex         = {{ . | quote }}
         action        = "keep"
       }
+      {{- end }}
+      {{- if $ksmShard }}
+{{- include "grafana-alloy.shardByEndpointNode" . | nindent 6 }}
       {{- end }}
     }
 
@@ -454,6 +458,9 @@ data:
         regex         = "(?i)^\\s*true\\s*$"
         action        = "keep"
       }
+      {{- if $.Values.prometheusRemoteWrite.scrapeEndpoints.shardByNode }}
+{{- include "grafana-alloy.shardByEndpointNode" . | nindent 6 }}
+      {{- end }}
 
       rule {
         source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_path"]
@@ -664,6 +671,9 @@ data:
         regex         = {{ .portName | default "gpu-metrics" | quote }}
         action        = "keep"
       }
+      {{- if .shardByNode }}
+{{- include "grafana-alloy.shardByEndpointNode" . | nindent 6 }}
+      {{- end }}
 
       rule {
         source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
