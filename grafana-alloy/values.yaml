@@ -60,6 +60,7 @@ prometheusRemoteWrite:
     scrapeTimeout: "" # @schema description: Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)
     portName: "" # @schema description: Optional Kubernetes Service port name to scrape only (e.g. http for VMServiceScrape parity)
     metricRelabelConfigs: [] # @schema description: Optional metric relabel rules after scraping kube-state-metrics (Prometheus-style maps with source_labels, regex, action, target_label, replacement)
+    shardByNode: false # @schema description: When true (DaemonSet), discover KSM via role=endpoints and keep only the endpoint on this pod's node, so the single KSM is scraped once instead of once per node. Alternative to Alloy clustering for cluster-singleton scraping.
 
   # Scrape kubelet for kubelet_* and kubernetes_build_info metrics.
   scrapeKubelet: # @schema description: Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)
@@ -78,6 +79,7 @@ prometheusRemoteWrite:
     portName: "gpu-metrics" # @schema description: Endpoint port name to keep
     scrapeInterval: "15s"
     scrapeTimeout: "10s"
+    shardByNode: false # @schema description: When true (DaemonSet), each pod scrapes only the dcgm endpoints on its own node. dcgm-exporter is per-GPU-node, so this gives one scraper per exporter with locality and no duplication. Alternative to Alloy clustering.
 
   scrapeHostNodeExporter: # @schema description: Scrape node exporter on the local node for hostNetwork DaemonSet pods. Typical address 127.0.0.1:9101 (Andromeda-style port).
     enabled: false
@@ -119,6 +121,7 @@ prometheusRemoteWrite:
     enabled: true # @schema description: Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
     scrapeInterval: "1m" # @schema description: Scrape interval for endpoint scraping
     scrapeTimeout: "10s" # @schema description: Scrape timeout for endpoint scraping
+    shardByNode: false # @schema description: When true (DaemonSet), each pod scrapes only the annotated endpoints whose backing pod runs on its own node, so each target is scraped once instead of once per node. Alternative to Alloy clustering. Note - drops targets with no endpoint node name (external/headless services), so only use where all annotated scrape targets are pod-backed.
 
   additionalStaticScrapes: [] # @schema description: Extra prometheus.scrape blocks with static __address__ targets (forward_to filter_metrics). Each item: jobName, optional metricsPath, scrapeInterval, scrapeTimeout, targets: [{ address, optional job, optional namespace }]
 

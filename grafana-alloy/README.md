@@ -1189,14 +1189,15 @@ Must be one of:
 
 **Description:** Scrape NVIDIA DCGM exporter endpoints (VMAgent VMServiceScrape-style)
 
-| Property                                                                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
-| ----------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
-| - [enabled](#prometheusRemoteWrite_scrapeDcgmExporter_enabled )                           | No      | boolean | No         | -          | -                                                                        |
-| - [namespaces](#prometheusRemoteWrite_scrapeDcgmExporter_namespaces )                     | No      | array   | No         | -          | Kubernetes namespaces to search (e.g. nvidia-gpu-operator, gpu-operator) |
-| - [portName](#prometheusRemoteWrite_scrapeDcgmExporter_portName )                         | No      | string  | No         | -          | Endpoint port name to keep                                               |
-| - [scrapeInterval](#prometheusRemoteWrite_scrapeDcgmExporter_scrapeInterval )             | No      | string  | No         | -          | -                                                                        |
-| - [scrapeTimeout](#prometheusRemoteWrite_scrapeDcgmExporter_scrapeTimeout )               | No      | string  | No         | -          | -                                                                        |
-| - [serviceAppLabelValue](#prometheusRemoteWrite_scrapeDcgmExporter_serviceAppLabelValue ) | No      | string  | No         | -          | Value of the Service label app=...                                       |
+| Property                                                                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeDcgmExporter_enabled )                           | No      | boolean | No         | -          | -                                                                                                                                                                                                                         |
+| - [namespaces](#prometheusRemoteWrite_scrapeDcgmExporter_namespaces )                     | No      | array   | No         | -          | Kubernetes namespaces to search (e.g. nvidia-gpu-operator, gpu-operator)                                                                                                                                                  |
+| - [portName](#prometheusRemoteWrite_scrapeDcgmExporter_portName )                         | No      | string  | No         | -          | Endpoint port name to keep                                                                                                                                                                                                |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapeDcgmExporter_scrapeInterval )             | No      | string  | No         | -          | -                                                                                                                                                                                                                         |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapeDcgmExporter_scrapeTimeout )               | No      | string  | No         | -          | -                                                                                                                                                                                                                         |
+| - [serviceAppLabelValue](#prometheusRemoteWrite_scrapeDcgmExporter_serviceAppLabelValue ) | No      | string  | No         | -          | Value of the Service label app=...                                                                                                                                                                                        |
+| - [shardByNode](#prometheusRemoteWrite_scrapeDcgmExporter_shardByNode )                   | No      | boolean | No         | -          | When true (DaemonSet), each pod scrapes only the dcgm endpoints on its own node. dcgm-exporter is per-GPU-node, so this gives one scraper per exporter with locality and no duplication. Alternative to Alloy clustering. |
 
 #### <a name="prometheusRemoteWrite_scrapeDcgmExporter_enabled"></a>6.9.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeDcgmExporter > enabled`
 
@@ -1254,6 +1255,15 @@ Must be one of:
 
 **Description:** Value of the Service label app=...
 
+#### <a name="prometheusRemoteWrite_scrapeDcgmExporter_shardByNode"></a>6.9.7. Property `grafana-alloy > prometheusRemoteWrite > scrapeDcgmExporter > shardByNode`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** When true (DaemonSet), each pod scrapes only the dcgm endpoints on its own node. dcgm-exporter is per-GPU-node, so this gives one scraper per exporter with locality and no duplication. Alternative to Alloy clustering.
+
 ### <a name="prometheusRemoteWrite_scrapeEndpoints"></a>6.10. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints`
 
 |                           |                  |
@@ -1264,11 +1274,12 @@ Must be one of:
 
 **Description:** Scrape Kubernetes service endpoints with prometheus.io/scrape annotations
 
-| Property                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                          |
-| -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_scrapeEndpoints_enabled )               | No      | boolean | No         | -          | Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled) |
-| - [scrapeInterval](#prometheusRemoteWrite_scrapeEndpoints_scrapeInterval ) | No      | string  | No         | -          | Scrape interval for endpoint scraping                                                                      |
-| - [scrapeTimeout](#prometheusRemoteWrite_scrapeEndpoints_scrapeTimeout )   | No      | string  | No         | -          | Scrape timeout for endpoint scraping                                                                       |
+| Property                                                                   | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeEndpoints_enabled )               | No      | boolean | No         | -          | Enable scraping service endpoints (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)                                                                                                                                                                                                                                          |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapeEndpoints_scrapeInterval ) | No      | string  | No         | -          | Scrape interval for endpoint scraping                                                                                                                                                                                                                                                                                                               |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapeEndpoints_scrapeTimeout )   | No      | string  | No         | -          | Scrape timeout for endpoint scraping                                                                                                                                                                                                                                                                                                                |
+| - [shardByNode](#prometheusRemoteWrite_scrapeEndpoints_shardByNode )       | No      | boolean | No         | -          | When true (DaemonSet), each pod scrapes only the annotated endpoints whose backing pod runs on its own node, so each target is scraped once instead of once per node. Alternative to Alloy clustering. Note - drops targets with no endpoint node name (external/headless services), so only use where all annotated scrape targets are pod-backed. |
 
 #### <a name="prometheusRemoteWrite_scrapeEndpoints_enabled"></a>6.10.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > enabled`
 
@@ -1296,6 +1307,15 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Scrape timeout for endpoint scraping
+
+#### <a name="prometheusRemoteWrite_scrapeEndpoints_shardByNode"></a>6.10.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeEndpoints > shardByNode`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** When true (DaemonSet), each pod scrapes only the annotated endpoints whose backing pod runs on its own node, so each target is scraped once instead of once per node. Alternative to Alloy clustering. Note - drops targets with no endpoint node name (external/headless services), so only use where all annotated scrape targets are pod-backed.
 
 ### <a name="prometheusRemoteWrite_scrapeHostNodeExporter"></a>6.11. Property `grafana-alloy > prometheusRemoteWrite > scrapeHostNodeExporter`
 
@@ -1462,15 +1482,16 @@ Must be one of:
 
 **Description:** Scrape kube-state-metrics service for kube_* metrics
 
-| Property                                                                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                    |
-| --------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#prometheusRemoteWrite_scrapeKubeStateMetrics_enabled )                           | No      | boolean | No         | -          | Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)                                          |
-| - [metricRelabelConfigs](#prometheusRemoteWrite_scrapeKubeStateMetrics_metricRelabelConfigs ) | No      | array   | No         | -          | Optional metric relabel rules after scraping kube-state-metrics (Prometheus-style maps with source_labels, regex, action, target_label, replacement) |
-| - [namespace](#prometheusRemoteWrite_scrapeKubeStateMetrics_namespace )                       | No      | string  | No         | -          | Namespace where kube-state-metrics service runs                                                                                                      |
-| - [portName](#prometheusRemoteWrite_scrapeKubeStateMetrics_portName )                         | No      | string  | No         | -          | Optional Kubernetes Service port name to scrape only (e.g. http for VMServiceScrape parity)                                                          |
-| - [scrapeInterval](#prometheusRemoteWrite_scrapeKubeStateMetrics_scrapeInterval )             | No      | string  | No         | -          | Optional scrape interval override (defaults to prometheusRemoteWrite.scrapeInterval)                                                                 |
-| - [scrapeTimeout](#prometheusRemoteWrite_scrapeKubeStateMetrics_scrapeTimeout )               | No      | string  | No         | -          | Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)                                                                   |
-| - [serviceSelector](#prometheusRemoteWrite_scrapeKubeStateMetrics_serviceSelector )           | No      | string  | No         | -          | Label selector (key=value) to find the kube-state-metrics service                                                                                    |
+| Property                                                                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapeKubeStateMetrics_enabled )                           | No      | boolean | No         | -          | Enable scraping kube-state-metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)                                                                                                                       |
+| - [metricRelabelConfigs](#prometheusRemoteWrite_scrapeKubeStateMetrics_metricRelabelConfigs ) | No      | array   | No         | -          | Optional metric relabel rules after scraping kube-state-metrics (Prometheus-style maps with source_labels, regex, action, target_label, replacement)                                                                              |
+| - [namespace](#prometheusRemoteWrite_scrapeKubeStateMetrics_namespace )                       | No      | string  | No         | -          | Namespace where kube-state-metrics service runs                                                                                                                                                                                   |
+| - [portName](#prometheusRemoteWrite_scrapeKubeStateMetrics_portName )                         | No      | string  | No         | -          | Optional Kubernetes Service port name to scrape only (e.g. http for VMServiceScrape parity)                                                                                                                                       |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapeKubeStateMetrics_scrapeInterval )             | No      | string  | No         | -          | Optional scrape interval override (defaults to prometheusRemoteWrite.scrapeInterval)                                                                                                                                              |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapeKubeStateMetrics_scrapeTimeout )               | No      | string  | No         | -          | Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)                                                                                                                                                |
+| - [serviceSelector](#prometheusRemoteWrite_scrapeKubeStateMetrics_serviceSelector )           | No      | string  | No         | -          | Label selector (key=value) to find the kube-state-metrics service                                                                                                                                                                 |
+| - [shardByNode](#prometheusRemoteWrite_scrapeKubeStateMetrics_shardByNode )                   | No      | boolean | No         | -          | When true (DaemonSet), discover KSM via role=endpoints and keep only the endpoint on this pod's node, so the single KSM is scraped once instead of once per node. Alternative to Alloy clustering for cluster-singleton scraping. |
 
 #### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_enabled"></a>6.14.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > enabled`
 
@@ -1542,6 +1563,15 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Label selector (key=value) to find the kube-state-metrics service
+
+#### <a name="prometheusRemoteWrite_scrapeKubeStateMetrics_shardByNode"></a>6.14.8. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubeStateMetrics > shardByNode`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** When true (DaemonSet), discover KSM via role=endpoints and keep only the endpoint on this pod's node, so the single KSM is scraped once instead of once per node. Alternative to Alloy clustering for cluster-singleton scraping.
 
 ### <a name="prometheusRemoteWrite_scrapeKubelet"></a>6.15. Property `grafana-alloy > prometheusRemoteWrite > scrapeKubelet`
 

@@ -71,3 +71,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- end }}
 
+{{- define "grafana-alloy.shardByEndpointNode" -}}
+rule {
+  target_label = "__tmp_local_node"
+  replacement  = coalesce(sys.env("NODE_NAME"), sys.env("HOSTNAME"), constants.hostname)
+}
+rule {
+  source_labels = ["__meta_kubernetes_endpoint_node_name"]
+  target_label  = "__tmp_local_node"
+  action        = "keepequal"
+}
+rule {
+  action = "labeldrop"
+  regex  = "__tmp_local_node"
+}
+{{- end -}}
+
