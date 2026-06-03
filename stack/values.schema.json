@@ -409,9 +409,6 @@
             "annotations": {
               "type": "object",
               "properties": {
-                "nginx.ingress.kubernetes.io/affinity": {
-                  "type": "string"
-                },
                 "nginx.ingress.kubernetes.io/proxy-connect-timeout": {
                   "type": "string"
                 },
@@ -419,12 +416,6 @@
                   "type": "string"
                 },
                 "nginx.ingress.kubernetes.io/proxy-send-timeout": {
-                  "type": "string"
-                },
-                "nginx.ingress.kubernetes.io/session-cookie-max-age": {
-                  "type": "string"
-                },
-                "nginx.ingress.kubernetes.io/session-cookie-name": {
                   "type": "string"
                 }
               }
