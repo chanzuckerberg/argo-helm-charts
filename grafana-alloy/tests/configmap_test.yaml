@@ -1985,3 +1985,19 @@ tests:
       - notMatchRegex:
           path: data["config.alloy"]
           pattern: 'prometheus\.scrape "self_remote_write"'
+
+  - it: should shard pods_metrics discovery by node so each DaemonSet pod scrapes only its own node
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "pods_metrics" \{\s*role = "pod"\s*selectors \{\s*role  = "pod"\s*field = "spec\.nodeName='

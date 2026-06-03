@@ -26,6 +26,9 @@ spec:
   {{- end }}
   jobTemplate:
     spec:
+      {{- if .Values.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished }}
+      {{- end }}
       {{- if hasKey .Values "backoffLimit" }}
       backoffLimit: {{ .Values.backoffLimit }}
       {{- end }}
