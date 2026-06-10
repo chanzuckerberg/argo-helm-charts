@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.40.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.39.0...stack-v2.40.0) (2026-06-10)
+
+
+### Features
+
+* add cpu and memory usage as default charts in per-stack grafana dashboards ([#473](https://github.com/chanzuckerberg/argo-helm-charts/issues/473)) ([b3fb6b8](https://github.com/chanzuckerberg/argo-helm-charts/commit/b3fb6b8ef2fe310ea4808d9c5c7bcdb5dfebecfd))
+
 ## [2.39.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.38.0...stack-v2.39.0) (2026-06-02)
 
 

@@ -336,6 +336,10 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- $ingressLatencyPanelDict := include "stack.grafanaDashboard.charts.serviceIngressLatency" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $ingressLatencyPanelDict -}}
 {{- end }}
+{{- $cpuUsagePanelDict := include "stack.grafanaDashboard.charts.serviceCpuUsage" (dict "global" $global "service" $service) | fromYaml -}}
+{{- $panels = append $panels $cpuUsagePanelDict -}}
+{{- $memoryUsagePanelDict := include "stack.grafanaDashboard.charts.serviceMemoryUsage" (dict "global" $global "service" $service) | fromYaml -}}
+{{- $panels = append $panels $memoryUsagePanelDict -}}
 {{- $containerRestartsPanelDict := include "stack.grafanaDashboard.charts.serviceContainerRestarts" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $containerRestartsPanelDict -}}
 
@@ -580,6 +584,90 @@ Expects a dict with keys: global, service
       )
     )
     "title" "Failure % by Error Code"
+    "type" "timeseries"
+-}}
+{{- $panelDict | toYaml -}}
+{{- end -}}
+
+{{/*
+Create a CPU usage panel for a service.
+Expects a dict with keys: global, service
+*/}}
+{{- define "stack.grafanaDashboard.charts.serviceCpuUsage" -}}
+{{- $global := .global -}}
+{{- $service := .service -}}
+{{- $metricsQuery := printf "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"%s-.*\", container!=\"\"}[5m])) by (pod)" (include "service.fullname" $service) -}}
+{{- $panelDict := dict
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+    "gridPos" (dict "h" 8 "w" 12)
+    "fieldConfig" (dict "defaults" (dict "unit" "short"))
+    "options" (dict
+      "legend" (dict
+        "calcs" (list)
+        "displayMode" "list"
+        "placement" "bottom"
+        "showLegend" true
+      )
+      "tooltip" (dict
+        "hideZeros" false
+        "mode" "single"
+        "sort" "none"
+      )
+    )
+    "pluginVersion" "12.1.0"
+    "targets" (list
+      (dict
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+        "editorMode" "code"
+        "expr" $metricsQuery
+        "legendFormat" "{{pod}}"
+        "range" true
+        "refId" "A"
+      )
+    )
+    "title" "CPU Usage"
+    "type" "timeseries"
+-}}
+{{- $panelDict | toYaml -}}
+{{- end -}}
+
+{{/*
+Create a memory usage panel for a service.
+Expects a dict with keys: global, service
+*/}}
+{{- define "stack.grafanaDashboard.charts.serviceMemoryUsage" -}}
+{{- $global := .global -}}
+{{- $service := .service -}}
+{{- $metricsQuery := printf "sum(container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"%s-.*\", container!=\"\"}) by (pod)" (include "service.fullname" $service) -}}
+{{- $panelDict := dict
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+    "gridPos" (dict "h" 8 "w" 12)
+    "fieldConfig" (dict "defaults" (dict "unit" "bytes"))
+    "options" (dict
+      "legend" (dict
+        "calcs" (list)
+        "displayMode" "list"
+        "placement" "bottom"
+        "showLegend" true
+      )
+      "tooltip" (dict
+        "hideZeros" false
+        "mode" "single"
+        "sort" "none"
+      )
+    )
+    "pluginVersion" "12.1.0"
+    "targets" (list
+      (dict
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+        "editorMode" "code"
+        "expr" $metricsQuery
+        "legendFormat" "{{pod}}"
+        "range" true
+        "refId" "A"
+      )
+    )
+    "title" "Memory Usage"
     "type" "timeseries"
 -}}
 {{- $panelDict | toYaml -}}

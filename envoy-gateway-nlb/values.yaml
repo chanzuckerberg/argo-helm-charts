@@ -1,0 +1,18 @@
+baseDomain: "example.dev.czi.team"
+
+gatewayName: "envoy-gateway"
+gatewayNamespace: "envoy-gateway"
+
+proxyNamespace: "envoy-gateway-controller"
+
+externalHostnamePrefix: "access-gw"
+internalHostnamePrefix: "access-gw-internal"
+
+proxyProtocolV2: true
+
+internal:
+  enabled: false
+
+additionalInternalNLBs: []
+
+tags: {}
