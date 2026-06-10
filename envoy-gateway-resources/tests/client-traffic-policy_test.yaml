@@ -3,15 +3,7 @@ templates:
   - client-traffic-policy.yaml
 
 tests:
-  - it: should render nothing by default
-    asserts:
-      - hasDocuments:
-          count: 0
-
-  - it: should render a ClientTrafficPolicy targeting the Gateway when enabled
-    set:
-      proxyProtocol:
-        enabled: true
+  - it: should render a ClientTrafficPolicy by default
     asserts:
       - hasDocuments:
           count: 1
@@ -33,11 +25,17 @@ tests:
           path: spec.proxyProtocol.optional
           value: false
 
+  - it: should render nothing when disabled
+    set:
+      proxyProtocol:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
   - it: should follow a custom gateway name
     set:
       gatewayName: my-gateway
-      proxyProtocol:
-        enabled: true
     asserts:
       - equal:
           path: metadata.name
@@ -49,7 +47,6 @@ tests:
   - it: should pass through optional proxy protocol
     set:
       proxyProtocol:
-        enabled: true
         optional: true
     asserts:
       - equal:

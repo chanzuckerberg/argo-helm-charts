@@ -41,5 +41,5 @@ geoip:
     - "YE"
 
 proxyProtocol:
-  enabled: false
+  enabled: true
   optional: false
