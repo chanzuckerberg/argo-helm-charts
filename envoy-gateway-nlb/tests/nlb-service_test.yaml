@@ -1,0 +1,184 @@
+suite: test nlb-service.yaml
+templates:
+  - nlb-service.yaml
+
+tests:
+  - it: should render only the external Service by default
+    set:
+      clusterName: test-cluster
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.name
+          value: nlb-envoy
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway-controller
+
+  - it: should compose the external hostname from prefix, cluster, and base domain
+    set:
+      clusterName: test-cluster
+      baseDomain: dev.czi.team
+    asserts:
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
+          value: access-gw.test-cluster.dev.czi.team
+
+  - it: should render external NLB annotations
+    set:
+      clusterName: test-cluster
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
+          value: instance
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-scheme"]
+          value: internet-facing
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
+          value: external
+
+  - it: should enable proxy protocol v2 by default
+    set:
+      clusterName: test-cluster
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true
+
+  - it: should omit target group attributes when proxy protocol is disabled
+    set:
+      clusterName: test-cluster
+      proxyProtocolV2: false
+    asserts:
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+
+  - it: should select the envoy proxy pods for the cluster-wide Gateway
+    set:
+      clusterName: test-cluster
+    asserts:
+      - equal:
+          path: spec.selector["app.kubernetes.io/managed-by"]
+          value: envoy-gateway
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-name"]
+          value: envoy-gateway
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-namespace"]
+          value: envoy-gateway
+
+  - it: should respect a custom gateway name and namespace in the selector
+    set:
+      clusterName: test-cluster
+      gatewayName: my-gateway
+      gatewayNamespace: my-namespace
+    asserts:
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-name"]
+          value: my-gateway
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-namespace"]
+          value: my-namespace
+
+  - it: should forward 80/443 to the envoy listener ports
+    set:
+      clusterName: test-cluster
+    asserts:
+      - equal:
+          path: spec.ports
+          value:
+            - name: http
+              port: 80
+              targetPort: 10080
+              protocol: TCP
+            - name: https
+              port: 443
+              targetPort: 10443
+              protocol: TCP
+      - equal:
+          path: spec.type
+          value: LoadBalancer
+      - equal:
+          path: spec.loadBalancerClass
+          value: service.k8s.aws/nlb
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Cluster
+
+  - it: should omit the tags annotation when no tags are set
+    set:
+      clusterName: test-cluster
+    asserts:
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags"]
+
+  - it: should render tags as a sorted comma-separated list
+    set:
+      clusterName: test-cluster
+      tags:
+        owner: infra-eng
+        env: dev
+        managedBy: argocd
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags"]
+          value: env=dev,managedBy=argocd,owner=infra-eng
+
+  - it: should render the internal Service when enabled
+    set:
+      clusterName: test-cluster
+      baseDomain: dev.czi.team
+      internal:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: Service
+        documentIndex: 1
+      - equal:
+          path: metadata.name
+          value: nlb-envoy-internal
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-scheme"]
+          value: internal
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
+          value: ip
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
+          value: nlb-ip
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
+          value: access-gw-internal.test-cluster.dev.czi.team
+        documentIndex: 1
+
+  - it: should render additional internal NLBs with their own hostnames
+    set:
+      clusterName: test-cluster
+      additionalInternalNLBs:
+        - name: loki
+          hostname: loki.test-cluster.dev.czi.team
+    asserts:
+      - hasDocuments:
+          count: 2
+      - equal:
+          path: metadata.name
+          value: nlb-envoy-loki-internal
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
+          value: loki.test-cluster.dev.czi.team
+        documentIndex: 1
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-name"]
+          value: envoy-gateway
+        documentIndex: 1
