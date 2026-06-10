@@ -4,8 +4,6 @@ templates:
 
 tests:
   - it: should render only the external Service by default
-    set:
-      clusterName: test-cluster
     asserts:
       - hasDocuments:
           count: 1
@@ -18,18 +16,15 @@ tests:
           path: metadata.namespace
           value: envoy-gateway-controller
 
-  - it: should compose the external hostname from prefix, cluster, and base domain
+  - it: should compose the external hostname from prefix and base domain
     set:
-      clusterName: test-cluster
-      baseDomain: dev.czi.team
+      baseDomain: test-cluster.dev.czi.team
     asserts:
       - equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
           value: access-gw.test-cluster.dev.czi.team
 
   - it: should render external NLB annotations
-    set:
-      clusterName: test-cluster
     asserts:
       - equal:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
@@ -42,8 +37,6 @@ tests:
           value: external
 
   - it: should enable proxy protocol v2 by default
-    set:
-      clusterName: test-cluster
     asserts:
       - equal:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
@@ -51,15 +44,12 @@ tests:
 
   - it: should omit target group attributes when proxy protocol is disabled
     set:
-      clusterName: test-cluster
       proxyProtocolV2: false
     asserts:
       - notExists:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
 
   - it: should select the envoy proxy pods for the cluster-wide Gateway
-    set:
-      clusterName: test-cluster
     asserts:
       - equal:
           path: spec.selector["app.kubernetes.io/managed-by"]
@@ -73,7 +63,6 @@ tests:
 
   - it: should respect a custom gateway name and namespace in the selector
     set:
-      clusterName: test-cluster
       gatewayName: my-gateway
       gatewayNamespace: my-namespace
     asserts:
@@ -85,8 +74,6 @@ tests:
           value: my-namespace
 
   - it: should forward 80/443 to the envoy listener ports
-    set:
-      clusterName: test-cluster
     asserts:
       - equal:
           path: spec.ports
@@ -110,15 +97,12 @@ tests:
           value: Cluster
 
   - it: should omit the tags annotation when no tags are set
-    set:
-      clusterName: test-cluster
     asserts:
       - notExists:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags"]
 
   - it: should render tags as a sorted comma-separated list
     set:
-      clusterName: test-cluster
       tags:
         owner: infra-eng
         env: dev
@@ -130,8 +114,7 @@ tests:
 
   - it: should render the internal Service when enabled
     set:
-      clusterName: test-cluster
-      baseDomain: dev.czi.team
+      baseDomain: test-cluster.dev.czi.team
       internal:
         enabled: true
     asserts:
@@ -163,7 +146,6 @@ tests:
 
   - it: should render additional internal NLBs with their own hostnames
     set:
-      clusterName: test-cluster
       additionalInternalNLBs:
         - name: loki
           hostname: loki.test-cluster.dev.czi.team

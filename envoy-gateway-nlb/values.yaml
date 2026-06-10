@@ -1,5 +1,4 @@
-clusterName: ""
-baseDomain: "dev.czi.team"
+baseDomain: "example.dev.czi.team"
 
 gatewayName: "envoy-gateway"
 gatewayNamespace: "envoy-gateway"
