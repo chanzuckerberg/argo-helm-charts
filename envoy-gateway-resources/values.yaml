@@ -39,3 +39,7 @@ geoip:
     - "UA"
     - "VE"
     - "YE"
+
+proxyProtocol:
+  enabled: true
+  optional: false
