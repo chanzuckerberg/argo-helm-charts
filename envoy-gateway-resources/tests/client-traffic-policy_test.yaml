@@ -1,0 +1,57 @@
+suite: test client-traffic-policy.yaml
+templates:
+  - client-traffic-policy.yaml
+
+tests:
+  - it: should render nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a ClientTrafficPolicy targeting the Gateway when enabled
+    set:
+      proxyProtocol:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClientTrafficPolicy
+      - equal:
+          path: metadata.name
+          value: envoy-gateway-client-traffic
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway
+      - equal:
+          path: spec.targetRefs[0].kind
+          value: Gateway
+      - equal:
+          path: spec.targetRefs[0].name
+          value: envoy-gateway
+      - equal:
+          path: spec.proxyProtocol.optional
+          value: false
+
+  - it: should follow a custom gateway name
+    set:
+      gatewayName: my-gateway
+      proxyProtocol:
+        enabled: true
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-gateway-client-traffic
+      - equal:
+          path: spec.targetRefs[0].name
+          value: my-gateway
+
+  - it: should pass through optional proxy protocol
+    set:
+      proxyProtocol:
+        enabled: true
+        optional: true
+    asserts:
+      - equal:
+          path: spec.proxyProtocol.optional
+          value: true
