@@ -13,7 +13,6 @@
 | - [alternateNames](#alternateNames ) | No      | array  | No         | -          | -                 |
 | - [awsRegion](#awsRegion )           | No      | string | No         | -          | -                 |
 | - [baseDomain](#baseDomain )         | No      | string | No         | -          | -                 |
-| - [clusterName](#clusterName )       | No      | string | No         | -          | -                 |
 | - [envoyService](#envoyService )     | No      | object | No         | -          | -                 |
 | - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
 | - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
@@ -49,14 +48,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="clusterName"></a>4. Property `envoy-gateway-resources > clusterName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-## <a name="envoyService"></a>5. Property `envoy-gateway-resources > envoyService`
+## <a name="envoyService"></a>4. Property `envoy-gateway-resources > envoyService`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -68,21 +60,21 @@
 | ----------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [type](#envoyService_type ) | No      | string | No         | -          | -                 |
 
-### <a name="envoyService_type"></a>5.1. Property `envoy-gateway-resources > envoyService > type`
+### <a name="envoyService_type"></a>4.1. Property `envoy-gateway-resources > envoyService > type`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="gatewayName"></a>6. Property `envoy-gateway-resources > gatewayName`
+## <a name="gatewayName"></a>5. Property `envoy-gateway-resources > gatewayName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="geoip"></a>7. Property `envoy-gateway-resources > geoip`
+## <a name="geoip"></a>6. Property `envoy-gateway-resources > geoip`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -95,7 +87,7 @@
 | - [blockedCountries](#geoip_blockedCountries ) | No      | array of string | No         | -          | -                 |
 | - [enabled](#geoip_enabled )                   | No      | boolean         | No         | -          | -                 |
 
-### <a name="geoip_blockedCountries"></a>7.1. Property `envoy-gateway-resources > geoip > blockedCountries`
+### <a name="geoip_blockedCountries"></a>6.1. Property `envoy-gateway-resources > geoip > blockedCountries`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -114,21 +106,21 @@
 | ------------------------------------------------------- | ----------- |
 | [blockedCountries items](#geoip_blockedCountries_items) | -           |
 
-#### <a name="geoip_blockedCountries_items"></a>7.1.1. envoy-gateway-resources > geoip > blockedCountries > blockedCountries items
+#### <a name="geoip_blockedCountries_items"></a>6.1.1. envoy-gateway-resources > geoip > blockedCountries > blockedCountries items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="geoip_enabled"></a>7.2. Property `envoy-gateway-resources > geoip > enabled`
+### <a name="geoip_enabled"></a>6.2. Property `envoy-gateway-resources > geoip > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="proxyProtocol"></a>8. Property `envoy-gateway-resources > proxyProtocol`
+## <a name="proxyProtocol"></a>7. Property `envoy-gateway-resources > proxyProtocol`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -141,21 +133,21 @@
 | - [enabled](#proxyProtocol_enabled )   | No      | boolean | No         | -          | -                 |
 | - [optional](#proxyProtocol_optional ) | No      | boolean | No         | -          | -                 |
 
-### <a name="proxyProtocol_enabled"></a>8.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
+### <a name="proxyProtocol_enabled"></a>7.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="proxyProtocol_optional"></a>8.2. Property `envoy-gateway-resources > proxyProtocol > optional`
+### <a name="proxyProtocol_optional"></a>7.2. Property `envoy-gateway-resources > proxyProtocol > optional`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="serviceAccount"></a>9. Property `envoy-gateway-resources > serviceAccount`
+## <a name="serviceAccount"></a>8. Property `envoy-gateway-resources > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -168,7 +160,7 @@
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | -                 |
 | - [name](#serviceAccount_name )               | No      | string | No         | -          | -                 |
 
-### <a name="serviceAccount_annotations"></a>9.1. Property `envoy-gateway-resources > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>8.1. Property `envoy-gateway-resources > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -176,7 +168,7 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-### <a name="serviceAccount_name"></a>9.2. Property `envoy-gateway-resources > serviceAccount > name`
+### <a name="serviceAccount_name"></a>8.2. Property `envoy-gateway-resources > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |

@@ -1,5 +1,4 @@
-clusterName: ""
-baseDomain: "dev.czi.team"
+baseDomain: "example.dev.czi.team"
 awsRegion: "us-west-2"
 gatewayName: "envoy-gateway"
 alternateNames: []
