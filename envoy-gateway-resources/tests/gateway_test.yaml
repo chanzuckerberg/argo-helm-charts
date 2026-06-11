@@ -352,3 +352,22 @@ tests:
       - contains:
           path: spec.usages
           content: key encipherment
+
+  - it: should set the route53 solver region from awsRegion
+    set:
+      clusterName: test-cluster
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.solvers[0].dns01.route53.region
+          value: us-west-2
+
+  - it: should respect a custom awsRegion
+    set:
+      clusterName: test-cluster
+      awsRegion: us-east-1
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.solvers[0].dns01.route53.region
+          value: us-east-1
