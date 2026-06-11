@@ -53,7 +53,8 @@ spec:
           dnsZones:
             - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
         dns01:
-          route53: {}
+          route53:
+            region: {{ .Values.awsRegion }}
       - selector: {}
         http01:
           gatewayHTTPRoute:

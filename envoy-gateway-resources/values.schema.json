@@ -7,6 +7,9 @@
     "alternateNames": {
       "type": "array"
     },
+    "awsRegion": {
+      "type": "string"
+    },
     "baseDomain": {
       "type": "string"
     },
