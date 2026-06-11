@@ -13,9 +13,6 @@
     "baseDomain": {
       "type": "string"
     },
-    "clusterName": {
-      "type": "string"
-    },
     "envoyService": {
       "type": "object",
       "properties": {

@@ -27,7 +27,7 @@ spec:
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+      hostname: "*.{{ .Values.baseDomain }}"
       allowedRoutes:
         namespaces:
           from: All
@@ -51,7 +51,7 @@ spec:
     solvers:
       - selector:
           dnsZones:
-            - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+            - "{{ .Values.baseDomain }}"
         dns01:
           route53:
             region: {{ .Values.awsRegion }}
@@ -70,10 +70,10 @@ metadata:
   name: {{ .Values.gatewayName }}-wildcard-cert
   namespace: envoy-gateway
 spec:
-  commonName: "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+  commonName: "*.{{ .Values.baseDomain }}"
   dnsNames:
-    - "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
-    - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+    - "*.{{ .Values.baseDomain }}"
+    - "{{ .Values.baseDomain }}"
 {{- range .Values.alternateNames }}
     - "{{ . }}"
 {{- end }}
