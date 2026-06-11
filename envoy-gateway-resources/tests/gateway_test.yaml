@@ -365,3 +365,12 @@ tests:
       - equal:
           path: spec.acme.solvers[0].dns01.route53.region
           value: us-east-1
+
+  - it: should point external-dns at the cluster NLB hostname
+    set:
+      baseDomain: test-cluster.dev.czi.team
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/target"]
+          value: access-gw.test-cluster.dev.czi.team
