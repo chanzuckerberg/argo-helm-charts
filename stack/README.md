@@ -706,6 +706,17 @@ Must be one of:
 
 **Description:** Annotations to add to HTTPRoute resources
 
+| Property                                                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#cronJobs_pattern1_gateway_annotations_external-dnsalphakubernetesio/ttl ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_annotations_external-dnsalphakubernetesio/ttl"></a>2.1.16.1.1. Property `stack > cronJobs > ^.*$ > gateway > annotations > external-dns.alpha.kubernetes.io/ttl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
 ##### <a name="cronJobs_pattern1_gateway_enabled"></a>2.1.16.2. Property `stack > cronJobs > ^.*$ > gateway > enabled`
 
 |              |           |
@@ -1149,6 +1160,7 @@ Must be one of:
 
 | Property                                                                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#cronJobs_pattern1_ingress_annotations_external-dnsalphakubernetesio/ttl )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/affinity](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-connect-timeout](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout )   | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-read-timeout](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout )         | No      | string | No         | -          | -                 |
@@ -1156,42 +1168,49 @@ Must be one of:
 | - [nginx.ingress.kubernetes.io/session-cookie-max-age](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age ) | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/session-cookie-name](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name )       | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity"></a>2.1.20.1.1. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
+###### <a name="cronJobs_pattern1_ingress_annotations_external-dnsalphakubernetesio/ttl"></a>2.1.20.1.1. Property `stack > cronJobs > ^.*$ > ingress > annotations > external-dns.alpha.kubernetes.io/ttl`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>2.1.20.1.2. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity"></a>2.1.20.1.2. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>2.1.20.1.3. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>2.1.20.1.3. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>2.1.20.1.4. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>2.1.20.1.4. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>2.1.20.1.5. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>2.1.20.1.5. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>2.1.20.1.6. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>2.1.20.1.6. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>2.1.20.1.7. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
 
 |              |          |
 | ------------ | -------- |
@@ -4057,6 +4076,17 @@ Must be one of:
 
 **Description:** Annotations to add to HTTPRoute resources
 
+| Property                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#global_gateway_annotations_external-dnsalphakubernetesio/ttl ) | No      | string | No         | -          | -                 |
+
+##### <a name="global_gateway_annotations_external-dnsalphakubernetesio/ttl"></a>3.16.1.1. Property `stack > global > gateway > annotations > external-dns.alpha.kubernetes.io/ttl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
 #### <a name="global_gateway_enabled"></a>3.16.2. Property `stack > global > gateway > enabled`
 
 |              |           |
@@ -4500,6 +4530,7 @@ Must be one of:
 
 | Property                                                                                                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#global_ingress_annotations_external-dnsalphakubernetesio/ttl )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/affinity](#global_ingress_annotations_nginxingresskubernetesio/affinity )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-connect-timeout](#global_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout )   | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-read-timeout](#global_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout )         | No      | string | No         | -          | -                 |
@@ -4507,42 +4538,49 @@ Must be one of:
 | - [nginx.ingress.kubernetes.io/session-cookie-max-age](#global_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age ) | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/session-cookie-name](#global_ingress_annotations_nginxingresskubernetesio/session-cookie-name )       | No      | string | No         | -          | -                 |
 
-##### <a name="global_ingress_annotations_nginxingresskubernetesio/affinity"></a>3.20.1.1. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
+##### <a name="global_ingress_annotations_external-dnsalphakubernetesio/ttl"></a>3.20.1.1. Property `stack > global > ingress > annotations > external-dns.alpha.kubernetes.io/ttl`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>3.20.1.2. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
+##### <a name="global_ingress_annotations_nginxingresskubernetesio/affinity"></a>3.20.1.2. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>3.20.1.3. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
+##### <a name="global_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>3.20.1.3. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>3.20.1.4. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
+##### <a name="global_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>3.20.1.4. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>3.20.1.5. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+##### <a name="global_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>3.20.1.5. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>3.20.1.6. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
+##### <a name="global_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>3.20.1.6. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="global_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>3.20.1.7. Property `stack > global > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
 
 |              |          |
 | ------------ | -------- |
@@ -7426,6 +7464,17 @@ Must be one of:
 
 **Description:** Annotations to add to HTTPRoute resources
 
+| Property                                                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#cronJobs_pattern1_gateway_annotations_external-dnsalphakubernetesio/ttl ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_annotations_external-dnsalphakubernetesio/ttl"></a>4.1.16.1.1. Property `stack > cronJobs > ^.*$ > gateway > annotations > external-dns.alpha.kubernetes.io/ttl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
 ##### <a name="cronJobs_pattern1_gateway_enabled"></a>4.1.16.2. Property `stack > cronJobs > ^.*$ > gateway > enabled`
 
 |              |           |
@@ -7869,6 +7918,7 @@ Must be one of:
 
 | Property                                                                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#cronJobs_pattern1_ingress_annotations_external-dnsalphakubernetesio/ttl )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/affinity](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-connect-timeout](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout )   | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-read-timeout](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout )         | No      | string | No         | -          | -                 |
@@ -7876,42 +7926,49 @@ Must be one of:
 | - [nginx.ingress.kubernetes.io/session-cookie-max-age](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age ) | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/session-cookie-name](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name )       | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity"></a>4.1.20.1.1. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
+###### <a name="cronJobs_pattern1_ingress_annotations_external-dnsalphakubernetesio/ttl"></a>4.1.20.1.1. Property `stack > cronJobs > ^.*$ > ingress > annotations > external-dns.alpha.kubernetes.io/ttl`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>4.1.20.1.2. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity"></a>4.1.20.1.2. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>4.1.20.1.3. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>4.1.20.1.3. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>4.1.20.1.4. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>4.1.20.1.4. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>4.1.20.1.5. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>4.1.20.1.5. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>4.1.20.1.6. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>4.1.20.1.6. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>4.1.20.1.7. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
 
 |              |          |
 | ------------ | -------- |
@@ -11259,6 +11316,17 @@ Must be one of:
 
 **Description:** Annotations to add to HTTPRoute resources
 
+| Property                                                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#cronJobs_pattern1_gateway_annotations_external-dnsalphakubernetesio/ttl ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_annotations_external-dnsalphakubernetesio/ttl"></a>7.1.16.1.1. Property `stack > cronJobs > ^.*$ > gateway > annotations > external-dns.alpha.kubernetes.io/ttl`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
 ##### <a name="cronJobs_pattern1_gateway_enabled"></a>7.1.16.2. Property `stack > cronJobs > ^.*$ > gateway > enabled`
 
 |              |           |
@@ -11702,6 +11770,7 @@ Must be one of:
 
 | Property                                                                                                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [external-dns.alpha.kubernetes.io/ttl](#cronJobs_pattern1_ingress_annotations_external-dnsalphakubernetesio/ttl )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/affinity](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity )                             | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-connect-timeout](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout )   | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/proxy-read-timeout](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout )         | No      | string | No         | -          | -                 |
@@ -11709,42 +11778,49 @@ Must be one of:
 | - [nginx.ingress.kubernetes.io/session-cookie-max-age](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age ) | No      | string | No         | -          | -                 |
 | - [nginx.ingress.kubernetes.io/session-cookie-name](#cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name )       | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity"></a>7.1.20.1.1. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
+###### <a name="cronJobs_pattern1_ingress_annotations_external-dnsalphakubernetesio/ttl"></a>7.1.20.1.1. Property `stack > cronJobs > ^.*$ > ingress > annotations > external-dns.alpha.kubernetes.io/ttl`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>7.1.20.1.2. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/affinity"></a>7.1.20.1.2. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/affinity`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>7.1.20.1.3. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-connect-timeout"></a>7.1.20.1.3. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-connect-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>7.1.20.1.4. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-read-timeout"></a>7.1.20.1.4. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-read-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>7.1.20.1.5. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/proxy-send-timeout"></a>7.1.20.1.5. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/proxy-send-timeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>7.1.20.1.6. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-max-age"></a>7.1.20.1.6. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-max-age`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_ingress_annotations_nginxingresskubernetesio/session-cookie-name"></a>7.1.20.1.7. Property `stack > cronJobs > ^.*$ > ingress > annotations > nginx.ingress.kubernetes.io/session-cookie-name`
 
 |              |          |
 | ------------ | -------- |

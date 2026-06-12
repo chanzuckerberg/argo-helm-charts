@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test DNS TTL annotation defaults
+templates:
+  - ingress.yaml
+  - httproute.yaml
+tests:
+  - it: should set a 60s DNS TTL on Ingresses by default
+    set:
+      services:
+        web:
+          ingress:
+            host: web.example.com
+    asserts:
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
+          value: "60"
+
+  - it: should set a 60s DNS TTL on primary and rule HTTPRoutes by default
+    set:
+      global:
+        ingress:
+          enabled: false
+      services:
+        web:
+          gateway:
+            enabled: true
+            host: web.example.com
+            rules:
+              - host: vanity.example.com
+    asserts:
+      - template: httproute.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
+          value: "60"
+      - template: httproute.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
+          value: "60"
+
+  - it: should let a per-service annotation override the default TTL
+    set:
+      global:
+        ingress:
+          enabled: false
+      services:
+        web:
+          gateway:
+            enabled: true
+            host: web.example.com
+            annotations:
+              external-dns.alpha.kubernetes.io/ttl: "300"
+    asserts:
+      - template: httproute.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
+          value: "300"
+
+  - it: should let a global annotation override the default TTL
+    set:
+      global:
+        gateway:
+          annotations:
+            external-dns.alpha.kubernetes.io/ttl: "120"
+        ingress:
+          enabled: false
+      services:
+        web:
+          gateway:
+            enabled: true
+            host: web.example.com
+    asserts:
+      - template: httproute.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
+          value: "120"
