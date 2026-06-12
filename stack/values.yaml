@@ -201,6 +201,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     rules: [] # @schema description: List of ingress rules
     oidcProtected: false # @schema description: Enable OIDC protection (route to oauth2-proxy when using Ingress)
     annotations:
+      external-dns.alpha.kubernetes.io/ttl: "60"
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
@@ -224,7 +225,8 @@ global: # @schema description: Global configuration for the stack - this serves 
         pathType: Prefix # @schema description: HTTPRoute path type (Exact or Prefix)
     rules: [] # @schema description: List of additional HTTPRoute rules with custom hosts
     oidcProtected: false # @schema description: Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)
-    annotations: {} # @schema description: Annotations to add to HTTPRoute resources
+    annotations: # @schema description: Annotations to add to HTTPRoute resources
+      external-dns.alpha.kubernetes.io/ttl: "60"
   
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
