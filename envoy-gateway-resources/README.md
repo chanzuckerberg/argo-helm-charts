@@ -8,18 +8,18 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [alternateNames](#alternateNames ) | No      | array  | No         | -          | -                 |
-| - [awsRegion](#awsRegion )           | No      | string | No         | -          | -                 |
-| - [baseDomain](#baseDomain )         | No      | string | No         | -          | -                 |
-| - [envoyService](#envoyService )     | No      | object | No         | -          | -                 |
-| - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
-| - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
-| - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                 |
-| - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
+| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [additionalListeners](#additionalListeners ) | No      | array  | No         | -          | -                 |
+| - [awsRegion](#awsRegion )                     | No      | string | No         | -          | -                 |
+| - [baseDomain](#baseDomain )                   | No      | string | No         | -          | -                 |
+| - [envoyService](#envoyService )               | No      | object | No         | -          | -                 |
+| - [gatewayName](#gatewayName )                 | No      | string | No         | -          | -                 |
+| - [geoip](#geoip )                             | No      | object | No         | -          | -                 |
+| - [proxyProtocol](#proxyProtocol )             | No      | object | No         | -          | -                 |
+| - [serviceAccount](#serviceAccount )           | No      | object | No         | -          | -                 |
 
-## <a name="alternateNames"></a>1. Property `envoy-gateway-resources > alternateNames`
+## <a name="additionalListeners"></a>1. Property `envoy-gateway-resources > additionalListeners`
 
 |              |         |
 | ------------ | ------- |
