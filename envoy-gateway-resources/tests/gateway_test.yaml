@@ -323,6 +323,9 @@ tests:
       - equal:
           path: spec.privateKey.size
           value: 4096
+      - equal:
+          path: spec.privateKey.rotationPolicy
+          value: Always
 
   - it: should use correct secret name for certificate
     set:
