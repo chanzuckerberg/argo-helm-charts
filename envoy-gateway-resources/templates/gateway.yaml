@@ -86,6 +86,7 @@ spec:
   privateKey:
     algorithm: RSA
     size: 4096
+    rotationPolicy: Always
   secretName: {{ .Values.gatewayName }}-tls
   usages:
     - digital signature
