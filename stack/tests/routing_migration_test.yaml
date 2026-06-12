@@ -1,0 +1,180 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test seamless ingress-to-gateway migration
+templates:
+  - httproute.yaml
+  - ingress.yaml
+tests:
+  - it: should convert a service with one line, inheriting ingress paths
+    set:
+      global:
+        gateway:
+          host: stack.example.com
+      services:
+        backend:
+          ingress:
+            paths:
+              - path: /backend
+                pathType: Prefix
+          gateway:
+            enabled: true
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /backend
+      - template: httproute.yaml
+        equal:
+          path: spec.hostnames[0]
+          value: stack.example.com
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0
+
+  - it: should disable the ingress when gateway config keys are provided without enabled
+    set:
+      global:
+        gateway:
+          host: stack.example.com
+      services:
+        backend:
+          ingress:
+            paths:
+              - path: /backend
+                pathType: Prefix
+          gateway:
+            paths:
+              - path: /backend
+                pathType: Prefix
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0
+
+  - it: should prefer explicit gateway.paths over inherited ingress.paths
+    set:
+      global:
+        gateway:
+          host: stack.example.com
+      services:
+        backend:
+          ingress:
+            paths:
+              - path: /old
+                pathType: Prefix
+          gateway:
+            enabled: true
+            paths:
+              - path: /new
+                pathType: Prefix
+    asserts:
+      - template: httproute.yaml
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /new
+
+  - it: should inherit ingress rules with custom hosts
+    set:
+      global:
+        gateway:
+          host: stack.example.com
+      services:
+        frontend:
+          ingress:
+            rules:
+              - host: vanity.example.com
+          gateway:
+            enabled: true
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 2
+      - template: httproute.yaml
+        documentIndex: 1
+        equal:
+          path: spec.hostnames[0]
+          value: vanity.example.com
+
+  - it: should keep the ingress when explicitly enabled alongside gateway config keys
+    set:
+      global:
+        gateway:
+          host: stack.example.com
+      services:
+        backend:
+          ingress:
+            enabled: true
+            paths:
+              - path: /backend
+                pathType: Prefix
+          gateway:
+            paths:
+              - path: /backend
+                pathType: Prefix
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        hasDocuments:
+          count: 0
+
+  - it: should fail when both gateway and ingress are explicitly enabled
+    set:
+      services:
+        backend:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+    asserts:
+      - template: ingress.yaml
+        failedTemplate:
+          errorMessage: "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress."
+
+  - it: should fail converting an OIDC-protected ingress without an explicit gateway decision
+    set:
+      global:
+        gateway:
+          host: stack.example.com
+      services:
+        frontend:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: /
+                pathType: Prefix
+          gateway:
+            enabled: true
+    asserts:
+      - template: ingress.yaml
+        failedTemplate:
+          errorPattern: "service frontend is OIDC-protected via ingress.oidcProtected"
+
+  - it: should convert an OIDC-protected ingress when protection is explicitly dropped
+    set:
+      global:
+        gateway:
+          host: stack.example.com
+      services:
+        frontend:
+          ingress:
+            oidcProtected: true
+            paths:
+              - path: /
+                pathType: Prefix
+          gateway:
+            enabled: true
+            oidcProtected: false
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0

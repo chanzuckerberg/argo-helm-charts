@@ -299,16 +299,6 @@ https://{{ .Values.gateway.host }}/oauth2/callback
 Check if gateway config keys are provided (auto-enable detection)
 Returns: "true" if any gateway.* keys exist (excluding just "enabled")
 */}}
-{{- define "gateway.hasConfigKeys" -}}
-{{- $hasKeys := false -}}
-{{- if .Values.gateway -}}
-  {{- $gatewayKeys := keys (omit .Values.gateway "enabled") -}}
-  {{- if gt (len $gatewayKeys) 0 -}}
-    {{- $hasKeys = true -}}
-  {{- end -}}
-{{- end -}}
-{{- $hasKeys -}}
-{{- end -}}
 
 {{/*
 Create the full dashboard data structure as a Helm dictionary and return it as a JSON string.
@@ -1002,4 +992,54 @@ Expects a dict with keys: global, cronJob
     )
 -}}
 {{- $panelDict | toYaml -}}
+{{- end -}}
+
+{{/*
+Normalize a service's routing config (gateway vs ingress). Mutates the passed
+"values" dict in place:
+  include "stack.routing.normalize" (dict "serviceValues" $serviceValues "values" $values)
+
+Resolution order:
+ 1. A service-level gateway block (any key) enables the gateway unless it sets
+    enabled: false explicitly.
+ 2. Explicit service-level ingress.enabled: true wins over rule 1 unless the
+    gateway is also explicitly enabled (that conflict fails validation later).
+ 3. A service whose gateway ends up enabled by rules 1-2 has its ingress
+    disabled unless ingress.enabled is set explicitly.
+ 4. When the gateway is enabled and the service does not set gateway.paths /
+    gateway.rules, they are inherited from the service-level ingress block, so
+    converting a service is a one-line change. Explicit gateway.* always wins.
+ 5. A service that was OIDC-protected via ingress.oidcProtected must decide
+    gateway.oidcProtected explicitly when converting.
+*/}}
+{{- define "stack.routing.normalize" -}}
+{{- $sv := .serviceValues -}}
+{{- $v := .values -}}
+{{- $svGateway := dict -}}
+{{- if hasKey $sv "gateway" -}}{{- $svGateway = $sv.gateway -}}{{- end -}}
+{{- $svIngress := dict -}}
+{{- if hasKey $sv "ingress" -}}{{- $svIngress = $sv.ingress -}}{{- end -}}
+{{- $gatewayExplicit := hasKey $svGateway "enabled" -}}
+{{- $ingressExplicit := hasKey $svIngress "enabled" -}}
+{{- $gatewaySignal := hasKey $sv "gateway" -}}
+{{- if and $gatewaySignal (not (and $gatewayExplicit (eq $svGateway.enabled false))) -}}
+  {{- $_ := set $v.gateway "enabled" true -}}
+{{- end -}}
+{{- if and $ingressExplicit $svIngress.enabled (not $gatewayExplicit) -}}
+  {{- $_ := set $v.gateway "enabled" false -}}
+{{- end -}}
+{{- if and $v.gateway.enabled $gatewaySignal (not $ingressExplicit) -}}
+  {{- $_ := set $v.ingress "enabled" false -}}
+{{- end -}}
+{{- if $v.gateway.enabled -}}
+  {{- if and (not (hasKey $svGateway "paths")) (hasKey $svIngress "paths") -}}
+    {{- $_ := set $v.gateway "paths" $svIngress.paths -}}
+  {{- end -}}
+  {{- if and (not (hasKey $svGateway "rules")) (hasKey $svIngress "rules") -}}
+    {{- $_ := set $v.gateway "rules" $svIngress.rules -}}
+  {{- end -}}
+  {{- if and $v.ingress.oidcProtected (not (hasKey $svGateway "oidcProtected")) (not $v.gateway.oidcProtected) -}}
+    {{- fail (printf "service %s is OIDC-protected via ingress.oidcProtected. When converting to the gateway, set gateway.oidcProtected: true (with oidcProxyGateway configuration) to keep protection, or set gateway.oidcProtected: false explicitly to drop it." $v.name) -}}
+  {{- end -}}
+{{- end -}}
 {{- end -}}
