@@ -178,3 +178,37 @@ tests:
       - template: ingress.yaml
         hasDocuments:
           count: 0
+
+  - it: should serve via ingress alone when no gateway config is present
+    set:
+      services:
+        backend:
+          ingress:
+            paths:
+              - path: /backend
+                pathType: Prefix
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /backend
+      - template: httproute.yaml
+        hasDocuments:
+          count: 0
+
+  - it: should render no routing at all when ingress is explicitly disabled and gateway is absent
+    set:
+      services:
+        policy:
+          ingress:
+            enabled: false
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0
+      - template: httproute.yaml
+        hasDocuments:
+          count: 0
