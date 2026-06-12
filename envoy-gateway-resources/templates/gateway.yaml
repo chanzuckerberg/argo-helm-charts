@@ -39,6 +39,21 @@ spec:
           - group: ''
             kind: Secret
             name: {{ .Values.gatewayName }}-tls
+    {{- range .Values.additionalListeners }}
+    - name: https-{{ .name }}
+      protocol: HTTPS
+      port: 443
+      hostname: {{ .hostname | quote }}
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ''
+            kind: Secret
+            name: {{ $.Values.gatewayName }}-{{ .name }}-tls
+    {{- end }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -54,9 +69,25 @@ spec:
       - selector:
           dnsZones:
             - "{{ .Values.baseDomain }}"
+            {{- range .Values.additionalListeners }}
+            {{- if not .route53Role }}
+            - {{ trimPrefix "*." .hostname | quote }}
+            {{- end }}
+            {{- end }}
         dns01:
           route53:
             region: {{ .Values.awsRegion }}
+      {{- range .Values.additionalListeners }}
+      {{- if .route53Role }}
+      - selector:
+          dnsZones:
+            - {{ trimPrefix "*." .hostname | quote }}
+        dns01:
+          route53:
+            region: {{ $.Values.awsRegion }}
+            role: {{ .route53Role | quote }}
+      {{- end }}
+      {{- end }}
       - selector: {}
         http01:
           gatewayHTTPRoute:
@@ -76,9 +107,6 @@ spec:
   dnsNames:
     - "*.{{ .Values.baseDomain }}"
     - "{{ .Values.baseDomain }}"
-{{- range .Values.alternateNames }}
-    - "{{ . }}"
-{{- end }}
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
@@ -91,4 +119,29 @@ spec:
   usages:
     - digital signature
     - key encipherment
+{{- range .Values.additionalListeners }}
 ---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $.Values.gatewayName }}-{{ .name }}-cert
+  namespace: envoy-gateway
+spec:
+  commonName: {{ .hostname | quote }}
+  dnsNames:
+    - {{ .hostname | quote }}
+    {{- if hasPrefix "*." .hostname }}
+    - {{ trimPrefix "*." .hostname | quote }}
+    {{- end }}
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt-prod-eg
+  privateKey:
+    algorithm: RSA
+    size: 4096
+  secretName: {{ $.Values.gatewayName }}-{{ .name }}-tls
+  usages:
+    - digital signature
+    - key encipherment
+{{- end }}

@@ -279,22 +279,6 @@ tests:
           path: spec.dnsNames
           content: my-cluster.example.com
 
-  - it: should include alternate names in certificate
-    set:
-      gatewayName: test-gateway
-      baseDomain: test-cluster.example.com
-      alternateNames:
-        - alt1.example.com
-        - alt2.example.com
-    documentIndex: 3
-    asserts:
-      - contains:
-          path: spec.dnsNames
-          content: alt1.example.com
-      - contains:
-          path: spec.dnsNames
-          content: alt2.example.com
-
   - it: should reference ClusterIssuer in certificate
     set:
       gatewayName: test-gateway

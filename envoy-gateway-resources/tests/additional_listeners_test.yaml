@@ -1,0 +1,108 @@
+suite: test additional vanity-domain listeners
+templates:
+  - gateway.yaml
+tests:
+  - it: should render no extra listeners or certificates by default
+    set:
+      baseDomain: test-cluster.dev.czi.team
+    asserts:
+      - hasDocuments:
+          count: 4
+
+  - it: should add a listener and certificate per vanity domain
+    set:
+      baseDomain: prod-central.prod.czi.team
+      additionalListeners:
+        - name: tools
+          hostname: tools.czi.team
+        - name: rnaquarium
+          hostname: "*.rnaquarium.org"
+    asserts:
+      - hasDocuments:
+          count: 6
+      - documentIndex: 1
+        equal:
+          path: spec.listeners[2].name
+          value: https-tools
+      - documentIndex: 1
+        equal:
+          path: spec.listeners[2].hostname
+          value: tools.czi.team
+      - documentIndex: 1
+        equal:
+          path: spec.listeners[2].tls.certificateRefs[0].name
+          value: envoy-gateway-tools-tls
+      - documentIndex: 1
+        equal:
+          path: spec.listeners[3].hostname
+          value: "*.rnaquarium.org"
+
+  - it: should issue an exact-host certificate with a single dnsName
+    set:
+      baseDomain: prod-central.prod.czi.team
+      additionalListeners:
+        - name: tools
+          hostname: tools.czi.team
+    asserts:
+      - documentIndex: 4
+        equal:
+          path: metadata.name
+          value: envoy-gateway-tools-cert
+      - documentIndex: 4
+        equal:
+          path: spec.dnsNames
+          value:
+            - tools.czi.team
+      - documentIndex: 4
+        equal:
+          path: spec.secretName
+          value: envoy-gateway-tools-tls
+
+  - it: should issue a wildcard certificate covering apex and wildcard
+    set:
+      baseDomain: prod-biohub.prod.czi.team
+      additionalListeners:
+        - name: rnaquarium
+          hostname: "*.rnaquarium.org"
+    asserts:
+      - documentIndex: 4
+        equal:
+          path: spec.dnsNames
+          value:
+            - "*.rnaquarium.org"
+            - rnaquarium.org
+
+  - it: should extend the dns01 solver zones with vanity domains
+    set:
+      baseDomain: prod-central.prod.czi.team
+      additionalListeners:
+        - name: tools
+          hostname: tools.czi.team
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.acme.solvers[0].selector.dnsZones
+          value:
+            - prod-central.prod.czi.team
+            - tools.czi.team
+
+  - it: should give cross-account zones their own solver with the assumed role
+    set:
+      baseDomain: prod-biohub.prod.czi.team
+      additionalListeners:
+        - name: rnaquarium
+          hostname: "*.rnaquarium.org"
+          route53Role: arn:aws:iam::999999999999:role/czbiohub-dns01
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.acme.solvers[1].selector.dnsZones
+          value:
+            - rnaquarium.org
+      - documentIndex: 2
+        equal:
+          path: spec.acme.solvers[1].dns01.route53.role
+          value: arn:aws:iam::999999999999:role/czbiohub-dns01
+      - documentIndex: 2
+        notExists:
+          path: spec.acme.solvers[0].selector.dnsZones[1]

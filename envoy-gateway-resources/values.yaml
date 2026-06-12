@@ -1,7 +1,16 @@
 baseDomain: "example.dev.czi.team"
 awsRegion: "us-west-2"
 gatewayName: "envoy-gateway"
-alternateNames: []
+# Extra HTTPS listeners on the Gateway for public/vanity domains, each with its
+# own Let's Encrypt certificate (dns01). hostname may be exact or a *. wildcard.
+# route53Role: optional IAM role ARN for dns01 when the hosted zone lives in
+# another account (the role must be assumable by cert-manager).
+additionalListeners: []
+#  - name: tools
+#    hostname: tools.czi.team
+#  - name: rnaquarium
+#    hostname: "*.rnaquarium.org"
+#    route53Role: arn:aws:iam::123456789012:role/czbiohub-dns01
 
 serviceAccount:
   name: envoy-gateway-proxy

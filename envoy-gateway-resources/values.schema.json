@@ -4,7 +4,7 @@
   "title": "envoy-gateway-resources",
   "type": "object",
   "properties": {
-    "alternateNames": {
+    "additionalListeners": {
       "type": "array"
     },
     "awsRegion": {
