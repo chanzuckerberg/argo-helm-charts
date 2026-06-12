@@ -247,7 +247,12 @@
           "properties": {
             "annotations": {
               "description": "Annotations to add to HTTPRoute resources",
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "external-dns.alpha.kubernetes.io/ttl": {
+                  "type": "string"
+                }
+              }
             },
             "enabled": {
               "description": "Enable Gateway API HTTPRoute (alternative to Ingress)",
@@ -409,6 +414,9 @@
             "annotations": {
               "type": "object",
               "properties": {
+                "external-dns.alpha.kubernetes.io/ttl": {
+                  "type": "string"
+                },
                 "nginx.ingress.kubernetes.io/affinity": {
                   "type": "string"
                 },
