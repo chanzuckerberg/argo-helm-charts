@@ -21,7 +21,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: ListenerSet
 metadata:
-  name: {{ include "service.fullname" . }}-vanity
+  name: {{ include "service.vanityListenerSetName" . }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
@@ -42,7 +42,7 @@ spec:
         certificateRefs:
           - group: ''
             kind: Secret
-            name: {{ include "service.fullname" . }}-vanity-tls
+            name: {{ include "service.vanityListenerSetName" . }}-tls
 {{- end }}
 {{- end }}
 {{ end }}

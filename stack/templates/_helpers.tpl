@@ -81,6 +81,14 @@ external-dns.alpha.kubernetes.io/target: "access.{{ include "clusterBaseDomain" 
 {{- end }}
 
 {{/*
+Name of the vanity-domain ListenerSet. Referenced by both the ListenerSet itself
+and the HTTPRoute parentRef, so keep it in one place.
+*/}}
+{{- define "service.vanityListenerSetName" -}}
+{{ include "service.fullname" . }}-vanity
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "stack.chart" -}}

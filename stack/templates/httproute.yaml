@@ -53,7 +53,7 @@ spec:
     {{- if .Values.gateway.vanity.enabled }}
     - group: gateway.networking.k8s.io
       kind: ListenerSet
-      name: {{ include "service.fullname" . }}-vanity
+      name: {{ include "service.vanityListenerSetName" . }}
     {{- else }}
     - name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
