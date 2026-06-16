@@ -48,17 +48,7 @@
           "type": "string"
         },
         "namespaceSelector": {
-          "type": "object",
-          "properties": {
-            "matchLabels": {
-              "type": "object",
-              "properties": {
-                "argus.chanzuckerberg.com/allow-listener-sets": {
-                  "type": "string"
-                }
-              }
-            }
-          }
+          "type": "object"
         }
       }
     },

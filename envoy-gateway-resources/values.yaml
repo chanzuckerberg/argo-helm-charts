@@ -5,10 +5,8 @@ alternateNames: []
 
 listenerSets:
   enabled: false
-  from: Selector
-  namespaceSelector:
-    matchLabels:
-      argus.chanzuckerberg.com/allow-listener-sets: "true"
+  from: All
+  namespaceSelector: {}
 
 serviceAccount:
   name: envoy-gateway-proxy

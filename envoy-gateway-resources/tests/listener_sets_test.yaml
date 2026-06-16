@@ -32,12 +32,11 @@ tests:
           path: spec.allowedListeners.namespaces.selector.matchLabels["argus.chanzuckerberg.com/allow-listener-sets"]
           value: "true"
 
-  - it: should omit the selector when from is All
+  - it: should allow ListenerSets from all namespaces by default when enabled
     set:
       baseDomain: prod-central.prod.czi.team
       listenerSets:
         enabled: true
-        from: All
     asserts:
       - documentIndex: 1
         equal:
