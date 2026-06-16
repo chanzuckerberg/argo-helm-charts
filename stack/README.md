@@ -684,17 +684,18 @@ Must be one of:
 
 **Description:** Gateway API HTTPRoute configuration
 
-| Property                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                 |
-| ------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                         |
-| - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                             |
-| - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                         |
-| - [gatewayNamespace](#cronJobs_pattern1_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                 |
-| - [host](#cronJobs_pattern1_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                            |
-| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration) |
-| - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                           |
-| - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                              |
-| - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                              |
+| Property                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                         |
+| ------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                                                                 |
+| - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                     |
+| - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                                                                 |
+| - [gatewayNamespace](#cronJobs_pattern1_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                                                         |
+| - [host](#cronJobs_pattern1_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                                                                    |
+| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)                                         |
+| - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                                                                   |
+| - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                                                                      |
+| - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                                                                      |
+| - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object          | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20) |
 
 ##### <a name="cronJobs_pattern1_gateway_annotations"></a>2.1.16.1. Property `stack > cronJobs > ^.*$ > gateway > annotations`
 
@@ -839,6 +840,49 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Optional section name (listener name) on the Gateway
+
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
+
+| Property                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                        |
+| ------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [clusterIssuer](#cronJobs_pattern1_gateway_vanity_clusterIssuer ) | No      | string  | No         | -          | cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate                                                                    |
+| - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
+| - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
+
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.10.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
+
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.10.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
+
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.10.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs
 
 #### <a name="cronJobs_pattern1_grafanaDashboard"></a>2.1.17. Property `stack > cronJobs > ^.*$ > grafanaDashboard`
 
@@ -4054,17 +4098,18 @@ Must be one of:
 
 **Description:** Gateway API HTTPRoute configuration
 
-| Property                                                | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                 |
-| ------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------- |
-| - [annotations](#global_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                         |
-| - [enabled](#global_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                             |
-| - [gatewayName](#global_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                         |
-| - [gatewayNamespace](#global_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                 |
-| - [host](#global_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                            |
-| - [oidcProtected](#global_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration) |
-| - [paths](#global_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                           |
-| - [rules](#global_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                              |
-| - [sectionName](#global_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                              |
+| Property                                                | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                         |
+| ------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#global_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                                                                 |
+| - [enabled](#global_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                     |
+| - [gatewayName](#global_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                                                                 |
+| - [gatewayNamespace](#global_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                                                         |
+| - [host](#global_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                                                                    |
+| - [oidcProtected](#global_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)                                         |
+| - [paths](#global_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                                                                   |
+| - [rules](#global_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                                                                      |
+| - [sectionName](#global_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                                                                      |
+| - [vanity](#global_gateway_vanity )                     | No      | object          | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20) |
 
 #### <a name="global_gateway_annotations"></a>3.16.1. Property `stack > global > gateway > annotations`
 
@@ -4209,6 +4254,49 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Optional section name (listener name) on the Gateway
+
+#### <a name="global_gateway_vanity"></a>3.16.10. Property `stack > global > gateway > vanity`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
+
+| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                        |
+| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [clusterIssuer](#global_gateway_vanity_clusterIssuer ) | No      | string  | No         | -          | cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate                                                                    |
+| - [enabled](#global_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
+| - [hostname](#global_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
+
+##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.10.1. Property `stack > global > gateway > vanity > clusterIssuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
+
+##### <a name="global_gateway_vanity_enabled"></a>3.16.10.2. Property `stack > global > gateway > vanity > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
+
+##### <a name="global_gateway_vanity_hostname"></a>3.16.10.3. Property `stack > global > gateway > vanity > hostname`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs
 
 ### <a name="global_grafanaDashboard"></a>3.17. Property `stack > global > grafanaDashboard`
 
@@ -7442,17 +7530,18 @@ Must be one of:
 
 **Description:** Gateway API HTTPRoute configuration
 
-| Property                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                 |
-| ------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                         |
-| - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                             |
-| - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                         |
-| - [gatewayNamespace](#cronJobs_pattern1_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                 |
-| - [host](#cronJobs_pattern1_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                            |
-| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration) |
-| - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                           |
-| - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                              |
-| - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                              |
+| Property                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                         |
+| ------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                                                                 |
+| - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                     |
+| - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                                                                 |
+| - [gatewayNamespace](#cronJobs_pattern1_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                                                         |
+| - [host](#cronJobs_pattern1_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                                                                    |
+| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)                                         |
+| - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                                                                   |
+| - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                                                                      |
+| - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                                                                      |
+| - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object          | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20) |
 
 ##### <a name="cronJobs_pattern1_gateway_annotations"></a>4.1.16.1. Property `stack > cronJobs > ^.*$ > gateway > annotations`
 
@@ -7597,6 +7686,49 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Optional section name (listener name) on the Gateway
+
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
+
+| Property                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                        |
+| ------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [clusterIssuer](#cronJobs_pattern1_gateway_vanity_clusterIssuer ) | No      | string  | No         | -          | cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate                                                                    |
+| - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
+| - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
+
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.10.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
+
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.10.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
+
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.10.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs
 
 #### <a name="cronJobs_pattern1_grafanaDashboard"></a>4.1.17. Property `stack > cronJobs > ^.*$ > grafanaDashboard`
 
@@ -11294,17 +11426,18 @@ Must be one of:
 
 **Description:** Gateway API HTTPRoute configuration
 
-| Property                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                 |
-| ------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                         |
-| - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                             |
-| - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                         |
-| - [gatewayNamespace](#cronJobs_pattern1_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                 |
-| - [host](#cronJobs_pattern1_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                            |
-| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration) |
-| - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                           |
-| - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                              |
-| - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                              |
+| Property                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                         |
+| ------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object          | No         | -          | Annotations to add to HTTPRoute resources                                                                                                 |
+| - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean         | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                     |
+| - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string          | No         | -          | Name of the Gateway resource to attach to                                                                                                 |
+| - [gatewayNamespace](#cronJobs_pattern1_gateway_gatewayNamespace ) | No      | string          | No         | -          | Namespace of the Gateway resource                                                                                                         |
+| - [host](#cronJobs_pattern1_gateway_host )                         | No      | string          | No         | -          | Hostname for HTTPRoute                                                                                                                    |
+| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean         | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)                                         |
+| - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object | No         | -          | List of HTTPRoute paths                                                                                                                   |
+| - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array           | No         | -          | List of additional HTTPRoute rules with custom hosts                                                                                      |
+| - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string          | No         | -          | Optional section name (listener name) on the Gateway                                                                                      |
+| - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object          | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20) |
 
 ##### <a name="cronJobs_pattern1_gateway_annotations"></a>7.1.16.1. Property `stack > cronJobs > ^.*$ > gateway > annotations`
 
@@ -11449,6 +11582,49 @@ Must be one of:
 | **Required** | No       |
 
 **Description:** Optional section name (listener name) on the Gateway
+
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
+
+| Property                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                        |
+| ------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [clusterIssuer](#cronJobs_pattern1_gateway_vanity_clusterIssuer ) | No      | string  | No         | -          | cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate                                                                    |
+| - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
+| - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
+
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.10.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
+
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.10.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
+
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.10.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs
 
 #### <a name="cronJobs_pattern1_grafanaDashboard"></a>7.1.17. Property `stack > cronJobs > ^.*$ > grafanaDashboard`
 
