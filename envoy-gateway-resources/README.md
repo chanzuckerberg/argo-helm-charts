@@ -157,29 +157,6 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchLabels](#listenerSets_namespaceSelector_matchLabels ) | No      | object | No         | -          | -                 |
-
-#### <a name="listenerSets_namespaceSelector_matchLabels"></a>7.3.1. Property `envoy-gateway-resources > listenerSets > namespaceSelector > matchLabels`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [argus.chanzuckerberg.com/allow-listener-sets](#listenerSets_namespaceSelector_matchLabels_arguschanzuckerbergcom/allow-listener-sets ) | No      | string | No         | -          | -                 |
-
-##### <a name="listenerSets_namespaceSelector_matchLabels_arguschanzuckerbergcom/allow-listener-sets"></a>7.3.1.1. Property `envoy-gateway-resources > listenerSets > namespaceSelector > matchLabels > argus.chanzuckerberg.com/allow-listener-sets`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
 ## <a name="proxyProtocol"></a>8. Property `envoy-gateway-resources > proxyProtocol`
 
 |                           |                  |
