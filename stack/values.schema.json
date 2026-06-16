@@ -298,6 +298,24 @@
             "sectionName": {
               "description": "Optional section name (listener name) on the Gateway",
               "type": "string"
+            },
+            "vanity": {
+              "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway \u003e= v1.8 and cert-manager \u003e= v1.20)",
+              "type": "object",
+              "properties": {
+                "clusterIssuer": {
+                  "description": "cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate",
+                  "type": "string"
+                },
+                "enabled": {
+                  "description": "Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway",
+                  "type": "boolean"
+                },
+                "hostname": {
+                  "description": "Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs",
+                  "type": "string"
+                }
+              }
             }
           }
         },

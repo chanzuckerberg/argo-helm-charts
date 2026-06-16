@@ -225,9 +225,13 @@ global: # @schema description: Global configuration for the stack - this serves 
         pathType: Prefix # @schema description: HTTPRoute path type (Exact or Prefix)
     rules: [] # @schema description: List of additional HTTPRoute rules with custom hosts
     oidcProtected: false # @schema description: Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)
+    vanity: # @schema description: Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
+      enabled: false # @schema description: Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
+      hostname: "" # @schema description: Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs
+      clusterIssuer: letsencrypt-prod-eg # @schema description: cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
     annotations: # @schema description: Annotations to add to HTTPRoute resources
       external-dns.alpha.kubernetes.io/ttl: "60"
-  
+
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture
 

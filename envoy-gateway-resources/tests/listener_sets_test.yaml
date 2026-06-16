@@ -1,0 +1,48 @@
+suite: test allowedListeners for tenant ListenerSets
+templates:
+  - gateway.yaml
+tests:
+  - it: should not set allowedListeners by default
+    set:
+      baseDomain: test-cluster.dev.czi.team
+    asserts:
+      - documentIndex: 1
+        isKind:
+          of: Gateway
+      - documentIndex: 1
+        notExists:
+          path: spec.allowedListeners
+
+  - it: should allow ListenerSets from a namespace selector when enabled
+    set:
+      baseDomain: prod-central.prod.czi.team
+      listenerSets:
+        enabled: true
+        from: Selector
+        namespaceSelector:
+          matchLabels:
+            argus.chanzuckerberg.com/allow-listener-sets: "true"
+    asserts:
+      - documentIndex: 1
+        equal:
+          path: spec.allowedListeners.namespaces.from
+          value: Selector
+      - documentIndex: 1
+        equal:
+          path: spec.allowedListeners.namespaces.selector.matchLabels["argus.chanzuckerberg.com/allow-listener-sets"]
+          value: "true"
+
+  - it: should omit the selector when from is All
+    set:
+      baseDomain: prod-central.prod.czi.team
+      listenerSets:
+        enabled: true
+        from: All
+    asserts:
+      - documentIndex: 1
+        equal:
+          path: spec.allowedListeners.namespaces.from
+          value: All
+      - documentIndex: 1
+        notExists:
+          path: spec.allowedListeners.namespaces.selector
