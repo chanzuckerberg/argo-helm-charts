@@ -2,13 +2,24 @@ suite: test allowedListeners for tenant ListenerSets
 templates:
   - gateway.yaml
 tests:
-  - it: should not set allowedListeners by default
+  - it: should allow ListenerSets from all namespaces by default
     set:
       baseDomain: test-cluster.dev.czi.team
     asserts:
       - documentIndex: 1
         isKind:
           of: Gateway
+      - documentIndex: 1
+        equal:
+          path: spec.allowedListeners.namespaces.from
+          value: All
+
+  - it: should omit allowedListeners when explicitly disabled
+    set:
+      baseDomain: test-cluster.dev.czi.team
+      listenerSets:
+        enabled: false
+    asserts:
       - documentIndex: 1
         notExists:
           path: spec.allowedListeners
