@@ -1,0 +1,48 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+
+  {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
+  {{- if hasKey $serviceValues "gateway" -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
+      {{- $_ := set $values.gateway "enabled" true -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+{{- if and .Values.gateway.enabled .Values.gateway.vanity.enabled -}}
+{{- $hostname := .Values.gateway.vanity.hostname | default .Values.gateway.host -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: ListenerSet
+metadata:
+  name: {{ include "service.vanityListenerSetName" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.gateway.vanity.clusterIssuer | quote }}
+spec:
+  parentRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ .Values.gateway.gatewayName }}
+    namespace: {{ .Values.gateway.gatewayNamespace }}
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: {{ $hostname | quote }}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ''
+            kind: Secret
+            name: {{ include "service.vanityListenerSetName" . }}-tls
+{{- end }}
+{{- end }}
+{{ end }}

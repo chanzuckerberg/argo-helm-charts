@@ -348,3 +348,35 @@ tests:
         equal:
           path: metadata.labels["argus/env-name"]
           value: "production"
+
+  - it: should attach the HTTPRoute to the ListenerSet when vanity is enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: tools.czi.team
+          vanity:
+            enabled: true
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        isKind:
+          of: HTTPRoute
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0].kind
+          value: ListenerSet
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0].group
+          value: gateway.networking.k8s.io
+      - documentIndex: 0
+        matchRegex:
+          path: spec.parentRefs[0].name
+          pattern: -vanity$
+      - documentIndex: 0
+        notExists:
+          path: spec.parentRefs[0].namespace

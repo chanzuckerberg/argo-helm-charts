@@ -3,6 +3,11 @@ awsRegion: "us-west-2"
 gatewayName: "envoy-gateway"
 alternateNames: []
 
+listenerSets:
+  enabled: true
+  from: All
+  namespaceSelector: {}
+
 serviceAccount:
   name: envoy-gateway-proxy
   annotations: {}

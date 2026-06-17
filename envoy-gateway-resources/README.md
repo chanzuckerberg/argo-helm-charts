@@ -16,6 +16,7 @@
 | - [envoyService](#envoyService )     | No      | object | No         | -          | -                 |
 | - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
 | - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
+| - [listenerSets](#listenerSets )     | No      | object | No         | -          | -                 |
 | - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                 |
 | - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
 
@@ -120,7 +121,43 @@
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="proxyProtocol"></a>7. Property `envoy-gateway-resources > proxyProtocol`
+## <a name="listenerSets"></a>7. Property `envoy-gateway-resources > listenerSets`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#listenerSets_enabled )                     | No      | boolean | No         | -          | -                 |
+| - [from](#listenerSets_from )                           | No      | string  | No         | -          | -                 |
+| - [namespaceSelector](#listenerSets_namespaceSelector ) | No      | object  | No         | -          | -                 |
+
+### <a name="listenerSets_enabled"></a>7.1. Property `envoy-gateway-resources > listenerSets > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="listenerSets_from"></a>7.2. Property `envoy-gateway-resources > listenerSets > from`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="listenerSets_namespaceSelector"></a>7.3. Property `envoy-gateway-resources > listenerSets > namespaceSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+## <a name="proxyProtocol"></a>8. Property `envoy-gateway-resources > proxyProtocol`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -133,21 +170,21 @@
 | - [enabled](#proxyProtocol_enabled )   | No      | boolean | No         | -          | -                 |
 | - [optional](#proxyProtocol_optional ) | No      | boolean | No         | -          | -                 |
 
-### <a name="proxyProtocol_enabled"></a>7.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
+### <a name="proxyProtocol_enabled"></a>8.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="proxyProtocol_optional"></a>7.2. Property `envoy-gateway-resources > proxyProtocol > optional`
+### <a name="proxyProtocol_optional"></a>8.2. Property `envoy-gateway-resources > proxyProtocol > optional`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="serviceAccount"></a>8. Property `envoy-gateway-resources > serviceAccount`
+## <a name="serviceAccount"></a>9. Property `envoy-gateway-resources > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -160,7 +197,7 @@
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | -                 |
 | - [name](#serviceAccount_name )               | No      | string | No         | -          | -                 |
 
-### <a name="serviceAccount_annotations"></a>8.1. Property `envoy-gateway-resources > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>9.1. Property `envoy-gateway-resources > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -168,7 +205,7 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-### <a name="serviceAccount_name"></a>8.2. Property `envoy-gateway-resources > serviceAccount > name`
+### <a name="serviceAccount_name"></a>9.2. Property `envoy-gateway-resources > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
