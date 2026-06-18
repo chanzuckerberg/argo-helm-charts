@@ -1,0 +1,93 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+
+{{- if and .Values.gateway.enabled .Values.gateway.http -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "service.fullname" .  }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+    {{- with .Values.gateway.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with (mergeOverwrite 
+              (dict)
+              (.Values.annotations) 
+              (.Values.gateway.annotations)
+    ) }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+  {{- range .Values.gateway.parentRefs }}
+  - name: {{ .name }}
+    {{- if .namespace }}
+    namespace: {{ .namespace }}
+    {{- end }}
+    {{- if .sectionName }}
+    sectionName: {{ .sectionName }}
+    {{- end }}
+  {{- end }}
+  hostnames:
+  - {{ .Values.gateway.http.hostname }}
+  {{- range .Values.gateway.http.additionalHostnames }}
+  - {{ . }}
+  {{- end }}
+  rules:
+  {{- range .Values.gateway.http.paths }}
+  - matches:
+    - path:
+        {{- if .pathType }}
+        type: {{ .pathType }}
+        {{- else }}
+        type: PathPrefix
+        {{- end }}
+        value: {{ .path }}
+    backendRefs:
+    - name: {{ include "service.fullname" $service }}
+      port: {{ $service.Values.service.port }}
+  {{- end }}
+  {{- range .Values.gateway.http.rules }}
+  - matches:
+    - path:
+        {{- if .pathType }}
+        type: {{ .pathType }}
+        {{- else }}
+        type: PathPrefix
+        {{- end }}
+        value: {{ .path }}
+      {{- if .headers }}
+      headers:
+      {{- range .headers }}
+      - type: {{ .type | default "Exact" }}
+        name: {{ .name }}
+        value: {{ .value }}
+      {{- end }}
+      {{- end }}
+      {{- if .queryParams }}
+      queryParams:
+      {{- range .queryParams }}
+      - type: {{ .type | default "Exact" }}
+        name: {{ .name }}
+        value: {{ .value }}
+      {{- end }}
+      {{- end }}
+    backendRefs:
+    - name: {{ include "service.fullname" $service }}
+      port: {{ $service.Values.service.port }}
+      {{- if .weight }}
+      weight: {{ .weight }}
+      {{- end }}
+  {{- end }}
+{{ end }}
+{{- end }}
+{{- end }}

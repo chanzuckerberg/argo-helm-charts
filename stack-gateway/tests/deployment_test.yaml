@@ -1,0 +1,260 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: should work
+    set:
+      services:
+        service1:
+          args: ["arg1", "arg2"]
+          command: ["command1", "command2"]
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+            maxUnavailable: 1
+          replicaCount: 2
+          sidecars:
+            - name: sidecar1
+              image: "sidecar1:latest"
+            - name: sidecar2
+              image: "sidecar2:latest"
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+              command: ["echo", "Hello World"]
+    asserts:
+      - isKind:
+          of: Deployment
+      - isSubset:
+          path: spec
+          content:
+            revisionHistoryLimit: 3
+      - containsDocument:
+          apiVersion: apps/v1
+          kind: Deployment
+
+  - it: sets replicas when autoscaling is disabled
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 2
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 2
+  - it: does not set replicas when autoscaling is enabled
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: true
+          replicaCount: 2
+    asserts:
+      - notExists:
+          path: spec.replicas
+
+  - it: uses httpGet probe by default
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+  - it: uses exec probe when supplied
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            exec:
+              command: ["echo", "Hello World"]
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            exec:
+              command: ["echo", "Hello World"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+  - it: uses tcpSocket probe when supplied
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            tcpSocket:
+              port: 80
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+  - it: uses a combination of probes
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          livenessProbe:
+            timeoutSeconds: 10
+            tcpSocket:
+              port: 80
+          readinessProbe:
+            exec:
+              command: ["echo", "Hello World"]
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            failureThreshold: 3
+            exec:
+              command: ["echo", "Hello World"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+  - it: uses supplied initContainer image string value
+    set:
+      services:
+        service1:
+          initContainers:
+            - name: initContainer1
+              image: "alpine:latest"
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "alpine:latest"
+  - it: formats supplied initContainer image tag and repo
+    set:
+      services:
+        service1:
+          initContainers:
+            - name: initContainer1
+              image:
+                repository: "node"
+                tag: "20.0.0"
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "node:20.0.0"
+  - it: uses supplied sidecar image string value
+    set:
+      services:
+        service1:
+          sidecars:
+            - name: sidecar1
+              image: "alpine:latest"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "nginx:latest"
+      - equal:
+          path: spec.template.spec.containers[1].image
+          value: "alpine:latest"
+  - it: formats supplied sidecar image tag and repo
+    set:
+      services:
+        service1:
+          sidecars:
+            - name: sidecar2
+              image:
+                repository: "node"
+                tag: "20.0.0"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "nginx:latest"
+      - equal:
+          path: spec.template.spec.containers[1].image
+          value: "node:20.0.0"
+
+  - it: should include argus/env-name label when argusMetadata.envName is set
+    set:
+      global:
+        argusMetadata:
+          envName: "production"
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+    asserts:
+      - equal:
+          path: metadata.labels["argus/env-name"]
+          value: "production"
+
+  - it: correctly renders volumes with tpl
+    set:
+      global:
+        argusMetadata:
+          stackName: "test-stack"
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          volumes:
+            - name: otel-collector-config
+              configMap:
+                name: 'otel-collector-config-{{ .Values.global.argusMetadata.stackName }}'
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[0].configMap.name
+          value: "otel-collector-config-test-stack"
+
+  - it: correctly renders volumes with tpl even when values are strings
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: false
+          replicaCount: 1
+          volumes:
+            - name: otel-collector-config
+              configMap:
+                name: 'otel-collector-config-literal-str'
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes[0].configMap.name
+          value: "otel-collector-config-literal-str"

@@ -1,0 +1,38 @@
+{{ $global := . }}
+{{- $kind := default "Deployment" .Values.global.deploymentKind }}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- if eq $kind "Rollout" }}
+    {{- toYaml (mergeOverwrite
+                (dict)
+                (fromYaml (include "stack.annotations" $service ))
+                (dict "argocd.argoproj.io/sync-options" "ServerSideApply=false")
+    ) | nindent 4 }}
+    {{- else }}
+    {{- include "stack.annotations" $service | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "service.selectorLabels" . | nindent 4 }}
+---
+{{- end }}
+{{- end }}
