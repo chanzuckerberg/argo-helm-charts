@@ -1,0 +1,50 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+
+  {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
+  {{- if hasKey $serviceValues "gateway" -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
+      {{- $_ := set $values.gateway "enabled" true -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
+  {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
+    {{- if not (and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled")) -}}
+      {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+{{- if and .Values.gateway.enabled .Values.gateway.backendTLS.enabled -}}
+{{- $bt := .Values.gateway.backendTLS -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: BackendTLSPolicy
+metadata:
+  name: {{ include "service.fullname" . }}-btls
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+spec:
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: {{ include "service.fullname" . }}
+      sectionName: http
+  validation:
+    hostname: {{ required "gateway.backendTLS.hostname is required when gateway.backendTLS.enabled is true" $bt.hostname | quote }}
+    {{- if $bt.caCertificateRefs }}
+    caCertificateRefs:
+      {{- toYaml $bt.caCertificateRefs | nindent 6 }}
+    {{- else }}
+    wellKnownCACertificates: {{ $bt.wellKnownCACertificates | default "System" }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{ end }}
