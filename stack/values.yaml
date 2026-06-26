@@ -223,7 +223,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       -
         path: / # @schema description: HTTPRoute path
         pathType: Prefix # @schema description: HTTPRoute path type (Exact or Prefix)
-    rules: [] # @schema description: List of additional HTTPRoute rules with custom hosts
+    rules: [] # @schema description: List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity
     oidcProtected: false # @schema description: Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)
     vanity: # @schema description: Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
       enabled: false # @schema description: Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
