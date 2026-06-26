@@ -152,11 +152,17 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
+    {{- if and $rule.vanity $rule.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ printf "%s-rule-%d" (include "service.vanityListenerSetName" $service) $i }}
+    {{- else }}
     - name: {{ $service.Values.gateway.gatewayName }}
       namespace: {{ $service.Values.gateway.gatewayNamespace }}
       {{- if $service.Values.gateway.sectionName }}
       sectionName: {{ $service.Values.gateway.sectionName }}
       {{- end }}
+    {{- end }}
   hostnames:
     - {{ $rule.host }}
   rules:
