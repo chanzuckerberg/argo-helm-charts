@@ -19,6 +19,7 @@
 | - [listenerSets](#listenerSets )     | No      | object | No         | -          | -                 |
 | - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                 |
 | - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
+| - [tlsPassthrough](#tlsPassthrough ) | No      | object | No         | -          | -                 |
 
 ## <a name="alternateNames"></a>1. Property `envoy-gateway-resources > alternateNames`
 
@@ -211,5 +212,40 @@
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+## <a name="tlsPassthrough"></a>10. Property `envoy-gateway-resources > tlsPassthrough`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                  | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ----------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#tlsPassthrough_enabled )     | No      | boolean | No         | -          | -                 |
+| - [hostnames](#tlsPassthrough_hostnames ) | No      | array   | No         | -          | -                 |
+
+### <a name="tlsPassthrough_enabled"></a>10.1. Property `envoy-gateway-resources > tlsPassthrough > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="tlsPassthrough_hostnames"></a>10.2. Property `envoy-gateway-resources > tlsPassthrough > hostnames`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
 ----------------------------------------------------------------------------------------------------------------------------
