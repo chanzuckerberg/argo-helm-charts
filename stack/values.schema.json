@@ -493,6 +493,20 @@
                 }
               }
             },
+            "tlsPassthrough": {
+              "description": "TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service",
+                  "type": "boolean"
+                },
+                "sectionName": {
+                  "description": "Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case",
+                  "type": "string"
+                }
+              }
+            },
             "vanity": {
               "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway \u003e= v1.8 and cert-manager \u003e= v1.20)",
               "type": "object",

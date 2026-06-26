@@ -8,6 +8,14 @@ listenerSets:
   from: All
   namespaceSelector: {}
 
+# TLS passthrough listeners on the shared Gateway (mode: Passthrough). Off by default.
+# When enabled, one TLS listener is rendered per hostname; tenant TLSRoutes attach by
+# hostname. Hostnames must be specific (not the cluster wildcard) to avoid SNI conflict
+# with the Terminate HTTPS listener.
+tlsPassthrough:
+  enabled: false
+  hostnames: []
+
 serviceAccount:
   name: envoy-gateway-proxy
   annotations: {}

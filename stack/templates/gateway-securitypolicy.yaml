@@ -33,7 +33,7 @@
 {{- include "validate.gatewayRuleHost" . -}}
 {{- include "validate.gatewaySecurityExclusive" . -}}
 
-{{- if and .Values.gateway.enabled (eq (include "gateway.hasSecurityPolicy" .) "true") -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasSecurityPolicy" .) "true") -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" . -}}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1

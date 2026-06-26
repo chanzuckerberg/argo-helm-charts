@@ -32,7 +32,7 @@
 {{- include "validate.gatewayIngressMutualExclusion" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
-{{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) (not .Values.gateway.tlsPassthrough.enabled) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- $redirect := .Values.gateway.redirect -}}

@@ -275,6 +275,9 @@ global: # @schema description: Global configuration for the stack - this serves 
       statusCode: 301 # @schema description: Redirect status code (301 or 302)
       hostname: "" # @schema description: Target hostname, empty keeps the request host
       path: "" # @schema description: Replacement full path via ReplaceFullPath, empty keeps the path
+    tlsPassthrough: # @schema description: TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway
+      enabled: false # @schema description: Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
+      sectionName: "" # @schema description: Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture

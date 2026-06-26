@@ -22,29 +22,39 @@
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) .Values.gateway.backendTLS.enabled -}}
-{{- $bt := .Values.gateway.backendTLS -}}
+{{- include "validate.gatewayRuleHost" . -}}
+{{- if and .Values.gateway.enabled .Values.gateway.tlsPassthrough.enabled -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
-kind: BackendTLSPolicy
+kind: TLSRoute
 metadata:
-  name: {{ include "service.fullname" . }}-btls
+  name: {{ include "service.fullname" . }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                (.Values.annotations)
+                (.Values.gateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  targetRefs:
-    - group: ""
-      kind: Service
-      name: {{ include "service.fullname" . }}
-      sectionName: http
-  validation:
-    hostname: {{ required "gateway.backendTLS.hostname is required when gateway.backendTLS.enabled is true" $bt.hostname | quote }}
-    {{- if $bt.caCertificateRefs }}
-    caCertificateRefs:
-      {{- toYaml $bt.caCertificateRefs | nindent 6 }}
-    {{- else }}
-    wellKnownCACertificates: {{ $bt.wellKnownCACertificates | default "System" }}
+  parentRefs:
+    - name: {{ .Values.gateway.gatewayName }}
+      namespace: {{ .Values.gateway.gatewayNamespace }}
+      {{- if .Values.gateway.tlsPassthrough.sectionName }}
+      sectionName: {{ .Values.gateway.tlsPassthrough.sectionName }}
+      {{- end }}
+  hostnames:
+    - {{ .Values.gateway.host }}
+    {{- range $i, $rule := .Values.gateway.rules }}
+    - {{ $rule.host }}
     {{- end }}
+  rules:
+    - backendRefs:
+        - name: {{ include "service.fullname" . }}
+          port: {{ .Values.service.port | int }}
 {{- end }}
 {{- end }}
 {{ end }}
