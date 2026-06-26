@@ -292,7 +292,7 @@
               }
             },
             "rules": {
-              "description": "List of additional HTTPRoute rules with custom hosts",
+              "description": "List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity",
               "type": "array"
             },
             "sectionName": {
