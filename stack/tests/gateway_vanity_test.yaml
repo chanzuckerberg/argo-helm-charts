@@ -108,3 +108,46 @@ tests:
         equal:
           path: metadata.annotations["cert-manager.io/cluster-issuer"]
           value: letsencrypt-prod-dns01
+
+  - it: should render a per-rule ListenerSet when a rule has vanity enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: primary.dev.czi.team
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          rules:
+            - host: extra.example.com
+              vanity:
+                enabled: true
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: ListenerSet
+      - documentIndex: 0
+        equal:
+          path: spec.listeners[0].hostname
+          value: extra.example.com
+      - documentIndex: 0
+        equal:
+          path: spec.parentRef.kind
+          value: Gateway
+      - documentIndex: 0
+        matchRegex:
+          path: metadata.name
+          pattern: -vanity-rule-0$
+      - documentIndex: 0
+        matchRegex:
+          path: spec.listeners[0].tls.certificateRefs[0].name
+          pattern: -vanity-rule-0-tls$
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt-prod-eg

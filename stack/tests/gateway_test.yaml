@@ -380,3 +380,47 @@ tests:
       - documentIndex: 0
         notExists:
           path: spec.parentRefs[0].namespace
+
+  - it: rule with vanity enabled attaches its HTTPRoute to the per-rule ListenerSet
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: primary.dev.czi.team
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          paths:
+            - path: /
+              pathType: Prefix
+          rules:
+            - host: extra.example.com
+              vanity:
+                enabled: true
+      services:
+        service1: {}
+    asserts:
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: extra.example.com
+        equal:
+          path: spec.parentRefs[0].kind
+          value: ListenerSet
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: extra.example.com
+        matchRegex:
+          path: spec.parentRefs[0].name
+          pattern: -vanity-rule-0$
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: primary.dev.czi.team
+        equal:
+          path: spec.parentRefs[0].name
+          value: envoy-gateway
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: primary.dev.czi.team
+        notExists:
+          path: spec.parentRefs[0].kind

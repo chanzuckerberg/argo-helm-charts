@@ -44,5 +44,38 @@ spec:
             kind: Secret
             name: {{ include "service.vanityListenerSetName" . }}-tls
 {{- end }}
+{{- if .Values.gateway.enabled }}
+{{- range $i, $rule := .Values.gateway.rules }}
+{{- if and $rule.vanity $rule.vanity.enabled }}
+{{- $rname := printf "%s-rule-%d" (include "service.vanityListenerSetName" $service) $i }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: ListenerSet
+metadata:
+  name: {{ $rname }}
+  labels:
+    {{- include "service.labels" $service | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ $rule.vanity.clusterIssuer | default $service.Values.gateway.vanity.clusterIssuer | quote }}
+spec:
+  parentRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ $service.Values.gateway.gatewayName }}
+    namespace: {{ $service.Values.gateway.gatewayNamespace }}
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: {{ $rule.vanity.hostname | default $rule.host | quote }}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ''
+            kind: Secret
+            name: {{ $rname }}-tls
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{ end }}
