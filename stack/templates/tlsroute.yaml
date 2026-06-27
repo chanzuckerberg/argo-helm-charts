@@ -10,6 +10,9 @@
     {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
     {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
       {{- $_ := set $values.gateway "enabled" true -}}
+      {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
+        {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 

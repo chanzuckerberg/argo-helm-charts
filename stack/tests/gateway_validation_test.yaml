@@ -193,6 +193,32 @@ tests:
         hasDocuments:
           count: 1
 
+  - it: should auto-disable ingress when a service sets only gateway config keys (no explicit enabled) with global ingress on
+    templates:
+      - httproute.yaml
+      - ingress.yaml
+    set:
+      global:
+        ingress:
+          enabled: true
+          host: default.example.com
+        gateway:
+          host: api.example.com
+      services:
+        svc:
+          gateway:
+            cors:
+              enabled: true
+              allowOrigins:
+                - https://app.example.com
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0
+
   - it: should fail when both oidcProtected and basicAuth are enabled
     template: gateway-securitypolicy.yaml
     set:
