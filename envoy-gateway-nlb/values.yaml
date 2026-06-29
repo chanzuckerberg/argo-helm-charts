@@ -10,6 +10,8 @@ internalHostnamePrefix: "access-gw-internal"
 
 proxyProtocolV2: true
 
+deletionProtection: true
+
 internal:
   enabled: false
 

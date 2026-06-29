@@ -10,6 +10,9 @@
     "baseDomain": {
       "type": "string"
     },
+    "deletionProtection": {
+      "type": "boolean"
+    },
     "externalHostnamePrefix": {
       "type": "string"
     },
