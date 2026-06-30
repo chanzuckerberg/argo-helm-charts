@@ -12,6 +12,16 @@
     {{- end -}}
   {{- end -}}
 
+  {{/* Auto-disable ingress when gateway config keys auto-enable the gateway (mirrors the gateway templates) */}}
+  {{- if hasKey $serviceValues "gateway" -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
+      {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
+        {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
   {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
   {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
     {{- if not (and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled")) -}}

@@ -1,0 +1,63 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+
+  {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
+  {{- if hasKey $serviceValues "gateway" -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
+      {{- $_ := set $values.gateway "enabled" true -}}
+      {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
+        {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
+  {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
+    {{- if not (and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled")) -}}
+      {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+{{- include "validate.gatewayRuleHost" . -}}
+{{- if and .Values.gateway.enabled .Values.gateway.tlsPassthrough.enabled -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: TLSRoute
+metadata:
+  name: {{ include "service.fullname" . }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                (.Values.annotations)
+                (.Values.gateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.gatewayName }}
+      namespace: {{ .Values.gateway.gatewayNamespace }}
+      {{- if .Values.gateway.tlsPassthrough.sectionName }}
+      sectionName: {{ .Values.gateway.tlsPassthrough.sectionName }}
+      {{- end }}
+  hostnames:
+    - {{ .Values.gateway.host }}
+    {{- range $i, $rule := .Values.gateway.rules }}
+    - {{ $rule.host }}
+    {{- end }}
+  rules:
+    - backendRefs:
+        - name: {{ include "service.fullname" . }}
+          port: {{ .Values.service.port | int }}
+{{- end }}
+{{- end }}
+{{ end }}

@@ -73,6 +73,17 @@
           "type": "string"
         }
       }
+    },
+    "tlsPassthrough": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "hostnames": {
+          "type": "array"
+        }
+      }
     }
   }
 }

@@ -48,6 +48,21 @@ spec:
           - group: ''
             kind: Secret
             name: {{ .Values.gatewayName }}-tls
+    {{- if .Values.tlsPassthrough.enabled }}
+    {{- range $i, $h := .Values.tlsPassthrough.hostnames }}
+    - name: tls-passthrough-{{ $i }}
+      protocol: TLS
+      port: 443
+      hostname: {{ $h | quote }}
+      tls:
+        mode: Passthrough
+      allowedRoutes:
+        namespaces:
+          from: All
+        kinds:
+          - kind: TLSRoute
+    {{- end }}
+    {{- end }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
