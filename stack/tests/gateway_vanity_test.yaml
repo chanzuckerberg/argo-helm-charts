@@ -1,0 +1,153 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test vanity-domain ListenerSet
+templates:
+  - listenerset.yaml
+tests:
+  - it: should not create a ListenerSet when vanity is disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not create a ListenerSet when the gateway is disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: false
+          vanity:
+            enabled: true
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a ListenerSet attaching to the shared Gateway with a shim-issued cert
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: tools.czi.team
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          vanity:
+            enabled: true
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: ListenerSet
+      - documentIndex: 0
+        equal:
+          path: apiVersion
+          value: gateway.networking.k8s.io/v1
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt-prod-eg
+      - documentIndex: 0
+        equal:
+          path: spec.parentRef.kind
+          value: Gateway
+      - documentIndex: 0
+        equal:
+          path: spec.parentRef.name
+          value: envoy-gateway
+      - documentIndex: 0
+        equal:
+          path: spec.listeners[0].hostname
+          value: tools.czi.team
+      - documentIndex: 0
+        equal:
+          path: spec.listeners[0].tls.mode
+          value: Terminate
+      - documentIndex: 0
+        matchRegex:
+          path: spec.listeners[0].tls.certificateRefs[0].name
+          pattern: -vanity-tls$
+      - documentIndex: 0
+        matchRegex:
+          path: metadata.name
+          pattern: -vanity$
+
+  - it: should use the hostname override (wildcard) when set
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.rnaquarium.org
+          vanity:
+            enabled: true
+            hostname: "*.rnaquarium.org"
+            clusterIssuer: letsencrypt-prod-dns01
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.listeners[0].hostname
+          value: "*.rnaquarium.org"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt-prod-dns01
+
+  - it: should render a per-rule ListenerSet when a rule has vanity enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: primary.dev.czi.team
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          rules:
+            - host: extra.example.com
+              vanity:
+                enabled: true
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: ListenerSet
+      - documentIndex: 0
+        equal:
+          path: spec.listeners[0].hostname
+          value: extra.example.com
+      - documentIndex: 0
+        equal:
+          path: spec.parentRef.kind
+          value: Gateway
+      - documentIndex: 0
+        matchRegex:
+          path: metadata.name
+          pattern: -vanity-rule-0$
+      - documentIndex: 0
+        matchRegex:
+          path: spec.listeners[0].tls.certificateRefs[0].name
+          pattern: -vanity-rule-0-tls$
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["cert-manager.io/cluster-issuer"]
+          value: letsencrypt-prod-eg

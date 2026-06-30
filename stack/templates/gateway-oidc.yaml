@@ -10,6 +10,9 @@
     {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
     {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
       {{- $_ := set $values.gateway "enabled" true -}}
+      {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
+        {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 
@@ -32,7 +35,9 @@
 {{- include "validate.gatewayIngressMutualExclusion" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
-{{- if and .Values.gateway.enabled .Values.gateway.oidcProtected -}}
+{{- if and .Values.gateway.enabled .Values.gateway.oidcProtected (not .Values.gateway.tlsPassthrough.enabled) -}}
+{{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
+{{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- /* Create public HTTPRoute for skipAuth paths if configured */ -}}
 {{- if gt (len .Values.oidcProxyGateway.skipAuth) 0 -}}
 ---
@@ -133,6 +138,14 @@ spec:
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
     {{- end }}
 {{- range $i, $rule := .Values.gateway.rules }}
 ---
@@ -152,11 +165,17 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
+    {{- if and $rule.vanity $rule.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ printf "%s-rule-%d" (include "service.vanityListenerSetName" $service) $i }}
+    {{- else }}
     - name: {{ $service.Values.gateway.gatewayName }}
       namespace: {{ $service.Values.gateway.gatewayNamespace }}
       {{- if $service.Values.gateway.sectionName }}
       sectionName: {{ $service.Values.gateway.sectionName }}
       {{- end }}
+    {{- end }}
   hostnames:
     - {{ $rule.host }}
   rules:
@@ -193,134 +212,16 @@ spec:
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
     {{- end }}
 {{- end }}
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: SecurityPolicy
-metadata:
-  name: {{ include "service.fullname" . }}-oidc
-  labels:
-    {{- include "service.labels" . | nindent 4 }}
-  annotations:
-    {{- with (mergeOverwrite
-                (dict)
-                (.Values.annotations)
-                (.Values.oidcProxyGateway.annotations)
-      ) }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  targetRefs:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: {{ include "service.fullname" . }}
-  oidc:
-    provider:
-      issuer: {{ include "oidcProxyGateway.issuer" . | quote }}
-      {{- if .Values.oidcProxyGateway.provider.authorizationEndpoint }}
-      authorizationEndpoint: {{ .Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
-      {{- end }}
-      {{- if .Values.oidcProxyGateway.provider.tokenEndpoint }}
-      tokenEndpoint: {{ .Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
-      {{- end }}
-    clientID: {{ include "oidcProxyGateway.clientID" . | quote }}
-    clientSecret:
-      name: {{ include "service.fullname" . }}-oidc-client-secret
-    redirectURL: https://{{ .Values.gateway.host }}/oauth2/callback
-    {{- if .Values.oidcProxyGateway.logoutPath }}
-    logoutPath: {{ .Values.oidcProxyGateway.logoutPath | quote }}
-    {{- end }}
-    {{- if .Values.oidcProxyGateway.forwardAccessToken }}
-    forwardAccessToken: {{ .Values.oidcProxyGateway.forwardAccessToken }}
-    {{- end }}
-    {{- if .Values.oidcProxyGateway.refreshToken }}
-    refreshToken: {{ .Values.oidcProxyGateway.refreshToken }}
-    {{- end }}
-    {{- if .Values.oidcProxyGateway.cookieDomain }}
-    cookieDomain: {{ .Values.oidcProxyGateway.cookieDomain | quote }}
-    {{- end }}
-    {{- if or .Values.oidcProxyGateway.cookieNames.accessToken .Values.oidcProxyGateway.cookieNames.idToken }}
-    cookieNames:
-      {{- if .Values.oidcProxyGateway.cookieNames.accessToken }}
-      accessToken: {{ .Values.oidcProxyGateway.cookieNames.accessToken | quote }}
-      {{- end }}
-      {{- if .Values.oidcProxyGateway.cookieNames.idToken }}
-      idToken: {{ .Values.oidcProxyGateway.cookieNames.idToken | quote }}
-      {{- end }}
-    {{- end }}
-    {{- if .Values.oidcProxyGateway.scopes }}
-    scopes:
-      {{- toYaml .Values.oidcProxyGateway.scopes | nindent 6 }}
-    {{- end }}
-    {{- if .Values.oidcProxyGateway.resources }}
-    resources:
-      {{- toYaml .Values.oidcProxyGateway.resources | nindent 6 }}
-    {{- end }}
-{{- range $i, $rule := .Values.gateway.rules }}
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: SecurityPolicy
-metadata:
-  name: {{ include "service.fullname" $service }}-rule-{{ $i }}-oidc
-  labels:
-    {{- include "service.labels" $service | nindent 4 }}
-  annotations:
-    {{- with (mergeOverwrite
-                (dict)
-                ($service.Values.annotations)
-                ($service.Values.oidcProxyGateway.annotations)
-      ) }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  targetRefs:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: {{ include "service.fullname" $service }}-rule-{{ $i }}
-  oidc:
-    provider:
-      issuer: {{ include "oidcProxyGateway.issuer" $service | quote }}
-      {{- if $service.Values.oidcProxyGateway.provider.authorizationEndpoint }}
-      authorizationEndpoint: {{ $service.Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
-      {{- end }}
-      {{- if $service.Values.oidcProxyGateway.provider.tokenEndpoint }}
-      tokenEndpoint: {{ $service.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
-      {{- end }}
-    clientID: {{ include "oidcProxyGateway.clientID" $service | quote }}
-    clientSecret:
-      name: {{ include "service.fullname" $service }}-oidc-client-secret
-    redirectURL: https://{{ $rule.host }}/oauth2/callback
-    {{- if $service.Values.oidcProxyGateway.logoutPath }}
-    logoutPath: {{ $service.Values.oidcProxyGateway.logoutPath | quote }}
-    {{- end }}
-    {{- if $service.Values.oidcProxyGateway.forwardAccessToken }}
-    forwardAccessToken: {{ $service.Values.oidcProxyGateway.forwardAccessToken }}
-    {{- end }}
-    {{- if $service.Values.oidcProxyGateway.refreshToken }}
-    refreshToken: {{ $service.Values.oidcProxyGateway.refreshToken }}
-    {{- end }}
-    {{- if $service.Values.oidcProxyGateway.cookieDomain }}
-    cookieDomain: {{ $service.Values.oidcProxyGateway.cookieDomain | quote }}
-    {{- end }}
-    {{- if or $service.Values.oidcProxyGateway.cookieNames.accessToken $service.Values.oidcProxyGateway.cookieNames.idToken }}
-    cookieNames:
-      {{- if $service.Values.oidcProxyGateway.cookieNames.accessToken }}
-      accessToken: {{ $service.Values.oidcProxyGateway.cookieNames.accessToken | quote }}
-      {{- end }}
-      {{- if $service.Values.oidcProxyGateway.cookieNames.idToken }}
-      idToken: {{ $service.Values.oidcProxyGateway.cookieNames.idToken | quote }}
-      {{- end }}
-    {{- end }}
-    {{- if $service.Values.oidcProxyGateway.scopes }}
-    scopes:
-      {{- toYaml $service.Values.oidcProxyGateway.scopes | nindent 6 }}
-    {{- end }}
-    {{- if $service.Values.oidcProxyGateway.resources }}
-    resources:
-      {{- toYaml $service.Values.oidcProxyGateway.resources | nindent 6 }}
-    {{- end }}
 {{- end }}
 {{ end }}
-{{- end }}
 {{- end }}

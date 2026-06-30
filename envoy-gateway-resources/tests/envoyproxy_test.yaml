@@ -52,7 +52,43 @@ tests:
       geoip.enabled: false
     asserts:
       - notExists:
-          path: spec.provider.kubernetes.envoyDeployment
+          path: spec.provider.kubernetes.envoyDeployment.patch
+
+  - it: should always set prometheus scrape annotations on the proxy pods
+    set:
+      geoip.enabled: false
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.pod.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.pod.annotations["prometheus.io/port"]
+          value: "19001"
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.pod.annotations["prometheus.io/path"]
+          value: /stats/prometheus
+
+  - it: should always set prometheus scrape annotations on the proxy service
+    set:
+      geoip.enabled: false
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyService.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: spec.provider.kubernetes.envoyService.annotations["prometheus.io/port"]
+          value: "19001"
+      - equal:
+          path: spec.provider.kubernetes.envoyService.annotations["prometheus.io/path"]
+          value: /stats/prometheus
+
+  - it: should set prometheus scrape annotations on the proxy service when geoip is enabled too
+    set:
+      geoip.enabled: true
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyService.annotations["prometheus.io/scrape"]
+          value: "true"
 
   # Basic EnvoyProxy resource tests when geoip enabled
   - it: should render EnvoyProxy when geoip.enabled is true

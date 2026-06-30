@@ -81,6 +81,14 @@ external-dns.alpha.kubernetes.io/target: "access.{{ include "clusterBaseDomain" 
 {{- end }}
 
 {{/*
+Name of the vanity-domain ListenerSet. Referenced by both the ListenerSet itself
+and the HTTPRoute parentRef, so keep it in one place.
+*/}}
+{{- define "service.vanityListenerSetName" -}}
+{{ include "service.fullname" . }}-vanity
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "stack.chart" -}}
@@ -293,6 +301,195 @@ Note: gateway.host is auto-injected by Argus at global.gateway.host (similar to 
 */}}
 {{- define "oidcProxyGateway.redirectURL" -}}
 https://{{ .Values.gateway.host }}/oauth2/callback
+{{- end -}}
+
+{{/*
+Validate that OIDC and basic auth are not both enabled on a gateway service.
+A route can carry only one SecurityPolicy, and oidc + basicAuth are independent
+auth mechanisms; combining them is unsupported.
+*/}}
+{{- define "validate.gatewaySecurityExclusive" -}}
+{{- if and .Values.gateway.oidcProtected .Values.gateway.basicAuth.enabled -}}
+  {{- fail "gateway.oidcProtected and gateway.basicAuth.enabled cannot both be true on the same service. Pick one auth method." -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Whether the service needs a SecurityPolicy (any of oidc, basicAuth, cors, ipAllowList).
+Returns "true"/"" .
+*/}}
+{{- define "gateway.hasSecurityPolicy" -}}
+{{- $g := .Values.gateway -}}
+{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) -}}true{{- end -}}
+{{- end -}}
+
+{{/*
+SecurityPolicy name suffix: keep "-oidc" when OIDC is on (name continuity with the
+pre-consolidation policy, avoids delete/recreate), else "-security".
+*/}}
+{{- define "gateway.securityPolicy.suffix" -}}
+{{- if .Values.gateway.oidcProtected -}}oidc{{- else -}}security{{- end -}}
+{{- end -}}
+
+{{/*
+Whether the service needs a BackendTrafficPolicy (sessionAffinity, rateLimit, or connect timeout).
+*/}}
+{{- define "gateway.hasBackendTrafficPolicy" -}}
+{{- $g := .Values.gateway -}}
+{{- if or $g.sessionAffinity.enabled $g.rateLimit.enabled $g.timeouts.connect -}}true{{- end -}}
+{{- end -}}
+
+{{/*
+HTTPRoute per-rule timeouts block body (no "timeouts:" key). Caller indents under a rule.
+*/}}
+{{- define "gateway.ruleTimeoutsInner" -}}
+{{- $t := .Values.gateway.timeouts -}}
+{{- if $t.request }}
+request: {{ $t.request | quote }}
+{{- end }}
+{{- if $t.backendRequest }}
+backendRequest: {{ $t.backendRequest | quote }}
+{{- end }}
+{{- end -}}
+
+{{/*
+HTTPRoute per-rule filters list (no "filters:" key). Caller indents under a rule.
+Covers hostRewrite (URLRewrite) and request/response header modifiers. Redirect is
+handled separately as a whole-route rule.
+*/}}
+{{- define "gateway.ruleFiltersInner" -}}
+{{- $g := .Values.gateway -}}
+{{- if $g.hostRewrite }}
+- type: URLRewrite
+  urlRewrite:
+    hostname: {{ $g.hostRewrite | quote }}
+{{- end }}
+{{- $rh := $g.requestHeaders -}}
+{{- if and $rh (or $rh.set $rh.add $rh.remove) }}
+- type: RequestHeaderModifier
+  requestHeaderModifier:
+    {{- if $rh.set }}
+    set:
+      {{- toYaml $rh.set | nindent 6 }}
+    {{- end }}
+    {{- if $rh.add }}
+    add:
+      {{- toYaml $rh.add | nindent 6 }}
+    {{- end }}
+    {{- if $rh.remove }}
+    remove:
+      {{- toYaml $rh.remove | nindent 6 }}
+    {{- end }}
+{{- end }}
+{{- $sh := $g.responseHeaders -}}
+{{- if and $sh (or $sh.set $sh.add $sh.remove) }}
+- type: ResponseHeaderModifier
+  responseHeaderModifier:
+    {{- if $sh.set }}
+    set:
+      {{- toYaml $sh.set | nindent 6 }}
+    {{- end }}
+    {{- if $sh.add }}
+    add:
+      {{- toYaml $sh.add | nindent 6 }}
+    {{- end }}
+    {{- if $sh.remove }}
+    remove:
+      {{- toYaml $sh.remove | nindent 6 }}
+    {{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+SecurityPolicy spec body (no "targetRefs"). Input dict: "ctx" (service), "host", "public" (bool).
+Public routes (skipAuth) carry only cors/authorization, never oidc/basicAuth.
+*/}}
+{{- define "gateway.securityPolicy.body" -}}
+{{- $ := .ctx -}}
+{{- $g := $.Values.gateway -}}
+{{- if and (not .public) $g.oidcProtected }}
+oidc:
+  provider:
+    issuer: {{ include "oidcProxyGateway.issuer" $ | quote }}
+    {{- if $.Values.oidcProxyGateway.provider.authorizationEndpoint }}
+    authorizationEndpoint: {{ $.Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
+    {{- end }}
+    {{- if $.Values.oidcProxyGateway.provider.tokenEndpoint }}
+    tokenEndpoint: {{ $.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
+    {{- end }}
+  clientID: {{ include "oidcProxyGateway.clientID" $ | quote }}
+  clientSecret:
+    name: {{ include "service.fullname" $ }}-oidc-client-secret
+  redirectURL: https://{{ .host }}/oauth2/callback
+  {{- if $.Values.oidcProxyGateway.logoutPath }}
+  logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.forwardAccessToken }}
+  forwardAccessToken: {{ $.Values.oidcProxyGateway.forwardAccessToken }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.refreshToken }}
+  refreshToken: {{ $.Values.oidcProxyGateway.refreshToken }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.cookieDomain }}
+  cookieDomain: {{ $.Values.oidcProxyGateway.cookieDomain | quote }}
+  {{- end }}
+  {{- if or $.Values.oidcProxyGateway.cookieNames.accessToken $.Values.oidcProxyGateway.cookieNames.idToken }}
+  cookieNames:
+    {{- if $.Values.oidcProxyGateway.cookieNames.accessToken }}
+    accessToken: {{ $.Values.oidcProxyGateway.cookieNames.accessToken | quote }}
+    {{- end }}
+    {{- if $.Values.oidcProxyGateway.cookieNames.idToken }}
+    idToken: {{ $.Values.oidcProxyGateway.cookieNames.idToken | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.scopes }}
+  scopes:
+    {{- toYaml $.Values.oidcProxyGateway.scopes | nindent 4 }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.resources }}
+  resources:
+    {{- toYaml $.Values.oidcProxyGateway.resources | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- if and (not .public) $g.basicAuth.enabled }}
+basicAuth:
+  users:
+    name: {{ required "gateway.basicAuth.secretName is required when gateway.basicAuth.enabled is true" $g.basicAuth.secretName }}
+{{- end }}
+{{- if $g.cors.enabled }}
+cors:
+  {{- if $g.cors.allowOrigins }}
+  allowOrigins:
+    {{- toYaml $g.cors.allowOrigins | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.allowMethods }}
+  allowMethods:
+    {{- toYaml $g.cors.allowMethods | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.allowHeaders }}
+  allowHeaders:
+    {{- toYaml $g.cors.allowHeaders | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.exposeHeaders }}
+  exposeHeaders:
+    {{- toYaml $g.cors.exposeHeaders | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.allowCredentials }}
+  allowCredentials: true
+  {{- end }}
+  {{- if $g.cors.maxAge }}
+  maxAge: {{ $g.cors.maxAge | quote }}
+  {{- end }}
+{{- end }}
+{{- if gt (len $g.ipAllowList) 0 }}
+authorization:
+  defaultAction: Deny
+  rules:
+    - action: Allow
+      principal:
+        clientCIDRs:
+          {{- toYaml $g.ipAllowList | nindent 10 }}
+{{- end }}
 {{- end -}}
 
 {{/*

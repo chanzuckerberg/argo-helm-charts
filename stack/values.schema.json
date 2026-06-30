@@ -247,7 +247,82 @@
           "properties": {
             "annotations": {
               "description": "Annotations to add to HTTPRoute resources",
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "external-dns.alpha.kubernetes.io/ttl": {
+                  "type": "string"
+                }
+              }
+            },
+            "backendTLS": {
+              "description": "TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)",
+              "type": "object",
+              "properties": {
+                "caCertificateRefs": {
+                  "description": "ConfigMap refs holding the CA bundle for self-signed/internal upstreams",
+                  "type": "array"
+                },
+                "enabled": {
+                  "description": "Enable upstream TLS",
+                  "type": "boolean"
+                },
+                "hostname": {
+                  "description": "SNI/validation hostname presented by the upstream (required when enabled)",
+                  "type": "string"
+                },
+                "wellKnownCACertificates": {
+                  "description": "Use the System trust store, or set \"\" and use caCertificateRefs for a private CA",
+                  "type": "string"
+                }
+              }
+            },
+            "basicAuth": {
+              "description": "HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable basic auth",
+                  "type": "boolean"
+                },
+                "secretName": {
+                  "description": "Name of an Opaque Secret with a .htpasswd key",
+                  "type": "string"
+                }
+              }
+            },
+            "cors": {
+              "description": "CORS via a SecurityPolicy",
+              "type": "object",
+              "properties": {
+                "allowCredentials": {
+                  "description": "Allow credentials",
+                  "type": "boolean"
+                },
+                "allowHeaders": {
+                  "description": "Allowed request headers",
+                  "type": "array"
+                },
+                "allowMethods": {
+                  "description": "Allowed methods",
+                  "type": "array"
+                },
+                "allowOrigins": {
+                  "description": "Allowed origins (string patterns)",
+                  "type": "array"
+                },
+                "enabled": {
+                  "description": "Enable CORS",
+                  "type": "boolean"
+                },
+                "exposeHeaders": {
+                  "description": "Response headers exposed to the browser",
+                  "type": "array"
+                },
+                "maxAge": {
+                  "description": "Preflight cache duration (e.g. \"1h\"), empty omits it",
+                  "type": "string"
+                }
+              }
             },
             "enabled": {
               "description": "Enable Gateway API HTTPRoute (alternative to Ingress)",
@@ -264,6 +339,14 @@
             "host": {
               "description": "Hostname for HTTPRoute",
               "type": "string"
+            },
+            "hostRewrite": {
+              "description": "Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it",
+              "type": "string"
+            },
+            "ipAllowList": {
+              "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
+              "type": "array"
             },
             "oidcProtected": {
               "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)",
@@ -286,13 +369,161 @@
                 }
               }
             },
+            "rateLimit": {
+              "description": "Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable local rate limiting",
+                  "type": "boolean"
+                },
+                "requests": {
+                  "description": "Allowed requests per unit",
+                  "type": "integer"
+                },
+                "unit": {
+                  "description": "Rate limit unit (Second, Minute, Hour, Day)",
+                  "type": "string"
+                }
+              }
+            },
+            "redirect": {
+              "description": "Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable a redirect-only route",
+                  "type": "boolean"
+                },
+                "hostname": {
+                  "description": "Target hostname, empty keeps the request host",
+                  "type": "string"
+                },
+                "path": {
+                  "description": "Replacement full path via ReplaceFullPath, empty keeps the path",
+                  "type": "string"
+                },
+                "scheme": {
+                  "description": "Target scheme, e.g. https",
+                  "type": "string"
+                },
+                "statusCode": {
+                  "description": "Redirect status code (301 or 302)",
+                  "type": "integer"
+                }
+              }
+            },
+            "requestHeaders": {
+              "description": "Request header modifications (HTTPRoute RequestHeaderModifier filter)",
+              "type": "object",
+              "properties": {
+                "add": {
+                  "description": "Headers to add, list of {name,value}",
+                  "type": "array"
+                },
+                "remove": {
+                  "description": "Header names to remove",
+                  "type": "array"
+                },
+                "set": {
+                  "description": "Headers to set, list of {name,value}",
+                  "type": "array"
+                }
+              }
+            },
+            "responseHeaders": {
+              "description": "Response header modifications (HTTPRoute ResponseHeaderModifier filter)",
+              "type": "object",
+              "properties": {
+                "add": {
+                  "description": "Headers to add, list of {name,value}",
+                  "type": "array"
+                },
+                "remove": {
+                  "description": "Header names to remove",
+                  "type": "array"
+                },
+                "set": {
+                  "description": "Headers to set, list of {name,value}",
+                  "type": "array"
+                }
+              }
+            },
             "rules": {
-              "description": "List of additional HTTPRoute rules with custom hosts",
+              "description": "List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity",
               "type": "array"
             },
             "sectionName": {
               "description": "Optional section name (listener name) on the Gateway",
               "type": "string"
+            },
+            "sessionAffinity": {
+              "description": "Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)",
+              "type": "object",
+              "properties": {
+                "cookieName": {
+                  "description": "Affinity cookie name",
+                  "type": "string"
+                },
+                "enabled": {
+                  "description": "Enable consistent-hash cookie session affinity",
+                  "type": "boolean"
+                },
+                "ttl": {
+                  "description": "Affinity cookie TTL",
+                  "type": "string"
+                }
+              }
+            },
+            "timeouts": {
+              "description": "HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy",
+              "type": "object",
+              "properties": {
+                "backendRequest": {
+                  "description": "Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be \u003c= request",
+                  "type": "string"
+                },
+                "connect": {
+                  "description": "Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default",
+                  "type": "string"
+                },
+                "request": {
+                  "description": "Overall request timeout (HTTPRoute rules[].timeouts.request). Set \"0s\" to disable, e.g. for streaming or websockets",
+                  "type": "string"
+                }
+              }
+            },
+            "tlsPassthrough": {
+              "description": "TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service",
+                  "type": "boolean"
+                },
+                "sectionName": {
+                  "description": "Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case",
+                  "type": "string"
+                }
+              }
+            },
+            "vanity": {
+              "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway \u003e= v1.8 and cert-manager \u003e= v1.20)",
+              "type": "object",
+              "properties": {
+                "clusterIssuer": {
+                  "description": "cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate",
+                  "type": "string"
+                },
+                "enabled": {
+                  "description": "Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway",
+                  "type": "boolean"
+                },
+                "hostname": {
+                  "description": "Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs",
+                  "type": "string"
+                }
+              }
             }
           }
         },
@@ -409,6 +640,9 @@
             "annotations": {
               "type": "object",
               "properties": {
+                "external-dns.alpha.kubernetes.io/ttl": {
+                  "type": "string"
+                },
                 "nginx.ingress.kubernetes.io/affinity": {
                   "type": "string"
                 },

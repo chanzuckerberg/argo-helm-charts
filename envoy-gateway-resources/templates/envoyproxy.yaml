@@ -10,9 +10,18 @@ spec:
       envoyServiceAccount:
         name: {{ .Values.serviceAccount.name }}
       envoyService:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "19001"
+          prometheus.io/path: /stats/prometheus
         type: {{ .Values.envoyService.type }}
-      {{- if .Values.geoip.enabled }}
       envoyDeployment:
+        pod:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "19001"
+            prometheus.io/path: /stats/prometheus
+        {{- if .Values.geoip.enabled }}
         patch:
           type: StrategicMerge
           value:

@@ -11,13 +11,15 @@
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [alternateNames](#alternateNames ) | No      | array  | No         | -          | -                 |
+| - [awsRegion](#awsRegion )           | No      | string | No         | -          | -                 |
 | - [baseDomain](#baseDomain )         | No      | string | No         | -          | -                 |
-| - [clusterName](#clusterName )       | No      | string | No         | -          | -                 |
 | - [envoyService](#envoyService )     | No      | object | No         | -          | -                 |
 | - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
 | - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
+| - [listenerSets](#listenerSets )     | No      | object | No         | -          | -                 |
 | - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                 |
 | - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
+| - [tlsPassthrough](#tlsPassthrough ) | No      | object | No         | -          | -                 |
 
 ## <a name="alternateNames"></a>1. Property `envoy-gateway-resources > alternateNames`
 
@@ -34,14 +36,14 @@
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-## <a name="baseDomain"></a>2. Property `envoy-gateway-resources > baseDomain`
+## <a name="awsRegion"></a>2. Property `envoy-gateway-resources > awsRegion`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="clusterName"></a>3. Property `envoy-gateway-resources > clusterName`
+## <a name="baseDomain"></a>3. Property `envoy-gateway-resources > baseDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -120,7 +122,43 @@
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="proxyProtocol"></a>7. Property `envoy-gateway-resources > proxyProtocol`
+## <a name="listenerSets"></a>7. Property `envoy-gateway-resources > listenerSets`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#listenerSets_enabled )                     | No      | boolean | No         | -          | -                 |
+| - [from](#listenerSets_from )                           | No      | string  | No         | -          | -                 |
+| - [namespaceSelector](#listenerSets_namespaceSelector ) | No      | object  | No         | -          | -                 |
+
+### <a name="listenerSets_enabled"></a>7.1. Property `envoy-gateway-resources > listenerSets > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="listenerSets_from"></a>7.2. Property `envoy-gateway-resources > listenerSets > from`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="listenerSets_namespaceSelector"></a>7.3. Property `envoy-gateway-resources > listenerSets > namespaceSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+## <a name="proxyProtocol"></a>8. Property `envoy-gateway-resources > proxyProtocol`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -133,21 +171,21 @@
 | - [enabled](#proxyProtocol_enabled )   | No      | boolean | No         | -          | -                 |
 | - [optional](#proxyProtocol_optional ) | No      | boolean | No         | -          | -                 |
 
-### <a name="proxyProtocol_enabled"></a>7.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
+### <a name="proxyProtocol_enabled"></a>8.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="proxyProtocol_optional"></a>7.2. Property `envoy-gateway-resources > proxyProtocol > optional`
+### <a name="proxyProtocol_optional"></a>8.2. Property `envoy-gateway-resources > proxyProtocol > optional`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="serviceAccount"></a>8. Property `envoy-gateway-resources > serviceAccount`
+## <a name="serviceAccount"></a>9. Property `envoy-gateway-resources > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -160,7 +198,7 @@
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | -                 |
 | - [name](#serviceAccount_name )               | No      | string | No         | -          | -                 |
 
-### <a name="serviceAccount_annotations"></a>8.1. Property `envoy-gateway-resources > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>9.1. Property `envoy-gateway-resources > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -168,11 +206,46 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-### <a name="serviceAccount_name"></a>8.2. Property `envoy-gateway-resources > serviceAccount > name`
+### <a name="serviceAccount_name"></a>9.2. Property `envoy-gateway-resources > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+## <a name="tlsPassthrough"></a>10. Property `envoy-gateway-resources > tlsPassthrough`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                  | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ----------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#tlsPassthrough_enabled )     | No      | boolean | No         | -          | -                 |
+| - [hostnames](#tlsPassthrough_hostnames ) | No      | array   | No         | -          | -                 |
+
+### <a name="tlsPassthrough_enabled"></a>10.1. Property `envoy-gateway-resources > tlsPassthrough > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="tlsPassthrough_hostnames"></a>10.2. Property `envoy-gateway-resources > tlsPassthrough > hostnames`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
 ----------------------------------------------------------------------------------------------------------------------------

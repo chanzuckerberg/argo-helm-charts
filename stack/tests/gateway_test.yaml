@@ -348,3 +348,179 @@ tests:
         equal:
           path: metadata.labels["argus/env-name"]
           value: "production"
+
+  - it: should attach the HTTPRoute to the ListenerSet when vanity is enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: tools.czi.team
+          vanity:
+            enabled: true
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        isKind:
+          of: HTTPRoute
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0].kind
+          value: ListenerSet
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0].group
+          value: gateway.networking.k8s.io
+      - documentIndex: 0
+        matchRegex:
+          path: spec.parentRefs[0].name
+          pattern: -vanity$
+      - documentIndex: 0
+        notExists:
+          path: spec.parentRefs[0].namespace
+
+  - it: rule with vanity enabled attaches its HTTPRoute to the per-rule ListenerSet
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: primary.dev.czi.team
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          paths:
+            - path: /
+              pathType: Prefix
+          rules:
+            - host: extra.example.com
+              vanity:
+                enabled: true
+      services:
+        service1: {}
+    asserts:
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: extra.example.com
+        equal:
+          path: spec.parentRefs[0].kind
+          value: ListenerSet
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: extra.example.com
+        matchRegex:
+          path: spec.parentRefs[0].name
+          pattern: -vanity-rule-0$
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: primary.dev.czi.team
+        equal:
+          path: spec.parentRefs[0].name
+          value: envoy-gateway
+      - documentSelector:
+          path: spec.hostnames[0]
+          value: primary.dev.czi.team
+        notExists:
+          path: spec.parentRefs[0].kind
+
+  - it: should apply default 60s timeouts to gateway routes
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].timeouts.request
+          value: "60s"
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].timeouts.backendRequest
+          value: "60s"
+
+  - it: should add a URLRewrite filter for hostRewrite
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          hostRewrite: upstream.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: URLRewrite
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].urlRewrite.hostname
+          value: upstream.example.com
+
+  - it: should add a RequestHeaderModifier filter
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          requestHeaders:
+            set:
+              - name: X-Forwarded-Host
+                value: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: RequestHeaderModifier
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].requestHeaderModifier.set[0].name
+          value: X-Forwarded-Host
+
+  - it: should render a redirect-only rule when redirect is enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          redirect:
+            enabled: true
+            scheme: https
+            statusCode: 301
+            hostname: new.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: RequestRedirect
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].requestRedirect.scheme
+          value: https
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].requestRedirect.hostname
+          value: new.example.com
+      - documentIndex: 0
+        notExists:
+          path: spec.rules[0].backendRefs
