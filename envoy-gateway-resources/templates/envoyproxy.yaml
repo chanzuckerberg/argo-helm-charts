@@ -16,6 +16,11 @@ spec:
           prometheus.io/path: /stats/prometheus
         type: {{ .Values.envoyService.type }}
       envoyDeployment:
+        {{- with .Values.resources }}
+        container:
+          resources:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
         pod:
           annotations:
             prometheus.io/scrape: "true"
@@ -55,4 +60,16 @@ spec:
                   volumes:
                   - name: geoip-db
                     emptyDir: {}
+        {{- end }}
+      {{- if .Values.autoscaling.enabled }}
+      envoyHpa:
+        minReplicas: {{ .Values.autoscaling.minReplicas }}
+        maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+        metrics:
+          - type: Resource
+            resource:
+              name: cpu
+              target:
+                type: Utilization
+                averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
       {{- end }}

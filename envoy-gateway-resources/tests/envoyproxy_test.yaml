@@ -54,6 +54,76 @@ tests:
       - notExists:
           path: spec.provider.kubernetes.envoyDeployment.patch
 
+  - it: should set proxy container resource requests and limits from values
+    set:
+      geoip.enabled: false
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.container.resources.requests.cpu
+          value: 250m
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.container.resources.requests.memory
+          value: 256Mi
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.container.resources.limits.cpu
+          value: "1"
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.container.resources.limits.memory
+          value: 1Gi
+
+  - it: should enable envoyHpa with min 3 and max 20 by default
+    set:
+      geoip.enabled: false
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyHpa.minReplicas
+          value: 3
+      - equal:
+          path: spec.provider.kubernetes.envoyHpa.maxReplicas
+          value: 20
+      - equal:
+          path: spec.provider.kubernetes.envoyHpa.metrics[0].type
+          value: Resource
+      - equal:
+          path: spec.provider.kubernetes.envoyHpa.metrics[0].resource.name
+          value: cpu
+      - equal:
+          path: spec.provider.kubernetes.envoyHpa.metrics[0].resource.target.averageUtilization
+          value: 70
+
+  - it: should honor autoscaling min/max overrides
+    set:
+      geoip.enabled: false
+      autoscaling.minReplicas: 2
+      autoscaling.maxReplicas: 10
+    asserts:
+      - equal:
+          path: spec.provider.kubernetes.envoyHpa.minReplicas
+          value: 2
+      - equal:
+          path: spec.provider.kubernetes.envoyHpa.maxReplicas
+          value: 10
+
+  - it: should omit envoyHpa when autoscaling is disabled
+    set:
+      geoip.enabled: false
+      autoscaling.enabled: false
+    asserts:
+      - notExists:
+          path: spec.provider.kubernetes.envoyHpa
+
+  - it: should render both HPA and resources when geoip is enabled too
+    set:
+      geoip.enabled: true
+    asserts:
+      - exists:
+          path: spec.provider.kubernetes.envoyHpa
+      - equal:
+          path: spec.provider.kubernetes.envoyDeployment.container.resources.requests.cpu
+          value: 250m
+      - exists:
+          path: spec.provider.kubernetes.envoyDeployment.patch
+
   - it: should always set prometheus scrape annotations on the proxy pods
     set:
       geoip.enabled: false
