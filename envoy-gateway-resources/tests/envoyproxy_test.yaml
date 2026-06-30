@@ -60,16 +60,15 @@ tests:
     asserts:
       - equal:
           path: spec.provider.kubernetes.envoyDeployment.container.resources.requests.cpu
-          value: 250m
+          value: 100m
       - equal:
           path: spec.provider.kubernetes.envoyDeployment.container.resources.requests.memory
-          value: 256Mi
-      - equal:
-          path: spec.provider.kubernetes.envoyDeployment.container.resources.limits.cpu
-          value: "1"
+          value: 512Mi
       - equal:
           path: spec.provider.kubernetes.envoyDeployment.container.resources.limits.memory
-          value: 1Gi
+          value: 2Gi
+      - notExists:
+          path: spec.provider.kubernetes.envoyDeployment.container.resources.limits.cpu
 
   - it: should enable envoyHpa with min 3 and max 20 by default
     set:
@@ -120,7 +119,7 @@ tests:
           path: spec.provider.kubernetes.envoyHpa
       - equal:
           path: spec.provider.kubernetes.envoyDeployment.container.resources.requests.cpu
-          value: 250m
+          value: 100m
       - exists:
           path: spec.provider.kubernetes.envoyDeployment.patch
 
