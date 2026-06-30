@@ -49,6 +49,19 @@ tests:
       - notExists:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
 
+  - it: should enable NLB deletion protection by default
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true
+
+  - it: should omit the attributes annotation when deletion protection is disabled
+    set:
+      deletionProtection: false
+    asserts:
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+
   - it: should select the envoy proxy pods for the cluster-wide Gateway
     asserts:
       - equal:
