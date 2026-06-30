@@ -253,17 +253,9 @@
 
 | Property                              | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [cpu](#resources_limits_cpu )       | No      | string | No         | -          | -                 |
 | - [memory](#resources_limits_memory ) | No      | string | No         | -          | -                 |
 
-#### <a name="resources_limits_cpu"></a>10.1.1. Property `envoy-gateway-resources > resources > limits > cpu`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="resources_limits_memory"></a>10.1.2. Property `envoy-gateway-resources > resources > limits > memory`
+#### <a name="resources_limits_memory"></a>10.1.1. Property `envoy-gateway-resources > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
