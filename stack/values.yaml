@@ -394,12 +394,15 @@ global: # @schema description: Global configuration for the stack - this serves 
         cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 4Gi # @schema description: Memory request
 
-  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://<gateway.host>/oauth2/callback.
+  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration (settable once at global.oidcProxyGateway for a shared/central client). The client secret comes from clientSecretRef when set, otherwise a per-stack ExternalSecret is derived from appSecrets. redirectURL is auto-generated as https://<gateway.host>/oauth2/callback.
     clientID: "" # @schema description: OIDC client ID (required when gateway.oidcProtected is enabled)
     provider: # @schema description: OIDC provider configuration
       issuer: "" # @schema description: OIDC provider issuer URL (required when gateway.oidcProtected is enabled)
       authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered by provider if empty)
       tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered by provider if empty)
+    clientSecretRef: # @schema description: Reference an existing Kubernetes Secret holding the OIDC client secret under the key client-secret (e.g. a shared fleet OIDC client). When name is set, the per-stack ExternalSecret and its appSecrets wiring are skipped. A cross-namespace reference additionally requires a ReferenceGrant in the Secret's namespace.
+      name: "" # @schema description: Name of the existing Secret (empty = derive a per-stack ExternalSecret from appSecrets)
+      namespace: "" # @schema description: Optional namespace of the Secret (empty = the stack's namespace)
     skipAuth: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "method": {"type": "string"}}; description: Paths to skip authentication (creates separate public HTTPRoute)
     logoutPath: "/logout" # @schema description: Path for logout operations
     forwardAccessToken: false # @schema description: Forward access token to backend service

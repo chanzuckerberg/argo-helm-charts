@@ -419,7 +419,14 @@ oidc:
     {{- end }}
   clientID: {{ include "oidcProxyGateway.clientID" $ | quote }}
   clientSecret:
+    {{- if $.Values.oidcProxyGateway.clientSecretRef.name }}
+    name: {{ $.Values.oidcProxyGateway.clientSecretRef.name }}
+    {{- with $.Values.oidcProxyGateway.clientSecretRef.namespace }}
+    namespace: {{ . }}
+    {{- end }}
+    {{- else }}
     name: {{ include "service.fullname" $ }}-oidc-client-secret
+    {{- end }}
   redirectURL: https://{{ .host }}/oauth2/callback
   {{- if $.Values.oidcProxyGateway.logoutPath }}
   logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
