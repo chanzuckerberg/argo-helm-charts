@@ -925,7 +925,7 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://\u003cgateway.host\u003e/oauth2/callback.",
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration (settable once at global.oidcProxyGateway for a shared/central client). The client secret comes from clientSecretRef when set, otherwise a per-stack ExternalSecret is derived from appSecrets. redirectURL is auto-generated as https://\u003cgateway.host\u003e/oauth2/callback.",
           "type": "object",
           "properties": {
             "annotations": {
@@ -935,6 +935,20 @@
             "clientID": {
               "description": "OIDC client ID (required when gateway.oidcProtected is enabled)",
               "type": "string"
+            },
+            "clientSecretRef": {
+              "description": "Reference an existing Kubernetes Secret holding the OIDC client secret under the key client-secret (e.g. a shared fleet OIDC client). When name is set, the per-stack ExternalSecret and its appSecrets wiring are skipped. A cross-namespace reference additionally requires a ReferenceGrant in the Secret's namespace.",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "Name of the existing Secret (empty = derive a per-stack ExternalSecret from appSecrets)",
+                  "type": "string"
+                },
+                "namespace": {
+                  "description": "Optional namespace of the Secret (empty = the stack's namespace)",
+                  "type": "string"
+                }
+              }
             },
             "cookieDomain": {
               "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
