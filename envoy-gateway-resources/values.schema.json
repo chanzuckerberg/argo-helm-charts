@@ -4,6 +4,14 @@
   "title": "envoy-gateway-resources",
   "type": "object",
   "properties": {
+    "accessLog": {
+      "type": "object",
+      "properties": {
+        "omitSuccessful": {
+          "type": "boolean"
+        }
+      }
+    },
     "alternateNames": {
       "type": "array"
     },

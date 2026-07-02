@@ -73,3 +73,14 @@ spec:
                 type: Utilization
                 averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
       {{- end }}
+  {{- if .Values.accessLog.omitSuccessful }}
+  telemetry:
+    accessLog:
+      settings:
+        - matches:
+            - "!(response.code >= 200 && response.code < 300)"
+          sinks:
+            - type: File
+              file:
+                path: /dev/stdout
+  {{- end }}
