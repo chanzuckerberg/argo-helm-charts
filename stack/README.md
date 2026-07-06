@@ -83,7 +83,7 @@ must respect the following conditions
 | - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                     |
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                       |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
-| - [oidc](#cronJobs_pattern1_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.                                                                                 |
+| - [oidc](#cronJobs_pattern1_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.                         |
 | - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
 | - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). clientID, issuer, and clientSecret default to global.oidc values (populated by the argus-global-oidc ClusterExternalSecret). Override per-service when needed. |
 | - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
@@ -2276,40 +2276,30 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.
+**Description:** Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.
 
-| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                           |
-| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
-| - [clientID](#cronJobs_pattern1_oidc_clientID )     | No      | string | No         | -          | Default OIDC client ID for all services                                                     |
-| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                    |
-| - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret) |
+| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
+| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
-##### <a name="cronJobs_pattern1_oidc_clientID"></a>2.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Default OIDC client ID for all services
-
-##### <a name="cronJobs_pattern1_oidc_issuer"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > issuer`
+##### <a name="cronJobs_pattern1_oidc_issuer"></a>2.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services
+**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
 
-##### <a name="cronJobs_pattern1_oidc_secretName"></a>2.1.26.3. Property `stack > cronJobs > ^.*$ > oidc > secretName`
+##### <a name="cronJobs_pattern1_oidc_secretName"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > secretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret)
+**Description:** Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)
 
 #### <a name="cronJobs_pattern1_oidcProxy"></a>2.1.27. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
@@ -4157,7 +4147,7 @@ Must be one of:
 | - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                     |
 | - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                       |
 | - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
-| - [oidc](#global_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.                                                                                 |
+| - [oidc](#global_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.                         |
 | - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
 | - [oidcProxyGateway](#global_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). clientID, issuer, and clientSecret default to global.oidc values (populated by the argus-global-oidc ClusterExternalSecret). Override per-service when needed. |
 | - [persistence](#global_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
@@ -6350,40 +6340,30 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.
+**Description:** Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.
 
-| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                           |
-| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
-| - [clientID](#global_oidc_clientID )     | No      | string | No         | -          | Default OIDC client ID for all services                                                     |
-| - [issuer](#global_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                    |
-| - [secretName](#global_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret) |
+| Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
+| ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| - [issuer](#global_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [secretName](#global_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
-#### <a name="global_oidc_clientID"></a>3.26.1. Property `stack > global > oidc > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Default OIDC client ID for all services
-
-#### <a name="global_oidc_issuer"></a>3.26.2. Property `stack > global > oidc > issuer`
+#### <a name="global_oidc_issuer"></a>3.26.1. Property `stack > global > oidc > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services
+**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
 
-#### <a name="global_oidc_secretName"></a>3.26.3. Property `stack > global > oidc > secretName`
+#### <a name="global_oidc_secretName"></a>3.26.2. Property `stack > global > oidc > secretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret)
+**Description:** Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)
 
 ### <a name="global_oidcProxy"></a>3.27. Property `stack > global > oidcProxy`
 
@@ -8249,7 +8229,7 @@ must respect the following conditions
 | - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                     |
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                       |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
-| - [oidc](#cronJobs_pattern1_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.                                                                                 |
+| - [oidc](#cronJobs_pattern1_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.                         |
 | - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
 | - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). clientID, issuer, and clientSecret default to global.oidc values (populated by the argus-global-oidc ClusterExternalSecret). Override per-service when needed. |
 | - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
@@ -10442,40 +10422,30 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.
+**Description:** Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.
 
-| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                           |
-| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
-| - [clientID](#cronJobs_pattern1_oidc_clientID )     | No      | string | No         | -          | Default OIDC client ID for all services                                                     |
-| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                    |
-| - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret) |
+| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
+| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
-##### <a name="cronJobs_pattern1_oidc_clientID"></a>4.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Default OIDC client ID for all services
-
-##### <a name="cronJobs_pattern1_oidc_issuer"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > issuer`
+##### <a name="cronJobs_pattern1_oidc_issuer"></a>4.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services
+**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
 
-##### <a name="cronJobs_pattern1_oidc_secretName"></a>4.1.26.3. Property `stack > cronJobs > ^.*$ > oidc > secretName`
+##### <a name="cronJobs_pattern1_oidc_secretName"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > secretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret)
+**Description:** Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)
 
 #### <a name="cronJobs_pattern1_oidcProxy"></a>4.1.27. Property `stack > cronJobs > ^.*$ > oidcProxy`
 
@@ -12805,7 +12775,7 @@ must respect the following conditions
 | - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                     |
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                       |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
-| - [oidc](#cronJobs_pattern1_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.                                                                                 |
+| - [oidc](#cronJobs_pattern1_oidc )                                           | No      | object           | No         | -                       | Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.                         |
 | - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
 | - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). clientID, issuer, and clientSecret default to global.oidc values (populated by the argus-global-oidc ClusterExternalSecret). Override per-service when needed. |
 | - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                |
@@ -14998,40 +14968,30 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.
+**Description:** Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.
 
-| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                           |
-| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------- |
-| - [clientID](#cronJobs_pattern1_oidc_clientID )     | No      | string | No         | -          | Default OIDC client ID for all services                                                     |
-| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                    |
-| - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret) |
+| Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
+| --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
-##### <a name="cronJobs_pattern1_oidc_clientID"></a>7.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Default OIDC client ID for all services
-
-##### <a name="cronJobs_pattern1_oidc_issuer"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > issuer`
+##### <a name="cronJobs_pattern1_oidc_issuer"></a>7.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services
+**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
 
-##### <a name="cronJobs_pattern1_oidc_secretName"></a>7.1.26.3. Property `stack > cronJobs > ^.*$ > oidc > secretName`
+##### <a name="cronJobs_pattern1_oidc_secretName"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > secretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret)
+**Description:** Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)
 
 #### <a name="cronJobs_pattern1_oidcProxy"></a>7.1.27. Property `stack > cronJobs > ^.*$ > oidcProxy`
 

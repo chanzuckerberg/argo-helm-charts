@@ -812,19 +812,15 @@
           }
         },
         "oidc": {
-          "description": "Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.",
+          "description": "Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.",
           "type": "object",
           "properties": {
-            "clientID": {
-              "description": "Default OIDC client ID for all services",
-              "type": "string"
-            },
             "issuer": {
-              "description": "Default OIDC issuer URL for all services",
+              "description": "Default OIDC issuer URL for all services (e.g. https://czi.okta.com)",
               "type": "string"
             },
             "secretName": {
-              "description": "Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret)",
+              "description": "Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)",
               "type": "string"
             }
           }
