@@ -231,6 +231,53 @@ global: # @schema description: Global configuration for the stack - this serves 
       clusterIssuer: letsencrypt-prod-eg # @schema description: cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
     annotations: # @schema description: Annotations to add to HTTPRoute resources
       external-dns.alpha.kubernetes.io/ttl: "60"
+    timeouts: # @schema description: HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy
+      request: "60s" # @schema description: Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
+      backendRequest: "60s" # @schema description: Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
+      connect: "" # @schema description: Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
+    sessionAffinity: # @schema description: Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)
+      enabled: false # @schema description: Enable consistent-hash cookie session affinity
+      cookieName: argus_sticky_session # @schema description: Affinity cookie name
+      ttl: "600s" # @schema description: Affinity cookie TTL
+    rateLimit: # @schema description: Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)
+      enabled: false # @schema description: Enable local rate limiting
+      requests: 0 # @schema description: Allowed requests per unit
+      unit: Second # @schema description: Rate limit unit (Second, Minute, Hour, Day)
+    basicAuth: # @schema description: HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
+      enabled: false # @schema description: Enable basic auth
+      secretName: "" # @schema description: Name of an Opaque Secret with a .htpasswd key
+    cors: # @schema description: CORS via a SecurityPolicy
+      enabled: false # @schema description: Enable CORS
+      allowOrigins: [] # @schema description: Allowed origins (string patterns)
+      allowMethods: [] # @schema description: Allowed methods
+      allowHeaders: [] # @schema description: Allowed request headers
+      exposeHeaders: [] # @schema description: Response headers exposed to the browser
+      allowCredentials: false # @schema description: Allow credentials
+      maxAge: "" # @schema description: Preflight cache duration (e.g. "1h"), empty omits it
+    ipAllowList: [] # @schema description: Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it
+    backendTLS: # @schema description: TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
+      enabled: false # @schema description: Enable upstream TLS
+      hostname: "" # @schema description: SNI/validation hostname presented by the upstream (required when enabled)
+      wellKnownCACertificates: System # @schema description: Use the System trust store, or set "" and use caCertificateRefs for a private CA
+      caCertificateRefs: [] # @schema description: ConfigMap refs holding the CA bundle for self-signed/internal upstreams
+    hostRewrite: "" # @schema description: Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it
+    requestHeaders: # @schema description: Request header modifications (HTTPRoute RequestHeaderModifier filter)
+      set: [] # @schema description: Headers to set, list of {name,value}
+      add: [] # @schema description: Headers to add, list of {name,value}
+      remove: [] # @schema description: Header names to remove
+    responseHeaders: # @schema description: Response header modifications (HTTPRoute ResponseHeaderModifier filter)
+      set: [] # @schema description: Headers to set, list of {name,value}
+      add: [] # @schema description: Headers to add, list of {name,value}
+      remove: [] # @schema description: Header names to remove
+    redirect: # @schema description: Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host
+      enabled: false # @schema description: Enable a redirect-only route
+      scheme: "" # @schema description: Target scheme, e.g. https
+      statusCode: 301 # @schema description: Redirect status code (301 or 302)
+      hostname: "" # @schema description: Target hostname, empty keeps the request host
+      path: "" # @schema description: Replacement full path via ReplaceFullPath, empty keeps the path
+    tlsPassthrough: # @schema description: TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway
+      enabled: false # @schema description: Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
+      sectionName: "" # @schema description: Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
   nodeSelector:
     kubernetes.io/arch: arm64 # @schema description: Node selector for architecture

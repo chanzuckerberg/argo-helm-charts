@@ -3,6 +3,7 @@ suite: test gateway validation
 templates:
   - httproute.yaml
   - gateway-oidc.yaml
+  - gateway-securitypolicy.yaml
   - ingress.yaml
 tests:
   - it: should fail when gateway rule is missing host (non-OIDC)
@@ -64,7 +65,7 @@ tests:
           count: 3
 
   - it: should fail when oidcProxyGateway.clientID is missing
-    template: gateway-oidc.yaml
+    template: gateway-securitypolicy.yaml
     set:
       global:
         ingress:
@@ -83,7 +84,7 @@ tests:
           errorMessage: "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml."
 
   - it: should fail when oidcProxyGateway.provider.issuer is missing
-    template: gateway-oidc.yaml
+    template: gateway-securitypolicy.yaml
     set:
       global:
         ingress:
@@ -191,6 +192,55 @@ tests:
       - template: ingress.yaml
         hasDocuments:
           count: 1
+
+  - it: should auto-disable ingress when a service sets only gateway config keys (no explicit enabled) with global ingress on
+    templates:
+      - httproute.yaml
+      - ingress.yaml
+    set:
+      global:
+        ingress:
+          enabled: true
+          host: default.example.com
+        gateway:
+          host: api.example.com
+      services:
+        svc:
+          gateway:
+            cors:
+              enabled: true
+              allowOrigins:
+                - https://app.example.com
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0
+
+  - it: should fail when both oidcProtected and basicAuth are enabled
+    template: gateway-securitypolicy.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          basicAuth:
+            enabled: true
+            secretName: my-htpasswd
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.oidcProtected and gateway.basicAuth.enabled cannot both be true on the same service. Pick one auth method."
 
   - it: should fail when service explicitly enables both gateway and ingress
     template: ingress.yaml

@@ -424,3 +424,103 @@ tests:
           value: primary.dev.czi.team
         notExists:
           path: spec.parentRefs[0].kind
+
+  - it: should apply default 60s timeouts to gateway routes
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].timeouts.request
+          value: "60s"
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].timeouts.backendRequest
+          value: "60s"
+
+  - it: should add a URLRewrite filter for hostRewrite
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          hostRewrite: upstream.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: URLRewrite
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].urlRewrite.hostname
+          value: upstream.example.com
+
+  - it: should add a RequestHeaderModifier filter
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          requestHeaders:
+            set:
+              - name: X-Forwarded-Host
+                value: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: RequestHeaderModifier
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].requestHeaderModifier.set[0].name
+          value: X-Forwarded-Host
+
+  - it: should render a redirect-only rule when redirect is enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          redirect:
+            enabled: true
+            scheme: https
+            statusCode: 301
+            hostname: new.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: RequestRedirect
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].requestRedirect.scheme
+          value: https
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].requestRedirect.hostname
+          value: new.example.com
+      - documentIndex: 0
+        notExists:
+          path: spec.rules[0].backendRefs

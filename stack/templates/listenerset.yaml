@@ -10,12 +10,15 @@
     {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
     {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
       {{- $_ := set $values.gateway "enabled" true -}}
+      {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
+        {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- if and .Values.gateway.enabled .Values.gateway.vanity.enabled -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) .Values.gateway.vanity.enabled -}}
 {{- $hostname := .Values.gateway.vanity.hostname | default .Values.gateway.host -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -44,7 +47,7 @@ spec:
             kind: Secret
             name: {{ include "service.vanityListenerSetName" . }}-tls
 {{- end }}
-{{- if .Values.gateway.enabled }}
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) }}
 {{- range $i, $rule := .Values.gateway.rules }}
 {{- if and $rule.vanity $rule.vanity.enabled }}
 {{- $rname := printf "%s-rule-%d" (include "service.vanityListenerSetName" $service) $i }}
