@@ -811,20 +811,6 @@
             }
           }
         },
-        "oidc": {
-          "description": "Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.",
-          "type": "object",
-          "properties": {
-            "issuer": {
-              "description": "Default OIDC issuer URL for all services",
-              "type": "string"
-            },
-            "secretName": {
-              "description": "Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)",
-              "type": "string"
-            }
-          }
-        },
         "oidcProxy": {
           "type": "object",
           "properties": {
@@ -939,7 +925,7 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). clientID, issuer, and clientSecret default to global.oidc values (populated by the argus-global-oidc ClusterExternalSecret). Override per-service when needed.",
+          "description": "Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.",
           "type": "object",
           "properties": {
             "annotations": {
@@ -947,11 +933,11 @@
               "type": "object"
             },
             "clientID": {
-              "description": "OIDC client ID. Falls back to global.oidc.clientID if empty.",
+              "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
               "type": "string"
             },
             "clientSecretName": {
-              "description": "Kubernetes secret name containing the client-secret key. Falls back to global.oidc.secretName if empty.",
+              "description": "Kubernetes secret containing client-id and client-secret keys (created by the argus-global-oidc ClusterExternalSecret)",
               "type": "string"
             },
             "cookieDomain": {
@@ -989,7 +975,7 @@
                   "type": "string"
                 },
                 "issuer": {
-                  "description": "OIDC provider issuer URL. Falls back to global.oidc.issuer if empty.",
+                  "description": "OIDC provider issuer URL",
                   "type": "string"
                 },
                 "tokenEndpoint": {
