@@ -275,23 +275,22 @@ Validate that each gateway rule has a host specified
 {{- end -}}
 
 {{/*
-Return the OIDC client ID (must be explicitly configured)
-*/}}
-{{- define "oidcProxyGateway.clientID" -}}
-{{- if not .Values.oidcProxyGateway.clientID -}}
-  {{- fail "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
-{{- end -}}
-{{- .Values.oidcProxyGateway.clientID -}}
-{{- end -}}
-
-{{/*
-Return the OIDC issuer URL (must be explicitly configured)
+Return the OIDC issuer URL.
+(Envoy Gateway does not yet support issuerRef, so this must be a string.)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
 {{- if not .Values.oidcProxyGateway.provider.issuer -}}
-  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
+  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled." -}}
 {{- end -}}
 {{- .Values.oidcProxyGateway.provider.issuer -}}
+{{- end -}}
+
+{{/*
+Return the Kubernetes secret name for OIDC credentials.
+The secret must contain 'client-id' and 'client-secret' keys.
+*/}}
+{{- define "oidcProxyGateway.secretName" -}}
+{{- .Values.oidcProxyGateway.clientSecretName | default "argus-global-oidc" -}}
 {{- end -}}
 
 {{/*
@@ -417,9 +416,14 @@ oidc:
     {{- if $.Values.oidcProxyGateway.provider.tokenEndpoint }}
     tokenEndpoint: {{ $.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
     {{- end }}
-  clientID: {{ include "oidcProxyGateway.clientID" $ | quote }}
+  {{- if $.Values.oidcProxyGateway.clientID }}
+  clientID: {{ $.Values.oidcProxyGateway.clientID | quote }}
+  {{- else }}
+  clientIDRef:
+    name: {{ include "oidcProxyGateway.secretName" $ }}
+  {{- end }}
   clientSecret:
-    name: {{ include "service.fullname" $ }}-oidc-client-secret
+    name: {{ include "oidcProxyGateway.secretName" $ }}
   redirectURL: https://{{ .host }}/oauth2/callback
   {{- if $.Values.oidcProxyGateway.logoutPath }}
   logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
