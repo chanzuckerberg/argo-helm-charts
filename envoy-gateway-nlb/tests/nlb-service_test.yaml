@@ -28,7 +28,7 @@ tests:
     asserts:
       - equal:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
-          value: instance
+          value: ip
       - equal:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-scheme"]
           value: internet-facing
@@ -36,13 +36,13 @@ tests:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
           value: external
 
-  - it: should switch the external target type to ip when set
+  - it: should switch the external target type to instance when set
     set:
-      externalTargetType: ip
+      externalTargetType: instance
     asserts:
       - equal:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
-          value: ip
+          value: instance
 
   - it: should assemble target group attributes with proxy protocol and unhealthy draining by default
     asserts:

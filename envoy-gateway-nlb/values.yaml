@@ -14,7 +14,7 @@ deletionProtection: true # @schema description: Enable NLB deletion protection. 
 
 crossZone: true
 
-externalTargetType: instance # @schema enum: [instance, ip]
+externalTargetType: ip # @schema enum: [instance, ip]
 
 targetGroup:
   unhealthyConnectionTermination: false
