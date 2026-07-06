@@ -811,6 +811,24 @@
             }
           }
         },
+        "oidc": {
+          "description": "Global OIDC defaults shared by all services. Populated by the platform team via the argus-global-oidc ClusterExternalSecret. Per-service oidcProxyGateway values override these.",
+          "type": "object",
+          "properties": {
+            "clientID": {
+              "description": "Default OIDC client ID for all services",
+              "type": "string"
+            },
+            "issuer": {
+              "description": "Default OIDC issuer URL for all services",
+              "type": "string"
+            },
+            "secretName": {
+              "description": "Kubernetes secret name containing the OIDC client-secret (created by ClusterExternalSecret)",
+              "type": "string"
+            }
+          }
+        },
         "oidcProxy": {
           "type": "object",
           "properties": {
@@ -925,7 +943,7 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://\u003cgateway.host\u003e/oauth2/callback.",
+          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). clientID, issuer, and clientSecret default to global.oidc values (populated by the argus-global-oidc ClusterExternalSecret). Override per-service when needed.",
           "type": "object",
           "properties": {
             "annotations": {
@@ -933,7 +951,11 @@
               "type": "object"
             },
             "clientID": {
-              "description": "OIDC client ID (required when gateway.oidcProtected is enabled)",
+              "description": "OIDC client ID. Falls back to global.oidc.clientID if empty.",
+              "type": "string"
+            },
+            "clientSecretName": {
+              "description": "Kubernetes secret name containing the client-secret key. Falls back to global.oidc.secretName if empty.",
               "type": "string"
             },
             "cookieDomain": {
@@ -971,7 +993,7 @@
                   "type": "string"
                 },
                 "issuer": {
-                  "description": "OIDC provider issuer URL (required when gateway.oidcProtected is enabled)",
+                  "description": "OIDC provider issuer URL. Falls back to global.oidc.issuer if empty.",
                   "type": "string"
                 },
                 "tokenEndpoint": {
