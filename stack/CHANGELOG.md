@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.42.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.41.0...stack-v2.42.0) (2026-07-06)
+
+
+### Features
+
+* **oidc:** default OIDC config from global secret ([#496](https://github.com/chanzuckerberg/argo-helm-charts/issues/496)) ([c2ad274](https://github.com/chanzuckerberg/argo-helm-charts/commit/c2ad274f67a9decacf83695dc9dc0fa8dc11746c))
+
 ## [2.41.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.40.0...stack-v2.41.0) (2026-06-30)
 
 
