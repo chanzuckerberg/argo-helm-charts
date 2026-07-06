@@ -275,23 +275,43 @@ Validate that each gateway rule has a host specified
 {{- end -}}
 
 {{/*
-Return the OIDC client ID (must be explicitly configured)
+Return the OIDC client ID. Per-service oidcProxyGateway.clientID wins, then
+global.oidc.clientID (set by the platform team). Fails if neither is set.
 */}}
 {{- define "oidcProxyGateway.clientID" -}}
-{{- if not .Values.oidcProxyGateway.clientID -}}
-  {{- fail "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
+{{- if .Values.oidcProxyGateway.clientID -}}
+  {{- .Values.oidcProxyGateway.clientID -}}
+{{- else if .Values.oidc.clientID -}}
+  {{- .Values.oidc.clientID -}}
+{{- else -}}
+  {{- fail "No OIDC client ID configured. Set oidcProxyGateway.clientID (per-service) or global.oidc.clientID (platform default)." -}}
 {{- end -}}
-{{- .Values.oidcProxyGateway.clientID -}}
 {{- end -}}
 
 {{/*
-Return the OIDC issuer URL (must be explicitly configured)
+Return the OIDC issuer URL. Per-service oidcProxyGateway.provider.issuer wins,
+then global.oidc.issuer. Fails if neither is set.
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
-{{- if not .Values.oidcProxyGateway.provider.issuer -}}
-  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
+{{- if .Values.oidcProxyGateway.provider.issuer -}}
+  {{- .Values.oidcProxyGateway.provider.issuer -}}
+{{- else if .Values.oidc.issuer -}}
+  {{- .Values.oidc.issuer -}}
+{{- else -}}
+  {{- fail "No OIDC issuer configured. Set oidcProxyGateway.provider.issuer (per-service) or global.oidc.issuer (platform default)." -}}
 {{- end -}}
-{{- .Values.oidcProxyGateway.provider.issuer -}}
+{{- end -}}
+
+{{/*
+Return the Kubernetes secret name for the OIDC client secret. Per-service
+oidcProxyGateway.clientSecretName wins, then global.oidc.secretName.
+*/}}
+{{- define "oidcProxyGateway.clientSecretName" -}}
+{{- if .Values.oidcProxyGateway.clientSecretName -}}
+  {{- .Values.oidcProxyGateway.clientSecretName -}}
+{{- else -}}
+  {{- .Values.oidc.secretName | default "argus-global-oidc" -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -419,7 +439,7 @@ oidc:
     {{- end }}
   clientID: {{ include "oidcProxyGateway.clientID" $ | quote }}
   clientSecret:
-    name: {{ include "service.fullname" $ }}-oidc-client-secret
+    name: {{ include "oidcProxyGateway.clientSecretName" $ }}
   redirectURL: https://{{ .host }}/oauth2/callback
   {{- if $.Values.oidcProxyGateway.logoutPath }}
   logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
