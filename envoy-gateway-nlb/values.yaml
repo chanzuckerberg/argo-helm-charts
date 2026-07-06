@@ -10,7 +10,15 @@ internalHostnamePrefix: "access-gw-internal"
 
 proxyProtocolV2: true
 
-deletionProtection: true
+deletionProtection: true # @schema description: Enable NLB deletion protection. While enabled, deleting or recreating the Service strands the NLB in Terminating, so set this false and let it sync before any Service delete or recreate.
+
+crossZone: true
+
+externalTargetType: instance # @schema enum: [instance, ip]
+
+targetGroup:
+  unhealthyConnectionTermination: false
+  unhealthyDrainingIntervalSeconds: 300
 
 internal:
   enabled: false

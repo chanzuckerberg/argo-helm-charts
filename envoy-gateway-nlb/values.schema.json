@@ -10,11 +10,22 @@
     "baseDomain": {
       "type": "string"
     },
+    "crossZone": {
+      "type": "boolean"
+    },
     "deletionProtection": {
+      "description": "Enable NLB deletion protection. While enabled, deleting or recreating the Service strands the NLB in Terminating, so set this false and let it sync before any Service delete or recreate.",
       "type": "boolean"
     },
     "externalHostnamePrefix": {
       "type": "string"
+    },
+    "externalTargetType": {
+      "type": "string",
+      "enum": [
+        "instance",
+        "ip"
+      ]
     },
     "gatewayName": {
       "type": "string"
@@ -41,6 +52,17 @@
     },
     "tags": {
       "type": "object"
+    },
+    "targetGroup": {
+      "type": "object",
+      "properties": {
+        "unhealthyConnectionTermination": {
+          "type": "boolean"
+        },
+        "unhealthyDrainingIntervalSeconds": {
+          "type": "integer"
+        }
+      }
     }
   }
 }

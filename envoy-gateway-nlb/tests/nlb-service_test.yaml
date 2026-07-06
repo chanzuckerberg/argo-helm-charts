@@ -36,31 +36,67 @@ tests:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
           value: external
 
-  - it: should enable proxy protocol v2 by default
+  - it: should switch the external target type to ip when set
+    set:
+      externalTargetType: ip
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
+          value: ip
+
+  - it: should assemble target group attributes with proxy protocol and unhealthy draining by default
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
+
+  - it: should keep target group attributes without proxy_protocol_v2 when proxy protocol is disabled
+    set:
+      proxyProtocolV2: false
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
+
+  - it: should omit the unhealthy draining keys when connection termination is enabled
+    set:
+      targetGroup:
+        unhealthyConnectionTermination: true
     asserts:
       - equal:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
           value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true
 
-  - it: should omit target group attributes when proxy protocol is disabled
-    set:
-      proxyProtocolV2: false
+  - it: should enable deletion protection and cross-zone by default
     asserts:
-      - notExists:
-          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true,load_balancing.cross_zone.enabled=true
 
-  - it: should enable NLB deletion protection by default
+  - it: should emit only deletion protection when cross-zone is disabled
+    set:
+      crossZone: false
     asserts:
       - equal:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
           value: deletion_protection.enabled=true
 
-  - it: should omit the attributes annotation when deletion protection is disabled
+  - it: should omit the attributes annotation when deletion protection and cross-zone are both disabled
     set:
       deletionProtection: false
+      crossZone: false
     asserts:
       - notExists:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+
+  - it: should not render any health check annotations (TCP on traffic port)
+    asserts:
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol"]
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-healthcheck-port"]
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-healthcheck-path"]
 
   - it: should select the envoy proxy pods for the cluster-wide Gateway
     asserts:
@@ -125,7 +161,7 @@ tests:
           path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags"]
           value: env=dev,managedBy=argocd,owner=infra-eng
 
-  - it: should render the internal Service when enabled
+  - it: should render the internal Service with hardened attributes and keep the legacy type
     set:
       baseDomain: test-cluster.dev.czi.team
       internal:
@@ -153,11 +189,19 @@ tests:
           value: nlb-ip
         documentIndex: 1
       - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true,load_balancing.cross_zone.enabled=true
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
+        documentIndex: 1
+      - equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
           value: access-gw-internal.test-cluster.dev.czi.team
         documentIndex: 1
 
-  - it: should render additional internal NLBs with their own hostnames
+  - it: should render additional internal NLBs with their own hostnames and hardened attributes
     set:
       additionalInternalNLBs:
         - name: loki
@@ -172,6 +216,14 @@ tests:
       - equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
           value: loki.test-cluster.dev.czi.team
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true,load_balancing.cross_zone.enabled=true
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
         documentIndex: 1
       - equal:
           path: spec.selector["gateway.envoyproxy.io/owning-gateway-name"]
