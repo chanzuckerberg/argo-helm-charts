@@ -708,14 +708,15 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                            |
-| ---------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------- |
-| - [beyla](#alloyConfig_beyla )     | No      | object | No         | -          | Enable Beyla integration for eBPF-based application instrumentation                          |
-| - [content](#alloyConfig_content ) | No      | string | No         | -          | Custom Alloy configuration content (River format). If empty, uses default collection config. |
-| - [events](#alloyConfig_events )   | No      | object | No         | -          | Enable Kubernetes events collection                                                          |
-| - [logging](#alloyConfig_logging ) | No      | object | No         | -          | Logging configuration for Alloy                                                              |
-| - [metrics](#alloyConfig_metrics ) | No      | object | No         | -          | Enable Prometheus metrics collection                                                         |
-| - [podLogs](#alloyConfig_podLogs ) | No      | object | No         | -          | Enable pod log collection                                                                    |
+| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                 |
+| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [beyla](#alloyConfig_beyla )             | No      | object | No         | -          | Enable Beyla integration for eBPF-based application instrumentation                                                                                                                               |
+| - [content](#alloyConfig_content )         | No      | string | No         | -          | Custom Alloy configuration content (River format). If empty, uses default collection config.                                                                                                      |
+| - [events](#alloyConfig_events )           | No      | object | No         | -          | Enable Kubernetes events collection                                                                                                                                                               |
+| - [extraConfig](#alloyConfig_extraConfig ) | No      | string | No         | -          | Raw River config appended after the generated config. Ignored when alloyConfig.content is set. Use this to add custom blocks (e.g. OTLP receivers) without replacing the entire generated config. |
+| - [logging](#alloyConfig_logging )         | No      | object | No         | -          | Logging configuration for Alloy                                                                                                                                                                   |
+| - [metrics](#alloyConfig_metrics )         | No      | object | No         | -          | Enable Prometheus metrics collection                                                                                                                                                              |
+| - [podLogs](#alloyConfig_podLogs )         | No      | object | No         | -          | Enable pod log collection                                                                                                                                                                         |
 
 ### <a name="alloyConfig_beyla"></a>2.1. Property `grafana-alloy > alloyConfig > beyla`
 
@@ -782,7 +783,16 @@ Must be one of:
 
 **Description:** Enable collection of Kubernetes events
 
-### <a name="alloyConfig_logging"></a>2.4. Property `grafana-alloy > alloyConfig > logging`
+### <a name="alloyConfig_extraConfig"></a>2.4. Property `grafana-alloy > alloyConfig > extraConfig`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Raw River config appended after the generated config. Ignored when alloyConfig.content is set. Use this to add custom blocks (e.g. OTLP receivers) without replacing the entire generated config.
+
+### <a name="alloyConfig_logging"></a>2.5. Property `grafana-alloy > alloyConfig > logging`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -797,7 +807,7 @@ Must be one of:
 | - [format](#alloyConfig_logging_format ) | No      | enum (of string) | No         | -          | Log format for Alloy |
 | - [level](#alloyConfig_logging_level )   | No      | enum (of string) | No         | -          | Log level for Alloy  |
 
-#### <a name="alloyConfig_logging_format"></a>2.4.1. Property `grafana-alloy > alloyConfig > logging > format`
+#### <a name="alloyConfig_logging_format"></a>2.5.1. Property `grafana-alloy > alloyConfig > logging > format`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -810,7 +820,7 @@ Must be one of:
 * "logfmt"
 * "json"
 
-#### <a name="alloyConfig_logging_level"></a>2.4.2. Property `grafana-alloy > alloyConfig > logging > level`
+#### <a name="alloyConfig_logging_level"></a>2.5.2. Property `grafana-alloy > alloyConfig > logging > level`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -825,7 +835,7 @@ Must be one of:
 * "warn"
 * "error"
 
-### <a name="alloyConfig_metrics"></a>2.5. Property `grafana-alloy > alloyConfig > metrics`
+### <a name="alloyConfig_metrics"></a>2.6. Property `grafana-alloy > alloyConfig > metrics`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -839,7 +849,7 @@ Must be one of:
 | ------------------------------------------ | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------- |
 | - [enabled](#alloyConfig_metrics_enabled ) | No      | boolean | No         | -          | Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true) |
 
-#### <a name="alloyConfig_metrics_enabled"></a>2.5.1. Property `grafana-alloy > alloyConfig > metrics > enabled`
+#### <a name="alloyConfig_metrics_enabled"></a>2.6.1. Property `grafana-alloy > alloyConfig > metrics > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -848,7 +858,7 @@ Must be one of:
 
 **Description:** Enable scraping of Prometheus metrics from pods (requires prometheusRemoteWrite.enabled=true)
 
-### <a name="alloyConfig_podLogs"></a>2.6. Property `grafana-alloy > alloyConfig > podLogs`
+### <a name="alloyConfig_podLogs"></a>2.7. Property `grafana-alloy > alloyConfig > podLogs`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -862,7 +872,7 @@ Must be one of:
 | ------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------- |
 | - [enabled](#alloyConfig_podLogs_enabled ) | No      | boolean | No         | -          | Enable collection of pod logs from all nodes |
 
-#### <a name="alloyConfig_podLogs_enabled"></a>2.6.1. Property `grafana-alloy > alloyConfig > podLogs > enabled`
+#### <a name="alloyConfig_podLogs_enabled"></a>2.7.1. Property `grafana-alloy > alloyConfig > podLogs > enabled`
 
 |              |           |
 | ------------ | --------- |

@@ -302,6 +302,10 @@
             }
           }
         },
+        "extraConfig": {
+          "description": "Raw River config appended after the generated config. Ignored when alloyConfig.content is set. Use this to add custom blocks (e.g. OTLP receivers) without replacing the entire generated config.",
+          "type": "string"
+        },
         "logging": {
           "description": "Logging configuration for Alloy",
           "type": "object",
