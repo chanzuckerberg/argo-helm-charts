@@ -816,7 +816,7 @@
           "type": "object",
           "properties": {
             "issuer": {
-              "description": "Default OIDC issuer URL for all services (e.g. https://czi.okta.com)",
+              "description": "Default OIDC issuer URL for all services",
               "type": "string"
             },
             "secretName": {

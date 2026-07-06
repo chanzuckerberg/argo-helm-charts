@@ -2280,7 +2280,7 @@ Must be one of:
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
-| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                              |
 | - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
 ##### <a name="cronJobs_pattern1_oidc_issuer"></a>2.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > issuer`
@@ -2290,7 +2290,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
+**Description:** Default OIDC issuer URL for all services
 
 ##### <a name="cronJobs_pattern1_oidc_secretName"></a>2.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > secretName`
 
@@ -6344,7 +6344,7 @@ Must be one of:
 
 | Property                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
 | ---------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
-| - [issuer](#global_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [issuer](#global_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                              |
 | - [secretName](#global_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
 #### <a name="global_oidc_issuer"></a>3.26.1. Property `stack > global > oidc > issuer`
@@ -6354,7 +6354,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
+**Description:** Default OIDC issuer URL for all services
 
 #### <a name="global_oidc_secretName"></a>3.26.2. Property `stack > global > oidc > secretName`
 
@@ -10426,7 +10426,7 @@ Must be one of:
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
-| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                              |
 | - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
 ##### <a name="cronJobs_pattern1_oidc_issuer"></a>4.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > issuer`
@@ -10436,7 +10436,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
+**Description:** Default OIDC issuer URL for all services
 
 ##### <a name="cronJobs_pattern1_oidc_secretName"></a>4.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > secretName`
 
@@ -14972,7 +14972,7 @@ Must be one of:
 
 | Property                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                     |
 | --------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------- |
-| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services (e.g. https://czi.okta.com)                                  |
+| - [issuer](#cronJobs_pattern1_oidc_issuer )         | No      | string | No         | -          | Default OIDC issuer URL for all services                                                              |
 | - [secretName](#cronJobs_pattern1_oidc_secretName ) | No      | string | No         | -          | Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret) |
 
 ##### <a name="cronJobs_pattern1_oidc_issuer"></a>7.1.26.1. Property `stack > cronJobs > ^.*$ > oidc > issuer`
@@ -14982,7 +14982,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
+**Description:** Default OIDC issuer URL for all services
 
 ##### <a name="cronJobs_pattern1_oidc_secretName"></a>7.1.26.2. Property `stack > cronJobs > ^.*$ > oidc > secretName`
 
