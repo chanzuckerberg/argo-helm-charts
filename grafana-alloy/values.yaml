@@ -189,6 +189,9 @@ alloyConfig:
   # See https://grafana.com/docs/alloy/latest/reference/config-blocks/
   content: ""
 
+  # @schema description: Raw River config appended after the generated config. Ignored when alloyConfig.content is set. Use this to add custom blocks (e.g. OTLP receivers) without replacing the entire generated config.
+  extraConfig: ""
+
   # @schema description: Logging configuration for Alloy
   logging:
     level: info # @schema enum: [debug, info, warn, error]; description: Log level for Alloy

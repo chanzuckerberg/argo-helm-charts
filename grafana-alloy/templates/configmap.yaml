@@ -1113,5 +1113,8 @@ data:
       scrape_interval = "15s"
     }
     {{- end }}
+{{- if .Values.alloyConfig.extraConfig }}
+{{ .Values.alloyConfig.extraConfig | nindent 4 }}
+{{- end }}
 {{- end }}
 {{- end }}
