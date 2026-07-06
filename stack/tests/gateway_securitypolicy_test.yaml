@@ -52,8 +52,12 @@ tests:
           value: https://api.example.com/oauth2/callback
       - documentIndex: 0
         equal:
+          path: spec.oidc.clientID
+          value: my-client-id
+      - documentIndex: 0
+        equal:
           path: spec.oidc.clientSecret.name
-          value: release-name-stack-service1-oidc-client-secret
+          value: argus-global-oidc
 
   - it: should create a SecurityPolicy per rule with full OIDC config
     set:

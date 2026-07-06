@@ -64,7 +64,7 @@ tests:
       - hasDocuments:
           count: 3
 
-  - it: should fail when oidcProxyGateway.clientID is missing
+  - it: should use clientIDRef from global secret when clientID is not set
     template: gateway-securitypolicy.yaml
     set:
       global:
@@ -80,10 +80,15 @@ tests:
       services:
         service1: {}
     asserts:
-      - failedTemplate:
-          errorMessage: "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml."
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientIDRef.name
+          value: argus-global-oidc
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc.clientID
 
-  - it: should fail when oidcProxyGateway.provider.issuer is missing
+  - it: should use default issuer when provider.issuer is not overridden
     template: gateway-securitypolicy.yaml
     set:
       global:
@@ -93,13 +98,13 @@ tests:
           enabled: true
           host: api.example.com
           oidcProtected: true
-        oidcProxyGateway:
-          clientID: my-client-id
       services:
         service1: {}
     asserts:
-      - failedTemplate:
-          errorMessage: "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml."
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.provider.issuer
+          value: "https://czi.okta.com"
 
   - it: should fail when both gateway and ingress are enabled at global level
     template: ingress.yaml

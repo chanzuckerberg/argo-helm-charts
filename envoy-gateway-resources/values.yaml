@@ -23,6 +23,19 @@ serviceAccount:
 envoyService:
   type: ClusterIP
 
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    memory: 2Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 70
+
 geoip:
   enabled: true
   blockedCountries:
@@ -56,3 +69,9 @@ geoip:
 proxyProtocol:
   enabled: true
   optional: false
+
+# When true, drop access logs for successful (2xx) responses; errors, redirects,
+# and reset connections are still logged. For high-traffic clusters where 2xx
+# access-log volume is significant self-ingest.
+accessLog:
+  omitSuccessful: false

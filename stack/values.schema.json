@@ -925,7 +925,7 @@
           }
         },
         "oidcProxyGateway": {
-          "description": "Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). Requires explicit clientID and issuer configuration. clientSecret is auto-referenced from appSecrets. redirectURL is auto-generated as https://\u003cgateway.host\u003e/oauth2/callback.",
+          "description": "Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.",
           "type": "object",
           "properties": {
             "annotations": {
@@ -933,7 +933,11 @@
               "type": "object"
             },
             "clientID": {
-              "description": "OIDC client ID (required when gateway.oidcProtected is enabled)",
+              "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
+              "type": "string"
+            },
+            "clientSecretName": {
+              "description": "Kubernetes secret containing client-id and client-secret keys (created by the argus-global-oidc ClusterExternalSecret)",
               "type": "string"
             },
             "cookieDomain": {
@@ -971,7 +975,7 @@
                   "type": "string"
                 },
                 "issuer": {
-                  "description": "OIDC provider issuer URL (required when gateway.oidcProtected is enabled)",
+                  "description": "OIDC provider issuer URL",
                   "type": "string"
                 },
                 "tokenEndpoint": {
