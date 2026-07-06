@@ -275,22 +275,9 @@ Validate that each gateway rule has a host specified
 {{- end -}}
 
 {{/*
-Return the OIDC client ID. Per-service oidcProxyGateway.clientID wins, then
-global.oidc.clientID (set by the platform team). Fails if neither is set.
-*/}}
-{{- define "oidcProxyGateway.clientID" -}}
-{{- if .Values.oidcProxyGateway.clientID -}}
-  {{- .Values.oidcProxyGateway.clientID -}}
-{{- else if .Values.oidc.clientID -}}
-  {{- .Values.oidc.clientID -}}
-{{- else -}}
-  {{- fail "No OIDC client ID configured. Set oidcProxyGateway.clientID (per-service) or global.oidc.clientID (platform default)." -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return the OIDC issuer URL. Per-service oidcProxyGateway.provider.issuer wins,
 then global.oidc.issuer. Fails if neither is set.
+(Envoy Gateway does not yet support issuerRef, so this must be a string.)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
 {{- if .Values.oidcProxyGateway.provider.issuer -}}
@@ -303,10 +290,11 @@ then global.oidc.issuer. Fails if neither is set.
 {{- end -}}
 
 {{/*
-Return the Kubernetes secret name for the OIDC client secret. Per-service
+Return the Kubernetes secret name for OIDC credentials. Per-service
 oidcProxyGateway.clientSecretName wins, then global.oidc.secretName.
+The secret must contain 'client-id' and 'client-secret' keys.
 */}}
-{{- define "oidcProxyGateway.clientSecretName" -}}
+{{- define "oidcProxyGateway.secretName" -}}
 {{- if .Values.oidcProxyGateway.clientSecretName -}}
   {{- .Values.oidcProxyGateway.clientSecretName -}}
 {{- else -}}
@@ -437,9 +425,14 @@ oidc:
     {{- if $.Values.oidcProxyGateway.provider.tokenEndpoint }}
     tokenEndpoint: {{ $.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
     {{- end }}
-  clientID: {{ include "oidcProxyGateway.clientID" $ | quote }}
+  {{- if $.Values.oidcProxyGateway.clientID }}
+  clientID: {{ $.Values.oidcProxyGateway.clientID | quote }}
+  {{- else }}
+  clientIDRef:
+    name: {{ include "oidcProxyGateway.secretName" $ }}
+  {{- end }}
   clientSecret:
-    name: {{ include "oidcProxyGateway.clientSecretName" $ }}
+    name: {{ include "oidcProxyGateway.secretName" $ }}
   redirectURL: https://{{ .host }}/oauth2/callback
   {{- if $.Values.oidcProxyGateway.logoutPath }}
   logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
