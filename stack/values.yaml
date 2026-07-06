@@ -52,7 +52,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   deploymentStage: "" # @schema description: Deployment stage
 
   oidc: # @schema description: Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.
-    issuer: "" # @schema description: Default OIDC issuer URL for all services (e.g. https://czi.okta.com)
+    issuer: "https://czi.okta.com" # @schema description: Default OIDC issuer URL for all services
     secretName: "argus-global-oidc" # @schema description: Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)
 
   replicaCount: 1 # @schema description: Number of replicas
