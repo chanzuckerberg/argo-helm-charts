@@ -51,10 +51,6 @@ global: # @schema description: Global configuration for the stack - this serves 
   rollout: {} 
   deploymentStage: "" # @schema description: Deployment stage
 
-  oidc: # @schema description: Global OIDC defaults shared by all services. The argus-global-oidc ClusterExternalSecret provides clientID and clientSecret via secret reference. Only issuer needs a string default since Envoy Gateway does not yet support issuerRef.
-    issuer: "https://czi.okta.com" # @schema description: Default OIDC issuer URL for all services
-    secretName: "argus-global-oidc" # @schema description: Kubernetes secret name containing client-id and client-secret keys (created by ClusterExternalSecret)
-
   replicaCount: 1 # @schema description: Number of replicas
 
   # Settings for the primary container
@@ -398,11 +394,11 @@ global: # @schema description: Global configuration for the stack - this serves 
         cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 4Gi # @schema description: Memory request
 
-  oidcProxyGateway: # @schema description: Native Envoy Gateway OIDC authentication configuration (used when gateway.oidcProtected is true). clientID, issuer, and clientSecret default to global.oidc values (populated by the argus-global-oidc ClusterExternalSecret). Override per-service when needed.
-    clientID: "" # @schema description: OIDC client ID. Falls back to global.oidc.clientID if empty.
-    clientSecretName: "" # @schema description: Kubernetes secret name containing the client-secret key. Falls back to global.oidc.secretName if empty.
+  oidcProxyGateway: # @schema description: Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
+    clientID: "" # @schema description: OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
+    clientSecretName: "argus-global-oidc" # @schema description: Kubernetes secret containing client-id and client-secret keys (created by the argus-global-oidc ClusterExternalSecret)
     provider: # @schema description: OIDC provider configuration
-      issuer: "" # @schema description: OIDC provider issuer URL. Falls back to global.oidc.issuer if empty.
+      issuer: "https://czi.okta.com" # @schema description: OIDC provider issuer URL
       authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered by provider if empty)
       tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered by provider if empty)
     skipAuth: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "method": {"type": "string"}}; description: Paths to skip authentication (creates separate public HTTPRoute)

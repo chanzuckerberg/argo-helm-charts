@@ -275,31 +275,22 @@ Validate that each gateway rule has a host specified
 {{- end -}}
 
 {{/*
-Return the OIDC issuer URL. Per-service oidcProxyGateway.provider.issuer wins,
-then global.oidc.issuer. Fails if neither is set.
+Return the OIDC issuer URL.
 (Envoy Gateway does not yet support issuerRef, so this must be a string.)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
-{{- if .Values.oidcProxyGateway.provider.issuer -}}
-  {{- .Values.oidcProxyGateway.provider.issuer -}}
-{{- else if .Values.oidc.issuer -}}
-  {{- .Values.oidc.issuer -}}
-{{- else -}}
-  {{- fail "No OIDC issuer configured. Set oidcProxyGateway.provider.issuer (per-service) or global.oidc.issuer (platform default)." -}}
+{{- if not .Values.oidcProxyGateway.provider.issuer -}}
+  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled." -}}
 {{- end -}}
+{{- .Values.oidcProxyGateway.provider.issuer -}}
 {{- end -}}
 
 {{/*
-Return the Kubernetes secret name for OIDC credentials. Per-service
-oidcProxyGateway.clientSecretName wins, then global.oidc.secretName.
+Return the Kubernetes secret name for OIDC credentials.
 The secret must contain 'client-id' and 'client-secret' keys.
 */}}
 {{- define "oidcProxyGateway.secretName" -}}
-{{- if .Values.oidcProxyGateway.clientSecretName -}}
-  {{- .Values.oidcProxyGateway.clientSecretName -}}
-{{- else -}}
-  {{- .Values.oidc.secretName | default "argus-global-oidc" -}}
-{{- end -}}
+{{- .Values.oidcProxyGateway.clientSecretName | default "argus-global-oidc" -}}
 {{- end -}}
 
 {{/*
