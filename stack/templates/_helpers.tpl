@@ -32,7 +32,7 @@ port:
 {{- end -}}
 
 {{- define "service.backend.name" -}}
-{{- if .Values.gateway.oidcProtected -}}
+{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
 {{- include "oidcProxy.name" . }}
 {{- else }}
 {{- include "service.fullname" . }}
@@ -40,7 +40,7 @@ port:
 {{- end -}}
 
 {{- define "service.backend.port" -}}
-{{- if .Values.gateway.oidcProtected -}}
+{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
 {{- include "oidcProxy.port" . }}
 {{- else }}
 {{- .Values.service.port | int }}

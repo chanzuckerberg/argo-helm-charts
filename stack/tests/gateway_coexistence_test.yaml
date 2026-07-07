@@ -179,7 +179,7 @@ tests:
         notExists:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
 
-  - it: coexisting legacy oidc-proxy Ingress does not leak the proxy backend into the HTTPRoute
+  - it: legacy ingress.oidcProtected keeps the gateway path routed through the oauth2-proxy
     set:
       services:
         web:
@@ -194,7 +194,7 @@ tests:
           path: spec.rules[0].http.paths[0].backend.service.name
           pattern: oidc-proxy$
       - template: httproute.yaml
-        notMatchRegex:
+        matchRegex:
           path: spec.rules[0].backendRefs[0].name
           pattern: oidc-proxy$
 
