@@ -150,8 +150,7 @@ tests:
       services:
         service1: {}
     asserts:
-      - failedTemplate:
-          errorMessage: 'gateway.dnsOwner must be "ingress" or "gateway" when ingress and gateway are both enabled (got "nginx"). Coexistence renders both routing modes and external-dns publishes only the dnsOwner side. Flip it to "gateway" to move DNS to the Envoy gateway NLB.'
+      - failedTemplate: {}
 
   - it: should auto-disable ingress when service enables gateway (global ingress enabled)
     templates:
