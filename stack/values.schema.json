@@ -324,6 +324,14 @@
                 }
               }
             },
+            "dnsOwner": {
+              "description": "Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The other side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving",
+              "type": "string",
+              "enum": [
+                "ingress",
+                "gateway"
+              ]
+            },
             "enabled": {
               "description": "Enable Gateway API HTTPRoute (alternative to Ingress)",
               "type": "boolean"
