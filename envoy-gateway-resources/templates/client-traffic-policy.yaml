@@ -1,0 +1,14 @@
+{{- if .Values.proxyProtocol.enabled }}
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: {{ .Values.gatewayName }}-client-traffic
+  namespace: envoy-gateway
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: {{ .Values.gatewayName }}
+  proxyProtocol:
+    optional: {{ .Values.proxyProtocol.optional }}
+{{- end }}

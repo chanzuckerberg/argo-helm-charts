@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.42.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.41.0...stack-v2.42.0) (2026-07-06)
+
+
+### Features
+
+* **oidc:** default OIDC config from global secret ([#496](https://github.com/chanzuckerberg/argo-helm-charts/issues/496)) ([c2ad274](https://github.com/chanzuckerberg/argo-helm-charts/commit/c2ad274f67a9decacf83695dc9dc0fa8dc11746c))
+
+## [2.41.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.40.0...stack-v2.41.0) (2026-06-30)
+
+
+### Features
+
+* first-class gateway values for nginx-annotation parity ([#490](https://github.com/chanzuckerberg/argo-helm-charts/issues/490)) ([673c648](https://github.com/chanzuckerberg/argo-helm-charts/commit/673c6482a0c47fea22e71ffd0f147c7f04cd2160))
+* per-rule vanity hosts (a ListenerSet per gateway.rules entry) ([#489](https://github.com/chanzuckerberg/argo-helm-charts/issues/489)) ([61c213b](https://github.com/chanzuckerberg/argo-helm-charts/commit/61c213be55595cf244f9bf6d8ff55950621677e3))
+* Self-serve vanity-domain TLS via Gateway API ListenerSet (CCIE-6643) ([#488](https://github.com/chanzuckerberg/argo-helm-charts/issues/488)) ([3e6257c](https://github.com/chanzuckerberg/argo-helm-charts/commit/3e6257c8aa9b3cfc6a2bcbbbc213597c39ea30c4))
+* **stack:** default 60s DNS TTL on Ingress and HTTPRoute records (CCIE-6707) ([#483](https://github.com/chanzuckerberg/argo-helm-charts/issues/483)) ([e4e2637](https://github.com/chanzuckerberg/argo-helm-charts/commit/e4e26376105a402f54a377021d9d86de65f6438c))
+
+## [2.40.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.39.0...stack-v2.40.0) (2026-06-10)
+
+
+### Features
+
+* add cpu and memory usage as default charts in per-stack grafana dashboards ([#473](https://github.com/chanzuckerberg/argo-helm-charts/issues/473)) ([b3fb6b8](https://github.com/chanzuckerberg/argo-helm-charts/commit/b3fb6b8ef2fe310ea4808d9c5c7bcdb5dfebecfd))
+
 ## [2.39.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.38.0...stack-v2.39.0) (2026-06-02)
 
 

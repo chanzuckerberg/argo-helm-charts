@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nlb-envoy
+  namespace: {{ .Values.proxyNamespace }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: {{ .Values.externalTargetType }}
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    {{- with (include "envoy-gateway-nlb.lbAttributes" .) }}
+    service.beta.kubernetes.io/aws-load-balancer-attributes: {{ . | quote }}
+    {{- end }}
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: {{ include "envoy-gateway-nlb.targetGroupAttributes" . | quote }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.externalHostnamePrefix }}.{{ .Values.baseDomain }}
+    {{- if .Values.tags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ include "envoy-gateway-nlb.tags" . | quote }}
+    {{- end }}
+spec:
+  type: LoadBalancer
+  loadBalancerClass: service.k8s.aws/nlb
+  externalTrafficPolicy: Cluster
+  selector:
+    {{- include "envoy-gateway-nlb.selector" . | nindent 4 }}
+  ports:
+    {{- include "envoy-gateway-nlb.ports" . | nindent 4 }}
+{{- if .Values.internal.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nlb-envoy-internal
+  namespace: {{ .Values.proxyNamespace }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb-ip
+    {{- with (include "envoy-gateway-nlb.lbAttributes" .) }}
+    service.beta.kubernetes.io/aws-load-balancer-attributes: {{ . | quote }}
+    {{- end }}
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: {{ include "envoy-gateway-nlb.targetGroupAttributes" . | quote }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.internalHostnamePrefix }}.{{ .Values.baseDomain }}
+    {{- if .Values.tags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ include "envoy-gateway-nlb.tags" . | quote }}
+    {{- end }}
+spec:
+  type: LoadBalancer
+  loadBalancerClass: service.k8s.aws/nlb
+  externalTrafficPolicy: Cluster
+  selector:
+    {{- include "envoy-gateway-nlb.selector" . | nindent 4 }}
+  ports:
+    {{- include "envoy-gateway-nlb.ports" . | nindent 4 }}
+{{- end }}
+{{- range .Values.additionalInternalNLBs }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nlb-envoy-{{ .name }}-internal
+  namespace: {{ $.Values.proxyNamespace }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb-ip
+    {{- with (include "envoy-gateway-nlb.lbAttributes" $) }}
+    service.beta.kubernetes.io/aws-load-balancer-attributes: {{ . | quote }}
+    {{- end }}
+    service.beta.kubernetes.io/aws-load-balancer-target-group-attributes: {{ include "envoy-gateway-nlb.targetGroupAttributes" $ | quote }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .hostname }}
+    {{- if $.Values.tags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ include "envoy-gateway-nlb.tags" $ | quote }}
+    {{- end }}
+spec:
+  type: LoadBalancer
+  loadBalancerClass: service.k8s.aws/nlb
+  externalTrafficPolicy: Cluster
+  selector:
+    {{- include "envoy-gateway-nlb.selector" $ | nindent 4 }}
+  ports:
+    {{- include "envoy-gateway-nlb.ports" $ | nindent 4 }}
+{{- end }}

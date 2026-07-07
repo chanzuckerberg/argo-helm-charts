@@ -1,0 +1,231 @@
+suite: test nlb-service.yaml
+templates:
+  - nlb-service.yaml
+
+tests:
+  - it: should render only the external Service by default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
+      - equal:
+          path: metadata.name
+          value: nlb-envoy
+      - equal:
+          path: metadata.namespace
+          value: envoy-gateway-controller
+
+  - it: should compose the external hostname from prefix and base domain
+    set:
+      baseDomain: test-cluster.dev.czi.team
+    asserts:
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
+          value: access-gw.test-cluster.dev.czi.team
+
+  - it: should render external NLB annotations
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
+          value: ip
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-scheme"]
+          value: internet-facing
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
+          value: external
+
+  - it: should switch the external target type to instance when set
+    set:
+      externalTargetType: instance
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
+          value: instance
+
+  - it: should assemble target group attributes with proxy protocol and unhealthy draining by default
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
+
+  - it: should keep target group attributes without proxy_protocol_v2 when proxy protocol is disabled
+    set:
+      proxyProtocolV2: false
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
+
+  - it: should omit the unhealthy draining keys when connection termination is enabled
+    set:
+      targetGroup:
+        unhealthyConnectionTermination: true
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true
+
+  - it: should enable deletion protection and cross-zone by default
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true,load_balancing.cross_zone.enabled=true
+
+  - it: should emit only deletion protection when cross-zone is disabled
+    set:
+      crossZone: false
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true
+
+  - it: should omit the attributes annotation when deletion protection and cross-zone are both disabled
+    set:
+      deletionProtection: false
+      crossZone: false
+    asserts:
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+
+  - it: should not render any health check annotations (TCP on traffic port)
+    asserts:
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol"]
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-healthcheck-port"]
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-healthcheck-path"]
+
+  - it: should select the envoy proxy pods for the cluster-wide Gateway
+    asserts:
+      - equal:
+          path: spec.selector["app.kubernetes.io/managed-by"]
+          value: envoy-gateway
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-name"]
+          value: envoy-gateway
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-namespace"]
+          value: envoy-gateway
+
+  - it: should respect a custom gateway name and namespace in the selector
+    set:
+      gatewayName: my-gateway
+      gatewayNamespace: my-namespace
+    asserts:
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-name"]
+          value: my-gateway
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-namespace"]
+          value: my-namespace
+
+  - it: should forward 80/443 to the envoy listener ports
+    asserts:
+      - equal:
+          path: spec.ports
+          value:
+            - name: http
+              port: 80
+              targetPort: 10080
+              protocol: TCP
+            - name: https
+              port: 443
+              targetPort: 10443
+              protocol: TCP
+      - equal:
+          path: spec.type
+          value: LoadBalancer
+      - equal:
+          path: spec.loadBalancerClass
+          value: service.k8s.aws/nlb
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Cluster
+
+  - it: should omit the tags annotation when no tags are set
+    asserts:
+      - notExists:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags"]
+
+  - it: should render tags as a sorted comma-separated list
+    set:
+      tags:
+        owner: infra-eng
+        env: dev
+        managedBy: argocd
+    asserts:
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags"]
+          value: env=dev,managedBy=argocd,owner=infra-eng
+
+  - it: should render the internal Service with hardened attributes and keep the legacy type
+    set:
+      baseDomain: test-cluster.dev.czi.team
+      internal:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: Service
+        documentIndex: 1
+      - equal:
+          path: metadata.name
+          value: nlb-envoy-internal
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-scheme"]
+          value: internal
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-nlb-target-type"]
+          value: ip
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-type"]
+          value: nlb-ip
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true,load_balancing.cross_zone.enabled=true
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
+          value: access-gw-internal.test-cluster.dev.czi.team
+        documentIndex: 1
+
+  - it: should render additional internal NLBs with their own hostnames and hardened attributes
+    set:
+      additionalInternalNLBs:
+        - name: loki
+          hostname: loki.test-cluster.dev.czi.team
+    asserts:
+      - hasDocuments:
+          count: 2
+      - equal:
+          path: metadata.name
+          value: nlb-envoy-loki-internal
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/hostname"]
+          value: loki.test-cluster.dev.czi.team
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-attributes"]
+          value: deletion_protection.enabled=true,load_balancing.cross_zone.enabled=true
+        documentIndex: 1
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-target-group-attributes"]
+          value: preserve_client_ip.enabled=true,proxy_protocol_v2.enabled=true,target_health_state.unhealthy.connection_termination.enabled=false,target_health_state.unhealthy.draining_interval_seconds=300
+        documentIndex: 1
+      - equal:
+          path: spec.selector["gateway.envoyproxy.io/owning-gateway-name"]
+          value: envoy-gateway
+        documentIndex: 1

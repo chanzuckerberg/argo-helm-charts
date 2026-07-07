@@ -4,13 +4,38 @@
   "title": "envoy-gateway-resources",
   "type": "object",
   "properties": {
+    "accessLog": {
+      "type": "object",
+      "properties": {
+        "omitSuccessful": {
+          "type": "boolean"
+        }
+      }
+    },
     "alternateNames": {
       "type": "array"
     },
-    "baseDomain": {
+    "autoscaling": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "maxReplicas": {
+          "type": "integer"
+        },
+        "minReplicas": {
+          "type": "integer"
+        },
+        "targetCPUUtilizationPercentage": {
+          "type": "integer"
+        }
+      }
+    },
+    "awsRegion": {
       "type": "string"
     },
-    "clusterName": {
+    "baseDomain": {
       "type": "string"
     },
     "envoyService": {
@@ -38,6 +63,55 @@
         }
       }
     },
+    "listenerSets": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "from": {
+          "type": "string"
+        },
+        "namespaceSelector": {
+          "type": "object"
+        }
+      }
+    },
+    "proxyProtocol": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "optional": {
+          "type": "boolean"
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "memory": {
+              "type": "string"
+            }
+          }
+        },
+        "requests": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "serviceAccount": {
       "type": "object",
       "properties": {
@@ -46,6 +120,17 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "tlsPassthrough": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "hostnames": {
+          "type": "array"
         }
       }
     }

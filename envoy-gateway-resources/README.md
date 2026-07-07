@@ -10,15 +10,40 @@
 
 | Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
 | ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessLog](#accessLog )           | No      | object | No         | -          | -                 |
 | - [alternateNames](#alternateNames ) | No      | array  | No         | -          | -                 |
+| - [autoscaling](#autoscaling )       | No      | object | No         | -          | -                 |
+| - [awsRegion](#awsRegion )           | No      | string | No         | -          | -                 |
 | - [baseDomain](#baseDomain )         | No      | string | No         | -          | -                 |
-| - [clusterName](#clusterName )       | No      | string | No         | -          | -                 |
 | - [envoyService](#envoyService )     | No      | object | No         | -          | -                 |
 | - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
 | - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
+| - [listenerSets](#listenerSets )     | No      | object | No         | -          | -                 |
+| - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                 |
+| - [resources](#resources )           | No      | object | No         | -          | -                 |
 | - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
+| - [tlsPassthrough](#tlsPassthrough ) | No      | object | No         | -          | -                 |
 
-## <a name="alternateNames"></a>1. Property `envoy-gateway-resources > alternateNames`
+## <a name="accessLog"></a>1. Property `envoy-gateway-resources > accessLog`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                       | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [omitSuccessful](#accessLog_omitSuccessful ) | No      | boolean | No         | -          | -                 |
+
+### <a name="accessLog_omitSuccessful"></a>1.1. Property `envoy-gateway-resources > accessLog > omitSuccessful`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+## <a name="alternateNames"></a>2. Property `envoy-gateway-resources > alternateNames`
 
 |              |         |
 | ------------ | ------- |
@@ -33,21 +58,64 @@
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-## <a name="baseDomain"></a>2. Property `envoy-gateway-resources > baseDomain`
+## <a name="autoscaling"></a>3. Property `envoy-gateway-resources > autoscaling`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#autoscaling_enabled )                                               | No      | boolean | No         | -          | -                 |
+| - [maxReplicas](#autoscaling_maxReplicas )                                       | No      | integer | No         | -          | -                 |
+| - [minReplicas](#autoscaling_minReplicas )                                       | No      | integer | No         | -          | -                 |
+| - [targetCPUUtilizationPercentage](#autoscaling_targetCPUUtilizationPercentage ) | No      | integer | No         | -          | -                 |
+
+### <a name="autoscaling_enabled"></a>3.1. Property `envoy-gateway-resources > autoscaling > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="autoscaling_maxReplicas"></a>3.2. Property `envoy-gateway-resources > autoscaling > maxReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+### <a name="autoscaling_minReplicas"></a>3.3. Property `envoy-gateway-resources > autoscaling > minReplicas`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+### <a name="autoscaling_targetCPUUtilizationPercentage"></a>3.4. Property `envoy-gateway-resources > autoscaling > targetCPUUtilizationPercentage`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+## <a name="awsRegion"></a>4. Property `envoy-gateway-resources > awsRegion`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="clusterName"></a>3. Property `envoy-gateway-resources > clusterName`
+## <a name="baseDomain"></a>5. Property `envoy-gateway-resources > baseDomain`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="envoyService"></a>4. Property `envoy-gateway-resources > envoyService`
+## <a name="envoyService"></a>6. Property `envoy-gateway-resources > envoyService`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -59,21 +127,21 @@
 | ----------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [type](#envoyService_type ) | No      | string | No         | -          | -                 |
 
-### <a name="envoyService_type"></a>4.1. Property `envoy-gateway-resources > envoyService > type`
+### <a name="envoyService_type"></a>6.1. Property `envoy-gateway-resources > envoyService > type`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="gatewayName"></a>5. Property `envoy-gateway-resources > gatewayName`
+## <a name="gatewayName"></a>7. Property `envoy-gateway-resources > gatewayName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="geoip"></a>6. Property `envoy-gateway-resources > geoip`
+## <a name="geoip"></a>8. Property `envoy-gateway-resources > geoip`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -86,7 +154,7 @@
 | - [blockedCountries](#geoip_blockedCountries ) | No      | array of string | No         | -          | -                 |
 | - [enabled](#geoip_enabled )                   | No      | boolean         | No         | -          | -                 |
 
-### <a name="geoip_blockedCountries"></a>6.1. Property `envoy-gateway-resources > geoip > blockedCountries`
+### <a name="geoip_blockedCountries"></a>8.1. Property `envoy-gateway-resources > geoip > blockedCountries`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -105,21 +173,143 @@
 | ------------------------------------------------------- | ----------- |
 | [blockedCountries items](#geoip_blockedCountries_items) | -           |
 
-#### <a name="geoip_blockedCountries_items"></a>6.1.1. envoy-gateway-resources > geoip > blockedCountries > blockedCountries items
+#### <a name="geoip_blockedCountries_items"></a>8.1.1. envoy-gateway-resources > geoip > blockedCountries > blockedCountries items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="geoip_enabled"></a>6.2. Property `envoy-gateway-resources > geoip > enabled`
+### <a name="geoip_enabled"></a>8.2. Property `envoy-gateway-resources > geoip > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="serviceAccount"></a>7. Property `envoy-gateway-resources > serviceAccount`
+## <a name="listenerSets"></a>9. Property `envoy-gateway-resources > listenerSets`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#listenerSets_enabled )                     | No      | boolean | No         | -          | -                 |
+| - [from](#listenerSets_from )                           | No      | string  | No         | -          | -                 |
+| - [namespaceSelector](#listenerSets_namespaceSelector ) | No      | object  | No         | -          | -                 |
+
+### <a name="listenerSets_enabled"></a>9.1. Property `envoy-gateway-resources > listenerSets > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="listenerSets_from"></a>9.2. Property `envoy-gateway-resources > listenerSets > from`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="listenerSets_namespaceSelector"></a>9.3. Property `envoy-gateway-resources > listenerSets > namespaceSelector`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+## <a name="proxyProtocol"></a>10. Property `envoy-gateway-resources > proxyProtocol`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                               | Pattern | Type    | Deprecated | Definition | Title/Description |
+| -------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#proxyProtocol_enabled )   | No      | boolean | No         | -          | -                 |
+| - [optional](#proxyProtocol_optional ) | No      | boolean | No         | -          | -                 |
+
+### <a name="proxyProtocol_enabled"></a>10.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="proxyProtocol_optional"></a>10.2. Property `envoy-gateway-resources > proxyProtocol > optional`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+## <a name="resources"></a>11. Property `envoy-gateway-resources > resources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [limits](#resources_limits )     | No      | object | No         | -          | -                 |
+| - [requests](#resources_requests ) | No      | object | No         | -          | -                 |
+
+### <a name="resources_limits"></a>11.1. Property `envoy-gateway-resources > resources > limits`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [memory](#resources_limits_memory ) | No      | string | No         | -          | -                 |
+
+#### <a name="resources_limits_memory"></a>11.1.1. Property `envoy-gateway-resources > resources > limits > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="resources_requests"></a>11.2. Property `envoy-gateway-resources > resources > requests`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [cpu](#resources_requests_cpu )       | No      | string | No         | -          | -                 |
+| - [memory](#resources_requests_memory ) | No      | string | No         | -          | -                 |
+
+#### <a name="resources_requests_cpu"></a>11.2.1. Property `envoy-gateway-resources > resources > requests > cpu`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="resources_requests_memory"></a>11.2.2. Property `envoy-gateway-resources > resources > requests > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="serviceAccount"></a>12. Property `envoy-gateway-resources > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -132,7 +322,7 @@
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | -                 |
 | - [name](#serviceAccount_name )               | No      | string | No         | -          | -                 |
 
-### <a name="serviceAccount_annotations"></a>7.1. Property `envoy-gateway-resources > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>12.1. Property `envoy-gateway-resources > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -140,11 +330,46 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-### <a name="serviceAccount_name"></a>7.2. Property `envoy-gateway-resources > serviceAccount > name`
+### <a name="serviceAccount_name"></a>12.2. Property `envoy-gateway-resources > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+## <a name="tlsPassthrough"></a>13. Property `envoy-gateway-resources > tlsPassthrough`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                  | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ----------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#tlsPassthrough_enabled )     | No      | boolean | No         | -          | -                 |
+| - [hostnames](#tlsPassthrough_hostnames ) | No      | array   | No         | -          | -                 |
+
+### <a name="tlsPassthrough_enabled"></a>13.1. Property `envoy-gateway-resources > tlsPassthrough > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="tlsPassthrough_hostnames"></a>13.2. Property `envoy-gateway-resources > tlsPassthrough > hostnames`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
 ----------------------------------------------------------------------------------------------------------------------------
