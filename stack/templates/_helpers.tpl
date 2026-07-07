@@ -32,7 +32,7 @@ port:
 {{- end -}}
 
 {{- define "service.backend.name" -}}
-{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
+{{- if .Values.gateway.oidcProtected -}}
 {{- include "oidcProxy.name" . }}
 {{- else }}
 {{- include "service.fullname" . }}
@@ -40,7 +40,7 @@ port:
 {{- end -}}
 
 {{- define "service.backend.port" -}}
-{{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
+{{- if .Values.gateway.oidcProtected -}}
 {{- include "oidcProxy.port" . }}
 {{- else }}
 {{- .Values.service.port | int }}
@@ -254,12 +254,24 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{ .Values.ingress.host }}
 {{- end -}}
 
-{{/*
-Validate that gateway and ingress are not both enabled
-*/}}
-{{- define "validate.gatewayIngressMutualExclusion" -}}
+{{- define "validate.gatewayIngressCoexistence" -}}
 {{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
-  {{- fail "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress." -}}
+  {{- $owner := .Values.gateway.dnsOwner | default "" -}}
+  {{- if not (or (eq $owner "ingress") (eq $owner "gateway")) -}}
+    {{- fail (printf "gateway.dnsOwner must be \"ingress\" or \"gateway\" when ingress and gateway are both enabled (got %q). Coexistence renders both routing modes and external-dns publishes only the dnsOwner side. Flip it to \"gateway\" to move DNS to the Envoy gateway NLB." $owner) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "gateway.coexistDnsAnnotations" -}}
+{{- if and .Values.gateway.enabled .Values.ingress.enabled (eq (.Values.gateway.dnsOwner | default "ingress") "ingress") -}}
+external-dns.alpha.kubernetes.io/exclude: "true"
+{{- end -}}
+{{- end -}}
+
+{{- define "ingress.coexistDnsAnnotations" -}}
+{{- if and .Values.gateway.enabled .Values.ingress.enabled (eq (.Values.gateway.dnsOwner | default "ingress") "gateway") -}}
+external-dns.alpha.kubernetes.io/exclude: "true"
 {{- end -}}
 {{- end -}}
 

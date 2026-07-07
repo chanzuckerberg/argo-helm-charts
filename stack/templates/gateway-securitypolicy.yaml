@@ -32,7 +32,7 @@
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- include "validate.gatewayIngressMutualExclusion" . -}}
+{{- include "validate.gatewayIngressCoexistence" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 {{- include "validate.gatewaySecurityExclusive" . -}}
 

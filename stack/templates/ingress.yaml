@@ -31,7 +31,7 @@
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- include "validate.gatewayIngressMutualExclusion" . -}}
+{{- include "validate.gatewayIngressCoexistence" . -}}
 
 {{- if .Values.ingress.enabled -}}
 ---
@@ -43,11 +43,12 @@ metadata:
     {{- include "service.labels" . | nindent 4 }}
     {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
   annotations:
-    {{- with (mergeOverwrite 
+    {{- with (mergeOverwrite
                 (dict)
                 ($certManagerAnnotations)
-                (.Values.annotations) 
+                (.Values.annotations)
                 (.Values.ingress.annotations)
+                (fromYaml (include "ingress.coexistDnsAnnotations" . | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}

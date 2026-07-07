@@ -32,7 +32,7 @@
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- include "validate.gatewayIngressMutualExclusion" . -}}
+{{- include "validate.gatewayIngressCoexistence" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
 {{- if and .Values.gateway.enabled .Values.gateway.oidcProtected (not .Values.gateway.tlsPassthrough.enabled) -}}
@@ -52,6 +52,7 @@ metadata:
                 (dict)
                 (.Values.annotations)
                 (.Values.gateway.annotations)
+                (fromYaml (include "gateway.coexistDnsAnnotations" . | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -93,6 +94,7 @@ metadata:
                 (dict)
                 (.Values.annotations)
                 (.Values.gateway.annotations)
+                (fromYaml (include "gateway.coexistDnsAnnotations" . | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -160,6 +162,7 @@ metadata:
                 (dict)
                 ($service.Values.annotations)
                 ($service.Values.gateway.annotations)
+                (fromYaml (include "gateway.coexistDnsAnnotations" $service | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}

@@ -1,0 +1,215 @@
+suite: test ingress/gateway coexistence and the dnsOwner DNS flip
+templates:
+  - ingress.yaml
+  - httproute.yaml
+  - listenerset.yaml
+
+tests:
+  - it: pre phase renders only the Ingress with external-dns included
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "false"
+      - template: httproute.yaml
+        hasDocuments:
+          count: 0
+
+  - it: coexist phase renders both with the HTTPRoute excluded from DNS
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "false"
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+
+  - it: coexist phase excludes per-rule HTTPRoutes from DNS too
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            rules:
+              - host: extra.example.com
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 2
+      - template: httproute.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+
+  - it: cutover phase flips DNS ownership to the gateway
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            dnsOwner: gateway
+    asserts:
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+      - template: httproute.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: cleanup phase renders only the HTTPRoute with no exclude annotation
+    set:
+      services:
+        web:
+          gateway:
+            enabled: true
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: one-step swap stays unchanged when only the gateway is explicitly enabled
+    set:
+      global:
+        ingress:
+          enabled: true
+      services:
+        web:
+          gateway:
+            enabled: true
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 0
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: coexist phase excludes a vanity ListenerSet from DNS until the flip
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            vanity:
+              enabled: true
+              hostname: vanity.example.com
+    asserts:
+      - template: listenerset.yaml
+        hasDocuments:
+          count: 1
+      - template: listenerset.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+
+  - it: cutover phase lifts the exclude from the vanity ListenerSet
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            dnsOwner: gateway
+            vanity:
+              enabled: true
+              hostname: vanity.example.com
+    asserts:
+      - template: listenerset.yaml
+        hasDocuments:
+          count: 1
+      - template: listenerset.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: vanity ListenerSet has no exclude when the gateway runs alone
+    set:
+      services:
+        web:
+          gateway:
+            enabled: true
+            vanity:
+              enabled: true
+              hostname: vanity.example.com
+    asserts:
+      - template: listenerset.yaml
+        hasDocuments:
+          count: 1
+      - template: listenerset.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: coexisting legacy oidc-proxy Ingress does not leak the proxy backend into the HTTPRoute
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+            oidcProtected: true
+          gateway:
+            enabled: true
+    asserts:
+      - template: ingress.yaml
+        matchRegex:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          pattern: oidc-proxy$
+      - template: httproute.yaml
+        notMatchRegex:
+          path: spec.rules[0].backendRefs[0].name
+          pattern: oidc-proxy$
+
+  - it: user annotations cannot re-include an excluded HTTPRoute
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            annotations:
+              external-dns.alpha.kubernetes.io/exclude: "false"
+    asserts:
+      - template: httproute.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
