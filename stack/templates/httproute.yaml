@@ -7,10 +7,10 @@
 
   {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
   {{- if hasKey $serviceValues "gateway" -}}
-    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" (dict "gateway" ($serviceValues.gateway | default dict))) -}}
     {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
       {{- $_ := set $values.gateway "enabled" true -}}
-      {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
+      {{- if not (or (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) (hasKey $serviceValues.gateway "dnsOwner")) -}}
         {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
       {{- end -}}
     {{- end -}}
@@ -25,14 +25,14 @@
 
   {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
   {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
-    {{- if not (and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled")) -}}
+    {{- if not (and (hasKey $serviceValues "gateway") (or (hasKey $serviceValues.gateway "enabled") (hasKey $serviceValues.gateway "dnsOwner"))) -}}
       {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
     {{- end -}}
   {{- end -}}
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- include "validate.gatewayIngressMutualExclusion" . -}}
+{{- include "validate.gatewayIngressCoexistence" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
 {{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) (not .Values.gateway.tlsPassthrough.enabled) -}}
@@ -51,6 +51,7 @@ metadata:
                 (dict)
                 (.Values.annotations)
                 (.Values.gateway.annotations)
+                (fromYaml (include "gateway.coexistDnsAnnotations" (dict "root" . "host" .Values.gateway.host) | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -129,6 +130,7 @@ metadata:
                 (dict)
                 ($service.Values.annotations)
                 ($service.Values.gateway.annotations)
+                (fromYaml (include "gateway.coexistDnsAnnotations" (dict "root" $service "host" $rule.host) | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}

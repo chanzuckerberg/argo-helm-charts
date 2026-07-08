@@ -254,12 +254,58 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{ .Values.ingress.host }}
 {{- end -}}
 
-{{/*
-Validate that gateway and ingress are not both enabled
-*/}}
-{{- define "validate.gatewayIngressMutualExclusion" -}}
+{{- define "ingress.servedHosts" -}}
+{{- $v := .Values -}}
+{{- $hosts := list $v.ingress.host -}}
+{{- range $v.ingress.rules -}}
+  {{- $hosts = append $hosts (.host | default $v.ingress.host) -}}
+{{- end -}}
+{{- toJson ($hosts | uniq) -}}
+{{- end -}}
+
+{{- define "validate.gatewayIngressCoexistence" -}}
 {{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
-  {{- fail "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress." -}}
+  {{- $v := .Values -}}
+  {{- $owner := $v.gateway.dnsOwner | default "ingress" -}}
+  {{- if not (or (eq $owner "ingress") (eq $owner "gateway")) -}}
+    {{- fail (printf "gateway.dnsOwner must be \"ingress\" or \"gateway\" when ingress and gateway are both enabled (got %q). Coexistence renders both routing modes and external-dns publishes only the dnsOwner side. Flip it to \"gateway\" to move DNS to the Envoy gateway NLB." $owner) -}}
+  {{- end -}}
+  {{- if and $v.gateway.oidcProtected (not $v.ingress.oidcProtected) -}}
+    {{- fail "gateway.oidcProtected requires ingress.oidcProtected during coexistence: the still-serving nginx Ingress would expose the app without authentication. Set ingress.oidcProtected: true or disable the ingress." -}}
+  {{- end -}}
+  {{- if eq $owner "gateway" -}}
+    {{- if $v.gateway.tlsPassthrough.enabled -}}
+      {{- fail "gateway.dnsOwner: gateway cannot be combined with gateway.tlsPassthrough.enabled during coexistence: a TLSRoute is not an external-dns source, so excluding the Ingress would delete the host's DNS record." -}}
+    {{- end -}}
+    {{- $gwHosts := list $v.gateway.host -}}
+    {{- range $v.gateway.rules -}}
+      {{- $gwHosts = append $gwHosts .host -}}
+    {{- end -}}
+    {{- $missing := list -}}
+    {{- range (fromJsonArray (include "ingress.servedHosts" $)) -}}
+      {{- if not (has . $gwHosts) -}}
+        {{- $missing = append $missing . -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if gt (len $missing) 0 -}}
+      {{- fail (printf "gateway.dnsOwner: gateway would strip DNS for ingress hosts the gateway does not serve: %s. Add matching gateway.rules entries (or drop the ingress rules) before flipping." (join ", " $missing)) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "gateway.coexistDnsAnnotations" -}}
+{{- $v := .root.Values -}}
+{{- if and $v.gateway.enabled $v.ingress.enabled (eq ($v.gateway.dnsOwner | default "ingress") "ingress") -}}
+{{- if has .host (fromJsonArray (include "ingress.servedHosts" .root)) -}}
+external-dns.alpha.kubernetes.io/exclude: "true"
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "ingress.coexistDnsAnnotations" -}}
+{{- if and .Values.gateway.enabled .Values.ingress.enabled (eq (.Values.gateway.dnsOwner | default "ingress") "gateway") -}}
+external-dns.alpha.kubernetes.io/exclude: "true"
 {{- end -}}
 {{- end -}}
 
@@ -501,14 +547,10 @@ Check if gateway config keys are provided (auto-enable detection)
 Returns: "true" if any gateway.* keys exist (excluding just "enabled")
 */}}
 {{- define "gateway.hasConfigKeys" -}}
-{{- $hasKeys := false -}}
 {{- if .Values.gateway -}}
-  {{- $gatewayKeys := keys (omit .Values.gateway "enabled") -}}
-  {{- if gt (len $gatewayKeys) 0 -}}
-    {{- $hasKeys = true -}}
-  {{- end -}}
+  {{- $gatewayKeys := keys (omit .Values.gateway "enabled" "dnsOwner") -}}
+  {{- if gt (len $gatewayKeys) 0 -}}true{{- end -}}
 {{- end -}}
-{{- $hasKeys -}}
 {{- end -}}
 
 {{/*
@@ -714,7 +756,7 @@ Expects a dict with keys: global, service
 {{- $global := .global -}}
 {{- $service := .service -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"2..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[23]..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -756,7 +798,7 @@ Expects a dict with keys: global, service
 {{- $global := .global -}}
 {{- $service := .service -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status!~\"2..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[45]..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)

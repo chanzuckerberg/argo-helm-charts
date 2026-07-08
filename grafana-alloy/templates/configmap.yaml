@@ -17,7 +17,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-alloy-config
+  name: {{ .Values.alloy.alloy.configMap.name }}
   labels:
     {{- include "grafana-alloy.labels" . | nindent 4 }}
 data:

@@ -21,7 +21,7 @@ tests:
       - isKind:
           of: ConfigMap
 
-  - it: should have the correct name
+  - it: should default the name to grafana-alloy-config
     set:
       enabled: true
       clusterName: test-cluster
@@ -29,6 +29,19 @@ tests:
       - equal:
           path: metadata.name
           value: grafana-alloy-config
+
+  - it: should follow alloy.alloy.configMap.name so multiple releases can share a namespace
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloy:
+        alloy:
+          configMap:
+            name: grafana-alloy-otlp-config
+    asserts:
+      - equal:
+          path: metadata.name
+          value: grafana-alloy-otlp-config
 
   - it: should contain config.alloy key in data
     set:
