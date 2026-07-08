@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.43.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.42.0...stack-v2.43.0) (2026-07-08)
+
+
+### Features
+
+* ingress/gateway coexistence with a gateway.dnsOwner DNS flip ([#500](https://github.com/chanzuckerberg/argo-helm-charts/issues/500)) ([3a61ee9](https://github.com/chanzuckerberg/argo-helm-charts/commit/3a61ee9511314b43dc7f13ffa0f83d10b90eb81c))
+
+
+### Bug Fixes
+
+* **stack:** count 3xx as success in service dashboard rate panels ([#472](https://github.com/chanzuckerberg/argo-helm-charts/issues/472)) ([16427e2](https://github.com/chanzuckerberg/argo-helm-charts/commit/16427e255056ab62fd1042d1b85701c4b44a104e))
+
 ## [2.42.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.41.0...stack-v2.42.0) (2026-07-06)
 
 

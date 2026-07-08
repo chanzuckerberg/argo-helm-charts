@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.10.0...grafana-alloy-v0.10.1) (2026-07-08)
+
+
+### Bug Fixes
+
+* **grafana-alloy:** derive ConfigMap name from configMap.name value ([#501](https://github.com/chanzuckerberg/argo-helm-charts/issues/501)) ([7b9771b](https://github.com/chanzuckerberg/argo-helm-charts/commit/7b9771b3657e07dda579926f845ace00ba3a2d02))
+
 ## [0.10.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.9.0...grafana-alloy-v0.10.0) (2026-06-03)
 
 
