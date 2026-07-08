@@ -291,10 +291,10 @@ tests:
         service1:
           gateway:
             enabled: true
-            host: gateway.example.com
+            host: app.example.com
           ingress:
             enabled: true
-            host: ingress.example.com
+            host: app.example.com
     asserts:
       - template: ingress.yaml
         hasDocuments:
@@ -306,3 +306,27 @@ tests:
         equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
           value: "true"
+
+  - it: should flip DNS ownership to the gateway when dnsOwner is set at the global level
+    templates:
+      - ingress.yaml
+      - httproute.yaml
+    set:
+      global:
+        gateway:
+          enabled: true
+          host: api.example.com
+          dnsOwner: gateway
+        ingress:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+      - template: httproute.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]

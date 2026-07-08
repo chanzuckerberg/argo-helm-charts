@@ -179,6 +179,7 @@ metadata:
               ($certManagerAnnotations)
               (.Values.annotations)
               (.Values.oidcProxy.annotations)
+              (fromYaml (include "ingress.coexistDnsAnnotations" . | default "{}"))
       ) -}}
     {{ toYaml . | nindent 4 }}
   {{- end }}

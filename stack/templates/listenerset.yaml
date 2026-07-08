@@ -7,7 +7,7 @@
 
   {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
   {{- if hasKey $serviceValues "gateway" -}}
-    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" (dict "gateway" ($serviceValues.gateway | default dict))) -}}
     {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
       {{- $_ := set $values.gateway "enabled" true -}}
       {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
@@ -25,7 +25,7 @@
 
   {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
   {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
-    {{- if not (and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled")) -}}
+    {{- if not (and (hasKey $serviceValues "gateway") (or (hasKey $serviceValues.gateway "enabled") (hasKey $serviceValues.gateway "dnsOwner"))) -}}
       {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
     {{- end -}}
   {{- end -}}
@@ -43,9 +43,6 @@ metadata:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.gateway.vanity.clusterIssuer | quote }}
-    {{- with (fromYaml (include "gateway.coexistDnsAnnotations" . | default "{}")) }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
 spec:
   parentRef:
     group: gateway.networking.k8s.io
@@ -77,9 +74,6 @@ metadata:
     {{- include "service.labels" $service | nindent 4 }}
   annotations:
     cert-manager.io/cluster-issuer: {{ $rule.vanity.clusterIssuer | default $service.Values.gateway.vanity.clusterIssuer | quote }}
-    {{- with (fromYaml (include "gateway.coexistDnsAnnotations" $service | default "{}")) }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
 spec:
   parentRef:
     group: gateway.networking.k8s.io

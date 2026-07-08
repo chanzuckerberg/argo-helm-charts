@@ -3,6 +3,9 @@ templates:
   - ingress.yaml
   - httproute.yaml
   - listenerset.yaml
+  - gateway-oidc.yaml
+  - gateway-securitypolicy.yaml
+  - gateway-backendtrafficpolicy.yaml
 
 tests:
   - it: pre phase renders only the Ingress with external-dns included
@@ -47,12 +50,14 @@ tests:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
           value: "true"
 
-  - it: coexist phase excludes per-rule HTTPRoutes from DNS too
+  - it: coexist phase excludes a per-rule HTTPRoute whose host the ingress also serves
     set:
       services:
         web:
           ingress:
             enabled: true
+            rules:
+              - host: extra.example.com
           gateway:
             enabled: true
             rules:
@@ -66,6 +71,25 @@ tests:
         equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
           value: "true"
+
+  - it: coexist phase keeps publishing a gateway-only host the ingress never served
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            rules:
+              - host: gateway-only.example.com
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 2
+      - template: httproute.yaml
+        documentIndex: 1
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
 
   - it: cutover phase flips DNS ownership to the gateway
     set:
@@ -84,6 +108,38 @@ tests:
       - template: httproute.yaml
         notExists:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: cutover fails when the ingress serves a host the gateway does not
+    template: ingress.yaml
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+            rules:
+              - host: ingress-only.example.com
+          gateway:
+            enabled: true
+            dnsOwner: gateway
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.dnsOwner: gateway would strip DNS for ingress hosts the gateway does not serve: ingress-only.example.com. Add matching gateway.rules entries (or drop the ingress rules) before flipping."
+
+  - it: cutover fails for a TLS-passthrough service
+    template: ingress.yaml
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            dnsOwner: gateway
+            tlsPassthrough:
+              enabled: true
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.dnsOwner: gateway cannot be combined with gateway.tlsPassthrough.enabled during coexistence: a TLSRoute is not an external-dns source, so excluding the Ingress would delete the host's DNS record."
 
   - it: cleanup phase renders only the HTTPRoute with no exclude annotation
     set:
@@ -122,7 +178,67 @@ tests:
         notExists:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
 
-  - it: coexist phase excludes a vanity ListenerSet from DNS until the flip
+  - it: a service-level dnsOwner alone neither enables the gateway nor touches the ingress
+    set:
+      services:
+        web:
+          gateway:
+            dnsOwner: ingress
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 0
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "false"
+
+  - it: dnsOwner marks coexistence intent for an auto-enabled gateway
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            dnsOwner: gateway
+            timeouts:
+              request: "120s"
+    asserts:
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: dnsOwner left behind after cleanup is inert
+    set:
+      global:
+        gateway:
+          dnsOwner: gateway
+      services:
+        web:
+          gateway:
+            enabled: true
+    asserts:
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: coexisting vanity ListenerSets carry no external-dns annotations
     set:
       services:
         web:
@@ -138,11 +254,39 @@ tests:
         hasDocuments:
           count: 1
       - template: listenerset.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+
+  - it: coexist phase excludes the OIDC main and public HTTPRoutes from DNS
+    set:
+      global:
+        oidcProxyGateway:
+          skipAuth:
+            - path: /healthz
+              method: GET
+      services:
+        web:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+            oidcProtected: true
+    asserts:
+      - template: gateway-oidc.yaml
+        hasDocuments:
+          count: 2
+      - template: gateway-oidc.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+      - template: gateway-oidc.yaml
+        documentIndex: 1
         equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
           value: "true"
 
-  - it: cutover phase lifts the exclude from the vanity ListenerSet
+  - it: cutover lifts the exclude from the OIDC HTTPRoutes
     set:
       services:
         web:
@@ -151,33 +295,35 @@ tests:
           gateway:
             enabled: true
             dnsOwner: gateway
-            vanity:
-              enabled: true
-              hostname: vanity.example.com
+            oidcProtected: true
     asserts:
-      - template: listenerset.yaml
+      - template: gateway-oidc.yaml
         hasDocuments:
           count: 1
-      - template: listenerset.yaml
+      - template: gateway-oidc.yaml
         notExists:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
 
-  - it: vanity ListenerSet has no exclude when the gateway runs alone
+  - it: security and backend-traffic policies render during coexistence
     set:
       services:
         web:
+          ingress:
+            enabled: true
           gateway:
             enabled: true
-            vanity:
+            basicAuth:
               enabled: true
-              hostname: vanity.example.com
+              secretName: web-htpasswd
+            sessionAffinity:
+              enabled: true
     asserts:
-      - template: listenerset.yaml
+      - template: gateway-securitypolicy.yaml
         hasDocuments:
           count: 1
-      - template: listenerset.yaml
-        notExists:
-          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+      - template: gateway-backendtrafficpolicy.yaml
+        hasDocuments:
+          count: 1
 
   - it: legacy ingress.oidcProtected keeps the gateway path routed through the oauth2-proxy
     set:
@@ -210,6 +356,23 @@ tests:
               external-dns.alpha.kubernetes.io/exclude: "false"
     asserts:
       - template: httproute.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+
+  - it: user ingress annotations cannot re-include the Ingress at cutover
+    set:
+      services:
+        web:
+          ingress:
+            enabled: true
+            annotations:
+              external-dns.alpha.kubernetes.io/exclude: "false"
+          gateway:
+            enabled: true
+            dnsOwner: gateway
+    asserts:
+      - template: ingress.yaml
         equal:
           path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
           value: "true"

@@ -254,18 +254,49 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{ .Values.ingress.host }}
 {{- end -}}
 
+{{- define "ingress.servedHosts" -}}
+{{- $v := .Values -}}
+{{- $hosts := list $v.ingress.host -}}
+{{- range $v.ingress.rules -}}
+  {{- $hosts = append $hosts (.host | default $v.ingress.host) -}}
+{{- end -}}
+{{- toJson $hosts -}}
+{{- end -}}
+
 {{- define "validate.gatewayIngressCoexistence" -}}
 {{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
-  {{- $owner := .Values.gateway.dnsOwner | default "" -}}
+  {{- $v := .Values -}}
+  {{- $owner := $v.gateway.dnsOwner | default "ingress" -}}
   {{- if not (or (eq $owner "ingress") (eq $owner "gateway")) -}}
     {{- fail (printf "gateway.dnsOwner must be \"ingress\" or \"gateway\" when ingress and gateway are both enabled (got %q). Coexistence renders both routing modes and external-dns publishes only the dnsOwner side. Flip it to \"gateway\" to move DNS to the Envoy gateway NLB." $owner) -}}
+  {{- end -}}
+  {{- if eq $owner "gateway" -}}
+    {{- if $v.gateway.tlsPassthrough.enabled -}}
+      {{- fail "gateway.dnsOwner: gateway cannot be combined with gateway.tlsPassthrough.enabled during coexistence: a TLSRoute is not an external-dns source, so excluding the Ingress would delete the host's DNS record." -}}
+    {{- end -}}
+    {{- $gwHosts := list $v.gateway.host -}}
+    {{- range $v.gateway.rules -}}
+      {{- $gwHosts = append $gwHosts .host -}}
+    {{- end -}}
+    {{- $missing := list -}}
+    {{- range (fromJsonArray (include "ingress.servedHosts" $)) -}}
+      {{- if not (has . $gwHosts) -}}
+        {{- $missing = append $missing . -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if gt (len $missing) 0 -}}
+      {{- fail (printf "gateway.dnsOwner: gateway would strip DNS for ingress hosts the gateway does not serve: %s. Add matching gateway.rules entries (or drop the ingress rules) before flipping." (join ", " $missing)) -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "gateway.coexistDnsAnnotations" -}}
-{{- if and .Values.gateway.enabled .Values.ingress.enabled (eq (.Values.gateway.dnsOwner | default "ingress") "ingress") -}}
+{{- $v := .root.Values -}}
+{{- if and $v.gateway.enabled $v.ingress.enabled (eq ($v.gateway.dnsOwner | default "ingress") "ingress") -}}
+{{- if has .host (fromJsonArray (include "ingress.servedHosts" .root)) -}}
 external-dns.alpha.kubernetes.io/exclude: "true"
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -513,14 +544,10 @@ Check if gateway config keys are provided (auto-enable detection)
 Returns: "true" if any gateway.* keys exist (excluding just "enabled")
 */}}
 {{- define "gateway.hasConfigKeys" -}}
-{{- $hasKeys := false -}}
 {{- if .Values.gateway -}}
-  {{- $gatewayKeys := keys (omit .Values.gateway "enabled") -}}
-  {{- if gt (len $gatewayKeys) 0 -}}
-    {{- $hasKeys = true -}}
-  {{- end -}}
+  {{- $gatewayKeys := keys (omit .Values.gateway "enabled" "dnsOwner") -}}
+  {{- if gt (len $gatewayKeys) 0 -}}true{{- end -}}
 {{- end -}}
-{{- $hasKeys -}}
 {{- end -}}
 
 {{/*
