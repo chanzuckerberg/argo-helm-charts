@@ -325,7 +325,7 @@
               }
             },
             "dnsOwner": {
-              "description": "Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The other side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving",
+              "description": "Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence",
               "type": "string",
               "enum": [
                 "ingress",
