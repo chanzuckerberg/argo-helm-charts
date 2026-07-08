@@ -10,7 +10,7 @@
     {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" (dict "gateway" ($serviceValues.gateway | default dict))) -}}
     {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
       {{- $_ := set $values.gateway "enabled" true -}}
-      {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) -}}
+      {{- if not (or (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) (hasKey $serviceValues.gateway "dnsOwner")) -}}
         {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
       {{- end -}}
     {{- end -}}
@@ -32,6 +32,7 @@
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
+{{- include "validate.gatewayIngressCoexistence" . -}}
 {{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) .Values.gateway.vanity.enabled -}}
 {{- $hostname := .Values.gateway.vanity.hostname | default .Values.gateway.host -}}
 ---

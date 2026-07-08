@@ -260,7 +260,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- range $v.ingress.rules -}}
   {{- $hosts = append $hosts (.host | default $v.ingress.host) -}}
 {{- end -}}
-{{- toJson $hosts -}}
+{{- toJson ($hosts | uniq) -}}
 {{- end -}}
 
 {{- define "validate.gatewayIngressCoexistence" -}}
@@ -269,6 +269,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
   {{- $owner := $v.gateway.dnsOwner | default "ingress" -}}
   {{- if not (or (eq $owner "ingress") (eq $owner "gateway")) -}}
     {{- fail (printf "gateway.dnsOwner must be \"ingress\" or \"gateway\" when ingress and gateway are both enabled (got %q). Coexistence renders both routing modes and external-dns publishes only the dnsOwner side. Flip it to \"gateway\" to move DNS to the Envoy gateway NLB." $owner) -}}
+  {{- end -}}
+  {{- if and $v.gateway.oidcProtected (not $v.ingress.oidcProtected) -}}
+    {{- fail "gateway.oidcProtected requires ingress.oidcProtected during coexistence: the still-serving nginx Ingress would expose the app without authentication. Set ingress.oidcProtected: true or disable the ingress." -}}
   {{- end -}}
   {{- if eq $owner "gateway" -}}
     {{- if $v.gateway.tlsPassthrough.enabled -}}
