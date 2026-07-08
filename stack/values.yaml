@@ -215,6 +215,7 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   gateway: # @schema description: Gateway API HTTPRoute configuration
     enabled: false # @schema description: Enable Gateway API HTTPRoute (alternative to Ingress)
+    dnsOwner: ingress # @schema enum: [ingress, gateway]; description: Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence
     gatewayName: envoy-gateway # @schema description: Name of the Gateway resource to attach to
     gatewayNamespace: envoy-gateway # @schema description: Namespace of the Gateway resource
     sectionName: "" # @schema description: Optional section name (listener name) on the Gateway

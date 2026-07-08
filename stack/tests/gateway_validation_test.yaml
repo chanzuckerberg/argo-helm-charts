@@ -106,8 +106,10 @@ tests:
           path: spec.oidc.provider.issuer
           value: "https://czi.okta.com"
 
-  - it: should fail when both gateway and ingress are enabled at global level
-    template: ingress.yaml
+  - it: should coexist when both gateway and ingress are enabled at global level (dnsOwner defaults to ingress)
+    templates:
+      - ingress.yaml
+      - httproute.yaml
     set:
       global:
         gateway:
@@ -119,8 +121,36 @@ tests:
       services:
         service1: {}
     asserts:
-      - failedTemplate:
-          errorMessage: "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress."
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "false"
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+
+  - it: should fail when both are enabled and dnsOwner is invalid
+    template: ingress.yaml
+    set:
+      global:
+        gateway:
+          enabled: true
+          host: api.example.com
+          dnsOwner: nginx
+        ingress:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate: {}
 
   - it: should auto-disable ingress when service enables gateway (global ingress enabled)
     templates:
@@ -247,8 +277,10 @@ tests:
       - failedTemplate:
           errorMessage: "gateway.oidcProtected and gateway.basicAuth.enabled cannot both be true on the same service. Pick one auth method."
 
-  - it: should fail when service explicitly enables both gateway and ingress
-    template: ingress.yaml
+  - it: should coexist when service explicitly enables both gateway and ingress
+    templates:
+      - ingress.yaml
+      - httproute.yaml
     set:
       global:
         gateway:
@@ -259,10 +291,42 @@ tests:
         service1:
           gateway:
             enabled: true
-            host: gateway.example.com
+            host: app.example.com
           ingress:
             enabled: true
-            host: ingress.example.com
+            host: app.example.com
     asserts:
-      - failedTemplate:
-          errorMessage: "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress."
+      - template: ingress.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        hasDocuments:
+          count: 1
+      - template: httproute.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+
+  - it: should flip DNS ownership to the gateway when dnsOwner is set at the global level
+    templates:
+      - ingress.yaml
+      - httproute.yaml
+    set:
+      global:
+        gateway:
+          enabled: true
+          host: api.example.com
+          dnsOwner: gateway
+        ingress:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - template: ingress.yaml
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+      - template: httproute.yaml
+        notExists:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
