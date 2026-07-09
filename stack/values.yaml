@@ -107,6 +107,8 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   progressDeadlineSeconds: 600 # @schema description: the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
+  strategy: {} # @schema description: Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate
+
   resources: # @schema description: Resource requests and limits for the primary container
     limits: # @schema description: Resource limits
       cpu: "1" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit

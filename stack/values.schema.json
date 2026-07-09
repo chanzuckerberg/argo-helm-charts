@@ -1379,6 +1379,10 @@
             }
           }
         },
+        "strategy": {
+          "description": "Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate",
+          "type": "object"
+        },
         "tolerations": {
           "description": "Tolerations for the pod",
           "type": "array"

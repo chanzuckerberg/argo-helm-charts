@@ -27,6 +27,10 @@ spec:
   {{- end }}
   progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
   revisionHistoryLimit: 3
+  {{- with .Values.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "service.selectorLabels" . | nindent 6 }}
