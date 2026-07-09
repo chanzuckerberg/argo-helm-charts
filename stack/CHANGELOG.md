@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.43.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.1...stack-v2.43.2) (2026-07-09)
+
+
+### Bug Fixes
+
+* **stack:** oidc-proxy envFrom and skipAuth render errors, vanity OIDC route attachment ([#506](https://github.com/chanzuckerberg/argo-helm-charts/issues/506)) ([ad8cb63](https://github.com/chanzuckerberg/argo-helm-charts/commit/ad8cb6329475b2816f32fbb200860cf516052591))
+
 ## [2.43.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.0...stack-v2.43.1) (2026-07-09)
 
 
