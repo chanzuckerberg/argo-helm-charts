@@ -102,6 +102,7 @@ must respect the following conditions
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                 |
 | - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                        |
 | - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                             |
+| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate                                             |
 | - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                 |
 | - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                 |
 | - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                            |
@@ -4022,7 +4023,17 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>2.1.45. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_strategy"></a>2.1.45. Property `stack > cronJobs > ^.*$ > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate
+
+#### <a name="cronJobs_pattern1_tolerations"></a>2.1.46. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -4039,7 +4050,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.46. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.47. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -4056,7 +4067,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.47. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.48. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -4073,7 +4084,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>2.1.48. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>2.1.49. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -4146,6 +4157,7 @@ Must be one of:
 | - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                 |
 | - [sidecars](#global_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                        |
 | - [startupProbe](#global_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                             |
+| - [strategy](#global_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate                                             |
 | - [tolerations](#global_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                 |
 | - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                 |
 | - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                            |
@@ -8066,7 +8078,17 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_tolerations"></a>3.45. Property `stack > global > tolerations`
+### <a name="global_strategy"></a>3.45. Property `stack > global > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate
+
+### <a name="global_tolerations"></a>3.46. Property `stack > global > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -8083,7 +8105,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_topologySpreadConstraints"></a>3.46. Property `stack > global > topologySpreadConstraints`
+### <a name="global_topologySpreadConstraints"></a>3.47. Property `stack > global > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -8100,7 +8122,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumeMounts"></a>3.47. Property `stack > global > volumeMounts`
+### <a name="global_volumeMounts"></a>3.48. Property `stack > global > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -8117,7 +8139,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumes"></a>3.48. Property `stack > global > volumes`
+### <a name="global_volumes"></a>3.49. Property `stack > global > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -8208,6 +8230,7 @@ must respect the following conditions
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                 |
 | - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                        |
 | - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                             |
+| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate                                             |
 | - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                 |
 | - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                 |
 | - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                            |
@@ -12128,7 +12151,17 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>4.1.45. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_strategy"></a>4.1.45. Property `stack > cronJobs > ^.*$ > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate
+
+#### <a name="cronJobs_pattern1_tolerations"></a>4.1.46. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -12145,7 +12178,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.46. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.47. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -12162,7 +12195,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.47. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.48. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -12179,7 +12212,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>4.1.48. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>4.1.49. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -12734,6 +12767,7 @@ must respect the following conditions
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                 |
 | - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                        |
 | - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                             |
+| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate                                             |
 | - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                 |
 | - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                 |
 | - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                            |
@@ -16654,7 +16688,17 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_tolerations"></a>7.1.45. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_strategy"></a>7.1.45. Property `stack > cronJobs > ^.*$ > strategy`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate
+
+#### <a name="cronJobs_pattern1_tolerations"></a>7.1.46. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -16671,7 +16715,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.46. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.47. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -16688,7 +16732,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.47. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.48. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -16705,7 +16749,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>7.1.48. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>7.1.49. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
