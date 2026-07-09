@@ -361,3 +361,42 @@ tests:
           value:
             - name: SHARED_VAR
               value: "sidecar value"
+
+  - it: omits strategy by default
+    set:
+      services:
+        service1: {}
+    asserts:
+      - notExists:
+          path: spec.strategy
+
+  - it: renders strategy from global values
+    set:
+      global:
+        strategy:
+          type: Recreate
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.strategy.type
+          value: Recreate
+
+  - it: renders per-service strategy override
+    set:
+      global:
+        strategy:
+          type: Recreate
+      services:
+        service1:
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxUnavailable: 0
+    asserts:
+      - equal:
+          path: spec.strategy.type
+          value: RollingUpdate
+      - equal:
+          path: spec.strategy.rollingUpdate.maxUnavailable
+          value: 0
