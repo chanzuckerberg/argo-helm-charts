@@ -163,6 +163,38 @@ tests:
           path: spec.rules[1].matches[0].path.value
           value: /metrics
 
+  - it: should add default root path when no root path exists
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          paths:
+            - path: /backend
+              pathType: Prefix
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /
+      - documentIndex: 0
+        equal:
+          path: spec.rules[1].matches[0].path.value
+          value: /backend
+
   - it: should not add default root path when root path already exists
     set:
       global:
