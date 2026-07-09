@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.43.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.0...stack-v2.43.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* **stack:** fix YAML parse error in gateway-oidc when paths lack a root entry ([#504](https://github.com/chanzuckerberg/argo-helm-charts/issues/504)) ([8bc92e5](https://github.com/chanzuckerberg/argo-helm-charts/commit/8bc92e5e31c0efc484007fe5626683f5c27e3043))
+
 ## [2.43.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.42.0...stack-v2.43.0) (2026-07-08)
 
 
