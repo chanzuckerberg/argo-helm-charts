@@ -58,11 +58,17 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
+    {{- if .Values.gateway.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ include "service.vanityListenerSetName" . }}
+    {{- else }}
     - name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
       {{- if .Values.gateway.sectionName }}
       sectionName: {{ .Values.gateway.sectionName }}
       {{- end }}
+    {{- end }}
   hostnames:
     - {{ .Values.gateway.host }}
   {{- range $i, $rule := .Values.gateway.rules }}
@@ -100,11 +106,17 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
+    {{- if .Values.gateway.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ include "service.vanityListenerSetName" . }}
+    {{- else }}
     - name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
       {{- if .Values.gateway.sectionName }}
       sectionName: {{ .Values.gateway.sectionName }}
       {{- end }}
+    {{- end }}
   hostnames:
     - {{ .Values.gateway.host }}
   rules:

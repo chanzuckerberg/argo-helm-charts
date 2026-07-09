@@ -235,19 +235,13 @@ app.kubernetes.io/name: {{ include "oidcProxy.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{ define "oidcProxy.envFromArgusSecrets" -}}
-{{- include "service.configuration" . -}}
-{{- end -}}
-
-{{ define "oidcProxy.additionalSecrets" -}}
-{{ if gt (len .Values.oidcProxy.additionalSecrets) 0 }}
-{{ toYaml .Values.oidcProxy.additionalSecrets }}
-{{- end -}}
-{{- end -}}
-
 {{- define "oidcProxy.envFrom" -}}
-{{- include "oidcProxy.envFromArgusSecrets" . }}
-{{- include "oidcProxy.additionalSecrets" . }}
+{{- $envFrom := list -}}
+{{- with fromYaml (include "service.configuration" .) -}}
+{{- $envFrom = concat $envFrom (default (list) .envFrom) -}}
+{{- end -}}
+{{- $envFrom = concat $envFrom (default (list) .Values.oidcProxy.additionalSecrets) -}}
+{{- toYaml $envFrom -}}
 {{- end -}}
 
 {{- define "oidcProxy.authDomain" -}}
