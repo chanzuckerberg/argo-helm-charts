@@ -223,6 +223,99 @@ tests:
           path: spec.rules[0].matches[0].path.value
           value: /
 
+  - it: should attach the primary HTTPRoute to the vanity ListenerSet when vanity is enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          vanity:
+            enabled: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0]
+          value:
+            group: gateway.networking.k8s.io
+            kind: ListenerSet
+            name: release-name-stack-service1-vanity
+
+  - it: should attach the public skipAuth HTTPRoute to the vanity ListenerSet when vanity is enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          vanity:
+            enabled: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+              method: GET
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-public
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0]
+          value:
+            group: gateway.networking.k8s.io
+            kind: ListenerSet
+            name: release-name-stack-service1-vanity
+      - documentIndex: 1
+        equal:
+          path: spec.parentRefs[0]
+          value:
+            group: gateway.networking.k8s.io
+            kind: ListenerSet
+            name: release-name-stack-service1-vanity
+
+  - it: should attach to the shared gateway when vanity is disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          sectionName: https
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0]
+          value:
+            name: envoy-gateway
+            namespace: envoy-gateway
+            sectionName: https
+
   - it: should include service labels on the HTTPRoutes
     set:
       global:
