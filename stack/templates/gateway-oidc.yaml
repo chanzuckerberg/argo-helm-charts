@@ -115,8 +115,7 @@ spec:
         {{- $hasRootPath = true -}}
       {{- end -}}
     {{- end -}}
-    {{- if not $hasRootPath -}}
-    {{- /* Add a default / route to ensure /oauth2/callback works */ -}}
+    {{- if not $hasRootPath }}
     - matches:
         - path:
             type: PathPrefix
@@ -190,8 +189,7 @@ spec:
         {{- $hasRootPath = true -}}
       {{- end -}}
     {{- end -}}
-    {{- if not $hasRootPath -}}
-    {{- /* Add a default / route to ensure /oauth2/callback works */ -}}
+    {{- if not $hasRootPath }}
     - matches:
         - path:
             type: PathPrefix
