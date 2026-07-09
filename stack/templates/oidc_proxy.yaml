@@ -96,13 +96,13 @@ spec:
             {{- end -}}
 
             {{- range .Values.oidcProxy.skipAuth }}
-            {{ if contains "*" .method }}
-            # for backwards compatibility, could also just be provided using extraArgs
+            {{- $method := default "*" .method }}
+            {{- if contains "*" $method }}
             - --skip-auth-route={{ .path }}
-            {{- else -}}
-            - --skip-auth-route={{ .method }}={{ .path }}
-            {{- end -}}
-            {{- end -}}
+            {{- else }}
+            - --skip-auth-route={{ $method }}={{ .path }}
+            {{- end }}
+            {{- end }}
 
             {{ $cookiePrefix := list }}
             {{ range .Values.oidcProxy.extraArgs }}
@@ -124,8 +124,10 @@ spec:
             {{- toYaml .Values.oidcProxy.extraArgs | nindent 12}}
             {{- end }}
           {{- include "image" .Values.oidcProxy  | nindent 10 }}
-          {{- if gt (len (fromYamlArray (include "oidcProxy.envFrom" .))) 0 }}
-          {{- include "oidcProxy.envFrom" . | nindent 10 }}
+          {{- $envFrom := fromYamlArray (include "oidcProxy.envFrom" .) }}
+          {{- if $envFrom }}
+          envFrom:
+            {{- toYaml $envFrom | nindent 12 }}
           {{- else }}
           envFrom: []
           {{- end }}
