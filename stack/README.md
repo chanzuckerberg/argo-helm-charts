@@ -1512,12 +1512,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                      |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                      |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                     |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                           |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                            |
+| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect) |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>2.1.17.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -1720,6 +1721,19 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_refresh"></a>2.1.17.5. Property `stack > cronJobs > ^.*$ > grafanaDashboard > refresh`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)
+
+| Restrictions                      |                                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^([0-9]+(ms\|s\|m\|h\|d))?$``` [Test](https://regex101.com/?regex=%5E%28%5B0-9%5D%2B%28ms%7Cs%7Cm%7Ch%7Cd%29%29%3F%24) |
 
 #### <a name="cronJobs_pattern1_image"></a>2.1.18. Property `stack > cronJobs > ^.*$ > image`
 
@@ -5556,12 +5570,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
-| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#global_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
-| - [enabled](#global_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [extraPanels](#global_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
-| - [instanceSelector](#global_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                      |
+| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#global_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                      |
+| - [enabled](#global_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                     |
+| - [extraPanels](#global_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                           |
+| - [instanceSelector](#global_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                            |
+| - [refresh](#global_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect) |
 
 #### <a name="global_grafanaDashboard_datasources"></a>3.17.1. Property `stack > global > grafanaDashboard > datasources`
 
@@ -5764,6 +5779,19 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+#### <a name="global_grafanaDashboard_refresh"></a>3.17.5. Property `stack > global > grafanaDashboard > refresh`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)
+
+| Restrictions                      |                                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^([0-9]+(ms\|s\|m\|h\|d))?$``` [Test](https://regex101.com/?regex=%5E%28%5B0-9%5D%2B%28ms%7Cs%7Cm%7Ch%7Cd%29%29%3F%24) |
 
 ### <a name="global_image"></a>3.18. Property `stack > global > image`
 
@@ -9618,12 +9646,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                      |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                      |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                     |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                           |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                            |
+| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect) |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>4.1.17.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -9826,6 +9855,19 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_refresh"></a>4.1.17.5. Property `stack > cronJobs > ^.*$ > grafanaDashboard > refresh`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)
+
+| Restrictions                      |                                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^([0-9]+(ms\|s\|m\|h\|d))?$``` [Test](https://regex101.com/?regex=%5E%28%5B0-9%5D%2B%28ms%7Cs%7Cm%7Ch%7Cd%29%29%3F%24) |
 
 #### <a name="cronJobs_pattern1_image"></a>4.1.18. Property `stack > cronJobs > ^.*$ > image`
 
@@ -14144,12 +14186,13 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                  |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------ |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                  |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service) |
-| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                       |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                        |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                      |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                      |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                     |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                           |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                            |
+| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect) |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>7.1.17.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -14352,6 +14395,19 @@ Must be one of:
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+##### <a name="cronJobs_pattern1_grafanaDashboard_refresh"></a>7.1.17.5. Property `stack > cronJobs > ^.*$ > grafanaDashboard > refresh`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)
+
+| Restrictions                      |                                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^([0-9]+(ms\|s\|m\|h\|d))?$``` [Test](https://regex101.com/?regex=%5E%28%5B0-9%5D%2B%28ms%7Cs%7Cm%7Ch%7Cd%29%29%3F%24) |
 
 #### <a name="cronJobs_pattern1_image"></a>7.1.18. Property `stack > cronJobs > ^.*$ > image`
 
