@@ -137,12 +137,12 @@ tests:
           value: 30m
         documentIndex: 3
 
-  - it: should default dashboard refresh to 1m
+  - it: should default dashboard refresh to 30m
     documentIndex: 3
     asserts:
       - matchRegex:
           path: spec.json
-          pattern: '"refresh":\s*"1m"'
+          pattern: '"refresh":\s*"30m"'
 
   - it: should honor a refresh override
     set:
