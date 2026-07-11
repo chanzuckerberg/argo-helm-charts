@@ -194,3 +194,14 @@ tests:
         matchRegex:
           path: spec.uid
           pattern: "^[a-f0-9]{40}$"
+
+  - it: should disable auto-refresh via empty string
+    set:
+      global:
+        grafanaDashboard:
+          refresh: ""
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: '"refresh":\s*""'
