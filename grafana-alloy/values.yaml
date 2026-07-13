@@ -197,7 +197,11 @@ alloyConfig:
   # @schema description: Enable pod log collection
   podLogs:
     enabled: true # @schema description: Enable collection of pod logs from all nodes
-  
+
+  apiPodLogs:
+    enabled: false # @schema description: Tail pods in the listed namespaces via the Kubernetes API (loki.source.kubernetes) instead of node log files. For Fargate/API-only pods. Enable only in a deployment-type release, never the daemonset
+    namespaces: [] # @schema description: Namespaces whose pods are tailed via the API
+
   # @schema description: Enable Kubernetes events collection
   events:
     enabled: true # @schema description: Enable collection of Kubernetes events

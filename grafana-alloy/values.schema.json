@@ -274,6 +274,19 @@
     "alloyConfig": {
       "type": "object",
       "properties": {
+        "apiPodLogs": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Tail pods in the listed namespaces via the Kubernetes API (loki.source.kubernetes) instead of node log files. For Fargate/API-only pods. Enable only in a deployment-type release, never the daemonset",
+              "type": "boolean"
+            },
+            "namespaces": {
+              "description": "Namespaces whose pods are tailed via the API",
+              "type": "array"
+            }
+          }
+        },
         "beyla": {
           "description": "Enable Beyla integration for eBPF-based application instrumentation",
           "type": "object",
