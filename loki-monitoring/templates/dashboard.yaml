@@ -6,7 +6,7 @@ metadata:
 spec:
   folderRef: {{.Values.folder.name}}
   allowCrossNamespaceImport: true
-  resyncPeriod: 30s
+  resyncPeriod: 30m
   instanceSelector:
     matchLabels:
       app: {{.Values.grafana.name}}
