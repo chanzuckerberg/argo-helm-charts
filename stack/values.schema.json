@@ -357,7 +357,7 @@
               "type": "array"
             },
             "oidcProtected": {
-              "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)",
+              "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
               "type": "boolean"
             },
             "paths": {
