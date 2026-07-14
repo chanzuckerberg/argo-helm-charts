@@ -152,23 +152,23 @@ tests:
           value: 2h
         documentIndex: 3
 
-  - it: should default dashboard refresh to 30m
-    documentIndex: 3
-    asserts:
-      - matchRegex:
-          path: spec.json
-          pattern: '"refresh":\s*"30m"'
-
-  - it: should honor a refresh override
-    set:
-      global:
-        grafanaDashboard:
-          refresh: 5m
+  - it: should default dashboard refresh to 5m
     documentIndex: 3
     asserts:
       - matchRegex:
           path: spec.json
           pattern: '"refresh":\s*"5m"'
+
+  - it: should honor a refresh override
+    set:
+      global:
+        grafanaDashboard:
+          refresh: 1m
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: '"refresh":\s*"1m"'
 
   - it: should not render when grafanaDashboard is disabled
     set:
