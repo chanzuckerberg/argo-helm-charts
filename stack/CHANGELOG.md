@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.44.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.2...stack-v2.44.0) (2026-07-14)
+
+
+### Features
+
+* **stack:** relax Grafana CR resync and default dashboard refresh [CCIE-6793] ([#508](https://github.com/chanzuckerberg/argo-helm-charts/issues/508)) ([9e544d0](https://github.com/chanzuckerberg/argo-helm-charts/commit/9e544d04dbdab8773ebee149b1987cff9e474fbd))
+
+
+### Misc
+
+* gateway.oidcProtected works with zero extra configuration ([#510](https://github.com/chanzuckerberg/argo-helm-charts/issues/510)) ([3ddfef0](https://github.com/chanzuckerberg/argo-helm-charts/commit/3ddfef0f0950a09a32d1fdea02f479c10234af7c))
+
 ## [2.43.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.1...stack-v2.43.2) (2026-07-09)
 
 

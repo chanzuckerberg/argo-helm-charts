@@ -357,7 +357,7 @@
               "type": "array"
             },
             "oidcProtected": {
-              "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)",
+              "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
               "type": "boolean"
             },
             "paths": {
@@ -610,6 +610,16 @@
                   }
                 }
               }
+            },
+            "refresh": {
+              "description": "Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)",
+              "type": "string",
+              "pattern": "^([0-9]+(ms|s|m|h|d))?$"
+            },
+            "resyncPeriod": {
+              "description": "How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)",
+              "type": "string",
+              "pattern": "^[0-9]+(m|h)$"
             }
           }
         },

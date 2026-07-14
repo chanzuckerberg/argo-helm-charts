@@ -225,7 +225,7 @@ global: # @schema description: Global configuration for the stack - this serves 
         path: / # @schema description: HTTPRoute path
         pathType: Prefix # @schema description: HTTPRoute path type (Exact or Prefix)
     rules: [] # @schema description: List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity
-    oidcProtected: false # @schema description: Enable OIDC protection via Envoy Gateway SecurityPolicy (requires oidcProxyGateway configuration)
+    oidcProtected: false # @schema description: Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway
     vanity: # @schema description: Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
       enabled: false # @schema description: Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
       hostname: "" # @schema description: Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs
@@ -420,6 +420,8 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   grafanaDashboard:
     enabled: true # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
+    refresh: 5m # @schema type: string; pattern: ^([0-9]+(ms|s|m|h|d))?$; description: Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)
+    resyncPeriod: 5m # @schema type: string; pattern: ^[0-9]+(m|h)$; description: How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)
     datasources:
       prometheus:
         uid: "amp" # @schema description: Prometheus datasource UID
