@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.11.0...grafana-v0.11.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* **grafana:** relax GrafanaDatasource and loki-monitoring dashboard resync [CCIE-6793] ([#509](https://github.com/chanzuckerberg/argo-helm-charts/issues/509)) ([cb99a98](https://github.com/chanzuckerberg/argo-helm-charts/commit/cb99a984529d6dd8c2a0daefa6d08c89f9b2a2c5))
+
 ## [0.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.10.0...grafana-v0.11.0) (2026-05-01)
 
 
