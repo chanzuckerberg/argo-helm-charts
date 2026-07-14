@@ -22,8 +22,9 @@ tests:
 
   - it: should have a resync period
     asserts:
-      - isNotEmpty:
+      - equal:
           path: spec.resyncPeriod
+          value: 30m
 
   - it: should have an instance selector
     asserts:

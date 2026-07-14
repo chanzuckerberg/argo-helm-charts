@@ -7,7 +7,7 @@ metadata:
   labels:
     grafana_name: {{ .Values.grafanaName }}
 spec:
-  resyncPeriod: 30s
+  resyncPeriod: 30m
   instanceSelector:
     matchLabels:
       name: {{ .Values.grafanaName }}
@@ -30,7 +30,7 @@ metadata:
   labels:
     grafana_name: {{ .Values.grafanaName }}
 spec:
-  resyncPeriod: 30s
+  resyncPeriod: 30m
   instanceSelector:
     matchLabels:
       name: {{ .Values.grafanaName }}
@@ -51,7 +51,7 @@ metadata:
   labels:
     grafana_name: {{ .Values.grafanaName }}
 spec:
-  resyncPeriod: 30s
+  resyncPeriod: 30m
   instanceSelector:
     matchLabels:
       name: {{ .Values.grafanaName }}
@@ -73,7 +73,7 @@ metadata:
   labels:
     grafana_name: {{ .Values.grafanaName }}
 spec:
-  resyncPeriod: 30s
+  resyncPeriod: 30m
   instanceSelector:
     matchLabels:
       name: {{ .Values.grafanaName }}
