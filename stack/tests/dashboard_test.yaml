@@ -118,6 +118,58 @@ tests:
           value: true
         documentIndex: 3
 
+  - it: should set resyncPeriod to 5m on all resources
+    asserts:
+      - equal:
+          path: spec.resyncPeriod
+          value: 5m
+        documentIndex: 0
+      - equal:
+          path: spec.resyncPeriod
+          value: 5m
+        documentIndex: 1
+      - equal:
+          path: spec.resyncPeriod
+          value: 5m
+        documentIndex: 2
+      - equal:
+          path: spec.resyncPeriod
+          value: 5m
+        documentIndex: 3
+
+  - it: should honor a resyncPeriod override
+    set:
+      global:
+        grafanaDashboard:
+          resyncPeriod: 2h
+    asserts:
+      - equal:
+          path: spec.resyncPeriod
+          value: 2h
+        documentIndex: 0
+      - equal:
+          path: spec.resyncPeriod
+          value: 2h
+        documentIndex: 3
+
+  - it: should default dashboard refresh to 5m
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: '"refresh":\s*"5m"'
+
+  - it: should honor a refresh override
+    set:
+      global:
+        grafanaDashboard:
+          refresh: 1m
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: '"refresh":\s*"1m"'
+
   - it: should not render when grafanaDashboard is disabled
     set:
       global:
@@ -157,3 +209,14 @@ tests:
         matchRegex:
           path: spec.uid
           pattern: "^[a-f0-9]{40}$"
+
+  - it: should disable auto-refresh via empty string
+    set:
+      global:
+        grafanaDashboard:
+          refresh: ""
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: '"refresh":\s*""'

@@ -732,7 +732,7 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
         )
       )
     ))
-    "refresh" "5s"
+    "refresh" $global.Values.global.grafanaDashboard.refresh
     "schemaVersion" 17
     "version" 0
     "links" (list)
