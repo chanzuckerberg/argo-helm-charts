@@ -118,23 +118,23 @@ tests:
           value: true
         documentIndex: 3
 
-  - it: should set resyncPeriod to 30m on all resources
+  - it: should set resyncPeriod to 5m on all resources
     asserts:
       - equal:
           path: spec.resyncPeriod
-          value: 30m
+          value: 5m
         documentIndex: 0
       - equal:
           path: spec.resyncPeriod
-          value: 30m
+          value: 5m
         documentIndex: 1
       - equal:
           path: spec.resyncPeriod
-          value: 30m
+          value: 5m
         documentIndex: 2
       - equal:
           path: spec.resyncPeriod
-          value: 30m
+          value: 5m
         documentIndex: 3
 
   - it: should honor a resyncPeriod override
