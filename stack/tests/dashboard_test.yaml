@@ -137,6 +137,21 @@ tests:
           value: 30m
         documentIndex: 3
 
+  - it: should honor a resyncPeriod override
+    set:
+      global:
+        grafanaDashboard:
+          resyncPeriod: 2h
+    asserts:
+      - equal:
+          path: spec.resyncPeriod
+          value: 2h
+        documentIndex: 0
+      - equal:
+          path: spec.resyncPeriod
+          value: 2h
+        documentIndex: 3
+
   - it: should default dashboard refresh to 30m
     documentIndex: 3
     asserts:

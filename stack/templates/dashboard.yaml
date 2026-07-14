@@ -22,7 +22,7 @@ metadata:
     grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
-  resyncPeriod: 30m
+  resyncPeriod: {{ .Values.grafanaDashboard.resyncPeriod }}
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   title: {{ $rootFolderTitle }}
@@ -36,7 +36,7 @@ metadata:
     grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
-  resyncPeriod: 30m
+  resyncPeriod: {{ .Values.grafanaDashboard.resyncPeriod }}
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderUID: {{ $rootFolderUid }}
@@ -51,7 +51,7 @@ metadata:
     grafana.integreatly.org/preserve-resources-on-deletion: "true"
 spec:
   allowCrossNamespaceImport: true
-  resyncPeriod: 30m
+  resyncPeriod: {{ .Values.grafanaDashboard.resyncPeriod }}
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   parentFolderUID: {{ $appFolderUid }}
@@ -64,7 +64,7 @@ metadata:
   name: {{ include "stack.fullname" . | lower }}-dashboard
 spec:
   allowCrossNamespaceImport: true
-  resyncPeriod: 30m
+  resyncPeriod: {{ .Values.grafanaDashboard.resyncPeriod }}
   instanceSelector:
     {{- toYaml .Values.grafanaDashboard.instanceSelector | nindent 4 }}
   folderUID: {{ $envFolderUid }}

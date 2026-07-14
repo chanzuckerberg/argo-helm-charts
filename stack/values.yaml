@@ -421,6 +421,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   grafanaDashboard:
     enabled: true # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
     refresh: 30m # @schema type: string; pattern: ^([0-9]+(ms|s|m|h|d))?$; description: Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)
+    resyncPeriod: 30m # @schema type: string; pattern: ^[0-9]+(m|h)$; description: How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)
     datasources:
       prometheus:
         uid: "amp" # @schema description: Prometheus datasource UID
