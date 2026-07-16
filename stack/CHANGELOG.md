@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.45.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.44.0...stack-v2.45.0) (2026-07-16)
+
+
+### Features
+
+* **stack:** right-size oidcProxy default resources ([#514](https://github.com/chanzuckerberg/argo-helm-charts/issues/514)) ([9429b84](https://github.com/chanzuckerberg/argo-helm-charts/commit/9429b848a9006bfb9730fc07a18565319c7fa146))
+
 ## [2.44.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.2...stack-v2.44.0) (2026-07-14)
 
 

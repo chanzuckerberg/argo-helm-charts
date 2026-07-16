@@ -389,11 +389,11 @@ global: # @schema description: Global configuration for the stack - this serves 
     #   - --another-flag=2
     resources:
       limits:
-        cpu: "2" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
-        memory: 4Gi # @schema description: Memory limit
+        cpu: 500m # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
+        memory: 256Mi # @schema description: Memory limit
       requests:
-        cpu: 2 # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
-        memory: 4Gi # @schema description: Memory request
+        cpu: 100m # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
+        memory: 64Mi # @schema description: Memory request
 
   oidcProxyGateway: # @schema description: Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
     clientID: "" # @schema description: OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
