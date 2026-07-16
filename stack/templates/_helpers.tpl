@@ -477,14 +477,24 @@ oidc:
   {{- if $.Values.oidcProxyGateway.cookieDomain }}
   cookieDomain: {{ $.Values.oidcProxyGateway.cookieDomain | quote }}
   {{- end }}
-  {{- if or $.Values.oidcProxyGateway.cookieNames.accessToken $.Values.oidcProxyGateway.cookieNames.idToken }}
   cookieNames:
-    {{- if $.Values.oidcProxyGateway.cookieNames.accessToken }}
-    accessToken: {{ $.Values.oidcProxyGateway.cookieNames.accessToken | quote }}
-    {{- end }}
-    {{- if $.Values.oidcProxyGateway.cookieNames.idToken }}
-    idToken: {{ $.Values.oidcProxyGateway.cookieNames.idToken | quote }}
-    {{- end }}
+    accessToken: {{ $.Values.oidcProxyGateway.cookieNames.accessToken | default (printf "AccessToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
+    idToken: {{ $.Values.oidcProxyGateway.cookieNames.idToken | default (printf "IdToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
+  {{- if $.Values.oidcProxyGateway.denyRedirect.enabled }}
+  denyRedirect:
+    headers:
+      - name: Sec-Fetch-Mode
+        type: RegularExpression
+        value: "cors|no-cors|same-origin"
+      - name: Sec-Fetch-Dest
+        type: RegularExpression
+        value: "empty|script|style|image|font"
+      - name: X-Requested-With
+        type: Exact
+        value: XMLHttpRequest
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.csrfTokenTTL }}
+  csrfTokenTTL: {{ $.Values.oidcProxyGateway.csrfTokenTTL | quote }}
   {{- end }}
   {{- if $.Values.oidcProxyGateway.scopes }}
   scopes:

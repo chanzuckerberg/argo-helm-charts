@@ -303,3 +303,131 @@ tests:
       - documentIndex: 1
         exists:
           path: spec.cors
+
+  - it: should render denyRedirect by default and deterministic cookie names
+    release:
+      name: release-name
+      namespace: argus-karpenter-lens-rdev
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        app: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].name
+          value: Sec-Fetch-Mode
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].type
+          value: RegularExpression
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].value
+          value: cors|no-cors|same-origin
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[2].name
+          value: X-Requested-With
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-argus-karpenter-lens-rdev-app
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.idToken
+          value: IdToken-argus-karpenter-lens-rdev-app
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc.csrfTokenTTL
+
+  - it: should omit denyRedirect when disabled and let cookieNames overrides win
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          denyRedirect:
+            enabled: false
+          csrfTokenTTL: 5m
+          cookieNames:
+            accessToken: MyAccess
+            idToken: MyId
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc.denyRedirect
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.csrfTokenTTL
+          value: 5m
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: MyAccess
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.idToken
+          value: MyId
+
+  - it: should render identical cookie names on per-rule policies and none on public
+    release:
+      name: release-name
+      namespace: testns
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          rules:
+            - host: alt.example.com
+          cors:
+            enabled: true
+            allowOrigins:
+              - https://api.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+      services:
+        app: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-testns-app
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-testns-app
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].name
+          value: Sec-Fetch-Mode
+      - documentIndex: 2
+        notExists:
+          path: spec.oidc

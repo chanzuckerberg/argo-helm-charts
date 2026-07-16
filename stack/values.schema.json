@@ -963,7 +963,7 @@
               "type": "string"
             },
             "cookieNames": {
-              "description": "Customize cookie names",
+              "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-\u003cnamespace\u003e-\u003cservice\u003e / IdToken-\u003cnamespace\u003e-\u003cservice\u003e. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
               "type": "object",
               "properties": {
                 "accessToken": {
@@ -973,6 +973,20 @@
                 "idToken": {
                   "description": "Custom name for ID token cookie",
                   "type": "string"
+                }
+              }
+            },
+            "csrfTokenTTL": {
+              "description": "Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)",
+              "type": "string"
+            },
+            "denyRedirect": {
+              "description": "Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Disable per-service only if a client depends on receiving the 302",
+                  "type": "boolean"
                 }
               }
             },
