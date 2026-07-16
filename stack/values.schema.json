@@ -950,6 +950,21 @@
               "description": "Annotations to add to SecurityPolicy resources",
               "type": "object"
             },
+            "apiRoutes": {
+              "description": "API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "matchType": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
             "clientID": {
               "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
               "type": "string"
@@ -985,7 +1000,7 @@
               "type": "object",
               "properties": {
                 "enabled": {
-                  "description": "Disable per-service only if a client depends on receiving the 302",
+                  "description": "Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.",
                   "type": "boolean"
                 }
               }

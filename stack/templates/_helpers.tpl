@@ -480,9 +480,32 @@ oidc:
   cookieNames:
     accessToken: {{ $.Values.oidcProxyGateway.cookieNames.accessToken | default (printf "AccessToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
     idToken: {{ $.Values.oidcProxyGateway.cookieNames.idToken | default (printf "IdToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
-  {{- if $.Values.oidcProxyGateway.denyRedirect.enabled }}
+  {{- $apiRoutes := $.Values.oidcProxyGateway.apiRoutes | default list }}
+  {{- $denyEnabled := $.Values.oidcProxyGateway.denyRedirect.enabled }}
+  {{- $defaultMatcherCount := 0 }}
+  {{- if $denyEnabled }}{{- $defaultMatcherCount = 3 }}{{- end }}
+  {{- if gt (add (len $apiRoutes) $defaultMatcherCount) 16 }}
+    {{- fail (printf "oidcProxyGateway.apiRoutes: Envoy Gateway caps denyRedirect matchers at 16, got %d apiRoutes plus %d default matchers" (len $apiRoutes) $defaultMatcherCount) }}
+  {{- end }}
+  {{- range $apiRoutes }}
+    {{- $matchType := .matchType | default "Prefix" }}
+    {{- if not (has $matchType (list "Prefix" "Exact" "RegularExpression")) }}
+      {{- fail (printf "oidcProxyGateway.apiRoutes: matchType %q is not one of Prefix, Exact, RegularExpression" $matchType) }}
+    {{- end }}
+    {{- if not .path }}
+      {{- fail "oidcProxyGateway.apiRoutes: path must not be empty" }}
+    {{- end }}
+    {{- if and (ne $matchType "RegularExpression") (not (hasPrefix "/" .path)) }}
+      {{- fail (printf "oidcProxyGateway.apiRoutes: path %q must start with / for %s matching (request paths always do, so it would never match)" .path $matchType) }}
+    {{- end }}
+    {{- if and (eq $matchType "Prefix") (eq .path "/") }}
+      {{- fail "oidcProxyGateway.apiRoutes: Prefix / would 401 every request including browser navigations, making login impossible. For a fully headless API, use matchType RegularExpression deliberately." }}
+    {{- end }}
+  {{- end }}
+  {{- if or $denyEnabled (gt (len $apiRoutes) 0) }}
   denyRedirect:
     headers:
+      {{- if $denyEnabled }}
       - name: Sec-Fetch-Mode
         type: RegularExpression
         value: "cors|no-cors|same-origin"
@@ -492,6 +515,12 @@ oidc:
       - name: X-Requested-With
         type: Exact
         value: XMLHttpRequest
+      {{- end }}
+      {{- range $apiRoutes }}
+      - name: ":path"
+        type: {{ .matchType | default "Prefix" }}
+        value: {{ .path | quote }}
+      {{- end }}
   {{- end }}
   {{- if $.Values.oidcProxyGateway.csrfTokenTTL }}
   csrfTokenTTL: {{ $.Values.oidcProxyGateway.csrfTokenTTL | quote }}
