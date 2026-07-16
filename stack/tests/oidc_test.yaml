@@ -39,6 +39,22 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+  - it: sets right-sized default resources on the proxy container
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
   - it: sets additionalSecrets in envFrom
     set:
       global:
