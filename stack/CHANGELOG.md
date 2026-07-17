@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.46.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.45.0...stack-v2.46.0) (2026-07-17)
+
+
+### Features
+
+* **stack:** gateway OIDC 401 semantics (denyRedirect + apiRoutes), deterministic cookie names ([#513](https://github.com/chanzuckerberg/argo-helm-charts/issues/513)) ([a55f917](https://github.com/chanzuckerberg/argo-helm-charts/commit/a55f9177f2ac609b826cc05df13273ae7e8c7404))
+
 ## [2.45.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.44.0...stack-v2.45.0) (2026-07-16)
 
 
