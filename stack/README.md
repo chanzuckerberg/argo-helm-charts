@@ -2708,17 +2708,22 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
+| Property                                                                      | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType"></a>2.1.27.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path"></a>2.1.27.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > path`
 
@@ -6863,17 +6868,22 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#global_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#global_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
+| Property                                                           | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#global_oidcProxyGateway_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#global_oidcProxyGateway_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
 
 ###### <a name="global_oidcProxyGateway_apiRoutes_items_matchType"></a>3.27.2.1.1. Property `stack > global > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
 
 ###### <a name="global_oidcProxyGateway_apiRoutes_items_path"></a>3.27.2.1.2. Property `stack > global > oidcProxyGateway > apiRoutes > apiRoutes items > path`
 
@@ -11036,17 +11046,22 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
+| Property                                                                      | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType"></a>4.1.27.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path"></a>4.1.27.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > path`
 
@@ -15673,17 +15688,22 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
+| Property                                                                      | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType"></a>7.1.27.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
 
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
 
 ###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path"></a>7.1.27.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > path`
 

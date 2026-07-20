@@ -28,6 +28,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
       services:
@@ -57,7 +58,7 @@ tests:
       - documentIndex: 0
         equal:
           path: spec.oidc.clientSecret.name
-          value: argus-global-oidc
+          value: my-oidc-secret
 
   - it: should create a SecurityPolicy per rule with full OIDC config
     set:
@@ -72,6 +73,7 @@ tests:
             - host: api2.example.com
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
             authorizationEndpoint: https://auth.example.com/authorize
@@ -137,6 +139,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           annotations:
@@ -254,6 +257,7 @@ tests:
               - https://app.example.com
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
       services:
@@ -283,6 +287,7 @@ tests:
               - https://app.example.com
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           skipAuth:
@@ -318,6 +323,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
       services:
@@ -362,6 +368,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           denyRedirect:
@@ -400,6 +407,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           apiRoutes:
@@ -445,6 +453,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           denyRedirect:
@@ -480,6 +489,7 @@ tests:
               - https://api.example.com
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           skipAuth:
@@ -512,6 +522,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           apiRoutes:
@@ -533,6 +544,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           apiRoutes:
@@ -554,6 +566,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           apiRoutes:
@@ -575,6 +588,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           apiRoutes:
@@ -584,7 +598,7 @@ tests:
         service1: {}
     asserts:
       - failedTemplate:
-          errorPattern: "not one of Prefix, Exact, RegularExpression"
+          errorPattern: "must be one of 'Prefix', 'Exact', 'RegularExpression'"
 
   - it: should allow 13 apiRoutes with default matchers and fail on 14
     set:
@@ -597,6 +611,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           apiRoutes:
@@ -632,6 +647,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           apiRoutes:
@@ -666,6 +682,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           denyRedirect:
@@ -706,6 +723,7 @@ tests:
           oidcProtected: true
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           denyRedirect:
@@ -754,6 +772,7 @@ tests:
               - https://api.example.com
         oidcProxyGateway:
           clientID: my-client-id
+          clientSecretName: my-oidc-secret
           provider:
             issuer: https://auth.example.com
           skipAuth:
@@ -776,3 +795,132 @@ tests:
       - documentIndex: 2
         notExists:
           path: spec.oidc
+
+  - it: tolerates a null denyRedirect as disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          denyRedirect: null
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc.denyRedirect
+
+  - it: renders apiRoutes matchers when denyRedirect is null
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          denyRedirect: null
+          apiRoutes:
+            - path: /api
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.oidc.denyRedirect.headers
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].name
+          value: ":path"
+
+  - it: tolerates null cookieNames with deterministic defaults
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          cookieNames: null
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-NAMESPACE-service1
+
+  - it: tolerates a null skipAuth list
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          skipAuth: null
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: fails cleanly when oidcProxyGateway is null
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway: null
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "issuer is required"
+
+  - it: fails cleanly when provider is null
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          provider: null
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "issuer is required"
+
+  - it: fails when clientID is set without clientSecretName
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "invalid_client"

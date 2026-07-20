@@ -957,7 +957,12 @@
                 "type": "object",
                 "properties": {
                   "matchType": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "Prefix",
+                      "Exact",
+                      "RegularExpression"
+                    ]
                   },
                   "path": {
                     "type": "string"
