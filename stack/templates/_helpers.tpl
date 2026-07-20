@@ -540,7 +540,8 @@ oidc:
 {{- if not $jwks }}
   {{- if not $issuer }}{{- fail "gateway.jwt.enabled needs an issuer: set gateway.jwt.issuer, oidcProxyGateway.provider.issuer, or gateway.jwt.remoteJWKSUri" }}{{- end }}
   {{- $base := trimSuffix "/" $issuer }}
-  {{- if contains "/oauth2/" $base }}{{- $jwks = printf "%s/v1/keys" $base }}
+  {{- /* Okta JWKS: a custom auth server issuer already carries an /oauth2/<id> path (keys at <issuer>/v1/keys); a bare org issuer serves them at /oauth2/v1/keys. */ -}}
+  {{- if (urlParse $base).path }}{{- $jwks = printf "%s/v1/keys" $base }}
   {{- else }}{{- $jwks = printf "%s/oauth2/v1/keys" $base }}{{- end }}
 {{- end }}
 jwt:
