@@ -777,7 +777,7 @@ tests:
         notExists:
           path: spec.oidc
 
-  - it: should render a jwt block when gateway.jwt.enabled with providers
+  - it: should render a jwt provider (JWKS derived from issuer) when enabled
     set:
       global:
         ingress:
@@ -787,12 +787,9 @@ tests:
           host: api.example.com
           jwt:
             enabled: true
-            providers:
-              - name: okta
-                issuer: https://czi.okta.com/oauth2/aus123
-                remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
-                audiences:
-                  - my-api-audience
+            issuer: https://czi.okta.com/oauth2/aus123
+            audiences:
+              - my-api-audience
       services:
         service1: {}
     asserts:
@@ -809,11 +806,12 @@ tests:
       - documentIndex: 0
         equal:
           path: spec.jwt.providers[0].name
-          value: okta
+          value: default
       - documentIndex: 0
         equal:
           path: spec.jwt.providers[0].issuer
           value: https://czi.okta.com/oauth2/aus123
+      # JWKS derived as <issuer>/v1/keys
       - documentIndex: 0
         equal:
           path: spec.jwt.providers[0].remoteJWKS.uri
@@ -822,6 +820,28 @@ tests:
         equal:
           path: spec.jwt.providers[0].audiences[0]
           value: my-api-audience
+
+  - it: should use an explicit remoteJWKSUri override
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            issuer: https://czi.okta.com
+            remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+            audiences:
+              - my-api-audience
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].remoteJWKS.uri
+          value: https://czi.okta.com/oauth2/v1/keys
 
   - it: should render both oidc and jwt on one SecurityPolicy when both are enabled
     set:
@@ -834,9 +854,9 @@ tests:
           oidcProtected: true
           jwt:
             enabled: true
-            providers:
-              - name: okta
-                remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
+            issuer: https://czi.okta.com/oauth2/aus123
+            audiences:
+              - my-api-audience
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -856,7 +876,7 @@ tests:
       - documentIndex: 0
         equal:
           path: spec.jwt.providers[0].name
-          value: okta
+          value: default
 
   - it: should not render jwt on a public (skipAuth) SecurityPolicy
     set:
@@ -872,9 +892,9 @@ tests:
             allowOrigins: ["*"]
           jwt:
             enabled: true
-            providers:
-              - name: okta
-                remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
+            issuer: https://czi.okta.com/oauth2/aus123
+            audiences:
+              - my-api-audience
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -898,7 +918,7 @@ tests:
         notExists:
           path: spec.oidc
 
-  - it: should derive remoteJWKS uri from issuer when remoteJWKSUri is omitted
+  - it: should fail when jwt is enabled without issuer or remoteJWKSUri
     set:
       global:
         ingress:
@@ -908,40 +928,15 @@ tests:
           host: api.example.com
           jwt:
             enabled: true
-            providers:
-              - name: okta
-                issuer: https://czi.okta.com/oauth2/aus123
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].remoteJWKS.uri
-          value: https://czi.okta.com/oauth2/aus123/v1/keys
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].issuer
-          value: https://czi.okta.com/oauth2/aus123
-
-  - it: should fail when a provider has neither remoteJWKSUri nor issuer
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          jwt:
-            enabled: true
-            providers:
-              - name: okta
+            audiences:
+              - my-api-audience
       services:
         service1: {}
     asserts:
       - failedTemplate:
-          errorMessage: "gateway.jwt.providers[]: set remoteJWKSUri, or set issuer to derive it (<issuer>/v1/keys)"
+          errorMessage: "gateway.jwt.enabled requires gateway.jwt.issuer (or gateway.jwt.remoteJWKSUri)"
 
-  - it: should fail when gateway.jwt.enabled but providers is empty
+  - it: should fail when jwt is enabled without audiences
     set:
       global:
         ingress:
@@ -951,9 +946,9 @@ tests:
           host: api.example.com
           jwt:
             enabled: true
-            providers: []
+            issuer: https://czi.okta.com/oauth2/aus123
       services:
         service1: {}
     asserts:
       - failedTemplate:
-          errorMessage: "gateway.jwt.enabled is true but gateway.jwt.providers is empty; add at least one provider"
+          errorMessage: "gateway.jwt.enabled requires gateway.jwt.audiences"

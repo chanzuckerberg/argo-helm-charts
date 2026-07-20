@@ -360,13 +360,25 @@
               "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
               "type": "object",
               "properties": {
+                "audiences": {
+                  "description": "Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps",
+                  "type": "array"
+                },
+                "claimToHeaders": {
+                  "description": "Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend",
+                  "type": "array"
+                },
                 "enabled": {
-                  "description": "Enable JWT bearer-token validation. Requires at least one entry in providers",
+                  "description": "Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri",
                   "type": "boolean"
                 },
-                "providers": {
-                  "description": "JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as \u003cissuer\u003e/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)",
-                  "type": "array"
+                "issuer": {
+                  "description": "Expected token issuer (iss claim), also used to derive the JWKS URI as \u003cissuer\u003e/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider",
+                  "type": "string"
+                },
+                "remoteJWKSUri": {
+                  "description": "Explicit JWKS URI, an optional override. Defaults to \u003cissuer\u003e/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider",
+                  "type": "string"
                 }
               }
             },

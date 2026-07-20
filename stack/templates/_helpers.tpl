@@ -535,30 +535,26 @@ oidc:
   {{- end }}
 {{- end }}
 {{- if and (not .public) $g.jwt.enabled }}
-{{- if not $g.jwt.providers }}{{- fail "gateway.jwt.enabled is true but gateway.jwt.providers is empty; add at least one provider" }}{{- end }}
+{{- $jwks := $g.jwt.remoteJWKSUri }}
+{{- if not $jwks }}
+  {{- if $g.jwt.issuer }}{{- $jwks = printf "%s/v1/keys" (trimSuffix "/" $g.jwt.issuer) }}
+  {{- else }}{{- fail "gateway.jwt.enabled requires gateway.jwt.issuer (or gateway.jwt.remoteJWKSUri)" }}{{- end }}
+{{- end }}
+{{- if not $g.jwt.audiences }}{{- fail "gateway.jwt.enabled requires gateway.jwt.audiences" }}{{- end }}
 jwt:
   providers:
-    {{- range $g.jwt.providers }}
-    {{- $jwks := .remoteJWKSUri }}
-    {{- if not $jwks }}
-      {{- if .issuer }}{{- $jwks = printf "%s/v1/keys" (trimSuffix "/" .issuer) }}
-      {{- else }}{{- fail "gateway.jwt.providers[]: set remoteJWKSUri, or set issuer to derive it (<issuer>/v1/keys)" }}{{- end }}
-    {{- end }}
-    - name: {{ required "gateway.jwt.providers[].name is required" .name }}
+    - name: default
       remoteJWKS:
         uri: {{ $jwks | quote }}
-      {{- if .issuer }}
-      issuer: {{ .issuer | quote }}
-      {{- end }}
-      {{- if .audiences }}
       audiences:
-        {{- toYaml .audiences | nindent 8 }}
+        {{- toYaml $g.jwt.audiences | nindent 8 }}
+      {{- if $g.jwt.issuer }}
+      issuer: {{ $g.jwt.issuer | quote }}
       {{- end }}
-      {{- if .claimToHeaders }}
+      {{- if $g.jwt.claimToHeaders }}
       claimToHeaders:
-        {{- toYaml .claimToHeaders | nindent 8 }}
+        {{- toYaml $g.jwt.claimToHeaders | nindent 8 }}
       {{- end }}
-    {{- end }}
 {{- end }}
 {{- if and (not .public) $g.basicAuth.enabled }}
 basicAuth:
