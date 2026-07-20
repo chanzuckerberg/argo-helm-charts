@@ -540,6 +540,8 @@ jwt:
   providers:
     {{- range $g.jwt.providers }}
     - name: {{ required "gateway.jwt.providers[].name is required" .name }}
+      remoteJWKS:
+        uri: {{ required "gateway.jwt.providers[].remoteJWKSUri is required" .remoteJWKSUri | quote }}
       {{- if .issuer }}
       issuer: {{ .issuer | quote }}
       {{- end }}
@@ -547,8 +549,6 @@ jwt:
       audiences:
         {{- toYaml .audiences | nindent 8 }}
       {{- end }}
-      remoteJWKS:
-        uri: {{ required "gateway.jwt.providers[].remoteJWKSUri is required" .remoteJWKSUri | quote }}
       {{- if .claimToHeaders }}
       claimToHeaders:
         {{- toYaml .claimToHeaders | nindent 8 }}
