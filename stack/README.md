@@ -1026,10 +1026,10 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                   |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                        |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim}) |
+| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
+| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>2.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
 
@@ -1047,7 +1047,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim})
+**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -5223,10 +5223,10 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                   |
-| --------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#global_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                        |
-| - [providers](#global_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim}) |
+| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
+| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#global_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
+| - [providers](#global_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
 
 ##### <a name="global_gateway_jwt_enabled"></a>3.16.12.1. Property `stack > global > gateway > jwt > enabled`
 
@@ -5244,7 +5244,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim})
+**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -9438,10 +9438,10 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                   |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                        |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim}) |
+| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
+| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>4.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
 
@@ -9459,7 +9459,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim})
+**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -14117,10 +14117,10 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                   |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                        |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim}) |
+| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
+| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>7.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
 
@@ -14138,7 +14138,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim})
+**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
