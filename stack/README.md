@@ -1026,28 +1026,22 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
+| Property                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [claimToHeaders](#cronJobs_pattern1_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
+| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
-###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>2.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires at least one entry in providers
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers"></a>2.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers`
+###### <a name="cronJobs_pattern1_gateway_jwt_audiences"></a>2.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > audiences`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
+**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -1056,6 +1050,50 @@ Must be one of:
 | **Items unicity**    | False              |
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_gateway_jwt_claimToHeaders"></a>2.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > claimToHeaders`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>2.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+
+###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>2.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider
+
+###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>2.1.16.12.5. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider
 
 ##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>2.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
 
@@ -5223,28 +5261,22 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                      | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
-| --------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#global_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
-| - [providers](#global_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
+| Property                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
+| ------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [audiences](#global_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [claimToHeaders](#global_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
+| - [enabled](#global_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [issuer](#global_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
+| - [remoteJWKSUri](#global_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
-##### <a name="global_gateway_jwt_enabled"></a>3.16.12.1. Property `stack > global > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires at least one entry in providers
-
-##### <a name="global_gateway_jwt_providers"></a>3.16.12.2. Property `stack > global > gateway > jwt > providers`
+##### <a name="global_gateway_jwt_audiences"></a>3.16.12.1. Property `stack > global > gateway > jwt > audiences`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
+**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -5253,6 +5285,50 @@ Must be one of:
 | **Items unicity**    | False              |
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
+
+##### <a name="global_gateway_jwt_claimToHeaders"></a>3.16.12.2. Property `stack > global > gateway > jwt > claimToHeaders`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+##### <a name="global_gateway_jwt_enabled"></a>3.16.12.3. Property `stack > global > gateway > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+
+##### <a name="global_gateway_jwt_issuer"></a>3.16.12.4. Property `stack > global > gateway > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider
+
+##### <a name="global_gateway_jwt_remoteJWKSUri"></a>3.16.12.5. Property `stack > global > gateway > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider
 
 #### <a name="global_gateway_oidcProtected"></a>3.16.13. Property `stack > global > gateway > oidcProtected`
 
@@ -9438,28 +9514,22 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
+| Property                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [claimToHeaders](#cronJobs_pattern1_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
+| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
-###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>4.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires at least one entry in providers
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers"></a>4.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers`
+###### <a name="cronJobs_pattern1_gateway_jwt_audiences"></a>4.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > audiences`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
+**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -9468,6 +9538,50 @@ Must be one of:
 | **Items unicity**    | False              |
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_gateway_jwt_claimToHeaders"></a>4.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > claimToHeaders`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>4.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+
+###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>4.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider
+
+###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>4.1.16.12.5. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider
 
 ##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>4.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
 
@@ -14117,28 +14231,22 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                 | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )     | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires at least one entry in providers                                                                                                                                                                                                                                                          |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers ) | No      | array   | No         | -          | JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend) |
+| Property                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [claimToHeaders](#cronJobs_pattern1_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
+| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
-###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>7.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires at least one entry in providers
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers"></a>7.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers`
+###### <a name="cronJobs_pattern1_gateway_jwt_audiences"></a>7.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > audiences`
 
 |              |         |
 | ------------ | ------- |
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as <issuer>/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)
+**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -14147,6 +14255,50 @@ Must be one of:
 | **Items unicity**    | False              |
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_gateway_jwt_claimToHeaders"></a>7.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > claimToHeaders`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+**Description:** Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>7.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+
+###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>7.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider
+
+###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>7.1.16.12.5. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider
 
 ##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>7.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
 
