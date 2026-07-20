@@ -1028,9 +1028,9 @@ Must be one of:
 
 | Property                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
 | ------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API                                                                                      |
 | - [claimToHeaders](#cronJobs_pattern1_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri                                                                                                                                                                         |
 | - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
 | - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
@@ -1041,7 +1041,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
+**Description:** Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -1075,7 +1075,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+**Description:** Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>2.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
 
@@ -5263,9 +5263,9 @@ Must be one of:
 
 | Property                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
 | ------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [audiences](#global_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [audiences](#global_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API                                                                                      |
 | - [claimToHeaders](#global_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
-| - [enabled](#global_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [enabled](#global_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri                                                                                                                                                                         |
 | - [issuer](#global_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
 | - [remoteJWKSUri](#global_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
@@ -5276,7 +5276,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
+**Description:** Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -5310,7 +5310,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+**Description:** Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri
 
 ##### <a name="global_gateway_jwt_issuer"></a>3.16.12.4. Property `stack > global > gateway > jwt > issuer`
 
@@ -9516,9 +9516,9 @@ Must be one of:
 
 | Property                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
 | ------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API                                                                                      |
 | - [claimToHeaders](#cronJobs_pattern1_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri                                                                                                                                                                         |
 | - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
 | - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
@@ -9529,7 +9529,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
+**Description:** Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -9563,7 +9563,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+**Description:** Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>4.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
 
@@ -14233,9 +14233,9 @@ Must be one of:
 
 | Property                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                            |
 | ------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps                                                                                                                      |
+| - [audiences](#cronJobs_pattern1_gateway_jwt_audiences )           | No      | array   | No         | -          | Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API                                                                                      |
 | - [claimToHeaders](#cronJobs_pattern1_gateway_jwt_claimToHeaders ) | No      | array   | No         | -          | Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend                                                                                                                                     |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri                                                                                                                                                          |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )               | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri                                                                                                                                                                         |
 | - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )                 | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI as <issuer>/v1/keys (the Okta custom-auth-server convention). Set to the shared CZI API authorization server, or override for the Okta org server or a non-Okta provider |
 | - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri )   | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to <issuer>/v1/keys. Set it for the Okta org server (/oauth2/v1/keys) or a non-Okta provider                                                                                               |
 
@@ -14246,7 +14246,7 @@ Must be one of:
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps
+**Description:** Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -14280,7 +14280,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri
+**Description:** Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>7.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
 
