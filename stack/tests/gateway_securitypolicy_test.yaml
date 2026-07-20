@@ -931,22 +931,3 @@ tests:
       - documentIndex: 1
         notExists:
           path: spec.oidc
-
-  - it: should fail when jwt is enabled and no issuer or JWKS can be resolved
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          jwt:
-            enabled: true
-        oidcProxyGateway:
-          provider:
-            issuer: ""
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorMessage: "gateway.jwt.enabled needs an issuer: set gateway.jwt.issuer, oidcProxyGateway.provider.issuer, or gateway.jwt.remoteJWKSUri"

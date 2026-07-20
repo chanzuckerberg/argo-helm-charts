@@ -360,10 +360,6 @@
               "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
               "type": "object",
               "properties": {
-                "claimToHeaders": {
-                  "description": "Optional list of {header, claim} pairs copying validated JWT claims into request headers for the backend",
-                  "type": "array"
-                },
                 "enabled": {
                   "description": "Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case",
                   "type": "boolean"
