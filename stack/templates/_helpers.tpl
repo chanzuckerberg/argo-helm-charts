@@ -535,22 +535,21 @@ oidc:
   {{- end }}
 {{- end }}
 {{- if and (not .public) $g.jwt.enabled }}
+{{- $issuer := $g.jwt.issuer | default $.Values.oidcProxyGateway.provider.issuer }}
 {{- $jwks := $g.jwt.remoteJWKSUri }}
 {{- if not $jwks }}
-  {{- if $g.jwt.issuer }}{{- $jwks = printf "%s/v1/keys" (trimSuffix "/" $g.jwt.issuer) }}
-  {{- else }}{{- fail "gateway.jwt.enabled requires gateway.jwt.issuer (or gateway.jwt.remoteJWKSUri)" }}{{- end }}
+  {{- if not $issuer }}{{- fail "gateway.jwt.enabled needs an issuer: set gateway.jwt.issuer, oidcProxyGateway.provider.issuer, or gateway.jwt.remoteJWKSUri" }}{{- end }}
+  {{- $base := trimSuffix "/" $issuer }}
+  {{- if contains "/oauth2/" $base }}{{- $jwks = printf "%s/v1/keys" $base }}
+  {{- else }}{{- $jwks = printf "%s/oauth2/v1/keys" $base }}{{- end }}
 {{- end }}
 jwt:
   providers:
     - name: default
       remoteJWKS:
         uri: {{ $jwks | quote }}
-      {{- if $g.jwt.issuer }}
-      issuer: {{ $g.jwt.issuer | quote }}
-      {{- end }}
-      {{- if $g.jwt.audiences }}
-      audiences:
-        {{- toYaml $g.jwt.audiences | nindent 8 }}
+      {{- if $issuer }}
+      issuer: {{ $issuer | quote }}
       {{- end }}
       {{- if $g.jwt.claimToHeaders }}
       claimToHeaders:
