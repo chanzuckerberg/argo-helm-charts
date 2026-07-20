@@ -356,6 +356,20 @@
               "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
               "type": "array"
             },
+            "jwt": {
+              "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable JWT bearer-token validation. Requires at least one entry in providers",
+                  "type": "boolean"
+                },
+                "providers": {
+                  "description": "JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim})",
+                  "type": "array"
+                }
+              }
+            },
             "oidcProtected": {
               "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
               "type": "boolean"

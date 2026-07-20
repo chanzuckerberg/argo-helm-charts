@@ -776,3 +776,141 @@ tests:
       - documentIndex: 2
         notExists:
           path: spec.oidc
+
+  - it: should render a jwt block when gateway.jwt.enabled with providers
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                issuer: https://czi.okta.com/oauth2/aus123
+                remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
+                audiences:
+                  - my-api-audience
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: SecurityPolicy
+      # jwt alone (no oidc) → the "-security" suffix
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-security
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].name
+          value: okta
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].issuer
+          value: https://czi.okta.com/oauth2/aus123
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].remoteJWKS.uri
+          value: https://czi.okta.com/oauth2/aus123/v1/keys
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].audiences[0]
+          value: my-api-audience
+
+  - it: should render both oidc and jwt on one SecurityPolicy when both are enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-oidc
+      - documentIndex: 0
+        isNotEmpty:
+          path: spec.oidc
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].name
+          value: okta
+
+  - it: should not render jwt on a public (skipAuth) SecurityPolicy
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          cors:
+            enabled: true
+            allowOrigins: ["*"]
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+      services:
+        service1: {}
+    asserts:
+      # doc 0 is the gated route (oidc + jwt), doc 1 is the public/skipAuth route:
+      # it carries cors but never jwt or oidc
+      - hasDocuments:
+          count: 2
+      - documentIndex: 1
+        isNotEmpty:
+          path: spec.cors
+      - documentIndex: 1
+        notExists:
+          path: spec.jwt
+      - documentIndex: 1
+        notExists:
+          path: spec.oidc
+
+  - it: should fail when gateway.jwt.enabled but providers is empty
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers: []
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.jwt.enabled is true but gateway.jwt.providers is empty; add at least one provider"

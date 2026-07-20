@@ -359,7 +359,7 @@ Returns "true"/"" .
 */}}
 {{- define "gateway.hasSecurityPolicy" -}}
 {{- $g := .Values.gateway -}}
-{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) -}}true{{- end -}}
+{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) $g.jwt.enabled -}}true{{- end -}}
 {{- end -}}
 
 {{/*
@@ -533,6 +533,27 @@ oidc:
   resources:
     {{- toYaml $.Values.oidcProxyGateway.resources | nindent 4 }}
   {{- end }}
+{{- end }}
+{{- if and (not .public) $g.jwt.enabled }}
+{{- if not $g.jwt.providers }}{{- fail "gateway.jwt.enabled is true but gateway.jwt.providers is empty; add at least one provider" }}{{- end }}
+jwt:
+  providers:
+    {{- range $g.jwt.providers }}
+    - name: {{ required "gateway.jwt.providers[].name is required" .name }}
+      {{- if .issuer }}
+      issuer: {{ .issuer | quote }}
+      {{- end }}
+      {{- if .audiences }}
+      audiences:
+        {{- toYaml .audiences | nindent 8 }}
+      {{- end }}
+      remoteJWKS:
+        uri: {{ required "gateway.jwt.providers[].remoteJWKSUri is required" .remoteJWKSUri | quote }}
+      {{- if .claimToHeaders }}
+      claimToHeaders:
+        {{- toYaml .claimToHeaders | nindent 8 }}
+      {{- end }}
+    {{- end }}
 {{- end }}
 {{- if and (not .public) $g.basicAuth.enabled }}
 basicAuth:

@@ -247,6 +247,9 @@ global: # @schema description: Global configuration for the stack - this serves 
     basicAuth: # @schema description: HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
       enabled: false # @schema description: Enable basic auth
       secretName: "" # @schema description: Name of an Opaque Secret with a .htpasswd key
+    jwt: # @schema description: JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
+      enabled: false # @schema description: Enable JWT bearer-token validation. Requires at least one entry in providers
+      providers: [] # @schema description: JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim})
     cors: # @schema description: CORS via a SecurityPolicy
       enabled: false # @schema description: Enable CORS
       allowOrigins: [] # @schema description: Allowed origins (string patterns)
