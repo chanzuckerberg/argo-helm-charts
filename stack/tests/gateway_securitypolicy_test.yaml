@@ -936,7 +936,7 @@ tests:
       - failedTemplate:
           errorMessage: "gateway.jwt.enabled requires gateway.jwt.issuer (or gateway.jwt.remoteJWKSUri)"
 
-  - it: should fail when jwt is enabled without audiences
+  - it: should omit audiences when not set (audiences is optional)
     set:
       global:
         ingress:
@@ -950,5 +950,9 @@ tests:
       services:
         service1: {}
     asserts:
-      - failedTemplate:
-          errorMessage: "gateway.jwt.enabled requires gateway.jwt.audiences"
+      - documentIndex: 0
+        isNotEmpty:
+          path: spec.jwt.providers[0].remoteJWKS.uri
+      - documentIndex: 0
+        notExists:
+          path: spec.jwt.providers[0].audiences

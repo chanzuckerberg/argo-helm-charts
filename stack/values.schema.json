@@ -361,7 +361,7 @@
               "type": "object",
               "properties": {
                 "audiences": {
-                  "description": "Allowed aud claim values, required when enabled. Pins tokens minted for this API and rejects ones issued for other apps",
+                  "description": "Allowed aud claim values. Optional but recommended - without it any validly-signed token from the issuer is accepted, not only ones minted for this API",
                   "type": "array"
                 },
                 "claimToHeaders": {
@@ -369,7 +369,7 @@
                   "type": "array"
                 },
                 "enabled": {
-                  "description": "Enable JWT bearer-token validation. Requires audiences plus issuer or remoteJWKSUri",
+                  "description": "Enable JWT bearer-token validation. Requires issuer or remoteJWKSUri",
                   "type": "boolean"
                 },
                 "issuer": {

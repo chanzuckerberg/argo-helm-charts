@@ -540,16 +540,17 @@ oidc:
   {{- if $g.jwt.issuer }}{{- $jwks = printf "%s/v1/keys" (trimSuffix "/" $g.jwt.issuer) }}
   {{- else }}{{- fail "gateway.jwt.enabled requires gateway.jwt.issuer (or gateway.jwt.remoteJWKSUri)" }}{{- end }}
 {{- end }}
-{{- if not $g.jwt.audiences }}{{- fail "gateway.jwt.enabled requires gateway.jwt.audiences" }}{{- end }}
 jwt:
   providers:
     - name: default
       remoteJWKS:
         uri: {{ $jwks | quote }}
-      audiences:
-        {{- toYaml $g.jwt.audiences | nindent 8 }}
       {{- if $g.jwt.issuer }}
       issuer: {{ $g.jwt.issuer | quote }}
+      {{- end }}
+      {{- if $g.jwt.audiences }}
+      audiences:
+        {{- toYaml $g.jwt.audiences | nindent 8 }}
       {{- end }}
       {{- if $g.jwt.claimToHeaders }}
       claimToHeaders:
