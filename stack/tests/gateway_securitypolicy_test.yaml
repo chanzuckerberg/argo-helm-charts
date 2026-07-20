@@ -898,6 +898,49 @@ tests:
         notExists:
           path: spec.oidc
 
+  - it: should derive remoteJWKS uri from issuer when remoteJWKSUri is omitted
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                issuer: https://czi.okta.com/oauth2/aus123
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].remoteJWKS.uri
+          value: https://czi.okta.com/oauth2/aus123/v1/keys
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].issuer
+          value: https://czi.okta.com/oauth2/aus123
+
+  - it: should fail when a provider has neither remoteJWKSUri nor issuer
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.jwt.providers[]: set remoteJWKSUri, or set issuer to derive it (<issuer>/v1/keys)"
+
   - it: should fail when gateway.jwt.enabled but providers is empty
     set:
       global:

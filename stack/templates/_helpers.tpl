@@ -539,9 +539,14 @@ oidc:
 jwt:
   providers:
     {{- range $g.jwt.providers }}
+    {{- $jwks := .remoteJWKSUri }}
+    {{- if not $jwks }}
+      {{- if .issuer }}{{- $jwks = printf "%s/v1/keys" (trimSuffix "/" .issuer) }}
+      {{- else }}{{- fail "gateway.jwt.providers[]: set remoteJWKSUri, or set issuer to derive it (<issuer>/v1/keys)" }}{{- end }}
+    {{- end }}
     - name: {{ required "gateway.jwt.providers[].name is required" .name }}
       remoteJWKS:
-        uri: {{ required "gateway.jwt.providers[].remoteJWKSUri is required" .remoteJWKSUri | quote }}
+        uri: {{ $jwks | quote }}
       {{- if .issuer }}
       issuer: {{ .issuer | quote }}
       {{- end }}

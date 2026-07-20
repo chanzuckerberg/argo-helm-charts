@@ -365,7 +365,7 @@
                   "type": "boolean"
                 },
                 "providers": {
-                  "description": "JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name, remoteJWKSUri, optional issuer, optional audiences (list), and optional claimToHeaders (list of {header, claim})",
+                  "description": "JWT providers (Envoy Gateway SecurityPolicy jwt.providers). Each entry takes name plus either issuer (JWKS derived as \u003cissuer\u003e/v1/keys, the Okta custom-auth-server convention) or an explicit remoteJWKSUri. Optional audiences (list, the allowed aud claim) and claimToHeaders (list of {header, claim} to forward to the backend)",
                   "type": "array"
                 }
               }
