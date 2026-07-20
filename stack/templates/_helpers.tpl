@@ -359,7 +359,7 @@ Returns "true"/"" .
 */}}
 {{- define "gateway.hasSecurityPolicy" -}}
 {{- $g := .Values.gateway -}}
-{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) -}}true{{- end -}}
+{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) $g.jwt.enabled -}}true{{- end -}}
 {{- end -}}
 
 {{/*
@@ -533,6 +533,22 @@ oidc:
   resources:
     {{- toYaml $.Values.oidcProxyGateway.resources | nindent 4 }}
   {{- end }}
+{{- end }}
+{{- if and (not .public) $g.jwt.enabled }}
+{{- $issuer := $g.jwt.issuer | default $.Values.oidcProxyGateway.provider.issuer }}
+{{- $jwks := $g.jwt.remoteJWKSUri }}
+{{- if not $jwks }}
+  {{- $base := trimSuffix "/" $issuer }}
+  {{- /* Okta JWKS: a custom auth server issuer already carries an /oauth2/<id> path (keys at <issuer>/v1/keys); a bare org issuer serves them at /oauth2/v1/keys. */ -}}
+  {{- if (urlParse $base).path }}{{- $jwks = printf "%s/v1/keys" $base }}
+  {{- else }}{{- $jwks = printf "%s/oauth2/v1/keys" $base }}{{- end }}
+{{- end }}
+jwt:
+  providers:
+    - name: default
+      remoteJWKS:
+        uri: {{ $jwks | quote }}
+      issuer: {{ $issuer | quote }}
 {{- end }}
 {{- if and (not .public) $g.basicAuth.enabled }}
 basicAuth:

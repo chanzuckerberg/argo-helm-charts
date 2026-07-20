@@ -247,6 +247,15 @@ global: # @schema description: Global configuration for the stack - this serves 
     basicAuth: # @schema description: HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
       enabled: false # @schema description: Enable basic auth
       secretName: "" # @schema description: Name of an Opaque Secret with a .htpasswd key
+    jwt: # @schema description: JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
+      enabled: false # @schema description: Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case
+      issuer: "" # @schema description: Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
+      remoteJWKSUri: "" # @schema description: Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider
+      # NOTE: token audience (aud) validation is intentionally not exposed. It would be good
+      # practice - it pins a token to this API so a token minted for another service (same
+      # issuer and signing keys) cannot be replayed here (RFC 8725) - but a specific audience
+      # requires a custom Okta authorization server, which is not self-service in Argus. Add
+      # an audiences field here (and in the provider block in _helpers.tpl) if that changes.
     cors: # @schema description: CORS via a SecurityPolicy
       enabled: false # @schema description: Enable CORS
       allowOrigins: [] # @schema description: Allowed origins (string patterns)

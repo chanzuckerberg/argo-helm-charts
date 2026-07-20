@@ -356,6 +356,24 @@
               "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
               "type": "array"
             },
+            "jwt": {
+              "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case",
+                  "type": "boolean"
+                },
+                "issuer": {
+                  "description": "Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login",
+                  "type": "string"
+                },
+                "remoteJWKSUri": {
+                  "description": "Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server \u003cissuer\u003e/v1/keys). Set it for a non-Okta provider",
+                  "type": "string"
+                }
+              }
+            },
             "oidcProtected": {
               "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
               "type": "boolean"
