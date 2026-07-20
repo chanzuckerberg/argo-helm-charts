@@ -39,7 +39,7 @@
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- /* Create public HTTPRoute for skipAuth paths if configured */ -}}
-{{- if gt (len .Values.oidcProxyGateway.skipAuth) 0 -}}
+{{- if gt (len ((.Values.oidcProxyGateway | default dict).skipAuth | default list)) 0 -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -75,7 +75,7 @@ spec:
     - {{ $rule.host }}
   {{- end }}
   rules:
-    {{- range .Values.oidcProxyGateway.skipAuth }}
+    {{- range (.Values.oidcProxyGateway | default dict).skipAuth }}
     - matches:
         - path:
             type: PathPrefix

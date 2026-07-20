@@ -319,10 +319,11 @@ Return the OIDC issuer URL.
 (Envoy Gateway does not yet support issuerRef, so this must be a string.)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
-{{- if not .Values.oidcProxyGateway.provider.issuer -}}
+{{- $issuer := ((.Values.oidcProxyGateway | default dict).provider | default dict).issuer -}}
+{{- if not $issuer -}}
   {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled." -}}
 {{- end -}}
-{{- .Values.oidcProxyGateway.provider.issuer -}}
+{{- $issuer -}}
 {{- end -}}
 
 {{/*
@@ -330,7 +331,20 @@ Return the Kubernetes secret name for OIDC credentials.
 The secret must contain 'client-id' and 'client-secret' keys.
 */}}
 {{- define "oidcProxyGateway.secretName" -}}
-{{- .Values.oidcProxyGateway.clientSecretName | default "argus-global-oidc" -}}
+{{- (.Values.oidcProxyGateway | default dict).clientSecretName | default "argus-global-oidc" -}}
+{{- end -}}
+
+{{/*
+Fail when a clientID override is paired with the shared client secret: the old id plus the
+shared secret is rejected by the IdP on every login with invalid_client.
+*/}}
+{{- define "validate.oidcClientPairing" -}}
+{{- if and .Values.gateway.enabled .Values.gateway.oidcProtected -}}
+{{- $og := .Values.oidcProxyGateway | default dict -}}
+{{- if and $og.clientID (eq (include "oidcProxyGateway.secretName" .) "argus-global-oidc") -}}
+{{- fail "oidcProxyGateway.clientID is set without clientSecretName: this pairs your client id with the shared argus-global-oidc client secret and every login fails with invalid_client. Set clientID and clientSecretName together, or drop clientID to use the shared client." -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -446,18 +460,21 @@ Public routes (skipAuth) carry only cors/authorization, never oidc/basicAuth.
 {{- define "gateway.securityPolicy.body" -}}
 {{- $ := .ctx -}}
 {{- $g := $.Values.gateway -}}
+{{- $og := $.Values.oidcProxyGateway | default dict -}}
+{{- $ogProvider := $og.provider | default dict -}}
+{{- $ogCookieNames := $og.cookieNames | default dict -}}
 {{- if and (not .public) $g.oidcProtected }}
 oidc:
   provider:
     issuer: {{ include "oidcProxyGateway.issuer" $ | quote }}
-    {{- if $.Values.oidcProxyGateway.provider.authorizationEndpoint }}
-    authorizationEndpoint: {{ $.Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
+    {{- if $ogProvider.authorizationEndpoint }}
+    authorizationEndpoint: {{ $ogProvider.authorizationEndpoint | quote }}
     {{- end }}
-    {{- if $.Values.oidcProxyGateway.provider.tokenEndpoint }}
-    tokenEndpoint: {{ $.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
+    {{- if $ogProvider.tokenEndpoint }}
+    tokenEndpoint: {{ $ogProvider.tokenEndpoint | quote }}
     {{- end }}
-  {{- if $.Values.oidcProxyGateway.clientID }}
-  clientID: {{ $.Values.oidcProxyGateway.clientID | quote }}
+  {{- if $og.clientID }}
+  clientID: {{ $og.clientID | quote }}
   {{- else }}
   clientIDRef:
     name: {{ include "oidcProxyGateway.secretName" $ }}
@@ -465,23 +482,23 @@ oidc:
   clientSecret:
     name: {{ include "oidcProxyGateway.secretName" $ }}
   redirectURL: https://{{ .host }}/oauth2/callback
-  {{- if $.Values.oidcProxyGateway.logoutPath }}
-  logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
+  {{- if $og.logoutPath }}
+  logoutPath: {{ $og.logoutPath | quote }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.forwardAccessToken }}
-  forwardAccessToken: {{ $.Values.oidcProxyGateway.forwardAccessToken }}
+  {{- if $og.forwardAccessToken }}
+  forwardAccessToken: {{ $og.forwardAccessToken }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.refreshToken }}
-  refreshToken: {{ $.Values.oidcProxyGateway.refreshToken }}
+  {{- if $og.refreshToken }}
+  refreshToken: {{ $og.refreshToken }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.cookieDomain }}
-  cookieDomain: {{ $.Values.oidcProxyGateway.cookieDomain | quote }}
+  {{- if $og.cookieDomain }}
+  cookieDomain: {{ $og.cookieDomain | quote }}
   {{- end }}
   cookieNames:
-    accessToken: {{ $.Values.oidcProxyGateway.cookieNames.accessToken | default (printf "AccessToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
-    idToken: {{ $.Values.oidcProxyGateway.cookieNames.idToken | default (printf "IdToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
-  {{- $apiRoutes := $.Values.oidcProxyGateway.apiRoutes | default list }}
-  {{- $denyEnabled := $.Values.oidcProxyGateway.denyRedirect.enabled }}
+    accessToken: {{ $ogCookieNames.accessToken | default (printf "AccessToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
+    idToken: {{ $ogCookieNames.idToken | default (printf "IdToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
+  {{- $apiRoutes := $og.apiRoutes | default list }}
+  {{- $denyEnabled := ($og.denyRedirect | default dict).enabled }}
   {{- $defaultMatcherCount := 0 }}
   {{- if $denyEnabled }}{{- $defaultMatcherCount = 3 }}{{- end }}
   {{- if gt (add (len $apiRoutes) $defaultMatcherCount) 16 }}
@@ -522,16 +539,16 @@ oidc:
         value: {{ .path | quote }}
       {{- end }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.csrfTokenTTL }}
-  csrfTokenTTL: {{ $.Values.oidcProxyGateway.csrfTokenTTL | quote }}
+  {{- if $og.csrfTokenTTL }}
+  csrfTokenTTL: {{ $og.csrfTokenTTL | quote }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.scopes }}
+  {{- if $og.scopes }}
   scopes:
-    {{- toYaml $.Values.oidcProxyGateway.scopes | nindent 4 }}
+    {{- toYaml $og.scopes | nindent 4 }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.resources }}
+  {{- if $og.resources }}
   resources:
-    {{- toYaml $.Values.oidcProxyGateway.resources | nindent 4 }}
+    {{- toYaml $og.resources | nindent 4 }}
   {{- end }}
 {{- end }}
 {{- if and (not .public) $g.basicAuth.enabled }}
