@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.46.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.46.0...stack-v2.46.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* Remove default sticky sessions ([#465](https://github.com/chanzuckerberg/argo-helm-charts/issues/465)) ([9c45d9d](https://github.com/chanzuckerberg/argo-helm-charts/commit/9c45d9d9f7ba863e16b92a14eaf84fa5bd9c0d2b))
+
 ## [2.46.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.45.0...stack-v2.46.0) (2026-07-17)
 
 
