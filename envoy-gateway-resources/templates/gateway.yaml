@@ -10,8 +10,19 @@ kind: Gateway
 metadata:
   name: {{ .Values.gatewayName }}
   namespace: envoy-gateway
+  annotations:
+    external-dns.alpha.kubernetes.io/target: access-gw.{{ .Values.baseDomain }}
 spec:
   gatewayClassName: eg
+  {{- if .Values.listenerSets.enabled }}
+  allowedListeners:
+    namespaces:
+      from: {{ .Values.listenerSets.from }}
+      {{- if eq .Values.listenerSets.from "Selector" }}
+      selector:
+        {{- toYaml .Values.listenerSets.namespaceSelector | nindent 8 }}
+      {{- end }}
+  {{- end }}
   infrastructure:
     parametersRef:
       group: gateway.envoyproxy.io
@@ -27,7 +38,7 @@ spec:
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+      hostname: "*.{{ .Values.baseDomain }}"
       allowedRoutes:
         namespaces:
           from: All
@@ -37,6 +48,21 @@ spec:
           - group: ''
             kind: Secret
             name: {{ .Values.gatewayName }}-tls
+    {{- if .Values.tlsPassthrough.enabled }}
+    {{- range $i, $h := .Values.tlsPassthrough.hostnames }}
+    - name: tls-passthrough-{{ $i }}
+      protocol: TLS
+      port: 443
+      hostname: {{ $h | quote }}
+      tls:
+        mode: Passthrough
+      allowedRoutes:
+        namespaces:
+          from: All
+        kinds:
+          - kind: TLSRoute
+    {{- end }}
+    {{- end }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -51,9 +77,10 @@ spec:
     solvers:
       - selector:
           dnsZones:
-            - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+            - "{{ .Values.baseDomain }}"
         dns01:
-          route53: {}
+          route53:
+            region: {{ .Values.awsRegion }}
       - selector: {}
         http01:
           gatewayHTTPRoute:
@@ -69,10 +96,10 @@ metadata:
   name: {{ .Values.gatewayName }}-wildcard-cert
   namespace: envoy-gateway
 spec:
-  commonName: "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+  commonName: "*.{{ .Values.baseDomain }}"
   dnsNames:
-    - "*.{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
-    - "{{ .Values.clusterName }}.{{ .Values.baseDomain }}"
+    - "*.{{ .Values.baseDomain }}"
+    - "{{ .Values.baseDomain }}"
 {{- range .Values.alternateNames }}
     - "{{ . }}"
 {{- end }}
@@ -83,6 +110,7 @@ spec:
   privateKey:
     algorithm: RSA
     size: 4096
+    rotationPolicy: Always
   secretName: {{ .Values.gatewayName }}-tls
   usages:
     - digital signature

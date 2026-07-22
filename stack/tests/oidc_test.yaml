@@ -39,6 +39,22 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+  - it: sets right-sized default resources on the proxy container
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
   - it: sets additionalSecrets in envFrom
     set:
       global:
@@ -91,6 +107,56 @@ tests:
         lengthEqual:
           path: spec.template.spec.containers[0].envFrom
           count: 6
+  - it: sets additionalSecrets in envFrom without argus secrets
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          additionalSecrets:
+            - secretRef:
+                name: blah1
+                optional: true
+            - secretRef:
+                name: blah2
+                optional: true
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].envFrom
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].envFrom[0].secretRef.name
+          value: blah1
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].envFrom[1].secretRef.name
+          value: blah2
+  - it: puts argus secrets before additionalSecrets in envFrom
+    set:
+      global:
+        appSecrets:
+          envSecret:
+            secretName: argus-env
+        oidcProxy:
+          enabled: true
+          additionalSecrets:
+            - secretRef:
+                name: blah1
+                optional: true
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.template.spec.containers[0].envFrom
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].envFrom[0].secretRef.name
+          value: argus-env
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.containers[0].envFrom[1].secretRef.name
+          value: blah1
   - it: defaults to 0 envFrom object
     set:
       global:
@@ -150,6 +216,24 @@ tests:
         contains:
           path: spec.template.spec.containers[0].args
           content: "--cookie-refresh=1h23m45s"
+  - it: treats skipAuth entries without a method as all-methods
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          skipAuth:
+            - path: "/healthz"
+            - path: "/v1/api/docs"
+              method: GET
+    asserts:
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=/healthz"
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=GET=/v1/api/docs"
   - it: overwrites the name
     set:
       global:

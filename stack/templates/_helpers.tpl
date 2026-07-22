@@ -81,6 +81,14 @@ external-dns.alpha.kubernetes.io/target: "access.{{ include "clusterBaseDomain" 
 {{- end }}
 
 {{/*
+Name of the vanity-domain ListenerSet. Referenced by both the ListenerSet itself
+and the HTTPRoute parentRef, so keep it in one place.
+*/}}
+{{- define "service.vanityListenerSetName" -}}
+{{ include "service.fullname" . }}-vanity
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "stack.chart" -}}
@@ -227,31 +235,71 @@ app.kubernetes.io/name: {{ include "oidcProxy.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{ define "oidcProxy.envFromArgusSecrets" -}}
-{{- include "service.configuration" . -}}
-{{- end -}}
-
-{{ define "oidcProxy.additionalSecrets" -}}
-{{ if gt (len .Values.oidcProxy.additionalSecrets) 0 }}
-{{ toYaml .Values.oidcProxy.additionalSecrets }}
-{{- end -}}
-{{- end -}}
-
 {{- define "oidcProxy.envFrom" -}}
-{{- include "oidcProxy.envFromArgusSecrets" . }}
-{{- include "oidcProxy.additionalSecrets" . }}
+{{- $envFrom := list -}}
+{{- with fromYaml (include "service.configuration" .) -}}
+{{- $envFrom = concat $envFrom (default (list) .envFrom) -}}
+{{- end -}}
+{{- $envFrom = concat $envFrom (default (list) .Values.oidcProxy.additionalSecrets) -}}
+{{- toYaml $envFrom -}}
 {{- end -}}
 
 {{- define "oidcProxy.authDomain" -}}
 {{ .Values.ingress.host }}
 {{- end -}}
 
-{{/*
-Validate that gateway and ingress are not both enabled
-*/}}
-{{- define "validate.gatewayIngressMutualExclusion" -}}
+{{- define "ingress.servedHosts" -}}
+{{- $v := .Values -}}
+{{- $hosts := list $v.ingress.host -}}
+{{- range $v.ingress.rules -}}
+  {{- $hosts = append $hosts (.host | default $v.ingress.host) -}}
+{{- end -}}
+{{- toJson ($hosts | uniq) -}}
+{{- end -}}
+
+{{- define "validate.gatewayIngressCoexistence" -}}
 {{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
-  {{- fail "gateway.enabled and ingress.enabled cannot both be true. Please enable only one routing method: either gateway or ingress." -}}
+  {{- $v := .Values -}}
+  {{- $owner := $v.gateway.dnsOwner | default "ingress" -}}
+  {{- if not (or (eq $owner "ingress") (eq $owner "gateway")) -}}
+    {{- fail (printf "gateway.dnsOwner must be \"ingress\" or \"gateway\" when ingress and gateway are both enabled (got %q). Coexistence renders both routing modes and external-dns publishes only the dnsOwner side. Flip it to \"gateway\" to move DNS to the Envoy gateway NLB." $owner) -}}
+  {{- end -}}
+  {{- if and $v.gateway.oidcProtected (not $v.ingress.oidcProtected) -}}
+    {{- fail "gateway.oidcProtected requires ingress.oidcProtected during coexistence: the still-serving nginx Ingress would expose the app without authentication. Set ingress.oidcProtected: true or disable the ingress." -}}
+  {{- end -}}
+  {{- if eq $owner "gateway" -}}
+    {{- if $v.gateway.tlsPassthrough.enabled -}}
+      {{- fail "gateway.dnsOwner: gateway cannot be combined with gateway.tlsPassthrough.enabled during coexistence: a TLSRoute is not an external-dns source, so excluding the Ingress would delete the host's DNS record." -}}
+    {{- end -}}
+    {{- $gwHosts := list $v.gateway.host -}}
+    {{- range $v.gateway.rules -}}
+      {{- $gwHosts = append $gwHosts .host -}}
+    {{- end -}}
+    {{- $missing := list -}}
+    {{- range (fromJsonArray (include "ingress.servedHosts" $)) -}}
+      {{- if not (has . $gwHosts) -}}
+        {{- $missing = append $missing . -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if gt (len $missing) 0 -}}
+      {{- fail (printf "gateway.dnsOwner: gateway would strip DNS for ingress hosts the gateway does not serve: %s. Add matching gateway.rules entries (or drop the ingress rules) before flipping." (join ", " $missing)) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "gateway.coexistDnsAnnotations" -}}
+{{- $v := .root.Values -}}
+{{- if and $v.gateway.enabled $v.ingress.enabled (eq ($v.gateway.dnsOwner | default "ingress") "ingress") -}}
+{{- if has .host (fromJsonArray (include "ingress.servedHosts" .root)) -}}
+external-dns.alpha.kubernetes.io/exclude: "true"
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "ingress.coexistDnsAnnotations" -}}
+{{- if and .Values.gateway.enabled .Values.ingress.enabled (eq (.Values.gateway.dnsOwner | default "ingress") "gateway") -}}
+external-dns.alpha.kubernetes.io/exclude: "true"
 {{- end -}}
 {{- end -}}
 
@@ -267,23 +315,22 @@ Validate that each gateway rule has a host specified
 {{- end -}}
 
 {{/*
-Return the OIDC client ID (must be explicitly configured)
-*/}}
-{{- define "oidcProxyGateway.clientID" -}}
-{{- if not .Values.oidcProxyGateway.clientID -}}
-  {{- fail "oidcProxyGateway.clientID is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
-{{- end -}}
-{{- .Values.oidcProxyGateway.clientID -}}
-{{- end -}}
-
-{{/*
-Return the OIDC issuer URL (must be explicitly configured)
+Return the OIDC issuer URL.
+(Envoy Gateway does not yet support issuerRef, so this must be a string.)
 */}}
 {{- define "oidcProxyGateway.issuer" -}}
 {{- if not .Values.oidcProxyGateway.provider.issuer -}}
-  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled. Set it explicitly in your values.yaml." -}}
+  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled." -}}
 {{- end -}}
 {{- .Values.oidcProxyGateway.provider.issuer -}}
+{{- end -}}
+
+{{/*
+Return the Kubernetes secret name for OIDC credentials.
+The secret must contain 'client-id' and 'client-secret' keys.
+*/}}
+{{- define "oidcProxyGateway.secretName" -}}
+{{- .Values.oidcProxyGateway.clientSecretName | default "argus-global-oidc" -}}
 {{- end -}}
 
 {{/*
@@ -296,18 +343,247 @@ https://{{ .Values.gateway.host }}/oauth2/callback
 {{- end -}}
 
 {{/*
+Validate that OIDC and basic auth are not both enabled on a gateway service.
+A route can carry only one SecurityPolicy, and oidc + basicAuth are independent
+auth mechanisms; combining them is unsupported.
+*/}}
+{{- define "validate.gatewaySecurityExclusive" -}}
+{{- if and .Values.gateway.oidcProtected .Values.gateway.basicAuth.enabled -}}
+  {{- fail "gateway.oidcProtected and gateway.basicAuth.enabled cannot both be true on the same service. Pick one auth method." -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Whether the service needs a SecurityPolicy (any of oidc, basicAuth, cors, ipAllowList).
+Returns "true"/"" .
+*/}}
+{{- define "gateway.hasSecurityPolicy" -}}
+{{- $g := .Values.gateway -}}
+{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) -}}true{{- end -}}
+{{- end -}}
+
+{{/*
+SecurityPolicy name suffix: keep "-oidc" when OIDC is on (name continuity with the
+pre-consolidation policy, avoids delete/recreate), else "-security".
+*/}}
+{{- define "gateway.securityPolicy.suffix" -}}
+{{- if .Values.gateway.oidcProtected -}}oidc{{- else -}}security{{- end -}}
+{{- end -}}
+
+{{/*
+Whether the service needs a BackendTrafficPolicy (sessionAffinity, rateLimit, or connect timeout).
+*/}}
+{{- define "gateway.hasBackendTrafficPolicy" -}}
+{{- $g := .Values.gateway -}}
+{{- if or $g.sessionAffinity.enabled $g.rateLimit.enabled $g.timeouts.connect -}}true{{- end -}}
+{{- end -}}
+
+{{/*
+HTTPRoute per-rule timeouts block body (no "timeouts:" key). Caller indents under a rule.
+*/}}
+{{- define "gateway.ruleTimeoutsInner" -}}
+{{- $t := .Values.gateway.timeouts -}}
+{{- if $t.request }}
+request: {{ $t.request | quote }}
+{{- end }}
+{{- if $t.backendRequest }}
+backendRequest: {{ $t.backendRequest | quote }}
+{{- end }}
+{{- end -}}
+
+{{/*
+HTTPRoute per-rule filters list (no "filters:" key). Caller indents under a rule.
+Covers hostRewrite (URLRewrite) and request/response header modifiers. Redirect is
+handled separately as a whole-route rule.
+*/}}
+{{- define "gateway.ruleFiltersInner" -}}
+{{- $g := .Values.gateway -}}
+{{- if $g.hostRewrite }}
+- type: URLRewrite
+  urlRewrite:
+    hostname: {{ $g.hostRewrite | quote }}
+{{- end }}
+{{- $rh := $g.requestHeaders -}}
+{{- if and $rh (or $rh.set $rh.add $rh.remove) }}
+- type: RequestHeaderModifier
+  requestHeaderModifier:
+    {{- if $rh.set }}
+    set:
+      {{- toYaml $rh.set | nindent 6 }}
+    {{- end }}
+    {{- if $rh.add }}
+    add:
+      {{- toYaml $rh.add | nindent 6 }}
+    {{- end }}
+    {{- if $rh.remove }}
+    remove:
+      {{- toYaml $rh.remove | nindent 6 }}
+    {{- end }}
+{{- end }}
+{{- $sh := $g.responseHeaders -}}
+{{- if and $sh (or $sh.set $sh.add $sh.remove) }}
+- type: ResponseHeaderModifier
+  responseHeaderModifier:
+    {{- if $sh.set }}
+    set:
+      {{- toYaml $sh.set | nindent 6 }}
+    {{- end }}
+    {{- if $sh.add }}
+    add:
+      {{- toYaml $sh.add | nindent 6 }}
+    {{- end }}
+    {{- if $sh.remove }}
+    remove:
+      {{- toYaml $sh.remove | nindent 6 }}
+    {{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+SecurityPolicy spec body (no "targetRefs"). Input dict: "ctx" (service), "host", "public" (bool).
+Public routes (skipAuth) carry only cors/authorization, never oidc/basicAuth.
+*/}}
+{{- define "gateway.securityPolicy.body" -}}
+{{- $ := .ctx -}}
+{{- $g := $.Values.gateway -}}
+{{- if and (not .public) $g.oidcProtected }}
+oidc:
+  provider:
+    issuer: {{ include "oidcProxyGateway.issuer" $ | quote }}
+    {{- if $.Values.oidcProxyGateway.provider.authorizationEndpoint }}
+    authorizationEndpoint: {{ $.Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
+    {{- end }}
+    {{- if $.Values.oidcProxyGateway.provider.tokenEndpoint }}
+    tokenEndpoint: {{ $.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
+    {{- end }}
+  {{- if $.Values.oidcProxyGateway.clientID }}
+  clientID: {{ $.Values.oidcProxyGateway.clientID | quote }}
+  {{- else }}
+  clientIDRef:
+    name: {{ include "oidcProxyGateway.secretName" $ }}
+  {{- end }}
+  clientSecret:
+    name: {{ include "oidcProxyGateway.secretName" $ }}
+  redirectURL: https://{{ .host }}/oauth2/callback
+  {{- if $.Values.oidcProxyGateway.logoutPath }}
+  logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.forwardAccessToken }}
+  forwardAccessToken: {{ $.Values.oidcProxyGateway.forwardAccessToken }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.refreshToken }}
+  refreshToken: {{ $.Values.oidcProxyGateway.refreshToken }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.cookieDomain }}
+  cookieDomain: {{ $.Values.oidcProxyGateway.cookieDomain | quote }}
+  {{- end }}
+  cookieNames:
+    accessToken: {{ $.Values.oidcProxyGateway.cookieNames.accessToken | default (printf "AccessToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
+    idToken: {{ $.Values.oidcProxyGateway.cookieNames.idToken | default (printf "IdToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
+  {{- $apiRoutes := $.Values.oidcProxyGateway.apiRoutes | default list }}
+  {{- $denyEnabled := $.Values.oidcProxyGateway.denyRedirect.enabled }}
+  {{- $defaultMatcherCount := 0 }}
+  {{- if $denyEnabled }}{{- $defaultMatcherCount = 3 }}{{- end }}
+  {{- if gt (add (len $apiRoutes) $defaultMatcherCount) 16 }}
+    {{- fail (printf "oidcProxyGateway.apiRoutes: Envoy Gateway caps denyRedirect matchers at 16, got %d apiRoutes plus %d default matchers" (len $apiRoutes) $defaultMatcherCount) }}
+  {{- end }}
+  {{- range $apiRoutes }}
+    {{- $matchType := .matchType | default "Prefix" }}
+    {{- if not (has $matchType (list "Prefix" "Exact" "RegularExpression")) }}
+      {{- fail (printf "oidcProxyGateway.apiRoutes: matchType %q is not one of Prefix, Exact, RegularExpression" $matchType) }}
+    {{- end }}
+    {{- if not .path }}
+      {{- fail "oidcProxyGateway.apiRoutes: path must not be empty" }}
+    {{- end }}
+    {{- if and (ne $matchType "RegularExpression") (not (hasPrefix "/" .path)) }}
+      {{- fail (printf "oidcProxyGateway.apiRoutes: path %q must start with / for %s matching (request paths always do, so it would never match)" .path $matchType) }}
+    {{- end }}
+    {{- if and (eq $matchType "Prefix") (eq .path "/") }}
+      {{- fail "oidcProxyGateway.apiRoutes: Prefix / would 401 every request including browser navigations, making login impossible. For a fully headless API, use matchType RegularExpression deliberately." }}
+    {{- end }}
+  {{- end }}
+  {{- if or $denyEnabled (gt (len $apiRoutes) 0) }}
+  denyRedirect:
+    headers:
+      {{- if $denyEnabled }}
+      - name: Sec-Fetch-Mode
+        type: RegularExpression
+        value: "cors|no-cors|same-origin"
+      - name: Sec-Fetch-Dest
+        type: RegularExpression
+        value: "empty|script|style|image|font"
+      - name: X-Requested-With
+        type: Exact
+        value: XMLHttpRequest
+      {{- end }}
+      {{- range $apiRoutes }}
+      - name: ":path"
+        type: {{ .matchType | default "Prefix" }}
+        value: {{ .path | quote }}
+      {{- end }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.csrfTokenTTL }}
+  csrfTokenTTL: {{ $.Values.oidcProxyGateway.csrfTokenTTL | quote }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.scopes }}
+  scopes:
+    {{- toYaml $.Values.oidcProxyGateway.scopes | nindent 4 }}
+  {{- end }}
+  {{- if $.Values.oidcProxyGateway.resources }}
+  resources:
+    {{- toYaml $.Values.oidcProxyGateway.resources | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- if and (not .public) $g.basicAuth.enabled }}
+basicAuth:
+  users:
+    name: {{ required "gateway.basicAuth.secretName is required when gateway.basicAuth.enabled is true" $g.basicAuth.secretName }}
+{{- end }}
+{{- if $g.cors.enabled }}
+cors:
+  {{- if $g.cors.allowOrigins }}
+  allowOrigins:
+    {{- toYaml $g.cors.allowOrigins | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.allowMethods }}
+  allowMethods:
+    {{- toYaml $g.cors.allowMethods | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.allowHeaders }}
+  allowHeaders:
+    {{- toYaml $g.cors.allowHeaders | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.exposeHeaders }}
+  exposeHeaders:
+    {{- toYaml $g.cors.exposeHeaders | nindent 4 }}
+  {{- end }}
+  {{- if $g.cors.allowCredentials }}
+  allowCredentials: true
+  {{- end }}
+  {{- if $g.cors.maxAge }}
+  maxAge: {{ $g.cors.maxAge | quote }}
+  {{- end }}
+{{- end }}
+{{- if gt (len $g.ipAllowList) 0 }}
+authorization:
+  defaultAction: Deny
+  rules:
+    - action: Allow
+      principal:
+        clientCIDRs:
+          {{- toYaml $g.ipAllowList | nindent 10 }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Check if gateway config keys are provided (auto-enable detection)
 Returns: "true" if any gateway.* keys exist (excluding just "enabled")
 */}}
 {{- define "gateway.hasConfigKeys" -}}
-{{- $hasKeys := false -}}
 {{- if .Values.gateway -}}
-  {{- $gatewayKeys := keys (omit .Values.gateway "enabled") -}}
-  {{- if gt (len $gatewayKeys) 0 -}}
-    {{- $hasKeys = true -}}
-  {{- end -}}
+  {{- $gatewayKeys := keys (omit .Values.gateway "enabled" "dnsOwner") -}}
+  {{- if gt (len $gatewayKeys) 0 -}}true{{- end -}}
 {{- end -}}
-{{- $hasKeys -}}
 {{- end -}}
 
 {{/*
@@ -336,6 +612,10 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
 {{- $ingressLatencyPanelDict := include "stack.grafanaDashboard.charts.serviceIngressLatency" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $ingressLatencyPanelDict -}}
 {{- end }}
+{{- $cpuUsagePanelDict := include "stack.grafanaDashboard.charts.serviceCpuUsage" (dict "global" $global "service" $service) | fromYaml -}}
+{{- $panels = append $panels $cpuUsagePanelDict -}}
+{{- $memoryUsagePanelDict := include "stack.grafanaDashboard.charts.serviceMemoryUsage" (dict "global" $global "service" $service) | fromYaml -}}
+{{- $panels = append $panels $memoryUsagePanelDict -}}
 {{- $containerRestartsPanelDict := include "stack.grafanaDashboard.charts.serviceContainerRestarts" (dict "global" $global "service" $service) | fromYaml -}}
 {{- $panels = append $panels $containerRestartsPanelDict -}}
 
@@ -491,7 +771,7 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
         )
       )
     ))
-    "refresh" "5s"
+    "refresh" $global.Values.global.grafanaDashboard.refresh
     "schemaVersion" 17
     "version" 0
     "links" (list)
@@ -509,7 +789,7 @@ Expects a dict with keys: global, service
 {{- $global := .global -}}
 {{- $service := .service -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"2..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[23]..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -551,7 +831,7 @@ Expects a dict with keys: global, service
 {{- $global := .global -}}
 {{- $service := .service -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status!~\"2..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[45]..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -580,6 +860,90 @@ Expects a dict with keys: global, service
       )
     )
     "title" "Failure % by Error Code"
+    "type" "timeseries"
+-}}
+{{- $panelDict | toYaml -}}
+{{- end -}}
+
+{{/*
+Create a CPU usage panel for a service.
+Expects a dict with keys: global, service
+*/}}
+{{- define "stack.grafanaDashboard.charts.serviceCpuUsage" -}}
+{{- $global := .global -}}
+{{- $service := .service -}}
+{{- $metricsQuery := printf "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"%s-.*\", container!=\"\"}[5m])) by (pod)" (include "service.fullname" $service) -}}
+{{- $panelDict := dict
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+    "gridPos" (dict "h" 8 "w" 12)
+    "fieldConfig" (dict "defaults" (dict "unit" "short"))
+    "options" (dict
+      "legend" (dict
+        "calcs" (list)
+        "displayMode" "list"
+        "placement" "bottom"
+        "showLegend" true
+      )
+      "tooltip" (dict
+        "hideZeros" false
+        "mode" "single"
+        "sort" "none"
+      )
+    )
+    "pluginVersion" "12.1.0"
+    "targets" (list
+      (dict
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+        "editorMode" "code"
+        "expr" $metricsQuery
+        "legendFormat" "{{pod}}"
+        "range" true
+        "refId" "A"
+      )
+    )
+    "title" "CPU Usage"
+    "type" "timeseries"
+-}}
+{{- $panelDict | toYaml -}}
+{{- end -}}
+
+{{/*
+Create a memory usage panel for a service.
+Expects a dict with keys: global, service
+*/}}
+{{- define "stack.grafanaDashboard.charts.serviceMemoryUsage" -}}
+{{- $global := .global -}}
+{{- $service := .service -}}
+{{- $metricsQuery := printf "sum(container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"%s-.*\", container!=\"\"}) by (pod)" (include "service.fullname" $service) -}}
+{{- $panelDict := dict
+    "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+    "gridPos" (dict "h" 8 "w" 12)
+    "fieldConfig" (dict "defaults" (dict "unit" "bytes"))
+    "options" (dict
+      "legend" (dict
+        "calcs" (list)
+        "displayMode" "list"
+        "placement" "bottom"
+        "showLegend" true
+      )
+      "tooltip" (dict
+        "hideZeros" false
+        "mode" "single"
+        "sort" "none"
+      )
+    )
+    "pluginVersion" "12.1.0"
+    "targets" (list
+      (dict
+        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
+        "editorMode" "code"
+        "expr" $metricsQuery
+        "legendFormat" "{{pod}}"
+        "range" true
+        "refId" "A"
+      )
+    )
+    "title" "Memory Usage"
     "type" "timeseries"
 -}}
 {{- $panelDict | toYaml -}}

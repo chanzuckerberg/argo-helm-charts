@@ -7,8 +7,7 @@ tests:
   - it: should render all gateway resources
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
-      baseDomain: dev.czi.team
+      baseDomain: test-cluster.dev.czi.team
     asserts:
       - hasDocuments:
           count: 4
@@ -16,7 +15,7 @@ tests:
   - it: should render GatewayClass as first document
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 0
     asserts:
       - isKind:
@@ -32,7 +31,7 @@ tests:
   - it: should render Gateway as second document
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 1
     asserts:
       - isKind:
@@ -47,7 +46,7 @@ tests:
   - it: should use correct gateway name
     set:
       gatewayName: my-custom-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 1
     asserts:
       - equal:
@@ -57,7 +56,7 @@ tests:
   - it: should use eg GatewayClass
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 1
     asserts:
       - equal:
@@ -67,7 +66,7 @@ tests:
   - it: should always include infrastructure parametersRef (regardless of geoip)
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
       geoip.enabled: false
     documentIndex: 1
     asserts:
@@ -77,7 +76,7 @@ tests:
   - it: should reference EnvoyProxy resource
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
       geoip.enabled: true
     documentIndex: 1
     asserts:
@@ -94,7 +93,7 @@ tests:
   - it: should use correct EnvoyProxy name matching gatewayName
     set:
       gatewayName: my-custom-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
       geoip.enabled: true
     documentIndex: 1
     asserts:
@@ -106,7 +105,7 @@ tests:
   - it: should have HTTP listener on port 80
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 1
     asserts:
       - equal:
@@ -125,8 +124,7 @@ tests:
   - it: should have HTTPS listener on port 443
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
-      baseDomain: dev.czi.team
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 1
     asserts:
       - equal:
@@ -142,11 +140,10 @@ tests:
           path: spec.listeners[1].allowedRoutes.namespaces.from
           value: All
 
-  - it: should configure HTTPS hostname from clusterName and baseDomain
+  - it: should configure HTTPS hostname from baseDomain
     set:
       gatewayName: test-gateway
-      clusterName: my-cluster
-      baseDomain: example.com
+      baseDomain: my-cluster.example.com
     documentIndex: 1
     asserts:
       - equal:
@@ -156,7 +153,7 @@ tests:
   - it: should configure TLS with Terminate mode
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 1
     asserts:
       - equal:
@@ -166,7 +163,7 @@ tests:
   - it: should reference correct TLS secret
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 1
     asserts:
       - equal:
@@ -183,7 +180,7 @@ tests:
   - it: should render ClusterIssuer as third document
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 2
     asserts:
       - isKind:
@@ -195,7 +192,7 @@ tests:
   - it: should use Let's Encrypt production server
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 2
     asserts:
       - equal:
@@ -205,7 +202,7 @@ tests:
   - it: should have correct email for Let's Encrypt
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 2
     asserts:
       - equal:
@@ -215,8 +212,7 @@ tests:
   - it: should configure DNS01 solver with Route53
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
-      baseDomain: example.com
+      baseDomain: test-cluster.example.com
     documentIndex: 2
     asserts:
       - equal:
@@ -228,7 +224,7 @@ tests:
   - it: should configure HTTP01 solver with gateway reference
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 2
     asserts:
       - equal:
@@ -248,7 +244,7 @@ tests:
   - it: should render Certificate as fourth document
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 3
     asserts:
       - isKind:
@@ -260,7 +256,7 @@ tests:
   - it: should use correct certificate name
     set:
       gatewayName: my-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 3
     asserts:
       - equal:
@@ -270,8 +266,7 @@ tests:
   - it: should configure wildcard certificate for cluster domain
     set:
       gatewayName: test-gateway
-      clusterName: my-cluster
-      baseDomain: example.com
+      baseDomain: my-cluster.example.com
     documentIndex: 3
     asserts:
       - equal:
@@ -287,8 +282,7 @@ tests:
   - it: should include alternate names in certificate
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
-      baseDomain: example.com
+      baseDomain: test-cluster.example.com
       alternateNames:
         - alt1.example.com
         - alt2.example.com
@@ -304,7 +298,7 @@ tests:
   - it: should reference ClusterIssuer in certificate
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 3
     asserts:
       - equal:
@@ -320,7 +314,7 @@ tests:
   - it: should use RSA 4096 private key
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 3
     asserts:
       - equal:
@@ -329,11 +323,14 @@ tests:
       - equal:
           path: spec.privateKey.size
           value: 4096
+      - equal:
+          path: spec.privateKey.rotationPolicy
+          value: Always
 
   - it: should use correct secret name for certificate
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 3
     asserts:
       - equal:
@@ -343,7 +340,7 @@ tests:
   - it: should include required usages
     set:
       gatewayName: test-gateway
-      clusterName: test-cluster
+      baseDomain: test-cluster.dev.czi.team
     documentIndex: 3
     asserts:
       - contains:
@@ -352,3 +349,31 @@ tests:
       - contains:
           path: spec.usages
           content: key encipherment
+
+  - it: should set the route53 solver region from awsRegion
+    set:
+      baseDomain: test-cluster.dev.czi.team
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.solvers[0].dns01.route53.region
+          value: us-west-2
+
+  - it: should respect a custom awsRegion
+    set:
+      baseDomain: test-cluster.dev.czi.team
+      awsRegion: us-east-1
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.solvers[0].dns01.route53.region
+          value: us-east-1
+
+  - it: should point external-dns at the cluster NLB hostname
+    set:
+      baseDomain: test-cluster.dev.czi.team
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/target"]
+          value: access-gw.test-cluster.dev.czi.team

@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway BackendTLSPolicy (upstream TLS)
+templates:
+  - gateway-backendtlspolicy.yaml
+tests:
+  - it: should create no BackendTLSPolicy when backendTLS is disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a v1 BackendTLSPolicy targeting the Service port name
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          backendTLS:
+            enabled: true
+            hostname: upstream.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: BackendTLSPolicy
+      - documentIndex: 0
+        equal:
+          path: apiVersion
+          value: gateway.networking.k8s.io/v1
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-btls
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].kind
+          value: Service
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].sectionName
+          value: http
+      - documentIndex: 0
+        equal:
+          path: spec.validation.hostname
+          value: upstream.example.com
+      - documentIndex: 0
+        equal:
+          path: spec.validation.wellKnownCACertificates
+          value: System
+
+  - it: should use caCertificateRefs instead of System when provided
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          backendTLS:
+            enabled: true
+            hostname: upstream.example.com
+            caCertificateRefs:
+              - group: ""
+                kind: ConfigMap
+                name: upstream-ca
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.validation.caCertificateRefs[0].name
+          value: upstream-ca
+      - documentIndex: 0
+        notExists:
+          path: spec.validation.wellKnownCACertificates
+
+  - it: should fail when backendTLS is enabled without a hostname
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          backendTLS:
+            enabled: true
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: "gateway.backendTLS.hostname is required when gateway.backendTLS.enabled is true"

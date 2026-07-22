@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
-suite: test gateway OIDC HTTPRoute and SecurityPolicy
+suite: test gateway OIDC HTTPRoutes
 templates:
   - gateway-oidc.yaml
 tests:
@@ -31,7 +31,7 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: should create HTTPRoute and SecurityPolicy for primary host
+  - it: should create the primary HTTPRoute (SecurityPolicy is in gateway-securitypolicy.yaml)
     set:
       global:
         ingress:
@@ -51,8 +51,7 @@ tests:
         service1: {}
     asserts:
       - hasDocuments:
-          count: 2
-      # HTTPRoute
+          count: 1
       - documentIndex: 0
         isKind:
           of: HTTPRoute
@@ -64,28 +63,8 @@ tests:
         equal:
           path: spec.hostnames[0]
           value: api.example.com
-      # SecurityPolicy
-      - documentIndex: 1
-        isKind:
-          of: SecurityPolicy
-      - documentIndex: 1
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-oidc
-      - documentIndex: 1
-        equal:
-          path: spec.targetRefs[0].kind
-          value: HTTPRoute
-      - documentIndex: 1
-        equal:
-          path: spec.targetRefs[0].name
-          value: release-name-stack-service1
-      - documentIndex: 1
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api.example.com/oauth2/callback
 
-  - it: should create separate HTTPRoute and SecurityPolicy per rule
+  - it: should create a separate HTTPRoute per rule
     set:
       global:
         fullnameOverride: myapp
@@ -109,23 +88,11 @@ tests:
         service1: {}
     asserts:
       - hasDocuments:
-          count: 6
-      # Primary HTTPRoute
-      - documentIndex: 0
-        isKind:
-          of: HTTPRoute
+          count: 3
       - documentIndex: 0
         equal:
           path: metadata.name
           value: myapp-service1
-      - documentIndex: 0
-        equal:
-          path: spec.hostnames[0]
-          value: api.example.com
-      # Rule 0 HTTPRoute
-      - documentIndex: 1
-        isKind:
-          of: HTTPRoute
       - documentIndex: 1
         equal:
           path: metadata.name
@@ -134,170 +101,10 @@ tests:
         equal:
           path: spec.hostnames[0]
           value: api2.example.com
-      # Rule 1 HTTPRoute
-      - documentIndex: 2
-        isKind:
-          of: HTTPRoute
       - documentIndex: 2
         equal:
           path: metadata.name
           value: myapp-service1-rule-1
-      - documentIndex: 2
-        equal:
-          path: spec.hostnames[0]
-          value: api3.example.com
-      # Primary SecurityPolicy
-      - documentIndex: 3
-        isKind:
-          of: SecurityPolicy
-      - documentIndex: 3
-        equal:
-          path: metadata.name
-          value: myapp-service1-oidc
-      - documentIndex: 3
-        equal:
-          path: spec.targetRefs[0].name
-          value: myapp-service1
-      - documentIndex: 3
-        lengthEqual:
-          path: spec.targetRefs
-          count: 1
-      - documentIndex: 3
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api.example.com/oauth2/callback
-      # Rule 0 SecurityPolicy
-      - documentIndex: 4
-        isKind:
-          of: SecurityPolicy
-      - documentIndex: 4
-        equal:
-          path: metadata.name
-          value: myapp-service1-rule-0-oidc
-      - documentIndex: 4
-        equal:
-          path: spec.targetRefs[0].name
-          value: myapp-service1-rule-0
-      - documentIndex: 4
-        lengthEqual:
-          path: spec.targetRefs
-          count: 1
-      - documentIndex: 4
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api2.example.com/oauth2/callback
-      # Rule 1 SecurityPolicy
-      - documentIndex: 5
-        isKind:
-          of: SecurityPolicy
-      - documentIndex: 5
-        equal:
-          path: metadata.name
-          value: myapp-service1-rule-1-oidc
-      - documentIndex: 5
-        equal:
-          path: spec.targetRefs[0].name
-          value: myapp-service1-rule-1
-      - documentIndex: 5
-        lengthEqual:
-          path: spec.targetRefs
-          count: 1
-      - documentIndex: 5
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api3.example.com/oauth2/callback
-
-  - it: should set OIDC configuration in all SecurityPolicies
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          oidcProtected: true
-          rules:
-            - host: api2.example.com
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-            authorizationEndpoint: https://auth.example.com/authorize
-            tokenEndpoint: https://auth.example.com/token
-          logoutPath: /logout
-          forwardAccessToken: true
-          refreshToken: false
-          cookieDomain: example.com
-          cookieNames:
-            accessToken: my-access-token
-            idToken: my-id-token
-          scopes:
-            - openid
-            - profile
-            - email
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 4
-      # Primary SecurityPolicy (HTTPRoutes 0,1 then SecurityPolicies 2,3)
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.provider.issuer
-          value: https://auth.example.com
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.provider.authorizationEndpoint
-          value: https://auth.example.com/authorize
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.provider.tokenEndpoint
-          value: https://auth.example.com/token
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.clientID
-          value: my-client-id
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: release-name-stack-service1-oidc-client-secret
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.logoutPath
-          value: /logout
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.forwardAccessToken
-          value: true
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.cookieDomain
-          value: example.com
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.cookieNames.accessToken
-          value: my-access-token
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.cookieNames.idToken
-          value: my-id-token
-      - documentIndex: 2
-        contains:
-          path: spec.oidc.scopes
-          content: openid
-      # Rule SecurityPolicy has same OIDC config except redirectURL
-      - documentIndex: 3
-        equal:
-          path: spec.oidc.provider.issuer
-          value: https://auth.example.com
-      - documentIndex: 3
-        equal:
-          path: spec.oidc.clientID
-          value: my-client-id
-      - documentIndex: 3
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api2.example.com/oauth2/callback
 
   - it: should create public HTTPRoute for skipAuth paths with all hostnames
     set:
@@ -323,8 +130,7 @@ tests:
         service1: {}
     asserts:
       - hasDocuments:
-          count: 5
-      # Public HTTPRoute
+          count: 3
       - documentIndex: 0
         isKind:
           of: HTTPRoute
@@ -342,10 +148,6 @@ tests:
           content: api2.example.com
       - documentIndex: 0
         lengthEqual:
-          path: spec.hostnames
-          count: 2
-      - documentIndex: 0
-        lengthEqual:
           path: spec.rules
           count: 2
       - documentIndex: 0
@@ -360,6 +162,38 @@ tests:
         equal:
           path: spec.rules[1].matches[0].path.value
           value: /metrics
+
+  - it: should add default root path when no root path exists
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          paths:
+            - path: /backend
+              pathType: Prefix
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /
+      - documentIndex: 0
+        equal:
+          path: spec.rules[1].matches[0].path.value
+          value: /backend
 
   - it: should not add default root path when root path already exists
     set:
@@ -389,50 +223,75 @@ tests:
           path: spec.rules[0].matches[0].path.value
           value: /
 
-  - it: should include annotations on SecurityPolicies
+  - it: should attach the primary HTTPRoute to the vanity ListenerSet when vanity is enabled
     set:
       global:
         ingress:
           enabled: false
-        annotations:
-          global-annotation: "global-value"
         gateway:
           enabled: true
           host: api.example.com
           oidcProtected: true
-          rules:
-            - host: api2.example.com
+          vanity:
+            enabled: true
         oidcProxyGateway:
           clientID: my-client-id
           provider:
             issuer: https://auth.example.com
-          annotations:
-            oidc-annotation: "oidc-value"
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0]
+          value:
+            group: gateway.networking.k8s.io
+            kind: ListenerSet
+            name: release-name-stack-service1-vanity
+
+  - it: should attach the public skipAuth HTTPRoute to the vanity ListenerSet when vanity is enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          vanity:
+            enabled: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+              method: GET
       services:
         service1: {}
     asserts:
       - hasDocuments:
-          count: 4
-      # Primary SecurityPolicy (HTTPRoutes at 0,1 then SecurityPolicies at 2,3)
-      - documentIndex: 2
+          count: 2
+      - documentIndex: 0
         equal:
-          path: metadata.annotations["global-annotation"]
-          value: "global-value"
-      - documentIndex: 2
+          path: metadata.name
+          value: release-name-stack-service1-public
+      - documentIndex: 0
         equal:
-          path: metadata.annotations["oidc-annotation"]
-          value: "oidc-value"
-      # Rule SecurityPolicy
-      - documentIndex: 3
+          path: spec.parentRefs[0]
+          value:
+            group: gateway.networking.k8s.io
+            kind: ListenerSet
+            name: release-name-stack-service1-vanity
+      - documentIndex: 1
         equal:
-          path: metadata.annotations["global-annotation"]
-          value: "global-value"
-      - documentIndex: 3
-        equal:
-          path: metadata.annotations["oidc-annotation"]
-          value: "oidc-value"
+          path: spec.parentRefs[0]
+          value:
+            group: gateway.networking.k8s.io
+            kind: ListenerSet
+            name: release-name-stack-service1-vanity
 
-  - it: should support OIDC resources parameter
+  - it: should attach to the shared gateway when vanity is disabled
     set:
       global:
         ingress:
@@ -441,26 +300,23 @@ tests:
           enabled: true
           host: api.example.com
           oidcProtected: true
+          sectionName: https
         oidcProxyGateway:
           clientID: my-client-id
           provider:
             issuer: https://auth.example.com
-          resources:
-            - resource1
-            - resource2
       services:
         service1: {}
     asserts:
-      - documentIndex: 1
-        contains:
-          path: spec.oidc.resources
-          content: resource1
-      - documentIndex: 1
-        contains:
-          path: spec.oidc.resources
-          content: resource2
+      - documentIndex: 0
+        equal:
+          path: spec.parentRefs[0]
+          value:
+            name: envoy-gateway
+            namespace: envoy-gateway
+            sectionName: https
 
-  - it: should include service labels on all resources
+  - it: should include service labels on the HTTPRoutes
     set:
       global:
         ingress:
@@ -480,7 +336,6 @@ tests:
       services:
         service1: {}
     asserts:
-      # All HTTPRoutes
       - documentIndex: 0
         equal:
           path: metadata.labels["argus/env-name"]
@@ -489,42 +344,3 @@ tests:
         equal:
           path: metadata.labels["argus/env-name"]
           value: "production"
-      # All SecurityPolicies
-      - documentIndex: 2
-        equal:
-          path: metadata.labels["argus/env-name"]
-          value: "production"
-      - documentIndex: 3
-        equal:
-          path: metadata.labels["argus/env-name"]
-          value: "production"
-
-  - it: should reference same client secret for all SecurityPolicies
-    set:
-      global:
-        fullnameOverride: myapp
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          oidcProtected: true
-          rules:
-            - host: api2.example.com
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-      services:
-        service1: {}
-    asserts:
-      # Primary SecurityPolicy
-      - documentIndex: 2
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: myapp-service1-oidc-client-secret
-      # Rule SecurityPolicy
-      - documentIndex: 3
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: myapp-service1-oidc-client-secret

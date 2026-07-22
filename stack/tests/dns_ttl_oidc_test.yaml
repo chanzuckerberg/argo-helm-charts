@@ -1,0 +1,29 @@
+suite: test DNS TTL annotation on OIDC HTTPRoutes
+templates:
+  - gateway-oidc.yaml
+tests:
+  - it: should set a 60s DNS TTL on OIDC-protected HTTPRoutes
+    set:
+      global:
+        ingress:
+          enabled: false
+        appSecrets:
+          clusterCLISecret:
+            secretKey: /argus/test
+            secretName: test-secret
+      services:
+        web:
+          gateway:
+            enabled: true
+            oidcProtected: true
+            host: web.example.com
+          oidcProxyGateway:
+            clientID: test-client
+            provider:
+              issuer: https://czi.okta.com
+    asserts:
+      - template: gateway-oidc.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
+          value: "60"

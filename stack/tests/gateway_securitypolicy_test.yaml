@@ -1,0 +1,778 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway SecurityPolicy (oidc, basicAuth, cors, ipAllowList)
+templates:
+  - gateway-securitypolicy.yaml
+tests:
+  - it: should create no SecurityPolicy when no security features are set
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create a SecurityPolicy named -oidc for the primary host
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: SecurityPolicy
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-oidc
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://api.example.com/oauth2/callback
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientID
+          value: my-client-id
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientSecret.name
+          value: argus-global-oidc
+
+  - it: should create a SecurityPolicy per rule with full OIDC config
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          rules:
+            - host: api2.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+            authorizationEndpoint: https://auth.example.com/authorize
+            tokenEndpoint: https://auth.example.com/token
+          logoutPath: /logout
+          forwardAccessToken: true
+          cookieDomain: example.com
+          scopes:
+            - openid
+            - profile
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-oidc
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.provider.issuer
+          value: https://auth.example.com
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.provider.authorizationEndpoint
+          value: https://auth.example.com/authorize
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientID
+          value: my-client-id
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.logoutPath
+          value: /logout
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieDomain
+          value: example.com
+      - documentIndex: 0
+        contains:
+          path: spec.oidc.scopes
+          content: openid
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-rule-0-oidc
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://api2.example.com/oauth2/callback
+
+  - it: should include annotations on SecurityPolicies
+    set:
+      global:
+        ingress:
+          enabled: false
+        annotations:
+          global-annotation: "global-value"
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          annotations:
+            oidc-annotation: "oidc-value"
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["global-annotation"]
+          value: "global-value"
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["oidc-annotation"]
+          value: "oidc-value"
+
+  - it: should render basicAuth (named -security) when enabled without oidc
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          basicAuth:
+            enabled: true
+            secretName: my-htpasswd
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-security
+      - documentIndex: 0
+        equal:
+          path: spec.basicAuth.users.name
+          value: my-htpasswd
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc
+
+  - it: should render cors when enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          cors:
+            enabled: true
+            allowOrigins:
+              - https://app.example.com
+            allowMethods:
+              - GET
+              - POST
+            allowCredentials: true
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        contains:
+          path: spec.cors.allowOrigins
+          content: https://app.example.com
+      - documentIndex: 0
+        equal:
+          path: spec.cors.allowCredentials
+          value: true
+
+  - it: should render an IP allowlist authorization rule
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          ipAllowList:
+            - 192.112.170.192/26
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.authorization.defaultAction
+          value: Deny
+      - documentIndex: 0
+        equal:
+          path: spec.authorization.rules[0].action
+          value: Allow
+      - documentIndex: 0
+        contains:
+          path: spec.authorization.rules[0].principal.clientCIDRs
+          content: 192.112.170.192/26
+
+  - it: should compose oidc with cors in a single SecurityPolicy
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          cors:
+            enabled: true
+            allowOrigins:
+              - https://app.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        exists:
+          path: spec.oidc
+      - documentIndex: 0
+        exists:
+          path: spec.cors
+
+  - it: should add a public SecurityPolicy for cors on the skipAuth route
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          cors:
+            enabled: true
+            allowOrigins:
+              - https://app.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+              method: GET
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-public-security
+      - documentIndex: 1
+        notExists:
+          path: spec.oidc
+      - documentIndex: 1
+        exists:
+          path: spec.cors
+
+  - it: should render denyRedirect by default and deterministic cookie names
+    release:
+      name: release-name
+      namespace: argus-karpenter-lens-rdev
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        app: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].name
+          value: Sec-Fetch-Mode
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].type
+          value: RegularExpression
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].value
+          value: cors|no-cors|same-origin
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[2].name
+          value: X-Requested-With
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-argus-karpenter-lens-rdev-app
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.idToken
+          value: IdToken-argus-karpenter-lens-rdev-app
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc.csrfTokenTTL
+
+  - it: should omit denyRedirect when disabled and let cookieNames overrides win
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          denyRedirect:
+            enabled: false
+          csrfTokenTTL: 5m
+          cookieNames:
+            accessToken: MyAccess
+            idToken: MyId
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc.denyRedirect
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.csrfTokenTTL
+          value: 5m
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: MyAccess
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.idToken
+          value: MyId
+
+  - it: should render apiRoutes as :path matchers after the default denyRedirect headers
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          apiRoutes:
+            - path: /api
+            - path: /graphql(\?.*)?$
+              matchType: RegularExpression
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].name
+          value: Sec-Fetch-Mode
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[3].name
+          value: ":path"
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[3].type
+          value: Prefix
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[3].value
+          value: /api
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[4].type
+          value: RegularExpression
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[4].value
+          value: /graphql(\?.*)?$
+
+  - it: should render only :path matchers when denyRedirect is disabled but apiRoutes are set
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          denyRedirect:
+            enabled: false
+          apiRoutes:
+            - path: /api
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].name
+          value: ":path"
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.oidc.denyRedirect.headers
+          count: 1
+
+  - it: should carry apiRoutes onto per-rule policies and keep the public policy oidc-free
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          rules:
+            - host: alt.example.com
+          cors:
+            enabled: true
+            allowOrigins:
+              - https://api.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+          apiRoutes:
+            - path: /api
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.denyRedirect.headers[3].name
+          value: ":path"
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.denyRedirect.headers[3].value
+          value: /api
+      - documentIndex: 2
+        notExists:
+          path: spec.oidc
+
+  - it: should fail on an empty apiRoutes path
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          apiRoutes:
+            - path: ""
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "path must not be empty"
+
+  - it: should fail on a Prefix apiRoutes path without a leading slash
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          apiRoutes:
+            - path: api
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "must start with /"
+
+  - it: should fail on a Prefix apiRoutes path of /
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          apiRoutes:
+            - path: /
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "making login impossible"
+
+  - it: should fail on an unknown apiRoutes matchType
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          apiRoutes:
+            - path: /api
+              matchType: prefix
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "not one of Prefix, Exact, RegularExpression"
+
+  - it: should allow 13 apiRoutes with default matchers and fail on 14
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          apiRoutes:
+            - path: /a1
+            - path: /a2
+            - path: /a3
+            - path: /a4
+            - path: /a5
+            - path: /a6
+            - path: /a7
+            - path: /a8
+            - path: /a9
+            - path: /a10
+            - path: /a11
+            - path: /a12
+            - path: /a13
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.oidc.denyRedirect.headers
+          count: 16
+
+  - it: should fail on 14 apiRoutes with default matchers enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          apiRoutes:
+            - path: /a1
+            - path: /a2
+            - path: /a3
+            - path: /a4
+            - path: /a5
+            - path: /a6
+            - path: /a7
+            - path: /a8
+            - path: /a9
+            - path: /a10
+            - path: /a11
+            - path: /a12
+            - path: /a13
+            - path: /a14
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "caps denyRedirect matchers at 16"
+
+  - it: should allow 16 apiRoutes when default matchers are disabled and fail on 17
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          denyRedirect:
+            enabled: false
+          apiRoutes:
+            - path: /a1
+            - path: /a2
+            - path: /a3
+            - path: /a4
+            - path: /a5
+            - path: /a6
+            - path: /a7
+            - path: /a8
+            - path: /a9
+            - path: /a10
+            - path: /a11
+            - path: /a12
+            - path: /a13
+            - path: /a14
+            - path: /a15
+            - path: /a16
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.oidc.denyRedirect.headers
+          count: 16
+
+  - it: should fail on 17 apiRoutes when default matchers are disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          denyRedirect:
+            enabled: false
+          apiRoutes:
+            - path: /a1
+            - path: /a2
+            - path: /a3
+            - path: /a4
+            - path: /a5
+            - path: /a6
+            - path: /a7
+            - path: /a8
+            - path: /a9
+            - path: /a10
+            - path: /a11
+            - path: /a12
+            - path: /a13
+            - path: /a14
+            - path: /a15
+            - path: /a16
+            - path: /a17
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: "caps denyRedirect matchers at 16"
+
+  - it: should render identical cookie names on per-rule policies and none on public
+    release:
+      name: release-name
+      namespace: testns
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          rules:
+            - host: alt.example.com
+          cors:
+            enabled: true
+            allowOrigins:
+              - https://api.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+      services:
+        app: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-testns-app
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-testns-app
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.denyRedirect.headers[0].name
+          value: Sec-Fetch-Mode
+      - documentIndex: 2
+        notExists:
+          path: spec.oidc

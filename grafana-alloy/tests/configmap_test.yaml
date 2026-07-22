@@ -21,7 +21,7 @@ tests:
       - isKind:
           of: ConfigMap
 
-  - it: should have the correct name
+  - it: should default the name to grafana-alloy-config
     set:
       enabled: true
       clusterName: test-cluster
@@ -29,6 +29,19 @@ tests:
       - equal:
           path: metadata.name
           value: grafana-alloy-config
+
+  - it: should follow alloy.alloy.configMap.name so multiple releases can share a namespace
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloy:
+        alloy:
+          configMap:
+            name: grafana-alloy-otlp-config
+    asserts:
+      - equal:
+          path: metadata.name
+          value: grafana-alloy-otlp-config
 
   - it: should contain config.alloy key in data
     set:
@@ -2001,3 +2014,71 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'discovery\.kubernetes "pods_metrics" \{\s*role = "pod"\s*selectors \{\s*role  = "pod"\s*field = "spec\.nodeName='
+
+  - it: should not node-shard cluster-wide scrapes when shardByNode is false (default)
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        scrapeKubeStateMetrics:
+          enabled: true
+        scrapeEndpoints:
+          enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'keepequal'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: '__tmp_local_node'
+      # KSM stays role=service when not sharded
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc" \{\s*role = "service"'
+
+  - it: should node-shard endpoints, dcgm, and kube-state-metrics when shardByNode is true
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+        scrapeKubeStateMetrics:
+          enabled: true
+          portName: http
+          shardByNode: true
+        scrapeEndpoints:
+          enabled: true
+          shardByNode: true
+        scrapeDcgmExporter:
+          enabled: true
+          namespaces: ["kube-system"]
+          shardByNode: true
+    asserts:
+      # KSM switches role=service -> role=endpoints and uses the endpoint port-name meta label
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "kube_state_metrics_svc" \{\s*role = "endpoints"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'source_labels = \["__meta_kubernetes_endpoint_port_name"\]'
+      # each cluster-wide scrape gets a keepequal node-shard on endpoint node name
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "endpoints" \{[\s\S]*?__meta_kubernetes_endpoint_node_name[\s\S]*?action        = "keepequal"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "kube_state_metrics" \{[\s\S]*?action        = "keepequal"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "dcgm_exporter" \{[\s\S]*?action        = "keepequal"'

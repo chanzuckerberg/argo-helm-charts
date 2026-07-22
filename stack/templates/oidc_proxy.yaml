@@ -1,6 +1,8 @@
 {{ $global := . }}
 {{- $allHosts := list -}}
 {{- $allOIDCProtectedServces := list -}}
+{{- $oidcContributors := 0 -}}
+{{- $oidcFlippedToGateway := 0 -}}
 {{ range $serviceName, $serviceValues := .Values.services }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
@@ -10,6 +12,10 @@
   {{- with $values -}}
   {{ $serviceScope := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" .}}
   {{- if and .ingress.oidcProtected .ingress.enabled -}}
+    {{- $oidcContributors = add1 $oidcContributors -}}
+    {{- if and .gateway.enabled (eq (.gateway.dnsOwner | default "ingress") "gateway") -}}
+      {{- $oidcFlippedToGateway = add1 $oidcFlippedToGateway -}}
+    {{- end -}}
     {{ range $i, $path := .ingress.paths }}
       {{- if (eq $path.pathType "Exact") -}}
       {{- $allOIDCProtectedServces = append 
@@ -90,13 +96,13 @@ spec:
             {{- end -}}
 
             {{- range .Values.oidcProxy.skipAuth }}
-            {{ if contains "*" .method }}
-            # for backwards compatibility, could also just be provided using extraArgs
+            {{- $method := default "*" .method }}
+            {{- if contains "*" $method }}
             - --skip-auth-route={{ .path }}
-            {{- else -}}
-            - --skip-auth-route={{ .method }}={{ .path }}
-            {{- end -}}
-            {{- end -}}
+            {{- else }}
+            - --skip-auth-route={{ $method }}={{ .path }}
+            {{- end }}
+            {{- end }}
 
             {{ $cookiePrefix := list }}
             {{ range .Values.oidcProxy.extraArgs }}
@@ -118,8 +124,10 @@ spec:
             {{- toYaml .Values.oidcProxy.extraArgs | nindent 12}}
             {{- end }}
           {{- include "image" .Values.oidcProxy  | nindent 10 }}
-          {{- if gt (len (fromYamlArray (include "oidcProxy.envFrom" .))) 0 }}
-          {{- include "oidcProxy.envFrom" . | nindent 10 }}
+          {{- $envFrom := fromYamlArray (include "oidcProxy.envFrom" .) }}
+          {{- if $envFrom }}
+          envFrom:
+            {{- toYaml $envFrom | nindent 12 }}
           {{- else }}
           envFrom: []
           {{- end }}
@@ -173,12 +181,18 @@ kind: Ingress
 metadata:
   name: {{ include "oidcProxy.name" . }}
   {{- $certManagerAnnotations := (fromYaml (include "certManagerAnnotations" . )) }}
+  {{- $proxyDnsExclude := dict -}}
+  {{- if and (gt $oidcContributors 0) (eq $oidcContributors $oidcFlippedToGateway) -}}
+    {{- $proxyDnsExclude = dict "external-dns.alpha.kubernetes.io/exclude" "true" -}}
+  {{- end }}
   annotations:
   {{- with (mergeOverwrite
               (dict)
               ($certManagerAnnotations)
               (.Values.annotations)
               (.Values.oidcProxy.annotations)
+              (fromYaml (include "ingress.coexistDnsAnnotations" . | default "{}"))
+              ($proxyDnsExclude)
       ) -}}
     {{ toYaml . | nindent 4 }}
   {{- end }}

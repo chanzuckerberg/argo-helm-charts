@@ -1,0 +1,90 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $globalValuesDict := $global.Values.global | toYaml -}}
+  {{- $values := fromYaml $globalValuesDict -}}
+  {{- $values = set $values "name" $serviceName -}}
+  {{- $values := mergeOverwrite $values $serviceValues -}}
+
+  {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
+  {{- if hasKey $serviceValues "gateway" -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" (dict "gateway" ($serviceValues.gateway | default dict))) -}}
+    {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
+      {{- $_ := set $values.gateway "enabled" true -}}
+      {{- if not (or (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) (hasKey $serviceValues.gateway "dnsOwner")) -}}
+        {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/* Auto-disable ingress when gateway is explicitly enabled at service level */}}
+  {{- if and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled") $serviceValues.gateway.enabled -}}
+    {{- if not (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled")) -}}
+      {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
+  {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
+    {{- if not (and (hasKey $serviceValues "gateway") (or (hasKey $serviceValues.gateway "enabled") (hasKey $serviceValues.gateway "dnsOwner"))) -}}
+      {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+{{- with $service }}
+{{- include "validate.gatewayIngressCoexistence" . -}}
+
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasBackendTrafficPolicy" .) "true") -}}
+{{- $g := .Values.gateway -}}
+{{- $routes := list (include "service.fullname" .) -}}
+{{- range $i, $rule := .Values.gateway.rules -}}
+  {{- $routes = append $routes (printf "%s-rule-%d" (include "service.fullname" $service) $i) -}}
+{{- end -}}
+{{- range $routeName := $routes }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: {{ $routeName }}-btp
+  labels:
+    {{- include "service.labels" $service | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                ($service.Values.annotations)
+                ($service.Values.gateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ $routeName }}
+  {{- if $g.sessionAffinity.enabled }}
+  loadBalancer:
+    type: ConsistentHash
+    consistentHash:
+      type: Cookie
+      cookie:
+        name: {{ $g.sessionAffinity.cookieName | quote }}
+        ttl: {{ $g.sessionAffinity.ttl | quote }}
+  {{- end }}
+  {{- if $g.rateLimit.enabled }}
+  rateLimit:
+    type: Local
+    local:
+      rules:
+        - limit:
+            requests: {{ $g.rateLimit.requests | int }}
+            unit: {{ $g.rateLimit.unit }}
+  {{- end }}
+  {{- if $g.timeouts.connect }}
+  timeout:
+    tcp:
+      connectTimeout: {{ $g.timeouts.connect | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{ end }}
+{{- end }}

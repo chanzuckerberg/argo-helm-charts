@@ -7,9 +7,12 @@
 
   {{/* Auto-enable gateway when config keys are provided (unless explicitly disabled) */}}
   {{- if hasKey $serviceValues "gateway" -}}
-    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" $values) -}}
+    {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" (dict "gateway" ($serviceValues.gateway | default dict))) -}}
     {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
       {{- $_ := set $values.gateway "enabled" true -}}
+      {{- if not (or (and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled) (hasKey $serviceValues.gateway "dnsOwner")) -}}
+        {{- $_ := set $values "ingress" (mergeOverwrite (default dict $values.ingress) (dict "enabled" false)) -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 
@@ -22,17 +25,20 @@
 
   {{/* Auto-disable gateway when ingress is explicitly enabled at service level */}}
   {{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
-    {{- if not (and (hasKey $serviceValues "gateway") (hasKey $serviceValues.gateway "enabled")) -}}
+    {{- if not (and (hasKey $serviceValues "gateway") (or (hasKey $serviceValues.gateway "enabled") (hasKey $serviceValues.gateway "dnsOwner"))) -}}
       {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
     {{- end -}}
   {{- end -}}
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- include "validate.gatewayIngressMutualExclusion" . -}}
+{{- include "validate.gatewayIngressCoexistence" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
-{{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) (not .Values.gateway.tlsPassthrough.enabled) -}}
+{{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
+{{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
+{{- $redirect := .Values.gateway.redirect -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -45,19 +51,47 @@ metadata:
                 (dict)
                 (.Values.annotations)
                 (.Values.gateway.annotations)
+                (fromYaml (include "gateway.coexistDnsAnnotations" (dict "root" . "host" .Values.gateway.host) | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   parentRefs:
+    {{- if .Values.gateway.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ include "service.vanityListenerSetName" . }}
+    {{- else }}
     - name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
       {{- if .Values.gateway.sectionName }}
       sectionName: {{ .Values.gateway.sectionName }}
       {{- end }}
+    {{- end }}
   hostnames:
     - {{ $service.Values.gateway.host }}
   rules:
+    {{- if $redirect.enabled }}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            {{- if $redirect.scheme }}
+            scheme: {{ $redirect.scheme }}
+            {{- end }}
+            {{- if $redirect.hostname }}
+            hostname: {{ $redirect.hostname }}
+            {{- end }}
+            {{- if $redirect.path }}
+            path:
+              type: ReplaceFullPath
+              replaceFullPath: {{ $redirect.path }}
+            {{- end }}
+            statusCode: {{ $redirect.statusCode | int }}
+    {{- else }}
     {{- range $service.Values.gateway.paths }}
     - matches:
         - path:
@@ -73,6 +107,15 @@ spec:
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
     {{- end }}
 {{- range $i, $rule := .Values.gateway.rules }}
 ---
@@ -87,19 +130,47 @@ metadata:
                 (dict)
                 ($service.Values.annotations)
                 ($service.Values.gateway.annotations)
+                (fromYaml (include "gateway.coexistDnsAnnotations" (dict "root" $service "host" $rule.host) | default "{}"))
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   parentRefs:
+    {{- if and $rule.vanity $rule.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ printf "%s-rule-%d" (include "service.vanityListenerSetName" $service) $i }}
+    {{- else }}
     - name: {{ $service.Values.gateway.gatewayName }}
       namespace: {{ $service.Values.gateway.gatewayNamespace }}
       {{- if $service.Values.gateway.sectionName }}
       sectionName: {{ $service.Values.gateway.sectionName }}
       {{- end }}
+    {{- end }}
   hostnames:
     - {{ $rule.host }}
   rules:
+    {{- if $redirect.enabled }}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            {{- if $redirect.scheme }}
+            scheme: {{ $redirect.scheme }}
+            {{- end }}
+            {{- if $redirect.hostname }}
+            hostname: {{ $redirect.hostname }}
+            {{- end }}
+            {{- if $redirect.path }}
+            path:
+              type: ReplaceFullPath
+              replaceFullPath: {{ $redirect.path }}
+            {{- end }}
+            statusCode: {{ $redirect.statusCode | int }}
+    {{- else }}
     {{- $ruleValues := mergeOverwrite (dict "paths" $service.Values.gateway.paths) $rule -}}
     {{- range $ruleValues.paths }}
     - matches:
@@ -116,6 +187,15 @@ spec:
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
     {{- end }}
 {{- end }}
 {{ end }}

@@ -475,6 +475,10 @@
             "serviceAppLabelValue": {
               "description": "Value of the Service label app=...",
               "type": "string"
+            },
+            "shardByNode": {
+              "description": "When true (DaemonSet), each pod scrapes only the dcgm endpoints on its own node. dcgm-exporter is per-GPU-node, so this gives one scraper per exporter with locality and no duplication. Alternative to Alloy clustering.",
+              "type": "boolean"
             }
           }
         },
@@ -493,6 +497,10 @@
             "scrapeTimeout": {
               "description": "Scrape timeout for endpoint scraping",
               "type": "string"
+            },
+            "shardByNode": {
+              "description": "When true (DaemonSet), each pod scrapes only the annotated endpoints whose backing pod runs on its own node, so each target is scraped once instead of once per node. Alternative to Alloy clustering. Note - drops targets with no endpoint node name (external/headless services), so only use where all annotated scrape targets are pod-backed.",
+              "type": "boolean"
             }
           }
         },
@@ -585,6 +593,10 @@
             "serviceSelector": {
               "description": "Label selector (key=value) to find the kube-state-metrics service",
               "type": "string"
+            },
+            "shardByNode": {
+              "description": "When true (DaemonSet), discover KSM via role=endpoints and keep only the endpoint on this pod's node, so the single KSM is scraped once instead of once per node. Alternative to Alloy clustering for cluster-singleton scraping.",
+              "type": "boolean"
             }
           }
         },

@@ -1,5 +1,81 @@
 # Changelog
 
+## [2.46.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.45.0...stack-v2.46.0) (2026-07-17)
+
+
+### Features
+
+* **stack:** gateway OIDC 401 semantics (denyRedirect + apiRoutes), deterministic cookie names ([#513](https://github.com/chanzuckerberg/argo-helm-charts/issues/513)) ([a55f917](https://github.com/chanzuckerberg/argo-helm-charts/commit/a55f9177f2ac609b826cc05df13273ae7e8c7404))
+
+## [2.45.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.44.0...stack-v2.45.0) (2026-07-16)
+
+
+### Features
+
+* **stack:** right-size oidcProxy default resources ([#514](https://github.com/chanzuckerberg/argo-helm-charts/issues/514)) ([9429b84](https://github.com/chanzuckerberg/argo-helm-charts/commit/9429b848a9006bfb9730fc07a18565319c7fa146))
+
+## [2.44.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.2...stack-v2.44.0) (2026-07-14)
+
+
+### Features
+
+* **stack:** relax Grafana CR resync and default dashboard refresh [CCIE-6793] ([#508](https://github.com/chanzuckerberg/argo-helm-charts/issues/508)) ([9e544d0](https://github.com/chanzuckerberg/argo-helm-charts/commit/9e544d04dbdab8773ebee149b1987cff9e474fbd))
+
+
+### Misc
+
+* gateway.oidcProtected works with zero extra configuration ([#510](https://github.com/chanzuckerberg/argo-helm-charts/issues/510)) ([3ddfef0](https://github.com/chanzuckerberg/argo-helm-charts/commit/3ddfef0f0950a09a32d1fdea02f479c10234af7c))
+
+## [2.43.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.1...stack-v2.43.2) (2026-07-09)
+
+
+### Bug Fixes
+
+* **stack:** oidc-proxy envFrom and skipAuth render errors, vanity OIDC route attachment ([#506](https://github.com/chanzuckerberg/argo-helm-charts/issues/506)) ([ad8cb63](https://github.com/chanzuckerberg/argo-helm-charts/commit/ad8cb6329475b2816f32fbb200860cf516052591))
+
+## [2.43.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.43.0...stack-v2.43.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* **stack:** fix YAML parse error in gateway-oidc when paths lack a root entry ([#504](https://github.com/chanzuckerberg/argo-helm-charts/issues/504)) ([8bc92e5](https://github.com/chanzuckerberg/argo-helm-charts/commit/8bc92e5e31c0efc484007fe5626683f5c27e3043))
+
+## [2.43.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.42.0...stack-v2.43.0) (2026-07-08)
+
+
+### Features
+
+* ingress/gateway coexistence with a gateway.dnsOwner DNS flip ([#500](https://github.com/chanzuckerberg/argo-helm-charts/issues/500)) ([3a61ee9](https://github.com/chanzuckerberg/argo-helm-charts/commit/3a61ee9511314b43dc7f13ffa0f83d10b90eb81c))
+
+
+### Bug Fixes
+
+* **stack:** count 3xx as success in service dashboard rate panels ([#472](https://github.com/chanzuckerberg/argo-helm-charts/issues/472)) ([16427e2](https://github.com/chanzuckerberg/argo-helm-charts/commit/16427e255056ab62fd1042d1b85701c4b44a104e))
+
+## [2.42.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.41.0...stack-v2.42.0) (2026-07-06)
+
+
+### Features
+
+* **oidc:** default OIDC config from global secret ([#496](https://github.com/chanzuckerberg/argo-helm-charts/issues/496)) ([c2ad274](https://github.com/chanzuckerberg/argo-helm-charts/commit/c2ad274f67a9decacf83695dc9dc0fa8dc11746c))
+
+## [2.41.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.40.0...stack-v2.41.0) (2026-06-30)
+
+
+### Features
+
+* first-class gateway values for nginx-annotation parity ([#490](https://github.com/chanzuckerberg/argo-helm-charts/issues/490)) ([673c648](https://github.com/chanzuckerberg/argo-helm-charts/commit/673c6482a0c47fea22e71ffd0f147c7f04cd2160))
+* per-rule vanity hosts (a ListenerSet per gateway.rules entry) ([#489](https://github.com/chanzuckerberg/argo-helm-charts/issues/489)) ([61c213b](https://github.com/chanzuckerberg/argo-helm-charts/commit/61c213be55595cf244f9bf6d8ff55950621677e3))
+* Self-serve vanity-domain TLS via Gateway API ListenerSet (CCIE-6643) ([#488](https://github.com/chanzuckerberg/argo-helm-charts/issues/488)) ([3e6257c](https://github.com/chanzuckerberg/argo-helm-charts/commit/3e6257c8aa9b3cfc6a2bcbbbc213597c39ea30c4))
+* **stack:** default 60s DNS TTL on Ingress and HTTPRoute records (CCIE-6707) ([#483](https://github.com/chanzuckerberg/argo-helm-charts/issues/483)) ([e4e2637](https://github.com/chanzuckerberg/argo-helm-charts/commit/e4e26376105a402f54a377021d9d86de65f6438c))
+
+## [2.40.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.39.0...stack-v2.40.0) (2026-06-10)
+
+
+### Features
+
+* add cpu and memory usage as default charts in per-stack grafana dashboards ([#473](https://github.com/chanzuckerberg/argo-helm-charts/issues/473)) ([b3fb6b8](https://github.com/chanzuckerberg/argo-helm-charts/commit/b3fb6b8ef2fe310ea4808d9c5c7bcdb5dfebecfd))
+
 ## [2.39.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.38.0...stack-v2.39.0) (2026-06-02)
 
 
