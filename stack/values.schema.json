@@ -964,10 +964,6 @@
               "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty, a per-service secret is built from `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET values if set, otherwise falls back to the shared argus-global-oidc secret.",
               "type": "string"
             },
-            "globalSecretKey": {
-              "description": "Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.",
-              "type": "string"
-            },
             "cookieDomain": {
               "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
               "type": "string"
@@ -1003,6 +999,10 @@
             "forwardAccessToken": {
               "description": "Forward access token to backend service",
               "type": "boolean"
+            },
+            "globalSecretKey": {
+              "description": "Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.",
+              "type": "string"
             },
             "logoutPath": {
               "description": "Path for logout operations",
