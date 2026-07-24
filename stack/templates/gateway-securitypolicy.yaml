@@ -35,6 +35,7 @@
 {{- include "validate.gatewayIngressCoexistence" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 {{- include "validate.gatewaySecurityExclusive" . -}}
+{{- include "validate.oidcClientPairing" . -}}
 
 {{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasSecurityPolicy" .) "true") -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" . -}}
@@ -49,7 +50,7 @@ metadata:
     {{- with (mergeOverwrite
                 (dict)
                 (.Values.annotations)
-                (.Values.oidcProxyGateway.annotations)
+                ((.Values.oidcProxyGateway | default dict).annotations)
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -71,7 +72,7 @@ metadata:
     {{- with (mergeOverwrite
                 (dict)
                 ($service.Values.annotations)
-                ($service.Values.oidcProxyGateway.annotations)
+                (($service.Values.oidcProxyGateway | default dict).annotations)
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -82,7 +83,7 @@ spec:
       name: {{ include "service.fullname" $service }}-rule-{{ $i }}
   {{- include "gateway.securityPolicy.body" (dict "ctx" $service "host" $rule.host "public" false) | nindent 2 }}
 {{- end }}
-{{- if and .Values.gateway.oidcProtected (gt (len .Values.oidcProxyGateway.skipAuth) 0) (or .Values.gateway.cors.enabled (gt (len .Values.gateway.ipAllowList) 0)) }}
+{{- if and .Values.gateway.oidcProtected (gt (len ((.Values.oidcProxyGateway | default dict).skipAuth | default list)) 0) (or .Values.gateway.cors.enabled (gt (len .Values.gateway.ipAllowList) 0)) }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
@@ -94,7 +95,7 @@ metadata:
     {{- with (mergeOverwrite
                 (dict)
                 (.Values.annotations)
-                (.Values.oidcProxyGateway.annotations)
+                ((.Values.oidcProxyGateway | default dict).annotations)
       ) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
