@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.47.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.46.0...stack-v2.47.0) (2026-07-27)
+
+
+### Features
+
+* **oidc:** let argus set secret override the gateway OIDC client ([#520](https://github.com/chanzuckerberg/argo-helm-charts/issues/520)) ([349d55b](https://github.com/chanzuckerberg/argo-helm-charts/commit/349d55b34135e311d6301cb0016bab65165e4157))
+
+
+### Bug Fixes
+
+* Remove default sticky sessions ([#465](https://github.com/chanzuckerberg/argo-helm-charts/issues/465)) ([9c45d9d](https://github.com/chanzuckerberg/argo-helm-charts/commit/9c45d9d9f7ba863e16b92a14eaf84fa5bd9c0d2b))
+
 ## [2.46.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.45.0...stack-v2.46.0) (2026-07-17)
 
 
