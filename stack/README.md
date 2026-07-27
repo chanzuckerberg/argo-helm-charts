@@ -1026,11 +1026,11 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                 |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case                                  |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider                                                 |
+| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri                                                                                                                                                                                                 |
+| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login                                                            |
+| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>2.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
 
@@ -1039,7 +1039,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case
+**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>2.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
 
@@ -1048,7 +1048,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
+**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>2.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
 
@@ -1057,7 +1057,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider
+**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
 
 ##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>2.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
 
@@ -5201,11 +5201,11 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                              | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                 |
-| ----------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#global_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case                                  |
-| - [issuer](#global_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login |
-| - [remoteJWKSUri](#global_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider                                                 |
+| Property                                              | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                          |
+| ----------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#global_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri                                                                                                                                                                                                 |
+| - [issuer](#global_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login                                                            |
+| - [remoteJWKSUri](#global_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
 
 ##### <a name="global_gateway_jwt_enabled"></a>3.16.12.1. Property `stack > global > gateway > jwt > enabled`
 
@@ -5214,7 +5214,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case
+**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri
 
 ##### <a name="global_gateway_jwt_issuer"></a>3.16.12.2. Property `stack > global > gateway > jwt > issuer`
 
@@ -5223,7 +5223,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
+**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
 
 ##### <a name="global_gateway_jwt_remoteJWKSUri"></a>3.16.12.3. Property `stack > global > gateway > jwt > remoteJWKSUri`
 
@@ -5232,7 +5232,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider
+**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
 
 #### <a name="global_gateway_oidcProtected"></a>3.16.13. Property `stack > global > gateway > oidcProtected`
 
@@ -9394,11 +9394,11 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                 |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case                                  |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider                                                 |
+| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri                                                                                                                                                                                                 |
+| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login                                                            |
+| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>4.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
 
@@ -9407,7 +9407,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case
+**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>4.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
 
@@ -9416,7 +9416,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
+**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>4.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
 
@@ -9425,7 +9425,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider
+**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
 
 ##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>4.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
 
@@ -14051,11 +14051,11 @@ Must be one of:
 
 **Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
 
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                 |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case                                  |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider                                                 |
+| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri                                                                                                                                                                                                 |
+| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string  | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login                                                            |
+| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string  | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>7.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
 
@@ -14064,7 +14064,7 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Enable JWT bearer-token validation. With just this flag it reuses the OIDC issuer (oidcProxyGateway.provider.issuer) and derives its JWKS, so no other config is needed for the common Okta case
+**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>7.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
 
@@ -14073,7 +14073,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Expected token issuer (iss claim), also used to derive the JWKS URI. Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
+**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
 
 ###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>7.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
 
@@ -14082,7 +14082,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit JWKS URI, an optional override. Defaults to the issuer's Okta JWKS endpoint (org server /oauth2/v1/keys, custom server <issuer>/v1/keys). Set it for a non-Okta provider
+**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
 
 ##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>7.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
 
