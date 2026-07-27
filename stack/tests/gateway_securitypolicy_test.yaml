@@ -777,7 +777,7 @@ tests:
         notExists:
           path: spec.oidc
 
-  - it: should enable jwt with just the flag (reuses the OIDC issuer, derives JWKS)
+  - it: should render jwt from remoteJWKSUri, defaulting the issuer to the OIDC issuer
     set:
       global:
         ingress:
@@ -787,6 +787,7 @@ tests:
           host: api.example.com
           jwt:
             enabled: true
+            remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
       services:
         service1: {}
     asserts:
@@ -809,13 +810,12 @@ tests:
         equal:
           path: spec.jwt.providers[0].issuer
           value: https://czi.okta.com
-      # org-server JWKS lives under /oauth2/v1/keys
       - documentIndex: 0
         equal:
           path: spec.jwt.providers[0].remoteJWKS.uri
           value: https://czi.okta.com/oauth2/v1/keys
 
-  - it: should derive the JWKS from a custom authorization-server issuer
+  - it: should use an explicit issuer for a custom authorization server
     set:
       global:
         ingress:
@@ -826,6 +826,7 @@ tests:
           jwt:
             enabled: true
             issuer: https://czi.okta.com/oauth2/aus123
+            remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
       services:
         service1: {}
     asserts:
@@ -833,13 +834,12 @@ tests:
         equal:
           path: spec.jwt.providers[0].issuer
           value: https://czi.okta.com/oauth2/aus123
-      # custom server: JWKS is <issuer>/v1/keys
       - documentIndex: 0
         equal:
           path: spec.jwt.providers[0].remoteJWKS.uri
           value: https://czi.okta.com/oauth2/aus123/v1/keys
 
-  - it: should use an explicit remoteJWKSUri override
+  - it: should fail when jwt is enabled without a remoteJWKSUri
     set:
       global:
         ingress:
@@ -849,14 +849,11 @@ tests:
           host: api.example.com
           jwt:
             enabled: true
-            remoteJWKSUri: https://idp.example.com/keys
       services:
         service1: {}
     asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].remoteJWKS.uri
-          value: https://idp.example.com/keys
+      - failedTemplate:
+          errorPattern: gateway.jwt.remoteJWKSUri is required when gateway.jwt.enabled is true
 
   - it: should render both oidc and jwt on one SecurityPolicy when both are enabled
     set:
@@ -869,6 +866,7 @@ tests:
           oidcProtected: true
           jwt:
             enabled: true
+            remoteJWKSUri: https://auth.example.com/keys
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -909,6 +907,7 @@ tests:
             allowOrigins: ["*"]
           jwt:
             enabled: true
+            remoteJWKSUri: https://auth.example.com/keys
         oidcProxyGateway:
           clientID: my-client-id
           provider:
