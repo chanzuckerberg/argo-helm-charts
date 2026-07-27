@@ -661,9 +661,6 @@
                 "external-dns.alpha.kubernetes.io/ttl": {
                   "type": "string"
                 },
-                "nginx.ingress.kubernetes.io/affinity": {
-                  "type": "string"
-                },
                 "nginx.ingress.kubernetes.io/proxy-connect-timeout": {
                   "type": "string"
                 },
@@ -671,12 +668,6 @@
                   "type": "string"
                 },
                 "nginx.ingress.kubernetes.io/proxy-send-timeout": {
-                  "type": "string"
-                },
-                "nginx.ingress.kubernetes.io/session-cookie-max-age": {
-                  "type": "string"
-                },
-                "nginx.ingress.kubernetes.io/session-cookie-name": {
                   "type": "string"
                 }
               }
@@ -970,7 +961,7 @@
               "type": "string"
             },
             "clientSecretName": {
-              "description": "Kubernetes secret containing client-id and client-secret keys (created by the argus-global-oidc ClusterExternalSecret)",
+              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty, a per-service secret is built from `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET values if set, otherwise falls back to the shared argus-global-oidc secret.",
               "type": "string"
             },
             "cookieDomain": {
@@ -1008,6 +999,10 @@
             "forwardAccessToken": {
               "description": "Forward access token to backend service",
               "type": "boolean"
+            },
+            "globalSecretKey": {
+              "description": "Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.",
+              "type": "string"
             },
             "logoutPath": {
               "description": "Path for logout operations",

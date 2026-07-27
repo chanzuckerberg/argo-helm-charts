@@ -59,6 +59,61 @@ tests:
           path: spec.oidc.clientSecret.name
           value: argus-global-oidc
 
+  - it: should reference the per-service secret when the app has Argus secrets
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        appSecrets:
+          envSecret:
+            secretName: argus-env
+            secretKey: /argus/app=core-platform/env=prod
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientIDRef.name
+          value: release-name-stack-service1-oidc-client-secret
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientSecret.name
+          value: release-name-stack-service1-oidc-client-secret
+      - documentIndex: 0
+        notExists:
+          path: spec.oidc.clientID
+
+  - it: should reference an explicit clientSecretName over the per-service secret
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientSecretName: my-own-secret
+        appSecrets:
+          envSecret:
+            secretName: argus-env
+            secretKey: /argus/app=core-platform/env=prod
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientSecret.name
+          value: my-own-secret
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientIDRef.name
+          value: my-own-secret
+
   - it: should create a SecurityPolicy per rule with full OIDC config
     set:
       global:
