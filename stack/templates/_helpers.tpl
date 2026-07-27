@@ -326,11 +326,35 @@ Return the OIDC issuer URL.
 {{- end -}}
 
 {{/*
+Return "true" when the service has any Argus app secret configured (a secretKey
+at any level). Used to decide whether to build a per-service OIDC credential
+secret from `argus set secret` values.
+*/}}
+{{- define "oidcProxyGateway.hasAppSecrets" -}}
+{{- $s := default dict .Values.appSecrets -}}
+{{- if or (dig "clusterSecret" "secretKey" "" $s) (dig "clusterCLISecret" "secretKey" "" $s) (dig "stackSecret" "secretKey" "" $s) (dig "envSecret" "secretKey" "" $s) -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the Kubernetes secret name for OIDC credentials.
 The secret must contain 'client-id' and 'client-secret' keys.
+
+Precedence:
+  1. An explicit oidcProxyGateway.clientSecretName wins.
+  2. Otherwise, if the app has Argus secrets, use the per-service secret built by
+     gateway-oidc-secret.yaml (global defaults overridden by OAUTH2_PROXY_* values).
+  3. Otherwise, fall back to the shared argus-global-oidc secret.
 */}}
 {{- define "oidcProxyGateway.secretName" -}}
-{{- .Values.oidcProxyGateway.clientSecretName | default "argus-global-oidc" -}}
+{{- if .Values.oidcProxyGateway.clientSecretName -}}
+{{- .Values.oidcProxyGateway.clientSecretName -}}
+{{- else if eq (include "oidcProxyGateway.hasAppSecrets" .) "true" -}}
+{{- printf "%s-oidc-client-secret" (include "service.fullname" .) -}}
+{{- else -}}
+argus-global-oidc
+{{- end -}}
 {{- end -}}
 
 {{/*

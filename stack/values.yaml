@@ -394,7 +394,8 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   oidcProxyGateway: # @schema description: Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
     clientID: "" # @schema description: OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
-    clientSecretName: "argus-global-oidc" # @schema description: Kubernetes secret containing client-id and client-secret keys (created by the argus-global-oidc ClusterExternalSecret)
+    clientSecretName: "" # @schema description: Explicit Kubernetes secret with client-id and client-secret keys. When empty, a per-service secret is built from `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET values if set, otherwise falls back to the shared argus-global-oidc secret.
+    globalSecretKey: "arn:aws:secretsmanager:us-west-2:533267185808:secret:/argus/central/global-oidc-app" # @schema description: Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.
     provider: # @schema description: OIDC provider configuration
       issuer: "https://czi.okta.com" # @schema description: OIDC provider issuer URL
       authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered by provider if empty)
