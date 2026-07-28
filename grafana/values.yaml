@@ -16,6 +16,8 @@ secretStoreRef: "aws-secretsmanager" # @schema description: Name of the secret s
 
 roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || 'Viewer'" # @schema description: JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
+datasourceResyncPeriod: 30m # @schema type: string; pattern: ^[0-9]+(s|m|h)$; description: How often grafana-operator re-pushes GrafanaDatasource CRs. This is the recovery clock after a Grafana restart: until the DB is persistent, datasources are missing for up to this long after every pod replacement. Seconds are permitted - these CRs select instanceSelector name:<grafanaName>, the cluster-local instance, so they place no load on an external AMG workspace (which is a separate Grafana CR, typically central-grafana). Lower it on clusters where Grafana runs without persistent storage.
+
 grafanaAnnotations: {} # @schema description: Annotations to add to the Grafana instance.; patternProperties: { "^.*$": { "type": "string" } }
 
 grafanaSubdomain: "grafana" # @schema description: Subdomain to use for the Grafana instance.

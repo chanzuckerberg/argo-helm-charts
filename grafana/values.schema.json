@@ -69,6 +69,11 @@
       "description": "Name of the cluster to configure the platform Grafana for. This value is required.",
       "type": "string"
     },
+    "datasourceResyncPeriod": {
+      "description": "How often grafana-operator re-pushes GrafanaDatasource CRs. Seconds are permitted: these CRs select instanceSelector name:<grafanaName>, the cluster-local instance, so they place no load on an external AMG workspace (a separate Grafana CR, typically central-grafana).",
+      "type": "string",
+      "pattern": "^[0-9]+(s|m|h)$"
+    },
     "datasources": {
       "description": "List of datasources to configure for the Grafana instance.",
       "type": "object",
