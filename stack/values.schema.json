@@ -960,8 +960,12 @@
               "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
               "type": "string"
             },
+            "clientSecretFromAppSecrets": {
+              "description": "Set true only when the app supplies its own OIDC client via `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET. Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false (the default) to use the shared argus-global-oidc secret; unrelated app secrets do not trigger this path.",
+              "type": "boolean"
+            },
             "clientSecretName": {
-              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty, a per-service secret is built from `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET values if set, otherwise falls back to the shared argus-global-oidc secret.",
+              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.",
               "type": "string"
             },
             "cookieDomain": {

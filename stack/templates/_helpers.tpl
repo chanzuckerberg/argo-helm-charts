@@ -326,14 +326,19 @@ Return the OIDC issuer URL.
 {{- end -}}
 
 {{/*
-Return "true" when the service has any Argus app secret configured (a secretKey
-at any level). Used to decide whether to build a per-service OIDC credential
-secret from `argus set secret` values.
+Return "true" when the app supplies its own OIDC client via `argus set secret`
+(oidcProxyGateway.clientSecretFromAppSecrets) and has at least one Argus app secret
+level to read the OAUTH2_PROXY_* override from. This gates the per-service OIDC
+credential secret built by gateway-oidc-secret.yaml. It intentionally does not
+trigger on unrelated app secrets, which would otherwise point the SecurityPolicy at
+a per-service secret that never carries OIDC credentials.
 */}}
 {{- define "oidcProxyGateway.hasAppSecrets" -}}
+{{- if .Values.oidcProxyGateway.clientSecretFromAppSecrets -}}
 {{- $s := default dict .Values.appSecrets -}}
 {{- if or (dig "clusterSecret" "secretKey" "" $s) (dig "clusterCLISecret" "secretKey" "" $s) (dig "stackSecret" "secretKey" "" $s) (dig "envSecret" "secretKey" "" $s) -}}
 true
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -343,8 +348,9 @@ The secret must contain 'client-id' and 'client-secret' keys.
 
 Precedence:
   1. An explicit oidcProxyGateway.clientSecretName wins.
-  2. Otherwise, if the app has Argus secrets, use the per-service secret built by
-     gateway-oidc-secret.yaml (global defaults overridden by OAUTH2_PROXY_* values).
+  2. Otherwise, when oidcProxyGateway.clientSecretFromAppSecrets is set and the app
+     has Argus secrets, use the per-service secret built by gateway-oidc-secret.yaml
+     (global defaults overridden by OAUTH2_PROXY_* values).
   3. Otherwise, fall back to the shared argus-global-oidc secret.
 */}}
 {{- define "oidcProxyGateway.secretName" -}}
