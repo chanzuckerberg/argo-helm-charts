@@ -367,6 +367,31 @@ https://{{ .Values.gateway.host }}/oauth2/callback
 {{- end -}}
 
 {{/*
+Whether the OIDC OAuth2 callback path (/oauth2/callback) is already reachable
+through one of the configured gateway paths. Input dict: "paths" (list).
+A PathPrefix path covers the callback when it is "/" or a path-segment prefix of
+"/oauth2/callback"; an Exact path covers it only on an exact match.
+Returns "true"/"".
+*/}}
+{{- define "gateway.oidcCallbackCovered" -}}
+{{- $callback := "/oauth2/callback" -}}
+{{- $covered := false -}}
+{{- range .paths -}}
+  {{- if eq .pathType "Exact" -}}
+    {{- if eq .path $callback -}}
+      {{- $covered = true -}}
+    {{- end -}}
+  {{- else -}}
+    {{- $p := trimSuffix "/" .path -}}
+    {{- if or (eq $p "") (eq $p $callback) (hasPrefix (printf "%s/" $p) $callback) -}}
+      {{- $covered = true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if $covered -}}true{{- end -}}
+{{- end -}}
+
+{{/*
 Validate that OIDC and basic auth are not both enabled on a gateway service.
 A route can carry only one SecurityPolicy, and oidc + basicAuth are independent
 auth mechanisms; combining them is unsupported.

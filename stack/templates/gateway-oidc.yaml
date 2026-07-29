@@ -121,13 +121,7 @@ spec:
     - {{ .Values.gateway.host }}
   rules:
     {{- /* When OIDC is enabled, ensure we have a route that covers /oauth2/callback */ -}}
-    {{- $hasRootPath := false -}}
-    {{- range $service.Values.gateway.paths -}}
-      {{- if and (eq .path "/") (ne .pathType "Exact") -}}
-        {{- $hasRootPath = true -}}
-      {{- end -}}
-    {{- end -}}
-    {{- if not $hasRootPath }}
+    {{- if ne (include "gateway.oidcCallbackCovered" (dict "paths" $service.Values.gateway.paths)) "true" }}
     - matches:
         - path:
             type: PathPrefix
@@ -194,14 +188,8 @@ spec:
     - {{ $rule.host }}
   rules:
     {{- /* When OIDC is enabled, ensure we have a route that covers /oauth2/callback */ -}}
-    {{- $hasRootPath := false -}}
     {{- $ruleValues := mergeOverwrite (dict "paths" $service.Values.gateway.paths) $rule -}}
-    {{- range $ruleValues.paths -}}
-      {{- if and (eq .path "/") (ne .pathType "Exact") -}}
-        {{- $hasRootPath = true -}}
-      {{- end -}}
-    {{- end -}}
-    {{- if not $hasRootPath }}
+    {{- if ne (include "gateway.oidcCallbackCovered" (dict "paths" $ruleValues.paths)) "true" }}
     - matches:
         - path:
             type: PathPrefix
