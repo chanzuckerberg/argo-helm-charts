@@ -956,6 +956,10 @@
                 }
               }
             },
+            "basePath": {
+              "description": "URL prefix the OAuth2 callback and logout live under. Envoy Gateway requires redirectURL and logoutPath to match the service's own HTTPRoute, so the callback becomes \u003cbasePath\u003e/oauth2/callback and logout \u003cbasePath\u003e\u003clogoutPath\u003e. When empty, the chart derives it from a single non-root gateway path (e.g. /portal) so you never hand-write /oauth2 or /logout paths. Set explicitly only when the service serves multiple app prefixes.",
+              "type": "string"
+            },
             "clientID": {
               "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
               "type": "string"
@@ -1009,7 +1013,7 @@
               "type": "string"
             },
             "logoutPath": {
-              "description": "Path for logout operations",
+              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
               "type": "string"
             },
             "provider": {
