@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.49.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.48.0...stack-v2.49.0) (2026-07-30)
+
+
+### Features
+
+* **stack:** read global OIDC base credentials from cluster secret ([#525](https://github.com/chanzuckerberg/argo-helm-charts/issues/525)) ([00d2f19](https://github.com/chanzuckerberg/argo-helm-charts/commit/00d2f199e36a335e6ad5a6e05d1c39abcb972486))
+
 ## [2.48.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.47.0...stack-v2.48.0) (2026-07-30)
 
 
