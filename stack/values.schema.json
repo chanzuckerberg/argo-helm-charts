@@ -488,7 +488,7 @@
               "type": "object",
               "properties": {
                 "backendRequest": {
-                  "description": "Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request",
+                  "description": "Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be \u003c= request",
                   "type": "string"
                 },
                 "connect": {
@@ -516,7 +516,7 @@
               }
             },
             "vanity": {
-              "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)",
+              "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway \u003e= v1.8 and cert-manager \u003e= v1.20)",
               "type": "object",
               "properties": {
                 "clusterIssuer": {
@@ -765,7 +765,7 @@
               "type": "number"
             },
             "httpGet": {
-              "description": "HTTP probe configuration (exec & tcpSocket are also available)",
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
               "type": "object",
               "properties": {
                 "path": {
@@ -961,7 +961,7 @@
               "type": "string"
             },
             "clientSecretFromAppSecrets": {
-              "description": "Set true only when the app supplies its own OIDC client via `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET. Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false (the default) to use the shared argus-global-oidc secret; unrelated app secrets do not trigger this path.",
+              "description": "Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.",
               "type": "boolean"
             },
             "clientSecretName": {
@@ -973,7 +973,7 @@
               "type": "string"
             },
             "cookieNames": {
-              "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
+              "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-\u003cnamespace\u003e-\u003cservice\u003e / IdToken-\u003cnamespace\u003e-\u003cservice\u003e. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
               "type": "object",
               "properties": {
                 "accessToken": {
@@ -1009,7 +1009,7 @@
               "type": "string"
             },
             "logoutPath": {
-              "description": "Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.",
+              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
               "type": "string"
             },
             "provider": {
@@ -1158,7 +1158,7 @@
               "type": "number"
             },
             "httpGet": {
-              "description": "HTTP probe configuration (exec & tcpSocket are also available)",
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
               "type": "object",
               "properties": {
                 "path": {
