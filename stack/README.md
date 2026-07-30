@@ -2671,25 +2671,24 @@ Must be one of:
 
 **Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
 
-| Property                                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )                               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretFromAppSecrets](#cronJobs_pattern1_oidcProxyGateway_clientSecretFromAppSecrets ) | No      | boolean         | No         | -          | Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.                                                                                                                                                                                                                                                                                                                 |
-| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )                     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )                             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )                               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )                             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )                             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken )                 | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretKey](#cronJobs_pattern1_oidcProxyGateway_globalSecretKey )                       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )                             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
+| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.                                                                                                                                                                                                                        |
+| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
+| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
+| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [globalSecretKey](#cronJobs_pattern1_oidcProxyGateway_globalSecretKey )       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>2.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
@@ -2758,25 +2757,16 @@ Must be one of:
 
 **Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretFromAppSecrets"></a>2.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretFromAppSecrets`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>2.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>2.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.
+**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>2.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>2.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -2785,7 +2775,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>2.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>2.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2800,7 +2790,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>2.1.27.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>2.1.27.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -2809,7 +2799,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>2.1.27.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>2.1.27.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -2818,7 +2808,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>2.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>2.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
@@ -2827,7 +2817,7 @@ Must be one of:
 
 **Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>2.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>2.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2841,7 +2831,7 @@ Must be one of:
 | ---------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>2.1.27.9.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>2.1.27.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -2850,7 +2840,7 @@ Must be one of:
 
 **Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>2.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>2.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -2859,7 +2849,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretKey"></a>2.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretKey`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretKey"></a>2.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretKey`
 
 |              |          |
 | ------------ | -------- |
@@ -2868,7 +2858,7 @@ Must be one of:
 
 **Description:** Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>2.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>2.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -2877,7 +2867,7 @@ Must be one of:
 
 **Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>2.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>2.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -2893,7 +2883,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>2.1.27.13.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>2.1.27.12.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -2902,7 +2892,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>2.1.27.13.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>2.1.27.12.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -2911,7 +2901,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>2.1.27.13.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>2.1.27.12.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -2920,7 +2910,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>2.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>2.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -2929,7 +2919,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>2.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>2.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -2946,7 +2936,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>2.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>2.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2967,14 +2957,14 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.27.15.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>2.1.27.17. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>2.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -2995,7 +2985,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>2.1.27.17.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>2.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3008,14 +2998,14 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>2.1.27.17.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>2.1.27.16.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>2.1.27.17.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>2.1.27.16.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -6866,25 +6856,24 @@ Must be one of:
 
 **Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
 
-| Property                                                                             | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#global_oidcProxyGateway_annotations )                               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#global_oidcProxyGateway_apiRoutes )                                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#global_oidcProxyGateway_clientID )                                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretFromAppSecrets](#global_oidcProxyGateway_clientSecretFromAppSecrets ) | No      | boolean         | No         | -          | Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.                                                                                                                                                                                                                                                                                                                 |
-| - [clientSecretName](#global_oidcProxyGateway_clientSecretName )                     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cookieDomain](#global_oidcProxyGateway_cookieDomain )                             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#global_oidcProxyGateway_cookieNames )                               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#global_oidcProxyGateway_csrfTokenTTL )                             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#global_oidcProxyGateway_denyRedirect )                             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#global_oidcProxyGateway_forwardAccessToken )                 | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretKey](#global_oidcProxyGateway_globalSecretKey )                       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [logoutPath](#global_oidcProxyGateway_logoutPath )                                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#global_oidcProxyGateway_provider )                                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#global_oidcProxyGateway_refreshToken )                             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#global_oidcProxyGateway_resources )                                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#global_oidcProxyGateway_scopes )                                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#global_oidcProxyGateway_skipAuth )                                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Property                                                             | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#global_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [apiRoutes](#global_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
+| - [clientID](#global_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientSecretName](#global_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.                                                                                                                                                                                                                        |
+| - [cookieDomain](#global_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [cookieNames](#global_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
+| - [csrfTokenTTL](#global_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [denyRedirect](#global_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
+| - [forwardAccessToken](#global_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [globalSecretKey](#global_oidcProxyGateway_globalSecretKey )       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [logoutPath](#global_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [provider](#global_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [refreshToken](#global_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [resources](#global_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [scopes](#global_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [skipAuth](#global_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 #### <a name="global_oidcProxyGateway_annotations"></a>3.27.1. Property `stack > global > oidcProxyGateway > annotations`
 
@@ -6953,25 +6942,16 @@ Must be one of:
 
 **Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
 
-#### <a name="global_oidcProxyGateway_clientSecretFromAppSecrets"></a>3.27.4. Property `stack > global > oidcProxyGateway > clientSecretFromAppSecrets`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.
-
-#### <a name="global_oidcProxyGateway_clientSecretName"></a>3.27.5. Property `stack > global > oidcProxyGateway > clientSecretName`
+#### <a name="global_oidcProxyGateway_clientSecretName"></a>3.27.4. Property `stack > global > oidcProxyGateway > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.
+**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.
 
-#### <a name="global_oidcProxyGateway_cookieDomain"></a>3.27.6. Property `stack > global > oidcProxyGateway > cookieDomain`
+#### <a name="global_oidcProxyGateway_cookieDomain"></a>3.27.5. Property `stack > global > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -6980,7 +6960,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-#### <a name="global_oidcProxyGateway_cookieNames"></a>3.27.7. Property `stack > global > oidcProxyGateway > cookieNames`
+#### <a name="global_oidcProxyGateway_cookieNames"></a>3.27.6. Property `stack > global > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6995,7 +6975,7 @@ Must be one of:
 | - [accessToken](#global_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#global_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-##### <a name="global_oidcProxyGateway_cookieNames_accessToken"></a>3.27.7.1. Property `stack > global > oidcProxyGateway > cookieNames > accessToken`
+##### <a name="global_oidcProxyGateway_cookieNames_accessToken"></a>3.27.6.1. Property `stack > global > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -7004,7 +6984,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-##### <a name="global_oidcProxyGateway_cookieNames_idToken"></a>3.27.7.2. Property `stack > global > oidcProxyGateway > cookieNames > idToken`
+##### <a name="global_oidcProxyGateway_cookieNames_idToken"></a>3.27.6.2. Property `stack > global > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -7013,7 +6993,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-#### <a name="global_oidcProxyGateway_csrfTokenTTL"></a>3.27.8. Property `stack > global > oidcProxyGateway > csrfTokenTTL`
+#### <a name="global_oidcProxyGateway_csrfTokenTTL"></a>3.27.7. Property `stack > global > oidcProxyGateway > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
@@ -7022,7 +7002,7 @@ Must be one of:
 
 **Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
 
-#### <a name="global_oidcProxyGateway_denyRedirect"></a>3.27.9. Property `stack > global > oidcProxyGateway > denyRedirect`
+#### <a name="global_oidcProxyGateway_denyRedirect"></a>3.27.8. Property `stack > global > oidcProxyGateway > denyRedirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7036,7 +7016,7 @@ Must be one of:
 | ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#global_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
 
-##### <a name="global_oidcProxyGateway_denyRedirect_enabled"></a>3.27.9.1. Property `stack > global > oidcProxyGateway > denyRedirect > enabled`
+##### <a name="global_oidcProxyGateway_denyRedirect_enabled"></a>3.27.8.1. Property `stack > global > oidcProxyGateway > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -7045,7 +7025,7 @@ Must be one of:
 
 **Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
 
-#### <a name="global_oidcProxyGateway_forwardAccessToken"></a>3.27.10. Property `stack > global > oidcProxyGateway > forwardAccessToken`
+#### <a name="global_oidcProxyGateway_forwardAccessToken"></a>3.27.9. Property `stack > global > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -7054,7 +7034,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-#### <a name="global_oidcProxyGateway_globalSecretKey"></a>3.27.11. Property `stack > global > oidcProxyGateway > globalSecretKey`
+#### <a name="global_oidcProxyGateway_globalSecretKey"></a>3.27.10. Property `stack > global > oidcProxyGateway > globalSecretKey`
 
 |              |          |
 | ------------ | -------- |
@@ -7063,7 +7043,7 @@ Must be one of:
 
 **Description:** Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.
 
-#### <a name="global_oidcProxyGateway_logoutPath"></a>3.27.12. Property `stack > global > oidcProxyGateway > logoutPath`
+#### <a name="global_oidcProxyGateway_logoutPath"></a>3.27.11. Property `stack > global > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -7072,7 +7052,7 @@ Must be one of:
 
 **Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
 
-#### <a name="global_oidcProxyGateway_provider"></a>3.27.13. Property `stack > global > oidcProxyGateway > provider`
+#### <a name="global_oidcProxyGateway_provider"></a>3.27.12. Property `stack > global > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7088,7 +7068,7 @@ Must be one of:
 | - [issuer](#global_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
 | - [tokenEndpoint](#global_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
 
-##### <a name="global_oidcProxyGateway_provider_authorizationEndpoint"></a>3.27.13.1. Property `stack > global > oidcProxyGateway > provider > authorizationEndpoint`
+##### <a name="global_oidcProxyGateway_provider_authorizationEndpoint"></a>3.27.12.1. Property `stack > global > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -7097,7 +7077,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-##### <a name="global_oidcProxyGateway_provider_issuer"></a>3.27.13.2. Property `stack > global > oidcProxyGateway > provider > issuer`
+##### <a name="global_oidcProxyGateway_provider_issuer"></a>3.27.12.2. Property `stack > global > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -7106,7 +7086,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-##### <a name="global_oidcProxyGateway_provider_tokenEndpoint"></a>3.27.13.3. Property `stack > global > oidcProxyGateway > provider > tokenEndpoint`
+##### <a name="global_oidcProxyGateway_provider_tokenEndpoint"></a>3.27.12.3. Property `stack > global > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -7115,7 +7095,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-#### <a name="global_oidcProxyGateway_refreshToken"></a>3.27.14. Property `stack > global > oidcProxyGateway > refreshToken`
+#### <a name="global_oidcProxyGateway_refreshToken"></a>3.27.13. Property `stack > global > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -7124,7 +7104,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-#### <a name="global_oidcProxyGateway_resources"></a>3.27.15. Property `stack > global > oidcProxyGateway > resources`
+#### <a name="global_oidcProxyGateway_resources"></a>3.27.14. Property `stack > global > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -7141,7 +7121,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_oidcProxyGateway_scopes"></a>3.27.16. Property `stack > global > oidcProxyGateway > scopes`
+#### <a name="global_oidcProxyGateway_scopes"></a>3.27.15. Property `stack > global > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -7162,14 +7142,14 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [scopes items](#global_oidcProxyGateway_scopes_items) | -           |
 
-##### <a name="global_oidcProxyGateway_scopes_items"></a>3.27.16.1. stack > global > oidcProxyGateway > scopes > scopes items
+##### <a name="global_oidcProxyGateway_scopes_items"></a>3.27.15.1. stack > global > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_oidcProxyGateway_skipAuth"></a>3.27.17. Property `stack > global > oidcProxyGateway > skipAuth`
+#### <a name="global_oidcProxyGateway_skipAuth"></a>3.27.16. Property `stack > global > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -7190,7 +7170,7 @@ Must be one of:
 | --------------------------------------------------------- | ----------- |
 | [skipAuth items](#global_oidcProxyGateway_skipAuth_items) | -           |
 
-##### <a name="global_oidcProxyGateway_skipAuth_items"></a>3.27.17.1. stack > global > oidcProxyGateway > skipAuth > skipAuth items
+##### <a name="global_oidcProxyGateway_skipAuth_items"></a>3.27.16.1. stack > global > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7203,14 +7183,14 @@ Must be one of:
 | - [method](#global_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#global_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="global_oidcProxyGateway_skipAuth_items_method"></a>3.27.17.1.1. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="global_oidcProxyGateway_skipAuth_items_method"></a>3.27.16.1.1. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_oidcProxyGateway_skipAuth_items_path"></a>3.27.17.1.2. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="global_oidcProxyGateway_skipAuth_items_path"></a>3.27.16.1.2. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -11079,25 +11059,24 @@ Must be one of:
 
 **Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
 
-| Property                                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )                               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretFromAppSecrets](#cronJobs_pattern1_oidcProxyGateway_clientSecretFromAppSecrets ) | No      | boolean         | No         | -          | Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.                                                                                                                                                                                                                                                                                                                 |
-| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )                     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )                             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )                               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )                             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )                             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken )                 | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretKey](#cronJobs_pattern1_oidcProxyGateway_globalSecretKey )                       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )                             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
+| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.                                                                                                                                                                                                                        |
+| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
+| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
+| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [globalSecretKey](#cronJobs_pattern1_oidcProxyGateway_globalSecretKey )       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>4.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
@@ -11166,25 +11145,16 @@ Must be one of:
 
 **Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretFromAppSecrets"></a>4.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretFromAppSecrets`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>4.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>4.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.
+**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>4.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>4.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -11193,7 +11163,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>4.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>4.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11208,7 +11178,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>4.1.27.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>4.1.27.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -11217,7 +11187,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>4.1.27.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>4.1.27.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -11226,7 +11196,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>4.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>4.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
@@ -11235,7 +11205,7 @@ Must be one of:
 
 **Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>4.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>4.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11249,7 +11219,7 @@ Must be one of:
 | ---------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>4.1.27.9.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>4.1.27.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -11258,7 +11228,7 @@ Must be one of:
 
 **Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>4.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>4.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -11267,7 +11237,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretKey"></a>4.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretKey`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretKey"></a>4.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretKey`
 
 |              |          |
 | ------------ | -------- |
@@ -11276,7 +11246,7 @@ Must be one of:
 
 **Description:** Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>4.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>4.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -11285,7 +11255,7 @@ Must be one of:
 
 **Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>4.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>4.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11301,7 +11271,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>4.1.27.13.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>4.1.27.12.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -11310,7 +11280,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>4.1.27.13.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>4.1.27.12.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -11319,7 +11289,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>4.1.27.13.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>4.1.27.12.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -11328,7 +11298,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>4.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>4.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -11337,7 +11307,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>4.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>4.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -11354,7 +11324,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>4.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>4.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -11375,14 +11345,14 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.27.15.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>4.1.27.17. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>4.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -11403,7 +11373,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>4.1.27.17.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>4.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11416,14 +11386,14 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>4.1.27.17.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>4.1.27.16.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>4.1.27.17.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>4.1.27.16.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -15756,25 +15726,24 @@ Must be one of:
 
 **Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
 
-| Property                                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )                               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretFromAppSecrets](#cronJobs_pattern1_oidcProxyGateway_clientSecretFromAppSecrets ) | No      | boolean         | No         | -          | Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.                                                                                                                                                                                                                                                                                                                 |
-| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )                     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )                             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )                               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )                             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )                             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken )                 | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretKey](#cronJobs_pattern1_oidcProxyGateway_globalSecretKey )                       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )                             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
+| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.                                                                                                                                                                                                                        |
+| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
+| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
+| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [globalSecretKey](#cronJobs_pattern1_oidcProxyGateway_globalSecretKey )       | No      | string          | No         | -          | Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>7.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
 
@@ -15843,25 +15812,16 @@ Must be one of:
 
 **Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretFromAppSecrets"></a>7.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretFromAppSecrets`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>7.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>7.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty, the shared argus-global-oidc secret is used unless clientSecretFromAppSecrets is true.
+**Description:** Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>7.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>7.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
@@ -15870,7 +15830,7 @@ Must be one of:
 
 **Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>7.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>7.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15885,7 +15845,7 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
 | - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>7.1.27.7.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>7.1.27.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
@@ -15894,7 +15854,7 @@ Must be one of:
 
 **Description:** Custom name for access token cookie
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>7.1.27.7.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>7.1.27.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
@@ -15903,7 +15863,7 @@ Must be one of:
 
 **Description:** Custom name for ID token cookie
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>7.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>7.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
@@ -15912,7 +15872,7 @@ Must be one of:
 
 **Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>7.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>7.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15926,7 +15886,7 @@ Must be one of:
 | ---------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>7.1.27.9.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>7.1.27.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15935,7 +15895,7 @@ Must be one of:
 
 **Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>7.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>7.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -15944,7 +15904,7 @@ Must be one of:
 
 **Description:** Forward access token to backend service
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretKey"></a>7.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretKey`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretKey"></a>7.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretKey`
 
 |              |          |
 | ------------ | -------- |
@@ -15953,7 +15913,7 @@ Must be one of:
 
 **Description:** Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>7.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>7.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
 
 |              |          |
 | ------------ | -------- |
@@ -15962,7 +15922,7 @@ Must be one of:
 
 **Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>7.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>7.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15978,7 +15938,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
 | - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>7.1.27.13.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>7.1.27.12.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -15987,7 +15947,7 @@ Must be one of:
 
 **Description:** Optional authorization endpoint (auto-discovered by provider if empty)
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>7.1.27.13.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>7.1.27.12.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -15996,7 +15956,7 @@ Must be one of:
 
 **Description:** OIDC provider issuer URL
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>7.1.27.13.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>7.1.27.12.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -16005,7 +15965,7 @@ Must be one of:
 
 **Description:** Optional token endpoint (auto-discovered by provider if empty)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>7.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>7.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
 
 |              |           |
 | ------------ | --------- |
@@ -16014,7 +15974,7 @@ Must be one of:
 
 **Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>7.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>7.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
 
 |              |         |
 | ------------ | ------- |
@@ -16031,7 +15991,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>7.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>7.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -16052,14 +16012,14 @@ Must be one of:
 | ---------------------------------------------------------------- | ----------- |
 | [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.27.15.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>7.1.27.17. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
+##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>7.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -16080,7 +16040,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>7.1.27.17.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>7.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16093,14 +16053,14 @@ Must be one of:
 | - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
 | - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>7.1.27.17.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>7.1.27.16.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>7.1.27.17.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>7.1.27.16.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
