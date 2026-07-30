@@ -59,7 +59,7 @@ tests:
           path: spec.oidc.clientSecret.name
           value: argus-global-oidc
 
-  - it: should reference the per-service secret when the app has Argus secrets
+  - it: should namespace redirectURL and logoutPath under the derived base path
     set:
       global:
         ingress:
@@ -68,6 +68,66 @@ tests:
           enabled: true
           host: api.example.com
           oidcProtected: true
+          paths:
+            - path: /portal
+              pathType: Prefix
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://api.example.com/portal/oauth2/callback
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.logoutPath
+          value: /portal/logout
+
+  - it: should namespace redirectURL and logoutPath under the first non-root Prefix path when multiple paths are configured
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          paths:
+            - path: /portal
+              pathType: Prefix
+            - path: /admin
+              pathType: Prefix
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://api.example.com/portal/oauth2/callback
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.logoutPath
+          value: /portal/logout
+
+  - it: should reference the per-service secret when the app opts into app-supplied OIDC creds
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientSecretFromAppSecrets: true
         appSecrets:
           envSecret:
             secretName: argus-env
@@ -86,6 +146,27 @@ tests:
       - documentIndex: 0
         notExists:
           path: spec.oidc.clientID
+
+  - it: should use a per-service secret automatically when app secrets are present
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        appSecrets:
+          envSecret:
+            secretName: argus-env
+            secretKey: /argus/app=core-platform/env=prod
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientSecret.name
+          value: release-name-stack-service1-oidc-client-secret
 
   - it: should reference an explicit clientSecretName over the per-service secret
     set:
@@ -829,5 +910,159 @@ tests:
           path: spec.oidc.denyRedirect.headers[0].name
           value: Sec-Fetch-Mode
       - documentIndex: 2
+        notExists:
+          path: spec.oidc
+
+  - it: should render jwt from remoteJWKSUri, defaulting the issuer to the OIDC issuer
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: SecurityPolicy
+      # jwt alone (no oidc) → the "-security" suffix
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-security
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].name
+          value: default
+      # issuer defaults to oidcProxyGateway.provider.issuer
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].issuer
+          value: https://czi.okta.com
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].remoteJWKS.uri
+          value: https://czi.okta.com/oauth2/v1/keys
+
+  - it: should use an explicit issuer for a custom authorization server
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            issuer: https://czi.okta.com/oauth2/aus123
+            remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].issuer
+          value: https://czi.okta.com/oauth2/aus123
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].remoteJWKS.uri
+          value: https://czi.okta.com/oauth2/aus123/v1/keys
+
+  - it: should fail when jwt is enabled without a remoteJWKSUri
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: gateway.jwt.remoteJWKSUri is required when gateway.jwt.enabled is true
+
+  - it: should render both oidc and jwt on one SecurityPolicy when both are enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          jwt:
+            enabled: true
+            remoteJWKSUri: https://auth.example.com/keys
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-oidc
+      - documentIndex: 0
+        isNotEmpty:
+          path: spec.oidc
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].name
+          value: default
+      # jwt reuses the same OIDC issuer
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].issuer
+          value: https://auth.example.com
+
+  - it: should not render jwt on a public (skipAuth) SecurityPolicy
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          cors:
+            enabled: true
+            allowOrigins: ["*"]
+          jwt:
+            enabled: true
+            remoteJWKSUri: https://auth.example.com/keys
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+          skipAuth:
+            - path: /healthz
+      services:
+        service1: {}
+    asserts:
+      # doc 0 is the gated route (oidc + jwt), doc 1 is the public/skipAuth route:
+      # it carries cors but never jwt or oidc
+      - hasDocuments:
+          count: 2
+      - documentIndex: 1
+        isNotEmpty:
+          path: spec.cors
+      - documentIndex: 1
+        notExists:
+          path: spec.jwt
+      - documentIndex: 1
         notExists:
           path: spec.oidc

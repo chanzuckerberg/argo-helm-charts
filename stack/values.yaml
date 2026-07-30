@@ -244,6 +244,15 @@ global: # @schema description: Global configuration for the stack - this serves 
     basicAuth: # @schema description: HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
       enabled: false # @schema description: Enable basic auth
       secretName: "" # @schema description: Name of an Opaque Secret with a .htpasswd key
+    jwt: # @schema description: JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
+      enabled: false # @schema description: Enable JWT bearer-token validation. Requires remoteJWKSUri
+      issuer: "" # @schema description: Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login
+      remoteJWKSUri: "" # @schema description: JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
+      # NOTE: token audience (aud) validation is intentionally not exposed. It would be good
+      # practice - it pins a token to this API so a token minted for another service (same
+      # issuer and signing keys) cannot be replayed here (RFC 8725) - but a specific audience
+      # requires a custom Okta authorization server, which is not self-service in Argus. Add
+      # an audiences field here (and in the provider block in _helpers.tpl) if that changes.
     cors: # @schema description: CORS via a SecurityPolicy
       enabled: false # @schema description: Enable CORS
       allowOrigins: [] # @schema description: Allowed origins (string patterns)
@@ -394,7 +403,7 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   oidcProxyGateway: # @schema description: Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
     clientID: "" # @schema description: OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
-    clientSecretName: "" # @schema description: Explicit Kubernetes secret with client-id and client-secret keys. When empty, a per-service secret is built from `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET values if set, otherwise falls back to the shared argus-global-oidc secret.
+    clientSecretName: "" # @schema description: Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.
     globalSecretKey: "arn:aws:secretsmanager:us-west-2:533267185808:secret:/argus/central/global-oidc-app" # @schema description: Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.
     provider: # @schema description: OIDC provider configuration
       issuer: "https://czi.okta.com" # @schema description: OIDC provider issuer URL
@@ -402,7 +411,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered by provider if empty)
     skipAuth: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "method": {"type": "string"}}; description: Paths to skip authentication (creates separate public HTTPRoute)
     apiRoutes: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "matchType": {"type": "string"}}; description: API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.
-    logoutPath: "/logout" # @schema description: Path for logout operations
+    logoutPath: "/logout" # @schema description: Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
     forwardAccessToken: false # @schema description: Forward access token to backend service
     refreshToken: true # @schema description: Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
     cookieDomain: "" # @schema description: Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)

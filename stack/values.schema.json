@@ -356,6 +356,24 @@
               "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
               "type": "array"
             },
+            "jwt": {
+              "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable JWT bearer-token validation. Requires remoteJWKSUri",
+                  "type": "boolean"
+                },
+                "issuer": {
+                  "description": "Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login",
+                  "type": "string"
+                },
+                "remoteJWKSUri": {
+                  "description": "JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s \u003cissuer\u003e/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)",
+                  "type": "string"
+                }
+              }
+            },
             "oidcProtected": {
               "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
               "type": "boolean"
@@ -961,7 +979,7 @@
               "type": "string"
             },
             "clientSecretName": {
-              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty, a per-service secret is built from `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET values if set, otherwise falls back to the shared argus-global-oidc secret.",
+              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.",
               "type": "string"
             },
             "cookieDomain": {
@@ -1005,7 +1023,7 @@
               "type": "string"
             },
             "logoutPath": {
-              "description": "Path for logout operations",
+              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
               "type": "string"
             },
             "provider": {
