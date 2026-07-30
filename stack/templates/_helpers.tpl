@@ -326,19 +326,17 @@ Return the OIDC issuer URL.
 {{- end -}}
 
 {{/*
-Return "true" when the app supplies its own OIDC client via `argus set secret`
-(oidcProxyGateway.clientSecretFromAppSecrets) and has at least one Argus app secret
-level to read the OAUTH2_PROXY_* override from. This gates the per-service OIDC
-credential secret built by gateway-oidc-secret.yaml. It intentionally does not
-trigger on unrelated app secrets, which would otherwise point the SecurityPolicy at
-a per-service secret that never carries OIDC credentials.
+Return "true" when the service has at least one Argus app secret level configured.
+This gates the per-service OIDC credential secret built by gateway-oidc-secret.yaml.
+When true, the ExternalSecret seeds from the shared global OIDC app and overrides
+with OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET from the app's secrets if
+those keys are present. When they are absent the global values remain, so the service
+transparently falls back to the shared client without any flag or opt-in.
 */}}
 {{- define "oidcProxyGateway.hasAppSecrets" -}}
-{{- if .Values.oidcProxyGateway.clientSecretFromAppSecrets -}}
 {{- $s := default dict .Values.appSecrets -}}
 {{- if or (dig "clusterSecret" "secretKey" "" $s) (dig "clusterCLISecret" "secretKey" "" $s) (dig "stackSecret" "secretKey" "" $s) (dig "envSecret" "secretKey" "" $s) -}}
 true
-{{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -348,9 +346,9 @@ The secret must contain 'client-id' and 'client-secret' keys.
 
 Precedence:
   1. An explicit oidcProxyGateway.clientSecretName wins.
-  2. Otherwise, when oidcProxyGateway.clientSecretFromAppSecrets is set and the app
-     has Argus secrets, use the per-service secret built by gateway-oidc-secret.yaml
-     (global defaults overridden by OAUTH2_PROXY_* values).
+  2. Otherwise, when the service has Argus app secrets configured, use the
+     per-service secret built by gateway-oidc-secret.yaml (global defaults
+     transparently overridden by OAUTH2_PROXY_* values if set via argus set secret).
   3. Otherwise, fall back to the shared argus-global-oidc secret.
 */}}
 {{- define "oidcProxyGateway.secretName" -}}

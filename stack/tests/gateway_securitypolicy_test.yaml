@@ -147,7 +147,7 @@ tests:
         notExists:
           path: spec.oidc.clientID
 
-  - it: should fall back to the shared secret when app secrets are unrelated to OIDC
+  - it: should use a per-service secret automatically when app secrets are present
     set:
       global:
         ingress:
@@ -166,7 +166,7 @@ tests:
       - documentIndex: 0
         equal:
           path: spec.oidc.clientSecret.name
-          value: argus-global-oidc
+          value: release-name-stack-service1-oidc-client-secret
 
   - it: should reference an explicit clientSecretName over the per-service secret
     set:
