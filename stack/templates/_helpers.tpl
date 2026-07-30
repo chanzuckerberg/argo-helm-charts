@@ -452,7 +452,7 @@ Returns "true"/"" .
 */}}
 {{- define "gateway.hasSecurityPolicy" -}}
 {{- $g := .Values.gateway -}}
-{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) -}}true{{- end -}}
+{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) $g.jwt.enabled -}}true{{- end -}}
 {{- end -}}
 
 {{/*
@@ -627,6 +627,14 @@ oidc:
   resources:
     {{- toYaml $.Values.oidcProxyGateway.resources | nindent 4 }}
   {{- end }}
+{{- end }}
+{{- if and (not .public) $g.jwt.enabled }}
+jwt:
+  providers:
+    - name: default
+      remoteJWKS:
+        uri: {{ required "gateway.jwt.remoteJWKSUri is required when gateway.jwt.enabled is true. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $g.jwt.remoteJWKSUri | quote }}
+      issuer: {{ required "gateway.jwt.issuer is required when gateway.jwt.enabled is true (or set oidcProxyGateway.provider.issuer)" ($g.jwt.issuer | default $.Values.oidcProxyGateway.provider.issuer) | quote }}
 {{- end }}
 {{- if and (not .public) $g.basicAuth.enabled }}
 basicAuth:
