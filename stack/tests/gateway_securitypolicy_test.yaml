@@ -59,7 +59,7 @@ tests:
           path: spec.oidc.clientSecret.name
           value: argus-global-oidc
 
-  - it: should reference the per-service secret when the app has Argus secrets
+  - it: should namespace redirectURL and logoutPath under the derived base path
     set:
       global:
         ingress:
@@ -68,6 +68,66 @@ tests:
           enabled: true
           host: api.example.com
           oidcProtected: true
+          paths:
+            - path: /portal
+              pathType: Prefix
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://api.example.com/portal/oauth2/callback
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.logoutPath
+          value: /portal/logout
+
+  - it: should namespace redirectURL and logoutPath under the first non-root Prefix path when multiple paths are configured
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          paths:
+            - path: /portal
+              pathType: Prefix
+            - path: /admin
+              pathType: Prefix
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://api.example.com/portal/oauth2/callback
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.logoutPath
+          value: /portal/logout
+
+  - it: should reference the per-service secret when the app opts into app-supplied OIDC creds
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        oidcProxyGateway:
+          clientSecretFromAppSecrets: true
         appSecrets:
           envSecret:
             secretName: argus-env
@@ -86,6 +146,27 @@ tests:
       - documentIndex: 0
         notExists:
           path: spec.oidc.clientID
+
+  - it: should use a per-service secret automatically when app secrets are present
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+        appSecrets:
+          envSecret:
+            secretName: argus-env
+            secretKey: /argus/app=core-platform/env=prod
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.clientSecret.name
+          value: release-name-stack-service1-oidc-client-secret
 
   - it: should reference an explicit clientSecretName over the per-service secret
     set:

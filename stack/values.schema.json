@@ -979,7 +979,7 @@
               "type": "string"
             },
             "clientSecretName": {
-              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty, a per-service secret is built from `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET values if set, otherwise falls back to the shared argus-global-oidc secret.",
+              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.",
               "type": "string"
             },
             "cookieDomain": {
@@ -1023,7 +1023,7 @@
               "type": "string"
             },
             "logoutPath": {
-              "description": "Path for logout operations",
+              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
               "type": "string"
             },
             "provider": {
