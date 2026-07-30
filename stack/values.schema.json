@@ -1018,8 +1018,8 @@
               "description": "Forward access token to backend service",
               "type": "boolean"
             },
-            "globalSecretKey": {
-              "description": "Secrets Manager key for the shared global OIDC app, used as the default client-id/client-secret when the app has not set its own OAUTH2_PROXY_* secrets.",
+            "globalSecretName": {
+              "description": "Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used as the base credential source, and as the secret the SecurityPolicy points at directly when a service has no Argus app secrets.",
               "type": "string"
             },
             "logoutPath": {

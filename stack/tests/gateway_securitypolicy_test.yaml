@@ -117,7 +117,7 @@ tests:
           path: spec.oidc.logoutPath
           value: /portal/logout
 
-  - it: should reference the per-service secret when the app opts into app-supplied OIDC creds
+  - it: should point both clientIDRef and clientSecret at the per-service secret
     set:
       global:
         ingress:
@@ -126,8 +126,6 @@ tests:
           enabled: true
           host: api.example.com
           oidcProtected: true
-        oidcProxyGateway:
-          clientSecretFromAppSecrets: true
         appSecrets:
           envSecret:
             secretName: argus-env
