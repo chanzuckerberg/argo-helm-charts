@@ -400,26 +400,23 @@ exact match. Returns "true"/"".
 {{/*
 OIDC base path: the URL prefix the OAuth2 callback and logout live under. Envoy
 Gateway requires redirectURL and logoutPath to match the service's own HTTPRoute,
-otherwise the OAuth2 filter never sees those requests. The chart derives the prefix
-so users only declare their app path (e.g. /portal) and never hand-write /oauth2 or
-/logout. An explicit oidcProxyGateway.basePath wins. Otherwise a single non-root
-PathPrefix path becomes the base path; root, Exact, or multiple paths yield "" (host
-root). Input dict: "paths" (list), "basePath" (string). Returns "" or "/prefix"
-with no trailing slash.
+otherwise the OAuth2 filter never sees those requests. The chart scans the service's
+gateway.paths for the first non-root PathPrefix path and uses it as the base so
+users never have to hand-write /oauth2 or /logout paths. When no such path exists
+(all paths are root or Exact) the base path is empty, placing the callback at the
+host root. Input dict: "paths" (list). Returns "" or "/prefix" with no trailing slash.
 */}}
 {{- define "oidcProxyGateway.basePath" -}}
-{{- $explicit := .basePath | default "" -}}
-{{- if $explicit -}}
-{{- if ne $explicit "/" }}{{ trimSuffix "/" $explicit }}{{- end -}}
-{{- else -}}
 {{- $paths := .paths | default list -}}
-{{- if eq (len $paths) 1 -}}
-{{- $only := index $paths 0 -}}
-{{- if and (ne ($only.pathType | default "Prefix") "Exact") (ne ($only.path | default "/") "/") -}}
-{{ trimSuffix "/" $only.path }}
+{{- $base := "" -}}
+{{- $found := false -}}
+{{- range $paths -}}
+  {{- if and (not $found) (ne (.pathType | default "Prefix") "Exact") (ne (.path | default "/") "/") -}}
+    {{- $base = trimSuffix "/" .path -}}
+    {{- $found = true -}}
+  {{- end -}}
 {{- end -}}
-{{- end -}}
-{{- end -}}
+{{- $base -}}
 {{- end -}}
 
 {{/*
@@ -430,7 +427,7 @@ into a clear render-time error. Input: the service context.
 */}}
 {{- define "validate.oidcCallbackReachable" -}}
 {{- if and .Values.gateway.enabled .Values.gateway.oidcProtected (not .Values.gateway.tlsPassthrough.enabled) -}}
-{{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths "basePath" .Values.oidcProxyGateway.basePath) -}}
+{{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths) -}}
 {{- $callback := printf "%s/oauth2/callback" $basePath -}}
 {{- if ne (include "gateway.oidcCallbackCovered" (dict "paths" .Values.gateway.paths "callback" $callback)) "true" -}}
 {{- fail (printf "gateway.oidcProtected: the OAuth2 callback %q for service %q is not covered by any configured gateway path, so login would fail. Declare the app's route path (e.g. paths: [{path: /portal}]) so the chart can namespace the callback under it, or set oidcProxyGateway.basePath explicitly." $callback (include "service.name" .)) -}}
@@ -560,7 +557,7 @@ oidc:
   {{- end }}
   clientSecret:
     name: {{ include "oidcProxyGateway.secretName" $ }}
-  {{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" $g.paths "basePath" $.Values.oidcProxyGateway.basePath) }}
+  {{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" $g.paths) }}
   redirectURL: https://{{ .host }}{{ $basePath }}/oauth2/callback
   {{- if $.Values.oidcProxyGateway.logoutPath }}
   logoutPath: {{ printf "%s%s" $basePath $.Values.oidcProxyGateway.logoutPath | quote }}

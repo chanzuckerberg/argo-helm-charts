@@ -259,7 +259,7 @@ tests:
           path: spec.rules[2].matches[0].path.value
           value: /logout
 
-  - it: should fail when multiple paths leave the oauth2 callback uncovered and no basePath is set
+  - it: should use the first non-root Prefix path as base when multiple paths are configured
     set:
       global:
         ingress:
@@ -280,10 +280,16 @@ tests:
       services:
         service1: {}
     asserts:
-      - failedTemplate:
-          errorMessage: 'gateway.oidcProtected: the OAuth2 callback "/oauth2/callback" for service "service1" is not covered by any configured gateway path, so login would fail. Declare the app''s route path (e.g. paths: [{path: /portal}]) so the chart can namespace the callback under it, or set oidcProxyGateway.basePath explicitly.'
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /portal
 
-  - it: should not inject a root path when an explicit basePath covers the callback among multiple paths
+  - it: should use the first non-root Prefix path as base across multiple paths without explicit config
     set:
       global:
         ingress:
@@ -298,7 +304,6 @@ tests:
             - path: /admin
               pathType: Prefix
         oidcProxyGateway:
-          basePath: /portal
           clientID: my-client-id
           provider:
             issuer: https://auth.example.com

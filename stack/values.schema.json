@@ -488,7 +488,7 @@
               "type": "object",
               "properties": {
                 "backendRequest": {
-                  "description": "Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be \u003c= request",
+                  "description": "Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request",
                   "type": "string"
                 },
                 "connect": {
@@ -516,7 +516,7 @@
               }
             },
             "vanity": {
-              "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway \u003e= v1.8 and cert-manager \u003e= v1.20)",
+              "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)",
               "type": "object",
               "properties": {
                 "clusterIssuer": {
@@ -765,7 +765,7 @@
               "type": "number"
             },
             "httpGet": {
-              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "description": "HTTP probe configuration (exec & tcpSocket are also available)",
               "type": "object",
               "properties": {
                 "path": {
@@ -956,10 +956,6 @@
                 }
               }
             },
-            "basePath": {
-              "description": "URL prefix the OAuth2 callback and logout live under. Envoy Gateway requires redirectURL and logoutPath to match the service's own HTTPRoute, so the callback becomes \u003cbasePath\u003e/oauth2/callback and logout \u003cbasePath\u003e\u003clogoutPath\u003e. When empty, the chart derives it from a single non-root gateway path (e.g. /portal) so you never hand-write /oauth2 or /logout paths. Set explicitly only when the service serves multiple app prefixes.",
-              "type": "string"
-            },
             "clientID": {
               "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
               "type": "string"
@@ -977,7 +973,7 @@
               "type": "string"
             },
             "cookieNames": {
-              "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-\u003cnamespace\u003e-\u003cservice\u003e / IdToken-\u003cnamespace\u003e-\u003cservice\u003e. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
+              "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
               "type": "object",
               "properties": {
                 "accessToken": {
@@ -1013,7 +1009,7 @@
               "type": "string"
             },
             "logoutPath": {
-              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
+              "description": "Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.",
               "type": "string"
             },
             "provider": {
@@ -1162,7 +1158,7 @@
               "type": "number"
             },
             "httpGet": {
-              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "description": "HTTP probe configuration (exec & tcpSocket are also available)",
               "type": "object",
               "properties": {
                 "path": {

@@ -87,7 +87,7 @@ tests:
           path: spec.oidc.logoutPath
           value: /portal/logout
 
-  - it: should namespace redirectURL and logoutPath under an explicit base path
+  - it: should namespace redirectURL and logoutPath under the first non-root Prefix path when multiple paths are configured
     set:
       global:
         ingress:
@@ -102,7 +102,6 @@ tests:
             - path: /admin
               pathType: Prefix
         oidcProxyGateway:
-          basePath: /portal
           clientID: my-client-id
           provider:
             issuer: https://auth.example.com
