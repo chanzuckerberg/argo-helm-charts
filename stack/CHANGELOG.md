@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.48.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.47.0...stack-v2.48.0) (2026-07-30)
+
+
+### Features
+
+* **stack:** opt-in gateway.jwt for Bearer-token auth on the Envoy SecurityPolicy ([#518](https://github.com/chanzuckerberg/argo-helm-charts/issues/518)) ([7448977](https://github.com/chanzuckerberg/argo-helm-charts/commit/74489771e5971ea20f4b8d301d3947c47e633dff))
+
+
+### Bug Fixes
+
+* **oidc:** stop adding redundant root HTTPRoute rule when callback already covered ([#522](https://github.com/chanzuckerberg/argo-helm-charts/issues/522)) ([c756557](https://github.com/chanzuckerberg/argo-helm-charts/commit/c75655789c01fcd5da1e956b7c5f79d89bb3ffff))
+
 ## [2.47.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.46.0...stack-v2.47.0) (2026-07-27)
 
 
