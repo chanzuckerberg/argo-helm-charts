@@ -1,1581 +1,1583 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "properties": {
-        "argus-config": {
-            "description": "Allows values for the argus-config Helm chart",
-            "type": "object"
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/stack",
+  "title": "stack",
+  "type": "object",
+  "properties": {
+    "argus-config": {
+      "description": "Allows values for the argus-config Helm chart",
+      "type": "object"
+    },
+    "cronJobs": {
+      "description": "Cron jobs to deploy",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object"
+        }
+      }
+    },
+    "global": {
+      "description": "Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs",
+      "type": "object",
+      "properties": {
+        "affinity": {
+          "description": "Affinity for the pod",
+          "type": "object"
         },
-        "cronJobs": {
-            "description": "Cron jobs to deploy",
-            "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "$ref": "#/properties/global",
-                    "type": "object"
-                }
+        "annotations": {
+          "description": "Global annotations to add to all resources",
+          "type": "object"
+        },
+        "appContext": {
+          "type": "object",
+          "properties": {
+            "envContextConfigMapName": {
+              "type": "string"
+            },
+            "stackContextConfigMapName": {
+              "type": "string"
             }
+          }
         },
-        "global": {
-            "description": "Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs",
+        "appSecrets": {
+          "type": "object",
+          "properties": {
+            "clusterSecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              }
+            },
+            "envSecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              }
+            },
+            "stackSecret": {
+              "type": "object",
+              "properties": {
+                "secretKey": {
+                  "type": "string"
+                },
+                "secretName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "argoBuildEnv": {
+          "description": "Argo built-in environment parameters (provided by Argus API)",
+          "type": "object",
+          "properties": {
+            "appName": {
+              "description": "Set by Argus API to ARGOCD_APP_NAME (this is the ArgoCD app name, not the Argus app name)",
+              "type": "string"
+            },
+            "appNamespace": {
+              "description": "Set by Argus API to ARGOCD_APP_NAMESPACE",
+              "type": "string"
+            },
+            "appRevision": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION",
+              "type": "string"
+            },
+            "appRevisionShort": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT",
+              "type": "string"
+            },
+            "appRevisionShort8": {
+              "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT_8",
+              "type": "string"
+            },
+            "appSourcePath": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_PATH",
+              "type": "string"
+            },
+            "appSourceRepoUrl": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
+              "type": "string"
+            },
+            "appSourceTargetRevision": {
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
+              "type": "string"
+            }
+          }
+        },
+        "args": {
+          "description": "Arguments to pass to the command in the primary container",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "argusMetadata": {
+          "description": "Argus metadata (provided by Argus API)",
+          "type": "object",
+          "properties": {
+            "appName": {
+              "description": "Set by Argus API to Argus app name",
+              "type": "string"
+            },
+            "envName": {
+              "description": "Set by Argus API to Argus environment name",
+              "type": "string"
+            },
+            "repoName": {
+              "description": "Set by Argus API to Argus repository name",
+              "type": "string"
+            },
+            "repoOwner": {
+              "description": "Set by Argus API to Argus repository owner",
+              "type": "string"
+            },
+            "stackName": {
+              "description": "Set by Argus API to Argus stack name",
+              "type": "string"
+            }
+          }
+        },
+        "autoscaling": {
+          "description": "Autoscaling configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable autoscaling",
+              "type": "boolean"
+            },
+            "maxReplicas": {
+              "description": "Maximum number of replicas",
+              "type": "integer"
+            },
+            "minReplicas": {
+              "description": "Minimum number of replicas",
+              "type": "integer"
+            },
+            "targetCPUUtilizationPercentage": {
+              "description": "Target CPU utilization percentage",
+              "type": "integer"
+            },
+            "targetMemoryUtilizationPercentage": {
+              "description": "Target memory utilization percentage",
+              "type": "integer"
+            }
+          }
+        },
+        "command": {
+          "description": "Command to run in the primary container",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deploymentKind": {
+          "description": "Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).",
+          "default": "Deployment",
+          "type": "string",
+          "enum": [
+            "Deployment",
+            "Rollout"
+          ]
+        },
+        "deploymentStage": {
+          "description": "Deployment stage",
+          "type": "string"
+        },
+        "dnsPolicy": {
+          "description": "DNS policy for the pod",
+          "type": "string",
+          "enum": [
+            "ClusterFirst",
+            "Default",
+            "None"
+          ]
+        },
+        "env": {
+          "type": "array",
+          "items": {
             "type": "object",
             "properties": {
-                "affinity": {
-                    "description": "Affinity for the pod",
-                    "type": "object"
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "envFrom": {
+          "description": "Environment variables from configmaps or secrets",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "configMapRef": {
+                "type": "object"
+              },
+              "prefix": {
+                "type": "string"
+              },
+              "secretRef": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "fullnameOverride": {
+          "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
+          "type": "string"
+        },
+        "gateway": {
+          "description": "Gateway API HTTPRoute configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to HTTPRoute resources",
+              "type": "object",
+              "properties": {
+                "external-dns.alpha.kubernetes.io/ttl": {
+                  "type": "string"
+                }
+              }
+            },
+            "backendTLS": {
+              "description": "TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)",
+              "type": "object",
+              "properties": {
+                "caCertificateRefs": {
+                  "description": "ConfigMap refs holding the CA bundle for self-signed/internal upstreams",
+                  "type": "array"
                 },
-                "annotations": {
-                    "description": "Global annotations to add to all resources",
-                    "type": "object"
+                "enabled": {
+                  "description": "Enable upstream TLS",
+                  "type": "boolean"
                 },
-                "appContext": {
-                    "type": "object",
-                    "properties": {
-                        "envContextConfigMapName": {
-                            "type": "string"
-                        },
-                        "stackContextConfigMapName": {
-                            "type": "string"
-                        }
-                    }
+                "hostname": {
+                  "description": "SNI/validation hostname presented by the upstream (required when enabled)",
+                  "type": "string"
                 },
-                "appSecrets": {
-                    "type": "object",
-                    "properties": {
-                        "clusterSecret": {
-                            "type": "object",
-                            "properties": {
-                                "secretKey": {
-                                    "type": "string"
-                                },
-                                "secretName": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "envSecret": {
-                            "type": "object",
-                            "properties": {
-                                "secretKey": {
-                                    "type": "string"
-                                },
-                                "secretName": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "stackSecret": {
-                            "type": "object",
-                            "properties": {
-                                "secretKey": {
-                                    "type": "string"
-                                },
-                                "secretName": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
+                "wellKnownCACertificates": {
+                  "description": "Use the System trust store, or set \"\" and use caCertificateRefs for a private CA",
+                  "type": "string"
+                }
+              }
+            },
+            "basicAuth": {
+              "description": "HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable basic auth",
+                  "type": "boolean"
                 },
-                "argoBuildEnv": {
-                    "description": "Argo built-in environment parameters (provided by Argus API)",
-                    "type": "object",
-                    "properties": {
-                        "appName": {
-                            "description": "Set by Argus API to ARGOCD_APP_NAME (this is the ArgoCD app name, not the Argus app name)",
-                            "type": "string"
-                        },
-                        "appNamespace": {
-                            "description": "Set by Argus API to ARGOCD_APP_NAMESPACE",
-                            "type": "string"
-                        },
-                        "appRevision": {
-                            "description": "Set by Argus API to ARGOCD_APP_REVISION",
-                            "type": "string"
-                        },
-                        "appRevisionShort": {
-                            "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT",
-                            "type": "string"
-                        },
-                        "appRevisionShort8": {
-                            "description": "Set by Argus API to ARGOCD_APP_REVISION_SHORT_8",
-                            "type": "string"
-                        },
-                        "appSourcePath": {
-                            "description": "Set by Argus API to ARGOCD_APP_SOURCE_PATH",
-                            "type": "string"
-                        },
-                        "appSourceRepoUrl": {
-                            "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
-                            "type": "string"
-                        },
-                        "appSourceTargetRevision": {
-                            "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
-                            "type": "string"
-                        }
-                    }
+                "secretName": {
+                  "description": "Name of an Opaque Secret with a .htpasswd key",
+                  "type": "string"
+                }
+              }
+            },
+            "cors": {
+              "description": "CORS via a SecurityPolicy",
+              "type": "object",
+              "properties": {
+                "allowCredentials": {
+                  "description": "Allow credentials",
+                  "type": "boolean"
                 },
-                "args": {
-                    "description": "Arguments to pass to the command in the primary container",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "allowHeaders": {
+                  "description": "Allowed request headers",
+                  "type": "array"
                 },
-                "argusMetadata": {
-                    "description": "Argus metadata (provided by Argus API)",
-                    "type": "object",
-                    "properties": {
-                        "appName": {
-                            "description": "Set by Argus API to Argus app name",
-                            "type": "string"
-                        },
-                        "envName": {
-                            "description": "Set by Argus API to Argus environment name",
-                            "type": "string"
-                        },
-                        "repoName": {
-                            "description": "Set by Argus API to Argus repository name",
-                            "type": "string"
-                        },
-                        "repoOwner": {
-                            "description": "Set by Argus API to Argus repository owner",
-                            "type": "string"
-                        },
-                        "stackName": {
-                            "description": "Set by Argus API to Argus stack name",
-                            "type": "string"
-                        }
-                    }
+                "allowMethods": {
+                  "description": "Allowed methods",
+                  "type": "array"
                 },
-                "autoscaling": {
-                    "description": "Autoscaling configuration",
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "description": "Enable autoscaling",
-                            "type": "boolean"
-                        },
-                        "maxReplicas": {
-                            "description": "Maximum number of replicas",
-                            "type": "integer"
-                        },
-                        "minReplicas": {
-                            "description": "Minimum number of replicas",
-                            "type": "integer"
-                        },
-                        "targetCPUUtilizationPercentage": {
-                            "description": "Target CPU utilization percentage",
-                            "type": "integer"
-                        },
-                        "targetMemoryUtilizationPercentage": {
-                            "description": "Target memory utilization percentage",
-                            "type": "integer"
-                        }
-                    }
+                "allowOrigins": {
+                  "description": "Allowed origins (string patterns)",
+                  "type": "array"
                 },
-                "command": {
-                    "description": "Command to run in the primary container",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "enabled": {
+                  "description": "Enable CORS",
+                  "type": "boolean"
                 },
-                "deploymentKind": {
-                    "description": "Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).",
-                    "default": "Deployment",
-                    "type": "string",
-                    "enum": [
-                        "Deployment",
-                        "Rollout"
-                    ]
+                "exposeHeaders": {
+                  "description": "Response headers exposed to the browser",
+                  "type": "array"
                 },
-                "deploymentStage": {
-                    "description": "Deployment stage",
+                "maxAge": {
+                  "description": "Preflight cache duration (e.g. \"1h\"), empty omits it",
+                  "type": "string"
+                }
+              }
+            },
+            "dnsOwner": {
+              "description": "Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence",
+              "type": "string",
+              "enum": [
+                "ingress",
+                "gateway"
+              ]
+            },
+            "enabled": {
+              "description": "Enable Gateway API HTTPRoute (alternative to Ingress)",
+              "type": "boolean"
+            },
+            "gatewayName": {
+              "description": "Name of the Gateway resource to attach to",
+              "type": "string"
+            },
+            "gatewayNamespace": {
+              "description": "Namespace of the Gateway resource",
+              "type": "string"
+            },
+            "host": {
+              "description": "Hostname for HTTPRoute",
+              "type": "string"
+            },
+            "hostRewrite": {
+              "description": "Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it",
+              "type": "string"
+            },
+            "ipAllowList": {
+              "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
+              "type": "array"
+            },
+            "jwt": {
+              "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable JWT bearer-token validation. Requires remoteJWKSUri",
+                  "type": "boolean"
+                },
+                "issuer": {
+                  "description": "Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login",
+                  "type": "string"
+                },
+                "remoteJWKSUri": {
+                  "description": "JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s \u003cissuer\u003e/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)",
+                  "type": "string"
+                }
+              }
+            },
+            "oidcProtected": {
+              "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
+              "type": "boolean"
+            },
+            "paths": {
+              "description": "List of HTTPRoute paths",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "description": "HTTPRoute path",
                     "type": "string"
-                },
-                "dnsPolicy": {
-                    "description": "DNS policy for the pod",
-                    "type": "string",
-                    "enum": [
-                        "ClusterFirst",
-                        "Default",
-                        "None"
-                    ]
-                },
-                "env": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "type": "string"
-                            },
-                            "value": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                "envFrom": {
-                    "description": "Environment variables from configmaps or secrets",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "configMapRef": {
-                                "type": "object"
-                            },
-                            "prefix": {
-                                "type": "string"
-                            },
-                            "secretRef": {
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "fullnameOverride": {
-                    "description": "Name to prefix the K8s resources with, replaces the stack name prefix",
+                  },
+                  "pathType": {
+                    "description": "HTTPRoute path type (Exact or Prefix)",
                     "type": "string"
+                  }
+                }
+              }
+            },
+            "rateLimit": {
+              "description": "Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable local rate limiting",
+                  "type": "boolean"
                 },
-                "gateway": {
-                    "description": "Gateway API HTTPRoute configuration",
+                "requests": {
+                  "description": "Allowed requests per unit",
+                  "type": "integer"
+                },
+                "unit": {
+                  "description": "Rate limit unit (Second, Minute, Hour, Day)",
+                  "type": "string"
+                }
+              }
+            },
+            "redirect": {
+              "description": "Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable a redirect-only route",
+                  "type": "boolean"
+                },
+                "hostname": {
+                  "description": "Target hostname, empty keeps the request host",
+                  "type": "string"
+                },
+                "path": {
+                  "description": "Replacement full path via ReplaceFullPath, empty keeps the path",
+                  "type": "string"
+                },
+                "scheme": {
+                  "description": "Target scheme, e.g. https",
+                  "type": "string"
+                },
+                "statusCode": {
+                  "description": "Redirect status code (301 or 302)",
+                  "type": "integer"
+                }
+              }
+            },
+            "requestHeaders": {
+              "description": "Request header modifications (HTTPRoute RequestHeaderModifier filter)",
+              "type": "object",
+              "properties": {
+                "add": {
+                  "description": "Headers to add, list of {name,value}",
+                  "type": "array"
+                },
+                "remove": {
+                  "description": "Header names to remove",
+                  "type": "array"
+                },
+                "set": {
+                  "description": "Headers to set, list of {name,value}",
+                  "type": "array"
+                }
+              }
+            },
+            "responseHeaders": {
+              "description": "Response header modifications (HTTPRoute ResponseHeaderModifier filter)",
+              "type": "object",
+              "properties": {
+                "add": {
+                  "description": "Headers to add, list of {name,value}",
+                  "type": "array"
+                },
+                "remove": {
+                  "description": "Header names to remove",
+                  "type": "array"
+                },
+                "set": {
+                  "description": "Headers to set, list of {name,value}",
+                  "type": "array"
+                }
+              }
+            },
+            "rules": {
+              "description": "List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity",
+              "type": "array"
+            },
+            "sectionName": {
+              "description": "Optional section name (listener name) on the Gateway",
+              "type": "string"
+            },
+            "sessionAffinity": {
+              "description": "Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)",
+              "type": "object",
+              "properties": {
+                "cookieName": {
+                  "description": "Affinity cookie name",
+                  "type": "string"
+                },
+                "enabled": {
+                  "description": "Enable consistent-hash cookie session affinity",
+                  "type": "boolean"
+                },
+                "ttl": {
+                  "description": "Affinity cookie TTL",
+                  "type": "string"
+                }
+              }
+            },
+            "timeouts": {
+              "description": "HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy",
+              "type": "object",
+              "properties": {
+                "backendRequest": {
+                  "description": "Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be \u003c= request",
+                  "type": "string"
+                },
+                "connect": {
+                  "description": "Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default",
+                  "type": "string"
+                },
+                "request": {
+                  "description": "Overall request timeout (HTTPRoute rules[].timeouts.request). Set \"0s\" to disable, e.g. for streaming or websockets",
+                  "type": "string"
+                }
+              }
+            },
+            "tlsPassthrough": {
+              "description": "TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service",
+                  "type": "boolean"
+                },
+                "sectionName": {
+                  "description": "Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case",
+                  "type": "string"
+                }
+              }
+            },
+            "vanity": {
+              "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway \u003e= v1.8 and cert-manager \u003e= v1.20)",
+              "type": "object",
+              "properties": {
+                "clusterIssuer": {
+                  "description": "cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate",
+                  "type": "string"
+                },
+                "enabled": {
+                  "description": "Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway",
+                  "type": "boolean"
+                },
+                "hostname": {
+                  "description": "Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "grafanaDashboard": {
+          "type": "object",
+          "properties": {
+            "datasources": {
+              "type": "object",
+              "properties": {
+                "prometheus": {
+                  "type": "object",
+                  "properties": {
+                    "uid": {
+                      "description": "Prometheus datasource UID",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "enabled": {
+              "description": "Enable Grafana dashboard (globally, can be overridden per service)",
+              "type": "boolean"
+            },
+            "extraPanels": {
+              "description": "Extra panels to add to the Grafana dashboard",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "datasource": {
+                    "type": "object"
+                  },
+                  "fieldConfig": {
+                    "type": "object"
+                  },
+                  "gridPos": {
                     "type": "object",
                     "properties": {
-                        "annotations": {
-                            "description": "Annotations to add to HTTPRoute resources",
-                            "type": "object",
-                            "properties": {
-                                "external-dns.alpha.kubernetes.io/ttl": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "backendTLS": {
-                            "description": "TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)",
-                            "type": "object",
-                            "properties": {
-                                "caCertificateRefs": {
-                                    "description": "ConfigMap refs holding the CA bundle for self-signed/internal upstreams",
-                                    "type": "array"
-                                },
-                                "enabled": {
-                                    "description": "Enable upstream TLS",
-                                    "type": "boolean"
-                                },
-                                "hostname": {
-                                    "description": "SNI/validation hostname presented by the upstream (required when enabled)",
-                                    "type": "string"
-                                },
-                                "wellKnownCACertificates": {
-                                    "description": "Use the System trust store, or set \"\" and use caCertificateRefs for a private CA",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "basicAuth": {
-                            "description": "HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected",
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "description": "Enable basic auth",
-                                    "type": "boolean"
-                                },
-                                "secretName": {
-                                    "description": "Name of an Opaque Secret with a .htpasswd key",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "cors": {
-                            "description": "CORS via a SecurityPolicy",
-                            "type": "object",
-                            "properties": {
-                                "allowCredentials": {
-                                    "description": "Allow credentials",
-                                    "type": "boolean"
-                                },
-                                "allowHeaders": {
-                                    "description": "Allowed request headers",
-                                    "type": "array"
-                                },
-                                "allowMethods": {
-                                    "description": "Allowed methods",
-                                    "type": "array"
-                                },
-                                "allowOrigins": {
-                                    "description": "Allowed origins (string patterns)",
-                                    "type": "array"
-                                },
-                                "enabled": {
-                                    "description": "Enable CORS",
-                                    "type": "boolean"
-                                },
-                                "exposeHeaders": {
-                                    "description": "Response headers exposed to the browser",
-                                    "type": "array"
-                                },
-                                "maxAge": {
-                                    "description": "Preflight cache duration (e.g. \"1h\"), empty omits it",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "dnsOwner": {
-                            "description": "Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence",
-                            "type": "string",
-                            "enum": [
-                                "ingress",
-                                "gateway"
-                            ]
-                        },
-                        "enabled": {
-                            "description": "Enable Gateway API HTTPRoute (alternative to Ingress)",
-                            "type": "boolean"
-                        },
-                        "gatewayName": {
-                            "description": "Name of the Gateway resource to attach to",
-                            "type": "string"
-                        },
-                        "gatewayNamespace": {
-                            "description": "Namespace of the Gateway resource",
-                            "type": "string"
-                        },
-                        "host": {
-                            "description": "Hostname for HTTPRoute",
-                            "type": "string"
-                        },
-                        "hostRewrite": {
-                            "description": "Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it",
-                            "type": "string"
-                        },
-                        "ipAllowList": {
-                            "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
-                            "type": "array"
-                        },
-                        "jwt": {
-                            "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "description": "Enable JWT bearer-token validation. Requires remoteJWKSUri",
-                                    "type": "boolean"
-                                },
-                                "issuer": {
-                                    "description": "Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login",
-                                    "type": "string"
-                                },
-                                "remoteJWKSUri": {
-                                    "description": "JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s \u003cissuer\u003e/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "oidcProtected": {
-                            "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
-                            "type": "boolean"
-                        },
-                        "paths": {
-                            "description": "List of HTTPRoute paths",
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "path": {
-                                        "description": "HTTPRoute path",
-                                        "type": "string"
-                                    },
-                                    "pathType": {
-                                        "description": "HTTPRoute path type (Exact or Prefix)",
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "rateLimit": {
-                            "description": "Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)",
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "description": "Enable local rate limiting",
-                                    "type": "boolean"
-                                },
-                                "requests": {
-                                    "description": "Allowed requests per unit",
-                                    "type": "integer"
-                                },
-                                "unit": {
-                                    "description": "Rate limit unit (Second, Minute, Hour, Day)",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "redirect": {
-                            "description": "Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host",
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "description": "Enable a redirect-only route",
-                                    "type": "boolean"
-                                },
-                                "hostname": {
-                                    "description": "Target hostname, empty keeps the request host",
-                                    "type": "string"
-                                },
-                                "path": {
-                                    "description": "Replacement full path via ReplaceFullPath, empty keeps the path",
-                                    "type": "string"
-                                },
-                                "scheme": {
-                                    "description": "Target scheme, e.g. https",
-                                    "type": "string"
-                                },
-                                "statusCode": {
-                                    "description": "Redirect status code (301 or 302)",
-                                    "type": "integer"
-                                }
-                            }
-                        },
-                        "requestHeaders": {
-                            "description": "Request header modifications (HTTPRoute RequestHeaderModifier filter)",
-                            "type": "object",
-                            "properties": {
-                                "add": {
-                                    "description": "Headers to add, list of {name,value}",
-                                    "type": "array"
-                                },
-                                "remove": {
-                                    "description": "Header names to remove",
-                                    "type": "array"
-                                },
-                                "set": {
-                                    "description": "Headers to set, list of {name,value}",
-                                    "type": "array"
-                                }
-                            }
-                        },
-                        "responseHeaders": {
-                            "description": "Response header modifications (HTTPRoute ResponseHeaderModifier filter)",
-                            "type": "object",
-                            "properties": {
-                                "add": {
-                                    "description": "Headers to add, list of {name,value}",
-                                    "type": "array"
-                                },
-                                "remove": {
-                                    "description": "Header names to remove",
-                                    "type": "array"
-                                },
-                                "set": {
-                                    "description": "Headers to set, list of {name,value}",
-                                    "type": "array"
-                                }
-                            }
-                        },
-                        "rules": {
-                            "description": "List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity",
-                            "type": "array"
-                        },
-                        "sectionName": {
-                            "description": "Optional section name (listener name) on the Gateway",
-                            "type": "string"
-                        },
-                        "sessionAffinity": {
-                            "description": "Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)",
-                            "type": "object",
-                            "properties": {
-                                "cookieName": {
-                                    "description": "Affinity cookie name",
-                                    "type": "string"
-                                },
-                                "enabled": {
-                                    "description": "Enable consistent-hash cookie session affinity",
-                                    "type": "boolean"
-                                },
-                                "ttl": {
-                                    "description": "Affinity cookie TTL",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "timeouts": {
-                            "description": "HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy",
-                            "type": "object",
-                            "properties": {
-                                "backendRequest": {
-                                    "description": "Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be \u003c= request",
-                                    "type": "string"
-                                },
-                                "connect": {
-                                    "description": "Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default",
-                                    "type": "string"
-                                },
-                                "request": {
-                                    "description": "Overall request timeout (HTTPRoute rules[].timeouts.request). Set \"0s\" to disable, e.g. for streaming or websockets",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "tlsPassthrough": {
-                            "description": "TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway",
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "description": "Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service",
-                                    "type": "boolean"
-                                },
-                                "sectionName": {
-                                    "description": "Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "vanity": {
-                            "description": "Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway \u003e= v1.8 and cert-manager \u003e= v1.20)",
-                            "type": "object",
-                            "properties": {
-                                "clusterIssuer": {
-                                    "description": "cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate",
-                                    "type": "string"
-                                },
-                                "enabled": {
-                                    "description": "Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway",
-                                    "type": "boolean"
-                                },
-                                "hostname": {
-                                    "description": "Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs",
-                                    "type": "string"
-                                }
-                            }
-                        }
+                      "h": {
+                        "type": "number"
+                      },
+                      "w": {
+                        "type": "number"
+                      }
                     }
-                },
-                "grafanaDashboard": {
-                    "type": "object",
-                    "properties": {
-                        "datasources": {
-                            "type": "object",
-                            "properties": {
-                                "prometheus": {
-                                    "type": "object",
-                                    "properties": {
-                                        "uid": {
-                                            "description": "Prometheus datasource UID",
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "enabled": {
-                            "description": "Enable Grafana dashboard (globally, can be overridden per service)",
-                            "type": "boolean"
-                        },
-                        "extraPanels": {
-                            "description": "Extra panels to add to the Grafana dashboard",
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "datasource": {
-                                        "type": "object"
-                                    },
-                                    "fieldConfig": {
-                                        "type": "object"
-                                    },
-                                    "gridPos": {
-                                        "type": "object",
-                                        "properties": {
-                                            "h": {
-                                                "type": "number"
-                                            },
-                                            "w": {
-                                                "type": "number"
-                                            }
-                                        }
-                                    },
-                                    "options": {
-                                        "type": "object"
-                                    },
-                                    "pluginVersion": {
-                                        "type": "string"
-                                    },
-                                    "targets": {
-                                        "type": "array"
-                                    },
-                                    "title": {
-                                        "type": "string"
-                                    },
-                                    "type": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "instanceSelector": {
-                            "description": "Instance selector for the Grafana dashboard",
-                            "type": "object",
-                            "properties": {
-                                "matchLabels": {
-                                    "type": "object",
-                                    "properties": {
-                                        "name": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "refresh": {
-                            "description": "Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)",
-                            "type": "string",
-                            "pattern": "^([0-9]+(ms|s|m|h|d))?$"
-                        },
-                        "resyncPeriod": {
-                            "description": "How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)",
-                            "type": "string",
-                            "pattern": "^[0-9]+(m|h)$"
-                        }
-                    }
-                },
-                "image": {
-                    "type": "object",
-                    "properties": {
-                        "pullPolicy": {
-                            "description": "Image pull policy",
-                            "type": "string",
-                            "enum": [
-                                "Always",
-                                "IfNotPresent",
-                                "Never"
-                            ]
-                        },
-                        "repository": {
-                            "description": "Image repository",
-                            "type": "string"
-                        },
-                        "tag": {
-                            "description": "Image tag",
-                            "type": "string"
-                        }
-                    }
-                },
-                "imagePullSecrets": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "ingress": {
-                    "description": "Ingress configuration",
-                    "type": "object",
-                    "properties": {
-                        "annotations": {
-                            "type": "object",
-                            "properties": {
-                                "external-dns.alpha.kubernetes.io/ttl": {
-                                    "type": "string"
-                                },
-                                "nginx.ingress.kubernetes.io/proxy-connect-timeout": {
-                                    "type": "string"
-                                },
-                                "nginx.ingress.kubernetes.io/proxy-read-timeout": {
-                                    "type": "string"
-                                },
-                                "nginx.ingress.kubernetes.io/proxy-send-timeout": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "className": {
-                            "description": "Ingress class name",
-                            "type": "string"
-                        },
-                        "enabled": {
-                            "description": "Enable ingress",
-                            "type": "boolean"
-                        },
-                        "host": {
-                            "description": "Ingress host",
-                            "type": "string"
-                        },
-                        "oidcProtected": {
-                            "description": "Enable OIDC protection (route to oauth2-proxy when using Ingress)",
-                            "type": "boolean"
-                        },
-                        "paths": {
-                            "description": "List of ingress paths",
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "path": {
-                                        "description": "Ingress path",
-                                        "type": "string"
-                                    },
-                                    "pathType": {
-                                        "description": "Ingress path type",
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "rules": {
-                            "description": "List of ingress rules",
-                            "type": "array"
-                        },
-                        "tls": {
-                            "description": "List of ingress TLS configurations",
-                            "type": "array"
-                        }
-                    }
-                },
-                "initContainers": {
-                    "description": "List of init containers",
+                  },
+                  "options": {
+                    "type": "object"
+                  },
+                  "pluginVersion": {
+                    "type": "string"
+                  },
+                  "targets": {
                     "type": "array"
-                },
-                "kedaAutoscaling": {
-                    "description": "KEDA autoscaling configuration (creates a ScaledObject instead of HPA)",
-                    "type": "object",
-                    "properties": {
-                        "advanced": {
-                            "description": "Advanced KEDA ScaledObject configuration",
-                            "type": "object"
-                        },
-                        "cooldownPeriod": {
-                            "description": "Period in seconds to wait after the last trigger fires before scaling back to minReplicas",
-                            "type": "integer"
-                        },
-                        "enabled": {
-                            "description": "Enable KEDA autoscaling",
-                            "type": "boolean"
-                        },
-                        "maxReplicas": {
-                            "description": "Maximum number of replicas",
-                            "type": "integer"
-                        },
-                        "minReplicas": {
-                            "description": "Minimum number of replicas",
-                            "type": "integer"
-                        },
-                        "pollingInterval": {
-                            "description": "Interval in seconds to check each trigger",
-                            "type": "integer"
-                        },
-                        "triggers": {
-                            "description": "List of KEDA triggers (e.g. prometheus, cpu, memory, cron)",
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "livenessProbe": {
-                    "description": "Liveness probe configuration",
-                    "type": "object",
-                    "properties": {
-                        "failureThreshold": {
-                            "description": "Number of failures before the probe is considered failed",
-                            "type": "number"
-                        },
-                        "httpGet": {
-                            "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "description": "Path to probe",
-                                    "type": "string"
-                                },
-                                "port": {
-                                    "description": "Port to probe",
-                                    "oneOf": [
-                                        {
-                                            "type": "string"
-                                        },
-                                        {
-                                            "type": "number"
-                                        }
-                                    ]
-                                },
-                                "scheme": {
-                                    "description": "Scheme to use",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "initialDelaySeconds": {
-                            "description": "Number of seconds after the container has started before the probe is first initiated",
-                            "type": "number"
-                        },
-                        "periodSeconds": {
-                            "description": "How often to perform the probe",
-                            "type": "number"
-                        },
-                        "successThreshold": {
-                            "description": "Number of successes before the probe is considered successful",
-                            "type": "number"
-                        },
-                        "timeoutSeconds": {
-                            "description": "Timeout for the probe",
-                            "type": "number"
-                        }
-                    }
-                },
-                "nameOverride": {
-                    "description": "Name to prefix the K8s resources with, combined with the stack name prefix",
+                  },
+                  "title": {
                     "type": "string"
-                },
-                "nodeSelector": {
-                    "type": "object",
-                    "properties": {
-                        "kubernetes.io/arch": {
-                            "description": "Node selector for architecture",
-                            "type": "string"
-                        }
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "instanceSelector": {
+              "description": "Instance selector for the Grafana dashboard",
+              "type": "object",
+              "properties": {
+                "matchLabels": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
                     }
+                  }
+                }
+              }
+            },
+            "refresh": {
+              "description": "Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)",
+              "type": "string",
+              "pattern": "^([0-9]+(ms|s|m|h|d))?$"
+            },
+            "resyncPeriod": {
+              "description": "How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)",
+              "type": "string",
+              "pattern": "^[0-9]+(m|h)$"
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "description": "Image pull policy",
+              "type": "string",
+              "enum": [
+                "Always",
+                "IfNotPresent",
+                "Never"
+              ]
+            },
+            "repository": {
+              "description": "Image repository",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Image tag",
+              "type": "string"
+            }
+          }
+        },
+        "imagePullSecrets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ingress": {
+          "description": "Ingress configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "type": "object",
+              "properties": {
+                "external-dns.alpha.kubernetes.io/ttl": {
+                  "type": "string"
                 },
-                "oidcProxy": {
-                    "type": "object",
-                    "properties": {
-                        "additionalHeaders": {
-                            "description": "Additional headers to add",
-                            "type": "array"
-                        },
-                        "additionalSecrets": {
-                            "description": "Additional secrets to mount",
-                            "type": "array"
-                        },
-                        "annotations": {
-                            "description": "Annotations to add to the OIDC proxy",
-                            "type": "object"
-                        },
-                        "cookieRefresh": {
-                            "description": "Refresh tokens and cookies after this period",
-                            "type": "string"
-                        },
-                        "enabled": {
-                            "description": "Enable OIDC proxy",
-                            "type": "boolean"
-                        },
-                        "extraArgs": {
-                            "description": "Extra arguments to pass to the OIDC proxy",
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "image": {
-                            "type": "object",
-                            "properties": {
-                                "repository": {
-                                    "description": "Image repository",
-                                    "type": "string"
-                                },
-                                "tag": {
-                                    "description": "Image tag",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "replicaCount": {
-                            "description": "Number of replicas",
-                            "type": "integer"
-                        },
-                        "resources": {
-                            "type": "object",
-                            "properties": {
-                                "limits": {
-                                    "type": "object",
-                                    "properties": {
-                                        "cpu": {
-                                            "description": "CPU limit",
-                                            "oneOf": [
-                                                {
-                                                    "type": "string"
-                                                },
-                                                {
-                                                    "type": "number"
-                                                }
-                                            ]
-                                        },
-                                        "memory": {
-                                            "description": "Memory limit",
-                                            "type": "string"
-                                        }
-                                    }
-                                },
-                                "requests": {
-                                    "type": "object",
-                                    "properties": {
-                                        "cpu": {
-                                            "description": "CPU request",
-                                            "oneOf": [
-                                                {
-                                                    "type": "string"
-                                                },
-                                                {
-                                                    "type": "number"
-                                                }
-                                            ]
-                                        },
-                                        "memory": {
-                                            "description": "Memory request",
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "skipAuth": {
-                            "description": "Paths to skip authentication",
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "method": {
-                                        "type": "string"
-                                    },
-                                    "path": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "volumeMounts": {
-                            "description": "Volume mounts for the OIDC proxy",
-                            "type": "array"
-                        }
+                "nginx.ingress.kubernetes.io/proxy-connect-timeout": {
+                  "type": "string"
+                },
+                "nginx.ingress.kubernetes.io/proxy-read-timeout": {
+                  "type": "string"
+                },
+                "nginx.ingress.kubernetes.io/proxy-send-timeout": {
+                  "type": "string"
+                }
+              }
+            },
+            "className": {
+              "description": "Ingress class name",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable ingress",
+              "type": "boolean"
+            },
+            "host": {
+              "description": "Ingress host",
+              "type": "string"
+            },
+            "oidcProtected": {
+              "description": "Enable OIDC protection (route to oauth2-proxy when using Ingress)",
+              "type": "boolean"
+            },
+            "paths": {
+              "description": "List of ingress paths",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "description": "Ingress path",
+                    "type": "string"
+                  },
+                  "pathType": {
+                    "description": "Ingress path type",
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "rules": {
+              "description": "List of ingress rules",
+              "type": "array"
+            },
+            "tls": {
+              "description": "List of ingress TLS configurations",
+              "type": "array"
+            }
+          }
+        },
+        "initContainers": {
+          "description": "List of init containers",
+          "type": "array"
+        },
+        "kedaAutoscaling": {
+          "description": "KEDA autoscaling configuration (creates a ScaledObject instead of HPA)",
+          "type": "object",
+          "properties": {
+            "advanced": {
+              "description": "Advanced KEDA ScaledObject configuration",
+              "type": "object"
+            },
+            "cooldownPeriod": {
+              "description": "Period in seconds to wait after the last trigger fires before scaling back to minReplicas",
+              "type": "integer"
+            },
+            "enabled": {
+              "description": "Enable KEDA autoscaling",
+              "type": "boolean"
+            },
+            "maxReplicas": {
+              "description": "Maximum number of replicas",
+              "type": "integer"
+            },
+            "minReplicas": {
+              "description": "Minimum number of replicas",
+              "type": "integer"
+            },
+            "pollingInterval": {
+              "description": "Interval in seconds to check each trigger",
+              "type": "integer"
+            },
+            "triggers": {
+              "description": "List of KEDA triggers (e.g. prometheus, cpu, memory, cron)",
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "livenessProbe": {
+          "description": "Liveness probe configuration",
+          "type": "object",
+          "properties": {
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": "number"
+            },
+            "httpGet": {
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "type": "object",
+              "properties": {
+                "path": {
+                  "description": "Path to probe",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port to probe",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
                     }
+                  ]
                 },
-                "oidcProxyGateway": {
-                    "description": "Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.",
-                    "type": "object",
-                    "properties": {
-                        "annotations": {
-                            "description": "Annotations to add to SecurityPolicy resources",
-                            "type": "object"
+                "scheme": {
+                  "description": "Scheme to use",
+                  "type": "string"
+                }
+              }
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": "number"
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": "number"
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": "number"
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": "number"
+            }
+          }
+        },
+        "nameOverride": {
+          "description": "Name to prefix the K8s resources with, combined with the stack name prefix",
+          "type": "string"
+        },
+        "nodeSelector": {
+          "type": "object",
+          "properties": {
+            "kubernetes.io/arch": {
+              "description": "Node selector for architecture",
+              "type": "string"
+            }
+          }
+        },
+        "oidcProxy": {
+          "type": "object",
+          "properties": {
+            "additionalHeaders": {
+              "description": "Additional headers to add",
+              "type": "array"
+            },
+            "additionalSecrets": {
+              "description": "Additional secrets to mount",
+              "type": "array"
+            },
+            "annotations": {
+              "description": "Annotations to add to the OIDC proxy",
+              "type": "object"
+            },
+            "cookieRefresh": {
+              "description": "Refresh tokens and cookies after this period",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable OIDC proxy",
+              "type": "boolean"
+            },
+            "extraArgs": {
+              "description": "Extra arguments to pass to the OIDC proxy",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "image": {
+              "type": "object",
+              "properties": {
+                "repository": {
+                  "description": "Image repository",
+                  "type": "string"
+                },
+                "tag": {
+                  "description": "Image tag",
+                  "type": "string"
+                }
+              }
+            },
+            "replicaCount": {
+              "description": "Number of replicas",
+              "type": "integer"
+            },
+            "resources": {
+              "type": "object",
+              "properties": {
+                "limits": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "description": "CPU limit",
+                      "oneOf": [
+                        {
+                          "type": "string"
                         },
-                        "apiRoutes": {
-                            "description": "API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.",
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "matchType": {
-                                        "type": "string"
-                                    },
-                                    "path": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "clientID": {
-                            "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
-                            "type": "string"
-                        },
-                        "clientSecretName": {
-                            "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.",
-                            "type": "string"
-                        },
-                        "cookieDomain": {
-                            "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
-                            "type": "string"
-                        },
-                        "cookieNames": {
-                            "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-\u003cnamespace\u003e-\u003cservice\u003e / IdToken-\u003cnamespace\u003e-\u003cservice\u003e. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
-                            "type": "object",
-                            "properties": {
-                                "accessToken": {
-                                    "description": "Custom name for access token cookie",
-                                    "type": "string"
-                                },
-                                "idToken": {
-                                    "description": "Custom name for ID token cookie",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "csrfTokenTTL": {
-                            "description": "Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)",
-                            "type": "string"
-                        },
-                        "denyRedirect": {
-                            "description": "Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.",
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "description": "Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.",
-                                    "type": "boolean"
-                                }
-                            }
-                        },
-                        "forwardAccessToken": {
-                            "description": "Forward access token to backend service",
-                            "type": "boolean"
-                        },
-                        "globalSecretName": {
-                            "description": "Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used as the base credential source, and as the secret the SecurityPolicy points at directly when a service has no Argus app secrets.",
-                            "type": "string"
-                        },
-                        "logoutPath": {
-                            "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
-                            "type": "string"
-                        },
-                        "provider": {
-                            "description": "OIDC provider configuration",
-                            "type": "object",
-                            "properties": {
-                                "authorizationEndpoint": {
-                                    "description": "Optional authorization endpoint (auto-discovered by provider if empty)",
-                                    "type": "string"
-                                },
-                                "issuer": {
-                                    "description": "OIDC provider issuer URL",
-                                    "type": "string"
-                                },
-                                "tokenEndpoint": {
-                                    "description": "Optional token endpoint (auto-discovered by provider if empty)",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "refreshToken": {
-                            "description": "Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)",
-                            "type": "boolean"
-                        },
-                        "resources": {
-                            "description": "Optional OAuth2 resources parameter",
-                            "type": "array"
-                        },
-                        "scopes": {
-                            "description": "OIDC scopes to request",
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "skipAuth": {
-                            "description": "Paths to skip authentication (creates separate public HTTPRoute)",
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "method": {
-                                        "type": "string"
-                                    },
-                                    "path": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                        {
+                          "type": "number"
                         }
+                      ]
+                    },
+                    "memory": {
+                      "description": "Memory limit",
+                      "type": "string"
                     }
+                  }
                 },
-                "persistence": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "description": "Enable persistence",
-                            "type": "boolean"
+                "requests": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "description": "CPU request",
+                      "oneOf": [
+                        {
+                          "type": "string"
                         },
-                        "existingClaim": {
-                            "description": "Existing PVC name",
-                            "type": "string"
-                        },
-                        "mountPath": {
-                            "description": "Mount path for the PVC",
-                            "type": "string"
-                        },
-                        "pvc": {
-                            "type": "object",
-                            "properties": {
-                                "accessModes": {
-                                    "description": "Access modes for the PVC",
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": [
-                                            "ReadWriteOnce",
-                                            "ReadOnlyMany",
-                                            "ReadWriteMany",
-                                            "ReadWriteOncePod"
-                                        ]
-                                    }
-                                },
-                                "dataSource": {
-                                    "type": "object",
-                                    "properties": {
-                                        "apiGroup": {
-                                            "description": "API version of the data source",
-                                            "type": "string"
-                                        },
-                                        "kind": {
-                                            "description": "Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]",
-                                            "type": "string"
-                                        },
-                                        "name": {
-                                            "description": "Name of the data source",
-                                            "type": "string"
-                                        }
-                                    }
-                                },
-                                "resources": {
-                                    "type": "object",
-                                    "properties": {
-                                        "requests": {
-                                            "description": "PVC resource requests",
-                                            "type": "object",
-                                            "properties": {
-                                                "storage": {
-                                                    "description": "Storage resource request",
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "storageClassName": {
-                                    "description": "Storage class name",
-                                    "type": "string"
-                                }
-                            }
+                        {
+                          "type": "number"
                         }
+                      ]
+                    },
+                    "memory": {
+                      "description": "Memory request",
+                      "type": "string"
                     }
+                  }
+                }
+              }
+            },
+            "skipAuth": {
+              "description": "Paths to skip authentication",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "volumeMounts": {
+              "description": "Volume mounts for the OIDC proxy",
+              "type": "array"
+            }
+          }
+        },
+        "oidcProxyGateway": {
+          "description": "Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to SecurityPolicy resources",
+              "type": "object"
+            },
+            "apiRoutes": {
+              "description": "API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "matchType": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "clientID": {
+              "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
+              "type": "string"
+            },
+            "clientSecretName": {
+              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.",
+              "type": "string"
+            },
+            "cookieDomain": {
+              "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
+              "type": "string"
+            },
+            "cookieNames": {
+              "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-\u003cnamespace\u003e-\u003cservice\u003e / IdToken-\u003cnamespace\u003e-\u003cservice\u003e. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
+              "type": "object",
+              "properties": {
+                "accessToken": {
+                  "description": "Custom name for access token cookie",
+                  "type": "string"
                 },
-                "podAnnotations": {
-                    "description": "Annotations to add to pods",
-                    "type": "object"
+                "idToken": {
+                  "description": "Custom name for ID token cookie",
+                  "type": "string"
+                }
+              }
+            },
+            "csrfTokenTTL": {
+              "description": "Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)",
+              "type": "string"
+            },
+            "denyRedirect": {
+              "description": "Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.",
+                  "type": "boolean"
+                }
+              }
+            },
+            "forwardAccessToken": {
+              "description": "Forward access token to backend service",
+              "type": "boolean"
+            },
+            "globalSecretName": {
+              "description": "Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used as the base credential source, and as the secret the SecurityPolicy points at directly when a service has no Argus app secrets.",
+              "type": "string"
+            },
+            "logoutPath": {
+              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
+              "type": "string"
+            },
+            "provider": {
+              "description": "OIDC provider configuration",
+              "type": "object",
+              "properties": {
+                "authorizationEndpoint": {
+                  "description": "Optional authorization endpoint (auto-discovered by provider if empty)",
+                  "type": "string"
                 },
-                "podLabels": {
-                    "description": "Global labels to add to all pods",
-                    "type": "object"
+                "issuer": {
+                  "description": "OIDC provider issuer URL",
+                  "type": "string"
                 },
-                "podSecurityContext": {
-                    "description": "Pod security context",
-                    "type": "object"
+                "tokenEndpoint": {
+                  "description": "Optional token endpoint (auto-discovered by provider if empty)",
+                  "type": "string"
+                }
+              }
+            },
+            "refreshToken": {
+              "description": "Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)",
+              "type": "boolean"
+            },
+            "resources": {
+              "description": "Optional OAuth2 resources parameter",
+              "type": "array"
+            },
+            "scopes": {
+              "description": "OIDC scopes to request",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "skipAuth": {
+              "description": "Paths to skip authentication (creates separate public HTTPRoute)",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "persistence": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable persistence",
+              "type": "boolean"
+            },
+            "existingClaim": {
+              "description": "Existing PVC name",
+              "type": "string"
+            },
+            "mountPath": {
+              "description": "Mount path for the PVC",
+              "type": "string"
+            },
+            "pvc": {
+              "type": "object",
+              "properties": {
+                "accessModes": {
+                  "description": "Access modes for the PVC",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "ReadWriteOnce",
+                      "ReadOnlyMany",
+                      "ReadWriteMany",
+                      "ReadWriteOncePod"
+                    ]
+                  }
                 },
-                "progressDeadlineSeconds": {
-                    "description": "the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled",
-                    "type": "integer"
-                },
-                "readinessProbe": {
-                    "description": "Readiness probe configuration",
-                    "type": "object",
-                    "properties": {
-                        "failureThreshold": {
-                            "description": "Number of failures before the probe is considered failed",
-                            "type": "number"
-                        },
-                        "httpGet": {
-                            "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
-                            "type": "object",
-                            "properties": {
-                                "path": {
-                                    "description": "Path to probe",
-                                    "type": "string"
-                                },
-                                "port": {
-                                    "description": "Port to probe",
-                                    "oneOf": [
-                                        {
-                                            "type": "string"
-                                        },
-                                        {
-                                            "type": "number"
-                                        }
-                                    ]
-                                },
-                                "scheme": {
-                                    "description": "Scheme to use",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "initialDelaySeconds": {
-                            "description": "Number of seconds after the container has started before the probe is first initiated",
-                            "type": "number"
-                        },
-                        "periodSeconds": {
-                            "description": "How often to perform the probe",
-                            "type": "number"
-                        },
-                        "successThreshold": {
-                            "description": "Number of successes before the probe is considered successful",
-                            "type": "number"
-                        },
-                        "timeoutSeconds": {
-                            "description": "Timeout for the probe",
-                            "type": "number"
-                        }
+                "dataSource": {
+                  "type": "object",
+                  "properties": {
+                    "apiGroup": {
+                      "description": "API version of the data source",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "description": "Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Name of the data source",
+                      "type": "string"
                     }
-                },
-                "replicaCount": {
-                    "description": "Number of replicas",
-                    "type": "integer"
+                  }
                 },
                 "resources": {
-                    "description": "Resource requests and limits for the primary container",
-                    "type": "object",
-                    "properties": {
-                        "limits": {
-                            "description": "Resource limits",
-                            "type": "object",
-                            "properties": {
-                                "cpu": {
-                                    "description": "CPU limit",
-                                    "oneOf": [
-                                        {
-                                            "type": "string"
-                                        },
-                                        {
-                                            "type": "number"
-                                        }
-                                    ]
-                                },
-                                "memory": {
-                                    "description": "Memory limit",
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "requests": {
-                            "description": "Resource requests",
-                            "type": "object",
-                            "properties": {
-                                "cpu": {
-                                    "description": "CPU request",
-                                    "oneOf": [
-                                        {
-                                            "type": "string"
-                                        },
-                                        {
-                                            "type": "number"
-                                        }
-                                    ]
-                                },
-                                "memory": {
-                                    "description": "Memory request",
-                                    "type": "string"
-                                }
-                            }
+                  "type": "object",
+                  "properties": {
+                    "requests": {
+                      "description": "PVC resource requests",
+                      "type": "object",
+                      "properties": {
+                        "storage": {
+                          "description": "Storage resource request",
+                          "type": "string"
                         }
+                      }
                     }
+                  }
                 },
-                "restartPolicy": {
-                    "description": "Restart policy for the pod",
-                    "type": "string",
-                    "enum": [
-                        "Always",
-                        "OnFailure",
-                        "Never"
-                    ]
-                },
-                "rollout": {
-                    "$ref": "#/properties/rollout",
-                    "type": "object"
-                },
-                "s3Storage": {
-                    "type": "object",
-                    "properties": {
-                        "accessModes": {
-                            "description": "Access modes for the S3 storage",
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "ReadWriteOnce",
-                                    "ReadOnlyMany",
-                                    "ReadWriteMany",
-                                    "ReadWriteOncePod"
-                                ]
-                            }
-                        },
-                        "annotations": {
-                            "description": "Additional annotations for PV/PVC",
-                            "type": "object"
-                        },
-                        "bucketName": {
-                            "description": "S3 bucket name",
-                            "type": "string"
-                        },
-                        "capacity": {
-                            "description": "Storage capacity",
-                            "type": "string"
-                        },
-                        "enabled": {
-                            "description": "Enable S3 CSI storage",
-                            "type": "boolean"
-                        },
-                        "labels": {
-                            "description": "Additional labels for PV/PVC",
-                            "type": "object"
-                        },
-                        "pvName": {
-                            "description": "Custom PV name (auto-generated if empty)",
-                            "type": "string"
-                        },
-                        "pvcName": {
-                            "description": "Custom PVC name (auto-generated if empty)",
-                            "type": "string"
-                        },
-                        "reclaimPolicy": {
-                            "description": "Reclaim policy for the PV",
-                            "type": "string"
-                        },
-                        "region": {
-                            "description": "AWS region",
-                            "type": "string"
-                        },
-                        "volumeAttributes": {
-                            "description": "Additional CSI volume attributes",
-                            "type": "object"
-                        },
-                        "volumeHandle": {
-                            "description": "CSI volume handle (auto-generated if empty)",
-                            "type": "string"
-                        }
-                    }
-                },
-                "securityContext": {
-                    "description": "Security context",
-                    "type": "object"
-                },
-                "service": {
-                    "description": "Service configuration",
-                    "type": "object",
-                    "properties": {
-                        "port": {
-                            "description": "Service port",
-                            "type": "number"
-                        },
-                        "type": {
-                            "description": "Service type",
-                            "type": "string"
-                        }
-                    }
-                },
-                "serviceAccount": {
-                    "description": "Service account configuration",
-                    "type": "object",
-                    "properties": {
-                        "annotations": {
-                            "description": "Annotations to add to the service account",
-                            "type": "object"
-                        },
-                        "automount": {
-                            "description": "Specifies whether to automatically mount a ServiceAccount's API credentials",
-                            "type": "boolean"
-                        },
-                        "create": {
-                            "description": "Specifies whether a service account should be created",
-                            "type": "boolean"
-                        },
-                        "name": {
-                            "description": "Name of the service account to use (if not set and create is true, a name is generated using the fullname template)",
-                            "type": "string"
-                        }
-                    }
-                },
-                "shareProcessNamespace": {
-                    "description": "Share process namespace",
-                    "type": "boolean"
-                },
-                "sidecars": {
-                    "description": "List of sidecars",
-                    "type": "array"
-                },
-                "startupProbe": {
-                    "description": "Startup probe configuration",
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "description": "Enable the startup probe",
-                            "type": "boolean"
-                        },
-                        "exec": {
-                            "description": "Exec probe configuration",
-                            "type": "object",
-                            "properties": {
-                                "command": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        },
-                        "failureThreshold": {
-                            "description": "Number of failures before the probe is considered failed",
-                            "type": "integer"
-                        },
-                        "initialDelaySeconds": {
-                            "description": "Number of seconds after the container has started before the probe is first initiated",
-                            "type": "integer"
-                        },
-                        "periodSeconds": {
-                            "description": "How often to perform the probe",
-                            "type": "integer"
-                        },
-                        "successThreshold": {
-                            "description": "Number of successes before the probe is considered successful",
-                            "type": "integer"
-                        },
-                        "timeoutSeconds": {
-                            "description": "Timeout for the probe",
-                            "type": "integer"
-                        }
-                    }
-                },
-                "tolerations": {
-                    "description": "Tolerations for the pod",
-                    "type": "array"
-                },
-                "topologySpreadConstraints": {
-                    "description": "Topology spread constraints for the pod",
-                    "type": "array"
-                },
-                "volumeMounts": {
-                    "description": "Additional volume mounts on the output Deployment definition",
-                    "type": "array"
-                },
-                "volumes": {
-                    "description": "Additional volumes on the output Deployment definition",
-                    "type": "array"
+                "storageClassName": {
+                  "description": "Storage class name",
+                  "type": "string"
                 }
+              }
             }
+          }
         },
-        "jobs": {
-            "description": "Jobs to deploy",
-            "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "$ref": "#/properties/global",
-                    "type": "object"
+        "podAnnotations": {
+          "description": "Annotations to add to pods",
+          "type": "object"
+        },
+        "podLabels": {
+          "description": "Global labels to add to all pods",
+          "type": "object"
+        },
+        "podSecurityContext": {
+          "description": "Pod security context",
+          "type": "object"
+        },
+        "progressDeadlineSeconds": {
+          "description": "the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled",
+          "type": "integer"
+        },
+        "readinessProbe": {
+          "description": "Readiness probe configuration",
+          "type": "object",
+          "properties": {
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": "number"
+            },
+            "httpGet": {
+              "description": "HTTP probe configuration (exec \u0026 tcpSocket are also available)",
+              "type": "object",
+              "properties": {
+                "path": {
+                  "description": "Path to probe",
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port to probe",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "scheme": {
+                  "description": "Scheme to use",
+                  "type": "string"
                 }
+              }
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": "number"
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": "number"
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": "number"
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": "number"
             }
+          }
+        },
+        "replicaCount": {
+          "description": "Number of replicas",
+          "type": "integer"
+        },
+        "resources": {
+          "description": "Resource requests and limits for the primary container",
+          "type": "object",
+          "properties": {
+            "limits": {
+              "description": "Resource limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU limit",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "memory": {
+                  "description": "Memory limit",
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "description": "Resource requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU request",
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ]
+                },
+                "memory": {
+                  "description": "Memory request",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "restartPolicy": {
+          "description": "Restart policy for the pod",
+          "type": "string",
+          "enum": [
+            "Always",
+            "OnFailure",
+            "Never"
+          ]
         },
         "rollout": {
-            "type": "object",
-            "properties": {
-                "strategy": {
-                    "description": "Specifies the rollout strategy for the application.",
-                    "default": "blueGreen",
-                    "type": "object",
-                    "properties": {
-                        "blueGreen": {
-                            "default": "blueGreen",
-                            "type": "object",
-                            "properties": {
-                                "activeService": {
-                                    "description": "Name of the service that the rollout modifies as the active service.",
-                                    "type": "string"
-                                },
-                                "autoPromotionEnabled": {
-                                    "description": "indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.",
-                                    "type": "boolean"
-                                },
-                                "prePromotionAnalysis": {
-                                    "description": "configuration to run analysis before a selector switch",
-                                    "$ref": "#/properties/rolloutAnalysis",
-                                    "type": "object"
-                                },
-                                "previewService": {
-                                    "description": "Name of the service that the rollout modifies as the preview service.",
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "additionalProperties": true
+          "$ref": "#/properties/rollout",
+          "type": "object"
         },
-        "rolloutAnalysis": {
-            "description": "defines a template that is used to create a analysisRun",
-            "type": "object",
-            "properties": {
-                "analysisRunMetadata": {
-                    "description": "extra labels to add to the AnalysisRun",
-                    "type": "object",
-                    "properties": {
-                        "annotations": {
-                            "description": "additional annotations to add to the AnalysisRun",
-                            "type": "object"
-                        },
-                        "labels": {
-                            "description": "additional labels to add to the AnalysisRun",
-                            "type": "object"
-                        }
-                    }
-                },
-                "args": {
-                    "description": "the arguments that will be added to the AnalysisRuns",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "type": "string"
-                            },
-                            "value": {
-                                "type": "string"
-                            },
-                            "valueFrom": {
-                                "type": "object",
-                                "properties": {
-                                    "fieldRef": {
-                                        "type": "object",
-                                        "properties": {
-                                            "fieldPath": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "podTemplateHashValue": {
-                                        "type": "string",
-                                        "enum": [
-                                            "Latest",
-                                            "Stable"
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "templates": {
-                    "description": "reference to a list of analysis templates to combine for an AnalysisRun",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "clusterScope": {
-                                "description": "Whether to look for the templateName at cluster scope or namespace scope.",
-                                "type": "boolean"
-                            },
-                            "templateName": {
-                                "description": " name of the AnalysisTemplate to use for the rollout analysis",
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
+        "s3Storage": {
+          "type": "object",
+          "properties": {
+            "accessModes": {
+              "description": "Access modes for the S3 storage",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ReadWriteOnce",
+                  "ReadOnlyMany",
+                  "ReadWriteMany",
+                  "ReadWriteOncePod"
+                ]
+              }
             },
-            "additionalProperties": true
-        },
-        "services": {
-            "description": "Services to deploy",
-            "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "$ref": "#/properties/global",
-                    "type": "object",
-                    "unevaluatedProperties": false
-                }
+            "annotations": {
+              "description": "Additional annotations for PV/PVC",
+              "type": "object"
+            },
+            "bucketName": {
+              "description": "S3 bucket name",
+              "type": "string"
+            },
+            "capacity": {
+              "description": "Storage capacity",
+              "type": "string"
+            },
+            "enabled": {
+              "description": "Enable S3 CSI storage",
+              "type": "boolean"
+            },
+            "labels": {
+              "description": "Additional labels for PV/PVC",
+              "type": "object"
+            },
+            "pvName": {
+              "description": "Custom PV name (auto-generated if empty)",
+              "type": "string"
+            },
+            "pvcName": {
+              "description": "Custom PVC name (auto-generated if empty)",
+              "type": "string"
+            },
+            "reclaimPolicy": {
+              "description": "Reclaim policy for the PV",
+              "type": "string"
+            },
+            "region": {
+              "description": "AWS region",
+              "type": "string"
+            },
+            "volumeAttributes": {
+              "description": "Additional CSI volume attributes",
+              "type": "object"
+            },
+            "volumeHandle": {
+              "description": "CSI volume handle (auto-generated if empty)",
+              "type": "string"
             }
+          }
+        },
+        "securityContext": {
+          "description": "Security context",
+          "type": "object"
+        },
+        "service": {
+          "description": "Service configuration",
+          "type": "object",
+          "properties": {
+            "port": {
+              "description": "Service port",
+              "type": "number"
+            },
+            "type": {
+              "description": "Service type",
+              "type": "string"
+            }
+          }
+        },
+        "serviceAccount": {
+          "description": "Service account configuration",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "Annotations to add to the service account",
+              "type": "object"
+            },
+            "automount": {
+              "description": "Specifies whether to automatically mount a ServiceAccount's API credentials",
+              "type": "boolean"
+            },
+            "create": {
+              "description": "Specifies whether a service account should be created",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "Name of the service account to use (if not set and create is true, a name is generated using the fullname template)",
+              "type": "string"
+            }
+          }
+        },
+        "shareProcessNamespace": {
+          "description": "Share process namespace",
+          "type": "boolean"
+        },
+        "sidecars": {
+          "description": "List of sidecars",
+          "type": "array"
+        },
+        "startupProbe": {
+          "description": "Startup probe configuration",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable the startup probe",
+              "type": "boolean"
+            },
+            "exec": {
+              "description": "Exec probe configuration",
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "failureThreshold": {
+              "description": "Number of failures before the probe is considered failed",
+              "type": "integer"
+            },
+            "initialDelaySeconds": {
+              "description": "Number of seconds after the container has started before the probe is first initiated",
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "description": "How often to perform the probe",
+              "type": "integer"
+            },
+            "successThreshold": {
+              "description": "Number of successes before the probe is considered successful",
+              "type": "integer"
+            },
+            "timeoutSeconds": {
+              "description": "Timeout for the probe",
+              "type": "integer"
+            }
+          }
+        },
+        "tolerations": {
+          "description": "Tolerations for the pod",
+          "type": "array"
+        },
+        "topologySpreadConstraints": {
+          "description": "Topology spread constraints for the pod",
+          "type": "array"
+        },
+        "volumeMounts": {
+          "description": "Additional volume mounts on the output Deployment definition",
+          "type": "array"
+        },
+        "volumes": {
+          "description": "Additional volumes on the output Deployment definition",
+          "type": "array"
         }
+      }
+    },
+    "jobs": {
+      "description": "Jobs to deploy",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object"
+        }
+      }
+    },
+    "rollout": {
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "description": "Specifies the rollout strategy for the application.",
+          "default": "blueGreen",
+          "type": "object",
+          "properties": {
+            "blueGreen": {
+              "default": "blueGreen",
+              "type": "object",
+              "properties": {
+                "activeService": {
+                  "description": "Name of the service that the rollout modifies as the active service.",
+                  "type": "string"
+                },
+                "autoPromotionEnabled": {
+                  "description": "indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.",
+                  "type": "boolean"
+                },
+                "prePromotionAnalysis": {
+                  "description": "configuration to run analysis before a selector switch",
+                  "$ref": "#/properties/rolloutAnalysis",
+                  "type": "object"
+                },
+                "previewService": {
+                  "description": "Name of the service that the rollout modifies as the preview service.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "rolloutAnalysis": {
+      "description": "defines a template that is used to create a analysisRun",
+      "type": "object",
+      "properties": {
+        "analysisRunMetadata": {
+          "description": "extra labels to add to the AnalysisRun",
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "description": "additional annotations to add to the AnalysisRun",
+              "type": "object"
+            },
+            "labels": {
+              "description": "additional labels to add to the AnalysisRun",
+              "type": "object"
+            }
+          }
+        },
+        "args": {
+          "description": "the arguments that will be added to the AnalysisRuns",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "valueFrom": {
+                "type": "object",
+                "properties": {
+                  "fieldRef": {
+                    "type": "object",
+                    "properties": {
+                      "fieldPath": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "podTemplateHashValue": {
+                    "type": "string",
+                    "enum": [
+                      "Latest",
+                      "Stable"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "templates": {
+          "description": "reference to a list of analysis templates to combine for an AnalysisRun",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "clusterScope": {
+                "description": "Whether to look for the templateName at cluster scope or namespace scope.",
+                "type": "boolean"
+              },
+              "templateName": {
+                "description": " name of the AnalysisTemplate to use for the rollout analysis",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "services": {
+      "description": "Services to deploy",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/global",
+          "type": "object",
+          "unevaluatedProperties": false
+        }
+      }
     }
+  }
 }
