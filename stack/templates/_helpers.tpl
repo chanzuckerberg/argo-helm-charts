@@ -326,36 +326,17 @@ Return the OIDC issuer URL.
 {{- end -}}
 
 {{/*
-Return "true" when the service has at least one Argus app secret level configured.
-This gates the per-service OIDC credential secret built by gateway-oidc-secret.yaml.
-When true, the ExternalSecret seeds from the shared global OIDC app and overrides
-with OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET from the app's secrets if
-those keys are present. When they are absent the global values remain, so the service
-transparently falls back to the shared client without any flag or opt-in.
-*/}}
-{{- define "oidcProxyGateway.hasAppSecrets" -}}
-{{- $s := default dict .Values.appSecrets -}}
-{{- if or (dig "clusterSecret" "secretKey" "" $s) (dig "clusterCLISecret" "secretKey" "" $s) (dig "stackSecret" "secretKey" "" $s) (dig "envSecret" "secretKey" "" $s) -}}
-true
-{{- end -}}
-{{- end -}}
-
-{{/*
 Return the Kubernetes secret name for OIDC credentials.
 The secret must contain 'client-id' and 'client-secret' keys.
 
 Precedence:
-  1. An explicit oidcProxyGateway.clientSecretName wins.
-  2. Otherwise, when the service has Argus app secrets configured, use the
-     per-service secret built by gateway-oidc-secret.yaml (global defaults
-     transparently overridden by OAUTH2_PROXY_* values if set via argus set secret).
-  3. Otherwise, fall back to the shared oidcProxyGateway.globalSecretName secret.
+  1. An explicit oidcProxyGateway.clientSecretName wins. Set this when the app
+     runs its own Okta client.
+  2. Otherwise, the shared oidcProxyGateway.globalSecretName secret.
 */}}
 {{- define "oidcProxyGateway.secretName" -}}
 {{- if .Values.oidcProxyGateway.clientSecretName -}}
 {{- .Values.oidcProxyGateway.clientSecretName -}}
-{{- else if eq (include "oidcProxyGateway.hasAppSecrets" .) "true" -}}
-{{- printf "%s-oidc-client-secret" (include "service.fullname" .) -}}
 {{- else -}}
 {{- .Values.oidcProxyGateway.globalSecretName -}}
 {{- end -}}

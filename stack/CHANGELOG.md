@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.49.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.49.0...stack-v2.49.1) (2026-07-30)
+
+
+### Bug Fixes
+
+* **stack:** drop per-service OIDC credential merging ([#527](https://github.com/chanzuckerberg/argo-helm-charts/issues/527)) ([fb072cb](https://github.com/chanzuckerberg/argo-helm-charts/commit/fb072cb17d7c393decbcbfc81ca222c195a6b4b1))
+
 ## [2.49.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.48.0...stack-v2.49.0) (2026-07-30)
 
 

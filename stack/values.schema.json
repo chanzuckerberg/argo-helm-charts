@@ -979,7 +979,7 @@
               "type": "string"
             },
             "clientSecretName": {
-              "description": "Explicit Kubernetes secret with client-id and client-secret keys. When empty and the service has Argus app secrets, a per-service secret is built automatically (seeded from the global OIDC app, overridden by OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET if set via argus set secret). When empty with no app secrets, the shared argus-global-oidc secret is used.",
+              "description": "Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.",
               "type": "string"
             },
             "cookieDomain": {
@@ -1019,7 +1019,7 @@
               "type": "boolean"
             },
             "globalSecretName": {
-              "description": "Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used as the base credential source, and as the secret the SecurityPolicy points at directly when a service has no Argus app secrets.",
+              "description": "Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.",
               "type": "string"
             },
             "logoutPath": {
