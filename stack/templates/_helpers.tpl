@@ -349,7 +349,7 @@ Precedence:
   2. Otherwise, when the service has Argus app secrets configured, use the
      per-service secret built by gateway-oidc-secret.yaml (global defaults
      transparently overridden by OAUTH2_PROXY_* values if set via argus set secret).
-  3. Otherwise, fall back to the shared argus-global-oidc secret.
+  3. Otherwise, fall back to the shared oidcProxyGateway.globalSecretName secret.
 */}}
 {{- define "oidcProxyGateway.secretName" -}}
 {{- if .Values.oidcProxyGateway.clientSecretName -}}
@@ -357,7 +357,7 @@ Precedence:
 {{- else if eq (include "oidcProxyGateway.hasAppSecrets" .) "true" -}}
 {{- printf "%s-oidc-client-secret" (include "service.fullname" .) -}}
 {{- else -}}
-argus-global-oidc
+{{- .Values.oidcProxyGateway.globalSecretName -}}
 {{- end -}}
 {{- end -}}
 
