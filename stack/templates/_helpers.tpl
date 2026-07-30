@@ -373,14 +373,14 @@ https://{{ .Values.gateway.host }}/oauth2/callback
 {{- end -}}
 
 {{/*
-Whether the OIDC OAuth2 callback path (/oauth2/callback) is already reachable
-through one of the configured gateway paths. Input dict: "paths" (list).
-A PathPrefix path covers the callback when it is "/" or a path-segment prefix of
-"/oauth2/callback"; an Exact path covers it only on an exact match.
-Returns "true"/"".
+Whether the OIDC OAuth2 callback path is already reachable through one of the
+configured gateway paths. Input dict: "paths" (list), "callback" (string,
+defaults to "/oauth2/callback"). A PathPrefix path covers the callback when it is
+"/" or a path-segment prefix of the callback; an Exact path covers it only on an
+exact match. Returns "true"/"".
 */}}
 {{- define "gateway.oidcCallbackCovered" -}}
-{{- $callback := "/oauth2/callback" -}}
+{{- $callback := .callback | default "/oauth2/callback" -}}
 {{- $covered := false -}}
 {{- range .paths -}}
   {{- if eq .pathType "Exact" -}}
@@ -395,6 +395,44 @@ Returns "true"/"".
   {{- end -}}
 {{- end -}}
 {{- if $covered -}}true{{- end -}}
+{{- end -}}
+
+{{/*
+OIDC base path: the URL prefix the OAuth2 callback and logout live under. Envoy
+Gateway requires redirectURL and logoutPath to match the service's own HTTPRoute,
+otherwise the OAuth2 filter never sees those requests. The chart scans the service's
+gateway.paths for the first non-root PathPrefix path and uses it as the base so
+users never have to hand-write /oauth2 or /logout paths. When no such path exists
+(all paths are root or Exact) the base path is empty, placing the callback at the
+host root. Input dict: "paths" (list). Returns "" or "/prefix" with no trailing slash.
+*/}}
+{{- define "oidcProxyGateway.basePath" -}}
+{{- $paths := .paths | default list -}}
+{{- $base := "" -}}
+{{- $found := false -}}
+{{- range $paths -}}
+  {{- if and (not $found) (ne (.pathType | default "Prefix") "Exact") (ne (.path | default "/") "/") -}}
+    {{- $base = trimSuffix "/" .path -}}
+    {{- $found = true -}}
+  {{- end -}}
+{{- end -}}
+{{- $base -}}
+{{- end -}}
+
+{{/*
+Fail when an OIDC-protected service's derived OAuth2 callback is not reachable
+through any of its gateway paths. This turns an otherwise silent misconfiguration
+(the login flow breaks because the callback lands on no route, or the wrong one)
+into a clear render-time error. Input: the service context.
+*/}}
+{{- define "validate.oidcCallbackReachable" -}}
+{{- if and .Values.gateway.enabled .Values.gateway.oidcProtected (not .Values.gateway.tlsPassthrough.enabled) -}}
+{{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths) -}}
+{{- $callback := printf "%s/oauth2/callback" $basePath -}}
+{{- if ne (include "gateway.oidcCallbackCovered" (dict "paths" .Values.gateway.paths "callback" $callback)) "true" -}}
+{{- fail (printf "gateway.oidcProtected: the OAuth2 callback %q for service %q is not covered by any configured gateway path, so login would fail. Declare the app's route path (e.g. paths: [{path: /portal}]) so the chart can namespace the callback under it, or set oidcProxyGateway.basePath explicitly." $callback (include "service.name" .)) -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -519,9 +557,10 @@ oidc:
   {{- end }}
   clientSecret:
     name: {{ include "oidcProxyGateway.secretName" $ }}
-  redirectURL: https://{{ .host }}/oauth2/callback
+  {{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" $g.paths) }}
+  redirectURL: https://{{ .host }}{{ $basePath }}/oauth2/callback
   {{- if $.Values.oidcProxyGateway.logoutPath }}
-  logoutPath: {{ $.Values.oidcProxyGateway.logoutPath | quote }}
+  logoutPath: {{ printf "%s%s" $basePath $.Values.oidcProxyGateway.logoutPath | quote }}
   {{- end }}
   {{- if $.Values.oidcProxyGateway.forwardAccessToken }}
   forwardAccessToken: {{ $.Values.oidcProxyGateway.forwardAccessToken }}

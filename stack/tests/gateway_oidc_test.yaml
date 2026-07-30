@@ -163,7 +163,7 @@ tests:
           path: spec.rules[1].matches[0].path.value
           value: /metrics
 
-  - it: should add default root path when no root path exists
+  - it: should not inject a root path when a single non-root path defines the base path
     set:
       global:
         ingress:
@@ -185,14 +185,10 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.rules
-          count: 2
+          count: 1
       - documentIndex: 0
         equal:
           path: spec.rules[0].matches[0].path.value
-          value: /
-      - documentIndex: 0
-        equal:
-          path: spec.rules[1].matches[0].path.value
           value: /backend
 
   - it: should not add default root path when root path already exists
@@ -263,7 +259,7 @@ tests:
           path: spec.rules[2].matches[0].path.value
           value: /logout
 
-  - it: should add default root path when paths do not cover the oauth2 callback
+  - it: should use the first non-root Prefix path as base when multiple paths are configured
     set:
       global:
         ingress:
@@ -275,7 +271,7 @@ tests:
           paths:
             - path: /portal
               pathType: Prefix
-            - path: /logout
+            - path: /admin
               pathType: Prefix
         oidcProxyGateway:
           clientID: my-client-id
@@ -287,11 +283,41 @@ tests:
       - documentIndex: 0
         lengthEqual:
           path: spec.rules
-          count: 3
+          count: 2
       - documentIndex: 0
         equal:
           path: spec.rules[0].matches[0].path.value
-          value: /
+          value: /portal
+
+  - it: should use the first non-root Prefix path as base across multiple paths without explicit config
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          paths:
+            - path: /portal
+              pathType: Prefix
+            - path: /admin
+              pathType: Prefix
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /portal
 
   - it: should not add default root path when an exact oauth2 callback path is configured
     set:

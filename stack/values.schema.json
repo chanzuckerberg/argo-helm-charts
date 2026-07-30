@@ -961,7 +961,7 @@
               "type": "string"
             },
             "clientSecretFromAppSecrets": {
-              "description": "Set true only when the app supplies its own OIDC client via `argus set secret` OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET. Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false (the default) to use the shared argus-global-oidc secret; unrelated app secrets do not trigger this path.",
+              "description": "Set true only when the app supplies its own OIDC client via argus set secret (OAUTH2_PROXY_CLIENT_ID/OAUTH2_PROXY_CLIENT_SECRET). Builds a per-service secret seeded from the global OIDC app and overridden by those keys. Leave false to use the shared argus-global-oidc secret.",
               "type": "boolean"
             },
             "clientSecretName": {
@@ -1009,7 +1009,7 @@
               "type": "string"
             },
             "logoutPath": {
-              "description": "Path for logout operations",
+              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
               "type": "string"
             },
             "provider": {
