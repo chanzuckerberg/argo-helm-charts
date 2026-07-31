@@ -23,6 +23,7 @@
 | - [grafanaBaseImage](#grafanaBaseImage )     | No      | string           | No         | -          | Base image for the Grafana instance.                                                                                                                                                 |
 | - [grafanaName](#grafanaName )               | No      | string           | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
 | - [grafanaSubdomain](#grafanaSubdomain )     | No      | string           | No         | -          | Subdomain to use for the Grafana instance.                                                                                                                                           |
+| - [persistence](#persistence )               | No      | object           | No         | -          | Persistent storage for the Grafana database. Without this the SQLite DB lives on an emptyDir and every datasource, alert state, silence and annotation is lost on pod restart.       |
 | - [replicas](#replicas )                     | No      | integer          | No         | -          | Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.                                        |
 | - [roleAttributePath](#roleAttributePath )   | No      | string           | No         | -          | JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ . |
 | - [secretStoreRef](#secretStoreRef )         | No      | string           | No         | -          | Name of the secret store to use for external secrets.                                                                                                                                |
@@ -417,7 +418,79 @@ must respect the following conditions
 
 **Description:** Subdomain to use for the Grafana instance.
 
-## <a name="replicas"></a>14. Property `grafana > replicas`
+## <a name="persistence"></a>14. Property `grafana > persistence`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Persistent storage for the Grafana database. Without this the SQLite DB lives on an emptyDir and every datasource, alert state, silence and annotation is lost on pod restart.
+
+| Property                                             | Pattern | Type            | Deprecated | Definition | Title/Description                                                                    |
+| ---------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------ |
+| - [accessModes](#persistence_accessModes )           | No      | array of string | No         | -          | Access modes for the volume. ReadWriteOnce is correct while replicas is capped at 1. |
+| - [enabled](#persistence_enabled )                   | No      | boolean         | No         | -          | Enable a PersistentVolumeClaim for /var/lib/grafana.                                 |
+| - [size](#persistence_size )                         | No      | string          | No         | -          | Size of the Grafana data volume.                                                     |
+| - [storageClassName](#persistence_storageClassName ) | No      | string          | No         | -          | StorageClass for the volume. Empty uses the cluster default.                         |
+
+### <a name="persistence_accessModes"></a>14.1. Property `grafana > persistence > accessModes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** Access modes for the volume. ReadWriteOnce is correct while replicas is capped at 1.
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                     | Description |
+| --------------------------------------------------- | ----------- |
+| [accessModes items](#persistence_accessModes_items) | -           |
+
+#### <a name="persistence_accessModes_items"></a>14.1.1. grafana > persistence > accessModes > accessModes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="persistence_enabled"></a>14.2. Property `grafana > persistence > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable a PersistentVolumeClaim for /var/lib/grafana.
+
+### <a name="persistence_size"></a>14.3. Property `grafana > persistence > size`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Size of the Grafana data volume.
+
+### <a name="persistence_storageClassName"></a>14.4. Property `grafana > persistence > storageClassName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** StorageClass for the volume. Empty uses the cluster default.
+
+## <a name="replicas"></a>15. Property `grafana > replicas`
 
 |              |           |
 | ------------ | --------- |
@@ -430,7 +503,7 @@ must respect the following conditions
 | ------------ | ------ |
 | **Maximum**  | &le; 1 |
 
-## <a name="roleAttributePath"></a>15. Property `grafana > roleAttributePath`
+## <a name="roleAttributePath"></a>16. Property `grafana > roleAttributePath`
 
 |              |          |
 | ------------ | -------- |
@@ -439,7 +512,7 @@ must respect the following conditions
 
 **Description:** JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-## <a name="secretStoreRef"></a>16. Property `grafana > secretStoreRef`
+## <a name="secretStoreRef"></a>17. Property `grafana > secretStoreRef`
 
 |              |          |
 | ------------ | -------- |
@@ -448,7 +521,7 @@ must respect the following conditions
 
 **Description:** Name of the secret store to use for external secrets.
 
-## <a name="serviceAccount"></a>17. Property `grafana > serviceAccount`
+## <a name="serviceAccount"></a>18. Property `grafana > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -460,7 +533,7 @@ must respect the following conditions
 | --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | Annotations to add to the service account. |
 
-### <a name="serviceAccount_annotations"></a>17.1. Property `grafana > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>18.1. Property `grafana > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -474,7 +547,7 @@ must respect the following conditions
 | ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#serviceAccount_annotations_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="serviceAccount_annotations_pattern1"></a>17.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
+#### <a name="serviceAccount_annotations_pattern1"></a>18.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions

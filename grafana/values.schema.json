@@ -170,23 +170,27 @@
       "type": "string"
     },
     "persistence": {
-      "description": "Persistent storage for the Grafana database.",
+      "description": "Persistent storage for the Grafana database. Without this the SQLite DB lives on an emptyDir and every datasource, alert state, silence and annotation is lost on pod restart.",
       "type": "object",
       "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "size": {
-          "type": "string"
-        },
-        "storageClassName": {
-          "type": "string"
-        },
         "accessModes": {
+          "description": "Access modes for the volume. ReadWriteOnce is correct while replicas is capped at 1.",
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "enabled": {
+          "description": "Enable a PersistentVolumeClaim for /var/lib/grafana.",
+          "type": "boolean"
+        },
+        "size": {
+          "description": "Size of the Grafana data volume.",
+          "type": "string"
+        },
+        "storageClassName": {
+          "description": "StorageClass for the volume. Empty uses the cluster default.",
+          "type": "string"
         }
       }
     },
