@@ -169,6 +169,27 @@
       "description": "Subdomain to use for the Grafana instance.",
       "type": "string"
     },
+    "persistence": {
+      "description": "Persistent storage for the Grafana database.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "size": {
+          "type": "string"
+        },
+        "storageClassName": {
+          "type": "string"
+        },
+        "accessModes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "replicas": {
       "description": "Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.",
       "type": "integer",

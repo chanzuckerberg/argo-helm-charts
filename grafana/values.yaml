@@ -16,6 +16,13 @@ secretStoreRef: "aws-secretsmanager" # @schema description: Name of the secret s
 
 roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || 'Viewer'" # @schema description: JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
+persistence: # @schema description: Persistent storage for the Grafana database. Without this the SQLite DB lives on an emptyDir and every datasource, alert state, silence and annotation is lost on pod restart.
+  enabled: false # @schema description: Enable a PersistentVolumeClaim for /var/lib/grafana.
+  size: 5Gi # @schema description: Size of the Grafana data volume.
+  storageClassName: "" # @schema description: StorageClass for the volume. Empty uses the cluster default.
+  accessModes: # @schema description: Access modes for the volume. ReadWriteOnce is correct while replicas is capped at 1.
+    - ReadWriteOnce
+
 grafanaAnnotations: {} # @schema description: Annotations to add to the Grafana instance.; patternProperties: { "^.*$": { "type": "string" } }
 
 grafanaSubdomain: "grafana" # @schema description: Subdomain to use for the Grafana instance.

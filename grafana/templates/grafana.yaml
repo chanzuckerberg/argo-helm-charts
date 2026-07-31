@@ -11,6 +11,18 @@ metadata:
     {{- toYaml .Values.grafanaAnnotations | nindent 4 }}
     {{- end }}
 spec:
+  {{- if .Values.persistence.enabled }}
+  persistentVolumeClaim:
+    spec:
+      accessModes:
+        {{- toYaml .Values.persistence.accessModes | nindent 8 }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size }}
+      {{- if .Values.persistence.storageClassName }}
+      storageClassName: {{ .Values.persistence.storageClassName }}
+      {{- end }}
+  {{- end }}
   {{- if .Values.serviceAccount.annotations }}
   serviceAccount:
     metadata:
@@ -53,6 +65,14 @@ spec:
   deployment:
     spec:
       replicas: {{ .Values.replicas }}
+      {{- if .Values.persistence.enabled }}
+      # An RWO volume cannot attach to two pods on different nodes. With the
+      # default RollingUpdate, maxSurge 25% rounds up to 1 at replicas: 1, so
+      # the new pod is created before the old one terminates and blocks
+      # forever on volume attach. Recreate is required.
+      strategy:
+        type: Recreate
+      {{- end }}
       template:
         spec:
           {{- $hasSso := eq .Values.accessMode "sso" }}
