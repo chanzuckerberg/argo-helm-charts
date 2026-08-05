@@ -24,6 +24,7 @@
 | - [grafanaName](#grafanaName )               | No      | string           | No         | -          | Name of the Grafana instance to create.                                                                                                                                              |
 | - [grafanaSubdomain](#grafanaSubdomain )     | No      | string           | No         | -          | Subdomain to use for the Grafana instance.                                                                                                                                           |
 | - [replicas](#replicas )                     | No      | integer          | No         | -          | Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.                                        |
+| - [resources](#resources )                   | No      | object           | No         | -          | Resource requests and limits for the Grafana container. When empty, the grafana-operator applies its own defaults (requests 100m CPU / 256Mi memory, limits 1Gi memory).             |
 | - [roleAttributePath](#roleAttributePath )   | No      | string           | No         | -          | JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ . |
 | - [secretStoreRef](#secretStoreRef )         | No      | string           | No         | -          | Name of the secret store to use for external secrets.                                                                                                                                |
 | - [serviceAccount](#serviceAccount )         | No      | object           | No         | -          | -                                                                                                                                                                                    |
@@ -430,7 +431,17 @@ must respect the following conditions
 | ------------ | ------ |
 | **Maximum**  | &le; 1 |
 
-## <a name="roleAttributePath"></a>15. Property `grafana > roleAttributePath`
+## <a name="resources"></a>15. Property `grafana > resources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Resource requests and limits for the Grafana container. When empty, the grafana-operator applies its own defaults (requests 100m CPU / 256Mi memory, limits 1Gi memory).
+
+## <a name="roleAttributePath"></a>16. Property `grafana > roleAttributePath`
 
 |              |          |
 | ------------ | -------- |
@@ -439,7 +450,7 @@ must respect the following conditions
 
 **Description:** JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-## <a name="secretStoreRef"></a>16. Property `grafana > secretStoreRef`
+## <a name="secretStoreRef"></a>17. Property `grafana > secretStoreRef`
 
 |              |          |
 | ------------ | -------- |
@@ -448,7 +459,7 @@ must respect the following conditions
 
 **Description:** Name of the secret store to use for external secrets.
 
-## <a name="serviceAccount"></a>17. Property `grafana > serviceAccount`
+## <a name="serviceAccount"></a>18. Property `grafana > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -460,7 +471,7 @@ must respect the following conditions
 | --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | Annotations to add to the service account. |
 
-### <a name="serviceAccount_annotations"></a>17.1. Property `grafana > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>18.1. Property `grafana > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -474,7 +485,7 @@ must respect the following conditions
 | ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#serviceAccount_annotations_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="serviceAccount_annotations_pattern1"></a>17.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
+#### <a name="serviceAccount_annotations_pattern1"></a>18.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions

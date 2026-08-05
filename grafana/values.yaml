@@ -16,6 +16,8 @@ secretStoreRef: "aws-secretsmanager" # @schema description: Name of the secret s
 
 roleAttributePath: "contains(groups[*], 'team-central-czi-admin') && 'Admin' || 'Viewer'" # @schema description: JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
+resources: {} # @schema description: Resource requests and limits for the Grafana container. When empty, the grafana-operator applies its own defaults (requests 100m CPU / 256Mi memory, limits 1Gi memory).; type: object
+
 grafanaAnnotations: {} # @schema description: Annotations to add to the Grafana instance.; patternProperties: { "^.*$": { "type": "string" } }
 
 grafanaSubdomain: "grafana" # @schema description: Subdomain to use for the Grafana instance.
