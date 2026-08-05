@@ -70,7 +70,7 @@
       "type": "string"
     },
     "datasourceResyncPeriod": {
-      "description": "How often grafana-operator re-pushes GrafanaDatasource CRs. This is the recovery clock after a Grafana restart: until the DB is persistent, datasources are missing for up to this long after every pod replacement. Seconds are permitted - these CRs select instanceSelector name:<grafanaName>, the cluster-local instance, so they place no load on an external AMG workspace (which is a separate Grafana CR, typically central-grafana). Lower it on clusters where Grafana runs without persistent storage.",
+      "description": "How often grafana-operator re-pushes GrafanaDatasource CRs. This is the recovery clock after a Grafana restart: until the DB is persistent, datasources are missing for up to this long after every pod replacement. Seconds are permitted - these CRs select instanceSelector name:\u003cgrafanaName\u003e, the cluster-local instance, so they place no load on an external AMG workspace (which is a separate Grafana CR, typically central-grafana). Lower it on clusters where Grafana runs without persistent storage.",
       "type": "string",
       "pattern": "^[0-9]+(s|m|h)$"
     },
