@@ -26,6 +26,14 @@ tests:
           path: spec.resyncPeriod
           value: 30m
 
+  - it: should honor a datasourceResyncPeriod override
+    set:
+      datasourceResyncPeriod: 30s
+    asserts:
+      - equal:
+          path: spec.resyncPeriod
+          value: 30s
+
   - it: should have an instance selector
     asserts:
       - isNotEmpty:
