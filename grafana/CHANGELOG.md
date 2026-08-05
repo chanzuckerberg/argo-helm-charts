@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.11.1...grafana-v0.12.0) (2026-08-05)
+
+
+### Features
+
+* IDT-157 expose resources for the Grafana container ([#530](https://github.com/chanzuckerberg/argo-helm-charts/issues/530)) ([f9d8bf2](https://github.com/chanzuckerberg/argo-helm-charts/commit/f9d8bf26b92bcd84e9025ae1390b8b01f8e8a002))
+* IDT-170 make the datasource resync period configurable ([#529](https://github.com/chanzuckerberg/argo-helm-charts/issues/529)) ([022c859](https://github.com/chanzuckerberg/argo-helm-charts/commit/022c85974b236e546d28e88491410805af5d79ff))
+
 ## [0.11.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.11.0...grafana-v0.11.1) (2026-07-14)
 
 
