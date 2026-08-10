@@ -1157,11 +1157,19 @@ must respect the following conditions
 
 **Description:** Node selector for the DaemonSet. Can be used to target specific nodes.
 
-| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [^.*$](#nvidiaDriver_nodeSelector_pattern1 ) | Yes     | string | No         | -          | -                 |
+| Property                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [karpenter.k8s.aws/instance-gpu-manufacturer](#nvidiaDriver_nodeSelector_karpenterk8saws/instance-gpu-manufacturer ) | No      | string | No         | -          | -                 |
+| - [^.*$](#nvidiaDriver_nodeSelector_pattern1 )                                                                         | Yes     | string | No         | -          | -                 |
 
-#### <a name="nvidiaDriver_nodeSelector_pattern1"></a>4.8.1. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector > ^.*$`
+#### <a name="nvidiaDriver_nodeSelector_karpenterk8saws/instance-gpu-manufacturer"></a>4.8.1. Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector > karpenter.k8s.aws/instance-gpu-manufacturer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="nvidiaDriver_nodeSelector_pattern1"></a>4.8.2. Pattern Property `karpenter-gpu-nodepool > nvidiaDriver > nodeSelector > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -1221,6 +1229,37 @@ must respect the following conditions
 | **Additional properties** | Any type allowed |
 
 **Description:** Resources for the NVIDIA device plugin container. Can be used to set limits and requests.
+
+| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [requests](#nvidiaDriver_resources_requests ) | No      | object | No         | -          | -                 |
+
+#### <a name="nvidiaDriver_resources_requests"></a>4.11.1. Property `karpenter-gpu-nodepool > nvidiaDriver > resources > requests`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [cpu](#nvidiaDriver_resources_requests_cpu )       | No      | string | No         | -          | -                 |
+| - [memory](#nvidiaDriver_resources_requests_memory ) | No      | string | No         | -          | -                 |
+
+##### <a name="nvidiaDriver_resources_requests_cpu"></a>4.11.1.1. Property `karpenter-gpu-nodepool > nvidiaDriver > resources > requests > cpu`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="nvidiaDriver_resources_requests_memory"></a>4.11.1.2. Property `karpenter-gpu-nodepool > nvidiaDriver > resources > requests > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ### <a name="nvidiaDriver_securityContext"></a>4.12. Property `karpenter-gpu-nodepool > nvidiaDriver > securityContext`
 
