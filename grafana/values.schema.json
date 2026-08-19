@@ -59,9 +59,9 @@
           "type": "string"
         },
         "url": {
-          "description": "URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.",
+          "description": "URL of the Central Grafana instance. Must be an AWS Managed Grafana workspace URL, a Grafana Cloud stack URL (*.grafana.net), or a CZI custom domain (*.czi.team).",
           "type": "string",
-          "pattern": "^https://g-[a-f0-9]+\\.grafana-workspace\\.[a-z0-9]+(-[a-z0-9]+)*\\.amazonaws\\.com$"
+          "pattern": "^https://(g-[a-f0-9]+\\.grafana-workspace\\.[a-z0-9]+(-[a-z0-9]+)*\\.amazonaws\\.com|[a-z0-9-]+(\\.[a-z0-9-]+)*\\.czi\\.team|[a-z0-9-]+\\.grafana\\.net)$"
         }
       }
     },

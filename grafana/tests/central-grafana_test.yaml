@@ -176,3 +176,25 @@ tests:
           path: spec.external.apiKey
       - isNotEmpty:
           path: spec.external.url
+
+  - it: should accept a Grafana Cloud custom-domain url
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        url: https://grafana.prod.czi.team
+    asserts:
+      - equal:
+          path: spec.external.url
+          value: "https://grafana.prod.czi.team"
+
+  - it: should accept a grafana.net stack url
+    set:
+      enabled: true
+      centralGrafana:
+        enabled: true
+        url: https://biohub.grafana.net
+    asserts:
+      - equal:
+          path: spec.external.url
+          value: "https://biohub.grafana.net"

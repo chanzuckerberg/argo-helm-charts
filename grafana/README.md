@@ -74,7 +74,7 @@ Must be one of:
 | - [enabled](#centralGrafana_enabled )                 | No      | boolean         | No         | -          | Enable the resource provisioning into the Central Grafana workspace.                                                                                                                                                                                         |
 | - [grafanaName](#centralGrafana_grafanaName )         | No      | string          | No         | -          | Name of the Grafana instance to create.                                                                                                                                                                                                                      |
 | - [tenantNamespace](#centralGrafana_tenantNamespace ) | No      | string          | No         | -          | Namespace used by the Grafana operator for reconciling resources associated with this external Grafana instance.                                                                                                                                             |
-| - [url](#centralGrafana_url )                         | No      | string          | No         | -          | URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.                                                                                                                                              |
+| - [url](#centralGrafana_url )                         | No      | string          | No         | -          | URL of the Central Grafana instance. Must be an AWS Managed Grafana workspace URL, a Grafana Cloud stack URL (*.grafana.net), or a CZI custom domain (*.czi.team).                                                                                           |
 
 ### <a name="centralGrafana_apiKeySecret"></a>4.1. Property `grafana > centralGrafana > apiKeySecret`
 
@@ -154,11 +154,11 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.
+**Description:** URL of the Central Grafana instance. Must be an AWS Managed Grafana workspace URL, a Grafana Cloud stack URL (*.grafana.net), or a CZI custom domain (*.czi.team).
 
-| Restrictions                      |                                                                                                                                                                                                                                                       |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Must match regular expression** | ```^https://g-[a-f0-9]+\.grafana-workspace\.[a-z0-9]+(-[a-z0-9]+)*\.amazonaws\.com$``` [Test](https://regex101.com/?regex=%5Ehttps%3A%2F%2Fg-%5Ba-f0-9%5D%2B%5C.grafana-workspace%5C.%5Ba-z0-9%5D%2B%28-%5Ba-z0-9%5D%2B%29%2A%5C.amazonaws%5C.com%24) |
+| Restrictions                      |                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Must match regular expression** | ```^https://(g-[a-f0-9]+\.grafana-workspace\.[a-z0-9]+(-[a-z0-9]+)*\.amazonaws\.com\|[a-z0-9-]+(\.[a-z0-9-]+)*\.czi\.team\|[a-z0-9-]+\.grafana\.net)$``` [Test](https://regex101.com/?regex=%5Ehttps%3A%2F%2F%28g-%5Ba-f0-9%5D%2B%5C.grafana-workspace%5C.%5Ba-z0-9%5D%2B%28-%5Ba-z0-9%5D%2B%29%2A%5C.amazonaws%5C.com%7C%5Ba-z0-9-%5D%2B%28%5C.%5Ba-z0-9-%5D%2B%29%2A%5C.czi%5C.team%7C%5Ba-z0-9-%5D%2B%5C.grafana%5C.net%29%24) |
 
 ## <a name="clusterName"></a>5. Property `grafana > clusterName`
 
