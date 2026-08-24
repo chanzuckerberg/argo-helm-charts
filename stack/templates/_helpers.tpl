@@ -497,7 +497,7 @@ handled separately as a whole-route rule.
 {{- if and $sh $sh.set -}}
 {{- $set = $sh.set -}}
 {{- end -}}
-{{- if and $g.hsts $g.hsts.enabled -}}
+{{- if $g.hsts -}}
 {{- $hasSts := false -}}
 {{- range $set -}}
 {{- if eq (lower .name) "strict-transport-security" -}}

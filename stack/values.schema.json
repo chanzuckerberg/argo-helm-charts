@@ -353,13 +353,9 @@
               "type": "string"
             },
             "hsts": {
-              "description": "Strict-Transport-Security header emitted on every gateway HTTPRoute by default, matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap",
+              "description": "Strict-Transport-Security header always emitted on gateway HTTPRoutes (not disableable by design), matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap",
               "type": "object",
               "properties": {
-                "enabled": {
-                  "description": "Emit the Strict-Transport-Security response header on gateway routes",
-                  "type": "boolean"
-                },
                 "value": {
                   "description": "Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set",
                   "type": "string"

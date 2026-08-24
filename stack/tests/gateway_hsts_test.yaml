@@ -32,7 +32,7 @@ tests:
           path: spec.rules[0].filters[0].responseHeaderModifier.set[0].value
           value: "max-age=31536000; includeSubDomains"
 
-  - it: should not emit any filter when hsts is disabled and no responseHeaders are set
+  - it: should emit a custom hsts value
     set:
       global:
         ingress:
@@ -43,7 +43,7 @@ tests:
           gatewayName: envoy-gateway
           gatewayNamespace: envoy-gateway
           hsts:
-            enabled: false
+            value: "max-age=63072000; includeSubDomains; preload"
           paths:
             - path: /
               pathType: Prefix
@@ -51,8 +51,11 @@ tests:
         service1: {}
     asserts:
       - documentIndex: 0
-        notExists:
-          path: spec.rules[0].filters
+        contains:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set
+          content:
+            name: Strict-Transport-Security
+            value: "max-age=63072000; includeSubDomains; preload"
 
   - it: should let a user Strict-Transport-Security entry take precedence without duplication
     set:
