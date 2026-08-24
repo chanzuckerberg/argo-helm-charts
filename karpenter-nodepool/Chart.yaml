@@ -1,0 +1,14 @@
+apiVersion: v2
+name: karpenter-nodepool
+description: A Helm chart for deploying a generic Karpenter NodePool and its
+  EC2NodeClass, defaulting to a cluster's default pool
+type: application
+version: 0.1.0
+appVersion: "1.0"
+keywords:
+  - karpenter
+  - nodepool
+  - ec2nodeclass
+home: https://github.com/chanzuckerberg/argo-helm-charts
+maintainers:
+  - name: CZI Platform Team

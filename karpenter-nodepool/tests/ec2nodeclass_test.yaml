@@ -1,0 +1,99 @@
+suite: ec2nodeclass
+templates:
+  - ec2nodeclass.yaml
+values:
+  - ../ci/disabled-values.yaml
+tests:
+  - it: renders nothing when disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders the baseline default EC2NodeClass
+    set:
+      clusterName: test-cluster
+      nodeclass.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: EC2NodeClass
+      - equal:
+          path: metadata.name
+          value: default
+      - equal:
+          path: spec.amiFamily
+          value: AL2023
+      - equal:
+          path: spec.amiSelectorTerms[0].alias
+          value: al2023@latest
+      - equal:
+          path: spec.role
+          value: karpenter-test-cluster
+      - equal:
+          path: spec.blockDeviceMappings[0].ebs.volumeSize
+          value: 100Gi
+      - equal:
+          path: spec.kubelet.podsPerCore
+          value: 14
+      - equal:
+          path: spec.kubelet.systemReserved.cpu
+          value: 100m
+      - equal:
+          path: spec.securityGroupSelectorTerms[0].tags["karpenter.sh/discovery"]
+          value: test-cluster
+      - equal:
+          path: spec.securityGroupSelectorTerms[1].tags["karpenter.sh/discovery/test-cluster"]
+          value: test-cluster
+      - equal:
+          path: spec.subnetSelectorTerms[0].tags["karpenter.sh/discovery"]
+          value: test-cluster
+      - equal:
+          path: spec.tags.managedBy
+          value: karpenter
+      - equal:
+          path: spec.tags.env
+          value: test-cluster
+
+  - it: merges custom tags with managedBy and env defaults
+    set:
+      clusterName: test-cluster
+      nodeclass.enabled: true
+      nodeclass.tags:
+        project: argus-infra-stacks
+        service: eks
+        owner: infra-eng
+        env: custom-env
+        managedBy: overridden
+    asserts:
+      - equal:
+          path: spec.tags.project
+          value: argus-infra-stacks
+      - equal:
+          path: spec.tags.env
+          value: custom-env
+      - equal:
+          path: spec.tags.managedBy
+          value: karpenter
+
+  - it: honors role and volume size overrides
+    set:
+      clusterName: test-cluster
+      nodeclass.enabled: true
+      nodeclass.role: custom-role
+      nodeclass.volumeSizeGi: 150
+    asserts:
+      - equal:
+          path: spec.role
+          value: custom-role
+      - equal:
+          path: spec.blockDeviceMappings[0].ebs.volumeSize
+          value: 150Gi
+
+  - it: fails without clusterName
+    set:
+      nodeclass.enabled: true
+      clusterName: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: clusterName is required when nodeclass.enabled is true
