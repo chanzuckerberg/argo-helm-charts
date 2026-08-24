@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.50.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.49.1...stack-v2.50.0) (2026-08-24)
+
+
+### Features
+
+* **stack:** default Strict-Transport-Security on gateway HTTPRoutes ([#535](https://github.com/chanzuckerberg/argo-helm-charts/issues/535)) ([2aec633](https://github.com/chanzuckerberg/argo-helm-charts/commit/2aec63309545e8d7ec97a84d99bc1f22dae3ca92))
+
 ## [2.49.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.49.0...stack-v2.49.1) (2026-07-30)
 
 
