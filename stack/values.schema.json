@@ -352,6 +352,20 @@
               "description": "Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it",
               "type": "string"
             },
+            "hsts": {
+              "description": "Strict-Transport-Security header emitted on every gateway HTTPRoute by default, matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Emit the Strict-Transport-Security response header on gateway routes",
+                  "type": "boolean"
+                },
+                "value": {
+                  "description": "Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set",
+                  "type": "string"
+                }
+              }
+            },
             "ipAllowList": {
               "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
               "type": "array"
