@@ -414,6 +414,11 @@
         "nodeSelector": {
           "description": "Node selector for the DaemonSet. Can be used to target specific nodes.",
           "type": "object",
+          "properties": {
+            "karpenter.k8s.aws/instance-gpu-manufacturer": {
+              "type": "string"
+            }
+          },
           "patternProperties": {
             "^.*$": {
               "type": "string"
@@ -440,7 +445,20 @@
         },
         "resources": {
           "description": "Resources for the NVIDIA device plugin container. Can be used to set limits and requests.",
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         },
         "securityContext": {
           "description": "Security context for the container to run with minimal privileges.",

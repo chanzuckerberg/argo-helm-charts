@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.2...karpenter-gpu-nodepool-v0.4.3) (2026-08-24)
+
+
+### Bug Fixes
+
+* **karpenter-gpu-nodepool:** pin device plugin to GPU nodes and right-size requests ([#533](https://github.com/chanzuckerberg/argo-helm-charts/issues/533)) ([ba5893b](https://github.com/chanzuckerberg/argo-helm-charts/commit/ba5893b090413614e32b84f251a9ce495dce72bf))
+
 ## [0.4.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.1...karpenter-gpu-nodepool-v0.4.2) (2026-04-21)
 
 

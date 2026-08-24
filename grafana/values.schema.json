@@ -59,15 +59,20 @@
           "type": "string"
         },
         "url": {
-          "description": "URL of the Central Grafana instance (Argus Metrics Gateway). Must be a valid AWS Managed Grafana workspace URL.",
+          "description": "URL of the Central Grafana instance. Must be an AWS Managed Grafana workspace URL, a Grafana Cloud stack URL (*.grafana.net), or a CZI custom domain (*.czi.team).",
           "type": "string",
-          "pattern": "^https://g-[a-f0-9]+\\.grafana-workspace\\.[a-z0-9]+(-[a-z0-9]+)*\\.amazonaws\\.com$"
+          "pattern": "^https://(g-[a-f0-9]+\\.grafana-workspace\\.[a-z0-9]+(-[a-z0-9]+)*\\.amazonaws\\.com|[a-z0-9-]+(\\.[a-z0-9-]+)*\\.czi\\.team|[a-z0-9-]+\\.grafana\\.net)$"
         }
       }
     },
     "clusterName": {
       "description": "Name of the cluster to configure the platform Grafana for. This value is required.",
       "type": "string"
+    },
+    "datasourceResyncPeriod": {
+      "description": "How often grafana-operator re-pushes GrafanaDatasource CRs. This is the recovery clock after a Grafana restart: until the DB is persistent, datasources are missing for up to this long after every pod replacement. Seconds are permitted - these CRs select instanceSelector name:\u003cgrafanaName\u003e, the cluster-local instance, so they place no load on an external AMG workspace (which is a separate Grafana CR, typically central-grafana). Lower it on clusters where Grafana runs without persistent storage.",
+      "type": "string",
+      "pattern": "^[0-9]+(s|m|h)$"
     },
     "datasources": {
       "description": "List of datasources to configure for the Grafana instance.",
@@ -173,6 +178,10 @@
       "description": "Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.",
       "type": "integer",
       "maximum": 1
+    },
+    "resources": {
+      "description": "Resource requests and limits for the Grafana container. When empty, the grafana-operator applies its own defaults (requests 100m CPU / 256Mi memory, limits 1Gi memory).",
+      "type": "object"
     },
     "roleAttributePath": {
       "description": "JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .",

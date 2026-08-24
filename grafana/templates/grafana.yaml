@@ -81,6 +81,10 @@ spec:
                   value: {{ $value | quote }}
                 {{- end }}
               {{- end }}
+              {{- if .Values.resources }}
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+              {{- end }}
               {{- if and (not $hasSso) (not $hasExtra) }}
               volumeMounts: []
               {{- else }}

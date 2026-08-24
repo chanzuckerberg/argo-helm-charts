@@ -493,18 +493,33 @@ handled separately as a whole-route rule.
     {{- end }}
 {{- end }}
 {{- $sh := $g.responseHeaders -}}
-{{- if and $sh (or $sh.set $sh.add $sh.remove) }}
+{{- $set := list -}}
+{{- if and $sh $sh.set -}}
+{{- $set = $sh.set -}}
+{{- end -}}
+{{- if $g.hsts -}}
+{{- $hasSts := false -}}
+{{- range $set -}}
+{{- if eq (lower .name) "strict-transport-security" -}}
+{{- $hasSts = true -}}
+{{- end -}}
+{{- end -}}
+{{- if not $hasSts -}}
+{{- $set = append $set (dict "name" "Strict-Transport-Security" "value" $g.hsts.value) -}}
+{{- end -}}
+{{- end -}}
+{{- if or $set (and $sh (or $sh.add $sh.remove)) }}
 - type: ResponseHeaderModifier
   responseHeaderModifier:
-    {{- if $sh.set }}
+    {{- if $set }}
     set:
-      {{- toYaml $sh.set | nindent 6 }}
+      {{- toYaml $set | nindent 6 }}
     {{- end }}
-    {{- if $sh.add }}
+    {{- if and $sh $sh.add }}
     add:
       {{- toYaml $sh.add | nindent 6 }}
     {{- end }}
-    {{- if $sh.remove }}
+    {{- if and $sh $sh.remove }}
     remove:
       {{- toYaml $sh.remove | nindent 6 }}
     {{- end }}
