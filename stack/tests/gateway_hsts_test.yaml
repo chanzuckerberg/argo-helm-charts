@@ -1,0 +1,149 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway HSTS default
+templates:
+  - httproute.yaml
+tests:
+  - it: should emit Strict-Transport-Security by default on gateway routes
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: ResponseHeaderModifier
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set[0].name
+          value: Strict-Transport-Security
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set[0].value
+          value: "max-age=31536000; includeSubDomains"
+
+  - it: should emit a custom hsts value
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          hsts:
+            value: "max-age=63072000; includeSubDomains; preload"
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        contains:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set
+          content:
+            name: Strict-Transport-Security
+            value: "max-age=63072000; includeSubDomains; preload"
+
+  - it: should let a user Strict-Transport-Security entry take precedence without duplication
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          responseHeaders:
+            set:
+              - name: Strict-Transport-Security
+                value: max-age=63072000
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set[0].value
+          value: max-age=63072000
+
+  - it: should append HSTS after user responseHeaders entries
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          responseHeaders:
+            set:
+              - name: X-Frame-Options
+                value: DENY
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set[0].name
+          value: X-Frame-Options
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set[1].name
+          value: Strict-Transport-Security
+
+  - it: should recognize a lowercase user strict-transport-security entry
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          gatewayName: envoy-gateway
+          gatewayNamespace: envoy-gateway
+          responseHeaders:
+            set:
+              - name: strict-transport-security
+                value: max-age=300
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set[0].value
+          value: max-age=300

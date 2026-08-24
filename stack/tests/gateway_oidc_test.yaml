@@ -468,3 +468,38 @@ tests:
         equal:
           path: metadata.labels["argus/env-name"]
           value: "production"
+
+  - it: should carry the HSTS filter and rule timeouts on the public skipAuth HTTPRoute
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          paths:
+            - path: /
+              pathType: Prefix
+        oidcProxyGateway:
+          skipAuth:
+            - path: /healthz
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-public
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].type
+          value: ResponseHeaderModifier
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].filters[0].responseHeaderModifier.set[0].name
+          value: Strict-Transport-Security
+      - documentIndex: 0
+        equal:
+          path: spec.rules[0].timeouts.request
+          value: 60s

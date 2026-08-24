@@ -276,6 +276,8 @@ global: # @schema description: Global configuration for the stack - this serves 
       set: [] # @schema description: Headers to set, list of {name,value}
       add: [] # @schema description: Headers to add, list of {name,value}
       remove: [] # @schema description: Header names to remove
+    hsts: # @schema description: Strict-Transport-Security header always emitted on gateway HTTPRoutes (not disableable by design), matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap
+      value: "max-age=31536000; includeSubDomains" # @schema description: Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set
     redirect: # @schema description: Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host
       enabled: false # @schema description: Enable a redirect-only route
       scheme: "" # @schema description: Target scheme, e.g. https
