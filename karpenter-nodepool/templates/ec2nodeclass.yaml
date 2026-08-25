@@ -25,15 +25,23 @@ spec:
         volumeType: gp3
   role: {{ .Values.nodeclass.role | default (printf "karpenter-%s" $clusterName) }}
   securityGroupSelectorTerms:
+    {{- if .Values.nodeclass.securityGroupSelectorTerms }}
+    {{- toYaml .Values.nodeclass.securityGroupSelectorTerms | nindent 4 }}
+    {{- else }}
     - tags:
         karpenter.sh/discovery: {{ $clusterName }}
     - tags:
         karpenter.sh/discovery/{{ $clusterName }}: {{ $clusterName }}
+    {{- end }}
   subnetSelectorTerms:
+    {{- if .Values.nodeclass.subnetSelectorTerms }}
+    {{- toYaml .Values.nodeclass.subnetSelectorTerms | nindent 4 }}
+    {{- else }}
     - tags:
         karpenter.sh/discovery: {{ $clusterName }}
     - tags:
         karpenter.sh/discovery/{{ $clusterName }}: {{ $clusterName }}
+    {{- end }}
   tags:
     {{- toYaml (merge (dict "managedBy" "karpenter") .Values.nodeclass.tags (dict "env" $clusterName)) | nindent 4 }}
 {{- end }}

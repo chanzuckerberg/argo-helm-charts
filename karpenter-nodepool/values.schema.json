@@ -55,6 +55,12 @@
         "role": {
           "type": "string"
         },
+        "securityGroupSelectorTerms": {
+          "type": "array"
+        },
+        "subnetSelectorTerms": {
+          "type": "array"
+        },
         "tags": {
           "type": "object"
         },

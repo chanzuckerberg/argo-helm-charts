@@ -83,6 +83,9 @@ nodeclass:
   amiSelectorTerms:
     - alias: al2023@latest
 
+  securityGroupSelectorTerms: []
+  subnetSelectorTerms: []
+
   kubelet:
     systemReserved:
       cpu: 100m

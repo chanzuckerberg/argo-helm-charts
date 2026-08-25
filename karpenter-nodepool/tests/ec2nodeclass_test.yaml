@@ -76,6 +76,27 @@ tests:
           path: spec.tags.managedBy
           value: karpenter
 
+  - it: honors explicit selector-term overrides
+    set:
+      clusterName: in-cluster
+      nodeclass.enabled: true
+      nodeclass.securityGroupSelectorTerms:
+        - tags:
+            karpenter.sh/discovery: real-cluster
+      nodeclass.subnetSelectorTerms:
+        - tags:
+            karpenter.sh/discovery: real-cluster
+    asserts:
+      - lengthEqual:
+          path: spec.securityGroupSelectorTerms
+          count: 1
+      - equal:
+          path: spec.securityGroupSelectorTerms[0].tags["karpenter.sh/discovery"]
+          value: real-cluster
+      - equal:
+          path: spec.subnetSelectorTerms[0].tags["karpenter.sh/discovery"]
+          value: real-cluster
+
   - it: honors role and volume size overrides
     set:
       clusterName: test-cluster
