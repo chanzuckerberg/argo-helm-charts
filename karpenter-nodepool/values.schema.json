@@ -160,7 +160,12 @@
           }
         },
         "weight": {
-          "type": "null"
+          "type": [
+            "integer",
+            "null"
+          ],
+          "maximum": 100,
+          "minimum": 1
         }
       }
     }
