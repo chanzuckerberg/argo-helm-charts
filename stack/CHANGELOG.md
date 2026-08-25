@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.50.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.50.0...stack-v2.50.1) (2026-08-25)
+
+
+### Bug Fixes
+
+* **stack:** dedupe rendered env entries by name, later holders win ([#537](https://github.com/chanzuckerberg/argo-helm-charts/issues/537)) ([9f8f3d4](https://github.com/chanzuckerberg/argo-helm-charts/commit/9f8f3d43890cda1adcd665f60d19292bb3170c41))
+
 ## [2.50.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.49.1...stack-v2.50.0) (2026-08-24)
 
 
