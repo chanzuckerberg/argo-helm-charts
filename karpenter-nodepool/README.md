@@ -185,15 +185,15 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                | Pattern | Type    | Deprecated | Definition | Title/Description |
-| --------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [annotations](#nodepool_annotations ) | No      | object  | No         | -          | -                 |
-| - [disruption](#nodepool_disruption )   | No      | object  | No         | -          | -                 |
-| - [enabled](#nodepool_enabled )         | No      | boolean | No         | -          | -                 |
-| - [limits](#nodepool_limits )           | No      | object  | No         | -          | -                 |
-| - [name](#nodepool_name )               | No      | string  | No         | -          | -                 |
-| - [template](#nodepool_template )       | No      | object  | No         | -          | -                 |
-| - [weight](#nodepool_weight )           | No      | null    | No         | -          | -                 |
+| Property                                | Pattern | Type            | Deprecated | Definition | Title/Description |
+| --------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [annotations](#nodepool_annotations ) | No      | object          | No         | -          | -                 |
+| - [disruption](#nodepool_disruption )   | No      | object          | No         | -          | -                 |
+| - [enabled](#nodepool_enabled )         | No      | boolean         | No         | -          | -                 |
+| - [limits](#nodepool_limits )           | No      | object          | No         | -          | -                 |
+| - [name](#nodepool_name )               | No      | string          | No         | -          | -                 |
+| - [template](#nodepool_template )       | No      | object          | No         | -          | -                 |
+| - [weight](#nodepool_weight )           | No      | integer or null | No         | -          | -                 |
 
 ### <a name="nodepool_annotations"></a>3.1. Property `karpenter-nodepool > nodepool > annotations`
 
@@ -481,9 +481,14 @@
 
 ### <a name="nodepool_weight"></a>3.7. Property `karpenter-nodepool > nodepool > weight`
 
-|              |        |
-| ------------ | ------ |
-| **Type**     | `null` |
-| **Required** | No     |
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `integer or null` |
+| **Required** | No                |
+
+| Restrictions |          |
+| ------------ | -------- |
+| **Minimum**  | &ge; 1   |
+| **Maximum**  | &le; 100 |
 
 ----------------------------------------------------------------------------------------------------------------------------
