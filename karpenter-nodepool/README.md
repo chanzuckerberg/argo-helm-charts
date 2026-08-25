@@ -29,17 +29,19 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                           | Pattern | Type            | Deprecated | Definition | Title/Description |
-| -------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [amiFamily](#nodeclass_amiFamily )               | No      | string          | No         | -          | -                 |
-| - [amiSelectorTerms](#nodeclass_amiSelectorTerms ) | No      | array of object | No         | -          | -                 |
-| - [annotations](#nodeclass_annotations )           | No      | object          | No         | -          | -                 |
-| - [enabled](#nodeclass_enabled )                   | No      | boolean         | No         | -          | -                 |
-| - [kubelet](#nodeclass_kubelet )                   | No      | object          | No         | -          | -                 |
-| - [name](#nodeclass_name )                         | No      | string          | No         | -          | -                 |
-| - [role](#nodeclass_role )                         | No      | string          | No         | -          | -                 |
-| - [tags](#nodeclass_tags )                         | No      | object          | No         | -          | -                 |
-| - [volumeSizeGi](#nodeclass_volumeSizeGi )         | No      | integer         | No         | -          | -                 |
+| Property                                                               | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [amiFamily](#nodeclass_amiFamily )                                   | No      | string          | No         | -          | -                 |
+| - [amiSelectorTerms](#nodeclass_amiSelectorTerms )                     | No      | array of object | No         | -          | -                 |
+| - [annotations](#nodeclass_annotations )                               | No      | object          | No         | -          | -                 |
+| - [enabled](#nodeclass_enabled )                                       | No      | boolean         | No         | -          | -                 |
+| - [kubelet](#nodeclass_kubelet )                                       | No      | object          | No         | -          | -                 |
+| - [name](#nodeclass_name )                                             | No      | string          | No         | -          | -                 |
+| - [role](#nodeclass_role )                                             | No      | string          | No         | -          | -                 |
+| - [securityGroupSelectorTerms](#nodeclass_securityGroupSelectorTerms ) | No      | array           | No         | -          | -                 |
+| - [subnetSelectorTerms](#nodeclass_subnetSelectorTerms )               | No      | array           | No         | -          | -                 |
+| - [tags](#nodeclass_tags )                                             | No      | object          | No         | -          | -                 |
+| - [volumeSizeGi](#nodeclass_volumeSizeGi )                             | No      | integer         | No         | -          | -                 |
 
 ### <a name="nodeclass_amiFamily"></a>2.1. Property `karpenter-nodepool > nodeclass > amiFamily`
 
@@ -162,7 +164,37 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="nodeclass_tags"></a>2.8. Property `karpenter-nodepool > nodeclass > tags`
+### <a name="nodeclass_securityGroupSelectorTerms"></a>2.8. Property `karpenter-nodepool > nodeclass > securityGroupSelectorTerms`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+### <a name="nodeclass_subnetSelectorTerms"></a>2.9. Property `karpenter-nodepool > nodeclass > subnetSelectorTerms`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
+
+### <a name="nodeclass_tags"></a>2.10. Property `karpenter-nodepool > nodeclass > tags`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -170,7 +202,7 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-### <a name="nodeclass_volumeSizeGi"></a>2.9. Property `karpenter-nodepool > nodeclass > volumeSizeGi`
+### <a name="nodeclass_volumeSizeGi"></a>2.11. Property `karpenter-nodepool > nodeclass > volumeSizeGi`
 
 |              |           |
 | ------------ | --------- |
