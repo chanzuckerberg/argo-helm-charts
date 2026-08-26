@@ -1079,3 +1079,186 @@ tests:
       - documentIndex: 1
         notExists:
           path: spec.oidc
+
+  - it: should render multiple JWT providers when providers list is specified
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                issuer: https://czi.okta.com
+                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+              - name: github-actions
+                issuer: https://token.actions.githubusercontent.com
+                remoteJWKSUri: https://token.actions.githubusercontent.com/.well-known/jwks
+              - name: eks-dev
+                issuer: https://oidc.eks.us-west-2.amazonaws.com/id/ABC123
+                remoteJWKSUri: https://oidc.eks.us-west-2.amazonaws.com/id/ABC123/keys
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.jwt.providers
+          count: 3
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].name
+          value: okta
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].issuer
+          value: https://czi.okta.com
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].remoteJWKS.uri
+          value: https://czi.okta.com/oauth2/v1/keys
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[1].name
+          value: github-actions
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[1].issuer
+          value: https://token.actions.githubusercontent.com
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[2].name
+          value: eks-dev
+
+  - it: should fail when jwt providers list has a provider missing name
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers:
+              - issuer: https://czi.okta.com
+                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: gateway.jwt.providers\[0\].name is required
+
+  - it: should fail when jwt providers list has a provider missing issuer
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: gateway.jwt.providers\[0\].issuer is required
+
+  - it: should fail when jwt providers list has a provider missing remoteJWKSUri
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                issuer: https://czi.okta.com
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: gateway.jwt.providers\[0\].remoteJWKSUri is required
+
+  - it: should fall back to legacy single provider when providers list is empty
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          jwt:
+            enabled: true
+            issuer: https://czi.okta.com
+            remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+            providers: []
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].name
+          value: default
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].issuer
+          value: https://czi.okta.com
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.jwt.providers
+          count: 1
+
+  - it: should combine oidc with multi-provider jwt in one SecurityPolicy
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          oidcProtected: true
+          jwt:
+            enabled: true
+            providers:
+              - name: okta
+                issuer: https://czi.okta.com
+                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+              - name: github-actions
+                issuer: https://token.actions.githubusercontent.com
+                remoteJWKSUri: https://token.actions.githubusercontent.com/.well-known/jwks
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://czi.okta.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isNotEmpty:
+          path: spec.oidc
+      - documentIndex: 0
+        lengthEqual:
+          path: spec.jwt.providers
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[0].name
+          value: okta
+      - documentIndex: 0
+        equal:
+          path: spec.jwt.providers[1].name
+          value: github-actions
