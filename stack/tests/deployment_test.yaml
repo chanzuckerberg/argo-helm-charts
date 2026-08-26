@@ -312,3 +312,52 @@ tests:
       - equal:
           path: spec.template.spec.volumes[0].configMap.name
           value: "otel-collector-config-literal-str"
+  - it: service env overrides global env entry with the same name
+    set:
+      global:
+        env:
+          - name: SHARED_VAR
+            value: "global value"
+          - name: GLOBAL_ONLY
+            value: "global only"
+      services:
+        service1:
+          env:
+            - name: SHARED_VAR
+              value: "service value"
+            - name: SERVICE_ONLY
+              value: "service only"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: SHARED_VAR
+              value: "service value"
+            - name: GLOBAL_ONLY
+              value: "global only"
+            - name: SERVICE_ONLY
+              value: "service only"
+
+  - it: sidecar env overrides service and global env entries with the same name
+    set:
+      global:
+        env:
+          - name: SHARED_VAR
+            value: "global value"
+      services:
+        service1:
+          env:
+            - name: SHARED_VAR
+              value: "service value"
+          sidecars:
+            - name: sidecar1
+              image: "sidecar1:latest"
+              env:
+                - name: SHARED_VAR
+                  value: "sidecar value"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[1].env
+          value:
+            - name: SHARED_VAR
+              value: "sidecar value"

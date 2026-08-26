@@ -166,13 +166,25 @@ true
 {{- end -}}
 
 {{- define "service.nonsensitiveEnvVars" -}}
-{{- $envs := list }}
+{{- $all := list }}
 {{- range $i, $envHolder := . -}}
-{{ $envs = concat $envs (default (list) $envHolder.env) }}
+{{- $all = concat $all (default (list) $envHolder.env) }}
+{{- end -}}
+{{- $latest := dict }}
+{{- range $e := $all -}}
+{{- $_ := set $latest $e.name $e }}
+{{- end -}}
+{{- $envs := list }}
+{{- $emitted := dict }}
+{{- range $e := $all -}}
+{{- if not (hasKey $emitted $e.name) }}
+{{- $_ := set $emitted $e.name true }}
+{{- $envs = append $envs (get $latest $e.name) }}
+{{- end }}
 {{- end -}}
 {{- if ne (len $envs) 0 -}}
 env:
-{{ toYaml (uniq $envs) }}
+{{ toYaml $envs }}
 {{- else -}}
 env: []
 {{- end }}
