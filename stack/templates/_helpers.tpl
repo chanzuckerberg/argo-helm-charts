@@ -637,10 +637,19 @@ oidc:
 {{- if and (not .public) $g.jwt.enabled }}
 jwt:
   providers:
+{{- if and $g.jwt.providers (gt (len $g.jwt.providers) 0) }}
+  {{- range $i, $provider := $g.jwt.providers }}
+    - name: {{ required (printf "gateway.jwt.providers[%d].name is required. Provide a unique identifier for this JWT provider (e.g., 'okta', 'github-actions', 'eks-dev')" $i) $provider.name | quote }}
+      remoteJWKS:
+        uri: {{ required (printf "gateway.jwt.providers[%d].remoteJWKSUri is required. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $i) $provider.remoteJWKSUri | quote }}
+      issuer: {{ required (printf "gateway.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer | quote }}
+  {{- end }}
+{{- else }}
     - name: default
       remoteJWKS:
-        uri: {{ required "gateway.jwt.remoteJWKSUri is required when gateway.jwt.enabled is true. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $g.jwt.remoteJWKSUri | quote }}
-      issuer: {{ required "gateway.jwt.issuer is required when gateway.jwt.enabled is true (or set oidcProxyGateway.provider.issuer)" ($g.jwt.issuer | default $.Values.oidcProxyGateway.provider.issuer) | quote }}
+        uri: {{ required "gateway.jwt.remoteJWKSUri is required when gateway.jwt.enabled is true (or use gateway.jwt.providers list). Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $g.jwt.remoteJWKSUri | quote }}
+      issuer: {{ required "gateway.jwt.issuer is required when gateway.jwt.enabled is true (or set oidcProxyGateway.provider.issuer, or use gateway.jwt.providers list)" ($g.jwt.issuer | default $.Values.oidcProxyGateway.provider.issuer) | quote }}
+{{- end }}
 {{- end }}
 {{- if and (not .public) $g.basicAuth.enabled }}
 basicAuth:

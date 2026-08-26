@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.51.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.50.1...stack-v2.51.0) (2026-08-26)
+
+
+### Features
+
+* **stack:** ADI-259 - Add support for multiple JWT providers ([#540](https://github.com/chanzuckerberg/argo-helm-charts/issues/540)) ([6e5e32b](https://github.com/chanzuckerberg/argo-helm-charts/commit/6e5e32bd6f385b8e6a44a12add4a6f1ef78e8a6c))
+
 ## [2.50.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.50.0...stack-v2.50.1) (2026-08-25)
 
 
