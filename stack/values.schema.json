@@ -371,15 +371,36 @@
               "type": "object",
               "properties": {
                 "enabled": {
-                  "description": "Enable JWT bearer-token validation. Requires remoteJWKSUri",
+                  "description": "Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list",
                   "type": "boolean"
                 },
                 "issuer": {
-                  "description": "Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login",
+                  "description": "Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty",
                   "type": "string"
                 },
+                "providers": {
+                  "description": "List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "issuer": {
+                        "description": "Expected token issuer (iss claim) - required",
+                        "type": "string"
+                      },
+                      "name": {
+                        "description": "Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev'",
+                        "type": "string"
+                      },
+                      "remoteJWKSUri": {
+                        "description": "JWKS URI for this provider's signing keys - required",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
                 "remoteJWKSUri": {
-                  "description": "JWKS URI the gateway fetches the provider's signing keys from. Required when enabled - find it with `curl -s \u003cissuer\u003e/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)",
+                  "description": "JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with `curl -s \u003cissuer\u003e/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)",
                   "type": "string"
                 }
               }
