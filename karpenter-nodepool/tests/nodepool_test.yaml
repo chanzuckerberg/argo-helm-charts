@@ -1,0 +1,90 @@
+suite: nodepool
+templates:
+  - nodepool.yaml
+values:
+  - ../ci/disabled-values.yaml
+tests:
+  - it: renders nothing when disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders the baseline default NodePool
+    set:
+      clusterName: test-cluster
+      nodepool.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: NodePool
+      - equal:
+          path: metadata.name
+          value: default
+      - equal:
+          path: spec.disruption.consolidationPolicy
+          value: WhenEmptyOrUnderutilized
+      - equal:
+          path: spec.disruption.consolidateAfter
+          value: 24h
+      - equal:
+          path: spec.template.spec.terminationGracePeriod
+          value: 1h
+      - equal:
+          path: spec.template.spec.expireAfter
+          value: 360h
+      - equal:
+          path: spec.template.spec.nodeClassRef.name
+          value: default
+      - lengthEqual:
+          path: spec.template.spec.requirements
+          count: 6
+      - notExists:
+          path: spec.template.spec.startupTaints
+      - notExists:
+          path: spec.template.spec.taints
+      - notExists:
+          path: spec.weight
+      - notExists:
+          path: spec.limits
+      - notExists:
+          path: spec.disruption.budgets
+      - notExists:
+          path: spec.template.metadata
+
+  - it: renders startupTaints, budgets, and weight when set
+    set:
+      clusterName: test-cluster
+      nodepool.enabled: true
+      nodepool.weight: 10
+      nodepool.disruption.budgets:
+        - nodes: "10%"
+      nodepool.template.spec.startupTaints:
+        - key: node.cilium.io/agent-not-ready
+          effect: NoSchedule
+    asserts:
+      - equal:
+          path: spec.weight
+          value: 10
+      - equal:
+          path: spec.disruption.budgets[0].nodes
+          value: "10%"
+      - equal:
+          path: spec.template.spec.startupTaints[0].key
+          value: node.cilium.io/agent-not-ready
+
+  - it: renders template metadata labels and annotations when set
+    set:
+      clusterName: test-cluster
+      nodepool.enabled: true
+      nodepool.template.metadata.labels:
+        workload.type: general
+      nodepool.template.metadata.annotations:
+        example.com/note: value
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["workload.type"]
+          value: general
+      - equal:
+          path: spec.template.metadata.annotations["example.com/note"]
+          value: value

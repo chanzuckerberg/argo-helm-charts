@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/karpenter-nodepool",
+  "title": "karpenter-nodepool",
+  "type": "object",
+  "properties": {
+    "clusterName": {
+      "type": "string"
+    },
+    "nodeclass": {
+      "type": "object",
+      "properties": {
+        "amiFamily": {
+          "type": "string"
+        },
+        "amiSelectorTerms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "alias": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "kubelet": {
+          "type": "object",
+          "properties": {
+            "podsPerCore": {
+              "type": "integer"
+            },
+            "systemReserved": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "securityGroupSelectorTerms": {
+          "type": "array"
+        },
+        "subnetSelectorTerms": {
+          "type": "array"
+        },
+        "tags": {
+          "type": "object"
+        },
+        "volumeSizeGi": {
+          "type": "integer"
+        }
+      }
+    },
+    "nodepool": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object"
+        },
+        "disruption": {
+          "type": "object",
+          "properties": {
+            "budgets": {
+              "type": "array"
+            },
+            "consolidateAfter": {
+              "type": "string"
+            },
+            "consolidationPolicy": {
+              "type": "string"
+            }
+          }
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "limits": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "template": {
+          "type": "object",
+          "properties": {
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "annotations": {
+                  "type": "object"
+                },
+                "labels": {
+                  "type": "object"
+                }
+              }
+            },
+            "spec": {
+              "type": "object",
+              "properties": {
+                "expireAfter": {
+                  "type": "string"
+                },
+                "nodeClassRef": {
+                  "type": "object",
+                  "properties": {
+                    "group": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "requirements": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "startupTaints": {
+                  "type": "array"
+                },
+                "taints": {
+                  "type": "array"
+                },
+                "terminationGracePeriod": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "weight": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "maximum": 100,
+          "minimum": 1
+        }
+      }
+    }
+  }
+}
