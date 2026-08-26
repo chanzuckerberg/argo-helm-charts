@@ -1,0 +1,47 @@
+{{- if .Values.nodeclass.enabled }}
+{{- $clusterName := required "clusterName is required when nodeclass.enabled is true" .Values.clusterName }}
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: {{ .Values.nodeclass.name }}
+  labels:
+    {{- include "karpenter-nodepool.labels" . | nindent 4 }}
+  {{- with .Values.nodeclass.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  amiFamily: {{ .Values.nodeclass.amiFamily }}
+  amiSelectorTerms:
+    {{- toYaml .Values.nodeclass.amiSelectorTerms | nindent 4 }}
+  kubelet:
+    {{- toYaml .Values.nodeclass.kubelet | nindent 4 }}
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        deleteOnTermination: true
+        encrypted: true
+        volumeSize: {{ .Values.nodeclass.volumeSizeGi }}Gi
+        volumeType: gp3
+  role: {{ .Values.nodeclass.role | default (printf "karpenter-%s" $clusterName) }}
+  securityGroupSelectorTerms:
+    {{- if .Values.nodeclass.securityGroupSelectorTerms }}
+    {{- toYaml .Values.nodeclass.securityGroupSelectorTerms | nindent 4 }}
+    {{- else }}
+    - tags:
+        karpenter.sh/discovery: {{ $clusterName }}
+    - tags:
+        karpenter.sh/discovery/{{ $clusterName }}: {{ $clusterName }}
+    {{- end }}
+  subnetSelectorTerms:
+    {{- if .Values.nodeclass.subnetSelectorTerms }}
+    {{- toYaml .Values.nodeclass.subnetSelectorTerms | nindent 4 }}
+    {{- else }}
+    - tags:
+        karpenter.sh/discovery: {{ $clusterName }}
+    - tags:
+        karpenter.sh/discovery/{{ $clusterName }}: {{ $clusterName }}
+    {{- end }}
+  tags:
+    {{- toYaml (merge (dict "managedBy" "karpenter") .Values.nodeclass.tags (dict "env" $clusterName)) | nindent 4 }}
+{{- end }}

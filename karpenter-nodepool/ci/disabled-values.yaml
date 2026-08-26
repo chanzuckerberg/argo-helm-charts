@@ -1,0 +1,5 @@
+clusterName: ci
+nodepool:
+  enabled: false
+nodeclass:
+  enabled: false

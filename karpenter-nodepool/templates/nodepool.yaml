@@ -1,0 +1,56 @@
+{{- if .Values.nodepool.enabled }}
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: {{ .Values.nodepool.name }}
+  labels:
+    {{- include "karpenter-nodepool.labels" . | nindent 4 }}
+  {{- with .Values.nodepool.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.nodepool.weight }}
+  weight: {{ . }}
+  {{- end }}
+  disruption:
+    consolidationPolicy: {{ .Values.nodepool.disruption.consolidationPolicy }}
+    consolidateAfter: {{ .Values.nodepool.disruption.consolidateAfter }}
+    {{- with .Values.nodepool.disruption.budgets }}
+    budgets:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- with .Values.nodepool.limits }}
+  limits:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    {{- if or .Values.nodepool.template.metadata.labels .Values.nodepool.template.metadata.annotations }}
+    metadata:
+      {{- with .Values.nodepool.template.metadata.labels }}
+      labels:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodepool.template.metadata.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    spec:
+      terminationGracePeriod: {{ .Values.nodepool.template.spec.terminationGracePeriod }}
+      expireAfter: {{ .Values.nodepool.template.spec.expireAfter }}
+      nodeClassRef:
+        group: {{ .Values.nodepool.template.spec.nodeClassRef.group }}
+        kind: {{ .Values.nodepool.template.spec.nodeClassRef.kind }}
+        name: {{ .Values.nodepool.template.spec.nodeClassRef.name }}
+      {{- with .Values.nodepool.template.spec.startupTaints }}
+      startupTaints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodepool.template.spec.taints }}
+      taints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      requirements:
+        {{- toYaml .Values.nodepool.template.spec.requirements | nindent 8 }}
+{{- end }}
