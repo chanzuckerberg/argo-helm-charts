@@ -107,6 +107,10 @@ global: # @schema description: Global configuration for the stack - this serves 
 
   progressDeadlineSeconds: 600 # @schema description: the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
+  # @schema type: object; additionalProperties: false; patternProperties: {"^type$": {"type": "string", "enum": ["RollingUpdate", "Recreate"], "description": "Update strategy type"}, "^rollingUpdate$": {"type": "object", "additionalProperties": false, "properties": {"maxSurge": {"type": ["integer", "string"], "description": "Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable."}, "maxUnavailable": {"type": ["integer", "string"], "description": "Pods that may be unavailable during a rollout, as an integer or percentage string."}}}}
+  # @schema description: Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy.
+  strategy: {}
+
   resources: # @schema description: Resource requests and limits for the primary container
     limits: # @schema description: Resource limits
       cpu: "1" # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU limit
