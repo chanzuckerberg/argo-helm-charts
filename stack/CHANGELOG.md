@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.52.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.51.0...stack-v2.52.0) (2026-08-27)
+
+
+### Features
+
+* **stack:** add pdb.minAvailable and repair multi-service PDB rendering (CCIE-7240) ([#544](https://github.com/chanzuckerberg/argo-helm-charts/issues/544)) ([be44d91](https://github.com/chanzuckerberg/argo-helm-charts/commit/be44d911cc52a5b4b03e7ea051e4177327ae2fd6))
+
 ## [2.51.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.50.1...stack-v2.51.0) (2026-08-26)
 
 
