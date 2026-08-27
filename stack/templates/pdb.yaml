@@ -14,7 +14,10 @@ metadata:
   labels:
   {{- include "service.labels" . | nindent 4 }}
 spec:
-  {{- if or .Values.autoscaling.enabled .Values.kedaAutoscaling.enabled }}
+  {{- $minAvailable := (.Values.pdb | default dict).minAvailable }}
+  {{- if $minAvailable }}
+  minAvailable: {{ $minAvailable }}
+  {{- else if or .Values.autoscaling.enabled .Values.kedaAutoscaling.enabled }}
   maxUnavailable: {{ .Values.autoscaling.maxUnavailable | default 1 }}
   {{- else }}
   maxUnavailable: 1
@@ -23,4 +26,4 @@ spec:
     matchLabels:
     {{- include "service.selectorLabels" . | nindent 6 }}
 {{- end }}
-{{- end }}
+{{ end }}
