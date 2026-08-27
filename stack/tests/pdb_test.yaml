@@ -52,6 +52,28 @@ tests:
           path: spec.maxUnavailable
           value: 1
 
+  - it: should render one PodDisruptionBudget document per service
+    set:
+      services:
+        service1: {}
+        service2: {}
+        service3: {}
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-service2
+      - documentIndex: 2
+        equal:
+          path: metadata.name
+          value: release-name-stack-service3
+
   - it: should include argus/env-name label when argusMetadata.envName is set
     set:
       global:

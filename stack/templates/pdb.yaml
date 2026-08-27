@@ -23,4 +23,4 @@ spec:
     matchLabels:
     {{- include "service.selectorLabels" . | nindent 6 }}
 {{- end }}
-{{- end }}
+{{ end }}
