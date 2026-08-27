@@ -357,6 +357,13 @@
                       }
                     }
                   }
+                },
+                "terminationGracePeriod": {
+                  "description": "Maximum time a node may be draining before its remaining pods are forcibly deleted (e.g., 1h). When set, drift can disrupt nodes whose pods have blocking PDBs or the do-not-disrupt annotation, and forceful drains (expiration) are bounded instead of hanging on blocked evictions. Unset omits the field, preserving unbounded drains.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               }
             }

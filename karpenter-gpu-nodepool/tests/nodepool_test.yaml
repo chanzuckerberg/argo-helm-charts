@@ -215,6 +215,22 @@ tests:
           path: spec.template.spec.expireAfter
           value: 48h
 
+  - it: should not render terminationGracePeriod by default
+    asserts:
+      - notExists:
+          path: spec.template.spec.terminationGracePeriod
+
+  - it: should render terminationGracePeriod when set
+    set:
+      nodepool:
+        template:
+          spec:
+            terminationGracePeriod: 1h
+    asserts:
+      - equal:
+          path: spec.template.spec.terminationGracePeriod
+          value: 1h
+
   - it: should not render limits when empty (default)
     asserts:
       - notExists:
