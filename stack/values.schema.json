@@ -1483,8 +1483,39 @@
           }
         },
         "strategy": {
-          "description": "Deployment update strategy (for example type Recreate for single-replica pods with ReadWriteOnce volumes) - empty uses the Kubernetes default RollingUpdate",
-          "type": "object"
+          "description": "Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy.",
+          "type": "object",
+          "patternProperties": {
+            "^rollingUpdate$": {
+              "type": "object",
+              "properties": {
+                "maxSurge": {
+                  "description": "Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable.",
+                  "type": [
+                    "integer",
+                    "string"
+                  ]
+                },
+                "maxUnavailable": {
+                  "description": "Pods that may be unavailable during a rollout, as an integer or percentage string.",
+                  "type": [
+                    "integer",
+                    "string"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "^type$": {
+              "description": "Update strategy type",
+              "type": "string",
+              "enum": [
+                "RollingUpdate",
+                "Recreate"
+              ]
+            }
+          },
+          "additionalProperties": false
         },
         "tolerations": {
           "description": "Tolerations for the pod",

@@ -400,3 +400,49 @@ tests:
       - equal:
           path: spec.strategy.rollingUpdate.maxUnavailable
           value: 0
+
+  - it: renders maxSurge 0 with a percentage maxUnavailable for in-place rollouts
+    set:
+      services:
+        batch-worker:
+          strategy:
+            rollingUpdate:
+              maxSurge: 0
+              maxUnavailable: "50%"
+    asserts:
+      - equal:
+          path: spec.strategy.rollingUpdate.maxSurge
+          value: 0
+      - equal:
+          path: spec.strategy.rollingUpdate.maxUnavailable
+          value: "50%"
+      - notExists:
+          path: spec.strategy.type
+
+  - it: leaves other services on the Kubernetes default when one service sets a strategy
+    set:
+      services:
+        batch-worker:
+          strategy:
+            rollingUpdate:
+              maxSurge: 0
+              maxUnavailable: "50%"
+        sync-model: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.strategy.rollingUpdate.maxSurge
+          value: 0
+      - documentIndex: 1
+        notExists:
+          path: spec.strategy
+
+  - it: rejects an unknown field under rollingUpdate
+    set:
+      services:
+        service1:
+          strategy:
+            rollingUpdate:
+              maxsurge: 0
+    asserts:
+      - failedTemplate: {}
