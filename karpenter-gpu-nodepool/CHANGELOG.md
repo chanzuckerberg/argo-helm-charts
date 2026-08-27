@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.3...karpenter-gpu-nodepool-v0.5.0) (2026-08-27)
+
+
+### Features
+
+* **karpenter-gpu-nodepool:** support terminationGracePeriod on the NodePool (CCIE-7240) ([#542](https://github.com/chanzuckerberg/argo-helm-charts/issues/542)) ([ce70868](https://github.com/chanzuckerberg/argo-helm-charts/commit/ce708685ee4b2c7330fd016b6e2c7bebdf442f1f))
+
 ## [0.4.3](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.2...karpenter-gpu-nodepool-v0.4.3) (2026-08-24)
 
 

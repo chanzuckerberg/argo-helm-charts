@@ -760,13 +760,14 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                    |
-| --------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------- |
-| - [expireAfter](#nodepool_template_spec_expireAfter )     | No      | string          | No         | -          | Time after which nodes will expire and be replaced (e.g., 24h, 48h).                                 |
-| - [nodeClassRef](#nodepool_template_spec_nodeClassRef )   | No      | object          | No         | -          | -                                                                                                    |
-| - [requirements](#nodepool_template_spec_requirements )   | No      | array of object | No         | -          | Node requirements for scheduling. Defines constraints for instance selection.                        |
-| - [startupTaints](#nodepool_template_spec_startupTaints ) | No      | array of object | No         | -          | Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready. |
-| - [taints](#nodepool_template_spec_taints )               | No      | array of object | No         | -          | Taints to apply to nodes to prevent non-GPU workloads from scheduling.                               |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                          |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [expireAfter](#nodepool_template_spec_expireAfter )                       | No      | string          | No         | -          | Time after which nodes will expire and be replaced (e.g., 24h, 48h).                                                                                                                                                                                                                                                                       |
+| - [nodeClassRef](#nodepool_template_spec_nodeClassRef )                     | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                          |
+| - [requirements](#nodepool_template_spec_requirements )                     | No      | array of object | No         | -          | Node requirements for scheduling. Defines constraints for instance selection.                                                                                                                                                                                                                                                              |
+| - [startupTaints](#nodepool_template_spec_startupTaints )                   | No      | array of object | No         | -          | Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready.                                                                                                                                                                                                                                       |
+| - [taints](#nodepool_template_spec_taints )                                 | No      | array of object | No         | -          | Taints to apply to nodes to prevent non-GPU workloads from scheduling.                                                                                                                                                                                                                                                                     |
+| - [terminationGracePeriod](#nodepool_template_spec_terminationGracePeriod ) | No      | string or null  | No         | -          | Maximum time a node may be draining before its remaining pods are forcibly deleted (e.g., 1h). When set, drift can disrupt nodes whose pods have blocking PDBs or the do-not-disrupt annotation, and forceful drains (expiration) are bounded instead of hanging on blocked evictions. Unset omits the field, preserving unbounded drains. |
 
 ##### <a name="nodepool_template_spec_expireAfter"></a>3.5.2.1. Property `karpenter-gpu-nodepool > nodepool > template > spec > expireAfter`
 
@@ -996,6 +997,15 @@ must respect the following conditions
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+##### <a name="nodepool_template_spec_terminationGracePeriod"></a>3.5.2.6. Property `karpenter-gpu-nodepool > nodepool > template > spec > terminationGracePeriod`
+
+|              |                  |
+| ------------ | ---------------- |
+| **Type**     | `string or null` |
+| **Required** | No               |
+
+**Description:** Maximum time a node may be draining before its remaining pods are forcibly deleted (e.g., 1h). When set, drift can disrupt nodes whose pods have blocking PDBs or the do-not-disrupt annotation, and forceful drains (expiration) are bounded instead of hanging on blocked evictions. Unset omits the field, preserving unbounded drains.
 
 ## <a name="nvidiaDriver"></a>4. Property `karpenter-gpu-nodepool > nvidiaDriver`
 

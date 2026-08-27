@@ -162,6 +162,13 @@
               "description": "Maximum number of replicas",
               "type": "integer"
             },
+            "maxUnavailable": {
+              "description": "Pods that may be unavailable during voluntary disruption (integer or percentage string such as \"25%\"), applied to the service PodDisruptionBudget. Governs eviction-based disruption (Karpenter consolidation, drift, node drain), NOT Deployment rollouts. Ignored when pdb.minAvailable is set.",
+              "type": [
+                "integer",
+                "string"
+              ]
+            },
             "minReplicas": {
               "description": "Minimum number of replicas",
               "type": "integer"
@@ -1104,6 +1111,19 @@
                   }
                 }
               }
+            }
+          }
+        },
+        "pdb": {
+          "description": "PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.",
+          "type": "object",
+          "properties": {
+            "minAvailable": {
+              "description": "Pods that must remain available during voluntary disruption (integer or percentage string such as \"50%\"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable.",
+              "type": [
+                "integer",
+                "string"
+              ]
             }
           }
         },

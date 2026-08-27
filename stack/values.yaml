@@ -301,6 +301,12 @@ global: # @schema description: Global configuration for the stack - this serves 
     maxReplicas: 10 # @schema description: Maximum number of replicas
     targetCPUUtilizationPercentage: 80 # @schema description: Target CPU utilization percentage
     targetMemoryUtilizationPercentage: 80 # @schema description: Target memory utilization percentage
+    # @schema type: [integer, string]; description: Pods that may be unavailable during voluntary disruption (integer or percentage string such as "25%"), applied to the service PodDisruptionBudget. Governs eviction-based disruption (Karpenter consolidation, drift, node drain), NOT Deployment rollouts. Ignored when pdb.minAvailable is set.
+    maxUnavailable: 1
+
+  pdb: # @schema description: PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.
+    # @schema type: [integer, string]; description: Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable.
+    minAvailable: ""
 
   kedaAutoscaling: # @schema description: KEDA autoscaling configuration (creates a ScaledObject instead of HPA)
     enabled: false # @schema description: Enable KEDA autoscaling

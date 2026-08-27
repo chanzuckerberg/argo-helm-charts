@@ -18,6 +18,9 @@ spec:
       labels:
         {{- toYaml .Values.nodepool.template.metadata.labels | nindent 8 }}
     spec:
+      {{- with .Values.nodepool.template.spec.terminationGracePeriod }}
+      terminationGracePeriod: {{ . }}
+      {{- end }}
       expireAfter: {{ .Values.nodepool.template.spec.expireAfter }}
       nodeClassRef:
         group: {{ .Values.nodepool.template.spec.nodeClassRef.group }}

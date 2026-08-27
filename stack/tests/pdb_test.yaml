@@ -52,6 +52,179 @@ tests:
           path: spec.maxUnavailable
           value: 1
 
+  - it: should render one PodDisruptionBudget document per service
+    set:
+      services:
+        service1: {}
+        service2: {}
+        service3: {}
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-service2
+      - documentIndex: 2
+        equal:
+          path: metadata.name
+          value: release-name-stack-service3
+
+  - it: should not set minAvailable when pdb.minAvailable is unset
+    set:
+      services:
+        service1:
+          autoscaling:
+            enabled: true
+            minReplicas: 2
+            maxReplicas: 10
+    asserts:
+      - hasDocuments:
+          count: 1
+      - notExists:
+          path: spec.minAvailable
+      - exists:
+          path: spec.maxUnavailable
+
+  - it: should create a PodDisruptionBudget using minAvailable when pdb.minAvailable is set
+    set:
+      services:
+        service1:
+          pdb:
+            minAvailable: 1
+          replicaCount: 1
+    asserts:
+      - hasDocuments:
+          count: 1
+      - containsDocument:
+          apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          name: release-name-stack-service1
+      - equal:
+          path: spec.minAvailable
+          value: 1
+      - notExists:
+          path: spec.maxUnavailable
+
+  - it: should accept a percentage string for pdb.minAvailable
+    set:
+      services:
+        service1:
+          pdb:
+            minAvailable: "50%"
+          replicaCount: 4
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: "50%"
+      - notExists:
+          path: spec.maxUnavailable
+
+  - it: should prefer pdb.minAvailable over autoscaling.maxUnavailable
+    set:
+      services:
+        service1:
+          pdb:
+            minAvailable: 1
+          autoscaling:
+            enabled: true
+            minReplicas: 1
+            maxReplicas: 10
+            maxUnavailable: 3
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 1
+      - notExists:
+          path: spec.maxUnavailable
+
+  - it: should set minAvailable even when autoscaling is disabled
+    set:
+      services:
+        service1:
+          pdb:
+            minAvailable: 1
+          autoscaling:
+            enabled: false
+          kedaAutoscaling:
+            enabled: false
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 1
+      - notExists:
+          path: spec.maxUnavailable
+
+  - it: should inherit pdb.minAvailable from global
+    set:
+      global:
+        pdb:
+          minAvailable: 1
+      services:
+        service1: {}
+        service2: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.minAvailable
+          value: 1
+      - documentIndex: 1
+        equal:
+          path: spec.minAvailable
+          value: 1
+
+  - it: should let a service override global pdb.minAvailable back to maxUnavailable
+    set:
+      global:
+        pdb:
+          minAvailable: 1
+      services:
+        service1:
+          pdb:
+            minAvailable: ""
+          autoscaling:
+            enabled: true
+            maxUnavailable: 2
+    asserts:
+      - notExists:
+          path: spec.minAvailable
+      - equal:
+          path: spec.maxUnavailable
+          value: 2
+
+  - it: should render one PodDisruptionBudget per service when minAvailable and maxUnavailable are mixed
+    set:
+      services:
+        service1:
+          pdb:
+            minAvailable: 1
+        service2:
+          autoscaling:
+            enabled: true
+            maxUnavailable: 2
+        service3: {}
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 0
+        equal:
+          path: spec.minAvailable
+          value: 1
+      - documentIndex: 1
+        equal:
+          path: spec.maxUnavailable
+          value: 2
+      - documentIndex: 2
+        equal:
+          path: spec.maxUnavailable
+          value: 1
+
   - it: should include argus/env-name label when argusMetadata.envName is set
     set:
       global:
