@@ -220,3 +220,104 @@ tests:
       - matchRegex:
           path: spec.json
           pattern: '"refresh":\s*""'
+
+  - it: should use nginx metrics for an ingress-only service
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: 'nginx_ingress_controller_requests'
+      - notMatchRegex:
+          path: spec.json
+          pattern: 'envoy_cluster_upstream_rq'
+
+  - it: should use envoy metrics instead of nginx for a gateway-routed service
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: 'envoy_cluster_upstream_rq_xx'
+      - notMatchRegex:
+          path: spec.json
+          pattern: 'nginx_ingress_controller'
+
+  - it: should scope envoy metrics to the service HTTPRoute and dedupe duplicate scrapes
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: 'container=\\"envoy\\"'
+      - matchRegex:
+          path: spec.json
+          pattern: 'envoy_cluster_name=~\\"httproute/\$namespace/[A-Za-z0-9-]+-service1\(-rule-\[0-9\]\+\)\?/rule/\.\*\\"'
+
+  - it: should convert envoy latency from milliseconds to seconds
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: 'envoy_cluster_upstream_rq_time_count.*?\\n/ 1000'
+
+  - it: should emit both nginx and envoy targets while coexisting
+    set:
+      services:
+        service1:
+          ingress:
+            enabled: true
+          gateway:
+            enabled: true
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: 'nginx_ingress_controller_requests'
+      - matchRegex:
+          path: spec.json
+          pattern: 'envoy_cluster_upstream_rq_xx'
+
+  - it: should render no routing panels when neither ingress nor gateway is enabled
+    set:
+      services:
+        service1:
+          ingress:
+            enabled: false
+    documentIndex: 3
+    asserts:
+      - notMatchRegex:
+          path: spec.json
+          pattern: 'nginx_ingress_controller'
+      - notMatchRegex:
+          path: spec.json
+          pattern: 'envoy_cluster_upstream_rq'
+      - notMatchRegex:
+          path: spec.json
+          pattern: '"title":\s*"Success %"'
+
+  - it: should include extra-host rule routes in the envoy selector
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            rules:
+              - host: extra.example.com
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: '\(-rule-\[0-9\]\+\)\?/rule/'

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.54.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.53.0...stack-v2.54.0) (2026-08-28)
+
+
+### Features
+
+* **stack:** serve dashboard routing panels from Envoy metrics on gateway stacks (CCIE-7210) ([#547](https://github.com/chanzuckerberg/argo-helm-charts/issues/547)) ([2a41a18](https://github.com/chanzuckerberg/argo-helm-charts/commit/2a41a1807548c3d91300fcad6c0a3035739cc018))
+
 ## [2.53.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.52.0...stack-v2.53.0) (2026-08-27)
 
 
