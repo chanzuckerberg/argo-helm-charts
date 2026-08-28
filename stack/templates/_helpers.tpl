@@ -716,17 +716,32 @@ Create the full dashboard data structure as a Helm dictionary and return it as a
   {{- $values = set $values "name" $serviceName -}}
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+  {{- $gwEnabled := false -}}
+  {{- if hasKey $serviceValues "gateway" -}}
+    {{- $svcGw := $serviceValues.gateway | default dict -}}
+    {{- $explicitOff := and (hasKey $svcGw "enabled") (eq ($svcGw.enabled | toString) "false") -}}
+    {{- if and (hasKey $svcGw "enabled") $svcGw.enabled -}}
+      {{- $gwEnabled = true -}}
+    {{- else if and (include "gateway.hasConfigKeys" (dict "Values" (dict "gateway" $svcGw))) (not $explicitOff) -}}
+      {{- $gwEnabled = true -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $ingEnabled := $values.ingress.enabled -}}
+  {{- if and $gwEnabled (not (and (hasKey $serviceValues "ingress") (hasKey ($serviceValues.ingress | default dict) "enabled") $serviceValues.ingress.enabled)) -}}
+    {{- $ingEnabled = false -}}
+  {{- end -}}
 {{- with $service -}}
 {{- if .Values.grafanaDashboard.enabled -}}
 {{- $sectionPanelDict := dict "collapsed" false "panels" (list) "title" (printf "Service: %s" $serviceName) "type" "row" "serviceIndex" $idx -}}
 {{- $panels = append $panels $sectionPanelDict -}}
 
-{{- if .Values.ingress.enabled }}
-{{- $successRatePanelDict := include "stack.grafanaDashboard.charts.serviceSuccessRate" (dict "global" $global "service" $service) | fromYaml -}}
+{{- if or $ingEnabled $gwEnabled }}
+{{- $routingArgs := dict "global" $global "service" $service "useIngress" $ingEnabled "useGateway" $gwEnabled -}}
+{{- $successRatePanelDict := include "stack.grafanaDashboard.charts.serviceSuccessRate" $routingArgs | fromYaml -}}
 {{- $panels = append $panels $successRatePanelDict -}}
-{{- $failureRatePanelDict := include "stack.grafanaDashboard.charts.serviceFailureRate" (dict "global" $global "service" $service) | fromYaml -}}
+{{- $failureRatePanelDict := include "stack.grafanaDashboard.charts.serviceFailureRate" $routingArgs | fromYaml -}}
 {{- $panels = append $panels $failureRatePanelDict -}}
-{{- $ingressLatencyPanelDict := include "stack.grafanaDashboard.charts.serviceIngressLatency" (dict "global" $global "service" $service) | fromYaml -}}
+{{- $ingressLatencyPanelDict := include "stack.grafanaDashboard.charts.serviceIngressLatency" $routingArgs | fromYaml -}}
 {{- $panels = append $panels $ingressLatencyPanelDict -}}
 {{- end }}
 {{- $cpuUsagePanelDict := include "stack.grafanaDashboard.charts.serviceCpuUsage" (dict "global" $global "service" $service) | fromYaml -}}
@@ -905,8 +920,18 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceSuccessRate" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
+{{- $useIngress := .useIngress -}}
+{{- $useGateway := .useGateway -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[23]..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $targets := list -}}
+{{- if $useIngress -}}
+{{- $q := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[23]..\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "nginx" "range" true "refId" "A") -}}
+{{- end -}}
+{{- if $useGateway -}}
+{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\", envoy_response_code_class=~\"[23]\"}[5m]))\n/\nsum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "gateway" "range" true "refId" "B") -}}
+{{- end -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -924,16 +949,7 @@ Expects a dict with keys: global, service
       )
     )
     "pluginVersion" "12.1.0"
-    "targets" (list
-      (dict
-        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
-        "editorMode" "code"
-        "expr" $metricsQuery
-        "legendFormat" "__auto"
-        "range" true
-        "refId" "A"
-      )
-    )
+    "targets" $targets
     "title" "Success %"
     "type" "timeseries"
 -}}
@@ -947,8 +963,18 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceFailureRate" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
+{{- $useIngress := .useIngress -}}
+{{- $useGateway := .useGateway -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[45]..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $targets := list -}}
+{{- if $useIngress -}}
+{{- $q := printf "sum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\", status=~\"[45]..\"}[5m])) by (status)\n/ on() group_left\nsum(rate(nginx_ingress_controller_requests{namespace=\"$namespace\", ingress=\"%s\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "{{status}}" "range" true "refId" "A") -}}
+{{- end -}}
+{{- if $useGateway -}}
+{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\", envoy_response_code_class=~\"[45]\"}[5m])) by (envoy_response_code_class)\n/ on() group_left\nsum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "{{envoy_response_code_class}}xx" "range" true "refId" "B") -}}
+{{- end -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -966,16 +992,7 @@ Expects a dict with keys: global, service
       )
     )
     "pluginVersion" "12.1.0"
-    "targets" (list
-      (dict
-        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
-        "editorMode" "code"
-        "expr" $metricsQuery
-        "legendFormat" "{{status}}"
-        "range" true
-        "refId" "A"
-      )
-    )
+    "targets" $targets
     "title" "Failure % by Error Code"
     "type" "timeseries"
 -}}
@@ -1114,8 +1131,18 @@ Expects a dict with keys: global, service
 {{- define "stack.grafanaDashboard.charts.serviceIngressLatency" -}}
 {{- $global := .global -}}
 {{- $service := .service -}}
+{{- $useIngress := .useIngress -}}
+{{- $useGateway := .useGateway -}}
 {{- $serviceFullname := include "service.fullname" $service -}}
-{{- $metricsQuery := printf "sum(rate(nginx_ingress_controller_request_duration_seconds_sum{namespace=\"$namespace\", status=\"200\", ingress=\"%s\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"$namespace\", status=\"200\", ingress=\"%s\"}[5m]))" $serviceFullname $serviceFullname -}}
+{{- $targets := list -}}
+{{- if $useIngress -}}
+{{- $q := printf "sum(rate(nginx_ingress_controller_request_duration_seconds_sum{namespace=\"$namespace\", status=\"200\", ingress=\"%s\"}[5m]))\n/\nsum(rate(nginx_ingress_controller_request_duration_seconds_count{namespace=\"$namespace\", status=\"200\", ingress=\"%s\"}[5m]))" $serviceFullname $serviceFullname -}}
+{{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "nginx" "range" true "refId" "A") -}}
+{{- end -}}
+{{- if $useGateway -}}
+{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_time_sum{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m]))\n/\nsum(rate(envoy_cluster_upstream_rq_time_count{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m]))\n/ 1000" $serviceFullname $serviceFullname -}}
+{{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "gateway" "range" true "refId" "B") -}}
+{{- end -}}
 {{- $panelDict := dict
     "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
     "gridPos" (dict "h" 8 "w" 12)
@@ -1133,17 +1160,8 @@ Expects a dict with keys: global, service
       )
     )
     "pluginVersion" "12.1.0"
-    "targets" (list
-      (dict
-        "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid)
-        "editorMode" "code"
-        "expr" $metricsQuery
-        "legendFormat" "__auto"
-        "range" true
-        "refId" "A"
-      )
-    )
-    "title" "Ingress Request Latency"
+    "targets" $targets
+    "title" "Request Latency (s)"
     "type" "timeseries"
 -}}
 {{- $panelDict | toYaml -}}
