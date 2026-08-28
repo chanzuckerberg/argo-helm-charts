@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.53.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.52.0...stack-v2.53.0) (2026-08-27)
+
+
+### Features
+
+* **stack:** expose the Deployment update strategy so services can set maxSurge (CCIE-7240) ([#545](https://github.com/chanzuckerberg/argo-helm-charts/issues/545)) ([7f10294](https://github.com/chanzuckerberg/argo-helm-charts/commit/7f102943a0c07de372cb196bdcba98c8134fe087))
+
 ## [2.52.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.51.0...stack-v2.52.0) (2026-08-27)
 
 
