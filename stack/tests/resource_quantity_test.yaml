@@ -1,0 +1,124 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test memory quantity validation
+templates:
+  - deployment.yaml
+tests:
+  - it: should reject a bare-integer memory on an initContainer (the shape that shipped as a real bug)
+    set:
+      services:
+        backend:
+          initContainers:
+            - name: init-backend
+              image: alpine:latest
+              resources:
+                requests:
+                  memory: "1"
+                limits:
+                  memory: "2"
+    asserts:
+      - failedTemplate:
+          errorPattern: 'initContainers\[init-backend\]\.resources\.requests: memory "1" is a bare integer, which Kubernetes reads as BYTES'
+
+  - it: should reject a milli-suffixed memory on a service
+    set:
+      services:
+        web:
+          resources:
+            requests:
+              memory: 100m
+    asserts:
+      - failedTemplate:
+          errorPattern: 'memory "100m" uses the milli suffix, which means thousandths of a BYTE'
+
+  - it: should name the suggested fix in the milli message
+    set:
+      services:
+        web:
+          resources:
+            requests:
+              memory: 100m
+    asserts:
+      - failedTemplate:
+          errorPattern: 'Did you mean 100Mi\?'
+
+  - it: should reject a bare-integer memory on a sidecar
+    set:
+      services:
+        web:
+          sidecars:
+            - name: nginx-sidecar
+              image: nginx:1.27.1-alpine
+              resources:
+                limits:
+                  memory: "2"
+    asserts:
+      - failedTemplate:
+          errorPattern: 'sidecars\[nginx-sidecar\]\.resources\.limits: memory "2" is a bare integer'
+
+  - it: should accept ordinary suffixed quantities
+    set:
+      services:
+        web:
+          resources:
+            requests:
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+          initContainers:
+            - name: init
+              image: alpine:latest
+              resources:
+                requests:
+                  memory: 64Mi
+                limits:
+                  memory: 128Mi
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should accept a bare integer that is genuinely a plausible byte count
+    set:
+      services:
+        web:
+          initContainers:
+            - name: init
+              image: alpine:latest
+              resources:
+                requests:
+                  memory: "67108864"
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should accept an empty resources block
+    set:
+      services:
+        web:
+          resources: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should accept an initContainer with no resources block
+    set:
+      services:
+        web:
+          initContainers:
+            - name: init
+              image: alpine:latest
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should accept Gi and Ki suffixes
+    set:
+      services:
+        web:
+          resources:
+            requests:
+              memory: 512Ki
+            limits:
+              memory: 2Gi
+    asserts:
+      - hasDocuments:
+          count: 1

@@ -8,6 +8,7 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
+{{- include "validate.containerResources" . -}}
 
 ---
 apiVersion: apps/v1

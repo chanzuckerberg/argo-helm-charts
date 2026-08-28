@@ -6,6 +6,7 @@
   {{- $values := mergeOverwrite $values $jobValues -}}
   {{- $job := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $job -}}
+{{- include "validate.containerResources" . -}}
 ---
 apiVersion: batch/v1
 kind: Job

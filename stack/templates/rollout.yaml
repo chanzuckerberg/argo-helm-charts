@@ -8,6 +8,7 @@
   {{- $values := mergeOverwrite $values $serviceValues -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
+{{- include "validate.containerResources" . -}}
 {{- $rolloutConfig := default dict (get $service.Values "rollout") }}
 {{- $strategy := default dict (get $rolloutConfig "strategy") }}
 {{- $blueGreenStrategy := default dict (get $strategy "blueGreen") }}

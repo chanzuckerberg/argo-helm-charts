@@ -269,6 +269,60 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- toJson ($hosts | uniq) -}}
 {{- end -}}
 
+{{/*
+Reject memory quantities that are almost certainly a units mistake rather than an
+intentional value. Catches the two shapes seen in the fleet: a bare integer (which
+Kubernetes reads as BYTES, so `memory: 1` is one byte) and a milli suffix (`100m` is
+a tenth of a byte, never intentional for memory).
+
+This exists because an old chart pin silently substituted its own defaults for these
+values, so the mistake ran fine for months and only surfaced as
+`exitCode 128 / StartError` from runc the moment a pin bump made the chart honour them.
+Rendering was never the problem -- the manifest is perfectly well formed. See
+validate.containerResources callers in the workload templates.
+*/}}
+{{- define "validate.memoryQuantity" -}}
+{{- $q := .quantity | toString -}}
+{{- $where := .where -}}
+{{- if $q -}}
+  {{- if regexMatch "^[0-9]+(\\.[0-9]+)?m$" $q -}}
+    {{- fail (printf "%s: memory %q uses the milli suffix, which means thousandths of a BYTE (%s is well under one byte). Kubernetes will accept it and the container will fail to start. Did you mean %sMi?" $where $q $q (trimSuffix "m" $q)) -}}
+  {{- end -}}
+  {{- if regexMatch "^[0-9]+$" $q -}}
+    {{- if lt (int64 $q) 1048576 -}}
+      {{- fail (printf "%s: memory %q is a bare integer, which Kubernetes reads as BYTES -- that is %s byte(s), not %sMi. A container cannot start with this. Add a unit suffix (e.g. %sMi)." $where $q $q $q $q) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Walk every container spec a workload renders -- the main container, sidecars and
+initContainers -- and validate their memory quantities.
+Expects the per-service context (.Values holds the merged service values).
+*/}}
+{{- define "validate.containerResources" -}}
+{{- $svc := include "service.fullname" . -}}
+{{- $r := .Values.resources | default dict -}}
+{{- range $sect := list "requests" "limits" -}}
+  {{- $m := (index $r $sect | default dict).memory -}}
+  {{- if $m -}}
+    {{- include "validate.memoryQuantity" (dict "quantity" $m "where" (printf "service %s: resources.%s" $svc $sect)) -}}
+  {{- end -}}
+{{- end -}}
+{{- range $kind, $list := dict "sidecars" (.Values.sidecars | default list) "initContainers" (.Values.initContainers | default list) -}}
+  {{- range $c := $list -}}
+    {{- $cr := $c.resources | default dict -}}
+    {{- range $sect := list "requests" "limits" -}}
+      {{- $m := (index $cr $sect | default dict).memory -}}
+      {{- if $m -}}
+        {{- include "validate.memoryQuantity" (dict "quantity" $m "where" (printf "service %s: %s[%s].resources.%s" $svc $kind ($c.name | default "?") $sect)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "validate.gatewayIngressCoexistence" -}}
 {{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
   {{- $v := .Values -}}
