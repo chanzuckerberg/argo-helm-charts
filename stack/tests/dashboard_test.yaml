@@ -259,7 +259,7 @@ tests:
           pattern: 'container=\\"envoy\\"'
       - matchRegex:
           path: spec.json
-          pattern: 'envoy_cluster_name=~\\"httproute/\$namespace/[A-Za-z0-9-]+-service1/rule/\.\*\\"'
+          pattern: 'envoy_cluster_name=~\\"httproute/\$namespace/[A-Za-z0-9-]+-service1\(-rule-\[0-9\]\+\)\?/rule/\.\*\\"'
 
   - it: should convert envoy latency from milliseconds to seconds
     set:
@@ -307,3 +307,17 @@ tests:
       - notMatchRegex:
           path: spec.json
           pattern: '"title":\s*"Success %"'
+
+  - it: should include extra-host rule routes in the envoy selector
+    set:
+      services:
+        service1:
+          gateway:
+            enabled: true
+            rules:
+              - host: extra.example.com
+    documentIndex: 3
+    asserts:
+      - matchRegex:
+          path: spec.json
+          pattern: '\(-rule-\[0-9\]\+\)\?/rule/'

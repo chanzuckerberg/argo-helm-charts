@@ -929,7 +929,7 @@ Expects a dict with keys: global, service
 {{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "nginx" "range" true "refId" "A") -}}
 {{- end -}}
 {{- if $useGateway -}}
-{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\", envoy_response_code_class=~\"[23]\"}[5m]))\n/\nsum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s(-rule-[0-9]+)?/rule/.*\", envoy_response_code_class=~\"[23]\"}[5m]))\n/\nsum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s(-rule-[0-9]+)?/rule/.*\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "gateway" "range" true "refId" "B") -}}
 {{- end -}}
 {{- $panelDict := dict
@@ -972,7 +972,7 @@ Expects a dict with keys: global, service
 {{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "{{status}}" "range" true "refId" "A") -}}
 {{- end -}}
 {{- if $useGateway -}}
-{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\", envoy_response_code_class=~\"[45]\"}[5m])) by (envoy_response_code_class)\n/ on() group_left\nsum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
+{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s(-rule-[0-9]+)?/rule/.*\", envoy_response_code_class=~\"[45]\"}[5m])) by (envoy_response_code_class)\n/ on() group_left\nsum(rate(envoy_cluster_upstream_rq_xx{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s(-rule-[0-9]+)?/rule/.*\"}[5m])) * 100" $serviceFullname $serviceFullname -}}
 {{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "{{envoy_response_code_class}}xx" "range" true "refId" "B") -}}
 {{- end -}}
 {{- $panelDict := dict
@@ -1140,7 +1140,7 @@ Expects a dict with keys: global, service
 {{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "nginx" "range" true "refId" "A") -}}
 {{- end -}}
 {{- if $useGateway -}}
-{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_time_sum{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m]))\n/\nsum(rate(envoy_cluster_upstream_rq_time_count{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s/rule/.*\"}[5m]))\n/ 1000" $serviceFullname $serviceFullname -}}
+{{- $q := printf "sum(rate(envoy_cluster_upstream_rq_time_sum{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s(-rule-[0-9]+)?/rule/.*\"}[5m]))\n/\nsum(rate(envoy_cluster_upstream_rq_time_count{container=\"envoy\", envoy_cluster_name=~\"httproute/$namespace/%s(-rule-[0-9]+)?/rule/.*\"}[5m]))\n/ 1000" $serviceFullname $serviceFullname -}}
 {{- $targets = append $targets (dict "datasource" (dict "type" "prometheus" "uid" $global.Values.global.grafanaDashboard.datasources.prometheus.uid) "editorMode" "code" "expr" $q "legendFormat" "gateway" "range" true "refId" "B") -}}
 {{- end -}}
 {{- $panelDict := dict
