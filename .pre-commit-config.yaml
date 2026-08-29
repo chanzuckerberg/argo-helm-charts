@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: Detect hardcoded secrets
+        description: Scan the working tree for secrets (catches unstaged edits too, not just staged)
+        entry: gitleaks detect --no-banner --redact --verbose --no-git --source . --config .gitleaks.toml
+        language: system
+        pass_filenames: false
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+        exclude: '^.*/templates/.*\.ya?ml$'
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=500']
