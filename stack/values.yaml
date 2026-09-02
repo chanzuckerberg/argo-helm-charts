@@ -244,7 +244,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       enabled: false # @schema description: Enable local rate limiting
       requests: 0 # @schema description: Allowed requests per unit
       unit: Second # @schema description: Rate limit unit (Second, Minute, Hour, Day)
-    securityPolicy: "" # @schema description: Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or "none" means no policy is attached and the route is public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session
+    securityPolicy: "" # @schema description: Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session
     backendTLS: # @schema description: TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
       enabled: false # @schema description: Enable upstream TLS
       hostname: "" # @schema description: SNI/validation hostname presented by the upstream (required when enabled)
@@ -392,7 +392,7 @@ global: # @schema description: Global configuration for the stack - this serves 
         cpu: 100m # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 64Mi # @schema description: Memory request
 
-  securityPolicies: {} # @schema type: object; additionalProperties: true; description: Named SecurityPolicy definitions. One entry per policy, each carrying oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy; a policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. oidc-protected-default is built in and needs no declaration
+  securityPolicies: {} # @schema type: object; additionalProperties: true; description: Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
   grafanaDashboard:
     enabled: true # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
     refresh: 5m # @schema type: string; pattern: ^([0-9]+(ms|s|m|h|d))?$; description: Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)

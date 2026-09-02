@@ -283,54 +283,6 @@
                 }
               }
             },
-            "basicAuth": {
-              "description": "HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected",
-              "type": "object",
-              "properties": {
-                "enabled": {
-                  "description": "Enable basic auth",
-                  "type": "boolean"
-                },
-                "secretName": {
-                  "description": "Name of an Opaque Secret with a .htpasswd key",
-                  "type": "string"
-                }
-              }
-            },
-            "cors": {
-              "description": "CORS via a SecurityPolicy",
-              "type": "object",
-              "properties": {
-                "allowCredentials": {
-                  "description": "Allow credentials",
-                  "type": "boolean"
-                },
-                "allowHeaders": {
-                  "description": "Allowed request headers",
-                  "type": "array"
-                },
-                "allowMethods": {
-                  "description": "Allowed methods",
-                  "type": "array"
-                },
-                "allowOrigins": {
-                  "description": "Allowed origins (string patterns)",
-                  "type": "array"
-                },
-                "enabled": {
-                  "description": "Enable CORS",
-                  "type": "boolean"
-                },
-                "exposeHeaders": {
-                  "description": "Response headers exposed to the browser",
-                  "type": "array"
-                },
-                "maxAge": {
-                  "description": "Preflight cache duration (e.g. \"1h\"), empty omits it",
-                  "type": "string"
-                }
-              }
-            },
             "dnsOwner": {
               "description": "Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence",
               "type": "string",
@@ -368,53 +320,6 @@
                   "type": "string"
                 }
               }
-            },
-            "ipAllowList": {
-              "description": "Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it",
-              "type": "array"
-            },
-            "jwt": {
-              "description": "JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent",
-              "type": "object",
-              "properties": {
-                "enabled": {
-                  "description": "Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list",
-                  "type": "boolean"
-                },
-                "issuer": {
-                  "description": "Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty",
-                  "type": "string"
-                },
-                "providers": {
-                  "description": "List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri",
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "issuer": {
-                        "description": "Expected token issuer (iss claim) - required",
-                        "type": "string"
-                      },
-                      "name": {
-                        "description": "Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev'",
-                        "type": "string"
-                      },
-                      "remoteJWKSUri": {
-                        "description": "JWKS URI for this provider's signing keys - required",
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "remoteJWKSUri": {
-                  "description": "JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with `curl -s \u003cissuer\u003e/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)",
-                  "type": "string"
-                }
-              }
-            },
-            "oidcProtected": {
-              "description": "Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway",
-              "type": "boolean"
             },
             "paths": {
               "description": "List of HTTPRoute paths",
@@ -522,7 +427,7 @@
               "type": "string"
             },
             "securityPolicy": {
-              "description": "Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour",
+              "description": "Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session",
               "type": "string"
             },
             "sessionAffinity": {
@@ -993,131 +898,6 @@
             }
           }
         },
-        "oidcProxyGateway": {
-          "description": "Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.",
-          "type": "object",
-          "properties": {
-            "annotations": {
-              "description": "Annotations to add to SecurityPolicy resources",
-              "type": "object"
-            },
-            "apiRoutes": {
-              "description": "API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "matchType": {
-                    "type": "string"
-                  },
-                  "path": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "clientID": {
-              "description": "OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.",
-              "type": "string"
-            },
-            "clientSecretName": {
-              "description": "Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.",
-              "type": "string"
-            },
-            "cookieDomain": {
-              "description": "Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)",
-              "type": "string"
-            },
-            "cookieNames": {
-              "description": "Customize cookie names. When empty, deterministic names are generated as AccessToken-\u003cnamespace\u003e-\u003cservice\u003e / IdToken-\u003cnamespace\u003e-\u003cservice\u003e. With cookieDomain set, two stacks of the same app in one namespace would share these names.",
-              "type": "object",
-              "properties": {
-                "accessToken": {
-                  "description": "Custom name for access token cookie",
-                  "type": "string"
-                },
-                "idToken": {
-                  "description": "Custom name for ID token cookie",
-                  "type": "string"
-                }
-              }
-            },
-            "csrfTokenTTL": {
-              "description": "Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)",
-              "type": "string"
-            },
-            "denyRedirect": {
-              "description": "Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.",
-              "type": "object",
-              "properties": {
-                "enabled": {
-                  "description": "Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.",
-                  "type": "boolean"
-                }
-              }
-            },
-            "forwardAccessToken": {
-              "description": "Forward access token to backend service",
-              "type": "boolean"
-            },
-            "globalSecretName": {
-              "description": "Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.",
-              "type": "string"
-            },
-            "logoutPath": {
-              "description": "Logout path relative to the OIDC base path. The effective logout path is \u003cbasePath\u003e\u003clogoutPath\u003e, so it always matches the service's HTTPRoute.",
-              "type": "string"
-            },
-            "provider": {
-              "description": "OIDC provider configuration",
-              "type": "object",
-              "properties": {
-                "authorizationEndpoint": {
-                  "description": "Optional authorization endpoint (auto-discovered by provider if empty)",
-                  "type": "string"
-                },
-                "issuer": {
-                  "description": "OIDC provider issuer URL",
-                  "type": "string"
-                },
-                "tokenEndpoint": {
-                  "description": "Optional token endpoint (auto-discovered by provider if empty)",
-                  "type": "string"
-                }
-              }
-            },
-            "refreshToken": {
-              "description": "Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)",
-              "type": "boolean"
-            },
-            "resources": {
-              "description": "Optional OAuth2 resources parameter",
-              "type": "array"
-            },
-            "scopes": {
-              "description": "OIDC scopes to request",
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "skipAuth": {
-              "description": "Paths to skip authentication (creates separate public HTTPRoute)",
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "method": {
-                    "type": "string"
-                  },
-                  "path": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
         "pdb": {
           "description": "PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.",
           "type": "object",
@@ -1401,7 +1181,7 @@
           "type": "object"
         },
         "securityPolicies": {
-          "description": "Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it",
+          "description": "Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration",
           "type": "object",
           "additionalProperties": true
         },
