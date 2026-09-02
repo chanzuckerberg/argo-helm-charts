@@ -1,0 +1,58 @@
+{{- $root := . -}}
+{{- $hosts := list -}}
+{{- range $name, $_ := .Values.services -}}
+  {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
+  {{- $g := $v.gateway | default dict -}}
+  {{- if and $g.enabled $g.oidcProtected (not (($g.tlsPassthrough | default dict).enabled)) -}}
+    {{- $hosts = append $hosts ($g.host | default $root.Values.global.gateway.host) -}}
+  {{- end -}}
+{{- end -}}
+{{- range $host := ($hosts | uniq | sortAlpha) }}
+  {{- $group := splitList " " (include "gateway.oidcSessionGroup" (dict "root" $root "host" $host)) -}}
+  {{- if gt (len $group) 1 }}
+    {{- $primary := "" -}}
+    {{- $primaryBase := "" -}}
+    {{- $bodies := list -}}
+    {{- range $name := $group -}}
+      {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
+      {{- $svc := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $v -}}
+      {{- $base := include "oidcProxyGateway.basePath" (dict "paths" $v.gateway.paths) -}}
+      {{- if or (eq $primary "") (lt (len $base) (len $primaryBase)) -}}
+        {{- $primary = $name -}}
+        {{- $primaryBase = $base -}}
+      {{- end -}}
+      {{- $shape := dict "oidcProxyGateway" ($v.oidcProxyGateway | default dict) "cors" ($v.gateway.cors | default dict) "ipAllowList" ($v.gateway.ipAllowList | default list) "basicAuth" ($v.gateway.basicAuth | default dict) "jwt" ($v.gateway.jwt | default dict) -}}
+      {{- $bodies = append $bodies ($shape | toYaml) -}}
+    {{- end -}}
+    {{- if gt (len ($bodies | uniq)) 1 -}}
+      {{- fail (printf "gateway.oidcProtected: services %s share hostname %s but have different oidcProxyGateway/cors/ipAllowList/basicAuth/jwt settings. Envoy Gateway derives the OauthHMAC cookie per SecurityPolicy, so one hostname needs one policy and therefore one shared config. Align those settings across these services, or give one of them its own gateway.host." (join ", " $group) $host) -}}
+    {{- end -}}
+    {{- $pv := fromYaml (include "service.context" (dict "root" $root "name" $primary)) -}}
+    {{- $pctx := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $pv -}}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ include "stack.fullname" $pctx | lower }}-oidc
+  labels:
+    {{- include "service.labels" $pctx | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                ($pv.annotations)
+                ($pv.oidcProxyGateway.annotations)
+      ) }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  targetRefs:
+    {{- range $name := $group }}
+    {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
+    {{- $svc := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $v }}
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ include "service.fullname" $svc }}
+    {{- end }}
+  {{- include "gateway.securityPolicy.body" (dict "ctx" $pctx "host" $host "public" false) | nindent 2 }}
+  {{- end }}
+{{- end }}

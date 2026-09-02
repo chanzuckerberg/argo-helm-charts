@@ -441,6 +441,56 @@ auth mechanisms; combining them is unsupported.
 Whether the service needs a SecurityPolicy (any of oidc, basicAuth, cors, ipAllowList).
 Returns "true"/"" .
 */}}
+{{/*
+Merged per-service context, mirroring the preamble each gateway template applies:
+global values overlaid with the service block, plus the ingress/gateway
+auto-enable and auto-disable rules. Takes (dict "root" $ "name" <serviceName>).
+*/}}
+{{- define "service.context" -}}
+{{- $root := .root -}}
+{{- $serviceName := .name -}}
+{{- $serviceValues := index $root.Values.services $serviceName -}}
+{{- $values := fromYaml ($root.Values.global | toYaml) -}}
+{{- $_ := set $values "name" $serviceName -}}
+{{- $values = mergeOverwrite $values $serviceValues -}}
+{{- if hasKey $serviceValues "gateway" -}}
+  {{- $hasGatewayKeys := include "gateway.hasConfigKeys" (dict "Values" (dict "gateway" ($serviceValues.gateway | default dict))) -}}
+  {{- if and $hasGatewayKeys (not (and (hasKey $serviceValues.gateway "enabled") (eq $serviceValues.gateway.enabled false))) -}}
+    {{- $_ := set $values.gateway "enabled" true -}}
+  {{- end -}}
+{{- end -}}
+{{- if and (hasKey $serviceValues "ingress") (hasKey $serviceValues.ingress "enabled") $serviceValues.ingress.enabled -}}
+  {{- if not (and (hasKey $serviceValues "gateway") (or (hasKey $serviceValues.gateway "enabled") (hasKey $serviceValues.gateway "dnsOwner"))) -}}
+    {{- $_ := set $values "gateway" (mergeOverwrite (default dict $values.gateway) (dict "enabled" false)) -}}
+  {{- end -}}
+{{- end -}}
+{{- $values | toYaml -}}
+{{- end -}}
+
+{{/*
+Service names that share one OIDC session on a given hostname: every
+gateway-enabled, oidcProtected service whose effective gateway.host matches.
+Envoy Gateway derives the OauthHMAC cookie suffix per SecurityPolicy, so
+separate policies on one hostname cannot validate each other's session -
+these have to be covered by a single policy. Takes (dict "root" $ "host" <host>).
+Returns a space-separated, sorted list.
+*/}}
+{{- define "gateway.oidcSessionGroup" -}}
+{{- $root := .root -}}
+{{- $host := .host -}}
+{{- $names := list -}}
+{{- range $name, $_ := $root.Values.services -}}
+  {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
+  {{- $g := $v.gateway | default dict -}}
+  {{- if and $g.enabled $g.oidcProtected (not (($g.tlsPassthrough | default dict).enabled)) -}}
+    {{- if eq ($g.host | default $host) $host -}}
+      {{- $names = append $names $name -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- join " " (sortAlpha $names) -}}
+{{- end -}}
+
 {{- define "gateway.hasSecurityPolicy" -}}
 {{- $g := .Values.gateway -}}
 {{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) $g.jwt.enabled -}}true{{- end -}}

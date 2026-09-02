@@ -36,7 +36,17 @@
 {{- include "validate.gatewayRuleHost" . -}}
 {{- include "validate.gatewaySecurityExclusive" . -}}
 
-{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasSecurityPolicy" .) "true") -}}
+{{/* Services sharing a hostname with OIDC are covered by one policy from
+     gateway-securitypolicy-oidc-shared.yaml, because Envoy Gateway derives the
+     OauthHMAC cookie per policy and separate policies cannot validate each
+     other's session. */}}
+{{- $sharedOidc := false -}}
+{{- if .Values.gateway.oidcProtected -}}
+  {{- if gt (len (splitList " " (include "gateway.oidcSessionGroup" (dict "root" $global "host" .Values.gateway.host)))) 1 -}}
+    {{- $sharedOidc = true -}}
+  {{- end -}}
+{{- end -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasSecurityPolicy" .) "true") (not $sharedOidc) -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" . -}}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
