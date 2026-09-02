@@ -521,6 +521,10 @@
               "description": "Optional section name (listener name) on the Gateway",
               "type": "string"
             },
+            "securityPolicy": {
+              "description": "Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour",
+              "type": "string"
+            },
             "sessionAffinity": {
               "description": "Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)",
               "type": "object",
@@ -1395,6 +1399,11 @@
         "securityContext": {
           "description": "Security context",
           "type": "object"
+        },
+        "securityPolicies": {
+          "description": "Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it",
+          "type": "object",
+          "additionalProperties": true
         },
         "service": {
           "description": "Service configuration",

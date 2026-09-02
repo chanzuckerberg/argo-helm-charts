@@ -98,6 +98,7 @@ must respect the following conditions
 | - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it                                                                                                                              |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -719,6 +720,7 @@ Must be one of:
 | - [responseHeaders](#cronJobs_pattern1_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour                                                                                                                                                  |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
@@ -1485,7 +1487,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>2.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>2.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour
+
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>2.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1501,7 +1512,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>2.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>2.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -1510,7 +1521,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>2.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>2.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1519,7 +1530,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>2.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>2.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -1528,7 +1539,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1544,7 +1555,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -1553,7 +1564,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -1562,7 +1573,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.24.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -1571,7 +1582,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1586,7 +1597,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1595,7 +1606,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -1604,7 +1615,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1620,7 +1631,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -1629,7 +1640,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1638,7 +1649,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.26.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -4058,7 +4069,21 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>2.1.41. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_securityPolicies"></a>2.1.41. Property `stack > cronJobs > ^.*$ > securityPolicies`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+#### <a name="cronJobs_pattern1_service"></a>2.1.42. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4073,7 +4098,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>2.1.41.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>2.1.42.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -4082,7 +4107,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>2.1.41.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>2.1.42.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -4091,7 +4116,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.42. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>2.1.43. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4108,7 +4133,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.42.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.43.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4118,7 +4143,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.42.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>2.1.43.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -4127,7 +4152,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.42.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>2.1.43.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -4136,7 +4161,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.43.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -4145,7 +4170,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.43. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>2.1.44. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -4154,7 +4179,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>2.1.44. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>2.1.45. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -4171,7 +4196,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.45. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>2.1.46. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4191,7 +4216,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.45.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>2.1.46.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -4200,7 +4225,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.45.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>2.1.46.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4214,7 +4239,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.45.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>2.1.46.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4233,14 +4258,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.45.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>2.1.46.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.45.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>2.1.46.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -4249,7 +4274,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.45.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>2.1.46.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4258,7 +4283,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.45.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>2.1.46.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4267,7 +4292,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.45.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>2.1.46.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -4276,7 +4301,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.45.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>2.1.46.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -4285,7 +4310,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_strategy"></a>2.1.46. Property `stack > cronJobs > ^.*$ > strategy`
+#### <a name="cronJobs_pattern1_strategy"></a>2.1.47. Property `stack > cronJobs > ^.*$ > strategy`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -4300,7 +4325,7 @@ Must be one of:
 | - [^rollingUpdate$](#cronJobs_pattern1_strategy_pattern1 ) | Yes     | object           | No         | -          | -                    |
 | - [^type$](#cronJobs_pattern1_strategy_pattern2 )          | Yes     | enum (of string) | No         | -          | Update strategy type |
 
-##### <a name="cronJobs_pattern1_strategy_pattern1"></a>2.1.46.1. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$`
+##### <a name="cronJobs_pattern1_strategy_pattern1"></a>2.1.47.1. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$`
 > All properties whose name matches the regular expression
 ```^rollingUpdate$``` ([Test](https://regex101.com/?regex=%5ErollingUpdate%24))
 must respect the following conditions
@@ -4316,7 +4341,7 @@ must respect the following conditions
 | - [maxSurge](#cronJobs_pattern1_strategy_pattern1_maxSurge )             | No      | integer or string | No         | -          | Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable. |
 | - [maxUnavailable](#cronJobs_pattern1_strategy_pattern1_maxUnavailable ) | No      | integer or string | No         | -          | Pods that may be unavailable during a rollout, as an integer or percentage string.                                                                                                                                                                  |
 
-###### <a name="cronJobs_pattern1_strategy_pattern1_maxSurge"></a>2.1.46.1.1. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxSurge`
+###### <a name="cronJobs_pattern1_strategy_pattern1_maxSurge"></a>2.1.47.1.1. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxSurge`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -4325,7 +4350,7 @@ must respect the following conditions
 
 **Description:** Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable.
 
-###### <a name="cronJobs_pattern1_strategy_pattern1_maxUnavailable"></a>2.1.46.1.2. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxUnavailable`
+###### <a name="cronJobs_pattern1_strategy_pattern1_maxUnavailable"></a>2.1.47.1.2. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxUnavailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -4334,7 +4359,7 @@ must respect the following conditions
 
 **Description:** Pods that may be unavailable during a rollout, as an integer or percentage string.
 
-##### <a name="cronJobs_pattern1_strategy_pattern2"></a>2.1.46.2. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^type$`
+##### <a name="cronJobs_pattern1_strategy_pattern2"></a>2.1.47.2. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^type$`
 > All properties whose name matches the regular expression
 ```^type$``` ([Test](https://regex101.com/?regex=%5Etype%24))
 must respect the following conditions
@@ -4350,7 +4375,7 @@ Must be one of:
 * "RollingUpdate"
 * "Recreate"
 
-#### <a name="cronJobs_pattern1_tolerations"></a>2.1.47. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>2.1.48. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -4367,7 +4392,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.48. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>2.1.49. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -4384,7 +4409,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.49. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>2.1.50. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -4401,7 +4426,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>2.1.50. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>2.1.51. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -4470,6 +4495,7 @@ Must be one of:
 | - [rollout](#global_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#global_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#global_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it                                                                                                                              |
 | - [service](#global_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -5091,6 +5117,7 @@ Must be one of:
 | - [responseHeaders](#global_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#global_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#global_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#global_gateway_securityPolicy )     | No      | string           | No         | -          | Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour                                                                                                                                                  |
 | - [sessionAffinity](#global_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [timeouts](#global_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#global_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
@@ -5857,7 +5884,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-#### <a name="global_gateway_sessionAffinity"></a>3.16.22. Property `stack > global > gateway > sessionAffinity`
+#### <a name="global_gateway_securityPolicy"></a>3.16.22. Property `stack > global > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour
+
+#### <a name="global_gateway_sessionAffinity"></a>3.16.23. Property `stack > global > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5873,7 +5909,7 @@ Must be one of:
 | - [enabled](#global_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#global_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-##### <a name="global_gateway_sessionAffinity_cookieName"></a>3.16.22.1. Property `stack > global > gateway > sessionAffinity > cookieName`
+##### <a name="global_gateway_sessionAffinity_cookieName"></a>3.16.23.1. Property `stack > global > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -5882,7 +5918,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-##### <a name="global_gateway_sessionAffinity_enabled"></a>3.16.22.2. Property `stack > global > gateway > sessionAffinity > enabled`
+##### <a name="global_gateway_sessionAffinity_enabled"></a>3.16.23.2. Property `stack > global > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5891,7 +5927,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-##### <a name="global_gateway_sessionAffinity_ttl"></a>3.16.22.3. Property `stack > global > gateway > sessionAffinity > ttl`
+##### <a name="global_gateway_sessionAffinity_ttl"></a>3.16.23.3. Property `stack > global > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -5900,7 +5936,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-#### <a name="global_gateway_timeouts"></a>3.16.23. Property `stack > global > gateway > timeouts`
+#### <a name="global_gateway_timeouts"></a>3.16.24. Property `stack > global > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5916,7 +5952,7 @@ Must be one of:
 | - [connect](#global_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#global_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.23.1. Property `stack > global > gateway > timeouts > backendRequest`
+##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.24.1. Property `stack > global > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -5925,7 +5961,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-##### <a name="global_gateway_timeouts_connect"></a>3.16.23.2. Property `stack > global > gateway > timeouts > connect`
+##### <a name="global_gateway_timeouts_connect"></a>3.16.24.2. Property `stack > global > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -5934,7 +5970,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-##### <a name="global_gateway_timeouts_request"></a>3.16.23.3. Property `stack > global > gateway > timeouts > request`
+##### <a name="global_gateway_timeouts_request"></a>3.16.24.3. Property `stack > global > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -5943,7 +5979,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-#### <a name="global_gateway_tlsPassthrough"></a>3.16.24. Property `stack > global > gateway > tlsPassthrough`
+#### <a name="global_gateway_tlsPassthrough"></a>3.16.25. Property `stack > global > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5958,7 +5994,7 @@ Must be one of:
 | - [enabled](#global_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#global_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.24.1. Property `stack > global > gateway > tlsPassthrough > enabled`
+##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.25.1. Property `stack > global > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5967,7 +6003,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.24.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
+##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.25.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -5976,7 +6012,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-#### <a name="global_gateway_vanity"></a>3.16.25. Property `stack > global > gateway > vanity`
+#### <a name="global_gateway_vanity"></a>3.16.26. Property `stack > global > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5992,7 +6028,7 @@ Must be one of:
 | - [enabled](#global_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#global_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.25.1. Property `stack > global > gateway > vanity > clusterIssuer`
+##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.26.1. Property `stack > global > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -6001,7 +6037,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-##### <a name="global_gateway_vanity_enabled"></a>3.16.25.2. Property `stack > global > gateway > vanity > enabled`
+##### <a name="global_gateway_vanity_enabled"></a>3.16.26.2. Property `stack > global > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6010,7 +6046,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-##### <a name="global_gateway_vanity_hostname"></a>3.16.25.3. Property `stack > global > gateway > vanity > hostname`
+##### <a name="global_gateway_vanity_hostname"></a>3.16.26.3. Property `stack > global > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -8430,7 +8466,21 @@ Must be one of:
 
 **Description:** Security context
 
-### <a name="global_service"></a>3.41. Property `stack > global > service`
+### <a name="global_securityPolicies"></a>3.41. Property `stack > global > securityPolicies`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it
+
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#global_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+### <a name="global_service"></a>3.42. Property `stack > global > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8445,7 +8495,7 @@ Must be one of:
 | - [port](#global_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#global_service_type ) | No      | string | No         | -          | Service type      |
 
-#### <a name="global_service_port"></a>3.41.1. Property `stack > global > service > port`
+#### <a name="global_service_port"></a>3.42.1. Property `stack > global > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -8454,7 +8504,7 @@ Must be one of:
 
 **Description:** Service port
 
-#### <a name="global_service_type"></a>3.41.2. Property `stack > global > service > type`
+#### <a name="global_service_type"></a>3.42.2. Property `stack > global > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -8463,7 +8513,7 @@ Must be one of:
 
 **Description:** Service type
 
-### <a name="global_serviceAccount"></a>3.42. Property `stack > global > serviceAccount`
+### <a name="global_serviceAccount"></a>3.43. Property `stack > global > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8480,7 +8530,7 @@ Must be one of:
 | - [create](#global_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#global_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-#### <a name="global_serviceAccount_annotations"></a>3.42.1. Property `stack > global > serviceAccount > annotations`
+#### <a name="global_serviceAccount_annotations"></a>3.43.1. Property `stack > global > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8490,7 +8540,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-#### <a name="global_serviceAccount_automount"></a>3.42.2. Property `stack > global > serviceAccount > automount`
+#### <a name="global_serviceAccount_automount"></a>3.43.2. Property `stack > global > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -8499,7 +8549,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-#### <a name="global_serviceAccount_create"></a>3.42.3. Property `stack > global > serviceAccount > create`
+#### <a name="global_serviceAccount_create"></a>3.43.3. Property `stack > global > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -8508,7 +8558,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-#### <a name="global_serviceAccount_name"></a>3.42.4. Property `stack > global > serviceAccount > name`
+#### <a name="global_serviceAccount_name"></a>3.43.4. Property `stack > global > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -8517,7 +8567,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-### <a name="global_shareProcessNamespace"></a>3.43. Property `stack > global > shareProcessNamespace`
+### <a name="global_shareProcessNamespace"></a>3.44. Property `stack > global > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -8526,7 +8576,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-### <a name="global_sidecars"></a>3.44. Property `stack > global > sidecars`
+### <a name="global_sidecars"></a>3.45. Property `stack > global > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -8543,7 +8593,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_startupProbe"></a>3.45. Property `stack > global > startupProbe`
+### <a name="global_startupProbe"></a>3.46. Property `stack > global > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8563,7 +8613,7 @@ Must be one of:
 | - [successThreshold](#global_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#global_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-#### <a name="global_startupProbe_enabled"></a>3.45.1. Property `stack > global > startupProbe > enabled`
+#### <a name="global_startupProbe_enabled"></a>3.46.1. Property `stack > global > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8572,7 +8622,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-#### <a name="global_startupProbe_exec"></a>3.45.2. Property `stack > global > startupProbe > exec`
+#### <a name="global_startupProbe_exec"></a>3.46.2. Property `stack > global > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8586,7 +8636,7 @@ Must be one of:
 | ----------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#global_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-##### <a name="global_startupProbe_exec_command"></a>3.45.2.1. Property `stack > global > startupProbe > exec > command`
+##### <a name="global_startupProbe_exec_command"></a>3.46.2.1. Property `stack > global > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8605,14 +8655,14 @@ Must be one of:
 | -------------------------------------------------------- | ----------- |
 | [command items](#global_startupProbe_exec_command_items) | -           |
 
-###### <a name="global_startupProbe_exec_command_items"></a>3.45.2.1.1. stack > global > startupProbe > exec > command > command items
+###### <a name="global_startupProbe_exec_command_items"></a>3.46.2.1.1. stack > global > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="global_startupProbe_failureThreshold"></a>3.45.3. Property `stack > global > startupProbe > failureThreshold`
+#### <a name="global_startupProbe_failureThreshold"></a>3.46.3. Property `stack > global > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -8621,7 +8671,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-#### <a name="global_startupProbe_initialDelaySeconds"></a>3.45.4. Property `stack > global > startupProbe > initialDelaySeconds`
+#### <a name="global_startupProbe_initialDelaySeconds"></a>3.46.4. Property `stack > global > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -8630,7 +8680,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-#### <a name="global_startupProbe_periodSeconds"></a>3.45.5. Property `stack > global > startupProbe > periodSeconds`
+#### <a name="global_startupProbe_periodSeconds"></a>3.46.5. Property `stack > global > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -8639,7 +8689,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-#### <a name="global_startupProbe_successThreshold"></a>3.45.6. Property `stack > global > startupProbe > successThreshold`
+#### <a name="global_startupProbe_successThreshold"></a>3.46.6. Property `stack > global > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -8648,7 +8698,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-#### <a name="global_startupProbe_timeoutSeconds"></a>3.45.7. Property `stack > global > startupProbe > timeoutSeconds`
+#### <a name="global_startupProbe_timeoutSeconds"></a>3.46.7. Property `stack > global > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -8657,7 +8707,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_strategy"></a>3.46. Property `stack > global > strategy`
+### <a name="global_strategy"></a>3.47. Property `stack > global > strategy`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -8672,7 +8722,7 @@ Must be one of:
 | - [^rollingUpdate$](#global_strategy_pattern1 ) | Yes     | object           | No         | -          | -                    |
 | - [^type$](#global_strategy_pattern2 )          | Yes     | enum (of string) | No         | -          | Update strategy type |
 
-#### <a name="global_strategy_pattern1"></a>3.46.1. Pattern Property `stack > global > strategy > ^rollingUpdate$`
+#### <a name="global_strategy_pattern1"></a>3.47.1. Pattern Property `stack > global > strategy > ^rollingUpdate$`
 > All properties whose name matches the regular expression
 ```^rollingUpdate$``` ([Test](https://regex101.com/?regex=%5ErollingUpdate%24))
 must respect the following conditions
@@ -8688,7 +8738,7 @@ must respect the following conditions
 | - [maxSurge](#global_strategy_pattern1_maxSurge )             | No      | integer or string | No         | -          | Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable. |
 | - [maxUnavailable](#global_strategy_pattern1_maxUnavailable ) | No      | integer or string | No         | -          | Pods that may be unavailable during a rollout, as an integer or percentage string.                                                                                                                                                                  |
 
-##### <a name="global_strategy_pattern1_maxSurge"></a>3.46.1.1. Property `stack > global > strategy > ^rollingUpdate$ > maxSurge`
+##### <a name="global_strategy_pattern1_maxSurge"></a>3.47.1.1. Property `stack > global > strategy > ^rollingUpdate$ > maxSurge`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -8697,7 +8747,7 @@ must respect the following conditions
 
 **Description:** Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable.
 
-##### <a name="global_strategy_pattern1_maxUnavailable"></a>3.46.1.2. Property `stack > global > strategy > ^rollingUpdate$ > maxUnavailable`
+##### <a name="global_strategy_pattern1_maxUnavailable"></a>3.47.1.2. Property `stack > global > strategy > ^rollingUpdate$ > maxUnavailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -8706,7 +8756,7 @@ must respect the following conditions
 
 **Description:** Pods that may be unavailable during a rollout, as an integer or percentage string.
 
-#### <a name="global_strategy_pattern2"></a>3.46.2. Pattern Property `stack > global > strategy > ^type$`
+#### <a name="global_strategy_pattern2"></a>3.47.2. Pattern Property `stack > global > strategy > ^type$`
 > All properties whose name matches the regular expression
 ```^type$``` ([Test](https://regex101.com/?regex=%5Etype%24))
 must respect the following conditions
@@ -8722,7 +8772,7 @@ Must be one of:
 * "RollingUpdate"
 * "Recreate"
 
-### <a name="global_tolerations"></a>3.47. Property `stack > global > tolerations`
+### <a name="global_tolerations"></a>3.48. Property `stack > global > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -8739,7 +8789,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_topologySpreadConstraints"></a>3.48. Property `stack > global > topologySpreadConstraints`
+### <a name="global_topologySpreadConstraints"></a>3.49. Property `stack > global > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -8756,7 +8806,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumeMounts"></a>3.49. Property `stack > global > volumeMounts`
+### <a name="global_volumeMounts"></a>3.50. Property `stack > global > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -8773,7 +8823,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_volumes"></a>3.50. Property `stack > global > volumes`
+### <a name="global_volumes"></a>3.51. Property `stack > global > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -8860,6 +8910,7 @@ must respect the following conditions
 | - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it                                                                                                                              |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -9481,6 +9532,7 @@ Must be one of:
 | - [responseHeaders](#cronJobs_pattern1_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour                                                                                                                                                  |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
@@ -10247,7 +10299,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>4.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>4.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour
+
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>4.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10263,7 +10324,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>4.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>4.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -10272,7 +10333,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>4.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>4.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10281,7 +10342,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>4.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>4.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -10290,7 +10351,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10306,7 +10367,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -10315,7 +10376,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -10324,7 +10385,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.24.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -10333,7 +10394,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10348,7 +10409,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10357,7 +10418,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -10366,7 +10427,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10382,7 +10443,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -10391,7 +10452,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10400,7 +10461,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.26.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -12820,7 +12881,21 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>4.1.41. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_securityPolicies"></a>4.1.41. Property `stack > cronJobs > ^.*$ > securityPolicies`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+#### <a name="cronJobs_pattern1_service"></a>4.1.42. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12835,7 +12910,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>4.1.41.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>4.1.42.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -12844,7 +12919,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>4.1.41.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>4.1.42.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -12853,7 +12928,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.42. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>4.1.43. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12870,7 +12945,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.42.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.43.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12880,7 +12955,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.42.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>4.1.43.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -12889,7 +12964,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.42.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>4.1.43.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -12898,7 +12973,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.43.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -12907,7 +12982,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.43. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>4.1.44. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -12916,7 +12991,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>4.1.44. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>4.1.45. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -12933,7 +13008,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.45. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>4.1.46. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12953,7 +13028,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.45.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>4.1.46.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -12962,7 +13037,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.45.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>4.1.46.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12976,7 +13051,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.45.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>4.1.46.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12995,14 +13070,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.45.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>4.1.46.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.45.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>4.1.46.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -13011,7 +13086,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.45.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>4.1.46.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -13020,7 +13095,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.45.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>4.1.46.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -13029,7 +13104,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.45.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>4.1.46.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -13038,7 +13113,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.45.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>4.1.46.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -13047,7 +13122,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_strategy"></a>4.1.46. Property `stack > cronJobs > ^.*$ > strategy`
+#### <a name="cronJobs_pattern1_strategy"></a>4.1.47. Property `stack > cronJobs > ^.*$ > strategy`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -13062,7 +13137,7 @@ Must be one of:
 | - [^rollingUpdate$](#cronJobs_pattern1_strategy_pattern1 ) | Yes     | object           | No         | -          | -                    |
 | - [^type$](#cronJobs_pattern1_strategy_pattern2 )          | Yes     | enum (of string) | No         | -          | Update strategy type |
 
-##### <a name="cronJobs_pattern1_strategy_pattern1"></a>4.1.46.1. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$`
+##### <a name="cronJobs_pattern1_strategy_pattern1"></a>4.1.47.1. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$`
 > All properties whose name matches the regular expression
 ```^rollingUpdate$``` ([Test](https://regex101.com/?regex=%5ErollingUpdate%24))
 must respect the following conditions
@@ -13078,7 +13153,7 @@ must respect the following conditions
 | - [maxSurge](#cronJobs_pattern1_strategy_pattern1_maxSurge )             | No      | integer or string | No         | -          | Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable. |
 | - [maxUnavailable](#cronJobs_pattern1_strategy_pattern1_maxUnavailable ) | No      | integer or string | No         | -          | Pods that may be unavailable during a rollout, as an integer or percentage string.                                                                                                                                                                  |
 
-###### <a name="cronJobs_pattern1_strategy_pattern1_maxSurge"></a>4.1.46.1.1. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxSurge`
+###### <a name="cronJobs_pattern1_strategy_pattern1_maxSurge"></a>4.1.47.1.1. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxSurge`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -13087,7 +13162,7 @@ must respect the following conditions
 
 **Description:** Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable.
 
-###### <a name="cronJobs_pattern1_strategy_pattern1_maxUnavailable"></a>4.1.46.1.2. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxUnavailable`
+###### <a name="cronJobs_pattern1_strategy_pattern1_maxUnavailable"></a>4.1.47.1.2. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxUnavailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -13096,7 +13171,7 @@ must respect the following conditions
 
 **Description:** Pods that may be unavailable during a rollout, as an integer or percentage string.
 
-##### <a name="cronJobs_pattern1_strategy_pattern2"></a>4.1.46.2. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^type$`
+##### <a name="cronJobs_pattern1_strategy_pattern2"></a>4.1.47.2. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^type$`
 > All properties whose name matches the regular expression
 ```^type$``` ([Test](https://regex101.com/?regex=%5Etype%24))
 must respect the following conditions
@@ -13112,7 +13187,7 @@ Must be one of:
 * "RollingUpdate"
 * "Recreate"
 
-#### <a name="cronJobs_pattern1_tolerations"></a>4.1.47. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>4.1.48. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -13129,7 +13204,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.48. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>4.1.49. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -13146,7 +13221,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.49. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>4.1.50. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -13163,7 +13238,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>4.1.50. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>4.1.51. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
@@ -13714,6 +13789,7 @@ must respect the following conditions
 | - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it                                                                                                                              |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -14335,6 +14411,7 @@ Must be one of:
 | - [responseHeaders](#cronJobs_pattern1_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour                                                                                                                                                  |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
@@ -15101,7 +15178,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>7.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>7.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour
+
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>7.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15117,7 +15203,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>7.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>7.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -15126,7 +15212,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>7.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>7.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15135,7 +15221,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>7.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>7.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -15144,7 +15230,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15160,7 +15246,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -15169,7 +15255,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -15178,7 +15264,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.24.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -15187,7 +15273,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15202,7 +15288,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15211,7 +15297,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -15220,7 +15306,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15236,7 +15322,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -15245,7 +15331,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15254,7 +15340,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.26.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -17674,7 +17760,21 @@ Must be one of:
 
 **Description:** Security context
 
-#### <a name="cronJobs_pattern1_service"></a>7.1.41. Property `stack > cronJobs > ^.*$ > service`
+#### <a name="cronJobs_pattern1_securityPolicies"></a>7.1.41. Property `stack > cronJobs > ^.*$ > securityPolicies`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+#### <a name="cronJobs_pattern1_service"></a>7.1.42. Property `stack > cronJobs > ^.*$ > service`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17689,7 +17789,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_service_port ) | No      | number | No         | -          | Service port      |
 | - [type](#cronJobs_pattern1_service_type ) | No      | string | No         | -          | Service type      |
 
-##### <a name="cronJobs_pattern1_service_port"></a>7.1.41.1. Property `stack > cronJobs > ^.*$ > service > port`
+##### <a name="cronJobs_pattern1_service_port"></a>7.1.42.1. Property `stack > cronJobs > ^.*$ > service > port`
 
 |              |          |
 | ------------ | -------- |
@@ -17698,7 +17798,7 @@ Must be one of:
 
 **Description:** Service port
 
-##### <a name="cronJobs_pattern1_service_type"></a>7.1.41.2. Property `stack > cronJobs > ^.*$ > service > type`
+##### <a name="cronJobs_pattern1_service_type"></a>7.1.42.2. Property `stack > cronJobs > ^.*$ > service > type`
 
 |              |          |
 | ------------ | -------- |
@@ -17707,7 +17807,7 @@ Must be one of:
 
 **Description:** Service type
 
-#### <a name="cronJobs_pattern1_serviceAccount"></a>7.1.42. Property `stack > cronJobs > ^.*$ > serviceAccount`
+#### <a name="cronJobs_pattern1_serviceAccount"></a>7.1.43. Property `stack > cronJobs > ^.*$ > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17724,7 +17824,7 @@ Must be one of:
 | - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
 | - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
-##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>7.1.42.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
+##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>7.1.43.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17734,7 +17834,7 @@ Must be one of:
 
 **Description:** Annotations to add to the service account
 
-##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>7.1.42.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
+##### <a name="cronJobs_pattern1_serviceAccount_automount"></a>7.1.43.2. Property `stack > cronJobs > ^.*$ > serviceAccount > automount`
 
 |              |           |
 | ------------ | --------- |
@@ -17743,7 +17843,7 @@ Must be one of:
 
 **Description:** Specifies whether to automatically mount a ServiceAccount's API credentials
 
-##### <a name="cronJobs_pattern1_serviceAccount_create"></a>7.1.42.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
+##### <a name="cronJobs_pattern1_serviceAccount_create"></a>7.1.43.3. Property `stack > cronJobs > ^.*$ > serviceAccount > create`
 
 |              |           |
 | ------------ | --------- |
@@ -17752,7 +17852,7 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.43.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -17761,7 +17861,7 @@ Must be one of:
 
 **Description:** Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
-#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>7.1.43. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
+#### <a name="cronJobs_pattern1_shareProcessNamespace"></a>7.1.44. Property `stack > cronJobs > ^.*$ > shareProcessNamespace`
 
 |              |           |
 | ------------ | --------- |
@@ -17770,7 +17870,7 @@ Must be one of:
 
 **Description:** Share process namespace
 
-#### <a name="cronJobs_pattern1_sidecars"></a>7.1.44. Property `stack > cronJobs > ^.*$ > sidecars`
+#### <a name="cronJobs_pattern1_sidecars"></a>7.1.45. Property `stack > cronJobs > ^.*$ > sidecars`
 
 |              |         |
 | ------------ | ------- |
@@ -17787,7 +17887,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_startupProbe"></a>7.1.45. Property `stack > cronJobs > ^.*$ > startupProbe`
+#### <a name="cronJobs_pattern1_startupProbe"></a>7.1.46. Property `stack > cronJobs > ^.*$ > startupProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17807,7 +17907,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_startupProbe_successThreshold )       | No      | integer | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_startupProbe_timeoutSeconds )           | No      | integer | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>7.1.45.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
+##### <a name="cronJobs_pattern1_startupProbe_enabled"></a>7.1.46.1. Property `stack > cronJobs > ^.*$ > startupProbe > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -17816,7 +17916,7 @@ Must be one of:
 
 **Description:** Enable the startup probe
 
-##### <a name="cronJobs_pattern1_startupProbe_exec"></a>7.1.45.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
+##### <a name="cronJobs_pattern1_startupProbe_exec"></a>7.1.46.2. Property `stack > cronJobs > ^.*$ > startupProbe > exec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17830,7 +17930,7 @@ Must be one of:
 | ---------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
 | - [command](#cronJobs_pattern1_startupProbe_exec_command ) | No      | array of string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>7.1.45.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
+###### <a name="cronJobs_pattern1_startupProbe_exec_command"></a>7.1.46.2.1. Property `stack > cronJobs > ^.*$ > startupProbe > exec > command`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -17849,14 +17949,14 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [command items](#cronJobs_pattern1_startupProbe_exec_command_items) | -           |
 
-###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>7.1.45.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
+###### <a name="cronJobs_pattern1_startupProbe_exec_command_items"></a>7.1.46.2.1.1. stack > cronJobs > ^.*$ > startupProbe > exec > command > command items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>7.1.45.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_failureThreshold"></a>7.1.46.3. Property `stack > cronJobs > ^.*$ > startupProbe > failureThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -17865,7 +17965,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>7.1.45.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_startupProbe_initialDelaySeconds"></a>7.1.46.4. Property `stack > cronJobs > ^.*$ > startupProbe > initialDelaySeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -17874,7 +17974,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>7.1.45.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_periodSeconds"></a>7.1.46.5. Property `stack > cronJobs > ^.*$ > startupProbe > periodSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -17883,7 +17983,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>7.1.45.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
+##### <a name="cronJobs_pattern1_startupProbe_successThreshold"></a>7.1.46.6. Property `stack > cronJobs > ^.*$ > startupProbe > successThreshold`
 
 |              |           |
 | ------------ | --------- |
@@ -17892,7 +17992,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>7.1.45.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_startupProbe_timeoutSeconds"></a>7.1.46.7. Property `stack > cronJobs > ^.*$ > startupProbe > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -17901,7 +18001,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_strategy"></a>7.1.46. Property `stack > cronJobs > ^.*$ > strategy`
+#### <a name="cronJobs_pattern1_strategy"></a>7.1.47. Property `stack > cronJobs > ^.*$ > strategy`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -17916,7 +18016,7 @@ Must be one of:
 | - [^rollingUpdate$](#cronJobs_pattern1_strategy_pattern1 ) | Yes     | object           | No         | -          | -                    |
 | - [^type$](#cronJobs_pattern1_strategy_pattern2 )          | Yes     | enum (of string) | No         | -          | Update strategy type |
 
-##### <a name="cronJobs_pattern1_strategy_pattern1"></a>7.1.46.1. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$`
+##### <a name="cronJobs_pattern1_strategy_pattern1"></a>7.1.47.1. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$`
 > All properties whose name matches the regular expression
 ```^rollingUpdate$``` ([Test](https://regex101.com/?regex=%5ErollingUpdate%24))
 must respect the following conditions
@@ -17932,7 +18032,7 @@ must respect the following conditions
 | - [maxSurge](#cronJobs_pattern1_strategy_pattern1_maxSurge )             | No      | integer or string | No         | -          | Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable. |
 | - [maxUnavailable](#cronJobs_pattern1_strategy_pattern1_maxUnavailable ) | No      | integer or string | No         | -          | Pods that may be unavailable during a rollout, as an integer or percentage string.                                                                                                                                                                  |
 
-###### <a name="cronJobs_pattern1_strategy_pattern1_maxSurge"></a>7.1.46.1.1. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxSurge`
+###### <a name="cronJobs_pattern1_strategy_pattern1_maxSurge"></a>7.1.47.1.1. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxSurge`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -17941,7 +18041,7 @@ must respect the following conditions
 
 **Description:** Pods that may be created above the desired count during a rollout, as an integer or percentage string. Set to 0 to roll strictly in place so the rollout never waits on new nodes and cannot stall on capacity. Requires a non-zero maxUnavailable.
 
-###### <a name="cronJobs_pattern1_strategy_pattern1_maxUnavailable"></a>7.1.46.1.2. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxUnavailable`
+###### <a name="cronJobs_pattern1_strategy_pattern1_maxUnavailable"></a>7.1.47.1.2. Property `stack > cronJobs > ^.*$ > strategy > ^rollingUpdate$ > maxUnavailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -17950,7 +18050,7 @@ must respect the following conditions
 
 **Description:** Pods that may be unavailable during a rollout, as an integer or percentage string.
 
-##### <a name="cronJobs_pattern1_strategy_pattern2"></a>7.1.46.2. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^type$`
+##### <a name="cronJobs_pattern1_strategy_pattern2"></a>7.1.47.2. Pattern Property `stack > cronJobs > ^.*$ > strategy > ^type$`
 > All properties whose name matches the regular expression
 ```^type$``` ([Test](https://regex101.com/?regex=%5Etype%24))
 must respect the following conditions
@@ -17966,7 +18066,7 @@ Must be one of:
 * "RollingUpdate"
 * "Recreate"
 
-#### <a name="cronJobs_pattern1_tolerations"></a>7.1.47. Property `stack > cronJobs > ^.*$ > tolerations`
+#### <a name="cronJobs_pattern1_tolerations"></a>7.1.48. Property `stack > cronJobs > ^.*$ > tolerations`
 
 |              |         |
 | ------------ | ------- |
@@ -17983,7 +18083,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.48. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
+#### <a name="cronJobs_pattern1_topologySpreadConstraints"></a>7.1.49. Property `stack > cronJobs > ^.*$ > topologySpreadConstraints`
 
 |              |         |
 | ------------ | ------- |
@@ -18000,7 +18100,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.49. Property `stack > cronJobs > ^.*$ > volumeMounts`
+#### <a name="cronJobs_pattern1_volumeMounts"></a>7.1.50. Property `stack > cronJobs > ^.*$ > volumeMounts`
 
 |              |         |
 | ------------ | ------- |
@@ -18017,7 +18117,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_volumes"></a>7.1.50. Property `stack > cronJobs > ^.*$ > volumes`
+#### <a name="cronJobs_pattern1_volumes"></a>7.1.51. Property `stack > cronJobs > ^.*$ > volumes`
 
 |              |         |
 | ------------ | ------- |
