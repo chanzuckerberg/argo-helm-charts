@@ -1,29 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 suite: test DNS TTL annotation on OIDC HTTPRoutes
 templates:
-  - gateway-oidc.yaml
+- gateway-oidc.yaml
 tests:
-  - it: should set a 60s DNS TTL on OIDC-protected HTTPRoutes
-    set:
-      global:
-        ingress:
-          enabled: false
-        appSecrets:
-          clusterCLISecret:
-            secretKey: /argus/test
-            secretName: test-secret
-      services:
-        web:
-          gateway:
-            enabled: true
-            securityPolicy: oidc-protected-default
-            host: web.example.com
-          oidcProxyGateway:
+- it: should set a 60s DNS TTL on OIDC-protected HTTPRoutes
+  set:
+    global:
+      ingress:
+        enabled: false
+      appSecrets:
+        clusterCLISecret:
+          secretKey: /argus/test
+          secretName: test-secret
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
             clientID: test-client
             provider:
               issuer: https://czi.okta.com
-    asserts:
-      - template: gateway-oidc.yaml
-        documentIndex: 0
-        equal:
-          path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
-          value: "60"
+    services:
+      web:
+        gateway:
+          enabled: true
+          securityPolicy: oidc-protected-default
+          host: web.example.com
+  asserts:
+  - template: gateway-oidc.yaml
+    documentIndex: 0
+    equal:
+      path: metadata.annotations["external-dns.alpha.kubernetes.io/ttl"]
+      value: '60'
