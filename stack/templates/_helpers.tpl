@@ -270,14 +270,16 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{- define "validate.gatewayIngressCoexistence" -}}
-{{- if and .Values.gateway.enabled .Values.ingress.enabled -}}
-  {{- $v := .Values -}}
+{{- $ := .ctx -}}
+{{- if and $.Values.gateway.enabled $.Values.ingress.enabled -}}
+  {{- $v := $.Values -}}
+  {{- $gatewayOidc := eq (include "securityPolicy.isOidc" (dict "root" .root "name" .name)) "true" -}}
   {{- $owner := $v.gateway.dnsOwner | default "ingress" -}}
   {{- if not (or (eq $owner "ingress") (eq $owner "gateway")) -}}
     {{- fail (printf "gateway.dnsOwner must be \"ingress\" or \"gateway\" when ingress and gateway are both enabled (got %q). Coexistence renders both routing modes and external-dns publishes only the dnsOwner side. Flip it to \"gateway\" to move DNS to the Envoy gateway NLB." $owner) -}}
   {{- end -}}
-  {{- if and $v.gateway.oidcProtected (not $v.ingress.oidcProtected) -}}
-    {{- fail "gateway.oidcProtected requires ingress.oidcProtected during coexistence: the still-serving nginx Ingress would expose the app without authentication. Set ingress.oidcProtected: true or disable the ingress." -}}
+  {{- if and $gatewayOidc (not $v.ingress.oidcProtected) -}}
+    {{- fail "an OIDC gateway.securityPolicy requires ingress.oidcProtected during coexistence: the still-serving nginx Ingress would expose the app without authentication. Set ingress.oidcProtected: true or disable the ingress." -}}
   {{- end -}}
   {{- if eq $owner "gateway" -}}
     {{- if $v.gateway.tlsPassthrough.enabled -}}

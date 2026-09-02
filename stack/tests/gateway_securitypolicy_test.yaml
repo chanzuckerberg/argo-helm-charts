@@ -1,754 +1,801 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 suite: test gateway SecurityPolicy (oidc, basicAuth, cors, ipAllowList)
 templates:
-  - gateway-securitypolicy.yaml
+- gateway-securitypolicy.yaml
+- gateway-securitypolicy-shared.yaml
 tests:
-  - it: should create no SecurityPolicy when no security features are set
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 0
-
-  - it: should create a SecurityPolicy named -oidc for the primary host
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        isKind:
-          of: SecurityPolicy
-      - documentIndex: 0
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-oidc
-      - documentIndex: 0
-        equal:
-          path: spec.targetRefs[0].name
-          value: release-name-stack-service1
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api.example.com/oauth2/callback
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientID
-          value: my-client-id
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: argus-global-oidc
-
-  - it: should namespace redirectURL and logoutPath under the derived base path
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-          paths:
-            - path: /portal
-              pathType: Prefix
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api.example.com/portal/oauth2/callback
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.logoutPath
-          value: /portal/logout
-
-  - it: should namespace redirectURL and logoutPath under the first non-root Prefix path when multiple paths are configured
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-          paths:
-            - path: /portal
-              pathType: Prefix
-            - path: /admin
-              pathType: Prefix
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api.example.com/portal/oauth2/callback
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.logoutPath
-          value: /portal/logout
-
-  - it: should point both clientIDRef and clientSecret at the global secret by default
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientIDRef.name
-          value: argus-global-oidc
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: argus-global-oidc
-      - documentIndex: 0
-        notExists:
-          path: spec.oidc.clientID
-
-  - it: should ignore Argus app secrets when choosing the credential secret
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        appSecrets:
-          envSecret:
-            secretName: argus-env
-            secretKey: /argus/app=core-platform/env=prod
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: argus-global-oidc
-
-  - it: should honor a custom globalSecretName
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          globalSecretName: my-global-oidc
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: my-global-oidc
-
-  - it: should reference an explicit clientSecretName over the global secret
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientSecretName: my-own-secret
-        appSecrets:
-          envSecret:
-            secretName: argus-env
-            secretKey: /argus/app=core-platform/env=prod
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientSecret.name
-          value: my-own-secret
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientIDRef.name
-          value: my-own-secret
-
-  - it: should create a SecurityPolicy per rule with full OIDC config
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-          rules:
-            - host: api2.example.com
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-            authorizationEndpoint: https://auth.example.com/authorize
-            tokenEndpoint: https://auth.example.com/token
-          logoutPath: /logout
-          forwardAccessToken: true
-          cookieDomain: example.com
-          scopes:
+- it: should create no SecurityPolicy when no security features are set
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 0
+- it: should create a SecurityPolicy named -oidc for the primary host
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    isKind:
+      of: SecurityPolicy
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-oidc-protected-default
+  - documentIndex: 0
+    equal:
+      path: spec.targetRefs[0].name
+      value: release-name-stack-service1
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.redirectURL
+      value: https://api.example.com/oauth2/callback
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientID
+      value: my-client-id
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientSecret.name
+      value: argus-global-oidc
+  template: gateway-securitypolicy-shared.yaml
+- it: should namespace redirectURL and logoutPath under the derived base path
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /portal
+          pathType: Prefix
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.redirectURL
+      value: https://api.example.com/portal/oauth2/callback
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.logoutPath
+      value: /portal/logout
+  template: gateway-securitypolicy-shared.yaml
+- it: should namespace redirectURL and logoutPath under the first non-root Prefix path when multiple paths are configured
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /portal
+          pathType: Prefix
+        - path: /admin
+          pathType: Prefix
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.redirectURL
+      value: https://api.example.com/portal/oauth2/callback
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.logoutPath
+      value: /portal/logout
+  template: gateway-securitypolicy-shared.yaml
+- it: should point both clientIDRef and clientSecret at the global secret by default
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientIDRef.name
+      value: argus-global-oidc
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientSecret.name
+      value: argus-global-oidc
+  - documentIndex: 0
+    notExists:
+      path: spec.oidc.clientID
+  template: gateway-securitypolicy-shared.yaml
+- it: should ignore Argus app secrets when choosing the credential secret
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      appSecrets:
+        envSecret:
+          secretName: argus-env
+          secretKey: /argus/app=core-platform/env=prod
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientSecret.name
+      value: argus-global-oidc
+  template: gateway-securitypolicy-shared.yaml
+- it: should honor a custom globalSecretName
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            globalSecretName: my-global-oidc
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientSecret.name
+      value: my-global-oidc
+  template: gateway-securitypolicy-shared.yaml
+- it: should reference an explicit clientSecretName over the global secret
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      appSecrets:
+        envSecret:
+          secretName: argus-env
+          secretKey: /argus/app=core-platform/env=prod
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientSecretName: my-own-secret
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientSecret.name
+      value: my-own-secret
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientIDRef.name
+      value: my-own-secret
+  template: gateway-securitypolicy-shared.yaml
+- it: should create a SecurityPolicy per rule with full OIDC config
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+        rules:
+        - host: api2.example.com
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+              authorizationEndpoint: https://auth.example.com/authorize
+              tokenEndpoint: https://auth.example.com/token
+            logoutPath: /logout
+            forwardAccessToken: true
+            cookieDomain: example.com
+            scopes:
             - openid
             - profile
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 2
-      - documentIndex: 0
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-oidc
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.provider.issuer
-          value: https://auth.example.com
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.provider.authorizationEndpoint
-          value: https://auth.example.com/authorize
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.clientID
-          value: my-client-id
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.logoutPath
-          value: /logout
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.cookieDomain
-          value: example.com
-      - documentIndex: 0
-        contains:
-          path: spec.oidc.scopes
-          content: openid
-      - documentIndex: 1
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-rule-0-oidc
-      - documentIndex: 1
-        equal:
-          path: spec.oidc.redirectURL
-          value: https://api2.example.com/oauth2/callback
-
-  - it: should include annotations on SecurityPolicies
-    set:
-      global:
-        ingress:
-          enabled: false
-        annotations:
-          global-annotation: "global-value"
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-service1-rule-0-oidc
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.provider.issuer
+      value: https://auth.example.com
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.provider.authorizationEndpoint
+      value: https://auth.example.com/authorize
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.clientID
+      value: my-client-id
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.logoutPath
+      value: /logout
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.cookieDomain
+      value: example.com
+  - documentIndex: 0
+    contains:
+      path: spec.oidc.scopes
+      content: openid
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-service1-rule-0-oidc
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.redirectURL
+      value: https://api2.example.com/oauth2/callback
+  template: gateway-securitypolicy.yaml
+- it: should include annotations on SecurityPolicies
+  set:
+    global:
+      ingress:
+        enabled: false
+      annotations:
+        global-annotation: global-value
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
           annotations:
-            oidc-annotation: "oidc-value"
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: metadata.annotations["global-annotation"]
-          value: "global-value"
-      - documentIndex: 0
-        equal:
-          path: metadata.annotations["oidc-annotation"]
-          value: "oidc-value"
-
-  - it: should render basicAuth (named -security) when enabled without oidc
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+            oidc-annotation: oidc-value
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.annotations["global-annotation"]
+      value: global-value
+  - documentIndex: 0
+    equal:
+      path: metadata.annotations["oidc-annotation"]
+      value: oidc-value
+  template: gateway-securitypolicy-shared.yaml
+- it: should render basicAuth (named -security) when enabled without oidc
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           basicAuth:
             enabled: true
             secretName: my-htpasswd
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-security
-      - documentIndex: 0
-        equal:
-          path: spec.basicAuth.users.name
-          value: my-htpasswd
-      - documentIndex: 0
-        notExists:
-          path: spec.oidc
-
-  - it: should render cors when enabled
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-custom
+  - documentIndex: 0
+    equal:
+      path: spec.basicAuth.users.name
+      value: my-htpasswd
+  - documentIndex: 0
+    notExists:
+      path: spec.oidc
+  template: gateway-securitypolicy-shared.yaml
+- it: should render cors when enabled
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           cors:
             enabled: true
             allowOrigins:
-              - https://app.example.com
+            - https://app.example.com
             allowMethods:
-              - GET
-              - POST
+            - GET
+            - POST
             allowCredentials: true
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        contains:
-          path: spec.cors.allowOrigins
-          content: https://app.example.com
-      - documentIndex: 0
-        equal:
-          path: spec.cors.allowCredentials
-          value: true
-
-  - it: should render an IP allowlist authorization rule
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    contains:
+      path: spec.cors.allowOrigins
+      content: https://app.example.com
+  - documentIndex: 0
+    equal:
+      path: spec.cors.allowCredentials
+      value: true
+  template: gateway-securitypolicy-shared.yaml
+- it: should render an IP allowlist authorization rule
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           ipAllowList:
-            - 192.112.170.192/26
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        equal:
-          path: spec.authorization.defaultAction
-          value: Deny
-      - documentIndex: 0
-        equal:
-          path: spec.authorization.rules[0].action
-          value: Allow
-      - documentIndex: 0
-        contains:
-          path: spec.authorization.rules[0].principal.clientCIDRs
-          content: 192.112.170.192/26
-
-  - it: should compose oidc with cors in a single SecurityPolicy
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
+          - 192.112.170.192/26
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: spec.authorization.defaultAction
+      value: Deny
+  - documentIndex: 0
+    equal:
+      path: spec.authorization.rules[0].action
+      value: Allow
+  - documentIndex: 0
+    contains:
+      path: spec.authorization.rules[0].principal.clientCIDRs
+      content: 192.112.170.192/26
+  template: gateway-securitypolicy-shared.yaml
+- it: should compose oidc with cors in a single SecurityPolicy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
           cors:
             enabled: true
             allowOrigins:
-              - https://app.example.com
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        exists:
-          path: spec.oidc
-      - documentIndex: 0
-        exists:
-          path: spec.cors
-
-  - it: should add a public SecurityPolicy for cors on the skipAuth route
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-          cors:
-            enabled: true
-            allowOrigins:
-              - https://app.example.com
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          skipAuth:
+            - https://app.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    exists:
+      path: spec.oidc
+  - documentIndex: 0
+    exists:
+      path: spec.cors
+  template: gateway-securitypolicy-shared.yaml
+- it: should add a public SecurityPolicy for cors on the skipAuth route
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            skipAuth:
             - path: /healthz
               method: GET
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 2
-      - documentIndex: 1
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-public-security
-      - documentIndex: 1
-        notExists:
-          path: spec.oidc
-      - documentIndex: 1
-        exists:
-          path: spec.cors
-
-  - it: should render denyRedirect by default and deterministic cookie names
-    release:
-      name: release-name
-      namespace: argus-karpenter-lens-rdev
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-      services:
-        app: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[0].name
-          value: Sec-Fetch-Mode
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[0].type
-          value: RegularExpression
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[0].value
-          value: cors|no-cors|same-origin
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[2].name
-          value: X-Requested-With
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.cookieNames.accessToken
-          value: AccessToken-argus-karpenter-lens-rdev-app
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.cookieNames.idToken
-          value: IdToken-argus-karpenter-lens-rdev-app
-      - documentIndex: 0
-        notExists:
-          path: spec.oidc.csrfTokenTTL
-
-  - it: should omit denyRedirect when disabled and let cookieNames overrides win
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          denyRedirect:
-            enabled: false
-          csrfTokenTTL: 5m
-          cookieNames:
-            accessToken: MyAccess
-            idToken: MyId
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        notExists:
-          path: spec.oidc.denyRedirect
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.csrfTokenTTL
-          value: 5m
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.cookieNames.accessToken
-          value: MyAccess
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.cookieNames.idToken
-          value: MyId
-
-  - it: should render apiRoutes as :path matchers after the default denyRedirect headers
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          apiRoutes:
+          cors:
+            enabled: true
+            allowOrigins:
+            - https://app.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-service1-public-security
+  - documentIndex: 0
+    notExists:
+      path: spec.oidc
+  - documentIndex: 0
+    exists:
+      path: spec.cors
+  template: gateway-securitypolicy.yaml
+- it: should render denyRedirect by default and deterministic cookie names
+  release:
+    name: release-name
+    namespace: argus-karpenter-lens-rdev
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[0].name
+      value: Sec-Fetch-Mode
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[0].type
+      value: RegularExpression
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[0].value
+      value: cors|no-cors|same-origin
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[2].name
+      value: X-Requested-With
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.cookieNames.accessToken
+      value: AccessToken-oidc-protected-default-api-example-com
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.cookieNames.idToken
+      value: IdToken-oidc-protected-default-api-example-com
+  - documentIndex: 0
+    notExists:
+      path: spec.oidc.csrfTokenTTL
+  template: gateway-securitypolicy-shared.yaml
+- it: should omit denyRedirect when disabled and let cookieNames overrides win
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            denyRedirect:
+              enabled: false
+            csrfTokenTTL: 5m
+            cookieNames:
+              accessToken: MyAccess
+              idToken: MyId
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    notExists:
+      path: spec.oidc.denyRedirect
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.csrfTokenTTL
+      value: 5m
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.cookieNames.accessToken
+      value: MyAccess
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.cookieNames.idToken
+      value: MyId
+  template: gateway-securitypolicy-shared.yaml
+- it: should render apiRoutes as :path matchers after the default denyRedirect headers
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            apiRoutes:
             - path: /api
             - path: /graphql(\?.*)?$
               matchType: RegularExpression
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[0].name
-          value: Sec-Fetch-Mode
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[3].name
-          value: ":path"
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[3].type
-          value: Prefix
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[3].value
-          value: /api
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[4].type
-          value: RegularExpression
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[4].value
-          value: /graphql(\?.*)?$
-
-  - it: should render only :path matchers when denyRedirect is disabled but apiRoutes are set
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          denyRedirect:
-            enabled: false
-          apiRoutes:
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[0].name
+      value: Sec-Fetch-Mode
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[3].name
+      value: :path
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[3].type
+      value: Prefix
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[3].value
+      value: /api
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[4].type
+      value: RegularExpression
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[4].value
+      value: /graphql(\?.*)?$
+  template: gateway-securitypolicy-shared.yaml
+- it: should render only :path matchers when denyRedirect is disabled but apiRoutes are set
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            denyRedirect:
+              enabled: false
+            apiRoutes:
             - path: /api
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.denyRedirect.headers[0].name
-          value: ":path"
-      - documentIndex: 0
-        lengthEqual:
-          path: spec.oidc.denyRedirect.headers
-          count: 1
-
-  - it: should carry apiRoutes onto per-rule policies and keep the public policy oidc-free
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-          rules:
-            - host: alt.example.com
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[0].name
+      value: :path
+  - documentIndex: 0
+    lengthEqual:
+      path: spec.oidc.denyRedirect.headers
+      count: 1
+  template: gateway-securitypolicy-shared.yaml
+- it: should carry apiRoutes onto per-rule policies and keep the public policy oidc-free
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+        rules:
+        - host: alt.example.com
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            skipAuth:
+            - path: /healthz
+            apiRoutes:
+            - path: /api
           cors:
             enabled: true
             allowOrigins:
-              - https://api.example.com
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          skipAuth:
-            - path: /healthz
-          apiRoutes:
-            - path: /api
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 1
-        equal:
-          path: spec.oidc.denyRedirect.headers[3].name
-          value: ":path"
-      - documentIndex: 1
-        equal:
-          path: spec.oidc.denyRedirect.headers[3].value
-          value: /api
-      - documentIndex: 2
-        notExists:
-          path: spec.oidc
-
-  - it: should fail on an empty apiRoutes path
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          apiRoutes:
-            - path: ""
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: "path must not be empty"
-
-  - it: should fail on a Prefix apiRoutes path without a leading slash
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          apiRoutes:
+            - https://api.example.com
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[3].name
+      value: :path
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[3].value
+      value: /api
+  - documentIndex: 1
+    notExists:
+      path: spec.oidc
+  template: gateway-securitypolicy.yaml
+- it: should fail on an empty apiRoutes path
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            apiRoutes:
+            - path: ''
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: path must not be empty
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail on a Prefix apiRoutes path without a leading slash
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            apiRoutes:
             - path: api
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: "must start with /"
-
-  - it: should fail on a Prefix apiRoutes path of /
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          apiRoutes:
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: must start with /
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail on a Prefix apiRoutes path of /
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            apiRoutes:
             - path: /
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: "making login impossible"
-
-  - it: should fail on an unknown apiRoutes matchType
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          apiRoutes:
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: making login impossible
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail on an unknown apiRoutes matchType
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            apiRoutes:
             - path: /api
               matchType: prefix
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: "not one of Prefix, Exact, RegularExpression"
-
-  - it: should allow 13 apiRoutes with default matchers and fail on 14
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          apiRoutes:
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: not one of Prefix, Exact, RegularExpression
+  template: gateway-securitypolicy-shared.yaml
+- it: should allow 13 apiRoutes with default matchers and fail on 14
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            apiRoutes:
             - path: /a1
             - path: /a2
             - path: /a3
@@ -762,28 +809,30 @@ tests:
             - path: /a11
             - path: /a12
             - path: /a13
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        lengthEqual:
-          path: spec.oidc.denyRedirect.headers
-          count: 16
-
-  - it: should fail on 14 apiRoutes with default matchers enabled
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          apiRoutes:
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    lengthEqual:
+      path: spec.oidc.denyRedirect.headers
+      count: 16
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail on 14 apiRoutes with default matchers enabled
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            apiRoutes:
             - path: /a1
             - path: /a2
             - path: /a3
@@ -798,28 +847,30 @@ tests:
             - path: /a12
             - path: /a13
             - path: /a14
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: "caps denyRedirect matchers at 16"
-
-  - it: should allow 16 apiRoutes when default matchers are disabled and fail on 17
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          denyRedirect:
-            enabled: false
-          apiRoutes:
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: caps denyRedirect matchers at 16
+  template: gateway-securitypolicy-shared.yaml
+- it: should allow 16 apiRoutes when default matchers are disabled and fail on 17
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            denyRedirect:
+              enabled: false
+            apiRoutes:
             - path: /a1
             - path: /a2
             - path: /a3
@@ -836,30 +887,32 @@ tests:
             - path: /a14
             - path: /a15
             - path: /a16
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        lengthEqual:
-          path: spec.oidc.denyRedirect.headers
-          count: 16
-
-  - it: should fail on 17 apiRoutes when default matchers are disabled
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          denyRedirect:
-            enabled: false
-          apiRoutes:
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    lengthEqual:
+      path: spec.oidc.denyRedirect.headers
+      count: 16
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail on 17 apiRoutes when default matchers are disabled
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            denyRedirect:
+              enabled: false
+            apiRoutes:
             - path: /a1
             - path: /a2
             - path: /a3
@@ -877,388 +930,418 @@ tests:
             - path: /a15
             - path: /a16
             - path: /a17
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: "caps denyRedirect matchers at 16"
-
-  - it: should render identical cookie names on per-rule policies and none on public
-    release:
-      name: release-name
-      namespace: testns
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
-          rules:
-            - host: alt.example.com
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: caps denyRedirect matchers at 16
+  template: gateway-securitypolicy-shared.yaml
+- it: should scope per-rule policy cookie names to the rule host
+  release:
+    name: release-name
+    namespace: testns
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+        rules:
+        - host: alt.example.com
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            skipAuth:
+            - path: /healthz
           cors:
             enabled: true
             allowOrigins:
-              - https://api.example.com
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          skipAuth:
-            - path: /healthz
-      services:
-        app: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.oidc.cookieNames.accessToken
-          value: AccessToken-testns-app
-      - documentIndex: 1
-        equal:
-          path: spec.oidc.cookieNames.accessToken
-          value: AccessToken-testns-app
-      - documentIndex: 1
-        equal:
-          path: spec.oidc.denyRedirect.headers[0].name
-          value: Sec-Fetch-Mode
-      - documentIndex: 2
-        notExists:
-          path: spec.oidc
-
-  - it: should render jwt from remoteJWKSUri, defaulting the issuer to the OIDC issuer
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+            - https://api.example.com
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.cookieNames.accessToken
+      value: AccessToken-oidc-protected-default-alt-example-com
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.cookieNames.accessToken
+      value: AccessToken-oidc-protected-default-alt-example-com
+  - documentIndex: 0
+    equal:
+      path: spec.oidc.denyRedirect.headers[0].name
+      value: Sec-Fetch-Mode
+  - documentIndex: 1
+    notExists:
+      path: spec.oidc
+  template: gateway-securitypolicy.yaml
+- it: should render jwt from remoteJWKSUri, defaulting the issuer to the OIDC issuer
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
           jwt:
             enabled: true
             remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        isKind:
-          of: SecurityPolicy
-      # jwt alone (no oidc) → the "-security" suffix
-      - documentIndex: 0
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-security
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].name
-          value: default
-      # issuer defaults to oidcProxyGateway.provider.issuer
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].issuer
-          value: https://czi.okta.com
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].remoteJWKS.uri
-          value: https://czi.okta.com/oauth2/v1/keys
-
-  - it: should use an explicit issuer for a custom authorization server
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+          oidc: {}
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    isKind:
+      of: SecurityPolicy
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-oidc-protected-default
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].name
+      value: default
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].issuer
+      value: https://czi.okta.com
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].remoteJWKS.uri
+      value: https://czi.okta.com/oauth2/v1/keys
+  template: gateway-securitypolicy-shared.yaml
+- it: should use an explicit issuer for a custom authorization server
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           jwt:
             enabled: true
             issuer: https://czi.okta.com/oauth2/aus123
             remoteJWKSUri: https://czi.okta.com/oauth2/aus123/v1/keys
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].issuer
-          value: https://czi.okta.com/oauth2/aus123
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].remoteJWKS.uri
-          value: https://czi.okta.com/oauth2/aus123/v1/keys
-
-  - it: should fail when jwt is enabled without a remoteJWKSUri
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].issuer
+      value: https://czi.okta.com/oauth2/aus123
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].remoteJWKS.uri
+      value: https://czi.okta.com/oauth2/aus123/v1/keys
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail when jwt is enabled without a remoteJWKSUri
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           jwt:
             enabled: true
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: gateway.jwt.remoteJWKSUri is required when gateway.jwt.enabled is true
-
-  - it: should render both oidc and jwt on one SecurityPolicy when both are enabled
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: securityPolicies.<name>.jwt.remoteJWKSUri is required when securityPolicies.<name>.jwt.enabled is true
+  template: gateway-securitypolicy-shared.yaml
+- it: should render both oidc and jwt on one SecurityPolicy when both are enabled
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
           jwt:
             enabled: true
             remoteJWKSUri: https://auth.example.com/keys
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        equal:
-          path: metadata.name
-          value: release-name-stack-service1-oidc
-      - documentIndex: 0
-        isNotEmpty:
-          path: spec.oidc
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].name
-          value: default
-      # jwt reuses the same OIDC issuer
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].issuer
-          value: https://auth.example.com
-
-  - it: should not render jwt on a public (skipAuth) SecurityPolicy
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-oidc-protected-default
+  - documentIndex: 0
+    isNotEmpty:
+      path: spec.oidc
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].name
+      value: default
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].issuer
+      value: https://auth.example.com
+  template: gateway-securitypolicy-shared.yaml
+- it: should not render jwt on a public (skipAuth) SecurityPolicy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            skipAuth:
+            - path: /healthz
           cors:
             enabled: true
-            allowOrigins: ["*"]
+            allowOrigins:
+            - '*'
           jwt:
             enabled: true
             remoteJWKSUri: https://auth.example.com/keys
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://auth.example.com
-          skipAuth:
-            - path: /healthz
-      services:
-        service1: {}
-    asserts:
-      # doc 0 is the gated route (oidc + jwt), doc 1 is the public/skipAuth route:
-      # it carries cors but never jwt or oidc
-      - hasDocuments:
-          count: 2
-      - documentIndex: 1
-        isNotEmpty:
-          path: spec.cors
-      - documentIndex: 1
-        notExists:
-          path: spec.jwt
-      - documentIndex: 1
-        notExists:
-          path: spec.oidc
-
-  - it: should render multiple JWT providers when providers list is specified
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    isNotEmpty:
+      path: spec.cors
+  - documentIndex: 0
+    notExists:
+      path: spec.jwt
+  - documentIndex: 0
+    notExists:
+      path: spec.oidc
+  template: gateway-securitypolicy.yaml
+- it: should render multiple JWT providers when providers list is specified
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           jwt:
             enabled: true
             providers:
-              - name: okta
-                issuer: https://czi.okta.com
-                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
-              - name: github-actions
-                issuer: https://token.actions.githubusercontent.com
-                remoteJWKSUri: https://token.actions.githubusercontent.com/.well-known/jwks
-              - name: eks-dev
-                issuer: https://oidc.eks.us-west-2.amazonaws.com/id/ABC123
-                remoteJWKSUri: https://oidc.eks.us-west-2.amazonaws.com/id/ABC123/keys
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        lengthEqual:
-          path: spec.jwt.providers
-          count: 3
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].name
-          value: okta
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].issuer
-          value: https://czi.okta.com
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].remoteJWKS.uri
-          value: https://czi.okta.com/oauth2/v1/keys
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[1].name
-          value: github-actions
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[1].issuer
-          value: https://token.actions.githubusercontent.com
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[2].name
-          value: eks-dev
-
-  - it: should fail when jwt providers list has a provider missing name
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+            - name: okta
+              issuer: https://czi.okta.com
+              remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+            - name: github-actions
+              issuer: https://token.actions.githubusercontent.com
+              remoteJWKSUri: https://token.actions.githubusercontent.com/.well-known/jwks
+            - name: eks-dev
+              issuer: https://oidc.eks.us-west-2.amazonaws.com/id/ABC123
+              remoteJWKSUri: https://oidc.eks.us-west-2.amazonaws.com/id/ABC123/keys
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    lengthEqual:
+      path: spec.jwt.providers
+      count: 3
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].name
+      value: okta
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].issuer
+      value: https://czi.okta.com
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].remoteJWKS.uri
+      value: https://czi.okta.com/oauth2/v1/keys
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[1].name
+      value: github-actions
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[1].issuer
+      value: https://token.actions.githubusercontent.com
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[2].name
+      value: eks-dev
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail when jwt providers list has a provider missing name
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           jwt:
             enabled: true
             providers:
-              - issuer: https://czi.okta.com
-                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: gateway.jwt.providers\[0\].name is required
-
-  - it: should fail when jwt providers list has a provider missing issuer
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+            - issuer: https://czi.okta.com
+              remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: securityPolicies.<name>.jwt.providers\[0\].name is required
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail when jwt providers list has a provider missing issuer
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           jwt:
             enabled: true
             providers:
-              - name: okta
-                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: gateway.jwt.providers\[0\].issuer is required
-
-  - it: should fail when jwt providers list has a provider missing remoteJWKSUri
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+            - name: okta
+              remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: securityPolicies.<name>.jwt.providers\[0\].issuer is required
+  template: gateway-securitypolicy-shared.yaml
+- it: should fail when jwt providers list has a provider missing remoteJWKSUri
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           jwt:
             enabled: true
             providers:
-              - name: okta
-                issuer: https://czi.okta.com
-      services:
-        service1: {}
-    asserts:
-      - failedTemplate:
-          errorPattern: gateway.jwt.providers\[0\].remoteJWKSUri is required
-
-  - it: should fall back to legacy single provider when providers list is empty
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
+            - name: okta
+              issuer: https://czi.okta.com
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: securityPolicies.<name>.jwt.providers\[0\].remoteJWKSUri is required
+  template: gateway-securitypolicy-shared.yaml
+- it: should fall back to legacy single provider when providers list is empty
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: custom
+      securityPolicies:
+        custom:
           jwt:
             enabled: true
             issuer: https://czi.okta.com
             remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
             providers: []
-      services:
-        service1: {}
-    asserts:
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].name
-          value: default
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].issuer
-          value: https://czi.okta.com
-      - documentIndex: 0
-        lengthEqual:
-          path: spec.jwt.providers
-          count: 1
-
-  - it: should combine oidc with multi-provider jwt in one SecurityPolicy
-    set:
-      global:
-        ingress:
-          enabled: false
-        gateway:
-          enabled: true
-          host: api.example.com
-          securityPolicy: oidc-protected-default
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].name
+      value: default
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].issuer
+      value: https://czi.okta.com
+  - documentIndex: 0
+    lengthEqual:
+      path: spec.jwt.providers
+      count: 1
+  template: gateway-securitypolicy-shared.yaml
+- it: should combine oidc with multi-provider jwt in one SecurityPolicy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://czi.okta.com
           jwt:
             enabled: true
             providers:
-              - name: okta
-                issuer: https://czi.okta.com
-                remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
-              - name: github-actions
-                issuer: https://token.actions.githubusercontent.com
-                remoteJWKSUri: https://token.actions.githubusercontent.com/.well-known/jwks
-        oidcProxyGateway:
-          clientID: my-client-id
-          provider:
-            issuer: https://czi.okta.com
-      services:
-        service1: {}
-    asserts:
-      - hasDocuments:
-          count: 1
-      - documentIndex: 0
-        isNotEmpty:
-          path: spec.oidc
-      - documentIndex: 0
-        lengthEqual:
-          path: spec.jwt.providers
-          count: 2
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[0].name
-          value: okta
-      - documentIndex: 0
-        equal:
-          path: spec.jwt.providers[1].name
-          value: github-actions
+            - name: okta
+              issuer: https://czi.okta.com
+              remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+            - name: github-actions
+              issuer: https://token.actions.githubusercontent.com
+              remoteJWKSUri: https://token.actions.githubusercontent.com/.well-known/jwks
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    isNotEmpty:
+      path: spec.oidc
+  - documentIndex: 0
+    lengthEqual:
+      path: spec.jwt.providers
+      count: 2
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[0].name
+      value: okta
+  - documentIndex: 0
+    equal:
+      path: spec.jwt.providers[1].name
+      value: github-actions
+  template: gateway-securitypolicy-shared.yaml
