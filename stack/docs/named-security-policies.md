@@ -19,8 +19,8 @@ A policy is realized per hostname, because its `redirectURL` and OauthHMAC cooki
 ```mermaid
 flowchart TD
   svc["service.gateway.securityPolicy"] -->|"named"| named["securityPolicies.<name>"]
-  svc -->|"default (or omitted, protected)"| def["built-in default policy"]
-  svc -->|"none"| public["no policy"]
+  svc -->|"oidc-protected-default"| def["built-in oidc-protected-default policy"]
+  svc -->|"omitted or none"| public["no policy (public)"]
   named --> group["group by (policyName, host)"]
   def --> group
   group -->|">=1 member"| onePolicy["one SecurityPolicy per (policy, host)"]
@@ -30,13 +30,13 @@ flowchart TD
 
 - Remove the top-level `oidcProxyGateway` block and the `gateway.cors`, `gateway.ipAllowList`, `gateway.basicAuth`, `gateway.jwt` and `gateway.oidcProtected` fields. The gateway block keeps only route-shaped fields such as `host`, `paths`, `rules`, `vanity`, `timeouts`, headers and `tlsPassthrough`.
 - A global-only `securityPolicies:` map, one entry per named policy, each carrying `oidc` (the former `oidcProxyGateway` fields), `basicAuth`, `jwt`, `cors`, `ipAllowList` and `annotations`. It is not under the `services` `$ref`, so it cannot be set per service.
-- A `gateway.securityPolicy: ""` string on the service shape. Its value is a policy name, `default` or `none`.
-- A built-in `default` policy is synthesized when `securityPolicies.default` is absent, using `argus-global-oidc`, issuer `https://czi.okta.com`, the current default scopes, `denyRedirect: true` and `logoutPath: /logout`. So `gateway.securityPolicy: default` is zero-config.
+- A `gateway.securityPolicy: ""` string on the service shape. Its value is a policy name, `oidc-protected-default` or `none`. The empty value means `none`, so a gateway service is public unless it names a policy. There is no protected-by-default. Naming a policy is the only opt-in, which matches today's `oidcProtected: false` default and keeps public sites and machine APIs public on upgrade.
+- A built-in `oidc-protected-default` policy is synthesized when `securityPolicies.oidc-protected-default` is absent, using `argus-global-oidc`, issuer `https://czi.okta.com`, the current default scopes, `denyRedirect: true` and `logoutPath: /logout`. So `gateway.securityPolicy: oidc-protected-default` is zero-config.
 
 ## Resolution and rendering
 
-- `securityPolicy.definitions` returns the declared map with the built-in `default` merged in.
-- `securityPolicy.resolve` returns a service's effective policy name and settings. Precedence is an explicit `gateway.securityPolicy` name, then `default` when the service is protected, then none. There is no legacy branch.
+- `securityPolicy.definitions` returns the declared map with the built-in `oidc-protected-default` merged in.
+- `securityPolicy.resolve` returns a service's effective policy name and settings. It uses the explicit `gateway.securityPolicy` name. When that is omitted or `none`, the service gets no policy and is public. There is no legacy branch and no protected-by-default.
 - `gateway.securityPolicy.body` is refactored to take a resolved policy dict instead of reading `oidcProxyGateway` and `gateway.cors`/`...` off the service. This is the core decoupling.
 - The host-only grouping from PR #549 becomes grouping by `(policyName, host)`.
 - Default cookie names for a policy derive from `(policyName, host)`, not a service name, so the session is stable regardless of membership.
@@ -50,33 +50,45 @@ flowchart TD
 
 ## Example values
 
-Zero-config protection with the built-in default policy:
+A public service. With `securityPolicy` omitted, no `SecurityPolicy` is rendered and the route stays public, the same as `securityPolicy: none`:
+
+```yaml
+services:
+  public-site:
+    gateway:
+      host: www.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+```
+
+Zero-config protection with the built-in `oidc-protected-default` policy:
 
 ```yaml
 services:
   app:
     gateway:
-      securityPolicy: default
+      securityPolicy: oidc-protected-default
       host: app.example.com
       paths:
         - path: /
           pathType: Prefix
 ```
 
-A SPA and its API sharing one session on one host. Both name `default`, so both routes land under one policy and one cookie:
+A SPA and its API sharing one session on one host. Both name `oidc-protected-default`, so both routes land under one policy and one cookie:
 
 ```yaml
 services:
   frontend:
     gateway:
-      securityPolicy: default
+      securityPolicy: oidc-protected-default
       host: app.example.com
       paths:
         - path: /
           pathType: Prefix
   backend:
     gateway:
-      securityPolicy: default
+      securityPolicy: oidc-protected-default
       host: app.example.com
       paths:
         - path: /api
@@ -100,7 +112,7 @@ securityPolicies:
 services:
   app:
     gateway:
-      securityPolicy: default
+      securityPolicy: oidc-protected-default
       host: app.example.com
       paths:
         - path: /
@@ -159,10 +171,10 @@ services:
 
 ## Example tests
 
-These are illustrative `helm unittest` cases against the folded renderer. The policy object name `release-name-stack-default-oidc` assumes the proposed `<release>-stack-<policyName>-oidc` scheme.
+These are illustrative `helm unittest` cases against the folded renderer. The policy object name `release-name-stack-oidc-protected-default` assumes the proposed `<release>-stack-<policyName>` scheme.
 
 ```yaml
-- it: should render the built-in default policy for a protected service with no securityPolicies declared
+- it: should render the built-in policy for a protected service with no securityPolicies declared
   set:
     global:
       ingress: {enabled: false}
@@ -170,13 +182,24 @@ These are illustrative `helm unittest` cases against the folded renderer. The po
     services:
       app:
         gateway:
-          securityPolicy: default
+          securityPolicy: oidc-protected-default
           paths: [{path: /, pathType: Prefix}]
   asserts:
     - hasDocuments: {count: 1}
-    - equal: {path: metadata.name, value: release-name-stack-default-oidc}
+    - equal: {path: metadata.name, value: release-name-stack-oidc-protected-default}
     - equal: {path: spec.oidc.redirectURL, value: https://app.example.com/oauth2/callback}
     - lengthEqual: {path: spec.targetRefs, count: 1}
+
+- it: should render no SecurityPolicy when securityPolicy is omitted
+  set:
+    global:
+      ingress: {enabled: false}
+      gateway: {enabled: true, host: www.example.com}
+    services:
+      public-site:
+        gateway: {paths: [{path: /, pathType: Prefix}]}
+  asserts:
+    - hasDocuments: {count: 0}
 
 - it: should cover both services with one policy when they share a named policy on one host
   set:
@@ -185,9 +208,9 @@ These are illustrative `helm unittest` cases against the folded renderer. The po
       gateway: {enabled: true, host: app.example.com}
     services:
       frontend:
-        gateway: {securityPolicy: default, paths: [{path: /, pathType: Prefix}]}
+        gateway: {securityPolicy: oidc-protected-default, paths: [{path: /, pathType: Prefix}]}
       backend:
-        gateway: {securityPolicy: default, paths: [{path: /api, pathType: Prefix}]}
+        gateway: {securityPolicy: oidc-protected-default, paths: [{path: /api, pathType: Prefix}]}
   asserts:
     - hasDocuments: {count: 1}
     - lengthEqual: {path: spec.targetRefs, count: 2}
@@ -204,7 +227,7 @@ These are illustrative `helm unittest` cases against the folded renderer. The po
           provider: {issuer: https://czi.okta.com}
     services:
       app:
-        gateway: {securityPolicy: default, paths: [{path: /, pathType: Prefix}]}
+        gateway: {securityPolicy: oidc-protected-default, paths: [{path: /, pathType: Prefix}]}
       admin:
         gateway: {securityPolicy: admin-okta, paths: [{path: /admin, pathType: Prefix}]}
   asserts:
@@ -216,11 +239,11 @@ These are illustrative `helm unittest` cases against the folded renderer. The po
       ingress: {enabled: false}
       gateway: {enabled: true, host: app.example.com}
     securityPolicies:
-      default:
+      oidc-protected-default:
         annotations: {team: platform}
     services:
-      frontend: {gateway: {securityPolicy: default, paths: [{path: /, pathType: Prefix}]}}
-      backend: {gateway: {securityPolicy: default, paths: [{path: /api, pathType: Prefix}]}}
+      frontend: {gateway: {securityPolicy: oidc-protected-default, paths: [{path: /, pathType: Prefix}]}}
+      backend: {gateway: {securityPolicy: oidc-protected-default, paths: [{path: /api, pathType: Prefix}]}}
   asserts:
     - equal: {path: metadata.annotations.team, value: platform}
 
@@ -244,5 +267,5 @@ Ingress-based OIDC is a separate mechanism and is not affected. `oidc_proxy.yaml
 
 ## Open questions
 
-- Policy object naming should be deterministic and stable, for example `<release>-stack-<policyName>-oidc`, so a later rename does not delete and recreate live policies.
+- Policy object naming should be deterministic and stable, for example `<release>-stack-<policyName>`, so a later rename does not delete and recreate live policies.
 - Basing default cookie names on `(policyName, host)` is intended. Since the feature is thinly adopted there is little live session churn.
