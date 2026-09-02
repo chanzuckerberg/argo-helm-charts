@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test grouped OIDC services keep their non-shared SecurityPolicies
+templates:
+  - gateway-securitypolicy.yaml
+tests:
+  - it: should still emit the public skipAuth policy for a service in a shared OIDC group
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+        securityPolicies:
+          shared:
+            oidcProtected: true
+      services:
+        frontend:
+          gateway:
+            securityPolicy: shared
+            oidcProtected: true
+            paths:
+              - path: /
+                pathType: Prefix
+        backend:
+          gateway:
+            securityPolicy: shared
+            oidcProtected: true
+            cors:
+              enabled: true
+              allowOrigins:
+                - https://app.example.com
+            paths:
+              - path: /api
+                pathType: Prefix
+          oidcProxyGateway:
+            skipAuth:
+              - path: /api/healthz
+                method: GET
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: release-name-stack-backend-public-security
+      - notExists:
+          path: spec.oidc
+      - exists:
+          path: spec.cors
+
+  - it: should still emit per-rule policies for a service in a shared OIDC group
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+        oidcProxyGateway:
+          clientID: my-client-id
+          provider:
+            issuer: https://auth.example.com
+      services:
+        frontend:
+          gateway:
+            oidcProtected: true
+            paths:
+              - path: /
+                pathType: Prefix
+        backend:
+          gateway:
+            oidcProtected: true
+            rules:
+              - host: api2.example.com
+            paths:
+              - path: /api
+                pathType: Prefix
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: release-name-stack-backend-rule-0-oidc
+      # The rule route serves /api on api2.example.com, so the callback has to sit
+      # under /api to be routable there. Same value on main - not a change here.
+      - equal:
+          path: spec.oidc.redirectURL
+          value: https://api2.example.com/api/oauth2/callback

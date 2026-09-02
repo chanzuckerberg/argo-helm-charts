@@ -1,0 +1,123 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test shared SecurityPolicy resolution (named and implicit)
+templates:
+  - gateway-securitypolicy-shared.yaml
+tests:
+  - it: should emit nothing for a single oidcProtected service
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: api.example.com}
+      services:
+        app:
+          gateway:
+            oidcProtected: true
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 0}
+
+  - it: should implicitly share one policy across services on one hostname
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: api.example.com}
+      services:
+        frontend:
+          gateway:
+            oidcProtected: true
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          gateway:
+            oidcProtected: true
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 1}
+      - equal:
+          path: metadata.name
+          value: release-name-stack-frontend-oidc
+      - lengthEqual:
+          path: spec.targetRefs
+          count: 2
+      - equal:
+          path: spec.oidc.redirectURL
+          value: https://api.example.com/oauth2/callback
+
+  - it: should keep separate policies for two different OIDC providers on one hostname
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: api.example.com}
+      services:
+        frontend:
+          gateway:
+            oidcProtected: true
+            paths: [{path: /, pathType: Prefix}]
+        admin:
+          gateway:
+            oidcProtected: true
+            paths: [{path: /admin, pathType: Prefix}]
+          oidcProxyGateway:
+            clientID: admin-app
+    asserts:
+      - hasDocuments: {count: 0}
+
+  - it: should attach services to a named policy and name it after the entry
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: api.example.com}
+        securityPolicies:
+          portal:
+            oidcProtected: true
+      services:
+        frontend:
+          gateway:
+            securityPolicy: portal
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          gateway:
+            securityPolicy: portal
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 1}
+      - equal:
+          path: metadata.name
+          value: release-name-stack-portal
+      - lengthEqual:
+          path: spec.targetRefs
+          count: 2
+      - exists:
+          path: spec.oidc
+
+  - it: should fail when a service names a policy that does not exist
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: api.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: missing
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - failedTemplate:
+          errorPattern: 'global.securityPolicies has no such entry'
+
+  - it: should fail when implicitly grouped services disagree on route-level auth
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: api.example.com}
+      services:
+        frontend:
+          gateway:
+            oidcProtected: true
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          gateway:
+            oidcProtected: true
+            ipAllowList: [10.0.0.0/8]
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - failedTemplate:
+          errorPattern: 'Envoy Gateway allows only one policy per route'

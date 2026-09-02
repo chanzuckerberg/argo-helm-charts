@@ -1,0 +1,68 @@
+{{- $root := . -}}
+{{- $keys := list -}}
+{{- range $name, $_ := .Values.services -}}
+  {{- if eq (include "gateway.usesSharedPolicy" (dict "root" $root "name" $name)) "true" -}}
+    {{- $keys = append $keys (include "gateway.policyKey" (dict "root" $root "name" $name)) -}}
+  {{- end -}}
+{{- end -}}
+{{- range $key := ($keys | uniq | sortAlpha) }}
+  {{- $members := splitList " " (include "gateway.namedPolicyMembers" (dict "root" $root "key" $key)) -}}
+  {{- $primary := include "gateway.namedPolicyPrimary" (dict "root" $root "key" $key) -}}
+  {{- $pv := fromYaml (include "service.context" (dict "root" $root "name" $primary)) -}}
+  {{- $named := "" -}}
+  {{- if hasPrefix "named/" $key -}}
+    {{- $named = trimPrefix "named/" $key -}}
+    {{- $def := index ($root.Values.global.securityPolicies | default dict) $named -}}
+    {{- if not $def -}}
+      {{- fail (printf "gateway.securityPolicy: services %s name %q but global.securityPolicies has no such entry" (join ", " $members) $named) -}}
+    {{- end -}}
+    {{- $_ := set $pv "gateway" (mergeOverwrite $pv.gateway (omit $def "oidcProxyGateway")) -}}
+    {{- if $def.oidcProxyGateway -}}
+      {{- $_ := set $pv "oidcProxyGateway" (mergeOverwrite ($pv.oidcProxyGateway | default dict) $def.oidcProxyGateway) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $pctx := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $pv -}}
+  {{- $host := ($pv.gateway.host | default $root.Values.global.gateway.host) -}}
+  {{- if eq (include "gateway.hasSecurityPolicy" $pctx) "true" }}
+  {{/* One route carries one SecurityPolicy, so services sharing a policy cannot
+       each keep their own route-level authorization. Fail rather than silently
+       applying the primary's to everyone. */}}
+  {{- $routeAuth := list -}}
+  {{- range $name := $members -}}
+    {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
+    {{- $g := $v.gateway | default dict -}}
+    {{- if eq $named "" -}}
+      {{- $routeAuth = append $routeAuth (dict "cors" ($g.cors | default dict) "ipAllowList" ($g.ipAllowList | default list) "basicAuth" ($g.basicAuth | default dict) "jwt" ($g.jwt | default dict) | toYaml) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if gt (len ($routeAuth | uniq)) 1 -}}
+    {{- fail (printf "services %s share hostname %s and the same OIDC provider, so they need one SecurityPolicy and therefore one set of gateway.cors/ipAllowList/basicAuth/jwt - Envoy Gateway allows only one policy per route. Align those settings, or attach each service to its own global.securityPolicies entry via gateway.securityPolicy." (join ", " $members) $host) -}}
+  {{- end -}}
+  {{- $annotations := dict -}}
+  {{- range $name := $members -}}
+    {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
+    {{- $annotations = mergeOverwrite $annotations ($v.annotations | default dict) (($v.oidcProxyGateway | default dict).annotations | default dict) -}}
+  {{- end }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ if ne $named "" }}{{ include "stack.fullname" $pctx | lower }}-{{ $named }}{{ else }}{{ include "service.fullname" $pctx }}-{{ include "gateway.securityPolicy.suffix" $pctx }}{{ end }}
+  labels:
+    {{- include "service.labels" $pctx | nindent 4 }}
+  annotations:
+    {{- with $annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  targetRefs:
+    {{- range $name := $members }}
+    {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
+    {{- $svc := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $v }}
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ include "service.fullname" $svc }}
+    {{- end }}
+  {{- include "gateway.securityPolicy.body" (dict "ctx" $pctx "host" $host "public" false) | nindent 2 }}
+  {{- end }}
+{{- end }}

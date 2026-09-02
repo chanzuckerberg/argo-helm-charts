@@ -468,27 +468,83 @@ auto-enable and auto-disable rules. Takes (dict "root" $ "name" <serviceName>).
 {{- end -}}
 
 {{/*
-Service names that share one OIDC session on a given hostname: every
-gateway-enabled, oidcProtected service whose effective gateway.host matches.
-Envoy Gateway derives the OauthHMAC cookie suffix per SecurityPolicy, so
-separate policies on one hostname cannot validate each other's session -
-these have to be covered by a single policy. Takes (dict "root" $ "host" <host>).
-Returns a space-separated, sorted list.
+The SecurityPolicy a service resolves to. An explicit gateway.securityPolicy
+name wins. Otherwise services fall back to an implicit key derived from the
+hostname they serve and their OIDC provider config, so that services which
+plainly need one login share one policy without anyone having to opt in -
+Envoy Gateway derives its session cookies per policy, so two policies on one
+hostname cannot validate each other's session. Services whose implicit key is
+unique to them keep their own per-service policy and its existing name.
+Takes (dict "root" $ "name" <serviceName>).
 */}}
-{{- define "gateway.oidcSessionGroup" -}}
+{{- define "gateway.policyKey" -}}
 {{- $root := .root -}}
-{{- $host := .host -}}
-{{- $names := list -}}
+{{- $v := fromYaml (include "service.context" (dict "root" $root "name" .name)) -}}
+{{- $g := $v.gateway | default dict -}}
+{{- if ne ($g.securityPolicy | default "") "" -}}
+{{- printf "named/%s" $g.securityPolicy -}}
+{{- else if $g.oidcProtected -}}
+{{- printf "auto/%s/%s" ($g.host | default $root.Values.global.gateway.host) (($v.oidcProxyGateway | default dict) | toYaml | sha256sum | trunc 8) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Services resolving to a given policy key, space separated and sorted.
+Takes (dict "root" $ "key" <policyKey>).
+*/}}
+{{- define "gateway.namedPolicyMembers" -}}
+{{- $root := .root -}}
+{{- $key := .key -}}
+{{- $members := list -}}
 {{- range $name, $_ := $root.Values.services -}}
   {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
   {{- $g := $v.gateway | default dict -}}
-  {{- if and $g.enabled $g.oidcProtected (not (($g.tlsPassthrough | default dict).enabled)) -}}
-    {{- if eq ($g.host | default $host) $host -}}
-      {{- $names = append $names $name -}}
+  {{- if and $g.enabled (not (($g.tlsPassthrough | default dict).enabled)) -}}
+    {{- if eq (include "gateway.policyKey" (dict "root" $root "name" $name)) $key -}}
+      {{- $members = append $members $name -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- join " " (sortAlpha $names) -}}
+{{- join " " (sortAlpha $members) -}}
+{{- end -}}
+
+{{/*
+Whether a service's primary SecurityPolicy is rendered by the shared template
+rather than per-service: either it names a policy explicitly, or its implicit
+key is shared with at least one other service.
+Takes (dict "root" $ "name" <serviceName>).
+*/}}
+{{- define "gateway.usesSharedPolicy" -}}
+{{- $root := .root -}}
+{{- $key := include "gateway.policyKey" (dict "root" $root "name" .name) -}}
+{{- if ne $key "" -}}
+  {{- if hasPrefix "named/" $key -}}true
+  {{- else if gt (len (splitList " " (include "gateway.namedPolicyMembers" (dict "root" $root "key" $key)))) 1 -}}true
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Root-most member of a shared SecurityPolicy - the service with the shortest
+oidcProxyGateway.basePath - so the policy's redirectURL and logoutPath land on a
+path that service actually serves. Takes (dict "root" $ "key" <policyKey>).
+*/}}
+{{- define "gateway.namedPolicyPrimary" -}}
+{{- $root := .root -}}
+{{- $members := splitList " " (include "gateway.namedPolicyMembers" (dict "root" $root "key" .key)) -}}
+{{- $primary := "" -}}
+{{- $primaryBase := "" -}}
+{{- range $n := $members -}}
+  {{- if ne $n "" -}}
+    {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $n)) -}}
+    {{- $base := include "oidcProxyGateway.basePath" (dict "paths" ($v.gateway.paths | default list)) -}}
+    {{- if or (eq $primary "") (lt (len $base) (len $primaryBase)) -}}
+      {{- $primary = $n -}}
+      {{- $primaryBase = $base -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $primary -}}
 {{- end -}}
 
 {{- define "gateway.hasSecurityPolicy" -}}

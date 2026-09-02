@@ -266,6 +266,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       exposeHeaders: [] # @schema description: Response headers exposed to the browser
       allowCredentials: false # @schema description: Allow credentials
       maxAge: "" # @schema description: Preflight cache duration (e.g. "1h"), empty omits it
+    securityPolicy: "" # @schema description: Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour
     ipAllowList: [] # @schema description: Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it
     backendTLS: # @schema description: TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
       enabled: false # @schema description: Enable upstream TLS
@@ -414,6 +415,7 @@ global: # @schema description: Global configuration for the stack - this serves 
         cpu: 100m # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 64Mi # @schema description: Memory request
 
+  securityPolicies: {} # @schema type: object; additionalProperties: true; description: Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it
   oidcProxyGateway: # @schema description: Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
     clientID: "" # @schema description: OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
     clientSecretName: "" # @schema description: Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.

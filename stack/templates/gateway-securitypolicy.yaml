@@ -36,18 +36,14 @@
 {{- include "validate.gatewayRuleHost" . -}}
 {{- include "validate.gatewaySecurityExclusive" . -}}
 
-{{/* Services sharing a hostname with OIDC are covered by one policy from
-     gateway-securitypolicy-oidc-shared.yaml, because Envoy Gateway derives the
-     OauthHMAC cookie per policy and separate policies cannot validate each
-     other's session. */}}
-{{- $sharedOidc := false -}}
-{{- if .Values.gateway.oidcProtected -}}
-  {{- if gt (len (splitList " " (include "gateway.oidcSessionGroup" (dict "root" $global "host" .Values.gateway.host)))) 1 -}}
-    {{- $sharedOidc = true -}}
-  {{- end -}}
-{{- end -}}
-{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasSecurityPolicy" .) "true") (not $sharedOidc) -}}
+{{/* When this service's primary policy is shared - it names one explicitly, or
+     its implicit key is shared with another service on the same hostname - the
+     policy comes from gateway-securitypolicy-shared.yaml instead. Per-rule and
+     public policies are per-host and per-path, so they still render here. */}}
+{{- $sharedPolicy := eq (include "gateway.usesSharedPolicy" (dict "root" $global "name" .Values.name)) "true" -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasSecurityPolicy" .) "true") -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" . -}}
+{{- if not $sharedPolicy }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
@@ -69,6 +65,7 @@ spec:
       kind: HTTPRoute
       name: {{ include "service.fullname" . }}
   {{- include "gateway.securityPolicy.body" (dict "ctx" . "host" .Values.gateway.host "public" false) | nindent 2 }}
+{{- end }}
 {{- range $i, $rule := .Values.gateway.rules }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
