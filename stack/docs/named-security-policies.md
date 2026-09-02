@@ -48,6 +48,194 @@ flowchart TD
 - Annotations come from the policy definition, so nothing is dropped.
 - The config-equality failure is gone, because settings are centralized and there is nothing to disagree on.
 
+## Example values
+
+Zero-config protection with the built-in default policy:
+
+```yaml
+services:
+  app:
+    gateway:
+      securityPolicy: default
+      host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+```
+
+A SPA and its API sharing one session on one host. Both name `default`, so both routes land under one policy and one cookie:
+
+```yaml
+services:
+  frontend:
+    gateway:
+      securityPolicy: default
+      host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  backend:
+    gateway:
+      securityPolicy: default
+      host: app.example.com
+      paths:
+        - path: /api
+          pathType: Prefix
+```
+
+Two OIDC providers on one host, the case that fails today. A second named policy runs its own Okta client, and the two render as separate policies:
+
+```yaml
+securityPolicies:
+  admin-okta:
+    oidc:
+      clientSecretName: admin-okta-client
+      provider:
+        issuer: https://czi.okta.com
+      scopes: [openid, profile, email, groups]
+    cors:
+      enabled: true
+      allowOrigins: ["https://app.example.com"]
+
+services:
+  app:
+    gateway:
+      securityPolicy: default
+      host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  admin:
+    gateway:
+      securityPolicy: admin-okta
+      host: app.example.com
+      paths:
+        - path: /admin
+          pathType: Prefix
+```
+
+A full policy definition, showing the `oidc` block that carries the former `oidcProxyGateway` fields, plus a public service that opts out:
+
+```yaml
+securityPolicies:
+  data-portal:
+    oidc:
+      clientSecretName: ""            # empty uses globalSecretName
+      globalSecretName: argus-global-oidc
+      provider:
+        issuer: https://czi.okta.com
+      scopes: [openid, profile, email, groups]
+      logoutPath: /logout
+      denyRedirect:
+        enabled: true
+      skipAuth:
+        - path: /healthz
+          method: GET
+      apiRoutes:
+        - path: /api
+          matchType: Prefix
+    ipAllowList: []
+    annotations:
+      team: data-platform
+    jwt:
+      enabled: false
+
+services:
+  portal:
+    gateway:
+      securityPolicy: data-portal
+      host: portal.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  public-api:
+    gateway:
+      securityPolicy: none
+      host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+```
+
+## Example tests
+
+These are illustrative `helm unittest` cases against the folded renderer. The policy object name `release-name-stack-default-oidc` assumes the proposed `<release>-stack-<policyName>-oidc` scheme.
+
+```yaml
+- it: should render the built-in default policy for a protected service with no securityPolicies declared
+  set:
+    global:
+      ingress: {enabled: false}
+      gateway: {enabled: true, host: app.example.com}
+    services:
+      app:
+        gateway:
+          securityPolicy: default
+          paths: [{path: /, pathType: Prefix}]
+  asserts:
+    - hasDocuments: {count: 1}
+    - equal: {path: metadata.name, value: release-name-stack-default-oidc}
+    - equal: {path: spec.oidc.redirectURL, value: https://app.example.com/oauth2/callback}
+    - lengthEqual: {path: spec.targetRefs, count: 1}
+
+- it: should cover both services with one policy when they share a named policy on one host
+  set:
+    global:
+      ingress: {enabled: false}
+      gateway: {enabled: true, host: app.example.com}
+    services:
+      frontend:
+        gateway: {securityPolicy: default, paths: [{path: /, pathType: Prefix}]}
+      backend:
+        gateway: {securityPolicy: default, paths: [{path: /api, pathType: Prefix}]}
+  asserts:
+    - hasDocuments: {count: 1}
+    - lengthEqual: {path: spec.targetRefs, count: 2}
+
+- it: should render one policy per named policy when two providers share a host
+  set:
+    global:
+      ingress: {enabled: false}
+      gateway: {enabled: true, host: app.example.com}
+    securityPolicies:
+      admin-okta:
+        oidc:
+          clientSecretName: admin-okta-client
+          provider: {issuer: https://czi.okta.com}
+    services:
+      app:
+        gateway: {securityPolicy: default, paths: [{path: /, pathType: Prefix}]}
+      admin:
+        gateway: {securityPolicy: admin-okta, paths: [{path: /admin, pathType: Prefix}]}
+  asserts:
+    - hasDocuments: {count: 2}
+
+- it: should take annotations from the policy definition onto the shared policy
+  set:
+    global:
+      ingress: {enabled: false}
+      gateway: {enabled: true, host: app.example.com}
+    securityPolicies:
+      default:
+        annotations: {team: platform}
+    services:
+      frontend: {gateway: {securityPolicy: default, paths: [{path: /, pathType: Prefix}]}}
+      backend: {gateway: {securityPolicy: default, paths: [{path: /api, pathType: Prefix}]}}
+  asserts:
+    - equal: {path: metadata.annotations.team, value: platform}
+
+- it: should render no SecurityPolicy for a service that opts out
+  set:
+    global:
+      ingress: {enabled: false}
+      gateway: {enabled: true, host: api.example.com}
+    services:
+      public-api:
+        gateway: {securityPolicy: none, paths: [{path: /, pathType: Prefix}]}
+  asserts:
+    - hasDocuments: {count: 0}
+```
+
 ## Breaking change and scope
 
 Every stack using the gateway OIDC feature must move its `oidcProxyGateway`/`cors`/`ipAllowList`/`basicAuth`/`jwt`/`oidcProtected` values into a `securityPolicies` entry and reference it with `gateway.securityPolicy`. `Chart.yaml` goes to 3.0.0.
