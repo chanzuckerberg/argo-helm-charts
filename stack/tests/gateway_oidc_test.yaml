@@ -10,7 +10,7 @@ tests:
           enabled: false
         gateway:
           enabled: false
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
       services:
         service1: {}
     asserts:
@@ -24,7 +24,6 @@ tests:
           enabled: false
         gateway:
           enabled: true
-          oidcProtected: false
       services:
         service1: {}
     asserts:
@@ -39,7 +38,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /
               pathType: Prefix
@@ -73,7 +72,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /
               pathType: Prefix
@@ -114,7 +113,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           rules:
             - host: api2.example.com
         oidcProxyGateway:
@@ -171,7 +170,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /backend
               pathType: Prefix
@@ -199,7 +198,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /
               pathType: Prefix
@@ -227,7 +226,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /portal
               pathType: Prefix
@@ -267,7 +266,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /portal
               pathType: Prefix
@@ -297,7 +296,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /portal
               pathType: Prefix
@@ -327,7 +326,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /oauth2/callback
               pathType: Exact
@@ -355,7 +354,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           vanity:
             enabled: true
         oidcProxyGateway:
@@ -381,7 +380,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           vanity:
             enabled: true
         oidcProxyGateway:
@@ -423,7 +422,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           sectionName: https
         oidcProxyGateway:
           clientID: my-client-id
@@ -450,7 +449,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           rules:
             - host: api2.example.com
         oidcProxyGateway:
@@ -477,7 +476,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /
               pathType: Prefix

@@ -330,6 +330,19 @@ Validate that each gateway rule has a host specified
 Return the OIDC issuer URL.
 (Envoy Gateway does not yet support issuerRef, so this must be a string.)
 */}}
+{{- define "securityPolicy.issuer" -}}
+{{- $iss := ((.policy.oidc | default dict).provider | default dict).issuer -}}
+{{- if not $iss -}}
+  {{- fail (printf "securityPolicies.%s.oidc.provider.issuer is required" .name) -}}
+{{- end -}}
+{{- $iss -}}
+{{- end -}}
+
+{{- define "securityPolicy.secretName" -}}
+{{- $o := .policy.oidc | default dict -}}
+{{- if $o.clientSecretName -}}{{- $o.clientSecretName -}}{{- else -}}{{- $o.globalSecretName | default "argus-global-oidc" -}}{{- end -}}
+{{- end -}}
+
 {{- define "oidcProxyGateway.issuer" -}}
 {{- if not .Values.oidcProxyGateway.provider.issuer -}}
   {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled." -}}
@@ -432,8 +445,10 @@ A route can carry only one SecurityPolicy, and oidc + basicAuth are independent
 auth mechanisms; combining them is unsupported.
 */}}
 {{- define "validate.gatewaySecurityExclusive" -}}
-{{- if and .Values.gateway.oidcProtected .Values.gateway.basicAuth.enabled -}}
-  {{- fail "gateway.oidcProtected and gateway.basicAuth.enabled cannot both be true on the same service. Pick one auth method." -}}
+{{- range $name, $def := fromYaml (include "securityPolicy.definitions" .) -}}
+  {{- if and $def.oidc ($def.basicAuth).enabled -}}
+    {{- fail (printf "securityPolicies.%s sets both oidc and basicAuth. Pick one auth method." $name) -}}
+  {{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -468,31 +483,93 @@ auto-enable and auto-disable rules. Takes (dict "root" $ "name" <serviceName>).
 {{- end -}}
 
 {{/*
-The SecurityPolicy a service resolves to. An explicit gateway.securityPolicy
-name wins. Otherwise services fall back to an implicit key derived from the
-hostname they serve and their OIDC provider config, so that services which
-plainly need one login share one policy without anyone having to opt in -
-Envoy Gateway derives its session cookies per policy, so two policies on one
-hostname cannot validate each other's session. Services whose implicit key is
-unique to them keep their own per-service policy and its existing name.
+Declared securityPolicies with the built-in oidc-protected-default merged in, so
+gateway.securityPolicy: oidc-protected-default needs no configuration.
+Takes the root context.
+*/}}
+{{- define "securityPolicy.definitions" -}}
+{{- $declared := .Values.global.securityPolicies | default dict -}}
+{{- $builtin := dict "oidc" (dict
+      "provider" (dict "issuer" "https://czi.okta.com")
+      "globalSecretName" "argus-global-oidc"
+      "scopes" (list "openid" "profile" "email" "groups")
+      "denyRedirect" (dict "enabled" true)
+      "logoutPath" "/logout"
+      "cookieRefresh" "59m"
+    ) -}}
+{{- $defaults := dict "oidc-protected-default" $builtin -}}
+{{- $merged := mergeOverwrite $defaults $declared -}}
+{{/* Normalize every entry over a skeleton so the render can assume the shape */}}
+{{- $skeleton := dict
+      "cors" (dict "enabled" false)
+      "ipAllowList" (list)
+      "basicAuth" (dict "enabled" false)
+      "jwt" (dict "enabled" false "providers" (list))
+      "annotations" (dict) -}}
+{{- $oidcSkeleton := dict
+      "provider" (dict)
+      "cookieNames" (dict)
+      "denyRedirect" (dict "enabled" false)
+      "apiRoutes" (list)
+      "skipAuth" (list) -}}
+{{- $out := dict -}}
+{{- range $name, $def := $merged -}}
+  {{- $d := mergeOverwrite (deepCopy $skeleton) $def -}}
+  {{- if $d.oidc -}}
+    {{- $_ := set $d "oidc" (mergeOverwrite (deepCopy $oidcSkeleton) $d.oidc) -}}
+  {{- end -}}
+  {{- $_ := set $out $name $d -}}
+{{- end -}}
+{{- $out | toYaml -}}
+{{- end -}}
+
+{{/*
+A service's effective policy name, or "" when it is public. An omitted or "none"
+gateway.securityPolicy means no policy is attached.
 Takes (dict "root" $ "name" <serviceName>).
 */}}
-{{- define "gateway.policyKey" -}}
+{{- define "securityPolicy.name" -}}
+{{- $v := fromYaml (include "service.context" (dict "root" .root "name" .name)) -}}
+{{- $name := (($v.gateway | default dict).securityPolicy | default "") -}}
+{{- if and (ne $name "") (ne $name "none") -}}{{- $name -}}{{- end -}}
+{{- end -}}
+
+{{/*
+A service's resolved policy settings as YAML, or "" when it is public. Fails when
+the service names a policy that is not declared.
+Takes (dict "root" $ "name" <serviceName>).
+*/}}
+{{- define "securityPolicy.resolve" -}}
 {{- $root := .root -}}
-{{- $v := fromYaml (include "service.context" (dict "root" $root "name" .name)) -}}
-{{- $g := $v.gateway | default dict -}}
-{{- if ne ($g.securityPolicy | default "") "" -}}
-{{- printf "named/%s" $g.securityPolicy -}}
-{{- else if $g.oidcProtected -}}
-{{- printf "auto/%s/%s" ($g.host | default $root.Values.global.gateway.host) (($v.oidcProxyGateway | default dict) | toYaml | sha256sum | trunc 8) -}}
+{{- $name := include "securityPolicy.name" (dict "root" $root "name" .name) -}}
+{{- if ne $name "" -}}
+  {{- $defs := fromYaml (include "securityPolicy.definitions" $root) -}}
+  {{- if not (hasKey $defs $name) -}}
+    {{- fail (printf "service %q sets gateway.securityPolicy: %q but global.securityPolicies has no such entry. Declare it, or use oidc-protected-default." .name $name) -}}
+  {{- end -}}
+  {{- index $defs $name | toYaml -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Services resolving to a given policy key, space separated and sorted.
-Takes (dict "root" $ "key" <policyKey>).
+Group key for a policy attachment: one SecurityPolicy is realized per policy per
+hostname, because redirectURL and the OauthHMAC session cookie are host-scoped.
+Takes (dict "root" $ "name" <serviceName>).
 */}}
-{{- define "gateway.namedPolicyMembers" -}}
+{{- define "securityPolicy.groupKey" -}}
+{{- $root := .root -}}
+{{- $name := include "securityPolicy.name" (dict "root" $root "name" .name) -}}
+{{- if ne $name "" -}}
+  {{- $v := fromYaml (include "service.context" (dict "root" $root "name" .name)) -}}
+  {{- printf "%s|%s" $name ($v.gateway.host | default $root.Values.global.gateway.host) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Services attached to a group key, space separated and sorted.
+Takes (dict "root" $ "key" <groupKey>).
+*/}}
+{{- define "securityPolicy.groupMembers" -}}
 {{- $root := .root -}}
 {{- $key := .key -}}
 {{- $members := list -}}
@@ -500,7 +577,7 @@ Takes (dict "root" $ "key" <policyKey>).
   {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
   {{- $g := $v.gateway | default dict -}}
   {{- if and $g.enabled (not (($g.tlsPassthrough | default dict).enabled)) -}}
-    {{- if eq (include "gateway.policyKey" (dict "root" $root "name" $name)) $key -}}
+    {{- if eq (include "securityPolicy.groupKey" (dict "root" $root "name" $name)) $key -}}
       {{- $members = append $members $name -}}
     {{- end -}}
   {{- end -}}
@@ -509,32 +586,15 @@ Takes (dict "root" $ "key" <policyKey>).
 {{- end -}}
 
 {{/*
-Whether a service's primary SecurityPolicy is rendered by the shared template
-rather than per-service: either it names a policy explicitly, or its implicit
-key is shared with at least one other service.
-Takes (dict "root" $ "name" <serviceName>).
+Root-most member of a group - the service with the shortest basePath - so the
+policy's redirectURL and logoutPath land on a path that service serves.
+Takes (dict "root" $ "key" <groupKey>).
 */}}
-{{- define "gateway.usesSharedPolicy" -}}
+{{- define "securityPolicy.groupPrimary" -}}
 {{- $root := .root -}}
-{{- $key := include "gateway.policyKey" (dict "root" $root "name" .name) -}}
-{{- if ne $key "" -}}
-  {{- if hasPrefix "named/" $key -}}true
-  {{- else if gt (len (splitList " " (include "gateway.namedPolicyMembers" (dict "root" $root "key" $key)))) 1 -}}true
-  {{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Root-most member of a shared SecurityPolicy - the service with the shortest
-oidcProxyGateway.basePath - so the policy's redirectURL and logoutPath land on a
-path that service actually serves. Takes (dict "root" $ "key" <policyKey>).
-*/}}
-{{- define "gateway.namedPolicyPrimary" -}}
-{{- $root := .root -}}
-{{- $members := splitList " " (include "gateway.namedPolicyMembers" (dict "root" $root "key" .key)) -}}
 {{- $primary := "" -}}
 {{- $primaryBase := "" -}}
-{{- range $n := $members -}}
+{{- range $n := (splitList " " (include "securityPolicy.groupMembers" (dict "root" $root "key" .key))) -}}
   {{- if ne $n "" -}}
     {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $n)) -}}
     {{- $base := include "oidcProxyGateway.basePath" (dict "paths" ($v.gateway.paths | default list)) -}}
@@ -547,9 +607,53 @@ path that service actually serves. Takes (dict "root" $ "key" <policyKey>).
 {{- $primary -}}
 {{- end -}}
 
+{{/*
+Reject values that still set the per-service security surface removed in 3.0.0.
+A key that no longer does anything is a mistake, and for oidcProtected it would
+silently publish a service that used to require a login, so fail rather than
+ignore it. Takes (dict "root" $ "name" <serviceName>).
+*/}}
+{{- define "securityPolicy.validateRemovedKeys" -}}
+{{- $root := .root -}}
+{{- $sv := index $root.Values.services .name -}}
+{{- $g := ($sv.gateway | default dict) -}}
+{{- range $k := (list "oidcProtected" "cors" "ipAllowList" "basicAuth" "jwt") -}}
+  {{- if hasKey $g $k -}}
+    {{- fail (printf "service %q sets gateway.%s, which was removed in stack 3.0.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy. See stack/docs/named-security-policies.md." $.name $k) -}}
+  {{- end -}}
+{{- end -}}
+{{- if hasKey $sv "oidcProxyGateway" -}}
+  {{- fail (printf "service %q sets oidcProxyGateway, which was removed in stack 3.0.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy." $.name) -}}
+{{- end -}}
+{{- if hasKey $root.Values.global "oidcProxyGateway" -}}
+  {{- fail "global.oidcProxyGateway was removed in stack 3.0.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy on each service that should share that session." -}}
+{{- end -}}
+{{- range $k := (list "oidcProtected" "cors" "ipAllowList" "basicAuth" "jwt") -}}
+  {{- if hasKey ($root.Values.global.gateway | default dict) $k -}}
+    {{- fail (printf "global.gateway.%s was removed in stack 3.0.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy." $k) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Whether a service's resolved policy carries OIDC. Takes (dict "root" $ "name" <serviceName>).
+*/}}
+{{- define "securityPolicy.isOidc" -}}
+{{- $y := include "securityPolicy.resolve" (dict "root" .root "name" .name) -}}
+{{- if ne $y "" -}}
+  {{- if (fromYaml $y).oidc -}}true{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Whether a service needs a SecurityPolicy at all. Takes (dict "root" $ "name" <serviceName>).
+*/}}
 {{- define "gateway.hasSecurityPolicy" -}}
-{{- $g := .Values.gateway -}}
-{{- if or $g.oidcProtected $g.basicAuth.enabled $g.cors.enabled (gt (len $g.ipAllowList) 0) $g.jwt.enabled -}}true{{- end -}}
+{{- $y := include "securityPolicy.resolve" (dict "root" .root "name" .name) -}}
+{{- if ne $y "" -}}
+  {{- $p := fromYaml $y -}}
+  {{- if or $p.oidc ($p.basicAuth).enabled ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0) ($p.jwt).enabled -}}true{{- end -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -557,7 +661,7 @@ SecurityPolicy name suffix: keep "-oidc" when OIDC is on (name continuity with t
 pre-consolidation policy, avoids delete/recreate), else "-security".
 */}}
 {{- define "gateway.securityPolicy.suffix" -}}
-{{- if .Values.gateway.oidcProtected -}}oidc{{- else -}}security{{- end -}}
+{{- if .policy.oidc -}}oidc{{- else -}}security{{- end -}}
 {{- end -}}
 
 {{/*
@@ -650,62 +754,63 @@ Public routes (skipAuth) carry only cors/authorization, never oidc/basicAuth.
 */}}
 {{- define "gateway.securityPolicy.body" -}}
 {{- $ := .ctx -}}
-{{- $g := $.Values.gateway -}}
-{{- if and (not .public) $g.oidcProtected }}
+{{- $p := .policy -}}
+{{- $policyName := .policyName -}}
+{{- $basePath := .basePath -}}
+{{- if and (not .public) $p.oidc }}
 oidc:
   provider:
-    issuer: {{ include "oidcProxyGateway.issuer" $ | quote }}
-    {{- if $.Values.oidcProxyGateway.provider.authorizationEndpoint }}
-    authorizationEndpoint: {{ $.Values.oidcProxyGateway.provider.authorizationEndpoint | quote }}
+    issuer: {{ include "securityPolicy.issuer" (dict "policy" $p "name" $policyName) | quote }}
+    {{- if $p.oidc.provider.authorizationEndpoint }}
+    authorizationEndpoint: {{ $p.oidc.provider.authorizationEndpoint | quote }}
     {{- end }}
-    {{- if $.Values.oidcProxyGateway.provider.tokenEndpoint }}
-    tokenEndpoint: {{ $.Values.oidcProxyGateway.provider.tokenEndpoint | quote }}
+    {{- if $p.oidc.provider.tokenEndpoint }}
+    tokenEndpoint: {{ $p.oidc.provider.tokenEndpoint | quote }}
     {{- end }}
-  {{- if $.Values.oidcProxyGateway.clientID }}
-  clientID: {{ $.Values.oidcProxyGateway.clientID | quote }}
+  {{- if $p.oidc.clientID }}
+  clientID: {{ $p.oidc.clientID | quote }}
   {{- else }}
   clientIDRef:
-    name: {{ include "oidcProxyGateway.secretName" $ }}
+    name: {{ include "securityPolicy.secretName" (dict "policy" $p) }}
   {{- end }}
   clientSecret:
-    name: {{ include "oidcProxyGateway.secretName" $ }}
-  {{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" $g.paths) }}
+    name: {{ include "securityPolicy.secretName" (dict "policy" $p) }}
   redirectURL: https://{{ .host }}{{ $basePath }}/oauth2/callback
-  {{- if $.Values.oidcProxyGateway.logoutPath }}
-  logoutPath: {{ printf "%s%s" $basePath $.Values.oidcProxyGateway.logoutPath | quote }}
+  {{- if $p.oidc.logoutPath }}
+  logoutPath: {{ printf "%s%s" $basePath $p.oidc.logoutPath | quote }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.forwardAccessToken }}
-  forwardAccessToken: {{ $.Values.oidcProxyGateway.forwardAccessToken }}
+  {{- if $p.oidc.forwardAccessToken }}
+  forwardAccessToken: {{ $p.oidc.forwardAccessToken }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.refreshToken }}
-  refreshToken: {{ $.Values.oidcProxyGateway.refreshToken }}
+  {{- if $p.oidc.refreshToken }}
+  refreshToken: {{ $p.oidc.refreshToken }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.cookieDomain }}
-  cookieDomain: {{ $.Values.oidcProxyGateway.cookieDomain | quote }}
+  {{- if $p.oidc.cookieDomain }}
+  cookieDomain: {{ $p.oidc.cookieDomain | quote }}
   {{- end }}
   cookieNames:
-    accessToken: {{ $.Values.oidcProxyGateway.cookieNames.accessToken | default (printf "AccessToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
-    idToken: {{ $.Values.oidcProxyGateway.cookieNames.idToken | default (printf "IdToken-%s-%s" $.Release.Namespace (include "service.name" $)) | quote }}
-  {{- $apiRoutes := $.Values.oidcProxyGateway.apiRoutes | default list }}
-  {{- $denyEnabled := $.Values.oidcProxyGateway.denyRedirect.enabled }}
+    accessToken: {{ $p.oidc.cookieNames.accessToken | default (printf "AccessToken-%s-%s" $policyName (.host | replace "." "-")) | quote }}
+    idToken: {{ $p.oidc.cookieNames.idToken | default (printf "IdToken-%s-%s" $policyName (.host | replace "." "-")) | quote }}
+  {{- $apiRoutes := $p.oidc.apiRoutes | default list }}
+  {{- $denyEnabled := $p.oidc.denyRedirect.enabled }}
   {{- $defaultMatcherCount := 0 }}
   {{- if $denyEnabled }}{{- $defaultMatcherCount = 3 }}{{- end }}
   {{- if gt (add (len $apiRoutes) $defaultMatcherCount) 16 }}
-    {{- fail (printf "oidcProxyGateway.apiRoutes: Envoy Gateway caps denyRedirect matchers at 16, got %d apiRoutes plus %d default matchers" (len $apiRoutes) $defaultMatcherCount) }}
+    {{- fail (printf "securityPolicies.<name>.oidc.apiRoutes: Envoy Gateway caps denyRedirect matchers at 16, got %d apiRoutes plus %d default matchers" (len $apiRoutes) $defaultMatcherCount) }}
   {{- end }}
   {{- range $apiRoutes }}
     {{- $matchType := .matchType | default "Prefix" }}
     {{- if not (has $matchType (list "Prefix" "Exact" "RegularExpression")) }}
-      {{- fail (printf "oidcProxyGateway.apiRoutes: matchType %q is not one of Prefix, Exact, RegularExpression" $matchType) }}
+      {{- fail (printf "securityPolicies.<name>.oidc.apiRoutes: matchType %q is not one of Prefix, Exact, RegularExpression" $matchType) }}
     {{- end }}
     {{- if not .path }}
-      {{- fail "oidcProxyGateway.apiRoutes: path must not be empty" }}
+      {{- fail "securityPolicies.<name>.oidc.apiRoutes: path must not be empty" }}
     {{- end }}
     {{- if and (ne $matchType "RegularExpression") (not (hasPrefix "/" .path)) }}
-      {{- fail (printf "oidcProxyGateway.apiRoutes: path %q must start with / for %s matching (request paths always do, so it would never match)" .path $matchType) }}
+      {{- fail (printf "securityPolicies.<name>.oidc.apiRoutes: path %q must start with / for %s matching (request paths always do, so it would never match)" .path $matchType) }}
     {{- end }}
     {{- if and (eq $matchType "Prefix") (eq .path "/") }}
-      {{- fail "oidcProxyGateway.apiRoutes: Prefix / would 401 every request including browser navigations, making login impossible. For a fully headless API, use matchType RegularExpression deliberately." }}
+      {{- fail "securityPolicies.<name>.oidc.apiRoutes: Prefix / would 401 every request including browser navigations, making login impossible. For a fully headless API, use matchType RegularExpression deliberately." }}
     {{- end }}
   {{- end }}
   {{- if or $denyEnabled (gt (len $apiRoutes) 0) }}
@@ -728,73 +833,73 @@ oidc:
         value: {{ .path | quote }}
       {{- end }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.csrfTokenTTL }}
-  csrfTokenTTL: {{ $.Values.oidcProxyGateway.csrfTokenTTL | quote }}
+  {{- if $p.oidc.csrfTokenTTL }}
+  csrfTokenTTL: {{ $p.oidc.csrfTokenTTL | quote }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.scopes }}
+  {{- if $p.oidc.scopes }}
   scopes:
-    {{- toYaml $.Values.oidcProxyGateway.scopes | nindent 4 }}
+    {{- toYaml $p.oidc.scopes | nindent 4 }}
   {{- end }}
-  {{- if $.Values.oidcProxyGateway.resources }}
+  {{- if $p.oidc.resources }}
   resources:
-    {{- toYaml $.Values.oidcProxyGateway.resources | nindent 4 }}
+    {{- toYaml $p.oidc.resources | nindent 4 }}
   {{- end }}
 {{- end }}
-{{- if and (not .public) $g.jwt.enabled }}
+{{- if and (not .public) $p.jwt.enabled }}
 jwt:
   providers:
-{{- if and $g.jwt.providers (gt (len $g.jwt.providers) 0) }}
-  {{- range $i, $provider := $g.jwt.providers }}
-    - name: {{ required (printf "gateway.jwt.providers[%d].name is required. Provide a unique identifier for this JWT provider (e.g., 'okta', 'github-actions', 'eks-dev')" $i) $provider.name | quote }}
+{{- if and $p.jwt.providers (gt (len $p.jwt.providers) 0) }}
+  {{- range $i, $provider := $p.jwt.providers }}
+    - name: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].name is required. Provide a unique identifier for this JWT provider (e.g., 'okta', 'github-actions', 'eks-dev')" $i) $provider.name | quote }}
       remoteJWKS:
-        uri: {{ required (printf "gateway.jwt.providers[%d].remoteJWKSUri is required. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $i) $provider.remoteJWKSUri | quote }}
-      issuer: {{ required (printf "gateway.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer | quote }}
+        uri: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].remoteJWKSUri is required. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $i) $provider.remoteJWKSUri | quote }}
+      issuer: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer | quote }}
   {{- end }}
 {{- else }}
     - name: default
       remoteJWKS:
-        uri: {{ required "gateway.jwt.remoteJWKSUri is required when gateway.jwt.enabled is true (or use gateway.jwt.providers list). Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $g.jwt.remoteJWKSUri | quote }}
-      issuer: {{ required "gateway.jwt.issuer is required when gateway.jwt.enabled is true (or set oidcProxyGateway.provider.issuer, or use gateway.jwt.providers list)" ($g.jwt.issuer | default $.Values.oidcProxyGateway.provider.issuer) | quote }}
+        uri: {{ required "securityPolicies.<name>.jwt.remoteJWKSUri is required when securityPolicies.<name>.jwt.enabled is true (or use gateway.jwt.providers list). Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $p.jwt.remoteJWKSUri | quote }}
+      issuer: {{ required "securityPolicies.<name>.jwt.issuer is required when securityPolicies.<name>.jwt.enabled is true (or set oidcProxyGateway.provider.issuer, or use gateway.jwt.providers list)" ($p.jwt.issuer | default (($p.oidc | default dict).provider | default dict).issuer) | quote }}
 {{- end }}
 {{- end }}
-{{- if and (not .public) $g.basicAuth.enabled }}
+{{- if and (not .public) $p.basicAuth.enabled }}
 basicAuth:
   users:
-    name: {{ required "gateway.basicAuth.secretName is required when gateway.basicAuth.enabled is true" $g.basicAuth.secretName }}
+    name: {{ required "securityPolicies.<name>.basicAuth.secretName is required when securityPolicies.<name>.basicAuth.enabled is true" $p.basicAuth.secretName }}
 {{- end }}
-{{- if $g.cors.enabled }}
+{{- if $p.cors.enabled }}
 cors:
-  {{- if $g.cors.allowOrigins }}
+  {{- if $p.cors.allowOrigins }}
   allowOrigins:
-    {{- toYaml $g.cors.allowOrigins | nindent 4 }}
+    {{- toYaml $p.cors.allowOrigins | nindent 4 }}
   {{- end }}
-  {{- if $g.cors.allowMethods }}
+  {{- if $p.cors.allowMethods }}
   allowMethods:
-    {{- toYaml $g.cors.allowMethods | nindent 4 }}
+    {{- toYaml $p.cors.allowMethods | nindent 4 }}
   {{- end }}
-  {{- if $g.cors.allowHeaders }}
+  {{- if $p.cors.allowHeaders }}
   allowHeaders:
-    {{- toYaml $g.cors.allowHeaders | nindent 4 }}
+    {{- toYaml $p.cors.allowHeaders | nindent 4 }}
   {{- end }}
-  {{- if $g.cors.exposeHeaders }}
+  {{- if $p.cors.exposeHeaders }}
   exposeHeaders:
-    {{- toYaml $g.cors.exposeHeaders | nindent 4 }}
+    {{- toYaml $p.cors.exposeHeaders | nindent 4 }}
   {{- end }}
-  {{- if $g.cors.allowCredentials }}
+  {{- if $p.cors.allowCredentials }}
   allowCredentials: true
   {{- end }}
-  {{- if $g.cors.maxAge }}
-  maxAge: {{ $g.cors.maxAge | quote }}
+  {{- if $p.cors.maxAge }}
+  maxAge: {{ $p.cors.maxAge | quote }}
   {{- end }}
 {{- end }}
-{{- if gt (len $g.ipAllowList) 0 }}
+{{- if gt (len $p.ipAllowList) 0 }}
 authorization:
   defaultAction: Deny
   rules:
     - action: Allow
       principal:
         clientCIDRs:
-          {{- toYaml $g.ipAllowList | nindent 10 }}
+          {{- toYaml $p.ipAllowList | nindent 10 }}
 {{- end }}
 {{- end -}}
 

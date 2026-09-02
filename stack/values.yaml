@@ -226,7 +226,6 @@ global: # @schema description: Global configuration for the stack - this serves 
         path: / # @schema description: HTTPRoute path
         pathType: Prefix # @schema description: HTTPRoute path type (Exact or Prefix)
     rules: [] # @schema description: List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity
-    oidcProtected: false # @schema description: Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway
     vanity: # @schema description: Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)
       enabled: false # @schema description: Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
       hostname: "" # @schema description: Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs
@@ -245,29 +244,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       enabled: false # @schema description: Enable local rate limiting
       requests: 0 # @schema description: Allowed requests per unit
       unit: Second # @schema description: Rate limit unit (Second, Minute, Hour, Day)
-    basicAuth: # @schema description: HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
-      enabled: false # @schema description: Enable basic auth
-      secretName: "" # @schema description: Name of an Opaque Secret with a .htpasswd key
-    jwt: # @schema description: JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
-      enabled: false # @schema description: Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list
-      issuer: "" # @schema description: Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty
-      remoteJWKSUri: "" # @schema description: JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
-      providers: [] # @schema type: array; item: object; itemProperties: {"name": {"type": "string", "description": "Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev'"}, "issuer": {"type": "string", "description": "Expected token issuer (iss claim) - required"}, "remoteJWKSUri": {"type": "string", "description": "JWKS URI for this provider's signing keys - required"}}; description: List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri
-      # NOTE: token audience (aud) validation is intentionally not exposed. It would be good
-      # practice - it pins a token to this API so a token minted for another service (same
-      # issuer and signing keys) cannot be replayed here (RFC 8725) - but a specific audience
-      # requires a custom Okta authorization server, which is not self-service in Argus. Add
-      # an audiences field here (and in the provider block in _helpers.tpl) if that changes.
-    cors: # @schema description: CORS via a SecurityPolicy
-      enabled: false # @schema description: Enable CORS
-      allowOrigins: [] # @schema description: Allowed origins (string patterns)
-      allowMethods: [] # @schema description: Allowed methods
-      allowHeaders: [] # @schema description: Allowed request headers
-      exposeHeaders: [] # @schema description: Response headers exposed to the browser
-      allowCredentials: false # @schema description: Allow credentials
-      maxAge: "" # @schema description: Preflight cache duration (e.g. "1h"), empty omits it
-    securityPolicy: "" # @schema description: Name of an entry in global.securityPolicies to attach to this service instead of rendering a per-service policy. Services naming the same entry share one SecurityPolicy, and therefore one OIDC session - Envoy Gateway derives its session cookies per policy, so services on one hostname that should share a login must share a policy. Empty keeps the per-service behaviour
-    ipAllowList: [] # @schema description: Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it
+    securityPolicy: "" # @schema description: Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or "none" means no policy is attached and the route is public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session
     backendTLS: # @schema description: TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
       enabled: false # @schema description: Enable upstream TLS
       hostname: "" # @schema description: SNI/validation hostname presented by the upstream (required when enabled)
@@ -415,35 +392,7 @@ global: # @schema description: Global configuration for the stack - this serves 
         cpu: 100m # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: CPU request
         memory: 64Mi # @schema description: Memory request
 
-  securityPolicies: {} # @schema type: object; additionalProperties: true; description: Named SecurityPolicy definitions shared by services. Each entry takes the same security keys as gateway.* (oidcProtected, cors, ipAllowList, basicAuth, jwt) plus an oidcProxyGateway block, and is attached by setting gateway.securityPolicy to its name on each service that should share it
-  oidcProxyGateway: # @schema description: Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
-    clientID: "" # @schema description: OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
-    clientSecretName: "" # @schema description: Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.
-    globalSecretName: argus-global-oidc # @schema description: Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.
-    provider: # @schema description: OIDC provider configuration
-      issuer: "https://czi.okta.com" # @schema description: OIDC provider issuer URL
-      authorizationEndpoint: "" # @schema description: Optional authorization endpoint (auto-discovered by provider if empty)
-      tokenEndpoint: "" # @schema description: Optional token endpoint (auto-discovered by provider if empty)
-    skipAuth: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "method": {"type": "string"}}; description: Paths to skip authentication (creates separate public HTTPRoute)
-    apiRoutes: [] # @schema type: array; item: object; itemProperties: {"path": {"type": "string"}, "matchType": {"type": "string"}}; description: API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.
-    logoutPath: "/logout" # @schema description: Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
-    forwardAccessToken: false # @schema description: Forward access token to backend service
-    refreshToken: true # @schema description: Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
-    cookieDomain: "" # @schema description: Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
-    cookieNames: # @schema description: Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.
-      accessToken: "" # @schema description: Custom name for access token cookie
-      idToken: "" # @schema description: Custom name for ID token cookie
-    denyRedirect: # @schema description: Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.
-      enabled: true # @schema description: Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
-    csrfTokenTTL: "" # @schema description: Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
-    scopes: # @schema description: OIDC scopes to request
-      - "openid"
-      - "profile"
-      - "email"
-      - "groups"
-    resources: [] # @schema description: Optional OAuth2 resources parameter
-    annotations: {} # @schema description: Annotations to add to SecurityPolicy resources
-
+  securityPolicies: {} # @schema type: object; additionalProperties: true; description: Named SecurityPolicy definitions. One entry per policy, each carrying oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy; a policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. oidc-protected-default is built in and needs no declaration
   grafanaDashboard:
     enabled: true # @schema description: Enable Grafana dashboard (globally, can be overridden per service)
     refresh: 5m # @schema type: string; pattern: ^([0-9]+(ms|s|m|h|d))?$; description: Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)

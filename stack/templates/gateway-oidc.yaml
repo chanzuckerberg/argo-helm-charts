@@ -36,11 +36,12 @@
 {{- include "validate.gatewayRuleHost" . -}}
 {{- include "validate.oidcCallbackReachable" . -}}
 
-{{- if and .Values.gateway.enabled .Values.gateway.oidcProtected (not .Values.gateway.tlsPassthrough.enabled) -}}
+{{- if and .Values.gateway.enabled (eq (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
+{{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- /* Create public HTTPRoute for skipAuth paths if configured */ -}}
-{{- if gt (len .Values.oidcProxyGateway.skipAuth) 0 -}}
+{{- if gt (len ($p.oidc.skipAuth | default list)) 0 -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -76,7 +77,7 @@ spec:
     - {{ $rule.host }}
   {{- end }}
   rules:
-    {{- range .Values.oidcProxyGateway.skipAuth }}
+    {{- range ($p.oidc.skipAuth | default list) }}
     - matches:
         - path:
             type: PathPrefix

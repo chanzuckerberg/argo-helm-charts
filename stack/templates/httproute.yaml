@@ -35,7 +35,7 @@
 {{- include "validate.gatewayIngressCoexistence" . -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
-{{- if and .Values.gateway.enabled (not .Values.gateway.oidcProtected) (not .Values.gateway.tlsPassthrough.enabled) -}}
+{{- if and .Values.gateway.enabled (ne (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- $redirect := .Values.gateway.redirect -}}

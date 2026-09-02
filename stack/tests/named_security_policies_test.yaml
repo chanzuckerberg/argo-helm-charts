@@ -1,0 +1,129 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test named SecurityPolicies
+templates:
+  - gateway-securitypolicy-shared.yaml
+tests:
+  - it: should render no policy when a service names none
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: www.example.com}
+      services:
+        public-site:
+          gateway:
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 0}
+
+  - it: should render no policy for an explicit none
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: www.example.com}
+      services:
+        public-site:
+          gateway:
+            securityPolicy: none
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 0}
+
+  - it: should protect a single service with the built-in default and no config
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 1}
+      - equal:
+          path: metadata.name
+          value: release-name-stack-oidc-protected-default
+      - equal:
+          path: spec.oidc.provider.issuer
+          value: https://czi.okta.com
+      - equal:
+          path: spec.oidc.clientSecret.name
+          value: argus-global-oidc
+
+  - it: should put two services on one policy so they share a session
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 1}
+      - lengthEqual:
+          path: spec.targetRefs
+          count: 2
+      - equal:
+          path: spec.oidc.redirectURL
+          value: https://app.example.com/oauth2/callback
+
+  - it: should derive cookie names from policy and host, not service
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - equal:
+          path: spec.oidc.cookieNames.accessToken
+          value: AccessToken-oidc-protected-default-app-example-com
+
+  - it: should render two policies for two providers on one hostname
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          admin-okta:
+            oidc:
+              clientSecretName: admin-okta-client
+              provider: {issuer: https://czi.okta.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        admin:
+          gateway:
+            securityPolicy: admin-okta
+            paths: [{path: /admin, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 2}
+
+  - it: should fail when a service names a policy that is not declared
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: nope
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - failedTemplate:
+          errorPattern: 'has no such entry'

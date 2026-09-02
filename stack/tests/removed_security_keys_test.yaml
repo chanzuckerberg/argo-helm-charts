@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test 3.0.0 rejects the removed per-service security surface
+templates:
+  - gateway-securitypolicy.yaml
+tests:
+  - it: should fail rather than silently publish a service still setting gateway.oidcProtected
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        app:
+          gateway:
+            oidcProtected: true
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - failedTemplate:
+          errorPattern: 'gateway.oidcProtected, which was removed in stack 3.0.0'
+
+  - it: should fail on a per-service oidcProxyGateway block
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+          oidcProxyGateway:
+            cookieDomain: example.com
+    asserts:
+      - failedTemplate:
+          errorPattern: 'sets oidcProxyGateway, which was removed in stack 3.0.0'
+
+  - it: should fail on a global oidcProxyGateway block
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        oidcProxyGateway:
+          clientID: my-client
+      services:
+        app:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - failedTemplate:
+          errorPattern: 'global.oidcProxyGateway was removed in stack 3.0.0'
+
+  - it: should fail on per-service gateway.cors
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: oidc-protected-default
+            cors: {enabled: true}
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - failedTemplate:
+          errorPattern: 'gateway.cors, which was removed in stack 3.0.0'

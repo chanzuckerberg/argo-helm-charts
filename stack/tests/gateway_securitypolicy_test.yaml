@@ -25,7 +25,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -67,7 +67,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /portal
               pathType: Prefix
@@ -95,7 +95,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           paths:
             - path: /portal
               pathType: Prefix
@@ -125,7 +125,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
       services:
         service1: {}
     asserts:
@@ -149,7 +149,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         appSecrets:
           envSecret:
             secretName: argus-env
@@ -170,7 +170,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           globalSecretName: my-global-oidc
       services:
@@ -189,7 +189,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientSecretName: my-own-secret
         appSecrets:
@@ -216,7 +216,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           rules:
             - host: api2.example.com
         oidcProxyGateway:
@@ -283,7 +283,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -396,7 +396,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           cors:
             enabled: true
             allowOrigins:
@@ -425,7 +425,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           cors:
             enabled: true
             allowOrigins:
@@ -464,7 +464,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -508,7 +508,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -546,7 +546,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -591,7 +591,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -620,7 +620,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           rules:
             - host: alt.example.com
           cors:
@@ -658,7 +658,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -679,7 +679,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -700,7 +700,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -721,7 +721,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -743,7 +743,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -778,7 +778,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -812,7 +812,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -852,7 +852,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
         oidcProxyGateway:
           clientID: my-client-id
           provider:
@@ -894,7 +894,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           rules:
             - host: alt.example.com
           cors:
@@ -1012,7 +1012,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           jwt:
             enabled: true
             remoteJWKSUri: https://auth.example.com/keys
@@ -1050,7 +1050,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           cors:
             enabled: true
             allowOrigins: ["*"]
@@ -1228,7 +1228,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
           jwt:
             enabled: true
             providers:
