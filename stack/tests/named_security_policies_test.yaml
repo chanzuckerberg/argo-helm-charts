@@ -127,3 +127,183 @@ tests:
     asserts:
       - failedTemplate:
           errorPattern: 'has no such entry'
+  - it: should give each host its own policy object when one policy spans two hosts
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        other:
+          gateway:
+            securityPolicy: oidc-protected-default
+            host: other.example.com
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - hasDocuments: {count: 2}
+      - documentIndex: 0
+        equal: {path: metadata.name, value: release-name-stack-oidc-protected-default}
+      - documentIndex: 0
+        equal: {path: spec.oidc.redirectURL, value: https://app.example.com/oauth2/callback}
+      - documentIndex: 1
+        matchRegex: {path: metadata.name, pattern: "^release-name-stack-oidc-protected-default-[0-9a-f]{8}$"}
+      - documentIndex: 1
+        equal: {path: spec.oidc.redirectURL, value: https://other.example.com/oauth2/callback}
+
+  - it: should apply the built-in oidc defaults to any declared policy, not just the default one
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          admin-okta:
+            oidc:
+              clientSecretName: admin-okta-client
+              provider: {issuer: https://czi.okta.com}
+      services:
+        admin:
+          gateway:
+            securityPolicy: admin-okta
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - equal: {path: 'spec.oidc.denyRedirect.headers[0].name', value: Sec-Fetch-Mode}
+      - equal: {path: spec.oidc.logoutPath, value: /logout}
+      - contains: {path: spec.oidc.scopes, content: groups}
+
+  - it: should fail when the derived callback is covered by no member path
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        onlyexact:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /dashboard, pathType: Exact}]
+    asserts:
+      - failedTemplate:
+          errorMessage: 'the OAuth2 callback "/oauth2/callback" for security policy "oidc-protected-default" is not covered by any gateway path of the services attached to it (onlyexact), so login would fail. Give one of them a Prefix path that covers it.'
+
+  - it: should not let an Exact-only member drag the group callback to the host root
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        webapp:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /app, pathType: Prefix}]
+        aaa-metrics:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /metrics, pathType: Exact}]
+    asserts:
+      - equal: {path: spec.oidc.redirectURL, value: https://app.example.com/app/oauth2/callback}
+      - equal: {path: spec.oidc.logoutPath, value: /app/logout}
+
+  - it: should share one policy and one cookie name across services on a rules host
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+            rules: [{host: vanity.example.com}]
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+            rules: [{host: vanity.example.com}]
+    asserts:
+      - hasDocuments: {count: 2}
+      - documentIndex: 1
+        equal: {path: spec.oidc.cookieNames.accessToken, value: AccessToken-oidc-protected-default-vanity-example-com}
+      - documentIndex: 1
+        lengthEqual: {path: spec.targetRefs, count: 2}
+      - documentIndex: 1
+        equal: {path: 'spec.targetRefs[0].name', value: release-name-stack-backend-rule-0}
+      - documentIndex: 1
+        equal: {path: 'spec.targetRefs[1].name', value: release-name-stack-frontend-rule-0}
+
+  - it: should carry annotations from every member of a shared policy
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          annotations: {from: frontend}
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          annotations: {only-on: backend}
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - equal: {path: 'metadata.annotations["from"]', value: frontend}
+      - equal: {path: 'metadata.annotations["only-on"]', value: backend}
+
+  - it: should reject a policy name that is not a valid object-name component
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          Admin_Okta:
+            oidc: {}
+      services:
+        app:
+          gateway: {paths: [{path: /, pathType: Prefix}]}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'securityPolicies.Admin_Okta is not a valid policy name. Use lowercase letters, digits and dashes only: the name becomes part of a Kubernetes object name and of the session cookie names.'
+
+  - it: should reject an unknown key in a policy body
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          mypol:
+            oidcc: {}
+      services:
+        app:
+          gateway: {paths: [{path: /, pathType: Prefix}]}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'securityPolicies.mypol sets unknown key "oidcc". Valid keys are oidc, basicAuth, cors, ipAllowList, jwt and annotations.'
+
+  - it: should reject a policy that enforces nothing
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          mypol:
+            annotations: {a: b}
+      services:
+        app:
+          gateway: {paths: [{path: /, pathType: Prefix}]}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'securityPolicies.mypol declares none of oidc, basicAuth, cors, ipAllowList or jwt, so it would attach a policy that enforces nothing. Remove it, or give it a setting.'
+
+  - it: should reject a leftover global oidcProxyGateway even with no services
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        oidcProxyGateway: {cookieDomain: example.com}
+      services: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'global.oidcProxyGateway was removed in stack 2.55.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy on each service that should share that session.'

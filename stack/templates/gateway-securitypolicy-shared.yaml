@@ -1,13 +1,15 @@
 {{- $root := . -}}
 {{- include "validate.gatewaySecurityExclusive" $root -}}
+{{- include "securityPolicy.validateRemovedGlobalKeys" (dict "root" $root) -}}
 {{- $keys := list -}}
 {{- range $name, $_ := .Values.services -}}
   {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
   {{- $g := $v.gateway | default dict -}}
   {{- if and $g.enabled (not (($g.tlsPassthrough | default dict).enabled)) -}}
-    {{- $k := include "securityPolicy.groupKey" (dict "root" $root "name" $name) -}}
-    {{- if ne $k "" -}}
-      {{- $keys = append $keys $k -}}
+    {{- range $k := splitList " " (include "securityPolicy.groupKeys" (dict "root" $root "name" $name)) -}}
+      {{- if ne $k "" -}}
+        {{- $keys = append $keys $k -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
@@ -19,26 +21,33 @@
   {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $root "name" $primary)) -}}
   {{- $pv := fromYaml (include "service.context" (dict "root" $root "name" $primary)) -}}
   {{- $pctx := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $pv -}}
+  {{- include "validate.groupCallbackReachable" (dict "root" $root "key" $key) -}}
   {{- if eq (include "gateway.hasSecurityPolicy" (dict "root" $root "name" $primary)) "true" }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: {{ include "stack.fullname" $pctx | lower }}-{{ $policyName }}
+  name: {{ include "securityPolicy.objectName" (dict "root" $root "fullname" (include "stack.fullname" $pctx | lower) "policyName" $policyName "host" $host) }}
   labels:
-    {{- include "service.labels" $pctx | nindent 4 }}
+    {{- include "stack.labels" $root | nindent 4 }}
   annotations:
-    {{- with (mergeOverwrite (dict) ($pv.annotations | default dict) ($p.annotations | default dict)) }}
+    {{- $memberAnn := dict }}
+    {{- range $mn := $members }}
+    {{- $mv := fromYaml (include "service.context" (dict "root" $root "name" $mn)) }}
+    {{- $memberAnn = mergeOverwrite $memberAnn ($mv.annotations | default dict) }}
+    {{- end }}
+    {{- with (mergeOverwrite (dict) $memberAnn ($p.annotations | default dict)) }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   targetRefs:
     {{- range $name := $members }}
-    {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
-    {{- $svc := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $v }}
+    {{- $route := include "securityPolicy.memberRoute" (dict "root" $root "name" $name "host" $host) }}
+    {{- if ne $route "" }}
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      name: {{ include "service.fullname" $svc }}
+      name: {{ $route }}
+    {{- end }}
     {{- end }}
   {{- include "gateway.securityPolicy.body" (dict "ctx" $pctx "policy" $p "policyName" $policyName "basePath" (include "oidcProxyGateway.basePath" (dict "paths" ($pv.gateway.paths | default list))) "host" $host "public" false) | nindent 2 }}
   {{- end }}

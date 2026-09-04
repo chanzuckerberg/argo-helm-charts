@@ -218,7 +218,7 @@ tests:
       path: spec.oidc.clientIDRef.name
       value: my-own-secret
   template: gateway-securitypolicy-shared.yaml
-- it: should create a SecurityPolicy per rule with full OIDC config
+- it: should realize a grouped SecurityPolicy for each rules host with full OIDC config
   set:
     global:
       ingress:
@@ -247,44 +247,44 @@ tests:
       service1: {}
   asserts:
   - hasDocuments:
-      count: 1
-  - documentIndex: 0
-    equal:
+      count: 2
+  - documentIndex: 1
+    matchRegex:
       path: metadata.name
-      value: release-name-stack-service1-rule-0-oidc
-  - documentIndex: 0
+      pattern: ^release-name-stack-oidc-protected-default-[0-9a-f]{8}$
+  - documentIndex: 1
     equal:
       path: spec.oidc.provider.issuer
       value: https://auth.example.com
-  - documentIndex: 0
+  - documentIndex: 1
     equal:
       path: spec.oidc.provider.authorizationEndpoint
       value: https://auth.example.com/authorize
-  - documentIndex: 0
+  - documentIndex: 1
     equal:
       path: spec.oidc.clientID
       value: my-client-id
-  - documentIndex: 0
+  - documentIndex: 1
     equal:
       path: spec.oidc.logoutPath
       value: /logout
-  - documentIndex: 0
+  - documentIndex: 1
     equal:
       path: spec.oidc.cookieDomain
       value: example.com
-  - documentIndex: 0
+  - documentIndex: 1
     contains:
       path: spec.oidc.scopes
       content: openid
-  - documentIndex: 0
-    equal:
+  - documentIndex: 1
+    matchRegex:
       path: metadata.name
-      value: release-name-stack-service1-rule-0-oidc
-  - documentIndex: 0
+      pattern: ^release-name-stack-oidc-protected-default-[0-9a-f]{8}$
+  - documentIndex: 1
     equal:
       path: spec.oidc.redirectURL
       value: https://api2.example.com/oauth2/callback
-  template: gateway-securitypolicy.yaml
+  template: gateway-securitypolicy-shared.yaml
 - it: should include annotations on SecurityPolicies
   set:
     global:
@@ -647,7 +647,7 @@ tests:
       path: spec.oidc.denyRedirect.headers
       count: 1
   template: gateway-securitypolicy-shared.yaml
-- it: should carry apiRoutes onto per-rule policies and keep the public policy oidc-free
+- it: should carry apiRoutes onto the grouped rules-host policy
   set:
     global:
       ingress:
@@ -675,18 +675,15 @@ tests:
     services:
       service1: {}
   asserts:
-  - documentIndex: 0
+  - documentIndex: 1
     equal:
       path: spec.oidc.denyRedirect.headers[3].name
       value: :path
-  - documentIndex: 0
+  - documentIndex: 1
     equal:
       path: spec.oidc.denyRedirect.headers[3].value
       value: /api
-  - documentIndex: 1
-    notExists:
-      path: spec.oidc
-  template: gateway-securitypolicy.yaml
+  template: gateway-securitypolicy-shared.yaml
 - it: should fail on an empty apiRoutes path
   set:
     global:
@@ -936,7 +933,7 @@ tests:
   - failedTemplate:
       errorPattern: caps denyRedirect matchers at 16
   template: gateway-securitypolicy-shared.yaml
-- it: should scope per-rule policy cookie names to the rule host
+- it: should scope grouped policy cookie names to the rules host
   release:
     name: release-name
     namespace: testns
@@ -969,18 +966,15 @@ tests:
     equal:
       path: spec.oidc.cookieNames.accessToken
       value: AccessToken-oidc-protected-default-alt-example-com
-  - documentIndex: 0
+  - documentIndex: 1
     equal:
       path: spec.oidc.cookieNames.accessToken
-      value: AccessToken-oidc-protected-default-alt-example-com
+      value: AccessToken-oidc-protected-default-api-example-com
   - documentIndex: 0
     equal:
       path: spec.oidc.denyRedirect.headers[0].name
       value: Sec-Fetch-Mode
-  - documentIndex: 1
-    notExists:
-      path: spec.oidc
-  template: gateway-securitypolicy.yaml
+  template: gateway-securitypolicy-shared.yaml
 - it: should render jwt from remoteJWKSUri, defaulting the issuer to the OIDC issuer
   set:
     global:
