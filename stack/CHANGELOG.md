@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.55.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.54.0...stack-v2.55.0) (2026-09-04)
+
+
+### Features
+
+* **stack:** named SecurityPolicies so services can share an OIDC session ([#549](https://github.com/chanzuckerberg/argo-helm-charts/issues/549)) ([fbb1746](https://github.com/chanzuckerberg/argo-helm-charts/commit/fbb17467861f7159ba33e66767b6f3725956101d))
+
 ## [2.54.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.53.0...stack-v2.54.0) (2026-08-28)
 
 
