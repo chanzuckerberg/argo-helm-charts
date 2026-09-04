@@ -8,14 +8,14 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                       |
-| ---------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------- |
-| - [dcgmExporter](#dcgmExporter )   | No      | object | No         | -          | -                                                                                                       |
-| - [nodeReadiness](#nodeReadiness ) | No      | object | No         | -          | -                                                                                                       |
-| - [nodepool](#nodepool )           | No      | object | No         | -          | -                                                                                                       |
-| - [nodepools](#nodepools )         | No      | array  | No         | -          | List of NodePool overrides. Each entry has the same schema as nodepool and is merged with its defaults. |
-| - [nvidiaDriver](#nvidiaDriver )   | No      | object | No         | -          | -                                                                                                       |
-| - [priorityClass](#priorityClass ) | No      | object | No         | -          | -                                                                                                       |
+| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                    |
+| ---------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------- |
+| - [dcgmExporter](#dcgmExporter )   | No      | object | No         | -          | -                                                                                                                    |
+| - [nodeReadiness](#nodeReadiness ) | No      | object | No         | -          | -                                                                                                                    |
+| - [nodepool](#nodepool )           | No      | object | No         | -          | -                                                                                                                    |
+| - [nodepools](#nodepools )         | No      | object | No         | -          | Map of NodePool overrides keyed by name. Each entry has the same schema as nodepool and is merged with its defaults. |
+| - [nvidiaDriver](#nvidiaDriver )   | No      | object | No         | -          | -                                                                                                                    |
+| - [priorityClass](#priorityClass ) | No      | object | No         | -          | -                                                                                                                    |
 
 ## <a name="dcgmExporter"></a>1. Property `karpenter-gpu-nodepool > dcgmExporter`
 
@@ -1010,26 +1010,22 @@ must respect the following conditions
 
 ## <a name="nodepools"></a>4. Property `karpenter-gpu-nodepool > nodepools`
 
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
 
-**Description:** List of NodePool overrides. Each entry has the same schema as nodepool and is merged with its defaults.
+**Description:** Map of NodePool overrides keyed by name. Each entry has the same schema as nodepool and is merged with its defaults.
 
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
+| Property                       | Pattern | Type   | Deprecated | Definition               | Title/Description |
+| ------------------------------ | ------- | ------ | ---------- | ------------------------ | ----------------- |
+| - [^.*$](#nodepools_pattern1 ) | Yes     | object | No         | In #/properties/nodepool | -                 |
 
-| Each item of this array must be | Description |
-| ------------------------------- | ----------- |
-| [nodepool](#nodepools_items)    | -           |
-
-### <a name="nodepools_items"></a>4.1. karpenter-gpu-nodepool > nodepools > nodepool
+### <a name="nodepools_pattern1"></a>4.1. Pattern Property `karpenter-gpu-nodepool > nodepools > nodepool`
+> All properties whose name matches the regular expression
+```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
+must respect the following conditions
 
 |                           |                       |
 | ------------------------- | --------------------- |
@@ -1038,15 +1034,15 @@ must respect the following conditions
 | **Additional properties** | Any type allowed      |
 | **Defined in**            | #/properties/nodepool |
 
-| Property                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                                               |
-| -------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| - [disruption](#nodepools_items_disruption ) | No      | object  | No         | -          | -                                                                                               |
-| - [enabled](#nodepools_items_enabled )       | No      | boolean | No         | -          | Enable deployment of NodePool.                                                                  |
-| - [limits](#nodepools_items_limits )         | No      | object  | No         | -          | Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1"). |
-| - [name](#nodepools_items_name )             | No      | string  | No         | -          | Name of the NodePool.                                                                           |
-| - [template](#nodepools_items_template )     | No      | object  | No         | -          | -                                                                                               |
+| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                               |
+| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [disruption](#nodepools_pattern1_disruption ) | No      | object  | No         | -          | -                                                                                               |
+| - [enabled](#nodepools_pattern1_enabled )       | No      | boolean | No         | -          | Enable deployment of NodePool.                                                                  |
+| - [limits](#nodepools_pattern1_limits )         | No      | object  | No         | -          | Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1"). |
+| - [name](#nodepools_pattern1_name )             | No      | string  | No         | -          | Name of the NodePool.                                                                           |
+| - [template](#nodepools_pattern1_template )     | No      | object  | No         | -          | -                                                                                               |
 
-#### <a name="nodepools_items_disruption"></a>4.1.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > disruption`
+#### <a name="nodepools_pattern1_disruption"></a>4.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > disruption`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1054,12 +1050,12 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description                                                              |
-| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------ |
-| - [consolidateAfter](#nodepools_items_disruption_consolidateAfter )       | No      | string | No         | -          | Time to wait before consolidating nodes.                                       |
-| - [consolidationPolicy](#nodepools_items_disruption_consolidationPolicy ) | No      | string | No         | -          | Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty). |
+| Property                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description                                                              |
+| ---------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------ |
+| - [consolidateAfter](#nodepools_pattern1_disruption_consolidateAfter )       | No      | string | No         | -          | Time to wait before consolidating nodes.                                       |
+| - [consolidationPolicy](#nodepools_pattern1_disruption_consolidationPolicy ) | No      | string | No         | -          | Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty). |
 
-##### <a name="nodepools_items_disruption_consolidateAfter"></a>4.1.1.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > disruption > consolidateAfter`
+##### <a name="nodepools_pattern1_disruption_consolidateAfter"></a>4.1.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > disruption > consolidateAfter`
 
 |              |          |
 | ------------ | -------- |
@@ -1068,7 +1064,7 @@ must respect the following conditions
 
 **Description:** Time to wait before consolidating nodes.
 
-##### <a name="nodepools_items_disruption_consolidationPolicy"></a>4.1.1.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > disruption > consolidationPolicy`
+##### <a name="nodepools_pattern1_disruption_consolidationPolicy"></a>4.1.1.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > disruption > consolidationPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -1077,7 +1073,7 @@ must respect the following conditions
 
 **Description:** Consolidation policy for the nodepool (WhenEmptyOrUnderutilized or WhenEmpty).
 
-#### <a name="nodepools_items_enabled"></a>4.1.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > enabled`
+#### <a name="nodepools_pattern1_enabled"></a>4.1.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1086,7 +1082,7 @@ must respect the following conditions
 
 **Description:** Enable deployment of NodePool.
 
-#### <a name="nodepools_items_limits"></a>4.1.3. Property `karpenter-gpu-nodepool > nodepools > nodepools items > limits`
+#### <a name="nodepools_pattern1_limits"></a>4.1.3. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1096,11 +1092,11 @@ must respect the following conditions
 
 **Description:** Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1").
 
-| Property                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [^.*$](#nodepools_items_limits_pattern1 ) | Yes     | string | No         | -          | -                 |
+| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [^.*$](#nodepools_pattern1_limits_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-##### <a name="nodepools_items_limits_pattern1"></a>4.1.3.1. Pattern Property `karpenter-gpu-nodepool > nodepools > nodepools items > limits > ^.*$`
+##### <a name="nodepools_pattern1_limits_pattern1"></a>4.1.3.1. Pattern Property `karpenter-gpu-nodepool > nodepools > ^.*$ > limits > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -1110,7 +1106,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="nodepools_items_name"></a>4.1.4. Property `karpenter-gpu-nodepool > nodepools > nodepools items > name`
+#### <a name="nodepools_pattern1_name"></a>4.1.4. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > name`
 
 |              |          |
 | ------------ | -------- |
@@ -1119,7 +1115,7 @@ must respect the following conditions
 
 **Description:** Name of the NodePool.
 
-#### <a name="nodepools_items_template"></a>4.1.5. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template`
+#### <a name="nodepools_pattern1_template"></a>4.1.5. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1127,12 +1123,12 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                          | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [metadata](#nodepools_items_template_metadata ) | No      | object | No         | -          | -                 |
-| - [spec](#nodepools_items_template_spec )         | No      | object | No         | -          | -                 |
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [metadata](#nodepools_pattern1_template_metadata ) | No      | object | No         | -          | -                 |
+| - [spec](#nodepools_pattern1_template_spec )         | No      | object | No         | -          | -                 |
 
-##### <a name="nodepools_items_template_metadata"></a>4.1.5.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > metadata`
+##### <a name="nodepools_pattern1_template_metadata"></a>4.1.5.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > metadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1140,11 +1136,11 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                  |
-| ------------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------------------------- |
-| - [labels](#nodepools_items_template_metadata_labels ) | No      | object | No         | -          | Labels to apply to nodes created by this NodePool. |
+| Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description                                  |
+| --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------- |
+| - [labels](#nodepools_pattern1_template_metadata_labels ) | No      | object | No         | -          | Labels to apply to nodes created by this NodePool. |
 
-###### <a name="nodepools_items_template_metadata_labels"></a>4.1.5.1.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > metadata > labels`
+###### <a name="nodepools_pattern1_template_metadata_labels"></a>4.1.5.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > metadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1154,27 +1150,27 @@ must respect the following conditions
 
 **Description:** Labels to apply to nodes created by this NodePool.
 
-| Property                                                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [workload.node-purpose](#nodepools_items_template_metadata_labels_workloadnode-purpose ) | No      | string | No         | -          | -                 |
-| - [workload.type](#nodepools_items_template_metadata_labels_workloadtype )                 | No      | string | No         | -          | -                 |
-| - [^.*$](#nodepools_items_template_metadata_labels_pattern1 )                              | Yes     | string | No         | -          | -                 |
+| Property                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [workload.node-purpose](#nodepools_pattern1_template_metadata_labels_workloadnode-purpose ) | No      | string | No         | -          | -                 |
+| - [workload.type](#nodepools_pattern1_template_metadata_labels_workloadtype )                 | No      | string | No         | -          | -                 |
+| - [^.*$](#nodepools_pattern1_template_metadata_labels_pattern1 )                              | Yes     | string | No         | -          | -                 |
 
-###### <a name="nodepools_items_template_metadata_labels_workloadnode-purpose"></a>4.1.5.1.1.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > metadata > labels > workload.node-purpose`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="nodepools_items_template_metadata_labels_workloadtype"></a>4.1.5.1.1.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > metadata > labels > workload.type`
+###### <a name="nodepools_pattern1_template_metadata_labels_workloadnode-purpose"></a>4.1.5.1.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > metadata > labels > workload.node-purpose`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepools_items_template_metadata_labels_pattern1"></a>4.1.5.1.1.3. Pattern Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > metadata > labels > ^.*$`
+###### <a name="nodepools_pattern1_template_metadata_labels_workloadtype"></a>4.1.5.1.1.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > metadata > labels > workload.type`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="nodepools_pattern1_template_metadata_labels_pattern1"></a>4.1.5.1.1.3. Pattern Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > metadata > labels > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
@@ -1184,7 +1180,7 @@ must respect the following conditions
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="nodepools_items_template_spec"></a>4.1.5.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec`
+##### <a name="nodepools_pattern1_template_spec"></a>4.1.5.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1192,16 +1188,16 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                           | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                          |
-| ---------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| - [expireAfter](#nodepools_items_template_spec_expireAfter )                       | No      | string          | No         | -          | Time after which nodes will expire and be replaced (e.g., 24h, 48h).                                                                                                                                                                                                                                                                       |
-| - [nodeClassRef](#nodepools_items_template_spec_nodeClassRef )                     | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                          |
-| - [requirements](#nodepools_items_template_spec_requirements )                     | No      | array of object | No         | -          | Node requirements for scheduling. Defines constraints for instance selection.                                                                                                                                                                                                                                                              |
-| - [startupTaints](#nodepools_items_template_spec_startupTaints )                   | No      | array of object | No         | -          | Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready.                                                                                                                                                                                                                                       |
-| - [taints](#nodepools_items_template_spec_taints )                                 | No      | array of object | No         | -          | Taints to apply to nodes to prevent non-GPU workloads from scheduling.                                                                                                                                                                                                                                                                     |
-| - [terminationGracePeriod](#nodepools_items_template_spec_terminationGracePeriod ) | No      | string or null  | No         | -          | Maximum time a node may be draining before its remaining pods are forcibly deleted (e.g., 1h). When set, drift can disrupt nodes whose pods have blocking PDBs or the do-not-disrupt annotation, and forceful drains (expiration) are bounded instead of hanging on blocked evictions. Unset omits the field, preserving unbounded drains. |
+| Property                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [expireAfter](#nodepools_pattern1_template_spec_expireAfter )                       | No      | string          | No         | -          | Time after which nodes will expire and be replaced (e.g., 24h, 48h).                                                                                                                                                                                                                                                                       |
+| - [nodeClassRef](#nodepools_pattern1_template_spec_nodeClassRef )                     | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                          |
+| - [requirements](#nodepools_pattern1_template_spec_requirements )                     | No      | array of object | No         | -          | Node requirements for scheduling. Defines constraints for instance selection.                                                                                                                                                                                                                                                              |
+| - [startupTaints](#nodepools_pattern1_template_spec_startupTaints )                   | No      | array of object | No         | -          | Startup taints applied during node initialization to prevent scheduling until CSI drivers are ready.                                                                                                                                                                                                                                       |
+| - [taints](#nodepools_pattern1_template_spec_taints )                                 | No      | array of object | No         | -          | Taints to apply to nodes to prevent non-GPU workloads from scheduling.                                                                                                                                                                                                                                                                     |
+| - [terminationGracePeriod](#nodepools_pattern1_template_spec_terminationGracePeriod ) | No      | string or null  | No         | -          | Maximum time a node may be draining before its remaining pods are forcibly deleted (e.g., 1h). When set, drift can disrupt nodes whose pods have blocking PDBs or the do-not-disrupt annotation, and forceful drains (expiration) are bounded instead of hanging on blocked evictions. Unset omits the field, preserving unbounded drains. |
 
-###### <a name="nodepools_items_template_spec_expireAfter"></a>4.1.5.2.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > expireAfter`
+###### <a name="nodepools_pattern1_template_spec_expireAfter"></a>4.1.5.2.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > expireAfter`
 
 |              |          |
 | ------------ | -------- |
@@ -1210,7 +1206,7 @@ must respect the following conditions
 
 **Description:** Time after which nodes will expire and be replaced (e.g., 24h, 48h).
 
-###### <a name="nodepools_items_template_spec_nodeClassRef"></a>4.1.5.2.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > nodeClassRef`
+###### <a name="nodepools_pattern1_template_spec_nodeClassRef"></a>4.1.5.2.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > nodeClassRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1218,13 +1214,13 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                                        |
-| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------- |
-| - [group](#nodepools_items_template_spec_nodeClassRef_group ) | No      | string | No         | -          | Group for the NodeClass reference.                       |
-| - [kind](#nodepools_items_template_spec_nodeClassRef_kind )   | No      | string | No         | -          | Kind of NodeClass (typically EC2NodeClass).              |
-| + [name](#nodepools_items_template_spec_nodeClassRef_name )   | No      | string | No         | -          | Name of the EC2NodeClass to use. This value is required. |
+| Property                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                        |
+| ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------- |
+| - [group](#nodepools_pattern1_template_spec_nodeClassRef_group ) | No      | string | No         | -          | Group for the NodeClass reference.                       |
+| - [kind](#nodepools_pattern1_template_spec_nodeClassRef_kind )   | No      | string | No         | -          | Kind of NodeClass (typically EC2NodeClass).              |
+| + [name](#nodepools_pattern1_template_spec_nodeClassRef_name )   | No      | string | No         | -          | Name of the EC2NodeClass to use. This value is required. |
 
-###### <a name="nodepools_items_template_spec_nodeClassRef_group"></a>4.1.5.2.2.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > nodeClassRef > group`
+###### <a name="nodepools_pattern1_template_spec_nodeClassRef_group"></a>4.1.5.2.2.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > nodeClassRef > group`
 
 |              |          |
 | ------------ | -------- |
@@ -1233,7 +1229,7 @@ must respect the following conditions
 
 **Description:** Group for the NodeClass reference.
 
-###### <a name="nodepools_items_template_spec_nodeClassRef_kind"></a>4.1.5.2.2.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > nodeClassRef > kind`
+###### <a name="nodepools_pattern1_template_spec_nodeClassRef_kind"></a>4.1.5.2.2.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > nodeClassRef > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -1242,7 +1238,7 @@ must respect the following conditions
 
 **Description:** Kind of NodeClass (typically EC2NodeClass).
 
-###### <a name="nodepools_items_template_spec_nodeClassRef_name"></a>4.1.5.2.2.3. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > nodeClassRef > name`
+###### <a name="nodepools_pattern1_template_spec_nodeClassRef_name"></a>4.1.5.2.2.3. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > nodeClassRef > name`
 
 |              |          |
 | ------------ | -------- |
@@ -1251,7 +1247,7 @@ must respect the following conditions
 
 **Description:** Name of the EC2NodeClass to use. This value is required.
 
-###### <a name="nodepools_items_template_spec_requirements"></a>4.1.5.2.3. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > requirements`
+###### <a name="nodepools_pattern1_template_spec_requirements"></a>4.1.5.2.3. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > requirements`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1268,11 +1264,11 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                         | Description |
-| ----------------------------------------------------------------------- | ----------- |
-| [requirements items](#nodepools_items_template_spec_requirements_items) | -           |
+| Each item of this array must be                                            | Description |
+| -------------------------------------------------------------------------- | ----------- |
+| [requirements items](#nodepools_pattern1_template_spec_requirements_items) | -           |
 
-###### <a name="nodepools_items_template_spec_requirements_items"></a>4.1.5.2.3.1. karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > requirements > requirements items
+###### <a name="nodepools_pattern1_template_spec_requirements_items"></a>4.1.5.2.3.1. karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > requirements > requirements items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1280,27 +1276,27 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
-| - [key](#nodepools_items_template_spec_requirements_items_key )           | No      | string          | No         | -          | -                 |
-| - [operator](#nodepools_items_template_spec_requirements_items_operator ) | No      | string          | No         | -          | -                 |
-| - [values](#nodepools_items_template_spec_requirements_items_values )     | No      | array of string | No         | -          | -                 |
+| Property                                                                     | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [key](#nodepools_pattern1_template_spec_requirements_items_key )           | No      | string          | No         | -          | -                 |
+| - [operator](#nodepools_pattern1_template_spec_requirements_items_operator ) | No      | string          | No         | -          | -                 |
+| - [values](#nodepools_pattern1_template_spec_requirements_items_values )     | No      | array of string | No         | -          | -                 |
 
-###### <a name="nodepools_items_template_spec_requirements_items_key"></a>4.1.5.2.3.1.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > requirements > requirements items > key`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="nodepools_items_template_spec_requirements_items_operator"></a>4.1.5.2.3.1.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > requirements > requirements items > operator`
+###### <a name="nodepools_pattern1_template_spec_requirements_items_key"></a>4.1.5.2.3.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > requirements > requirements items > key`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepools_items_template_spec_requirements_items_values"></a>4.1.5.2.3.1.3. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > requirements > requirements items > values`
+###### <a name="nodepools_pattern1_template_spec_requirements_items_operator"></a>4.1.5.2.3.1.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > requirements > requirements items > operator`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="nodepools_pattern1_template_spec_requirements_items_values"></a>4.1.5.2.3.1.3. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > requirements > requirements items > values`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1315,18 +1311,18 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                                | Description |
-| ------------------------------------------------------------------------------ | ----------- |
-| [values items](#nodepools_items_template_spec_requirements_items_values_items) | -           |
+| Each item of this array must be                                                   | Description |
+| --------------------------------------------------------------------------------- | ----------- |
+| [values items](#nodepools_pattern1_template_spec_requirements_items_values_items) | -           |
 
-###### <a name="nodepools_items_template_spec_requirements_items_values_items"></a>4.1.5.2.3.1.3.1. karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > requirements > requirements items > values > values items
+###### <a name="nodepools_pattern1_template_spec_requirements_items_values_items"></a>4.1.5.2.3.1.3.1. karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > requirements > requirements items > values > values items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepools_items_template_spec_startupTaints"></a>4.1.5.2.4. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > startupTaints`
+###### <a name="nodepools_pattern1_template_spec_startupTaints"></a>4.1.5.2.4. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > startupTaints`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1343,11 +1339,11 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                                           | Description |
-| ------------------------------------------------------------------------- | ----------- |
-| [startupTaints items](#nodepools_items_template_spec_startupTaints_items) | -           |
+| Each item of this array must be                                              | Description |
+| ---------------------------------------------------------------------------- | ----------- |
+| [startupTaints items](#nodepools_pattern1_template_spec_startupTaints_items) | -           |
 
-###### <a name="nodepools_items_template_spec_startupTaints_items"></a>4.1.5.2.4.1. karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > startupTaints > startupTaints items
+###### <a name="nodepools_pattern1_template_spec_startupTaints_items"></a>4.1.5.2.4.1. karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > startupTaints > startupTaints items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1355,26 +1351,26 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [effect](#nodepools_items_template_spec_startupTaints_items_effect ) | No      | string | No         | -          | -                 |
-| - [key](#nodepools_items_template_spec_startupTaints_items_key )       | No      | string | No         | -          | -                 |
+| Property                                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [effect](#nodepools_pattern1_template_spec_startupTaints_items_effect ) | No      | string | No         | -          | -                 |
+| - [key](#nodepools_pattern1_template_spec_startupTaints_items_key )       | No      | string | No         | -          | -                 |
 
-###### <a name="nodepools_items_template_spec_startupTaints_items_effect"></a>4.1.5.2.4.1.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > startupTaints > startupTaints items > effect`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="nodepools_items_template_spec_startupTaints_items_key"></a>4.1.5.2.4.1.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > startupTaints > startupTaints items > key`
+###### <a name="nodepools_pattern1_template_spec_startupTaints_items_effect"></a>4.1.5.2.4.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > startupTaints > startupTaints items > effect`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepools_items_template_spec_taints"></a>4.1.5.2.5. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > taints`
+###### <a name="nodepools_pattern1_template_spec_startupTaints_items_key"></a>4.1.5.2.4.1.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > startupTaints > startupTaints items > key`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="nodepools_pattern1_template_spec_taints"></a>4.1.5.2.5. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > taints`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1391,11 +1387,11 @@ must respect the following conditions
 | **Additional items** | False              |
 | **Tuple validation** | See below          |
 
-| Each item of this array must be                             | Description |
-| ----------------------------------------------------------- | ----------- |
-| [taints items](#nodepools_items_template_spec_taints_items) | -           |
+| Each item of this array must be                                | Description |
+| -------------------------------------------------------------- | ----------- |
+| [taints items](#nodepools_pattern1_template_spec_taints_items) | -           |
 
-###### <a name="nodepools_items_template_spec_taints_items"></a>4.1.5.2.5.1. karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > taints > taints items
+###### <a name="nodepools_pattern1_template_spec_taints_items"></a>4.1.5.2.5.1. karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > taints > taints items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1403,34 +1399,34 @@ must respect the following conditions
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [effect](#nodepools_items_template_spec_taints_items_effect ) | No      | string | No         | -          | -                 |
-| - [key](#nodepools_items_template_spec_taints_items_key )       | No      | string | No         | -          | -                 |
-| - [value](#nodepools_items_template_spec_taints_items_value )   | No      | string | No         | -          | -                 |
+| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [effect](#nodepools_pattern1_template_spec_taints_items_effect ) | No      | string | No         | -          | -                 |
+| - [key](#nodepools_pattern1_template_spec_taints_items_key )       | No      | string | No         | -          | -                 |
+| - [value](#nodepools_pattern1_template_spec_taints_items_value )   | No      | string | No         | -          | -                 |
 
-###### <a name="nodepools_items_template_spec_taints_items_effect"></a>4.1.5.2.5.1.1. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > taints > taints items > effect`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="nodepools_items_template_spec_taints_items_key"></a>4.1.5.2.5.1.2. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > taints > taints items > key`
+###### <a name="nodepools_pattern1_template_spec_taints_items_effect"></a>4.1.5.2.5.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > taints > taints items > effect`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepools_items_template_spec_taints_items_value"></a>4.1.5.2.5.1.3. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > taints > taints items > value`
+###### <a name="nodepools_pattern1_template_spec_taints_items_key"></a>4.1.5.2.5.1.2. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > taints > taints items > key`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="nodepools_items_template_spec_terminationGracePeriod"></a>4.1.5.2.6. Property `karpenter-gpu-nodepool > nodepools > nodepools items > template > spec > terminationGracePeriod`
+###### <a name="nodepools_pattern1_template_spec_taints_items_value"></a>4.1.5.2.5.1.3. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > taints > taints items > value`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="nodepools_pattern1_template_spec_terminationGracePeriod"></a>4.1.5.2.6. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > template > spec > terminationGracePeriod`
 
 |              |                  |
 | ------------ | ---------------- |
