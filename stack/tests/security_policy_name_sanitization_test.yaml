@@ -3,7 +3,7 @@ suite: test a policy name always yields a valid object name
 templates:
   - gateway-securitypolicy-shared.yaml
 tests:
-  - it: should not build an object name from an unsanitized policy name
+  - it: should reject a policy name that cannot become a Kubernetes object name
     set:
       global:
         ingress: {enabled: false}
@@ -18,9 +18,8 @@ tests:
             securityPolicy: Admin_Okta
             paths: [{path: /, pathType: Prefix}]
     asserts:
-      - matchRegex:
-          path: metadata.name
-          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+      - failedTemplate:
+          errorPattern: securityPolicies\.Admin_Okta is not a valid policy name
 
   - it: should accept a policy name that is already a DNS-1123 label
     set:

@@ -30,13 +30,11 @@ tests:
       - equal:
           path: metadata.annotations.owner
           value: frontend-team
-      - isSubset:
-          path: metadata
-          content:
-            annotations:
-              extra: keepme
+      - equal:
+          path: metadata.annotations.extra
+          value: keepme
 
-  - it: should take annotations from the policy definition onto the shared policy
+  - it: should let a policy add annotations without redeclaring what it enforces
     set:
       global:
         ingress: {enabled: false}

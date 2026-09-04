@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 suite: test gateway.rules hosts share one SecurityPolicy per (policy, host)
 templates:
-  - gateway-securitypolicy.yaml
+  - gateway-securitypolicy-shared.yaml
 tests:
   - it: should not emit two policies writing the same cookie name on one rule host
     set:
