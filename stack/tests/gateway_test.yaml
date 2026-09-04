@@ -324,7 +324,7 @@ tests:
         gateway:
           enabled: true
           host: api.example.com
-          oidcProtected: true
+          securityPolicy: oidc-protected-default
       services:
         service1: {}
     asserts:

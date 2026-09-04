@@ -32,57 +32,16 @@
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- include "validate.gatewayIngressCoexistence" . -}}
+{{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
 {{- include "validate.gatewayRuleHost" . -}}
-{{- include "validate.gatewaySecurityExclusive" . -}}
 
-{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasSecurityPolicy" .) "true") -}}
-{{- $suffix := include "gateway.securityPolicy.suffix" . -}}
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: SecurityPolicy
-metadata:
-  name: {{ include "service.fullname" . }}-{{ $suffix }}
-  labels:
-    {{- include "service.labels" . | nindent 4 }}
-  annotations:
-    {{- with (mergeOverwrite
-                (dict)
-                (.Values.annotations)
-                (.Values.oidcProxyGateway.annotations)
-      ) }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  targetRefs:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: {{ include "service.fullname" . }}
-  {{- include "gateway.securityPolicy.body" (dict "ctx" . "host" .Values.gateway.host "public" false) | nindent 2 }}
-{{- range $i, $rule := .Values.gateway.rules }}
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: SecurityPolicy
-metadata:
-  name: {{ include "service.fullname" $service }}-rule-{{ $i }}-{{ $suffix }}
-  labels:
-    {{- include "service.labels" $service | nindent 4 }}
-  annotations:
-    {{- with (mergeOverwrite
-                (dict)
-                ($service.Values.annotations)
-                ($service.Values.oidcProxyGateway.annotations)
-      ) }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  targetRefs:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: {{ include "service.fullname" $service }}-rule-{{ $i }}
-  {{- include "gateway.securityPolicy.body" (dict "ctx" $service "host" $rule.host "public" false) | nindent 2 }}
-{{- end }}
-{{- if and .Values.gateway.oidcProtected (gt (len .Values.oidcProxyGateway.skipAuth) 0) (or .Values.gateway.cors.enabled (gt (len .Values.gateway.ipAllowList) 0)) }}
+{{- $policyYaml := include "securityPolicy.resolve" (dict "root" $global "name" .Values.name) -}}
+{{- $policyName := include "securityPolicy.name" (dict "root" $global "name" .Values.name) -}}
+{{- include "securityPolicy.validateRemovedKeys" (dict "root" $global "name" .Values.name) -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (ne $policyYaml "") -}}
+{{- $p := fromYaml $policyYaml -}}
+{{- $suffix := include "gateway.securityPolicy.suffix" (dict "policy" $p) -}}
+{{- if and $p.oidc (gt (len (.Values.gateway.skipAuth | default list)) 0) (or ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0)) }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
@@ -91,11 +50,7 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- with (mergeOverwrite
-                (dict)
-                (.Values.annotations)
-                (.Values.oidcProxyGateway.annotations)
-      ) }}
+    {{- with (mergeOverwrite (dict) (.Values.annotations) ($p.annotations)) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
@@ -103,8 +58,8 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: {{ include "service.fullname" . }}-public
-  {{- include "gateway.securityPolicy.body" (dict "ctx" . "host" .Values.gateway.host "public" true) | nindent 2 }}
+  {{- include "gateway.securityPolicy.body" (dict "ctx" . "policy" $p "policyName" $policyName "basePath" (include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths)) "host" .Values.gateway.host "public" true) | nindent 2 }}
 {{- end }}
 {{- end }}
-{{ end }}
+{{- end }}
 {{- end }}

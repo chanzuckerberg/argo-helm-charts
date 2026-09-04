@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test SecurityPolicy object names are unique per (policy, host)
+templates:
+  - gateway-securitypolicy-shared.yaml
+tests:
+  - it: should render one policy per host when a named policy spans two hosts
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: oidc-protected-default
+            host: app.example.com
+            paths: [{path: /, pathType: Prefix}]
+        other:
+          gateway:
+            securityPolicy: oidc-protected-default
+            host: other.example.com
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-app
+      - documentIndex: 0
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://app.example.com/oauth2/callback
+      - documentIndex: 1
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-other
+      - documentIndex: 1
+        equal:
+          path: spec.oidc.redirectURL
+          value: https://other.example.com/oauth2/callback
+
+  - it: should not give the two host policies the same object name
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: oidc-protected-default
+            host: app.example.com
+            paths: [{path: /, pathType: Prefix}]
+        other:
+          gateway:
+            securityPolicy: oidc-protected-default
+            host: other.example.com
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-oidc-protected-default
+      - documentIndex: 1
+        notEqual:
+          path: metadata.name
+          value: release-name-stack-oidc-protected-default
+
+  - it: should keep one policy for two services sharing a policy on one host
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - lengthEqual:
+          path: spec.targetRefs
+          count: 2
