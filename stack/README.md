@@ -56,58 +56,58 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                                                                                       |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                                                                              |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy.                                                             |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                 |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                    |
+| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                          |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                             |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                        |
+| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                  |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                       |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy. |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                 |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                       |
 
 #### <a name="cronJobs_pattern1_affinity"></a>2.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -3434,17 +3434,631 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_securityPolicies"></a>2.1.40. Property `stack > cronJobs > ^.*$ > securityPolicies`
 
+|                           |                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                        |
+| **Required**              | No                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#cronJobs_pattern1_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+##### <a name="cronJobs_pattern1_securityPolicies_additionalProperties"></a>2.1.40.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| -------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#cronJobs_pattern1_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_annotations"></a>2.1.40.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > annotations`
+
 |                           |                  |
 | ------------------------- | ---------------- |
 | **Type**                  | `object`         |
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+**Description:** Extra annotations on the rendered SecurityPolicy
 
-| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth"></a>2.1.40.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>2.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>2.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors"></a>2.1.40.1.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials"></a>2.1.40.1.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders"></a>2.1.40.1.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>2.1.40.1.3.2.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods"></a>2.1.40.1.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowMethods items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items"></a>2.1.40.1.3.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins"></a>2.1.40.1.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowOrigins items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>2.1.40.1.3.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled"></a>2.1.40.1.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders"></a>2.1.40.1.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                          | Description |
+| -------------------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>2.1.40.1.3.6.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge"></a>2.1.40.1.3.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList"></a>2.1.40.1.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [ipAllowList items](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items"></a>2.1.40.1.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt"></a>2.1.40.1.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>2.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>2.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>2.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>2.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>2.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc"></a>2.1.40.1.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| - [skipAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>2.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [apiRoutes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>2.1.40.1.6.1.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>2.1.40.1.6.1.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>2.1.40.1.6.1.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID"></a>2.1.40.1.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>2.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>2.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>2.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>2.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>2.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>2.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>2.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>2.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>2.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>2.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>2.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>2.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>2.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>2.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>2.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>2.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>2.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                            | Description |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>2.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth"></a>2.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                | Description |
+| ---------------------------------------------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>2.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>2.1.40.1.6.15.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>2.1.40.1.6.15.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_service"></a>2.1.41. Property `stack > cronJobs > ^.*$ > service`
 
@@ -3816,58 +4430,58 @@ Must be one of:
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                          | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ----------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#global_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [annotations](#global_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [appContext](#global_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [appSecrets](#global_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [argoBuildEnv](#global_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [args](#global_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [argusMetadata](#global_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [autoscaling](#global_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [command](#global_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [deploymentKind](#global_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [deploymentStage](#global_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [dnsPolicy](#global_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [env](#global_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [envFrom](#global_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [fullnameOverride](#global_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [gateway](#global_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [grafanaDashboard](#global_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [image](#global_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [imagePullSecrets](#global_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [ingress](#global_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [initContainers](#global_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [kedaAutoscaling](#global_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [pdb](#global_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                                                                                       |
-| - [persistence](#global_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [podAnnotations](#global_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [podLabels](#global_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [podSecurityContext](#global_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [progressDeadlineSeconds](#global_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                                                                              |
-| - [readinessProbe](#global_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [replicaCount](#global_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [resources](#global_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [restartPolicy](#global_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [rollout](#global_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [securityContext](#global_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [securityPolicies](#global_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration |
-| - [service](#global_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [sidecars](#global_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [startupProbe](#global_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [strategy](#global_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy.                                                             |
-| - [tolerations](#global_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [volumes](#global_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Property                                                          | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#global_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [annotations](#global_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [appContext](#global_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [appSecrets](#global_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [argoBuildEnv](#global_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                 |
+| - [args](#global_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                    |
+| - [argusMetadata](#global_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [autoscaling](#global_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [command](#global_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [deploymentKind](#global_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                          |
+| - [deploymentStage](#global_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [dnsPolicy](#global_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [env](#global_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [envFrom](#global_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                             |
+| - [fullnameOverride](#global_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                        |
+| - [gateway](#global_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [grafanaDashboard](#global_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [image](#global_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#global_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [ingress](#global_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [initContainers](#global_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [kedaAutoscaling](#global_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
+| - [livenessProbe](#global_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
+| - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [pdb](#global_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
+| - [persistence](#global_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [podAnnotations](#global_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [podLabels](#global_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [podSecurityContext](#global_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [progressDeadlineSeconds](#global_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                  |
+| - [readinessProbe](#global_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [replicaCount](#global_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [resources](#global_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                       |
+| - [restartPolicy](#global_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [rollout](#global_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [securityContext](#global_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#global_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
+| - [service](#global_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [sidecars](#global_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [startupProbe](#global_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [strategy](#global_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy. |
+| - [tolerations](#global_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [topologySpreadConstraints](#global_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [volumeMounts](#global_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                 |
+| - [volumes](#global_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                       |
 
 ### <a name="global_affinity"></a>3.1. Property `stack > global > affinity`
 
@@ -7194,17 +7808,631 @@ Must be one of:
 
 ### <a name="global_securityPolicies"></a>3.40. Property `stack > global > securityPolicies`
 
+|                           |                                                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                             |
+| **Required**              | No                                                                                                   |
+| **Additional properties** | [Each additional property must conform to the schema](#global_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#global_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+#### <a name="global_securityPolicies_additionalProperties"></a>3.40.1. Property `stack > global > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#global_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#global_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#global_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#global_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#global_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#global_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+##### <a name="global_securityPolicies_additionalProperties_annotations"></a>3.40.1.1. Property `stack > global > securityPolicies > additionalProperties > annotations`
+
 |                           |                  |
 | ------------------------- | ---------------- |
 | **Type**                  | `object`         |
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+**Description:** Extra annotations on the rendered SecurityPolicy
 
-| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#global_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+##### <a name="global_securityPolicies_additionalProperties_basicAuth"></a>3.40.1.2. Property `stack > global > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ----------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#global_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="global_securityPolicies_additionalProperties_basicAuth_enabled"></a>3.40.1.2.1. Property `stack > global > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_basicAuth_secretName"></a>3.40.1.2.2. Property `stack > global > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+##### <a name="global_securityPolicies_additionalProperties_cors"></a>3.40.1.3. Property `stack > global > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#global_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#global_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#global_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#global_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#global_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#global_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#global_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowCredentials"></a>3.40.1.3.1. Property `stack > global > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowHeaders"></a>3.40.1.3.2. Property `stack > global > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [allowHeaders items](#global_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>3.40.1.3.2.1. stack > global > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowMethods"></a>3.40.1.3.3. Property `stack > global > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [allowMethods items](#global_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowMethods_items"></a>3.40.1.3.3.1. stack > global > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowOrigins"></a>3.40.1.3.4. Property `stack > global > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [allowOrigins items](#global_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>3.40.1.3.4.1. stack > global > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_enabled"></a>3.40.1.3.5. Property `stack > global > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_exposeHeaders"></a>3.40.1.3.6. Property `stack > global > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                               | Description |
+| --------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#global_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>3.40.1.3.6.1. stack > global > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_maxAge"></a>3.40.1.3.7. Property `stack > global > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="global_securityPolicies_additionalProperties_ipAllowList"></a>3.40.1.4. Property `stack > global > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                      | Description |
+| ------------------------------------------------------------------------------------ | ----------- |
+| [ipAllowList items](#global_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_ipAllowList_items"></a>3.40.1.4.1. stack > global > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="global_securityPolicies_additionalProperties_jwt"></a>3.40.1.5. Property `stack > global > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                            | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ----------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#global_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#global_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#global_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_enabled"></a>3.40.1.5.1. Property `stack > global > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_issuer"></a>3.40.1.5.2. Property `stack > global > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_providers"></a>3.40.1.5.3. Property `stack > global > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                      | Description |
+| ------------------------------------------------------------------------------------ | ----------- |
+| [providers items](#global_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_providers_items"></a>3.40.1.5.3.1. stack > global > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>3.40.1.5.4. Property `stack > global > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="global_securityPolicies_additionalProperties_oidc"></a>3.40.1.6. Property `stack > global > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#global_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#global_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#global_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#global_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#global_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#global_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#global_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#global_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#global_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#global_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#global_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#global_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#global_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#global_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| - [skipAuth](#global_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes"></a>3.40.1.6.1. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                       | Description |
+| ------------------------------------------------------------------------------------- | ----------- |
+| [apiRoutes items](#global_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>3.40.1.6.1.1. stack > global > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                     | Pattern | Type             | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#global_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#global_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>3.40.1.6.1.1.1. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>3.40.1.6.1.1.2. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientID"></a>3.40.1.6.2. Property `stack > global > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretName"></a>3.40.1.6.3. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieDomain"></a>3.40.1.6.4. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames"></a>3.40.1.6.5. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#global_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#global_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>3.40.1.6.5.1. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>3.40.1.6.5.2. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>3.40.1.6.6. Property `stack > global > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect"></a>3.40.1.6.7. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                              | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#global_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>3.40.1.6.7.1. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>3.40.1.6.8. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_globalSecretName"></a>3.40.1.6.9. Property `stack > global > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_logoutPath"></a>3.40.1.6.10. Property `stack > global > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider"></a>3.40.1.6.11. Property `stack > global > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#global_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>3.40.1.6.11.1. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.11.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.11.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_refreshToken"></a>3.40.1.6.12. Property `stack > global > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources"></a>3.40.1.6.13. Property `stack > global > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                       | Description |
+| ------------------------------------------------------------------------------------- | ----------- |
+| [resources items](#global_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources_items"></a>3.40.1.6.13.1. stack > global > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes"></a>3.40.1.6.14. Property `stack > global > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                 | Description |
+| ------------------------------------------------------------------------------- | ----------- |
+| [scopes items](#global_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes_items"></a>3.40.1.6.14.1. stack > global > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth"></a>3.40.1.6.15. Property `stack > global > securityPolicies > additionalProperties > oidc > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                     | Description |
+| ----------------------------------------------------------------------------------- | ----------- |
+| [skipAuth items](#global_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>3.40.1.6.15.1. stack > global > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#global_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#global_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>3.40.1.6.15.1.1. Property `stack > global > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>3.40.1.6.15.1.2. Property `stack > global > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ### <a name="global_service"></a>3.41. Property `stack > global > service`
 
@@ -7594,58 +8822,58 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                                                                                       |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                                                                              |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy.                                                             |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                 |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                    |
+| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                          |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                             |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                        |
+| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                  |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                       |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy. |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                 |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                       |
 
 #### <a name="cronJobs_pattern1_affinity"></a>4.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -10972,17 +12200,631 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_securityPolicies"></a>4.1.40. Property `stack > cronJobs > ^.*$ > securityPolicies`
 
+|                           |                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                        |
+| **Required**              | No                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#cronJobs_pattern1_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+##### <a name="cronJobs_pattern1_securityPolicies_additionalProperties"></a>4.1.40.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| -------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#cronJobs_pattern1_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_annotations"></a>4.1.40.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > annotations`
+
 |                           |                  |
 | ------------------------- | ---------------- |
 | **Type**                  | `object`         |
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+**Description:** Extra annotations on the rendered SecurityPolicy
 
-| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth"></a>4.1.40.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>4.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>4.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors"></a>4.1.40.1.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials"></a>4.1.40.1.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders"></a>4.1.40.1.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>4.1.40.1.3.2.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods"></a>4.1.40.1.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowMethods items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items"></a>4.1.40.1.3.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins"></a>4.1.40.1.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowOrigins items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>4.1.40.1.3.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled"></a>4.1.40.1.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders"></a>4.1.40.1.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                          | Description |
+| -------------------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>4.1.40.1.3.6.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge"></a>4.1.40.1.3.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList"></a>4.1.40.1.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [ipAllowList items](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items"></a>4.1.40.1.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt"></a>4.1.40.1.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>4.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>4.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>4.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>4.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>4.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc"></a>4.1.40.1.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| - [skipAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>4.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [apiRoutes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>4.1.40.1.6.1.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>4.1.40.1.6.1.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>4.1.40.1.6.1.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID"></a>4.1.40.1.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>4.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>4.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>4.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>4.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>4.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>4.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>4.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>4.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>4.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>4.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>4.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>4.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>4.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>4.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>4.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>4.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>4.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                            | Description |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>4.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth"></a>4.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                | Description |
+| ---------------------------------------------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>4.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>4.1.40.1.6.15.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>4.1.40.1.6.15.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_service"></a>4.1.41. Property `stack > cronJobs > ^.*$ > service`
 
@@ -11836,58 +13678,58 @@ must respect the following conditions
 
 **Description:** Global configuration for the stack - this serves as the default configuration for all services/jobs/cronjobs
 
-| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                                                                                       |
-| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                                                                              |
-| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration |
-| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy.                                                             |
-| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Property                                                                     | Pattern | Type             | Deprecated | Definition              | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [affinity](#cronJobs_pattern1_affinity )                                   | No      | object           | No         | -                       | Affinity for the pod                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [annotations](#cronJobs_pattern1_annotations )                             | No      | object           | No         | -                       | Global annotations to add to all resources                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [appContext](#cronJobs_pattern1_appContext )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [appSecrets](#cronJobs_pattern1_appSecrets )                               | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [argoBuildEnv](#cronJobs_pattern1_argoBuildEnv )                           | No      | object           | No         | -                       | Argo built-in environment parameters (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                 |
+| - [args](#cronJobs_pattern1_args )                                           | No      | array of string  | No         | -                       | Arguments to pass to the command in the primary container                                                                                                                                                                                                                                                                                                                                                                    |
+| - [argusMetadata](#cronJobs_pattern1_argusMetadata )                         | No      | object           | No         | -                       | Argus metadata (provided by Argus API)                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [autoscaling](#cronJobs_pattern1_autoscaling )                             | No      | object           | No         | -                       | Autoscaling configuration                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [command](#cronJobs_pattern1_command )                                     | No      | array of string  | No         | -                       | Command to run in the primary container                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [deploymentKind](#cronJobs_pattern1_deploymentKind )                       | No      | enum (of string) | No         | -                       | Specifies the Kubernetes Kind for the main application workload controller (Deployment or Rollout).                                                                                                                                                                                                                                                                                                                          |
+| - [deploymentStage](#cronJobs_pattern1_deploymentStage )                     | No      | string           | No         | -                       | Deployment stage                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [dnsPolicy](#cronJobs_pattern1_dnsPolicy )                                 | No      | enum (of string) | No         | -                       | DNS policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [env](#cronJobs_pattern1_env )                                             | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [envFrom](#cronJobs_pattern1_envFrom )                                     | No      | array of object  | No         | -                       | Environment variables from configmaps or secrets                                                                                                                                                                                                                                                                                                                                                                             |
+| - [fullnameOverride](#cronJobs_pattern1_fullnameOverride )                   | No      | string           | No         | -                       | Name to prefix the K8s resources with, replaces the stack name prefix                                                                                                                                                                                                                                                                                                                                                        |
+| - [gateway](#cronJobs_pattern1_gateway )                                     | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
+| - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                   | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [image](#cronJobs_pattern1_image )                                         | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                   | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [ingress](#cronJobs_pattern1_ingress )                                     | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [initContainers](#cronJobs_pattern1_initContainers )                       | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                     | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
+| - [livenessProbe](#cronJobs_pattern1_livenessProbe )                         | No      | object           | No         | -                       | Liveness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
+| - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
+| - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [podLabels](#cronJobs_pattern1_podLabels )                                 | No      | object           | No         | -                       | Global labels to add to all pods                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [podSecurityContext](#cronJobs_pattern1_podSecurityContext )               | No      | object           | No         | -                       | Pod security context                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [progressDeadlineSeconds](#cronJobs_pattern1_progressDeadlineSeconds )     | No      | integer          | No         | -                       | the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled                                                                                                                                                                                                                                                                                  |
+| - [readinessProbe](#cronJobs_pattern1_readinessProbe )                       | No      | object           | No         | -                       | Readiness probe configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [replicaCount](#cronJobs_pattern1_replicaCount )                           | No      | integer          | No         | -                       | Number of replicas                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [resources](#cronJobs_pattern1_resources )                                 | No      | object           | No         | -                       | Resource requests and limits for the primary container                                                                                                                                                                                                                                                                                                                                                                       |
+| - [restartPolicy](#cronJobs_pattern1_restartPolicy )                         | No      | enum (of string) | No         | -                       | Restart policy for the pod                                                                                                                                                                                                                                                                                                                                                                                                   |
+| - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
+| - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
+| - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [sidecars](#cronJobs_pattern1_sidecars )                                   | No      | array            | No         | -                       | List of sidecars                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [startupProbe](#cronJobs_pattern1_startupProbe )                           | No      | object           | No         | -                       | Startup probe configuration                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [strategy](#cronJobs_pattern1_strategy )                                   | No      | object           | No         | -                       | Deployment update strategy. Empty writes no strategy field, so Kubernetes applies its default of RollingUpdate with maxSurge and maxUnavailable at 25%. Governs Deployment rollouts only, NOT eviction-based disruption (Karpenter consolidation and drift honor the PodDisruptionBudget instead, see pdb.minAvailable and autoscaling.maxUnavailable). Ignored when deploymentKind is Rollout, which uses rollout.strategy. |
+| - [tolerations](#cronJobs_pattern1_tolerations )                             | No      | array            | No         | -                       | Tolerations for the pod                                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [topologySpreadConstraints](#cronJobs_pattern1_topologySpreadConstraints ) | No      | array            | No         | -                       | Topology spread constraints for the pod                                                                                                                                                                                                                                                                                                                                                                                      |
+| - [volumeMounts](#cronJobs_pattern1_volumeMounts )                           | No      | array            | No         | -                       | Additional volume mounts on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                 |
+| - [volumes](#cronJobs_pattern1_volumes )                                     | No      | array            | No         | -                       | Additional volumes on the output Deployment definition                                                                                                                                                                                                                                                                                                                                                                       |
 
 #### <a name="cronJobs_pattern1_affinity"></a>7.1.1. Property `stack > cronJobs > ^.*$ > affinity`
 
@@ -15214,17 +17056,631 @@ Must be one of:
 
 #### <a name="cronJobs_pattern1_securityPolicies"></a>7.1.40. Property `stack > cronJobs > ^.*$ > securityPolicies`
 
+|                           |                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                        |
+| **Required**              | No                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#cronJobs_pattern1_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+##### <a name="cronJobs_pattern1_securityPolicies_additionalProperties"></a>7.1.40.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| -------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#cronJobs_pattern1_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_annotations"></a>7.1.40.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > annotations`
+
 |                           |                  |
 | ------------------------- | ---------------- |
 | **Type**                  | `object`         |
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+**Description:** Extra annotations on the rendered SecurityPolicy
 
-| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
-| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth"></a>7.1.40.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>7.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>7.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors"></a>7.1.40.1.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials"></a>7.1.40.1.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders"></a>7.1.40.1.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>7.1.40.1.3.2.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods"></a>7.1.40.1.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowMethods items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items"></a>7.1.40.1.3.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins"></a>7.1.40.1.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowOrigins items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>7.1.40.1.3.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled"></a>7.1.40.1.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders"></a>7.1.40.1.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                          | Description |
+| -------------------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>7.1.40.1.3.6.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge"></a>7.1.40.1.3.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList"></a>7.1.40.1.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [ipAllowList items](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items"></a>7.1.40.1.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt"></a>7.1.40.1.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>7.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>7.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>7.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>7.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>7.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc"></a>7.1.40.1.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| - [skipAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>7.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [apiRoutes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>7.1.40.1.6.1.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>7.1.40.1.6.1.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>7.1.40.1.6.1.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID"></a>7.1.40.1.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>7.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>7.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>7.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>7.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>7.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>7.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>7.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>7.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>7.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>7.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>7.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>7.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>7.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>7.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>7.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>7.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>7.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                            | Description |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>7.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth"></a>7.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                | Description |
+| ---------------------------------------------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>7.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>7.1.40.1.6.15.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>7.1.40.1.6.15.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_service"></a>7.1.41. Property `stack > cronJobs > ^.*$ > service`
 
