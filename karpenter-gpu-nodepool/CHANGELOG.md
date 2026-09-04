@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.5.0...karpenter-gpu-nodepool-v0.6.0) (2026-09-04)
+
+
+### Features
+
+* **karpenter-gpu-nodepool:** support multiple NodePools via nodepools list ([#553](https://github.com/chanzuckerberg/argo-helm-charts/issues/553)) ([a7a8a70](https://github.com/chanzuckerberg/argo-helm-charts/commit/a7a8a7036521e3ae162a51f7e6c754b96b75de38))
+
 ## [0.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.4.3...karpenter-gpu-nodepool-v0.5.0) (2026-08-27)
 
 
