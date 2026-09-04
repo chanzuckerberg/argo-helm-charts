@@ -1,40 +1,47 @@
-{{- if .Values.nodepool.enabled }}
+{{- $defaults := .Values.nodepool -}}
+{{- $pools := list -}}
+{{- if .Values.nodepools -}}
+  {{- $pools = .Values.nodepools -}}
+{{- else -}}
+  {{- $pools = list $defaults -}}
+{{- end -}}
+{{- range $pool := $pools }}
+{{- $merged := mergeOverwrite (deepCopy $defaults) $pool -}}
+{{- if $merged.enabled }}
+---
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: {{ .Values.nodepool.name }}
+  name: {{ $merged.name }}
   labels:
-    {{- include "karpenter-gpu-nodepool.labels" . | nindent 4 }}
+    {{- include "karpenter-gpu-nodepool.labels" $ | nindent 4 }}
 spec:
   disruption:
-    consolidationPolicy: {{ .Values.nodepool.disruption.consolidationPolicy }}
-    consolidateAfter: {{ .Values.nodepool.disruption.consolidateAfter }}
-  {{- with .Values.nodepool.limits }}
+    consolidationPolicy: {{ $merged.disruption.consolidationPolicy }}
+    consolidateAfter: {{ $merged.disruption.consolidateAfter }}
+  {{- with $merged.limits }}
   limits:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   template:
     metadata:
       labels:
-        {{- toYaml .Values.nodepool.template.metadata.labels | nindent 8 }}
+        {{- toYaml $merged.template.metadata.labels | nindent 8 }}
     spec:
-      {{- with .Values.nodepool.template.spec.terminationGracePeriod }}
-      terminationGracePeriod: {{ . }}
-      {{- end }}
-      expireAfter: {{ .Values.nodepool.template.spec.expireAfter }}
+      expireAfter: {{ $merged.template.spec.expireAfter }}
       nodeClassRef:
-        group: {{ .Values.nodepool.template.spec.nodeClassRef.group }}
-        kind: {{ .Values.nodepool.template.spec.nodeClassRef.kind }}
-        name: {{ .Values.nodepool.template.spec.nodeClassRef.name }}
-      {{- with .Values.nodepool.template.spec.startupTaints }}
+        group: {{ $merged.template.spec.nodeClassRef.group }}
+        kind: {{ $merged.template.spec.nodeClassRef.kind }}
+        name: {{ $merged.template.spec.nodeClassRef.name }}
+      {{- with $merged.template.spec.startupTaints }}
       startupTaints:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       requirements:
-        {{- toYaml .Values.nodepool.template.spec.requirements | nindent 8 }}
-      {{- with .Values.nodepool.template.spec.taints }}
+        {{- toYaml $merged.template.spec.requirements | nindent 8 }}
+      {{- with $merged.template.spec.taints }}
       taints:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
-
+{{- end }}

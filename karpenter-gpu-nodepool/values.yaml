@@ -67,6 +67,12 @@ nodepool:
           value: "true"
           effect: NoSchedule
 
+# Optional: deploy multiple NodePools instead of a single one. When set, each
+# entry is merged with the `nodepool` defaults above (via mergeOverwrite), so
+# you only need to specify the fields that differ per pool.
+# When empty/unset, the chart renders a single NodePool from `nodepool` above.
+nodepools: [] # @schema type: array; description: List of NodePool overrides. Each entry is merged with the nodepool defaults.
+
 priorityClass:
   enabled: true # @schema description: Enable creation of PriorityClass for critical GPU infrastructure.
   name: gpu-device-plugin-critical # @schema description: Name of the PriorityClass.
