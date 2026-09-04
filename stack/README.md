@@ -716,6 +716,7 @@ Must be one of:
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -1253,7 +1254,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>2.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                             | Description |
+| ----------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>2.1.16.19.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>2.1.16.19.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>2.1.16.19.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1269,7 +1318,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.19.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -1278,7 +1327,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.19.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -1287,7 +1336,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.19.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.20.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -1296,7 +1345,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1311,7 +1360,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1320,7 +1369,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -1329,7 +1378,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1345,7 +1394,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -1354,7 +1403,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1363,7 +1412,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.21.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -3762,7 +3811,6 @@ Must be one of:
 | - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
 | - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
 | - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
-| - [skipAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>2.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -4008,52 +4056,6 @@ Must be one of:
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>2.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth"></a>2.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                | Description |
-| ---------------------------------------------------------------------------------------------- | ----------- |
-| [skipAuth items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>2.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
-
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
-
-| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>2.1.40.1.6.15.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>2.1.40.1.6.15.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -5090,6 +5092,7 @@ Must be one of:
 | - [sectionName](#global_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | - [securityPolicy](#global_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#global_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#global_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#global_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#global_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#global_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -5627,7 +5630,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-#### <a name="global_gateway_timeouts"></a>3.16.19. Property `stack > global > gateway > timeouts`
+#### <a name="global_gateway_skipAuth"></a>3.16.19. Property `stack > global > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                  | Description |
+| ------------------------------------------------ | ----------- |
+| [skipAuth items](#global_gateway_skipAuth_items) | -           |
+
+##### <a name="global_gateway_skipAuth_items"></a>3.16.19.1. stack > global > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#global_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#global_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="global_gateway_skipAuth_items_method"></a>3.16.19.1.1. Property `stack > global > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_gateway_skipAuth_items_path"></a>3.16.19.1.2. Property `stack > global > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="global_gateway_timeouts"></a>3.16.20. Property `stack > global > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5643,7 +5694,7 @@ Must be one of:
 | - [connect](#global_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#global_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.19.1. Property `stack > global > gateway > timeouts > backendRequest`
+##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.20.1. Property `stack > global > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -5652,7 +5703,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-##### <a name="global_gateway_timeouts_connect"></a>3.16.19.2. Property `stack > global > gateway > timeouts > connect`
+##### <a name="global_gateway_timeouts_connect"></a>3.16.20.2. Property `stack > global > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -5661,7 +5712,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-##### <a name="global_gateway_timeouts_request"></a>3.16.19.3. Property `stack > global > gateway > timeouts > request`
+##### <a name="global_gateway_timeouts_request"></a>3.16.20.3. Property `stack > global > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -5670,7 +5721,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-#### <a name="global_gateway_tlsPassthrough"></a>3.16.20. Property `stack > global > gateway > tlsPassthrough`
+#### <a name="global_gateway_tlsPassthrough"></a>3.16.21. Property `stack > global > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5685,7 +5736,7 @@ Must be one of:
 | - [enabled](#global_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#global_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.20.1. Property `stack > global > gateway > tlsPassthrough > enabled`
+##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.21.1. Property `stack > global > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5694,7 +5745,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.20.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
+##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.21.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -5703,7 +5754,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-#### <a name="global_gateway_vanity"></a>3.16.21. Property `stack > global > gateway > vanity`
+#### <a name="global_gateway_vanity"></a>3.16.22. Property `stack > global > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5719,7 +5770,7 @@ Must be one of:
 | - [enabled](#global_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#global_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.21.1. Property `stack > global > gateway > vanity > clusterIssuer`
+##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.22.1. Property `stack > global > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -5728,7 +5779,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-##### <a name="global_gateway_vanity_enabled"></a>3.16.21.2. Property `stack > global > gateway > vanity > enabled`
+##### <a name="global_gateway_vanity_enabled"></a>3.16.22.2. Property `stack > global > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5737,7 +5788,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-##### <a name="global_gateway_vanity_hostname"></a>3.16.21.3. Property `stack > global > gateway > vanity > hostname`
+##### <a name="global_gateway_vanity_hostname"></a>3.16.22.3. Property `stack > global > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -8136,7 +8187,6 @@ Must be one of:
 | - [refreshToken](#global_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
 | - [resources](#global_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
 | - [scopes](#global_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
-| - [skipAuth](#global_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
 
 ###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes"></a>3.40.1.6.1. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -8382,52 +8432,6 @@ Must be one of:
 | [scopes items](#global_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
 ###### <a name="global_securityPolicies_additionalProperties_oidc_scopes_items"></a>3.40.1.6.14.1. stack > global > securityPolicies > additionalProperties > oidc > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth"></a>3.40.1.6.15. Property `stack > global > securityPolicies > additionalProperties > oidc > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                     | Description |
-| ----------------------------------------------------------------------------------- | ----------- |
-| [skipAuth items](#global_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
-
-###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>3.40.1.6.15.1. stack > global > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
-
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
-
-| Property                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#global_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#global_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>3.40.1.6.15.1.1. Property `stack > global > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="global_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>3.40.1.6.15.1.2. Property `stack > global > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -9482,6 +9486,7 @@ Must be one of:
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -10019,7 +10024,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>4.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                             | Description |
+| ----------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>4.1.16.19.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>4.1.16.19.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>4.1.16.19.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10035,7 +10088,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.19.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -10044,7 +10097,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.19.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -10053,7 +10106,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.19.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.20.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -10062,7 +10115,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10077,7 +10130,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10086,7 +10139,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -10095,7 +10148,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10111,7 +10164,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -10120,7 +10173,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10129,7 +10182,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.21.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -12528,7 +12581,6 @@ Must be one of:
 | - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
 | - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
 | - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
-| - [skipAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>4.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -12774,52 +12826,6 @@ Must be one of:
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>4.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth"></a>4.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                | Description |
-| ---------------------------------------------------------------------------------------------- | ----------- |
-| [skipAuth items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>4.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
-
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
-
-| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>4.1.40.1.6.15.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>4.1.40.1.6.15.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -14338,6 +14344,7 @@ Must be one of:
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -14875,7 +14882,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>7.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                             | Description |
+| ----------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>7.1.16.19.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>7.1.16.19.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>7.1.16.19.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14891,7 +14946,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.19.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -14900,7 +14955,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.19.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -14909,7 +14964,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.19.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.20.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -14918,7 +14973,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14933,7 +14988,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -14942,7 +14997,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -14951,7 +15006,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14967,7 +15022,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -14976,7 +15031,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -14985,7 +15040,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.21.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -17384,7 +17439,6 @@ Must be one of:
 | - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
 | - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
 | - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
-| - [skipAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth )                     | No      | array of object | No         | -          | -                                                                                               |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>7.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -17630,52 +17684,6 @@ Must be one of:
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>7.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth"></a>7.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                                                | Description |
-| ---------------------------------------------------------------------------------------------- | ----------- |
-| [skipAuth items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items) | -           |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items"></a>7.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items
-
-|                           |             |
-| ------------------------- | ----------- |
-| **Type**                  | `object`    |
-| **Required**              | No          |
-| **Additional properties** | Not allowed |
-
-| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_method"></a>7.1.40.1.6.15.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_skipAuth_items_path"></a>7.1.40.1.6.15.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
