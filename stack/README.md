@@ -84,7 +84,6 @@ must respect the following conditions
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.                                                                                                                                                                                                                      |
 | - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
 | - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -98,6 +97,7 @@ must respect the following conditions
 | - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -700,8 +700,6 @@ Must be one of:
 | ------------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object           | No         | -          | Annotations to add to HTTPRoute resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [backendTLS](#cronJobs_pattern1_gateway_backendTLS )             | No      | object           | No         | -          | TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [basicAuth](#cronJobs_pattern1_gateway_basicAuth )               | No      | object           | No         | -          | HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cors](#cronJobs_pattern1_gateway_cors )                         | No      | object           | No         | -          | CORS via a SecurityPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [dnsOwner](#cronJobs_pattern1_gateway_dnsOwner )                 | No      | enum (of string) | No         | -          | Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence |
 | - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean          | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string           | No         | -          | Name of the Gateway resource to attach to                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -709,9 +707,6 @@ Must be one of:
 | - [host](#cronJobs_pattern1_gateway_host )                         | No      | string           | No         | -          | Hostname for HTTPRoute                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [hostRewrite](#cronJobs_pattern1_gateway_hostRewrite )           | No      | string           | No         | -          | Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [hsts](#cronJobs_pattern1_gateway_hsts )                         | No      | object           | No         | -          | Strict-Transport-Security header always emitted on gateway HTTPRoutes (not disableable by design), matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap                                                                                                                                                                                                                                                                                                                                               |
-| - [ipAllowList](#cronJobs_pattern1_gateway_ipAllowList )           | No      | array            | No         | -          | Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [jwt](#cronJobs_pattern1_gateway_jwt )                           | No      | object           | No         | -          | JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent                                                                                              |
-| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean          | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway                                                                                                                                                                                                                                                                          |
 | - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rateLimit](#cronJobs_pattern1_gateway_rateLimit )               | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [redirect](#cronJobs_pattern1_gateway_redirect )                 | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -719,7 +714,9 @@ Must be one of:
 | - [responseHeaders](#cronJobs_pattern1_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -806,155 +803,7 @@ Must be one of:
 
 **Description:** Use the System trust store, or set "" and use caCertificateRefs for a private CA
 
-##### <a name="cronJobs_pattern1_gateway_basicAuth"></a>2.1.16.3. Property `stack > cronJobs > ^.*$ > gateway > basicAuth`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
-
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                             |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_basicAuth_enabled )       | No      | boolean | No         | -          | Enable basic auth                             |
-| - [secretName](#cronJobs_pattern1_gateway_basicAuth_secretName ) | No      | string  | No         | -          | Name of an Opaque Secret with a .htpasswd key |
-
-###### <a name="cronJobs_pattern1_gateway_basicAuth_enabled"></a>2.1.16.3.1. Property `stack > cronJobs > ^.*$ > gateway > basicAuth > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable basic auth
-
-###### <a name="cronJobs_pattern1_gateway_basicAuth_secretName"></a>2.1.16.3.2. Property `stack > cronJobs > ^.*$ > gateway > basicAuth > secretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of an Opaque Secret with a .htpasswd key
-
-##### <a name="cronJobs_pattern1_gateway_cors"></a>2.1.16.4. Property `stack > cronJobs > ^.*$ > gateway > cors`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** CORS via a SecurityPolicy
-
-| Property                                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                    |
-| ----------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------- |
-| - [allowCredentials](#cronJobs_pattern1_gateway_cors_allowCredentials ) | No      | boolean | No         | -          | Allow credentials                                    |
-| - [allowHeaders](#cronJobs_pattern1_gateway_cors_allowHeaders )         | No      | array   | No         | -          | Allowed request headers                              |
-| - [allowMethods](#cronJobs_pattern1_gateway_cors_allowMethods )         | No      | array   | No         | -          | Allowed methods                                      |
-| - [allowOrigins](#cronJobs_pattern1_gateway_cors_allowOrigins )         | No      | array   | No         | -          | Allowed origins (string patterns)                    |
-| - [enabled](#cronJobs_pattern1_gateway_cors_enabled )                   | No      | boolean | No         | -          | Enable CORS                                          |
-| - [exposeHeaders](#cronJobs_pattern1_gateway_cors_exposeHeaders )       | No      | array   | No         | -          | Response headers exposed to the browser              |
-| - [maxAge](#cronJobs_pattern1_gateway_cors_maxAge )                     | No      | string  | No         | -          | Preflight cache duration (e.g. "1h"), empty omits it |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowCredentials"></a>2.1.16.4.1. Property `stack > cronJobs > ^.*$ > gateway > cors > allowCredentials`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Allow credentials
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowHeaders"></a>2.1.16.4.2. Property `stack > cronJobs > ^.*$ > gateway > cors > allowHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed request headers
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowMethods"></a>2.1.16.4.3. Property `stack > cronJobs > ^.*$ > gateway > cors > allowMethods`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed methods
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowOrigins"></a>2.1.16.4.4. Property `stack > cronJobs > ^.*$ > gateway > cors > allowOrigins`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed origins (string patterns)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_enabled"></a>2.1.16.4.5. Property `stack > cronJobs > ^.*$ > gateway > cors > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable CORS
-
-###### <a name="cronJobs_pattern1_gateway_cors_exposeHeaders"></a>2.1.16.4.6. Property `stack > cronJobs > ^.*$ > gateway > cors > exposeHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Response headers exposed to the browser
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_maxAge"></a>2.1.16.4.7. Property `stack > cronJobs > ^.*$ > gateway > cors > maxAge`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Preflight cache duration (e.g. "1h"), empty omits it
-
-##### <a name="cronJobs_pattern1_gateway_dnsOwner"></a>2.1.16.5. Property `stack > cronJobs > ^.*$ > gateway > dnsOwner`
+##### <a name="cronJobs_pattern1_gateway_dnsOwner"></a>2.1.16.3. Property `stack > cronJobs > ^.*$ > gateway > dnsOwner`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -967,7 +816,7 @@ Must be one of:
 * "ingress"
 * "gateway"
 
-##### <a name="cronJobs_pattern1_gateway_enabled"></a>2.1.16.6. Property `stack > cronJobs > ^.*$ > gateway > enabled`
+##### <a name="cronJobs_pattern1_gateway_enabled"></a>2.1.16.4. Property `stack > cronJobs > ^.*$ > gateway > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -976,7 +825,7 @@ Must be one of:
 
 **Description:** Enable Gateway API HTTPRoute (alternative to Ingress)
 
-##### <a name="cronJobs_pattern1_gateway_gatewayName"></a>2.1.16.7. Property `stack > cronJobs > ^.*$ > gateway > gatewayName`
+##### <a name="cronJobs_pattern1_gateway_gatewayName"></a>2.1.16.5. Property `stack > cronJobs > ^.*$ > gateway > gatewayName`
 
 |              |          |
 | ------------ | -------- |
@@ -985,7 +834,7 @@ Must be one of:
 
 **Description:** Name of the Gateway resource to attach to
 
-##### <a name="cronJobs_pattern1_gateway_gatewayNamespace"></a>2.1.16.8. Property `stack > cronJobs > ^.*$ > gateway > gatewayNamespace`
+##### <a name="cronJobs_pattern1_gateway_gatewayNamespace"></a>2.1.16.6. Property `stack > cronJobs > ^.*$ > gateway > gatewayNamespace`
 
 |              |          |
 | ------------ | -------- |
@@ -994,7 +843,7 @@ Must be one of:
 
 **Description:** Namespace of the Gateway resource
 
-##### <a name="cronJobs_pattern1_gateway_host"></a>2.1.16.9. Property `stack > cronJobs > ^.*$ > gateway > host`
+##### <a name="cronJobs_pattern1_gateway_host"></a>2.1.16.7. Property `stack > cronJobs > ^.*$ > gateway > host`
 
 |              |          |
 | ------------ | -------- |
@@ -1003,7 +852,7 @@ Must be one of:
 
 **Description:** Hostname for HTTPRoute
 
-##### <a name="cronJobs_pattern1_gateway_hostRewrite"></a>2.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > hostRewrite`
+##### <a name="cronJobs_pattern1_gateway_hostRewrite"></a>2.1.16.8. Property `stack > cronJobs > ^.*$ > gateway > hostRewrite`
 
 |              |          |
 | ------------ | -------- |
@@ -1012,7 +861,7 @@ Must be one of:
 
 **Description:** Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it
 
-##### <a name="cronJobs_pattern1_gateway_hsts"></a>2.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > hsts`
+##### <a name="cronJobs_pattern1_gateway_hsts"></a>2.1.16.9. Property `stack > cronJobs > ^.*$ > gateway > hsts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1026,7 +875,7 @@ Must be one of:
 | ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------ |
 | - [value](#cronJobs_pattern1_gateway_hsts_value ) | No      | string | No         | -          | Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set |
 
-###### <a name="cronJobs_pattern1_gateway_hsts_value"></a>2.1.16.11.1. Property `stack > cronJobs > ^.*$ > gateway > hsts > value`
+###### <a name="cronJobs_pattern1_gateway_hsts_value"></a>2.1.16.9.1. Property `stack > cronJobs > ^.*$ > gateway > hsts > value`
 
 |              |          |
 | ------------ | -------- |
@@ -1035,139 +884,7 @@ Must be one of:
 
 **Description:** Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set
 
-##### <a name="cronJobs_pattern1_gateway_ipAllowList"></a>2.1.16.12. Property `stack > cronJobs > ^.*$ > gateway > ipAllowList`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="cronJobs_pattern1_gateway_jwt"></a>2.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > jwt`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
-
-| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                      |
-| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean         | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list                                                                                                                                                                                                           |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string          | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty                                                |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers )         | No      | array of object | No         | -          | List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri                                                                                           |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string          | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>2.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list
-
-###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>2.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers"></a>2.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                   | Description |
-| ----------------------------------------------------------------- | ----------- |
-| [providers items](#cronJobs_pattern1_gateway_jwt_providers_items) | -           |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items"></a>2.1.16.13.3.1. stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                     |
-| -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------- |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_providers_items_issuer )               | No      | string | No         | -          | Expected token issuer (iss claim) - required                                          |
-| - [name](#cronJobs_pattern1_gateway_jwt_providers_items_name )                   | No      | string | No         | -          | Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev' |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_providers_items_remoteJWKSUri ) | No      | string | No         | -          | JWKS URI for this provider's signing keys - required                                  |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_issuer"></a>2.1.16.13.3.1.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim) - required
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_name"></a>2.1.16.13.3.1.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev'
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_remoteJWKSUri"></a>2.1.16.13.3.1.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI for this provider's signing keys - required
-
-###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>2.1.16.13.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
-
-##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>2.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway
-
-##### <a name="cronJobs_pattern1_gateway_paths"></a>2.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > paths`
+##### <a name="cronJobs_pattern1_gateway_paths"></a>2.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > paths`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1188,7 +905,7 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [paths items](#cronJobs_pattern1_gateway_paths_items) | -           |
 
-###### <a name="cronJobs_pattern1_gateway_paths_items"></a>2.1.16.15.1. stack > cronJobs > ^.*$ > gateway > paths > paths items
+###### <a name="cronJobs_pattern1_gateway_paths_items"></a>2.1.16.10.1. stack > cronJobs > ^.*$ > gateway > paths > paths items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1201,7 +918,7 @@ Must be one of:
 | - [path](#cronJobs_pattern1_gateway_paths_items_path )         | No      | string | No         | -          | HTTPRoute path                        |
 | - [pathType](#cronJobs_pattern1_gateway_paths_items_pathType ) | No      | string | No         | -          | HTTPRoute path type (Exact or Prefix) |
 
-###### <a name="cronJobs_pattern1_gateway_paths_items_path"></a>2.1.16.15.1.1. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > path`
+###### <a name="cronJobs_pattern1_gateway_paths_items_path"></a>2.1.16.10.1.1. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -1210,7 +927,7 @@ Must be one of:
 
 **Description:** HTTPRoute path
 
-###### <a name="cronJobs_pattern1_gateway_paths_items_pathType"></a>2.1.16.15.1.2. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > pathType`
+###### <a name="cronJobs_pattern1_gateway_paths_items_pathType"></a>2.1.16.10.1.2. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > pathType`
 
 |              |          |
 | ------------ | -------- |
@@ -1219,7 +936,7 @@ Must be one of:
 
 **Description:** HTTPRoute path type (Exact or Prefix)
 
-##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>2.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
+##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>2.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1235,7 +952,7 @@ Must be one of:
 | - [requests](#cronJobs_pattern1_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#cronJobs_pattern1_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>2.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>2.1.16.11.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1244,7 +961,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>2.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>2.1.16.11.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -1253,7 +970,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>2.1.16.16.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>2.1.16.11.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -1262,7 +979,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-##### <a name="cronJobs_pattern1_gateway_redirect"></a>2.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > redirect`
+##### <a name="cronJobs_pattern1_gateway_redirect"></a>2.1.16.12. Property `stack > cronJobs > ^.*$ > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1280,7 +997,7 @@ Must be one of:
 | - [scheme](#cronJobs_pattern1_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#cronJobs_pattern1_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>2.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
+###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>2.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1289,7 +1006,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>2.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
+###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>2.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -1298,7 +1015,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>2.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
+###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>2.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -1307,7 +1024,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>2.1.16.17.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
+###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>2.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -1316,7 +1033,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>2.1.16.17.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
+###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>2.1.16.12.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -1325,7 +1042,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>2.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
+##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>2.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1341,7 +1058,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>2.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>2.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -1358,7 +1075,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>2.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>2.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -1375,7 +1092,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>2.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>2.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -1392,7 +1109,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>2.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
+##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>2.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1408,7 +1125,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>2.1.16.19.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>2.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -1425,7 +1142,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>2.1.16.19.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>2.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -1442,7 +1159,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>2.1.16.19.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>2.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -1459,7 +1176,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_rules"></a>2.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > rules`
+##### <a name="cronJobs_pattern1_gateway_rules"></a>2.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -1476,7 +1193,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_sectionName"></a>2.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
+##### <a name="cronJobs_pattern1_gateway_sectionName"></a>2.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -1485,7 +1202,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>2.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>2.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session
+
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>2.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1501,7 +1227,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>2.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>2.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -1510,7 +1236,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>2.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>2.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1519,7 +1245,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>2.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>2.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -1528,7 +1254,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>2.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                             | Description |
+| ----------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>2.1.16.19.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>2.1.16.19.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>2.1.16.19.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1544,7 +1318,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -1553,7 +1327,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -1562,7 +1336,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.20.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -1571,7 +1345,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1586,7 +1360,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1595,7 +1369,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -1604,7 +1378,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1620,7 +1394,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -1629,7 +1403,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1638,7 +1412,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -2760,358 +2534,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>2.1.27. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
-
-| Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretName](#cronJobs_pattern1_oidcProxyGateway_globalSecretName )     | No      | string          | No         | -          | Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.                                                                                                                                                                                                                                                                                                                                                                              |
-| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>2.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Annotations to add to SecurityPolicy resources
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes"></a>2.1.27.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                        | Description |
-| ---------------------------------------------------------------------- | ----------- |
-| [apiRoutes items](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items"></a>2.1.27.2.1. stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType"></a>2.1.27.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path"></a>2.1.27.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>2.1.27.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>2.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>2.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>2.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.
-
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                   |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------- |
-| - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
-| - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>2.1.27.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for access token cookie
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>2.1.27.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for ID token cookie
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>2.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>2.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.
-
-| Property                                                               | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                      |
-| ---------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>2.1.27.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>2.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Forward access token to backend service
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretName"></a>2.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>2.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>2.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** OIDC provider configuration
-
-| Property                                                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                      |
-| ---------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------- |
-| - [authorizationEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint ) | No      | string | No         | -          | Optional authorization endpoint (auto-discovered by provider if empty) |
-| - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
-| - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>2.1.27.12.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional authorization endpoint (auto-discovered by provider if empty)
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>2.1.27.12.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC provider issuer URL
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>2.1.27.12.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional token endpoint (auto-discovered by provider if empty)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>2.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>2.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Optional OAuth2 resources parameter
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>2.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** OIDC scopes to request
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                  | Description |
-| ---------------------------------------------------------------- | ----------- |
-| [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>2.1.27.15.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>2.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** Paths to skip authentication (creates separate public HTTPRoute)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                      | Description |
-| -------------------------------------------------------------------- | ----------- |
-| [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>2.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>2.1.27.16.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>2.1.27.16.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="cronJobs_pattern1_pdb"></a>2.1.28. Property `stack > cronJobs > ^.*$ > pdb`
+#### <a name="cronJobs_pattern1_pdb"></a>2.1.27. Property `stack > cronJobs > ^.*$ > pdb`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3125,7 +2548,7 @@ Must be one of:
 | ------------------------------------------------------ | ------- | ----------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | - [minAvailable](#cronJobs_pattern1_pdb_minAvailable ) | No      | integer or string | No         | -          | Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable. |
 
-##### <a name="cronJobs_pattern1_pdb_minAvailable"></a>2.1.28.1. Property `stack > cronJobs > ^.*$ > pdb > minAvailable`
+##### <a name="cronJobs_pattern1_pdb_minAvailable"></a>2.1.27.1. Property `stack > cronJobs > ^.*$ > pdb > minAvailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -3134,7 +2557,7 @@ Must be one of:
 
 **Description:** Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable.
 
-#### <a name="cronJobs_pattern1_persistence"></a>2.1.29. Property `stack > cronJobs > ^.*$ > persistence`
+#### <a name="cronJobs_pattern1_persistence"></a>2.1.28. Property `stack > cronJobs > ^.*$ > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3149,7 +2572,7 @@ Must be one of:
 | - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-##### <a name="cronJobs_pattern1_persistence_enabled"></a>2.1.29.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
+##### <a name="cronJobs_pattern1_persistence_enabled"></a>2.1.28.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -3158,7 +2581,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>2.1.29.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
+##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>2.1.28.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -3167,7 +2590,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-##### <a name="cronJobs_pattern1_persistence_mountPath"></a>2.1.29.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
+##### <a name="cronJobs_pattern1_persistence_mountPath"></a>2.1.28.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -3176,7 +2599,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-##### <a name="cronJobs_pattern1_persistence_pvc"></a>2.1.29.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
+##### <a name="cronJobs_pattern1_persistence_pvc"></a>2.1.28.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3191,7 +2614,7 @@ Must be one of:
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>2.1.29.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>2.1.28.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -3212,7 +2635,7 @@ Must be one of:
 | ------------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>2.1.29.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>2.1.28.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -3225,7 +2648,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>2.1.29.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>2.1.28.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3239,7 +2662,7 @@ Must be one of:
 | - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>2.1.29.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>2.1.28.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -3248,7 +2671,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>2.1.29.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>2.1.28.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -3257,7 +2680,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>2.1.29.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>2.1.28.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -3266,7 +2689,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>2.1.29.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>2.1.28.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3278,7 +2701,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>2.1.29.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>2.1.28.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3292,7 +2715,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>2.1.29.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>2.1.28.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -3301,7 +2724,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>2.1.29.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>2.1.28.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -3310,7 +2733,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-#### <a name="cronJobs_pattern1_podAnnotations"></a>2.1.30. Property `stack > cronJobs > ^.*$ > podAnnotations`
+#### <a name="cronJobs_pattern1_podAnnotations"></a>2.1.29. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3320,7 +2743,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-#### <a name="cronJobs_pattern1_podLabels"></a>2.1.31. Property `stack > cronJobs > ^.*$ > podLabels`
+#### <a name="cronJobs_pattern1_podLabels"></a>2.1.30. Property `stack > cronJobs > ^.*$ > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3330,7 +2753,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-#### <a name="cronJobs_pattern1_podSecurityContext"></a>2.1.32. Property `stack > cronJobs > ^.*$ > podSecurityContext`
+#### <a name="cronJobs_pattern1_podSecurityContext"></a>2.1.31. Property `stack > cronJobs > ^.*$ > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3340,7 +2763,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>2.1.33. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
+#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>2.1.32. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -3349,7 +2772,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-#### <a name="cronJobs_pattern1_readinessProbe"></a>2.1.34. Property `stack > cronJobs > ^.*$ > readinessProbe`
+#### <a name="cronJobs_pattern1_readinessProbe"></a>2.1.33. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3368,7 +2791,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>2.1.34.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>2.1.33.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -3377,7 +2800,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>2.1.34.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
+##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>2.1.33.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3393,7 +2816,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>2.1.34.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>2.1.33.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -3402,7 +2825,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>2.1.34.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>2.1.33.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3417,21 +2840,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>2.1.34.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>2.1.33.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>2.1.34.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>2.1.33.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>2.1.34.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>2.1.33.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -3440,7 +2863,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>2.1.34.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>2.1.33.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -3449,7 +2872,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>2.1.34.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>2.1.33.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -3458,7 +2881,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>2.1.34.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>2.1.33.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -3467,7 +2890,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>2.1.34.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>2.1.33.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -3476,7 +2899,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_replicaCount"></a>2.1.35. Property `stack > cronJobs > ^.*$ > replicaCount`
+#### <a name="cronJobs_pattern1_replicaCount"></a>2.1.34. Property `stack > cronJobs > ^.*$ > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -3485,7 +2908,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-#### <a name="cronJobs_pattern1_resources"></a>2.1.36. Property `stack > cronJobs > ^.*$ > resources`
+#### <a name="cronJobs_pattern1_resources"></a>2.1.35. Property `stack > cronJobs > ^.*$ > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3500,7 +2923,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#cronJobs_pattern1_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-##### <a name="cronJobs_pattern1_resources_limits"></a>2.1.36.1. Property `stack > cronJobs > ^.*$ > resources > limits`
+##### <a name="cronJobs_pattern1_resources_limits"></a>2.1.35.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3515,7 +2938,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>2.1.36.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>2.1.35.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3530,21 +2953,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>2.1.36.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>2.1.35.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>2.1.36.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>2.1.35.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_memory"></a>2.1.36.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
+###### <a name="cronJobs_pattern1_resources_limits_memory"></a>2.1.35.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -3553,7 +2976,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-##### <a name="cronJobs_pattern1_resources_requests"></a>2.1.36.2. Property `stack > cronJobs > ^.*$ > resources > requests`
+##### <a name="cronJobs_pattern1_resources_requests"></a>2.1.35.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3568,7 +2991,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>2.1.36.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>2.1.35.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3583,21 +3006,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>2.1.36.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>2.1.35.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>2.1.36.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>2.1.35.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_memory"></a>2.1.36.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
+###### <a name="cronJobs_pattern1_resources_requests_memory"></a>2.1.35.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -3606,7 +3029,7 @@ Must be one of:
 
 **Description:** Memory request
 
-#### <a name="cronJobs_pattern1_restartPolicy"></a>2.1.37. Property `stack > cronJobs > ^.*$ > restartPolicy`
+#### <a name="cronJobs_pattern1_restartPolicy"></a>2.1.36. Property `stack > cronJobs > ^.*$ > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -3620,7 +3043,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_rollout"></a>2.1.38. Property `stack > cronJobs > ^.*$ > rollout`
+#### <a name="cronJobs_pattern1_rollout"></a>2.1.37. Property `stack > cronJobs > ^.*$ > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -3634,7 +3057,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-##### <a name="cronJobs_pattern1_rollout_strategy"></a>2.1.38.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>2.1.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3649,7 +3072,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>2.1.38.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>2.1.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3665,7 +3088,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>2.1.38.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>2.1.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -3674,7 +3097,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>2.1.38.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>2.1.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -3683,7 +3106,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>2.1.38.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>2.1.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -3701,7 +3124,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>2.1.38.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>2.1.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3716,7 +3139,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>2.1.38.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>2.1.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3726,7 +3149,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>2.1.38.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>2.1.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3736,7 +3159,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>2.1.38.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>2.1.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -3757,7 +3180,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>2.1.38.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>2.1.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3771,21 +3194,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>2.1.38.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>2.1.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>2.1.38.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>2.1.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>2.1.38.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>2.1.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3798,7 +3221,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>2.1.38.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>2.1.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3810,14 +3233,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>2.1.38.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>2.1.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>2.1.38.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>2.1.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -3828,7 +3251,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>2.1.38.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>2.1.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -3849,7 +3272,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>2.1.38.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>2.1.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3862,7 +3285,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>2.1.38.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>2.1.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -3871,7 +3294,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>2.1.38.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>2.1.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -3880,7 +3303,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>2.1.38.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>2.1.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -3889,7 +3312,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>2.1.39. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_s3Storage"></a>2.1.38. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3912,7 +3335,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.39.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>2.1.38.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -3933,7 +3356,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>2.1.39.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>2.1.38.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -3946,7 +3369,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>2.1.39.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>2.1.38.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3956,7 +3379,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>2.1.39.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>2.1.38.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -3965,7 +3388,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>2.1.39.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>2.1.38.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -3974,7 +3397,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>2.1.39.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>2.1.38.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -3983,7 +3406,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>2.1.39.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>2.1.38.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3993,7 +3416,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.39.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>2.1.38.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -4002,7 +3425,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.39.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>2.1.38.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -4011,7 +3434,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.39.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>2.1.38.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -4020,7 +3443,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.39.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>2.1.38.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -4029,7 +3452,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.39.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>2.1.38.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4039,7 +3462,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.39.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>2.1.38.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -4048,7 +3471,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>2.1.40. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>2.1.39. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -4057,6 +3480,587 @@ Must be one of:
 | **Additional properties** | Any type allowed |
 
 **Description:** Security context
+
+#### <a name="cronJobs_pattern1_securityPolicies"></a>2.1.40. Property `stack > cronJobs > ^.*$ > securityPolicies`
+
+|                           |                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                        |
+| **Required**              | No                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#cronJobs_pattern1_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+##### <a name="cronJobs_pattern1_securityPolicies_additionalProperties"></a>2.1.40.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| -------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#cronJobs_pattern1_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_annotations"></a>2.1.40.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered SecurityPolicy
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth"></a>2.1.40.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>2.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>2.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors"></a>2.1.40.1.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials"></a>2.1.40.1.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders"></a>2.1.40.1.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>2.1.40.1.3.2.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods"></a>2.1.40.1.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowMethods items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items"></a>2.1.40.1.3.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins"></a>2.1.40.1.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowOrigins items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>2.1.40.1.3.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled"></a>2.1.40.1.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders"></a>2.1.40.1.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                          | Description |
+| -------------------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>2.1.40.1.3.6.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge"></a>2.1.40.1.3.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList"></a>2.1.40.1.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [ipAllowList items](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items"></a>2.1.40.1.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt"></a>2.1.40.1.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>2.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>2.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>2.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>2.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>2.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc"></a>2.1.40.1.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>2.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [apiRoutes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>2.1.40.1.6.1.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>2.1.40.1.6.1.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>2.1.40.1.6.1.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID"></a>2.1.40.1.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>2.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>2.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>2.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>2.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>2.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>2.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>2.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>2.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>2.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>2.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>2.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>2.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>2.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>2.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>2.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>2.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>2.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                            | Description |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>2.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_service"></a>2.1.41. Property `stack > cronJobs > ^.*$ > service`
 
@@ -4456,7 +4460,6 @@ Must be one of:
 | - [nameOverride](#global_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
 | - [nodeSelector](#global_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [oidcProxy](#global_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [oidcProxyGateway](#global_oidcProxyGateway )                   | No      | object           | No         | -                       | Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.                                                                                                                                                                                                                      |
 | - [pdb](#global_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
 | - [persistence](#global_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [podAnnotations](#global_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -4470,6 +4473,7 @@ Must be one of:
 | - [rollout](#global_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#global_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#global_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#global_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
 | - [service](#global_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#global_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#global_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -5072,8 +5076,6 @@ Must be one of:
 | ------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [annotations](#global_gateway_annotations )           | No      | object           | No         | -          | Annotations to add to HTTPRoute resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [backendTLS](#global_gateway_backendTLS )             | No      | object           | No         | -          | TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [basicAuth](#global_gateway_basicAuth )               | No      | object           | No         | -          | HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cors](#global_gateway_cors )                         | No      | object           | No         | -          | CORS via a SecurityPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [dnsOwner](#global_gateway_dnsOwner )                 | No      | enum (of string) | No         | -          | Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence |
 | - [enabled](#global_gateway_enabled )                   | No      | boolean          | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [gatewayName](#global_gateway_gatewayName )           | No      | string           | No         | -          | Name of the Gateway resource to attach to                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -5081,9 +5083,6 @@ Must be one of:
 | - [host](#global_gateway_host )                         | No      | string           | No         | -          | Hostname for HTTPRoute                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [hostRewrite](#global_gateway_hostRewrite )           | No      | string           | No         | -          | Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [hsts](#global_gateway_hsts )                         | No      | object           | No         | -          | Strict-Transport-Security header always emitted on gateway HTTPRoutes (not disableable by design), matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap                                                                                                                                                                                                                                                                                                                                               |
-| - [ipAllowList](#global_gateway_ipAllowList )           | No      | array            | No         | -          | Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [jwt](#global_gateway_jwt )                           | No      | object           | No         | -          | JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent                                                                                              |
-| - [oidcProtected](#global_gateway_oidcProtected )       | No      | boolean          | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway                                                                                                                                                                                                                                                                          |
 | - [paths](#global_gateway_paths )                       | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rateLimit](#global_gateway_rateLimit )               | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [redirect](#global_gateway_redirect )                 | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -5091,7 +5090,9 @@ Must be one of:
 | - [responseHeaders](#global_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#global_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#global_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#global_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#global_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#global_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#global_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#global_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#global_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -5178,155 +5179,7 @@ Must be one of:
 
 **Description:** Use the System trust store, or set "" and use caCertificateRefs for a private CA
 
-#### <a name="global_gateway_basicAuth"></a>3.16.3. Property `stack > global > gateway > basicAuth`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
-
-| Property                                              | Pattern | Type    | Deprecated | Definition | Title/Description                             |
-| ----------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------- |
-| - [enabled](#global_gateway_basicAuth_enabled )       | No      | boolean | No         | -          | Enable basic auth                             |
-| - [secretName](#global_gateway_basicAuth_secretName ) | No      | string  | No         | -          | Name of an Opaque Secret with a .htpasswd key |
-
-##### <a name="global_gateway_basicAuth_enabled"></a>3.16.3.1. Property `stack > global > gateway > basicAuth > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable basic auth
-
-##### <a name="global_gateway_basicAuth_secretName"></a>3.16.3.2. Property `stack > global > gateway > basicAuth > secretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of an Opaque Secret with a .htpasswd key
-
-#### <a name="global_gateway_cors"></a>3.16.4. Property `stack > global > gateway > cors`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** CORS via a SecurityPolicy
-
-| Property                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                    |
-| ------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ---------------------------------------------------- |
-| - [allowCredentials](#global_gateway_cors_allowCredentials ) | No      | boolean | No         | -          | Allow credentials                                    |
-| - [allowHeaders](#global_gateway_cors_allowHeaders )         | No      | array   | No         | -          | Allowed request headers                              |
-| - [allowMethods](#global_gateway_cors_allowMethods )         | No      | array   | No         | -          | Allowed methods                                      |
-| - [allowOrigins](#global_gateway_cors_allowOrigins )         | No      | array   | No         | -          | Allowed origins (string patterns)                    |
-| - [enabled](#global_gateway_cors_enabled )                   | No      | boolean | No         | -          | Enable CORS                                          |
-| - [exposeHeaders](#global_gateway_cors_exposeHeaders )       | No      | array   | No         | -          | Response headers exposed to the browser              |
-| - [maxAge](#global_gateway_cors_maxAge )                     | No      | string  | No         | -          | Preflight cache duration (e.g. "1h"), empty omits it |
-
-##### <a name="global_gateway_cors_allowCredentials"></a>3.16.4.1. Property `stack > global > gateway > cors > allowCredentials`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Allow credentials
-
-##### <a name="global_gateway_cors_allowHeaders"></a>3.16.4.2. Property `stack > global > gateway > cors > allowHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed request headers
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="global_gateway_cors_allowMethods"></a>3.16.4.3. Property `stack > global > gateway > cors > allowMethods`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed methods
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="global_gateway_cors_allowOrigins"></a>3.16.4.4. Property `stack > global > gateway > cors > allowOrigins`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed origins (string patterns)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="global_gateway_cors_enabled"></a>3.16.4.5. Property `stack > global > gateway > cors > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable CORS
-
-##### <a name="global_gateway_cors_exposeHeaders"></a>3.16.4.6. Property `stack > global > gateway > cors > exposeHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Response headers exposed to the browser
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="global_gateway_cors_maxAge"></a>3.16.4.7. Property `stack > global > gateway > cors > maxAge`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Preflight cache duration (e.g. "1h"), empty omits it
-
-#### <a name="global_gateway_dnsOwner"></a>3.16.5. Property `stack > global > gateway > dnsOwner`
+#### <a name="global_gateway_dnsOwner"></a>3.16.3. Property `stack > global > gateway > dnsOwner`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -5339,7 +5192,7 @@ Must be one of:
 * "ingress"
 * "gateway"
 
-#### <a name="global_gateway_enabled"></a>3.16.6. Property `stack > global > gateway > enabled`
+#### <a name="global_gateway_enabled"></a>3.16.4. Property `stack > global > gateway > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5348,7 +5201,7 @@ Must be one of:
 
 **Description:** Enable Gateway API HTTPRoute (alternative to Ingress)
 
-#### <a name="global_gateway_gatewayName"></a>3.16.7. Property `stack > global > gateway > gatewayName`
+#### <a name="global_gateway_gatewayName"></a>3.16.5. Property `stack > global > gateway > gatewayName`
 
 |              |          |
 | ------------ | -------- |
@@ -5357,7 +5210,7 @@ Must be one of:
 
 **Description:** Name of the Gateway resource to attach to
 
-#### <a name="global_gateway_gatewayNamespace"></a>3.16.8. Property `stack > global > gateway > gatewayNamespace`
+#### <a name="global_gateway_gatewayNamespace"></a>3.16.6. Property `stack > global > gateway > gatewayNamespace`
 
 |              |          |
 | ------------ | -------- |
@@ -5366,7 +5219,7 @@ Must be one of:
 
 **Description:** Namespace of the Gateway resource
 
-#### <a name="global_gateway_host"></a>3.16.9. Property `stack > global > gateway > host`
+#### <a name="global_gateway_host"></a>3.16.7. Property `stack > global > gateway > host`
 
 |              |          |
 | ------------ | -------- |
@@ -5375,7 +5228,7 @@ Must be one of:
 
 **Description:** Hostname for HTTPRoute
 
-#### <a name="global_gateway_hostRewrite"></a>3.16.10. Property `stack > global > gateway > hostRewrite`
+#### <a name="global_gateway_hostRewrite"></a>3.16.8. Property `stack > global > gateway > hostRewrite`
 
 |              |          |
 | ------------ | -------- |
@@ -5384,7 +5237,7 @@ Must be one of:
 
 **Description:** Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it
 
-#### <a name="global_gateway_hsts"></a>3.16.11. Property `stack > global > gateway > hsts`
+#### <a name="global_gateway_hsts"></a>3.16.9. Property `stack > global > gateway > hsts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5398,7 +5251,7 @@ Must be one of:
 | -------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------ |
 | - [value](#global_gateway_hsts_value ) | No      | string | No         | -          | Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set |
 
-##### <a name="global_gateway_hsts_value"></a>3.16.11.1. Property `stack > global > gateway > hsts > value`
+##### <a name="global_gateway_hsts_value"></a>3.16.9.1. Property `stack > global > gateway > hsts > value`
 
 |              |          |
 | ------------ | -------- |
@@ -5407,139 +5260,7 @@ Must be one of:
 
 **Description:** Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set
 
-#### <a name="global_gateway_ipAllowList"></a>3.16.12. Property `stack > global > gateway > ipAllowList`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-#### <a name="global_gateway_jwt"></a>3.16.13. Property `stack > global > gateway > jwt`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
-
-| Property                                              | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                      |
-| ----------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#global_gateway_jwt_enabled )             | No      | boolean         | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list                                                                                                                                                                                                           |
-| - [issuer](#global_gateway_jwt_issuer )               | No      | string          | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty                                                |
-| - [providers](#global_gateway_jwt_providers )         | No      | array of object | No         | -          | List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri                                                                                           |
-| - [remoteJWKSUri](#global_gateway_jwt_remoteJWKSUri ) | No      | string          | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
-
-##### <a name="global_gateway_jwt_enabled"></a>3.16.13.1. Property `stack > global > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list
-
-##### <a name="global_gateway_jwt_issuer"></a>3.16.13.2. Property `stack > global > gateway > jwt > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty
-
-##### <a name="global_gateway_jwt_providers"></a>3.16.13.3. Property `stack > global > gateway > jwt > providers`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                        | Description |
-| ------------------------------------------------------ | ----------- |
-| [providers items](#global_gateway_jwt_providers_items) | -           |
-
-###### <a name="global_gateway_jwt_providers_items"></a>3.16.13.3.1. stack > global > gateway > jwt > providers > providers items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                     |
-| --------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------- |
-| - [issuer](#global_gateway_jwt_providers_items_issuer )               | No      | string | No         | -          | Expected token issuer (iss claim) - required                                          |
-| - [name](#global_gateway_jwt_providers_items_name )                   | No      | string | No         | -          | Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev' |
-| - [remoteJWKSUri](#global_gateway_jwt_providers_items_remoteJWKSUri ) | No      | string | No         | -          | JWKS URI for this provider's signing keys - required                                  |
-
-###### <a name="global_gateway_jwt_providers_items_issuer"></a>3.16.13.3.1.1. Property `stack > global > gateway > jwt > providers > providers items > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim) - required
-
-###### <a name="global_gateway_jwt_providers_items_name"></a>3.16.13.3.1.2. Property `stack > global > gateway > jwt > providers > providers items > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev'
-
-###### <a name="global_gateway_jwt_providers_items_remoteJWKSUri"></a>3.16.13.3.1.3. Property `stack > global > gateway > jwt > providers > providers items > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI for this provider's signing keys - required
-
-##### <a name="global_gateway_jwt_remoteJWKSUri"></a>3.16.13.4. Property `stack > global > gateway > jwt > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
-
-#### <a name="global_gateway_oidcProtected"></a>3.16.14. Property `stack > global > gateway > oidcProtected`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway
-
-#### <a name="global_gateway_paths"></a>3.16.15. Property `stack > global > gateway > paths`
+#### <a name="global_gateway_paths"></a>3.16.10. Property `stack > global > gateway > paths`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -5560,7 +5281,7 @@ Must be one of:
 | ------------------------------------------ | ----------- |
 | [paths items](#global_gateway_paths_items) | -           |
 
-##### <a name="global_gateway_paths_items"></a>3.16.15.1. stack > global > gateway > paths > paths items
+##### <a name="global_gateway_paths_items"></a>3.16.10.1. stack > global > gateway > paths > paths items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5573,7 +5294,7 @@ Must be one of:
 | - [path](#global_gateway_paths_items_path )         | No      | string | No         | -          | HTTPRoute path                        |
 | - [pathType](#global_gateway_paths_items_pathType ) | No      | string | No         | -          | HTTPRoute path type (Exact or Prefix) |
 
-###### <a name="global_gateway_paths_items_path"></a>3.16.15.1.1. Property `stack > global > gateway > paths > paths items > path`
+###### <a name="global_gateway_paths_items_path"></a>3.16.10.1.1. Property `stack > global > gateway > paths > paths items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -5582,7 +5303,7 @@ Must be one of:
 
 **Description:** HTTPRoute path
 
-###### <a name="global_gateway_paths_items_pathType"></a>3.16.15.1.2. Property `stack > global > gateway > paths > paths items > pathType`
+###### <a name="global_gateway_paths_items_pathType"></a>3.16.10.1.2. Property `stack > global > gateway > paths > paths items > pathType`
 
 |              |          |
 | ------------ | -------- |
@@ -5591,7 +5312,7 @@ Must be one of:
 
 **Description:** HTTPRoute path type (Exact or Prefix)
 
-#### <a name="global_gateway_rateLimit"></a>3.16.16. Property `stack > global > gateway > rateLimit`
+#### <a name="global_gateway_rateLimit"></a>3.16.11. Property `stack > global > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5607,7 +5328,7 @@ Must be one of:
 | - [requests](#global_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#global_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-##### <a name="global_gateway_rateLimit_enabled"></a>3.16.16.1. Property `stack > global > gateway > rateLimit > enabled`
+##### <a name="global_gateway_rateLimit_enabled"></a>3.16.11.1. Property `stack > global > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5616,7 +5337,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-##### <a name="global_gateway_rateLimit_requests"></a>3.16.16.2. Property `stack > global > gateway > rateLimit > requests`
+##### <a name="global_gateway_rateLimit_requests"></a>3.16.11.2. Property `stack > global > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -5625,7 +5346,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-##### <a name="global_gateway_rateLimit_unit"></a>3.16.16.3. Property `stack > global > gateway > rateLimit > unit`
+##### <a name="global_gateway_rateLimit_unit"></a>3.16.11.3. Property `stack > global > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -5634,7 +5355,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-#### <a name="global_gateway_redirect"></a>3.16.17. Property `stack > global > gateway > redirect`
+#### <a name="global_gateway_redirect"></a>3.16.12. Property `stack > global > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5652,7 +5373,7 @@ Must be one of:
 | - [scheme](#global_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#global_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-##### <a name="global_gateway_redirect_enabled"></a>3.16.17.1. Property `stack > global > gateway > redirect > enabled`
+##### <a name="global_gateway_redirect_enabled"></a>3.16.12.1. Property `stack > global > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5661,7 +5382,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-##### <a name="global_gateway_redirect_hostname"></a>3.16.17.2. Property `stack > global > gateway > redirect > hostname`
+##### <a name="global_gateway_redirect_hostname"></a>3.16.12.2. Property `stack > global > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -5670,7 +5391,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-##### <a name="global_gateway_redirect_path"></a>3.16.17.3. Property `stack > global > gateway > redirect > path`
+##### <a name="global_gateway_redirect_path"></a>3.16.12.3. Property `stack > global > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -5679,7 +5400,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-##### <a name="global_gateway_redirect_scheme"></a>3.16.17.4. Property `stack > global > gateway > redirect > scheme`
+##### <a name="global_gateway_redirect_scheme"></a>3.16.12.4. Property `stack > global > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -5688,7 +5409,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-##### <a name="global_gateway_redirect_statusCode"></a>3.16.17.5. Property `stack > global > gateway > redirect > statusCode`
+##### <a name="global_gateway_redirect_statusCode"></a>3.16.12.5. Property `stack > global > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -5697,7 +5418,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-#### <a name="global_gateway_requestHeaders"></a>3.16.18. Property `stack > global > gateway > requestHeaders`
+#### <a name="global_gateway_requestHeaders"></a>3.16.13. Property `stack > global > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5713,7 +5434,7 @@ Must be one of:
 | - [remove](#global_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#global_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-##### <a name="global_gateway_requestHeaders_add"></a>3.16.18.1. Property `stack > global > gateway > requestHeaders > add`
+##### <a name="global_gateway_requestHeaders_add"></a>3.16.13.1. Property `stack > global > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -5730,7 +5451,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_requestHeaders_remove"></a>3.16.18.2. Property `stack > global > gateway > requestHeaders > remove`
+##### <a name="global_gateway_requestHeaders_remove"></a>3.16.13.2. Property `stack > global > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -5747,7 +5468,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_requestHeaders_set"></a>3.16.18.3. Property `stack > global > gateway > requestHeaders > set`
+##### <a name="global_gateway_requestHeaders_set"></a>3.16.13.3. Property `stack > global > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -5764,7 +5485,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_gateway_responseHeaders"></a>3.16.19. Property `stack > global > gateway > responseHeaders`
+#### <a name="global_gateway_responseHeaders"></a>3.16.14. Property `stack > global > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5780,7 +5501,7 @@ Must be one of:
 | - [remove](#global_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#global_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-##### <a name="global_gateway_responseHeaders_add"></a>3.16.19.1. Property `stack > global > gateway > responseHeaders > add`
+##### <a name="global_gateway_responseHeaders_add"></a>3.16.14.1. Property `stack > global > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -5797,7 +5518,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_responseHeaders_remove"></a>3.16.19.2. Property `stack > global > gateway > responseHeaders > remove`
+##### <a name="global_gateway_responseHeaders_remove"></a>3.16.14.2. Property `stack > global > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -5814,7 +5535,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_responseHeaders_set"></a>3.16.19.3. Property `stack > global > gateway > responseHeaders > set`
+##### <a name="global_gateway_responseHeaders_set"></a>3.16.14.3. Property `stack > global > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -5831,7 +5552,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_gateway_rules"></a>3.16.20. Property `stack > global > gateway > rules`
+#### <a name="global_gateway_rules"></a>3.16.15. Property `stack > global > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -5848,7 +5569,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_gateway_sectionName"></a>3.16.21. Property `stack > global > gateway > sectionName`
+#### <a name="global_gateway_sectionName"></a>3.16.16. Property `stack > global > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -5857,7 +5578,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-#### <a name="global_gateway_sessionAffinity"></a>3.16.22. Property `stack > global > gateway > sessionAffinity`
+#### <a name="global_gateway_securityPolicy"></a>3.16.17. Property `stack > global > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session
+
+#### <a name="global_gateway_sessionAffinity"></a>3.16.18. Property `stack > global > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5873,7 +5603,7 @@ Must be one of:
 | - [enabled](#global_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#global_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-##### <a name="global_gateway_sessionAffinity_cookieName"></a>3.16.22.1. Property `stack > global > gateway > sessionAffinity > cookieName`
+##### <a name="global_gateway_sessionAffinity_cookieName"></a>3.16.18.1. Property `stack > global > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -5882,7 +5612,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-##### <a name="global_gateway_sessionAffinity_enabled"></a>3.16.22.2. Property `stack > global > gateway > sessionAffinity > enabled`
+##### <a name="global_gateway_sessionAffinity_enabled"></a>3.16.18.2. Property `stack > global > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5891,7 +5621,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-##### <a name="global_gateway_sessionAffinity_ttl"></a>3.16.22.3. Property `stack > global > gateway > sessionAffinity > ttl`
+##### <a name="global_gateway_sessionAffinity_ttl"></a>3.16.18.3. Property `stack > global > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -5900,7 +5630,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-#### <a name="global_gateway_timeouts"></a>3.16.23. Property `stack > global > gateway > timeouts`
+#### <a name="global_gateway_skipAuth"></a>3.16.19. Property `stack > global > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                  | Description |
+| ------------------------------------------------ | ----------- |
+| [skipAuth items](#global_gateway_skipAuth_items) | -           |
+
+##### <a name="global_gateway_skipAuth_items"></a>3.16.19.1. stack > global > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#global_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#global_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="global_gateway_skipAuth_items_method"></a>3.16.19.1.1. Property `stack > global > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_gateway_skipAuth_items_path"></a>3.16.19.1.2. Property `stack > global > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="global_gateway_timeouts"></a>3.16.20. Property `stack > global > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5916,7 +5694,7 @@ Must be one of:
 | - [connect](#global_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#global_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.23.1. Property `stack > global > gateway > timeouts > backendRequest`
+##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.20.1. Property `stack > global > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -5925,7 +5703,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-##### <a name="global_gateway_timeouts_connect"></a>3.16.23.2. Property `stack > global > gateway > timeouts > connect`
+##### <a name="global_gateway_timeouts_connect"></a>3.16.20.2. Property `stack > global > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -5934,7 +5712,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-##### <a name="global_gateway_timeouts_request"></a>3.16.23.3. Property `stack > global > gateway > timeouts > request`
+##### <a name="global_gateway_timeouts_request"></a>3.16.20.3. Property `stack > global > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -5943,7 +5721,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-#### <a name="global_gateway_tlsPassthrough"></a>3.16.24. Property `stack > global > gateway > tlsPassthrough`
+#### <a name="global_gateway_tlsPassthrough"></a>3.16.21. Property `stack > global > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5958,7 +5736,7 @@ Must be one of:
 | - [enabled](#global_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#global_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.24.1. Property `stack > global > gateway > tlsPassthrough > enabled`
+##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.21.1. Property `stack > global > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5967,7 +5745,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.24.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
+##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.21.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -5976,7 +5754,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-#### <a name="global_gateway_vanity"></a>3.16.25. Property `stack > global > gateway > vanity`
+#### <a name="global_gateway_vanity"></a>3.16.22. Property `stack > global > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5992,7 +5770,7 @@ Must be one of:
 | - [enabled](#global_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#global_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.25.1. Property `stack > global > gateway > vanity > clusterIssuer`
+##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.22.1. Property `stack > global > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -6001,7 +5779,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-##### <a name="global_gateway_vanity_enabled"></a>3.16.25.2. Property `stack > global > gateway > vanity > enabled`
+##### <a name="global_gateway_vanity_enabled"></a>3.16.22.2. Property `stack > global > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6010,7 +5788,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-##### <a name="global_gateway_vanity_hostname"></a>3.16.25.3. Property `stack > global > gateway > vanity > hostname`
+##### <a name="global_gateway_vanity_hostname"></a>3.16.22.3. Property `stack > global > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -7132,358 +6910,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-### <a name="global_oidcProxyGateway"></a>3.27. Property `stack > global > oidcProxyGateway`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
-
-| Property                                                             | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| -------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#global_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#global_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#global_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretName](#global_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [cookieDomain](#global_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#global_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#global_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#global_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#global_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretName](#global_oidcProxyGateway_globalSecretName )     | No      | string          | No         | -          | Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.                                                                                                                                                                                                                                                                                                                                                                              |
-| - [logoutPath](#global_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#global_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#global_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#global_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#global_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#global_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-
-#### <a name="global_oidcProxyGateway_annotations"></a>3.27.1. Property `stack > global > oidcProxyGateway > annotations`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Annotations to add to SecurityPolicy resources
-
-#### <a name="global_oidcProxyGateway_apiRoutes"></a>3.27.2. Property `stack > global > oidcProxyGateway > apiRoutes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                             | Description |
-| ----------------------------------------------------------- | ----------- |
-| [apiRoutes items](#global_oidcProxyGateway_apiRoutes_items) | -           |
-
-##### <a name="global_oidcProxyGateway_apiRoutes_items"></a>3.27.2.1. stack > global > oidcProxyGateway > apiRoutes > apiRoutes items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#global_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#global_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
-
-###### <a name="global_oidcProxyGateway_apiRoutes_items_matchType"></a>3.27.2.1.1. Property `stack > global > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="global_oidcProxyGateway_apiRoutes_items_path"></a>3.27.2.1.2. Property `stack > global > oidcProxyGateway > apiRoutes > apiRoutes items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="global_oidcProxyGateway_clientID"></a>3.27.3. Property `stack > global > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
-
-#### <a name="global_oidcProxyGateway_clientSecretName"></a>3.27.4. Property `stack > global > oidcProxyGateway > clientSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.
-
-#### <a name="global_oidcProxyGateway_cookieDomain"></a>3.27.5. Property `stack > global > oidcProxyGateway > cookieDomain`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
-
-#### <a name="global_oidcProxyGateway_cookieNames"></a>3.27.6. Property `stack > global > oidcProxyGateway > cookieNames`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.
-
-| Property                                                           | Pattern | Type   | Deprecated | Definition | Title/Description                   |
-| ------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------- |
-| - [accessToken](#global_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
-| - [idToken](#global_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
-
-##### <a name="global_oidcProxyGateway_cookieNames_accessToken"></a>3.27.6.1. Property `stack > global > oidcProxyGateway > cookieNames > accessToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for access token cookie
-
-##### <a name="global_oidcProxyGateway_cookieNames_idToken"></a>3.27.6.2. Property `stack > global > oidcProxyGateway > cookieNames > idToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for ID token cookie
-
-#### <a name="global_oidcProxyGateway_csrfTokenTTL"></a>3.27.7. Property `stack > global > oidcProxyGateway > csrfTokenTTL`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
-
-#### <a name="global_oidcProxyGateway_denyRedirect"></a>3.27.8. Property `stack > global > oidcProxyGateway > denyRedirect`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.
-
-| Property                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                      |
-| ----------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#global_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
-
-##### <a name="global_oidcProxyGateway_denyRedirect_enabled"></a>3.27.8.1. Property `stack > global > oidcProxyGateway > denyRedirect > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
-
-#### <a name="global_oidcProxyGateway_forwardAccessToken"></a>3.27.9. Property `stack > global > oidcProxyGateway > forwardAccessToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Forward access token to backend service
-
-#### <a name="global_oidcProxyGateway_globalSecretName"></a>3.27.10. Property `stack > global > oidcProxyGateway > globalSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.
-
-#### <a name="global_oidcProxyGateway_logoutPath"></a>3.27.11. Property `stack > global > oidcProxyGateway > logoutPath`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
-
-#### <a name="global_oidcProxyGateway_provider"></a>3.27.12. Property `stack > global > oidcProxyGateway > provider`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** OIDC provider configuration
-
-| Property                                                                            | Pattern | Type   | Deprecated | Definition | Title/Description                                                      |
-| ----------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------- |
-| - [authorizationEndpoint](#global_oidcProxyGateway_provider_authorizationEndpoint ) | No      | string | No         | -          | Optional authorization endpoint (auto-discovered by provider if empty) |
-| - [issuer](#global_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
-| - [tokenEndpoint](#global_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
-
-##### <a name="global_oidcProxyGateway_provider_authorizationEndpoint"></a>3.27.12.1. Property `stack > global > oidcProxyGateway > provider > authorizationEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional authorization endpoint (auto-discovered by provider if empty)
-
-##### <a name="global_oidcProxyGateway_provider_issuer"></a>3.27.12.2. Property `stack > global > oidcProxyGateway > provider > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC provider issuer URL
-
-##### <a name="global_oidcProxyGateway_provider_tokenEndpoint"></a>3.27.12.3. Property `stack > global > oidcProxyGateway > provider > tokenEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional token endpoint (auto-discovered by provider if empty)
-
-#### <a name="global_oidcProxyGateway_refreshToken"></a>3.27.13. Property `stack > global > oidcProxyGateway > refreshToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
-
-#### <a name="global_oidcProxyGateway_resources"></a>3.27.14. Property `stack > global > oidcProxyGateway > resources`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Optional OAuth2 resources parameter
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-#### <a name="global_oidcProxyGateway_scopes"></a>3.27.15. Property `stack > global > oidcProxyGateway > scopes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** OIDC scopes to request
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                       | Description |
-| ----------------------------------------------------- | ----------- |
-| [scopes items](#global_oidcProxyGateway_scopes_items) | -           |
-
-##### <a name="global_oidcProxyGateway_scopes_items"></a>3.27.15.1. stack > global > oidcProxyGateway > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="global_oidcProxyGateway_skipAuth"></a>3.27.16. Property `stack > global > oidcProxyGateway > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** Paths to skip authentication (creates separate public HTTPRoute)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                           | Description |
-| --------------------------------------------------------- | ----------- |
-| [skipAuth items](#global_oidcProxyGateway_skipAuth_items) | -           |
-
-##### <a name="global_oidcProxyGateway_skipAuth_items"></a>3.27.16.1. stack > global > oidcProxyGateway > skipAuth > skipAuth items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                    | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#global_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#global_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="global_oidcProxyGateway_skipAuth_items_method"></a>3.27.16.1.1. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="global_oidcProxyGateway_skipAuth_items_path"></a>3.27.16.1.2. Property `stack > global > oidcProxyGateway > skipAuth > skipAuth items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-### <a name="global_pdb"></a>3.28. Property `stack > global > pdb`
+### <a name="global_pdb"></a>3.27. Property `stack > global > pdb`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7497,7 +6924,7 @@ Must be one of:
 | ------------------------------------------- | ------- | ----------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | - [minAvailable](#global_pdb_minAvailable ) | No      | integer or string | No         | -          | Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable. |
 
-#### <a name="global_pdb_minAvailable"></a>3.28.1. Property `stack > global > pdb > minAvailable`
+#### <a name="global_pdb_minAvailable"></a>3.27.1. Property `stack > global > pdb > minAvailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -7506,7 +6933,7 @@ Must be one of:
 
 **Description:** Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable.
 
-### <a name="global_persistence"></a>3.29. Property `stack > global > persistence`
+### <a name="global_persistence"></a>3.28. Property `stack > global > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7521,7 +6948,7 @@ Must be one of:
 | - [mountPath](#global_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#global_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-#### <a name="global_persistence_enabled"></a>3.29.1. Property `stack > global > persistence > enabled`
+#### <a name="global_persistence_enabled"></a>3.28.1. Property `stack > global > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -7530,7 +6957,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-#### <a name="global_persistence_existingClaim"></a>3.29.2. Property `stack > global > persistence > existingClaim`
+#### <a name="global_persistence_existingClaim"></a>3.28.2. Property `stack > global > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -7539,7 +6966,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-#### <a name="global_persistence_mountPath"></a>3.29.3. Property `stack > global > persistence > mountPath`
+#### <a name="global_persistence_mountPath"></a>3.28.3. Property `stack > global > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -7548,7 +6975,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-#### <a name="global_persistence_pvc"></a>3.29.4. Property `stack > global > persistence > pvc`
+#### <a name="global_persistence_pvc"></a>3.28.4. Property `stack > global > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7563,7 +6990,7 @@ Must be one of:
 | - [resources](#global_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#global_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-##### <a name="global_persistence_pvc_accessModes"></a>3.29.4.1. Property `stack > global > persistence > pvc > accessModes`
+##### <a name="global_persistence_pvc_accessModes"></a>3.28.4.1. Property `stack > global > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -7584,7 +7011,7 @@ Must be one of:
 | -------------------------------------------------------------- | ----------- |
 | [accessModes items](#global_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="global_persistence_pvc_accessModes_items"></a>3.29.4.1.1. stack > global > persistence > pvc > accessModes > accessModes items
+###### <a name="global_persistence_pvc_accessModes_items"></a>3.28.4.1.1. stack > global > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7597,7 +7024,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="global_persistence_pvc_dataSource"></a>3.29.4.2. Property `stack > global > persistence > pvc > dataSource`
+##### <a name="global_persistence_pvc_dataSource"></a>3.28.4.2. Property `stack > global > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7611,7 +7038,7 @@ Must be one of:
 | - [kind](#global_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#global_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="global_persistence_pvc_dataSource_apiGroup"></a>3.29.4.2.1. Property `stack > global > persistence > pvc > dataSource > apiGroup`
+###### <a name="global_persistence_pvc_dataSource_apiGroup"></a>3.28.4.2.1. Property `stack > global > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -7620,7 +7047,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="global_persistence_pvc_dataSource_kind"></a>3.29.4.2.2. Property `stack > global > persistence > pvc > dataSource > kind`
+###### <a name="global_persistence_pvc_dataSource_kind"></a>3.28.4.2.2. Property `stack > global > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -7629,7 +7056,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="global_persistence_pvc_dataSource_name"></a>3.29.4.2.3. Property `stack > global > persistence > pvc > dataSource > name`
+###### <a name="global_persistence_pvc_dataSource_name"></a>3.28.4.2.3. Property `stack > global > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -7638,7 +7065,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-##### <a name="global_persistence_pvc_resources"></a>3.29.4.3. Property `stack > global > persistence > pvc > resources`
+##### <a name="global_persistence_pvc_resources"></a>3.28.4.3. Property `stack > global > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7650,7 +7077,7 @@ Must be one of:
 | --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#global_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="global_persistence_pvc_resources_requests"></a>3.29.4.3.1. Property `stack > global > persistence > pvc > resources > requests`
+###### <a name="global_persistence_pvc_resources_requests"></a>3.28.4.3.1. Property `stack > global > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7664,7 +7091,7 @@ Must be one of:
 | ---------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#global_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="global_persistence_pvc_resources_requests_storage"></a>3.29.4.3.1.1. Property `stack > global > persistence > pvc > resources > requests > storage`
+###### <a name="global_persistence_pvc_resources_requests_storage"></a>3.28.4.3.1.1. Property `stack > global > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -7673,7 +7100,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-##### <a name="global_persistence_pvc_storageClassName"></a>3.29.4.4. Property `stack > global > persistence > pvc > storageClassName`
+##### <a name="global_persistence_pvc_storageClassName"></a>3.28.4.4. Property `stack > global > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -7682,7 +7109,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-### <a name="global_podAnnotations"></a>3.30. Property `stack > global > podAnnotations`
+### <a name="global_podAnnotations"></a>3.29. Property `stack > global > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7692,7 +7119,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-### <a name="global_podLabels"></a>3.31. Property `stack > global > podLabels`
+### <a name="global_podLabels"></a>3.30. Property `stack > global > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7702,7 +7129,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-### <a name="global_podSecurityContext"></a>3.32. Property `stack > global > podSecurityContext`
+### <a name="global_podSecurityContext"></a>3.31. Property `stack > global > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7712,7 +7139,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-### <a name="global_progressDeadlineSeconds"></a>3.33. Property `stack > global > progressDeadlineSeconds`
+### <a name="global_progressDeadlineSeconds"></a>3.32. Property `stack > global > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -7721,7 +7148,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-### <a name="global_readinessProbe"></a>3.34. Property `stack > global > readinessProbe`
+### <a name="global_readinessProbe"></a>3.33. Property `stack > global > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7740,7 +7167,7 @@ Must be one of:
 | - [successThreshold](#global_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#global_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-#### <a name="global_readinessProbe_failureThreshold"></a>3.34.1. Property `stack > global > readinessProbe > failureThreshold`
+#### <a name="global_readinessProbe_failureThreshold"></a>3.33.1. Property `stack > global > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -7749,7 +7176,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-#### <a name="global_readinessProbe_httpGet"></a>3.34.2. Property `stack > global > readinessProbe > httpGet`
+#### <a name="global_readinessProbe_httpGet"></a>3.33.2. Property `stack > global > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7765,7 +7192,7 @@ Must be one of:
 | - [port](#global_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#global_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-##### <a name="global_readinessProbe_httpGet_path"></a>3.34.2.1. Property `stack > global > readinessProbe > httpGet > path`
+##### <a name="global_readinessProbe_httpGet_path"></a>3.33.2.1. Property `stack > global > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -7774,7 +7201,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-##### <a name="global_readinessProbe_httpGet_port"></a>3.34.2.2. Property `stack > global > readinessProbe > httpGet > port`
+##### <a name="global_readinessProbe_httpGet_port"></a>3.33.2.2. Property `stack > global > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7789,21 +7216,21 @@ Must be one of:
 | [item 0](#global_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#global_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="global_readinessProbe_httpGet_port_oneOf_i0"></a>3.34.2.2.1. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="global_readinessProbe_httpGet_port_oneOf_i0"></a>3.33.2.2.1. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_readinessProbe_httpGet_port_oneOf_i1"></a>3.34.2.2.2. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="global_readinessProbe_httpGet_port_oneOf_i1"></a>3.33.2.2.2. Property `stack > global > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-##### <a name="global_readinessProbe_httpGet_scheme"></a>3.34.2.3. Property `stack > global > readinessProbe > httpGet > scheme`
+##### <a name="global_readinessProbe_httpGet_scheme"></a>3.33.2.3. Property `stack > global > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -7812,7 +7239,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-#### <a name="global_readinessProbe_initialDelaySeconds"></a>3.34.3. Property `stack > global > readinessProbe > initialDelaySeconds`
+#### <a name="global_readinessProbe_initialDelaySeconds"></a>3.33.3. Property `stack > global > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -7821,7 +7248,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-#### <a name="global_readinessProbe_periodSeconds"></a>3.34.4. Property `stack > global > readinessProbe > periodSeconds`
+#### <a name="global_readinessProbe_periodSeconds"></a>3.33.4. Property `stack > global > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -7830,7 +7257,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-#### <a name="global_readinessProbe_successThreshold"></a>3.34.5. Property `stack > global > readinessProbe > successThreshold`
+#### <a name="global_readinessProbe_successThreshold"></a>3.33.5. Property `stack > global > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -7839,7 +7266,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-#### <a name="global_readinessProbe_timeoutSeconds"></a>3.34.6. Property `stack > global > readinessProbe > timeoutSeconds`
+#### <a name="global_readinessProbe_timeoutSeconds"></a>3.33.6. Property `stack > global > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -7848,7 +7275,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-### <a name="global_replicaCount"></a>3.35. Property `stack > global > replicaCount`
+### <a name="global_replicaCount"></a>3.34. Property `stack > global > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -7857,7 +7284,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-### <a name="global_resources"></a>3.36. Property `stack > global > resources`
+### <a name="global_resources"></a>3.35. Property `stack > global > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7872,7 +7299,7 @@ Must be one of:
 | - [limits](#global_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#global_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-#### <a name="global_resources_limits"></a>3.36.1. Property `stack > global > resources > limits`
+#### <a name="global_resources_limits"></a>3.35.1. Property `stack > global > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7887,7 +7314,7 @@ Must be one of:
 | - [cpu](#global_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#global_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-##### <a name="global_resources_limits_cpu"></a>3.36.1.1. Property `stack > global > resources > limits > cpu`
+##### <a name="global_resources_limits_cpu"></a>3.35.1.1. Property `stack > global > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7902,21 +7329,21 @@ Must be one of:
 | [item 0](#global_resources_limits_cpu_oneOf_i0) |
 | [item 1](#global_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="global_resources_limits_cpu_oneOf_i0"></a>3.36.1.1.1. Property `stack > global > resources > limits > cpu > oneOf > item 0`
+###### <a name="global_resources_limits_cpu_oneOf_i0"></a>3.35.1.1.1. Property `stack > global > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_resources_limits_cpu_oneOf_i1"></a>3.36.1.1.2. Property `stack > global > resources > limits > cpu > oneOf > item 1`
+###### <a name="global_resources_limits_cpu_oneOf_i1"></a>3.35.1.1.2. Property `stack > global > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-##### <a name="global_resources_limits_memory"></a>3.36.1.2. Property `stack > global > resources > limits > memory`
+##### <a name="global_resources_limits_memory"></a>3.35.1.2. Property `stack > global > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -7925,7 +7352,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-#### <a name="global_resources_requests"></a>3.36.2. Property `stack > global > resources > requests`
+#### <a name="global_resources_requests"></a>3.35.2. Property `stack > global > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7940,7 +7367,7 @@ Must be one of:
 | - [cpu](#global_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#global_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-##### <a name="global_resources_requests_cpu"></a>3.36.2.1. Property `stack > global > resources > requests > cpu`
+##### <a name="global_resources_requests_cpu"></a>3.35.2.1. Property `stack > global > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -7955,21 +7382,21 @@ Must be one of:
 | [item 0](#global_resources_requests_cpu_oneOf_i0) |
 | [item 1](#global_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="global_resources_requests_cpu_oneOf_i0"></a>3.36.2.1.1. Property `stack > global > resources > requests > cpu > oneOf > item 0`
+###### <a name="global_resources_requests_cpu_oneOf_i0"></a>3.35.2.1.1. Property `stack > global > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_resources_requests_cpu_oneOf_i1"></a>3.36.2.1.2. Property `stack > global > resources > requests > cpu > oneOf > item 1`
+###### <a name="global_resources_requests_cpu_oneOf_i1"></a>3.35.2.1.2. Property `stack > global > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-##### <a name="global_resources_requests_memory"></a>3.36.2.2. Property `stack > global > resources > requests > memory`
+##### <a name="global_resources_requests_memory"></a>3.35.2.2. Property `stack > global > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -7978,7 +7405,7 @@ Must be one of:
 
 **Description:** Memory request
 
-### <a name="global_restartPolicy"></a>3.37. Property `stack > global > restartPolicy`
+### <a name="global_restartPolicy"></a>3.36. Property `stack > global > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -7992,7 +7419,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-### <a name="global_rollout"></a>3.38. Property `stack > global > rollout`
+### <a name="global_rollout"></a>3.37. Property `stack > global > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -8006,7 +7433,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-#### <a name="cronJobs_pattern1_rollout_strategy"></a>3.38.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+#### <a name="cronJobs_pattern1_rollout_strategy"></a>3.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8021,7 +7448,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-##### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>3.38.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+##### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>3.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8037,7 +7464,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>3.38.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>3.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -8046,7 +7473,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>3.38.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>3.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8055,7 +7482,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>3.38.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>3.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -8073,7 +7500,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>3.38.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>3.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8088,7 +7515,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>3.38.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>3.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8098,7 +7525,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>3.38.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>3.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8108,7 +7535,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>3.38.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>3.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8129,7 +7556,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>3.38.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>3.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8143,21 +7570,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>3.38.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>3.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>3.38.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>3.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>3.38.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>3.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8170,7 +7597,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>3.38.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>3.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8182,14 +7609,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>3.38.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>3.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>3.38.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>3.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -8200,7 +7627,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>3.38.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>3.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8221,7 +7648,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>3.38.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>3.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8234,7 +7661,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>3.38.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>3.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -8243,7 +7670,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>3.38.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>3.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -8252,7 +7679,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>3.38.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>3.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -8261,7 +7688,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-### <a name="global_s3Storage"></a>3.39. Property `stack > global > s3Storage`
+### <a name="global_s3Storage"></a>3.38. Property `stack > global > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8284,7 +7711,7 @@ Must be one of:
 | - [volumeAttributes](#global_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#global_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-#### <a name="global_s3Storage_accessModes"></a>3.39.1. Property `stack > global > s3Storage > accessModes`
+#### <a name="global_s3Storage_accessModes"></a>3.38.1. Property `stack > global > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -8305,7 +7732,7 @@ Must be one of:
 | -------------------------------------------------------- | ----------- |
 | [accessModes items](#global_s3Storage_accessModes_items) | -           |
 
-##### <a name="global_s3Storage_accessModes_items"></a>3.39.1.1. stack > global > s3Storage > accessModes > accessModes items
+##### <a name="global_s3Storage_accessModes_items"></a>3.38.1.1. stack > global > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -8318,7 +7745,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-#### <a name="global_s3Storage_annotations"></a>3.39.2. Property `stack > global > s3Storage > annotations`
+#### <a name="global_s3Storage_annotations"></a>3.38.2. Property `stack > global > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8328,7 +7755,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-#### <a name="global_s3Storage_bucketName"></a>3.39.3. Property `stack > global > s3Storage > bucketName`
+#### <a name="global_s3Storage_bucketName"></a>3.38.3. Property `stack > global > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -8337,7 +7764,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-#### <a name="global_s3Storage_capacity"></a>3.39.4. Property `stack > global > s3Storage > capacity`
+#### <a name="global_s3Storage_capacity"></a>3.38.4. Property `stack > global > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -8346,7 +7773,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-#### <a name="global_s3Storage_enabled"></a>3.39.5. Property `stack > global > s3Storage > enabled`
+#### <a name="global_s3Storage_enabled"></a>3.38.5. Property `stack > global > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8355,7 +7782,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-#### <a name="global_s3Storage_labels"></a>3.39.6. Property `stack > global > s3Storage > labels`
+#### <a name="global_s3Storage_labels"></a>3.38.6. Property `stack > global > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8365,7 +7792,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-#### <a name="global_s3Storage_pvName"></a>3.39.7. Property `stack > global > s3Storage > pvName`
+#### <a name="global_s3Storage_pvName"></a>3.38.7. Property `stack > global > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -8374,7 +7801,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-#### <a name="global_s3Storage_pvcName"></a>3.39.8. Property `stack > global > s3Storage > pvcName`
+#### <a name="global_s3Storage_pvcName"></a>3.38.8. Property `stack > global > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -8383,7 +7810,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-#### <a name="global_s3Storage_reclaimPolicy"></a>3.39.9. Property `stack > global > s3Storage > reclaimPolicy`
+#### <a name="global_s3Storage_reclaimPolicy"></a>3.38.9. Property `stack > global > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -8392,7 +7819,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-#### <a name="global_s3Storage_region"></a>3.39.10. Property `stack > global > s3Storage > region`
+#### <a name="global_s3Storage_region"></a>3.38.10. Property `stack > global > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -8401,7 +7828,7 @@ Must be one of:
 
 **Description:** AWS region
 
-#### <a name="global_s3Storage_volumeAttributes"></a>3.39.11. Property `stack > global > s3Storage > volumeAttributes`
+#### <a name="global_s3Storage_volumeAttributes"></a>3.38.11. Property `stack > global > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8411,7 +7838,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-#### <a name="global_s3Storage_volumeHandle"></a>3.39.12. Property `stack > global > s3Storage > volumeHandle`
+#### <a name="global_s3Storage_volumeHandle"></a>3.38.12. Property `stack > global > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -8420,7 +7847,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-### <a name="global_securityContext"></a>3.40. Property `stack > global > securityContext`
+### <a name="global_securityContext"></a>3.39. Property `stack > global > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8429,6 +7856,587 @@ Must be one of:
 | **Additional properties** | Any type allowed |
 
 **Description:** Security context
+
+### <a name="global_securityPolicies"></a>3.40. Property `stack > global > securityPolicies`
+
+|                           |                                                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                             |
+| **Required**              | No                                                                                                   |
+| **Additional properties** | [Each additional property must conform to the schema](#global_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#global_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+#### <a name="global_securityPolicies_additionalProperties"></a>3.40.1. Property `stack > global > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#global_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#global_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#global_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#global_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#global_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#global_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+##### <a name="global_securityPolicies_additionalProperties_annotations"></a>3.40.1.1. Property `stack > global > securityPolicies > additionalProperties > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered SecurityPolicy
+
+##### <a name="global_securityPolicies_additionalProperties_basicAuth"></a>3.40.1.2. Property `stack > global > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ----------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#global_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="global_securityPolicies_additionalProperties_basicAuth_enabled"></a>3.40.1.2.1. Property `stack > global > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_basicAuth_secretName"></a>3.40.1.2.2. Property `stack > global > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+##### <a name="global_securityPolicies_additionalProperties_cors"></a>3.40.1.3. Property `stack > global > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                   | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------ | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#global_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#global_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#global_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#global_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#global_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#global_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#global_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowCredentials"></a>3.40.1.3.1. Property `stack > global > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowHeaders"></a>3.40.1.3.2. Property `stack > global > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [allowHeaders items](#global_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>3.40.1.3.2.1. stack > global > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowMethods"></a>3.40.1.3.3. Property `stack > global > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [allowMethods items](#global_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowMethods_items"></a>3.40.1.3.3.1. stack > global > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowOrigins"></a>3.40.1.3.4. Property `stack > global > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                             | Description |
+| ------------------------------------------------------------------------------------------- | ----------- |
+| [allowOrigins items](#global_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>3.40.1.3.4.1. stack > global > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_enabled"></a>3.40.1.3.5. Property `stack > global > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_exposeHeaders"></a>3.40.1.3.6. Property `stack > global > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                               | Description |
+| --------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#global_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>3.40.1.3.6.1. stack > global > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_cors_maxAge"></a>3.40.1.3.7. Property `stack > global > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="global_securityPolicies_additionalProperties_ipAllowList"></a>3.40.1.4. Property `stack > global > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                      | Description |
+| ------------------------------------------------------------------------------------ | ----------- |
+| [ipAllowList items](#global_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_ipAllowList_items"></a>3.40.1.4.1. stack > global > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="global_securityPolicies_additionalProperties_jwt"></a>3.40.1.5. Property `stack > global > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                            | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ----------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#global_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#global_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#global_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_enabled"></a>3.40.1.5.1. Property `stack > global > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_issuer"></a>3.40.1.5.2. Property `stack > global > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_providers"></a>3.40.1.5.3. Property `stack > global > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                      | Description |
+| ------------------------------------------------------------------------------------ | ----------- |
+| [providers items](#global_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_providers_items"></a>3.40.1.5.3.1. stack > global > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>3.40.1.5.4. Property `stack > global > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="global_securityPolicies_additionalProperties_oidc"></a>3.40.1.6. Property `stack > global > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#global_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#global_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#global_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#global_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#global_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#global_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#global_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#global_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#global_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#global_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#global_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#global_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#global_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#global_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes"></a>3.40.1.6.1. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                       | Description |
+| ------------------------------------------------------------------------------------- | ----------- |
+| [apiRoutes items](#global_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>3.40.1.6.1.1. stack > global > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                     | Pattern | Type             | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#global_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#global_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>3.40.1.6.1.1.1. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>3.40.1.6.1.1.2. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientID"></a>3.40.1.6.2. Property `stack > global > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretName"></a>3.40.1.6.3. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieDomain"></a>3.40.1.6.4. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames"></a>3.40.1.6.5. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#global_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#global_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>3.40.1.6.5.1. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>3.40.1.6.5.2. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>3.40.1.6.6. Property `stack > global > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect"></a>3.40.1.6.7. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                              | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#global_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>3.40.1.6.7.1. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>3.40.1.6.8. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_globalSecretName"></a>3.40.1.6.9. Property `stack > global > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_logoutPath"></a>3.40.1.6.10. Property `stack > global > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider"></a>3.40.1.6.11. Property `stack > global > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#global_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>3.40.1.6.11.1. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.11.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.11.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_refreshToken"></a>3.40.1.6.12. Property `stack > global > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources"></a>3.40.1.6.13. Property `stack > global > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                       | Description |
+| ------------------------------------------------------------------------------------- | ----------- |
+| [resources items](#global_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources_items"></a>3.40.1.6.13.1. stack > global > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes"></a>3.40.1.6.14. Property `stack > global > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                 | Description |
+| ------------------------------------------------------------------------------- | ----------- |
+| [scopes items](#global_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes_items"></a>3.40.1.6.14.1. stack > global > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ### <a name="global_service"></a>3.41. Property `stack > global > service`
 
@@ -8846,7 +8854,6 @@ must respect the following conditions
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.                                                                                                                                                                                                                      |
 | - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
 | - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -8860,6 +8867,7 @@ must respect the following conditions
 | - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -9462,8 +9470,6 @@ Must be one of:
 | ------------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object           | No         | -          | Annotations to add to HTTPRoute resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [backendTLS](#cronJobs_pattern1_gateway_backendTLS )             | No      | object           | No         | -          | TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [basicAuth](#cronJobs_pattern1_gateway_basicAuth )               | No      | object           | No         | -          | HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cors](#cronJobs_pattern1_gateway_cors )                         | No      | object           | No         | -          | CORS via a SecurityPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [dnsOwner](#cronJobs_pattern1_gateway_dnsOwner )                 | No      | enum (of string) | No         | -          | Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence |
 | - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean          | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string           | No         | -          | Name of the Gateway resource to attach to                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -9471,9 +9477,6 @@ Must be one of:
 | - [host](#cronJobs_pattern1_gateway_host )                         | No      | string           | No         | -          | Hostname for HTTPRoute                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [hostRewrite](#cronJobs_pattern1_gateway_hostRewrite )           | No      | string           | No         | -          | Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [hsts](#cronJobs_pattern1_gateway_hsts )                         | No      | object           | No         | -          | Strict-Transport-Security header always emitted on gateway HTTPRoutes (not disableable by design), matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap                                                                                                                                                                                                                                                                                                                                               |
-| - [ipAllowList](#cronJobs_pattern1_gateway_ipAllowList )           | No      | array            | No         | -          | Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [jwt](#cronJobs_pattern1_gateway_jwt )                           | No      | object           | No         | -          | JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent                                                                                              |
-| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean          | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway                                                                                                                                                                                                                                                                          |
 | - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rateLimit](#cronJobs_pattern1_gateway_rateLimit )               | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [redirect](#cronJobs_pattern1_gateway_redirect )                 | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -9481,7 +9484,9 @@ Must be one of:
 | - [responseHeaders](#cronJobs_pattern1_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -9568,155 +9573,7 @@ Must be one of:
 
 **Description:** Use the System trust store, or set "" and use caCertificateRefs for a private CA
 
-##### <a name="cronJobs_pattern1_gateway_basicAuth"></a>4.1.16.3. Property `stack > cronJobs > ^.*$ > gateway > basicAuth`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
-
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                             |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_basicAuth_enabled )       | No      | boolean | No         | -          | Enable basic auth                             |
-| - [secretName](#cronJobs_pattern1_gateway_basicAuth_secretName ) | No      | string  | No         | -          | Name of an Opaque Secret with a .htpasswd key |
-
-###### <a name="cronJobs_pattern1_gateway_basicAuth_enabled"></a>4.1.16.3.1. Property `stack > cronJobs > ^.*$ > gateway > basicAuth > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable basic auth
-
-###### <a name="cronJobs_pattern1_gateway_basicAuth_secretName"></a>4.1.16.3.2. Property `stack > cronJobs > ^.*$ > gateway > basicAuth > secretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of an Opaque Secret with a .htpasswd key
-
-##### <a name="cronJobs_pattern1_gateway_cors"></a>4.1.16.4. Property `stack > cronJobs > ^.*$ > gateway > cors`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** CORS via a SecurityPolicy
-
-| Property                                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                    |
-| ----------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------- |
-| - [allowCredentials](#cronJobs_pattern1_gateway_cors_allowCredentials ) | No      | boolean | No         | -          | Allow credentials                                    |
-| - [allowHeaders](#cronJobs_pattern1_gateway_cors_allowHeaders )         | No      | array   | No         | -          | Allowed request headers                              |
-| - [allowMethods](#cronJobs_pattern1_gateway_cors_allowMethods )         | No      | array   | No         | -          | Allowed methods                                      |
-| - [allowOrigins](#cronJobs_pattern1_gateway_cors_allowOrigins )         | No      | array   | No         | -          | Allowed origins (string patterns)                    |
-| - [enabled](#cronJobs_pattern1_gateway_cors_enabled )                   | No      | boolean | No         | -          | Enable CORS                                          |
-| - [exposeHeaders](#cronJobs_pattern1_gateway_cors_exposeHeaders )       | No      | array   | No         | -          | Response headers exposed to the browser              |
-| - [maxAge](#cronJobs_pattern1_gateway_cors_maxAge )                     | No      | string  | No         | -          | Preflight cache duration (e.g. "1h"), empty omits it |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowCredentials"></a>4.1.16.4.1. Property `stack > cronJobs > ^.*$ > gateway > cors > allowCredentials`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Allow credentials
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowHeaders"></a>4.1.16.4.2. Property `stack > cronJobs > ^.*$ > gateway > cors > allowHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed request headers
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowMethods"></a>4.1.16.4.3. Property `stack > cronJobs > ^.*$ > gateway > cors > allowMethods`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed methods
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowOrigins"></a>4.1.16.4.4. Property `stack > cronJobs > ^.*$ > gateway > cors > allowOrigins`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed origins (string patterns)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_enabled"></a>4.1.16.4.5. Property `stack > cronJobs > ^.*$ > gateway > cors > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable CORS
-
-###### <a name="cronJobs_pattern1_gateway_cors_exposeHeaders"></a>4.1.16.4.6. Property `stack > cronJobs > ^.*$ > gateway > cors > exposeHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Response headers exposed to the browser
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_maxAge"></a>4.1.16.4.7. Property `stack > cronJobs > ^.*$ > gateway > cors > maxAge`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Preflight cache duration (e.g. "1h"), empty omits it
-
-##### <a name="cronJobs_pattern1_gateway_dnsOwner"></a>4.1.16.5. Property `stack > cronJobs > ^.*$ > gateway > dnsOwner`
+##### <a name="cronJobs_pattern1_gateway_dnsOwner"></a>4.1.16.3. Property `stack > cronJobs > ^.*$ > gateway > dnsOwner`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -9729,7 +9586,7 @@ Must be one of:
 * "ingress"
 * "gateway"
 
-##### <a name="cronJobs_pattern1_gateway_enabled"></a>4.1.16.6. Property `stack > cronJobs > ^.*$ > gateway > enabled`
+##### <a name="cronJobs_pattern1_gateway_enabled"></a>4.1.16.4. Property `stack > cronJobs > ^.*$ > gateway > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -9738,7 +9595,7 @@ Must be one of:
 
 **Description:** Enable Gateway API HTTPRoute (alternative to Ingress)
 
-##### <a name="cronJobs_pattern1_gateway_gatewayName"></a>4.1.16.7. Property `stack > cronJobs > ^.*$ > gateway > gatewayName`
+##### <a name="cronJobs_pattern1_gateway_gatewayName"></a>4.1.16.5. Property `stack > cronJobs > ^.*$ > gateway > gatewayName`
 
 |              |          |
 | ------------ | -------- |
@@ -9747,7 +9604,7 @@ Must be one of:
 
 **Description:** Name of the Gateway resource to attach to
 
-##### <a name="cronJobs_pattern1_gateway_gatewayNamespace"></a>4.1.16.8. Property `stack > cronJobs > ^.*$ > gateway > gatewayNamespace`
+##### <a name="cronJobs_pattern1_gateway_gatewayNamespace"></a>4.1.16.6. Property `stack > cronJobs > ^.*$ > gateway > gatewayNamespace`
 
 |              |          |
 | ------------ | -------- |
@@ -9756,7 +9613,7 @@ Must be one of:
 
 **Description:** Namespace of the Gateway resource
 
-##### <a name="cronJobs_pattern1_gateway_host"></a>4.1.16.9. Property `stack > cronJobs > ^.*$ > gateway > host`
+##### <a name="cronJobs_pattern1_gateway_host"></a>4.1.16.7. Property `stack > cronJobs > ^.*$ > gateway > host`
 
 |              |          |
 | ------------ | -------- |
@@ -9765,7 +9622,7 @@ Must be one of:
 
 **Description:** Hostname for HTTPRoute
 
-##### <a name="cronJobs_pattern1_gateway_hostRewrite"></a>4.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > hostRewrite`
+##### <a name="cronJobs_pattern1_gateway_hostRewrite"></a>4.1.16.8. Property `stack > cronJobs > ^.*$ > gateway > hostRewrite`
 
 |              |          |
 | ------------ | -------- |
@@ -9774,7 +9631,7 @@ Must be one of:
 
 **Description:** Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it
 
-##### <a name="cronJobs_pattern1_gateway_hsts"></a>4.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > hsts`
+##### <a name="cronJobs_pattern1_gateway_hsts"></a>4.1.16.9. Property `stack > cronJobs > ^.*$ > gateway > hsts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9788,7 +9645,7 @@ Must be one of:
 | ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------ |
 | - [value](#cronJobs_pattern1_gateway_hsts_value ) | No      | string | No         | -          | Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set |
 
-###### <a name="cronJobs_pattern1_gateway_hsts_value"></a>4.1.16.11.1. Property `stack > cronJobs > ^.*$ > gateway > hsts > value`
+###### <a name="cronJobs_pattern1_gateway_hsts_value"></a>4.1.16.9.1. Property `stack > cronJobs > ^.*$ > gateway > hsts > value`
 
 |              |          |
 | ------------ | -------- |
@@ -9797,139 +9654,7 @@ Must be one of:
 
 **Description:** Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set
 
-##### <a name="cronJobs_pattern1_gateway_ipAllowList"></a>4.1.16.12. Property `stack > cronJobs > ^.*$ > gateway > ipAllowList`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="cronJobs_pattern1_gateway_jwt"></a>4.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > jwt`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
-
-| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                      |
-| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean         | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list                                                                                                                                                                                                           |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string          | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty                                                |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers )         | No      | array of object | No         | -          | List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri                                                                                           |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string          | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>4.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list
-
-###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>4.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers"></a>4.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                   | Description |
-| ----------------------------------------------------------------- | ----------- |
-| [providers items](#cronJobs_pattern1_gateway_jwt_providers_items) | -           |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items"></a>4.1.16.13.3.1. stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                     |
-| -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------- |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_providers_items_issuer )               | No      | string | No         | -          | Expected token issuer (iss claim) - required                                          |
-| - [name](#cronJobs_pattern1_gateway_jwt_providers_items_name )                   | No      | string | No         | -          | Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev' |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_providers_items_remoteJWKSUri ) | No      | string | No         | -          | JWKS URI for this provider's signing keys - required                                  |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_issuer"></a>4.1.16.13.3.1.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim) - required
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_name"></a>4.1.16.13.3.1.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev'
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_remoteJWKSUri"></a>4.1.16.13.3.1.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI for this provider's signing keys - required
-
-###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>4.1.16.13.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
-
-##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>4.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway
-
-##### <a name="cronJobs_pattern1_gateway_paths"></a>4.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > paths`
+##### <a name="cronJobs_pattern1_gateway_paths"></a>4.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > paths`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -9950,7 +9675,7 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [paths items](#cronJobs_pattern1_gateway_paths_items) | -           |
 
-###### <a name="cronJobs_pattern1_gateway_paths_items"></a>4.1.16.15.1. stack > cronJobs > ^.*$ > gateway > paths > paths items
+###### <a name="cronJobs_pattern1_gateway_paths_items"></a>4.1.16.10.1. stack > cronJobs > ^.*$ > gateway > paths > paths items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9963,7 +9688,7 @@ Must be one of:
 | - [path](#cronJobs_pattern1_gateway_paths_items_path )         | No      | string | No         | -          | HTTPRoute path                        |
 | - [pathType](#cronJobs_pattern1_gateway_paths_items_pathType ) | No      | string | No         | -          | HTTPRoute path type (Exact or Prefix) |
 
-###### <a name="cronJobs_pattern1_gateway_paths_items_path"></a>4.1.16.15.1.1. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > path`
+###### <a name="cronJobs_pattern1_gateway_paths_items_path"></a>4.1.16.10.1.1. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -9972,7 +9697,7 @@ Must be one of:
 
 **Description:** HTTPRoute path
 
-###### <a name="cronJobs_pattern1_gateway_paths_items_pathType"></a>4.1.16.15.1.2. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > pathType`
+###### <a name="cronJobs_pattern1_gateway_paths_items_pathType"></a>4.1.16.10.1.2. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > pathType`
 
 |              |          |
 | ------------ | -------- |
@@ -9981,7 +9706,7 @@ Must be one of:
 
 **Description:** HTTPRoute path type (Exact or Prefix)
 
-##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>4.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
+##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>4.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -9997,7 +9722,7 @@ Must be one of:
 | - [requests](#cronJobs_pattern1_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#cronJobs_pattern1_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>4.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>4.1.16.11.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10006,7 +9731,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>4.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>4.1.16.11.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -10015,7 +9740,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>4.1.16.16.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>4.1.16.11.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -10024,7 +9749,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-##### <a name="cronJobs_pattern1_gateway_redirect"></a>4.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > redirect`
+##### <a name="cronJobs_pattern1_gateway_redirect"></a>4.1.16.12. Property `stack > cronJobs > ^.*$ > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10042,7 +9767,7 @@ Must be one of:
 | - [scheme](#cronJobs_pattern1_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#cronJobs_pattern1_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>4.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
+###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>4.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10051,7 +9776,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>4.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
+###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>4.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -10060,7 +9785,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>4.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
+###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>4.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -10069,7 +9794,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>4.1.16.17.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
+###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>4.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -10078,7 +9803,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>4.1.16.17.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
+###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>4.1.16.12.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -10087,7 +9812,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>4.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
+##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>4.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10103,7 +9828,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>4.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>4.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -10120,7 +9845,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>4.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>4.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -10137,7 +9862,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>4.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>4.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -10154,7 +9879,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>4.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
+##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>4.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10170,7 +9895,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>4.1.16.19.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>4.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -10187,7 +9912,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>4.1.16.19.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>4.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -10204,7 +9929,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>4.1.16.19.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>4.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -10221,7 +9946,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_rules"></a>4.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > rules`
+##### <a name="cronJobs_pattern1_gateway_rules"></a>4.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -10238,7 +9963,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_sectionName"></a>4.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
+##### <a name="cronJobs_pattern1_gateway_sectionName"></a>4.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -10247,7 +9972,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>4.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>4.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session
+
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>4.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10263,7 +9997,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>4.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>4.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -10272,7 +10006,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>4.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>4.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10281,7 +10015,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>4.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>4.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -10290,7 +10024,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>4.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                             | Description |
+| ----------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>4.1.16.19.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>4.1.16.19.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>4.1.16.19.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10306,7 +10088,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -10315,7 +10097,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -10324,7 +10106,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.20.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -10333,7 +10115,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10348,7 +10130,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10357,7 +10139,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -10366,7 +10148,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10382,7 +10164,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -10391,7 +10173,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10400,7 +10182,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -11522,358 +11304,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>4.1.27. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
-
-| Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretName](#cronJobs_pattern1_oidcProxyGateway_globalSecretName )     | No      | string          | No         | -          | Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.                                                                                                                                                                                                                                                                                                                                                                              |
-| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>4.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Annotations to add to SecurityPolicy resources
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes"></a>4.1.27.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                        | Description |
-| ---------------------------------------------------------------------- | ----------- |
-| [apiRoutes items](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items"></a>4.1.27.2.1. stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType"></a>4.1.27.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path"></a>4.1.27.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>4.1.27.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>4.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>4.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>4.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.
-
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                   |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------- |
-| - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
-| - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>4.1.27.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for access token cookie
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>4.1.27.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for ID token cookie
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>4.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>4.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.
-
-| Property                                                               | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                      |
-| ---------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>4.1.27.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>4.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Forward access token to backend service
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretName"></a>4.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>4.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>4.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** OIDC provider configuration
-
-| Property                                                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                      |
-| ---------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------- |
-| - [authorizationEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint ) | No      | string | No         | -          | Optional authorization endpoint (auto-discovered by provider if empty) |
-| - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
-| - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>4.1.27.12.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional authorization endpoint (auto-discovered by provider if empty)
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>4.1.27.12.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC provider issuer URL
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>4.1.27.12.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional token endpoint (auto-discovered by provider if empty)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>4.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>4.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Optional OAuth2 resources parameter
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>4.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** OIDC scopes to request
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                  | Description |
-| ---------------------------------------------------------------- | ----------- |
-| [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>4.1.27.15.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>4.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** Paths to skip authentication (creates separate public HTTPRoute)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                      | Description |
-| -------------------------------------------------------------------- | ----------- |
-| [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>4.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>4.1.27.16.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>4.1.27.16.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="cronJobs_pattern1_pdb"></a>4.1.28. Property `stack > cronJobs > ^.*$ > pdb`
+#### <a name="cronJobs_pattern1_pdb"></a>4.1.27. Property `stack > cronJobs > ^.*$ > pdb`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11887,7 +11318,7 @@ Must be one of:
 | ------------------------------------------------------ | ------- | ----------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | - [minAvailable](#cronJobs_pattern1_pdb_minAvailable ) | No      | integer or string | No         | -          | Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable. |
 
-##### <a name="cronJobs_pattern1_pdb_minAvailable"></a>4.1.28.1. Property `stack > cronJobs > ^.*$ > pdb > minAvailable`
+##### <a name="cronJobs_pattern1_pdb_minAvailable"></a>4.1.27.1. Property `stack > cronJobs > ^.*$ > pdb > minAvailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -11896,7 +11327,7 @@ Must be one of:
 
 **Description:** Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable.
 
-#### <a name="cronJobs_pattern1_persistence"></a>4.1.29. Property `stack > cronJobs > ^.*$ > persistence`
+#### <a name="cronJobs_pattern1_persistence"></a>4.1.28. Property `stack > cronJobs > ^.*$ > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11911,7 +11342,7 @@ Must be one of:
 | - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-##### <a name="cronJobs_pattern1_persistence_enabled"></a>4.1.29.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
+##### <a name="cronJobs_pattern1_persistence_enabled"></a>4.1.28.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -11920,7 +11351,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>4.1.29.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
+##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>4.1.28.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -11929,7 +11360,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-##### <a name="cronJobs_pattern1_persistence_mountPath"></a>4.1.29.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
+##### <a name="cronJobs_pattern1_persistence_mountPath"></a>4.1.28.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -11938,7 +11369,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-##### <a name="cronJobs_pattern1_persistence_pvc"></a>4.1.29.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
+##### <a name="cronJobs_pattern1_persistence_pvc"></a>4.1.28.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11953,7 +11384,7 @@ Must be one of:
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>4.1.29.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>4.1.28.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -11974,7 +11405,7 @@ Must be one of:
 | ------------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>4.1.29.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>4.1.28.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -11987,7 +11418,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>4.1.29.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>4.1.28.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12001,7 +11432,7 @@ Must be one of:
 | - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>4.1.29.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>4.1.28.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -12010,7 +11441,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>4.1.29.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>4.1.28.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -12019,7 +11450,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>4.1.29.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>4.1.28.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -12028,7 +11459,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>4.1.29.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>4.1.28.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12040,7 +11471,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>4.1.29.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>4.1.28.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12054,7 +11485,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>4.1.29.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>4.1.28.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -12063,7 +11494,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>4.1.29.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>4.1.28.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -12072,7 +11503,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-#### <a name="cronJobs_pattern1_podAnnotations"></a>4.1.30. Property `stack > cronJobs > ^.*$ > podAnnotations`
+#### <a name="cronJobs_pattern1_podAnnotations"></a>4.1.29. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12082,7 +11513,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-#### <a name="cronJobs_pattern1_podLabels"></a>4.1.31. Property `stack > cronJobs > ^.*$ > podLabels`
+#### <a name="cronJobs_pattern1_podLabels"></a>4.1.30. Property `stack > cronJobs > ^.*$ > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12092,7 +11523,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-#### <a name="cronJobs_pattern1_podSecurityContext"></a>4.1.32. Property `stack > cronJobs > ^.*$ > podSecurityContext`
+#### <a name="cronJobs_pattern1_podSecurityContext"></a>4.1.31. Property `stack > cronJobs > ^.*$ > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12102,7 +11533,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>4.1.33. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
+#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>4.1.32. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -12111,7 +11542,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-#### <a name="cronJobs_pattern1_readinessProbe"></a>4.1.34. Property `stack > cronJobs > ^.*$ > readinessProbe`
+#### <a name="cronJobs_pattern1_readinessProbe"></a>4.1.33. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12130,7 +11561,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>4.1.34.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>4.1.33.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -12139,7 +11570,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>4.1.34.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
+##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>4.1.33.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12155,7 +11586,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>4.1.34.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>4.1.33.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -12164,7 +11595,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>4.1.34.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>4.1.33.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12179,21 +11610,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>4.1.34.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>4.1.33.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>4.1.34.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>4.1.33.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>4.1.34.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>4.1.33.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -12202,7 +11633,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>4.1.34.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>4.1.33.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -12211,7 +11642,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>4.1.34.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>4.1.33.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -12220,7 +11651,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>4.1.34.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>4.1.33.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -12229,7 +11660,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>4.1.34.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>4.1.33.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -12238,7 +11669,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_replicaCount"></a>4.1.35. Property `stack > cronJobs > ^.*$ > replicaCount`
+#### <a name="cronJobs_pattern1_replicaCount"></a>4.1.34. Property `stack > cronJobs > ^.*$ > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -12247,7 +11678,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-#### <a name="cronJobs_pattern1_resources"></a>4.1.36. Property `stack > cronJobs > ^.*$ > resources`
+#### <a name="cronJobs_pattern1_resources"></a>4.1.35. Property `stack > cronJobs > ^.*$ > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12262,7 +11693,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#cronJobs_pattern1_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-##### <a name="cronJobs_pattern1_resources_limits"></a>4.1.36.1. Property `stack > cronJobs > ^.*$ > resources > limits`
+##### <a name="cronJobs_pattern1_resources_limits"></a>4.1.35.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12277,7 +11708,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>4.1.36.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>4.1.35.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12292,21 +11723,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>4.1.36.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>4.1.35.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>4.1.36.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>4.1.35.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_memory"></a>4.1.36.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
+###### <a name="cronJobs_pattern1_resources_limits_memory"></a>4.1.35.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -12315,7 +11746,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-##### <a name="cronJobs_pattern1_resources_requests"></a>4.1.36.2. Property `stack > cronJobs > ^.*$ > resources > requests`
+##### <a name="cronJobs_pattern1_resources_requests"></a>4.1.35.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12330,7 +11761,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>4.1.36.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>4.1.35.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12345,21 +11776,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>4.1.36.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>4.1.35.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>4.1.36.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>4.1.35.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_memory"></a>4.1.36.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
+###### <a name="cronJobs_pattern1_resources_requests_memory"></a>4.1.35.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -12368,7 +11799,7 @@ Must be one of:
 
 **Description:** Memory request
 
-#### <a name="cronJobs_pattern1_restartPolicy"></a>4.1.37. Property `stack > cronJobs > ^.*$ > restartPolicy`
+#### <a name="cronJobs_pattern1_restartPolicy"></a>4.1.36. Property `stack > cronJobs > ^.*$ > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -12382,7 +11813,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_rollout"></a>4.1.38. Property `stack > cronJobs > ^.*$ > rollout`
+#### <a name="cronJobs_pattern1_rollout"></a>4.1.37. Property `stack > cronJobs > ^.*$ > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -12396,7 +11827,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-##### <a name="cronJobs_pattern1_rollout_strategy"></a>4.1.38.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>4.1.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12411,7 +11842,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>4.1.38.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>4.1.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12427,7 +11858,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>4.1.38.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>4.1.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -12436,7 +11867,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>4.1.38.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>4.1.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -12445,7 +11876,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>4.1.38.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>4.1.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -12463,7 +11894,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>4.1.38.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>4.1.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12478,7 +11909,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>4.1.38.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>4.1.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12488,7 +11919,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>4.1.38.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>4.1.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12498,7 +11929,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>4.1.38.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>4.1.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12519,7 +11950,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>4.1.38.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>4.1.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12533,21 +11964,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>4.1.38.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>4.1.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>4.1.38.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>4.1.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>4.1.38.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>4.1.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12560,7 +11991,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>4.1.38.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>4.1.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12572,14 +12003,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>4.1.38.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>4.1.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>4.1.38.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>4.1.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -12590,7 +12021,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>4.1.38.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>4.1.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12611,7 +12042,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>4.1.38.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>4.1.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12624,7 +12055,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>4.1.38.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>4.1.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -12633,7 +12064,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>4.1.38.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>4.1.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -12642,7 +12073,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>4.1.38.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>4.1.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -12651,7 +12082,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>4.1.39. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_s3Storage"></a>4.1.38. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12674,7 +12105,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.39.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>4.1.38.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -12695,7 +12126,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>4.1.39.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>4.1.38.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -12708,7 +12139,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>4.1.39.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>4.1.38.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12718,7 +12149,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>4.1.39.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>4.1.38.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -12727,7 +12158,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>4.1.39.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>4.1.38.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -12736,7 +12167,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>4.1.39.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>4.1.38.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -12745,7 +12176,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>4.1.39.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>4.1.38.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12755,7 +12186,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.39.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>4.1.38.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -12764,7 +12195,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.39.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>4.1.38.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -12773,7 +12204,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.39.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>4.1.38.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -12782,7 +12213,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.39.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>4.1.38.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -12791,7 +12222,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.39.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>4.1.38.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12801,7 +12232,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.39.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>4.1.38.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -12810,7 +12241,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>4.1.40. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>4.1.39. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12819,6 +12250,587 @@ Must be one of:
 | **Additional properties** | Any type allowed |
 
 **Description:** Security context
+
+#### <a name="cronJobs_pattern1_securityPolicies"></a>4.1.40. Property `stack > cronJobs > ^.*$ > securityPolicies`
+
+|                           |                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                        |
+| **Required**              | No                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#cronJobs_pattern1_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+##### <a name="cronJobs_pattern1_securityPolicies_additionalProperties"></a>4.1.40.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| -------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#cronJobs_pattern1_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_annotations"></a>4.1.40.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered SecurityPolicy
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth"></a>4.1.40.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>4.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>4.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors"></a>4.1.40.1.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials"></a>4.1.40.1.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders"></a>4.1.40.1.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>4.1.40.1.3.2.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods"></a>4.1.40.1.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowMethods items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items"></a>4.1.40.1.3.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins"></a>4.1.40.1.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowOrigins items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>4.1.40.1.3.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled"></a>4.1.40.1.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders"></a>4.1.40.1.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                          | Description |
+| -------------------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>4.1.40.1.3.6.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge"></a>4.1.40.1.3.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList"></a>4.1.40.1.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [ipAllowList items](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items"></a>4.1.40.1.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt"></a>4.1.40.1.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>4.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>4.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>4.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>4.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>4.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc"></a>4.1.40.1.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>4.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [apiRoutes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>4.1.40.1.6.1.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>4.1.40.1.6.1.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>4.1.40.1.6.1.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID"></a>4.1.40.1.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>4.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>4.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>4.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>4.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>4.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>4.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>4.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>4.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>4.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>4.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>4.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>4.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>4.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>4.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>4.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>4.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>4.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                            | Description |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>4.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_service"></a>4.1.41. Property `stack > cronJobs > ^.*$ > service`
 
@@ -13700,7 +13712,6 @@ must respect the following conditions
 | - [nameOverride](#cronJobs_pattern1_nameOverride )                           | No      | string           | No         | -                       | Name to prefix the K8s resources with, combined with the stack name prefix                                                                                                                                                                                                                                                                                                                                                   |
 | - [nodeSelector](#cronJobs_pattern1_nodeSelector )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [oidcProxy](#cronJobs_pattern1_oidcProxy )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [oidcProxyGateway](#cronJobs_pattern1_oidcProxyGateway )                   | No      | object           | No         | -                       | Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.                                                                                                                                                                                                                      |
 | - [pdb](#cronJobs_pattern1_pdb )                                             | No      | object           | No         | -                       | PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.                                                                                                                                                                                                                                                                           |
 | - [persistence](#cronJobs_pattern1_persistence )                             | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [podAnnotations](#cronJobs_pattern1_podAnnotations )                       | No      | object           | No         | -                       | Annotations to add to pods                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -13714,6 +13725,7 @@ must respect the following conditions
 | - [rollout](#cronJobs_pattern1_rollout )                                     | No      | object           | No         | In #/properties/rollout | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [s3Storage](#cronJobs_pattern1_s3Storage )                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [securityContext](#cronJobs_pattern1_securityContext )                     | No      | object           | No         | -                       | Security context                                                                                                                                                                                                                                                                                                                                                                                                             |
+| - [securityPolicies](#cronJobs_pattern1_securityPolicies )                   | No      | object           | No         | -                       | Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration                            |
 | - [service](#cronJobs_pattern1_service )                                     | No      | object           | No         | -                       | Service configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [serviceAccount](#cronJobs_pattern1_serviceAccount )                       | No      | object           | No         | -                       | Service account configuration                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [shareProcessNamespace](#cronJobs_pattern1_shareProcessNamespace )         | No      | boolean          | No         | -                       | Share process namespace                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -14316,8 +14328,6 @@ Must be one of:
 | ------------------------------------------------------------------ | ------- | ---------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [annotations](#cronJobs_pattern1_gateway_annotations )           | No      | object           | No         | -          | Annotations to add to HTTPRoute resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [backendTLS](#cronJobs_pattern1_gateway_backendTLS )             | No      | object           | No         | -          | TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [basicAuth](#cronJobs_pattern1_gateway_basicAuth )               | No      | object           | No         | -          | HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| - [cors](#cronJobs_pattern1_gateway_cors )                         | No      | object           | No         | -          | CORS via a SecurityPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [dnsOwner](#cronJobs_pattern1_gateway_dnsOwner )                 | No      | enum (of string) | No         | -          | Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence |
 | - [enabled](#cronJobs_pattern1_gateway_enabled )                   | No      | boolean          | No         | -          | Enable Gateway API HTTPRoute (alternative to Ingress)                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | - [gatewayName](#cronJobs_pattern1_gateway_gatewayName )           | No      | string           | No         | -          | Name of the Gateway resource to attach to                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -14325,9 +14335,6 @@ Must be one of:
 | - [host](#cronJobs_pattern1_gateway_host )                         | No      | string           | No         | -          | Hostname for HTTPRoute                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [hostRewrite](#cronJobs_pattern1_gateway_hostRewrite )           | No      | string           | No         | -          | Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [hsts](#cronJobs_pattern1_gateway_hsts )                         | No      | object           | No         | -          | Strict-Transport-Security header always emitted on gateway HTTPRoutes (not disableable by design), matching the fleet-wide HSTS that nginx-ingress sets via its controller ConfigMap                                                                                                                                                                                                                                                                                                                                               |
-| - [ipAllowList](#cronJobs_pattern1_gateway_ipAllowList )           | No      | array            | No         | -          | Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [jwt](#cronJobs_pattern1_gateway_jwt )                           | No      | object           | No         | -          | JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent                                                                                              |
-| - [oidcProtected](#cronJobs_pattern1_gateway_oidcProtected )       | No      | boolean          | No         | -          | Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway                                                                                                                                                                                                                                                                          |
 | - [paths](#cronJobs_pattern1_gateway_paths )                       | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rateLimit](#cronJobs_pattern1_gateway_rateLimit )               | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [redirect](#cronJobs_pattern1_gateway_redirect )                 | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -14335,7 +14342,9 @@ Must be one of:
 | - [responseHeaders](#cronJobs_pattern1_gateway_responseHeaders )   | No      | object           | No         | -          | Response header modifications (HTTPRoute ResponseHeaderModifier filter)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [rules](#cronJobs_pattern1_gateway_rules )                       | No      | array            | No         | -          | List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity                                                                                                                                                                                                                                                                |
 | - [sectionName](#cronJobs_pattern1_gateway_sectionName )           | No      | string           | No         | -          | Optional section name (listener name) on the Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )     | No      | string           | No         | -          | Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session                                                                                                                                                                                                                              |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )   | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                 | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths                                                                                                                                                                                                                                                                                                                   |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                 | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                           |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )     | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                    |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                     | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -14422,155 +14431,7 @@ Must be one of:
 
 **Description:** Use the System trust store, or set "" and use caCertificateRefs for a private CA
 
-##### <a name="cronJobs_pattern1_gateway_basicAuth"></a>7.1.16.3. Property `stack > cronJobs > ^.*$ > gateway > basicAuth`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** HTTP basic auth via a SecurityPolicy. Mutually exclusive with gateway.oidcProtected
-
-| Property                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                             |
-| ---------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_basicAuth_enabled )       | No      | boolean | No         | -          | Enable basic auth                             |
-| - [secretName](#cronJobs_pattern1_gateway_basicAuth_secretName ) | No      | string  | No         | -          | Name of an Opaque Secret with a .htpasswd key |
-
-###### <a name="cronJobs_pattern1_gateway_basicAuth_enabled"></a>7.1.16.3.1. Property `stack > cronJobs > ^.*$ > gateway > basicAuth > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable basic auth
-
-###### <a name="cronJobs_pattern1_gateway_basicAuth_secretName"></a>7.1.16.3.2. Property `stack > cronJobs > ^.*$ > gateway > basicAuth > secretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of an Opaque Secret with a .htpasswd key
-
-##### <a name="cronJobs_pattern1_gateway_cors"></a>7.1.16.4. Property `stack > cronJobs > ^.*$ > gateway > cors`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** CORS via a SecurityPolicy
-
-| Property                                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                    |
-| ----------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------- |
-| - [allowCredentials](#cronJobs_pattern1_gateway_cors_allowCredentials ) | No      | boolean | No         | -          | Allow credentials                                    |
-| - [allowHeaders](#cronJobs_pattern1_gateway_cors_allowHeaders )         | No      | array   | No         | -          | Allowed request headers                              |
-| - [allowMethods](#cronJobs_pattern1_gateway_cors_allowMethods )         | No      | array   | No         | -          | Allowed methods                                      |
-| - [allowOrigins](#cronJobs_pattern1_gateway_cors_allowOrigins )         | No      | array   | No         | -          | Allowed origins (string patterns)                    |
-| - [enabled](#cronJobs_pattern1_gateway_cors_enabled )                   | No      | boolean | No         | -          | Enable CORS                                          |
-| - [exposeHeaders](#cronJobs_pattern1_gateway_cors_exposeHeaders )       | No      | array   | No         | -          | Response headers exposed to the browser              |
-| - [maxAge](#cronJobs_pattern1_gateway_cors_maxAge )                     | No      | string  | No         | -          | Preflight cache duration (e.g. "1h"), empty omits it |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowCredentials"></a>7.1.16.4.1. Property `stack > cronJobs > ^.*$ > gateway > cors > allowCredentials`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Allow credentials
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowHeaders"></a>7.1.16.4.2. Property `stack > cronJobs > ^.*$ > gateway > cors > allowHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed request headers
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowMethods"></a>7.1.16.4.3. Property `stack > cronJobs > ^.*$ > gateway > cors > allowMethods`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed methods
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_allowOrigins"></a>7.1.16.4.4. Property `stack > cronJobs > ^.*$ > gateway > cors > allowOrigins`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Allowed origins (string patterns)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_enabled"></a>7.1.16.4.5. Property `stack > cronJobs > ^.*$ > gateway > cors > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable CORS
-
-###### <a name="cronJobs_pattern1_gateway_cors_exposeHeaders"></a>7.1.16.4.6. Property `stack > cronJobs > ^.*$ > gateway > cors > exposeHeaders`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Response headers exposed to the browser
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-###### <a name="cronJobs_pattern1_gateway_cors_maxAge"></a>7.1.16.4.7. Property `stack > cronJobs > ^.*$ > gateway > cors > maxAge`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Preflight cache duration (e.g. "1h"), empty omits it
-
-##### <a name="cronJobs_pattern1_gateway_dnsOwner"></a>7.1.16.5. Property `stack > cronJobs > ^.*$ > gateway > dnsOwner`
+##### <a name="cronJobs_pattern1_gateway_dnsOwner"></a>7.1.16.3. Property `stack > cronJobs > ^.*$ > gateway > dnsOwner`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -14583,7 +14444,7 @@ Must be one of:
 * "ingress"
 * "gateway"
 
-##### <a name="cronJobs_pattern1_gateway_enabled"></a>7.1.16.6. Property `stack > cronJobs > ^.*$ > gateway > enabled`
+##### <a name="cronJobs_pattern1_gateway_enabled"></a>7.1.16.4. Property `stack > cronJobs > ^.*$ > gateway > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -14592,7 +14453,7 @@ Must be one of:
 
 **Description:** Enable Gateway API HTTPRoute (alternative to Ingress)
 
-##### <a name="cronJobs_pattern1_gateway_gatewayName"></a>7.1.16.7. Property `stack > cronJobs > ^.*$ > gateway > gatewayName`
+##### <a name="cronJobs_pattern1_gateway_gatewayName"></a>7.1.16.5. Property `stack > cronJobs > ^.*$ > gateway > gatewayName`
 
 |              |          |
 | ------------ | -------- |
@@ -14601,7 +14462,7 @@ Must be one of:
 
 **Description:** Name of the Gateway resource to attach to
 
-##### <a name="cronJobs_pattern1_gateway_gatewayNamespace"></a>7.1.16.8. Property `stack > cronJobs > ^.*$ > gateway > gatewayNamespace`
+##### <a name="cronJobs_pattern1_gateway_gatewayNamespace"></a>7.1.16.6. Property `stack > cronJobs > ^.*$ > gateway > gatewayNamespace`
 
 |              |          |
 | ------------ | -------- |
@@ -14610,7 +14471,7 @@ Must be one of:
 
 **Description:** Namespace of the Gateway resource
 
-##### <a name="cronJobs_pattern1_gateway_host"></a>7.1.16.9. Property `stack > cronJobs > ^.*$ > gateway > host`
+##### <a name="cronJobs_pattern1_gateway_host"></a>7.1.16.7. Property `stack > cronJobs > ^.*$ > gateway > host`
 
 |              |          |
 | ------------ | -------- |
@@ -14619,7 +14480,7 @@ Must be one of:
 
 **Description:** Hostname for HTTPRoute
 
-##### <a name="cronJobs_pattern1_gateway_hostRewrite"></a>7.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > hostRewrite`
+##### <a name="cronJobs_pattern1_gateway_hostRewrite"></a>7.1.16.8. Property `stack > cronJobs > ^.*$ > gateway > hostRewrite`
 
 |              |          |
 | ------------ | -------- |
@@ -14628,7 +14489,7 @@ Must be one of:
 
 **Description:** Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it
 
-##### <a name="cronJobs_pattern1_gateway_hsts"></a>7.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > hsts`
+##### <a name="cronJobs_pattern1_gateway_hsts"></a>7.1.16.9. Property `stack > cronJobs > ^.*$ > gateway > hsts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14642,7 +14503,7 @@ Must be one of:
 | ------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------ |
 | - [value](#cronJobs_pattern1_gateway_hsts_value ) | No      | string | No         | -          | Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set |
 
-###### <a name="cronJobs_pattern1_gateway_hsts_value"></a>7.1.16.11.1. Property `stack > cronJobs > ^.*$ > gateway > hsts > value`
+###### <a name="cronJobs_pattern1_gateway_hsts_value"></a>7.1.16.9.1. Property `stack > cronJobs > ^.*$ > gateway > hsts > value`
 
 |              |          |
 | ------------ | -------- |
@@ -14651,139 +14512,7 @@ Must be one of:
 
 **Description:** Header value, overridden by a Strict-Transport-Security entry in responseHeaders.set
 
-##### <a name="cronJobs_pattern1_gateway_ipAllowList"></a>7.1.16.12. Property `stack > cronJobs > ^.*$ > gateway > ipAllowList`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Client IP allowlist of CIDRs that renders a SecurityPolicy authorization rule (defaultAction Deny). Empty disables it
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="cronJobs_pattern1_gateway_jwt"></a>7.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > jwt`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** JWT bearer-token validation via a SecurityPolicy, for machine clients (CLIs, service-to-service) that send an Authorization: Bearer token. Independent of and combinable with oidcProtected - browsers keep the OIDC cookie flow while bearer requests are validated at the gateway against the provider JWKS. This is the Gateway API replacement for oauth2-proxy's --skip-jwt-bearer-tokens, which has no other gateway equivalent
-
-| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                      |
-| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_gateway_jwt_enabled )             | No      | boolean         | No         | -          | Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list                                                                                                                                                                                                           |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_issuer )               | No      | string          | No         | -          | Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty                                                |
-| - [providers](#cronJobs_pattern1_gateway_jwt_providers )         | No      | array of object | No         | -          | List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri                                                                                           |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_remoteJWKSUri ) | No      | string          | No         | -          | JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with \`curl -s <issuer>/.well-known/openid-configuration \| jq -r .jwks_uri\` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys) |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_enabled"></a>7.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable JWT bearer-token validation. Requires remoteJWKSUri or providers list
-
-###### <a name="cronJobs_pattern1_gateway_jwt_issuer"></a>7.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim). Defaults to the OIDC issuer (oidcProxyGateway.provider.issuer). Override only if bearer tokens come from a different authorization server than browser login. Used only when providers list is empty
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers"></a>7.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** List of JWT providers to accept tokens from. When specified, takes precedence over the single issuer/remoteJWKSUri configuration. Each provider must specify name, issuer, and remoteJWKSUri
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                   | Description |
-| ----------------------------------------------------------------- | ----------- |
-| [providers items](#cronJobs_pattern1_gateway_jwt_providers_items) | -           |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items"></a>7.1.16.13.3.1. stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                     |
-| -------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------- |
-| - [issuer](#cronJobs_pattern1_gateway_jwt_providers_items_issuer )               | No      | string | No         | -          | Expected token issuer (iss claim) - required                                          |
-| - [name](#cronJobs_pattern1_gateway_jwt_providers_items_name )                   | No      | string | No         | -          | Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev' |
-| - [remoteJWKSUri](#cronJobs_pattern1_gateway_jwt_providers_items_remoteJWKSUri ) | No      | string | No         | -          | JWKS URI for this provider's signing keys - required                                  |
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_issuer"></a>7.1.16.13.3.1.1. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Expected token issuer (iss claim) - required
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_name"></a>7.1.16.13.3.1.2. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Provider name (required) - unique identifier like 'okta', 'github-actions', 'eks-dev'
-
-###### <a name="cronJobs_pattern1_gateway_jwt_providers_items_remoteJWKSUri"></a>7.1.16.13.3.1.3. Property `stack > cronJobs > ^.*$ > gateway > jwt > providers > providers items > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI for this provider's signing keys - required
-
-###### <a name="cronJobs_pattern1_gateway_jwt_remoteJWKSUri"></a>7.1.16.13.4. Property `stack > cronJobs > ^.*$ > gateway > jwt > remoteJWKSUri`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** JWKS URI the gateway fetches the provider's signing keys from. Required when enabled and providers list is empty - find it with `curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri` (for the czi.okta.com org server that is https://czi.okta.com/oauth2/v1/keys)
-
-##### <a name="cronJobs_pattern1_gateway_oidcProtected"></a>7.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > oidcProtected`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Enable OIDC protection via Envoy Gateway SecurityPolicy. Works with no other configuration - the client id and secret default from the argus-global-oidc secret (shared confidential Okta app), with per-service overrides available via oidcProxyGateway
-
-##### <a name="cronJobs_pattern1_gateway_paths"></a>7.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > paths`
+##### <a name="cronJobs_pattern1_gateway_paths"></a>7.1.16.10. Property `stack > cronJobs > ^.*$ > gateway > paths`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -14804,7 +14533,7 @@ Must be one of:
 | ----------------------------------------------------- | ----------- |
 | [paths items](#cronJobs_pattern1_gateway_paths_items) | -           |
 
-###### <a name="cronJobs_pattern1_gateway_paths_items"></a>7.1.16.15.1. stack > cronJobs > ^.*$ > gateway > paths > paths items
+###### <a name="cronJobs_pattern1_gateway_paths_items"></a>7.1.16.10.1. stack > cronJobs > ^.*$ > gateway > paths > paths items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14817,7 +14546,7 @@ Must be one of:
 | - [path](#cronJobs_pattern1_gateway_paths_items_path )         | No      | string | No         | -          | HTTPRoute path                        |
 | - [pathType](#cronJobs_pattern1_gateway_paths_items_pathType ) | No      | string | No         | -          | HTTPRoute path type (Exact or Prefix) |
 
-###### <a name="cronJobs_pattern1_gateway_paths_items_path"></a>7.1.16.15.1.1. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > path`
+###### <a name="cronJobs_pattern1_gateway_paths_items_path"></a>7.1.16.10.1.1. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > path`
 
 |              |          |
 | ------------ | -------- |
@@ -14826,7 +14555,7 @@ Must be one of:
 
 **Description:** HTTPRoute path
 
-###### <a name="cronJobs_pattern1_gateway_paths_items_pathType"></a>7.1.16.15.1.2. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > pathType`
+###### <a name="cronJobs_pattern1_gateway_paths_items_pathType"></a>7.1.16.10.1.2. Property `stack > cronJobs > ^.*$ > gateway > paths > paths items > pathType`
 
 |              |          |
 | ------------ | -------- |
@@ -14835,7 +14564,7 @@ Must be one of:
 
 **Description:** HTTPRoute path type (Exact or Prefix)
 
-##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>7.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
+##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>7.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14851,7 +14580,7 @@ Must be one of:
 | - [requests](#cronJobs_pattern1_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#cronJobs_pattern1_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>7.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>7.1.16.11.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -14860,7 +14589,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>7.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>7.1.16.11.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -14869,7 +14598,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>7.1.16.16.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>7.1.16.11.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -14878,7 +14607,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-##### <a name="cronJobs_pattern1_gateway_redirect"></a>7.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > redirect`
+##### <a name="cronJobs_pattern1_gateway_redirect"></a>7.1.16.12. Property `stack > cronJobs > ^.*$ > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14896,7 +14625,7 @@ Must be one of:
 | - [scheme](#cronJobs_pattern1_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#cronJobs_pattern1_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>7.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
+###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>7.1.16.12.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -14905,7 +14634,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>7.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
+###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>7.1.16.12.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -14914,7 +14643,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>7.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
+###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>7.1.16.12.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -14923,7 +14652,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>7.1.16.17.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
+###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>7.1.16.12.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -14932,7 +14661,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>7.1.16.17.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
+###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>7.1.16.12.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -14941,7 +14670,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>7.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
+##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>7.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -14957,7 +14686,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>7.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>7.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -14974,7 +14703,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>7.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>7.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -14991,7 +14720,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>7.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>7.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -15008,7 +14737,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>7.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
+##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>7.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15024,7 +14753,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>7.1.16.19.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>7.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -15041,7 +14770,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>7.1.16.19.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>7.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -15058,7 +14787,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>7.1.16.19.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>7.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -15075,7 +14804,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_rules"></a>7.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > rules`
+##### <a name="cronJobs_pattern1_gateway_rules"></a>7.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -15092,7 +14821,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_sectionName"></a>7.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
+##### <a name="cronJobs_pattern1_gateway_sectionName"></a>7.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -15101,7 +14830,16 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>7.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>7.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session
+
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>7.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15117,7 +14855,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>7.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>7.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -15126,7 +14864,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>7.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>7.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15135,7 +14873,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>7.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>7.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -15144,7 +14882,55 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>7.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                             | Description |
+| ----------------------------------------------------------- | ----------- |
+| [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>7.1.16.19.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [method](#cronJobs_pattern1_gateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>7.1.16.19.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>7.1.16.19.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15160,7 +14946,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.23.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.20.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -15169,7 +14955,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.23.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.20.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -15178,7 +14964,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.23.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.20.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -15187,7 +14973,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15202,7 +14988,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15211,7 +14997,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -15220,7 +15006,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15236,7 +15022,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -15245,7 +15031,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15254,7 +15040,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -16376,358 +16162,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="cronJobs_pattern1_oidcProxyGateway"></a>7.1.27. Property `stack > cronJobs > ^.*$ > oidcProxyGateway`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Envoy Gateway OIDC configuration (used when gateway.oidcProtected is true). Defaults read clientID and clientSecret from the argus-global-oidc ClusterExternalSecret. Override per-service when needed.
-
-| Property                                                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_oidcProxyGateway_annotations )               | No      | object          | No         | -          | Annotations to add to SecurityPolicy resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [apiRoutes](#cronJobs_pattern1_oidcProxyGateway_apiRoutes )                   | No      | array of object | No         | -          | API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true. |
-| - [clientID](#cronJobs_pattern1_oidcProxyGateway_clientID )                     | No      | string          | No         | -          | OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| - [clientSecretName](#cronJobs_pattern1_oidcProxyGateway_clientSecretName )     | No      | string          | No         | -          | Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [cookieDomain](#cronJobs_pattern1_oidcProxyGateway_cookieDomain )             | No      | string          | No         | -          | Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [cookieNames](#cronJobs_pattern1_oidcProxyGateway_cookieNames )               | No      | object          | No         | -          | Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.                                                                                                                                                                                                                                                                                                                                                             |
-| - [csrfTokenTTL](#cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL )             | No      | string          | No         | -          | Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| - [denyRedirect](#cronJobs_pattern1_oidcProxyGateway_denyRedirect )             | No      | object          | No         | -          | Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.                                                                                                                                                                                      |
-| - [forwardAccessToken](#cronJobs_pattern1_oidcProxyGateway_forwardAccessToken ) | No      | boolean         | No         | -          | Forward access token to backend service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| - [globalSecretName](#cronJobs_pattern1_oidcProxyGateway_globalSecretName )     | No      | string          | No         | -          | Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.                                                                                                                                                                                                                                                                                                                                                                              |
-| - [logoutPath](#cronJobs_pattern1_oidcProxyGateway_logoutPath )                 | No      | string          | No         | -          | Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| - [provider](#cronJobs_pattern1_oidcProxyGateway_provider )                     | No      | object          | No         | -          | OIDC provider configuration                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| - [refreshToken](#cronJobs_pattern1_oidcProxyGateway_refreshToken )             | No      | boolean         | No         | -          | Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [resources](#cronJobs_pattern1_oidcProxyGateway_resources )                   | No      | array           | No         | -          | Optional OAuth2 resources parameter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| - [scopes](#cronJobs_pattern1_oidcProxyGateway_scopes )                         | No      | array of string | No         | -          | OIDC scopes to request                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| - [skipAuth](#cronJobs_pattern1_oidcProxyGateway_skipAuth )                     | No      | array of object | No         | -          | Paths to skip authentication (creates separate public HTTPRoute)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_annotations"></a>7.1.27.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > annotations`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Annotations to add to SecurityPolicy resources
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes"></a>7.1.27.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** API paths where unauthenticated requests get 401 instead of a login redirect. Auth is still enforced - unlike skipAuth, which removes it entirely. Replaces the oauth2-proxy --api-route flag. matchType is Prefix (default), Exact, or RegularExpression. Matching runs on the full request path including the query string - Exact and anchored regex values need a (\?.*)?$ tail to match requests carrying queries. Prefix is a plain string prefix (/api also matches /apikeys). A service-level list replaces the global list entirely. Only takes effect when gateway.oidcProtected is true.
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                        | Description |
-| ---------------------------------------------------------------------- | ----------- |
-| [apiRoutes items](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items"></a>7.1.27.2.1. stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [matchType](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path )           | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_matchType"></a>7.1.27.2.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > matchType`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_apiRoutes_items_path"></a>7.1.27.2.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > apiRoutes > apiRoutes items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientID"></a>7.1.27.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientID`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC client ID string override. When empty, clientIDRef reads the value from the secret named by clientSecretName.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_clientSecretName"></a>7.1.27.4. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > clientSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Kubernetes secret holding client-id and client-secret keys for an OIDC client the app owns. Set this when the app runs its own Okta client. When empty, the shared globalSecretName secret is used.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieDomain"></a>7.1.27.5. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieDomain`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional root domain for sharing tokens across subdomains (e.g., cluster.dev.czi.team)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames"></a>7.1.27.6. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Customize cookie names. When empty, deterministic names are generated as AccessToken-<namespace>-<service> / IdToken-<namespace>-<service>. With cookieDomain set, two stacks of the same app in one namespace would share these names.
-
-| Property                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                   |
-| ----------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------- |
-| - [accessToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken ) | No      | string | No         | -          | Custom name for access token cookie |
-| - [idToken](#cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken )         | No      | string | No         | -          | Custom name for ID token cookie     |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_accessToken"></a>7.1.27.6.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > accessToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for access token cookie
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_cookieNames_idToken"></a>7.1.27.6.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > cookieNames > idToken`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Custom name for ID token cookie
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_csrfTokenTTL"></a>7.1.27.7. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > csrfTokenTTL`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional TTL for the OauthNonce/CodeVerifier cookies, e.g. 5m (Envoy Gateway default 10m)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect"></a>7.1.27.8. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** Return 401 instead of a 302-to-IdP for non-navigation requests (fetch/XHR/EventSource) with missing or expired tokens. Browsers cannot complete the OIDC redirect from fetch. The 401 gives SPAs a deterministic session-expired signal and stops per-request nonce/verifier cookie minting. Navigations still redirect, and matched requests still get silent token refresh while the refresh token is valid.
-
-| Property                                                               | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                      |
-| ---------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled ) | No      | boolean | No         | -          | Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false. |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_denyRedirect_enabled"></a>7.1.27.8.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > denyRedirect > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Disable per-service only if a client depends on receiving the 302. apiRoutes still return 401 even when this is false.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_forwardAccessToken"></a>7.1.27.9. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > forwardAccessToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Forward access token to backend service
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_globalSecretName"></a>7.1.27.10. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > globalSecretName`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Name of the in-namespace Kubernetes Secret (distributed by the argus-global-oidc ClusterExternalSecret) holding the client-id and client-secret keys for the shared OIDC app. Used whenever clientSecretName is empty.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_logoutPath"></a>7.1.27.11. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > logoutPath`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Logout path relative to the OIDC base path. The effective logout path is <basePath><logoutPath>, so it always matches the service's HTTPRoute.
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_provider"></a>7.1.27.12. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-**Description:** OIDC provider configuration
-
-| Property                                                                                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                      |
-| ---------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------- |
-| - [authorizationEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint ) | No      | string | No         | -          | Optional authorization endpoint (auto-discovered by provider if empty) |
-| - [issuer](#cronJobs_pattern1_oidcProxyGateway_provider_issuer )                               | No      | string | No         | -          | OIDC provider issuer URL                                               |
-| - [tokenEndpoint](#cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint )                 | No      | string | No         | -          | Optional token endpoint (auto-discovered by provider if empty)         |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_authorizationEndpoint"></a>7.1.27.12.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > authorizationEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional authorization endpoint (auto-discovered by provider if empty)
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_issuer"></a>7.1.27.12.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > issuer`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** OIDC provider issuer URL
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_provider_tokenEndpoint"></a>7.1.27.12.3. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > provider > tokenEndpoint`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-**Description:** Optional token endpoint (auto-discovered by provider if empty)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_refreshToken"></a>7.1.27.13. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > refreshToken`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Use refresh tokens to refresh access tokens (default true in Envoy Gateway v1.6.0+)
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_resources"></a>7.1.27.14. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > resources`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-**Description:** Optional OAuth2 resources parameter
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_scopes"></a>7.1.27.15. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > scopes`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of string` |
-| **Required** | No                |
-
-**Description:** OIDC scopes to request
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                  | Description |
-| ---------------------------------------------------------------- | ----------- |
-| [scopes items](#cronJobs_pattern1_oidcProxyGateway_scopes_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_scopes_items"></a>7.1.27.15.1. stack > cronJobs > ^.*$ > oidcProxyGateway > scopes > scopes items
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth"></a>7.1.27.16. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth`
-
-|              |                   |
-| ------------ | ----------------- |
-| **Type**     | `array of object` |
-| **Required** | No                |
-
-**Description:** Paths to skip authentication (creates separate public HTTPRoute)
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | See below          |
-
-| Each item of this array must be                                      | Description |
-| -------------------------------------------------------------------- | ----------- |
-| [skipAuth items](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items) | -           |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items"></a>7.1.27.16.1. stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [method](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method ) | No      | string | No         | -          | -                 |
-| - [path](#cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path )     | No      | string | No         | -          | -                 |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_method"></a>7.1.27.16.1.1. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > method`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="cronJobs_pattern1_oidcProxyGateway_skipAuth_items_path"></a>7.1.27.16.1.2. Property `stack > cronJobs > ^.*$ > oidcProxyGateway > skipAuth > skipAuth items > path`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="cronJobs_pattern1_pdb"></a>7.1.28. Property `stack > cronJobs > ^.*$ > pdb`
+#### <a name="cronJobs_pattern1_pdb"></a>7.1.27. Property `stack > cronJobs > ^.*$ > pdb`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16741,7 +16176,7 @@ Must be one of:
 | ------------------------------------------------------ | ------- | ----------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | - [minAvailable](#cronJobs_pattern1_pdb_minAvailable ) | No      | integer or string | No         | -          | Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable. |
 
-##### <a name="cronJobs_pattern1_pdb_minAvailable"></a>7.1.28.1. Property `stack > cronJobs > ^.*$ > pdb > minAvailable`
+##### <a name="cronJobs_pattern1_pdb_minAvailable"></a>7.1.27.1. Property `stack > cronJobs > ^.*$ > pdb > minAvailable`
 
 |              |                     |
 | ------------ | ------------------- |
@@ -16750,7 +16185,7 @@ Must be one of:
 
 **Description:** Pods that must remain available during voluntary disruption (integer or percentage string such as "50%"). Mutually exclusive with autoscaling.maxUnavailable and takes precedence over it. Set to 1 to make a single-replica service block eviction entirely, which stops Karpenter consolidation from taking its only pod. Requires a NodePool terminationGracePeriod so drift and expiration drains stay bounded. Leave empty to use autoscaling.maxUnavailable.
 
-#### <a name="cronJobs_pattern1_persistence"></a>7.1.29. Property `stack > cronJobs > ^.*$ > persistence`
+#### <a name="cronJobs_pattern1_persistence"></a>7.1.28. Property `stack > cronJobs > ^.*$ > persistence`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16765,7 +16200,7 @@ Must be one of:
 | - [mountPath](#cronJobs_pattern1_persistence_mountPath )         | No      | string  | No         | -          | Mount path for the PVC |
 | - [pvc](#cronJobs_pattern1_persistence_pvc )                     | No      | object  | No         | -          | -                      |
 
-##### <a name="cronJobs_pattern1_persistence_enabled"></a>7.1.29.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
+##### <a name="cronJobs_pattern1_persistence_enabled"></a>7.1.28.1. Property `stack > cronJobs > ^.*$ > persistence > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -16774,7 +16209,7 @@ Must be one of:
 
 **Description:** Enable persistence
 
-##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>7.1.29.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
+##### <a name="cronJobs_pattern1_persistence_existingClaim"></a>7.1.28.2. Property `stack > cronJobs > ^.*$ > persistence > existingClaim`
 
 |              |          |
 | ------------ | -------- |
@@ -16783,7 +16218,7 @@ Must be one of:
 
 **Description:** Existing PVC name
 
-##### <a name="cronJobs_pattern1_persistence_mountPath"></a>7.1.29.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
+##### <a name="cronJobs_pattern1_persistence_mountPath"></a>7.1.28.3. Property `stack > cronJobs > ^.*$ > persistence > mountPath`
 
 |              |          |
 | ------------ | -------- |
@@ -16792,7 +16227,7 @@ Must be one of:
 
 **Description:** Mount path for the PVC
 
-##### <a name="cronJobs_pattern1_persistence_pvc"></a>7.1.29.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
+##### <a name="cronJobs_pattern1_persistence_pvc"></a>7.1.28.4. Property `stack > cronJobs > ^.*$ > persistence > pvc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16807,7 +16242,7 @@ Must be one of:
 | - [resources](#cronJobs_pattern1_persistence_pvc_resources )               | No      | object                    | No         | -          | -                        |
 | - [storageClassName](#cronJobs_pattern1_persistence_pvc_storageClassName ) | No      | string                    | No         | -          | Storage class name       |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>7.1.29.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes"></a>7.1.28.4.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -16828,7 +16263,7 @@ Must be one of:
 | ------------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_persistence_pvc_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>7.1.29.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_persistence_pvc_accessModes_items"></a>7.1.28.4.1.1. stack > cronJobs > ^.*$ > persistence > pvc > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -16841,7 +16276,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>7.1.29.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource"></a>7.1.28.4.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16855,7 +16290,7 @@ Must be one of:
 | - [kind](#cronJobs_pattern1_persistence_pvc_dataSource_kind )         | No      | string | No         | -          | Kind of the data source [VolumeSnapshot, PersistentVolumeClaim] |
 | - [name](#cronJobs_pattern1_persistence_pvc_dataSource_name )         | No      | string | No         | -          | Name of the data source                                         |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>7.1.29.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_apiGroup"></a>7.1.28.4.2.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > apiGroup`
 
 |              |          |
 | ------------ | -------- |
@@ -16864,7 +16299,7 @@ Must be one of:
 
 **Description:** API version of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>7.1.29.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_kind"></a>7.1.28.4.2.2. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > kind`
 
 |              |          |
 | ------------ | -------- |
@@ -16873,7 +16308,7 @@ Must be one of:
 
 **Description:** Kind of the data source [VolumeSnapshot, PersistentVolumeClaim]
 
-###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>7.1.29.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
+###### <a name="cronJobs_pattern1_persistence_pvc_dataSource_name"></a>7.1.28.4.2.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > dataSource > name`
 
 |              |          |
 | ------------ | -------- |
@@ -16882,7 +16317,7 @@ Must be one of:
 
 **Description:** Name of the data source
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>7.1.29.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources"></a>7.1.28.4.3. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16894,7 +16329,7 @@ Must be one of:
 | -------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------- |
 | - [requests](#cronJobs_pattern1_persistence_pvc_resources_requests ) | No      | object | No         | -          | PVC resource requests |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>7.1.29.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests"></a>7.1.28.4.3.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16908,7 +16343,7 @@ Must be one of:
 | --------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------ |
 | - [storage](#cronJobs_pattern1_persistence_pvc_resources_requests_storage ) | No      | string | No         | -          | Storage resource request |
 
-###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>7.1.29.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
+###### <a name="cronJobs_pattern1_persistence_pvc_resources_requests_storage"></a>7.1.28.4.3.1.1. Property `stack > cronJobs > ^.*$ > persistence > pvc > resources > requests > storage`
 
 |              |          |
 | ------------ | -------- |
@@ -16917,7 +16352,7 @@ Must be one of:
 
 **Description:** Storage resource request
 
-###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>7.1.29.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
+###### <a name="cronJobs_pattern1_persistence_pvc_storageClassName"></a>7.1.28.4.4. Property `stack > cronJobs > ^.*$ > persistence > pvc > storageClassName`
 
 |              |          |
 | ------------ | -------- |
@@ -16926,7 +16361,7 @@ Must be one of:
 
 **Description:** Storage class name
 
-#### <a name="cronJobs_pattern1_podAnnotations"></a>7.1.30. Property `stack > cronJobs > ^.*$ > podAnnotations`
+#### <a name="cronJobs_pattern1_podAnnotations"></a>7.1.29. Property `stack > cronJobs > ^.*$ > podAnnotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16936,7 +16371,7 @@ Must be one of:
 
 **Description:** Annotations to add to pods
 
-#### <a name="cronJobs_pattern1_podLabels"></a>7.1.31. Property `stack > cronJobs > ^.*$ > podLabels`
+#### <a name="cronJobs_pattern1_podLabels"></a>7.1.30. Property `stack > cronJobs > ^.*$ > podLabels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16946,7 +16381,7 @@ Must be one of:
 
 **Description:** Global labels to add to all pods
 
-#### <a name="cronJobs_pattern1_podSecurityContext"></a>7.1.32. Property `stack > cronJobs > ^.*$ > podSecurityContext`
+#### <a name="cronJobs_pattern1_podSecurityContext"></a>7.1.31. Property `stack > cronJobs > ^.*$ > podSecurityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16956,7 +16391,7 @@ Must be one of:
 
 **Description:** Pod security context
 
-#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>7.1.33. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
+#### <a name="cronJobs_pattern1_progressDeadlineSeconds"></a>7.1.32. Property `stack > cronJobs > ^.*$ > progressDeadlineSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -16965,7 +16400,7 @@ Must be one of:
 
 **Description:** the number of seconds the Deployment controller waits before indicating (in the Deployment status) that the Deployment progress has stalled
 
-#### <a name="cronJobs_pattern1_readinessProbe"></a>7.1.34. Property `stack > cronJobs > ^.*$ > readinessProbe`
+#### <a name="cronJobs_pattern1_readinessProbe"></a>7.1.33. Property `stack > cronJobs > ^.*$ > readinessProbe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16984,7 +16419,7 @@ Must be one of:
 | - [successThreshold](#cronJobs_pattern1_readinessProbe_successThreshold )       | No      | number | No         | -          | Number of successes before the probe is considered successful                         |
 | - [timeoutSeconds](#cronJobs_pattern1_readinessProbe_timeoutSeconds )           | No      | number | No         | -          | Timeout for the probe                                                                 |
 
-##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>7.1.34.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_failureThreshold"></a>7.1.33.1. Property `stack > cronJobs > ^.*$ > readinessProbe > failureThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -16993,7 +16428,7 @@ Must be one of:
 
 **Description:** Number of failures before the probe is considered failed
 
-##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>7.1.34.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
+##### <a name="cronJobs_pattern1_readinessProbe_httpGet"></a>7.1.33.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17009,7 +16444,7 @@ Must be one of:
 | - [port](#cronJobs_pattern1_readinessProbe_httpGet_port )     | No      | Combination | No         | -          | Port to probe     |
 | - [scheme](#cronJobs_pattern1_readinessProbe_httpGet_scheme ) | No      | string      | No         | -          | Scheme to use     |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>7.1.34.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_path"></a>7.1.33.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > path`
 
 |              |          |
 | ------------ | -------- |
@@ -17018,7 +16453,7 @@ Must be one of:
 
 **Description:** Path to probe
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>7.1.34.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port"></a>7.1.33.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17033,21 +16468,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>7.1.34.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i0"></a>7.1.33.2.2.1. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>7.1.34.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_port_oneOf_i1"></a>7.1.33.2.2.2. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > port > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>7.1.34.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
+###### <a name="cronJobs_pattern1_readinessProbe_httpGet_scheme"></a>7.1.33.2.3. Property `stack > cronJobs > ^.*$ > readinessProbe > httpGet > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -17056,7 +16491,7 @@ Must be one of:
 
 **Description:** Scheme to use
 
-##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>7.1.34.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_initialDelaySeconds"></a>7.1.33.3. Property `stack > cronJobs > ^.*$ > readinessProbe > initialDelaySeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -17065,7 +16500,7 @@ Must be one of:
 
 **Description:** Number of seconds after the container has started before the probe is first initiated
 
-##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>7.1.34.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_periodSeconds"></a>7.1.33.4. Property `stack > cronJobs > ^.*$ > readinessProbe > periodSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -17074,7 +16509,7 @@ Must be one of:
 
 **Description:** How often to perform the probe
 
-##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>7.1.34.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
+##### <a name="cronJobs_pattern1_readinessProbe_successThreshold"></a>7.1.33.5. Property `stack > cronJobs > ^.*$ > readinessProbe > successThreshold`
 
 |              |          |
 | ------------ | -------- |
@@ -17083,7 +16518,7 @@ Must be one of:
 
 **Description:** Number of successes before the probe is considered successful
 
-##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>7.1.34.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
+##### <a name="cronJobs_pattern1_readinessProbe_timeoutSeconds"></a>7.1.33.6. Property `stack > cronJobs > ^.*$ > readinessProbe > timeoutSeconds`
 
 |              |          |
 | ------------ | -------- |
@@ -17092,7 +16527,7 @@ Must be one of:
 
 **Description:** Timeout for the probe
 
-#### <a name="cronJobs_pattern1_replicaCount"></a>7.1.35. Property `stack > cronJobs > ^.*$ > replicaCount`
+#### <a name="cronJobs_pattern1_replicaCount"></a>7.1.34. Property `stack > cronJobs > ^.*$ > replicaCount`
 
 |              |           |
 | ------------ | --------- |
@@ -17101,7 +16536,7 @@ Must be one of:
 
 **Description:** Number of replicas
 
-#### <a name="cronJobs_pattern1_resources"></a>7.1.36. Property `stack > cronJobs > ^.*$ > resources`
+#### <a name="cronJobs_pattern1_resources"></a>7.1.35. Property `stack > cronJobs > ^.*$ > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17116,7 +16551,7 @@ Must be one of:
 | - [limits](#cronJobs_pattern1_resources_limits )     | No      | object | No         | -          | Resource limits   |
 | - [requests](#cronJobs_pattern1_resources_requests ) | No      | object | No         | -          | Resource requests |
 
-##### <a name="cronJobs_pattern1_resources_limits"></a>7.1.36.1. Property `stack > cronJobs > ^.*$ > resources > limits`
+##### <a name="cronJobs_pattern1_resources_limits"></a>7.1.35.1. Property `stack > cronJobs > ^.*$ > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17131,7 +16566,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_limits_cpu )       | No      | Combination | No         | -          | CPU limit         |
 | - [memory](#cronJobs_pattern1_resources_limits_memory ) | No      | string      | No         | -          | Memory limit      |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>7.1.36.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
+###### <a name="cronJobs_pattern1_resources_limits_cpu"></a>7.1.35.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17146,21 +16581,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_limits_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_limits_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>7.1.36.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i0"></a>7.1.35.1.1.1. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>7.1.36.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_limits_cpu_oneOf_i1"></a>7.1.35.1.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_limits_memory"></a>7.1.36.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
+###### <a name="cronJobs_pattern1_resources_limits_memory"></a>7.1.35.1.2. Property `stack > cronJobs > ^.*$ > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -17169,7 +16604,7 @@ Must be one of:
 
 **Description:** Memory limit
 
-##### <a name="cronJobs_pattern1_resources_requests"></a>7.1.36.2. Property `stack > cronJobs > ^.*$ > resources > requests`
+##### <a name="cronJobs_pattern1_resources_requests"></a>7.1.35.2. Property `stack > cronJobs > ^.*$ > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17184,7 +16619,7 @@ Must be one of:
 | - [cpu](#cronJobs_pattern1_resources_requests_cpu )       | No      | Combination | No         | -          | CPU request       |
 | - [memory](#cronJobs_pattern1_resources_requests_memory ) | No      | string      | No         | -          | Memory request    |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>7.1.36.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
+###### <a name="cronJobs_pattern1_resources_requests_cpu"></a>7.1.35.2.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17199,21 +16634,21 @@ Must be one of:
 | [item 0](#cronJobs_pattern1_resources_requests_cpu_oneOf_i0) |
 | [item 1](#cronJobs_pattern1_resources_requests_cpu_oneOf_i1) |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>7.1.36.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i0"></a>7.1.35.2.1.1. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 0`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>7.1.36.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
+###### <a name="cronJobs_pattern1_resources_requests_cpu_oneOf_i1"></a>7.1.35.2.1.2. Property `stack > cronJobs > ^.*$ > resources > requests > cpu > oneOf > item 1`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `number` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_resources_requests_memory"></a>7.1.36.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
+###### <a name="cronJobs_pattern1_resources_requests_memory"></a>7.1.35.2.2. Property `stack > cronJobs > ^.*$ > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -17222,7 +16657,7 @@ Must be one of:
 
 **Description:** Memory request
 
-#### <a name="cronJobs_pattern1_restartPolicy"></a>7.1.37. Property `stack > cronJobs > ^.*$ > restartPolicy`
+#### <a name="cronJobs_pattern1_restartPolicy"></a>7.1.36. Property `stack > cronJobs > ^.*$ > restartPolicy`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -17236,7 +16671,7 @@ Must be one of:
 * "OnFailure"
 * "Never"
 
-#### <a name="cronJobs_pattern1_rollout"></a>7.1.38. Property `stack > cronJobs > ^.*$ > rollout`
+#### <a name="cronJobs_pattern1_rollout"></a>7.1.37. Property `stack > cronJobs > ^.*$ > rollout`
 
 |                           |                      |
 | ------------------------- | -------------------- |
@@ -17250,7 +16685,7 @@ Must be one of:
 | - [strategy](#cronJobs_pattern1_rollout_strategy )     | No      | object | No         | -          | Specifies the rollout strategy for the application. |
 | - [](#cronJobs_pattern1_rollout_additionalProperties ) | No      | object | No         | -          | -                                                   |
 
-##### <a name="cronJobs_pattern1_rollout_strategy"></a>7.1.38.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
+##### <a name="cronJobs_pattern1_rollout_strategy"></a>7.1.37.1. Property `stack > cronJobs > ^.*$ > rollout > strategy`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17265,7 +16700,7 @@ Must be one of:
 | ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [blueGreen](#cronJobs_pattern1_rollout_strategy_blueGreen ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>7.1.38.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen"></a>7.1.37.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17281,7 +16716,7 @@ Must be one of:
 | - [prePromotionAnalysis](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis ) | No      | object  | No         | In #/properties/rolloutAnalysis | configuration to run analysis before a selector switch                                                                  |
 | - [previewService](#cronJobs_pattern1_rollout_strategy_blueGreen_previewService )             | No      | string  | No         | -                               | Name of the service that the rollout modifies as the preview service.                                                   |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>7.1.38.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_activeService"></a>7.1.37.1.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > activeService`
 
 |              |          |
 | ------------ | -------- |
@@ -17290,7 +16725,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the active service.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>7.1.38.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_autoPromotionEnabled"></a>7.1.37.1.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > autoPromotionEnabled`
 
 |              |           |
 | ------------ | --------- |
@@ -17299,7 +16734,7 @@ Must be one of:
 
 **Description:** indicates if the rollout should automatically promote the new ReplicaSet to the active service or enter a paused state.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>7.1.38.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis"></a>7.1.37.1.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis`
 
 |                           |                              |
 | ------------------------- | ---------------------------- |
@@ -17317,7 +16752,7 @@ Must be one of:
 | - [templates](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates )                     | No      | array of object | No         | -          | reference to a list of analysis templates to combine for an AnalysisRun |
 | - [](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_additionalProperties )                   | No      | object          | No         | -          | -                                                                       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>7.1.38.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata"></a>7.1.37.1.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17332,7 +16767,7 @@ Must be one of:
 | - [annotations](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations ) | No      | object | No         | -          | additional annotations to add to the AnalysisRun |
 | - [labels](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels )           | No      | object | No         | -          | additional labels to add to the AnalysisRun      |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>7.1.38.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_annotations"></a>7.1.37.1.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17342,7 +16777,7 @@ Must be one of:
 
 **Description:** additional annotations to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>7.1.38.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_analysisRunMetadata_labels"></a>7.1.37.1.1.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > analysisRunMetadata > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17352,7 +16787,7 @@ Must be one of:
 
 **Description:** additional labels to add to the AnalysisRun
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>7.1.38.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args"></a>7.1.37.1.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -17373,7 +16808,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------- | ----------- |
 | [args items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>7.1.38.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items"></a>7.1.37.1.1.3.2.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17387,21 +16822,21 @@ Must be one of:
 | - [value](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>7.1.38.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_name"></a>7.1.37.1.1.3.2.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>7.1.38.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_value"></a>7.1.37.1.1.3.2.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>7.1.38.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom"></a>7.1.37.1.1.3.2.1.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17414,7 +16849,7 @@ Must be one of:
 | - [fieldRef](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef )                         | No      | object           | No         | -          | -                 |
 | - [podTemplateHashValue](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>7.1.38.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef"></a>7.1.37.1.1.3.2.1.3.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17426,14 +16861,14 @@ Must be one of:
 | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [fieldPath](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath ) | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>7.1.38.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_fieldRef_fieldPath"></a>7.1.37.1.1.3.2.1.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > fieldRef > fieldPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>7.1.38.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_args_items_valueFrom_podTemplateHashValue"></a>7.1.37.1.1.3.2.1.3.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > args > args items > valueFrom > podTemplateHashValue`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -17444,7 +16879,7 @@ Must be one of:
 * "Latest"
 * "Stable"
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>7.1.38.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates"></a>7.1.37.1.1.3.3. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -17465,7 +16900,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------------- | ----------- |
 | [templates items](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items) | -           |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>7.1.38.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items"></a>7.1.37.1.1.3.3.1. stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17478,7 +16913,7 @@ Must be one of:
 | - [clusterScope](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope ) | No      | boolean | No         | -          | Whether to look for the templateName at cluster scope or namespace scope. |
 | - [templateName](#cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName ) | No      | string  | No         | -          |  name of the AnalysisTemplate to use for the rollout analysis             |
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>7.1.38.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_clusterScope"></a>7.1.37.1.1.3.3.1.1. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > clusterScope`
 
 |              |           |
 | ------------ | --------- |
@@ -17487,7 +16922,7 @@ Must be one of:
 
 **Description:** Whether to look for the templateName at cluster scope or namespace scope.
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>7.1.38.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_prePromotionAnalysis_templates_items_templateName"></a>7.1.37.1.1.3.3.1.2. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > prePromotionAnalysis > templates > templates items > templateName`
 
 |              |          |
 | ------------ | -------- |
@@ -17496,7 +16931,7 @@ Must be one of:
 
 **Description:**  name of the AnalysisTemplate to use for the rollout analysis
 
-###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>7.1.38.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
+###### <a name="cronJobs_pattern1_rollout_strategy_blueGreen_previewService"></a>7.1.37.1.1.4. Property `stack > cronJobs > ^.*$ > rollout > strategy > blueGreen > previewService`
 
 |              |          |
 | ------------ | -------- |
@@ -17505,7 +16940,7 @@ Must be one of:
 
 **Description:** Name of the service that the rollout modifies as the preview service.
 
-#### <a name="cronJobs_pattern1_s3Storage"></a>7.1.39. Property `stack > cronJobs > ^.*$ > s3Storage`
+#### <a name="cronJobs_pattern1_s3Storage"></a>7.1.38. Property `stack > cronJobs > ^.*$ > s3Storage`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17528,7 +16963,7 @@ Must be one of:
 | - [volumeAttributes](#cronJobs_pattern1_s3Storage_volumeAttributes ) | No      | object                    | No         | -          | Additional CSI volume attributes            |
 | - [volumeHandle](#cronJobs_pattern1_s3Storage_volumeHandle )         | No      | string                    | No         | -          | CSI volume handle (auto-generated if empty) |
 
-##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>7.1.39.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
+##### <a name="cronJobs_pattern1_s3Storage_accessModes"></a>7.1.38.1. Property `stack > cronJobs > ^.*$ > s3Storage > accessModes`
 
 |              |                             |
 | ------------ | --------------------------- |
@@ -17549,7 +16984,7 @@ Must be one of:
 | ------------------------------------------------------------------- | ----------- |
 | [accessModes items](#cronJobs_pattern1_s3Storage_accessModes_items) | -           |
 
-###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>7.1.39.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
+###### <a name="cronJobs_pattern1_s3Storage_accessModes_items"></a>7.1.38.1.1. stack > cronJobs > ^.*$ > s3Storage > accessModes > accessModes items
 
 |              |                    |
 | ------------ | ------------------ |
@@ -17562,7 +16997,7 @@ Must be one of:
 * "ReadWriteMany"
 * "ReadWriteOncePod"
 
-##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>7.1.39.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
+##### <a name="cronJobs_pattern1_s3Storage_annotations"></a>7.1.38.2. Property `stack > cronJobs > ^.*$ > s3Storage > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17572,7 +17007,7 @@ Must be one of:
 
 **Description:** Additional annotations for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>7.1.39.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
+##### <a name="cronJobs_pattern1_s3Storage_bucketName"></a>7.1.38.3. Property `stack > cronJobs > ^.*$ > s3Storage > bucketName`
 
 |              |          |
 | ------------ | -------- |
@@ -17581,7 +17016,7 @@ Must be one of:
 
 **Description:** S3 bucket name
 
-##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>7.1.39.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
+##### <a name="cronJobs_pattern1_s3Storage_capacity"></a>7.1.38.4. Property `stack > cronJobs > ^.*$ > s3Storage > capacity`
 
 |              |          |
 | ------------ | -------- |
@@ -17590,7 +17025,7 @@ Must be one of:
 
 **Description:** Storage capacity
 
-##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>7.1.39.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
+##### <a name="cronJobs_pattern1_s3Storage_enabled"></a>7.1.38.5. Property `stack > cronJobs > ^.*$ > s3Storage > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -17599,7 +17034,7 @@ Must be one of:
 
 **Description:** Enable S3 CSI storage
 
-##### <a name="cronJobs_pattern1_s3Storage_labels"></a>7.1.39.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
+##### <a name="cronJobs_pattern1_s3Storage_labels"></a>7.1.38.6. Property `stack > cronJobs > ^.*$ > s3Storage > labels`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17609,7 +17044,7 @@ Must be one of:
 
 **Description:** Additional labels for PV/PVC
 
-##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>7.1.39.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
+##### <a name="cronJobs_pattern1_s3Storage_pvName"></a>7.1.38.7. Property `stack > cronJobs > ^.*$ > s3Storage > pvName`
 
 |              |          |
 | ------------ | -------- |
@@ -17618,7 +17053,7 @@ Must be one of:
 
 **Description:** Custom PV name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>7.1.39.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
+##### <a name="cronJobs_pattern1_s3Storage_pvcName"></a>7.1.38.8. Property `stack > cronJobs > ^.*$ > s3Storage > pvcName`
 
 |              |          |
 | ------------ | -------- |
@@ -17627,7 +17062,7 @@ Must be one of:
 
 **Description:** Custom PVC name (auto-generated if empty)
 
-##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>7.1.39.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
+##### <a name="cronJobs_pattern1_s3Storage_reclaimPolicy"></a>7.1.38.9. Property `stack > cronJobs > ^.*$ > s3Storage > reclaimPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -17636,7 +17071,7 @@ Must be one of:
 
 **Description:** Reclaim policy for the PV
 
-##### <a name="cronJobs_pattern1_s3Storage_region"></a>7.1.39.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
+##### <a name="cronJobs_pattern1_s3Storage_region"></a>7.1.38.10. Property `stack > cronJobs > ^.*$ > s3Storage > region`
 
 |              |          |
 | ------------ | -------- |
@@ -17645,7 +17080,7 @@ Must be one of:
 
 **Description:** AWS region
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>7.1.39.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
+##### <a name="cronJobs_pattern1_s3Storage_volumeAttributes"></a>7.1.38.11. Property `stack > cronJobs > ^.*$ > s3Storage > volumeAttributes`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17655,7 +17090,7 @@ Must be one of:
 
 **Description:** Additional CSI volume attributes
 
-##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>7.1.39.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
+##### <a name="cronJobs_pattern1_s3Storage_volumeHandle"></a>7.1.38.12. Property `stack > cronJobs > ^.*$ > s3Storage > volumeHandle`
 
 |              |          |
 | ------------ | -------- |
@@ -17664,7 +17099,7 @@ Must be one of:
 
 **Description:** CSI volume handle (auto-generated if empty)
 
-#### <a name="cronJobs_pattern1_securityContext"></a>7.1.40. Property `stack > cronJobs > ^.*$ > securityContext`
+#### <a name="cronJobs_pattern1_securityContext"></a>7.1.39. Property `stack > cronJobs > ^.*$ > securityContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -17673,6 +17108,587 @@ Must be one of:
 | **Additional properties** | Any type allowed |
 
 **Description:** Security context
+
+#### <a name="cronJobs_pattern1_securityPolicies"></a>7.1.40. Property `stack > cronJobs > ^.*$ > securityPolicies`
+
+|                           |                                                                                                                 |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Type**                  | `object`                                                                                                        |
+| **Required**              | No                                                                                                              |
+| **Additional properties** | [Each additional property must conform to the schema](#cronJobs_pattern1_securityPolicies_additionalProperties) |
+
+**Description:** Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [](#cronJobs_pattern1_securityPolicies_additionalProperties ) | No      | object | No         | -          | -                 |
+
+##### <a name="cronJobs_pattern1_securityPolicies_additionalProperties"></a>7.1.40.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                               | Pattern | Type            | Deprecated | Definition | Title/Description                                           |
+| -------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_annotations ) | No      | object          | No         | -          | Extra annotations on the rendered SecurityPolicy            |
+| - [basicAuth](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth )     | No      | object          | No         | -          | -                                                           |
+| - [cors](#cronJobs_pattern1_securityPolicies_additionalProperties_cors )               | No      | object          | No         | -          | -                                                           |
+| - [ipAllowList](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList ) | No      | array of string | No         | -          | CIDRs allowed to reach the route, everything else is denied |
+| - [jwt](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt )                 | No      | object          | No         | -          | -                                                           |
+| - [oidc](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc )               | No      | object          | No         | -          | -                                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_annotations"></a>7.1.40.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered SecurityPolicy
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth"></a>7.1.40.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>7.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>7.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Opaque Secret with a .htpasswd key, note nginx uses auth instead
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors"></a>7.1.40.1.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                              | Pattern | Type            | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------- |
+| - [allowCredentials](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials ) | No      | boolean         | No         | -          | -                 |
+| - [allowHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders )         | No      | array of string | No         | -          | -                 |
+| - [allowMethods](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods )         | No      | array of string | No         | -          | -                 |
+| - [allowOrigins](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins )         | No      | array of string | No         | -          | -                 |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled )                   | No      | boolean         | No         | -          | -                 |
+| - [exposeHeaders](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders )       | No      | array of string | No         | -          | -                 |
+| - [maxAge](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge )                     | No      | string          | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowCredentials"></a>7.1.40.1.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowCredentials`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders"></a>7.1.40.1.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowHeaders_items"></a>7.1.40.1.3.2.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowHeaders > allowHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods"></a>7.1.40.1.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowMethods items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowMethods_items"></a>7.1.40.1.3.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowMethods > allowMethods items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins"></a>7.1.40.1.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                        | Description |
+| ------------------------------------------------------------------------------------------------------ | ----------- |
+| [allowOrigins items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_allowOrigins_items"></a>7.1.40.1.3.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > allowOrigins > allowOrigins items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_enabled"></a>7.1.40.1.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders"></a>7.1.40.1.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                          | Description |
+| -------------------------------------------------------------------------------------------------------- | ----------- |
+| [exposeHeaders items](#cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_exposeHeaders_items"></a>7.1.40.1.3.6.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > exposeHeaders > exposeHeaders items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_cors_maxAge"></a>7.1.40.1.3.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > cors > maxAge`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList"></a>7.1.40.1.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+**Description:** CIDRs allowed to reach the route, everything else is denied
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [ipAllowList items](#cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_ipAllowList_items"></a>7.1.40.1.4.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > ipAllowList > ipAllowList items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt"></a>7.1.40.1.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>7.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>7.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Defaults to the policy oidc provider issuer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>7.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                 | Description |
+| ----------------------------------------------------------------------------------------------- | ----------- |
+| [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>7.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>7.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc"></a>7.1.40.1.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>7.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [apiRoutes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items"></a>7.1.40.1.6.1.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type             | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ---------------- | ---------- | ---------- | ----------------- |
+| - [matchType](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType ) | No      | enum (of string) | No         | -          | -                 |
+| - [path](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path )           | No      | string           | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_matchType"></a>7.1.40.1.6.1.1.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > matchType`
+
+|              |                    |
+| ------------ | ------------------ |
+| **Type**     | `enum (of string)` |
+| **Required** | No                 |
+
+Must be one of:
+* "Prefix"
+* "Exact"
+* "RegularExpression"
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes_items_path"></a>7.1.40.1.6.1.1.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes > apiRoutes items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID"></a>7.1.40.1.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** OIDC client id, defaults to the shared Argus Okta client
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>7.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>7.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>7.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
+| - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>7.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>7.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>7.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>7.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                        |
+| ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>7.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>7.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>7.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fleet-wide client secret name, defaults to argus-global-oidc
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>7.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>7.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>7.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>7.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>7.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                                  | Description |
+| ------------------------------------------------------------------------------------------------ | ----------- |
+| [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>7.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>7.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of string` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                            | Description |
+| ------------------------------------------------------------------------------------------ | ----------- |
+| [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>7.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 #### <a name="cronJobs_pattern1_service"></a>7.1.41. Property `stack > cronJobs > ^.*$ > service`
 
