@@ -1,3 +1,9 @@
+{{/*
+  Render one or more NodePool resources. When the `nodepools` dict is set,
+  each key becomes a NodePool name and its value is merged with the `nodepool`
+  defaults. When `nodepools` is empty (backward compat), a single NodePool is
+  rendered using the `nodepool` values directly, keyed by nodepool.name.
+*/}}
 {{- $defaults := .Values.nodepool -}}
 {{- $pools := dict -}}
 {{- if .Values.nodepools -}}
