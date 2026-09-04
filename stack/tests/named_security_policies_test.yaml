@@ -280,7 +280,7 @@ tests:
           gateway: {paths: [{path: /, pathType: Prefix}]}
     asserts:
       - failedTemplate:
-          errorMessage: 'securityPolicies.mypol sets unknown key "oidcc". Valid keys are oidc, basicAuth, cors, ipAllowList, jwt and annotations.'
+          errorPattern: "additional properties 'oidcc' not allowed"
 
   - it: should reject a policy that enforces nothing
     set:

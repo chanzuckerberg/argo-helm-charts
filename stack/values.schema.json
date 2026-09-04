@@ -1181,9 +1181,217 @@
           "type": "object"
         },
         "securityPolicies": {
-          "description": "Named SecurityPolicy definitions. Each entry carries oidc (issuer, clientSecretName, scopes, skipAuth, apiRoutes, denyRedirect, cookie settings), basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration",
+          "description": "Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration",
           "type": "object",
-          "additionalProperties": true
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "annotations": {
+                "description": "Extra annotations on the rendered SecurityPolicy",
+                "type": "object"
+              },
+              "basicAuth": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "secretName": {
+                    "description": "Opaque Secret with a .htpasswd key, note nginx uses auth instead",
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "cors": {
+                "type": "object",
+                "properties": {
+                  "allowCredentials": {
+                    "type": "boolean"
+                  },
+                  "allowHeaders": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "allowMethods": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "allowOrigins": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "exposeHeaders": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "maxAge": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "ipAllowList": {
+                "description": "CIDRs allowed to reach the route, everything else is denied",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "jwt": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "issuer": {
+                    "description": "Defaults to the policy oidc provider issuer",
+                    "type": "string"
+                  },
+                  "providers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "remoteJWKSUri": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "oidc": {
+                "type": "object",
+                "properties": {
+                  "apiRoutes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "matchType": {
+                          "type": "string",
+                          "enum": [
+                            "Prefix",
+                            "Exact",
+                            "RegularExpression"
+                          ]
+                        },
+                        "path": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "clientID": {
+                    "description": "OIDC client id, defaults to the shared Argus Okta client",
+                    "type": "string"
+                  },
+                  "clientSecretName": {
+                    "description": "Secret in the stack namespace with client-id and client-secret keys, set together with clientID",
+                    "type": "string"
+                  },
+                  "cookieDomain": {
+                    "type": "string"
+                  },
+                  "cookieNames": {
+                    "type": "object",
+                    "properties": {
+                      "accessToken": {
+                        "type": "string"
+                      },
+                      "idToken": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "csrfTokenTTL": {
+                    "type": "string"
+                  },
+                  "denyRedirect": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "description": "Answer unauthenticated fetch/XHR requests with 401 instead of a redirect",
+                        "type": "boolean"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "forwardAccessToken": {
+                    "type": "boolean"
+                  },
+                  "globalSecretName": {
+                    "description": "Fleet-wide client secret name, defaults to argus-global-oidc",
+                    "type": "string"
+                  },
+                  "logoutPath": {
+                    "type": "string"
+                  },
+                  "provider": {
+                    "type": "object",
+                    "properties": {
+                      "authorizationEndpoint": {
+                        "description": "Override only when the provider lacks discovery, setting both endpoints disables end-session logout",
+                        "type": "string"
+                      },
+                      "issuer": {
+                        "type": "string"
+                      },
+                      "tokenEndpoint": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "refreshToken": {
+                    "type": "boolean"
+                  },
+                  "resources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "scopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "skipAuth": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "method": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
         },
         "service": {
           "description": "Service configuration",

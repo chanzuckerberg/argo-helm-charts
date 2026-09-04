@@ -775,7 +775,8 @@ tests:
       service1: {}
   asserts:
   - failedTemplate:
-      errorPattern: not one of Prefix, Exact, RegularExpression
+      errorPattern: "value must be one of 'Prefix', 'Exact', 'RegularExpression'"
+
   template: gateway-securitypolicy-shared.yaml
 - it: should allow 13 apiRoutes with default matchers and fail on 14
   set:
