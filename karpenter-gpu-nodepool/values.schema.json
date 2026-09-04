@@ -371,6 +371,10 @@
         }
       }
     },
+    "nodepools": {
+      "description": "List of NodePool overrides. Each entry is merged with the nodepool defaults.",
+      "type": "array"
+    },
     "nvidiaDriver": {
       "type": "object",
       "properties": {
