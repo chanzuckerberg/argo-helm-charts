@@ -518,8 +518,7 @@ Takes the root context.
       "provider" (dict)
       "cookieNames" (dict)
       "denyRedirect" (dict "enabled" false)
-      "apiRoutes" (list)
-      "skipAuth" (list) -}}
+      "apiRoutes" (list) -}}
 {{- $out := dict -}}
 {{- range $name, $def := $merged -}}
   {{- $d := mergeOverwrite (deepCopy $skeleton) $def -}}

@@ -116,17 +116,17 @@ tests:
         securityPolicy: oidc-protected-default
         rules:
         - host: api2.example.com
+        skipAuth:
+        - path: /healthz
+          method: GET
+        - path: /metrics
+          method: GET
       securityPolicies:
         oidc-protected-default:
           oidc:
             clientID: my-client-id
             provider:
               issuer: https://auth.example.com
-            skipAuth:
-            - path: /healthz
-              method: GET
-            - path: /metrics
-              method: GET
     services:
       service1: {}
   asserts:
@@ -391,15 +391,15 @@ tests:
         securityPolicy: oidc-protected-default
         vanity:
           enabled: true
+        skipAuth:
+        - path: /healthz
+          method: GET
       securityPolicies:
         oidc-protected-default:
           oidc:
             clientID: my-client-id
             provider:
               issuer: https://auth.example.com
-            skipAuth:
-            - path: /healthz
-              method: GET
     services:
       service1: {}
   asserts:
@@ -491,11 +491,11 @@ tests:
         paths:
         - path: /
           pathType: Prefix
+        skipAuth:
+        - path: /healthz
       securityPolicies:
         oidc-protected-default:
-          oidc:
-            skipAuth:
-            - path: /healthz
+          oidc: {}
     services:
       service1: {}
   asserts:

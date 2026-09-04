@@ -41,7 +41,7 @@
 {{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (ne $policyYaml "") -}}
 {{- $p := fromYaml $policyYaml -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" (dict "policy" $p) -}}
-{{- if and $p.oidc (gt (len ($p.oidc.skipAuth | default list)) 0) (or ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0)) }}
+{{- if and $p.oidc (gt (len (.Values.gateway.skipAuth | default list)) 0) (or ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0)) }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy

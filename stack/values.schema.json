@@ -448,6 +448,21 @@
                 }
               }
             },
+            "skipAuth": {
+              "description": "Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
             "timeouts": {
               "description": "HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy",
               "type": "object",
@@ -1369,21 +1384,6 @@
                     "type": "array",
                     "items": {
                       "type": "string"
-                    }
-                  },
-                  "skipAuth": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "method": {
-                          "type": "string"
-                        },
-                        "path": {
-                          "type": "string"
-                        }
-                      },
-                      "additionalProperties": false
                     }
                   }
                 },

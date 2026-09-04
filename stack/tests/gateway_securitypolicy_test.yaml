@@ -451,15 +451,15 @@ tests:
         enabled: true
         host: api.example.com
         securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /healthz
+          method: GET
       securityPolicies:
         oidc-protected-default:
           oidc:
             clientID: my-client-id
             provider:
               issuer: https://auth.example.com
-            skipAuth:
-            - path: /healthz
-              method: GET
           cors:
             enabled: true
             allowOrigins:
@@ -658,14 +658,14 @@ tests:
         securityPolicy: oidc-protected-default
         rules:
         - host: alt.example.com
+        skipAuth:
+        - path: /healthz
       securityPolicies:
         oidc-protected-default:
           oidc:
             clientID: my-client-id
             provider:
               issuer: https://auth.example.com
-            skipAuth:
-            - path: /healthz
             apiRoutes:
             - path: /api
           cors:
@@ -775,8 +775,7 @@ tests:
       service1: {}
   asserts:
   - failedTemplate:
-      errorPattern: "value must be one of 'Prefix', 'Exact', 'RegularExpression'"
-
+      errorPattern: value must be one of 'Prefix', 'Exact', 'RegularExpression'
   template: gateway-securitypolicy-shared.yaml
 - it: should allow 13 apiRoutes with default matchers and fail on 14
   set:
@@ -948,14 +947,14 @@ tests:
         securityPolicy: oidc-protected-default
         rules:
         - host: alt.example.com
+        skipAuth:
+        - path: /healthz
       securityPolicies:
         oidc-protected-default:
           oidc:
             clientID: my-client-id
             provider:
               issuer: https://auth.example.com
-            skipAuth:
-            - path: /healthz
           cors:
             enabled: true
             allowOrigins:
@@ -1110,14 +1109,14 @@ tests:
         enabled: true
         host: api.example.com
         securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /healthz
       securityPolicies:
         oidc-protected-default:
           oidc:
             clientID: my-client-id
             provider:
               issuer: https://auth.example.com
-            skipAuth:
-            - path: /healthz
           cors:
             enabled: true
             allowOrigins:

@@ -253,11 +253,11 @@ tests:
     global:
       securityPolicies:
         oidc-protected-default:
-          oidc:
-            skipAuth:
-            - path: /healthz
-              method: GET
-      gateway: {}
+          oidc: {}
+      gateway:
+        skipAuth:
+        - path: /healthz
+          method: GET
     services:
       web:
         ingress:
@@ -417,11 +417,11 @@ tests:
     global:
       securityPolicies:
         oidc-protected-default:
-          oidc:
-            skipAuth:
-            - path: /healthz
-              method: GET
-      gateway: {}
+          oidc: {}
+      gateway:
+        skipAuth:
+        - path: /healthz
+          method: GET
     services:
       web:
         gateway:
