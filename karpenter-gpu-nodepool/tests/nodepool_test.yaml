@@ -23,10 +23,10 @@ tests:
           path: spec.template.spec.nodeClassRef.name
           value: default
 
-  - it: should render multiple NodePools when nodepools is set
+  - it: should render multiple NodePools when nodepools dict is set
     set:
       nodepools:
-        - name: gpu-reserved
+        gpu-reserved:
           disruption:
             consolidateAfter: Never
           template:
@@ -36,7 +36,7 @@ tests:
                   operator: In
                   values:
                     - reserved
-        - name: gpu-ondemand
+        gpu-ondemand:
           disruption:
             consolidateAfter: 15m
           template:
@@ -51,28 +51,24 @@ tests:
           count: 2
       - documentIndex: 0
         equal:
-          path: metadata.name
-          value: gpu-reserved
-      - documentIndex: 0
+          path: spec.disruption.consolidateAfter
+          value: 15m
+      - documentIndex: 1
         equal:
           path: spec.disruption.consolidateAfter
           value: Never
+
+  - it: should use dict key as NodePool name
+    set:
+      nodepools:
+        my-custom-pool: {}
+    asserts:
+      - hasDocuments:
+          count: 1
       - documentIndex: 0
         equal:
-          path: spec.template.spec.requirements
-          value:
-            - key: karpenter.sh/capacity-type
-              operator: In
-              values:
-                - reserved
-      - documentIndex: 1
-        equal:
           path: metadata.name
-          value: gpu-ondemand
-      - documentIndex: 1
-        equal:
-          path: spec.disruption.consolidateAfter
-          value: 15m
+          value: my-custom-pool
 
   - it: should inherit defaults into nodepools entries
     set:
@@ -83,7 +79,7 @@ tests:
             nodeClassRef:
               name: my-nodeclass
       nodepools:
-        - name: pool-override
+        pool-override: {}
     asserts:
       - hasDocuments:
           count: 1
@@ -100,9 +96,9 @@ tests:
   - it: should not render disabled pools
     set:
       nodepools:
-        - name: enabled-pool
+        enabled-pool:
           enabled: true
-        - name: disabled-pool
+        disabled-pool:
           enabled: false
     asserts:
       - hasDocuments:

@@ -1,18 +1,18 @@
 {{- $defaults := .Values.nodepool -}}
-{{- $pools := list -}}
+{{- $pools := dict -}}
 {{- if .Values.nodepools -}}
   {{- $pools = .Values.nodepools -}}
 {{- else -}}
-  {{- $pools = list $defaults -}}
+  {{- $pools = dict $defaults.name $defaults -}}
 {{- end -}}
-{{- range $pool := $pools }}
+{{- range $name, $pool := $pools }}
 {{- $merged := mergeOverwrite (deepCopy $defaults) $pool -}}
 {{- if $merged.enabled }}
 ---
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: {{ $merged.name }}
+  name: {{ $name }}
   labels:
     {{- include "karpenter-gpu-nodepool.labels" $ | nindent 4 }}
 spec:
