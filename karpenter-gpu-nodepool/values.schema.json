@@ -371,6 +371,15 @@
         }
       }
     },
+    "nodepools": {
+      "description": "Map of NodePool overrides keyed by name. Each entry has the same schema as nodepool and is merged with its defaults.",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "$ref": "#/properties/nodepool"
+        }
+      }
+    },
     "nvidiaDriver": {
       "type": "object",
       "properties": {

@@ -6,7 +6,7 @@
   "argo-project": "1.0.2",
   "basic-auth-secret": "0.4.0",
   "prom2parquet": "0.3.2",
-  "karpenter-gpu-nodepool": "0.5.0",
+  "karpenter-gpu-nodepool": "0.6.0",
   "grafana-alloy": "0.10.1",
   "karpenter-nodepool": "0.1.0"
 }
