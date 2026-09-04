@@ -345,38 +345,6 @@ Return the OIDC issuer URL.
 {{- if $o.clientSecretName -}}{{- $o.clientSecretName -}}{{- else -}}{{- $o.globalSecretName | default "argus-global-oidc" -}}{{- end -}}
 {{- end -}}
 
-{{- define "oidcProxyGateway.issuer" -}}
-{{- if not .Values.oidcProxyGateway.provider.issuer -}}
-  {{- fail "oidcProxyGateway.provider.issuer is required when gateway.oidcProtected is enabled." -}}
-{{- end -}}
-{{- .Values.oidcProxyGateway.provider.issuer -}}
-{{- end -}}
-
-{{/*
-Return the Kubernetes secret name for OIDC credentials.
-The secret must contain 'client-id' and 'client-secret' keys.
-
-Precedence:
-  1. An explicit oidcProxyGateway.clientSecretName wins. Set this when the app
-     runs its own Okta client.
-  2. Otherwise, the shared oidcProxyGateway.globalSecretName secret.
-*/}}
-{{- define "oidcProxyGateway.secretName" -}}
-{{- if .Values.oidcProxyGateway.clientSecretName -}}
-{{- .Values.oidcProxyGateway.clientSecretName -}}
-{{- else -}}
-{{- .Values.oidcProxyGateway.globalSecretName -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Auto-generate the OIDC redirect URL based on gateway host (matches oauth2-proxy behavior)
-Returns: https://<gateway.host>/oauth2/callback
-Note: gateway.host is auto-injected by Argus at global.gateway.host (similar to ingress.host)
-*/}}
-{{- define "oidcProxyGateway.redirectURL" -}}
-https://{{ .Values.gateway.host }}/oauth2/callback
-{{- end -}}
 
 {{/*
 Whether the OIDC OAuth2 callback path is already reachable through one of the
@@ -431,13 +399,27 @@ through any of its gateway paths. This turns an otherwise silent misconfiguratio
 (the login flow breaks because the callback lands on no route, or the wrong one)
 into a clear render-time error. Input: the service context.
 */}}
-{{- define "validate.oidcCallbackReachable" -}}
-{{- if and .Values.gateway.enabled .Values.gateway.oidcProtected (not .Values.gateway.tlsPassthrough.enabled) -}}
-{{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths) -}}
-{{- $callback := printf "%s/oauth2/callback" $basePath -}}
-{{- if ne (include "gateway.oidcCallbackCovered" (dict "paths" .Values.gateway.paths "callback" $callback)) "true" -}}
-{{- fail (printf "gateway.oidcProtected: the OAuth2 callback %q for service %q is not covered by any configured gateway path, so login would fail. Declare the app's route path (e.g. paths: [{path: /portal}]) so the chart can namespace the callback under it, or set oidcProxyGateway.basePath explicitly." $callback (include "service.name" .)) -}}
-{{- end -}}
+{{- define "validate.groupCallbackReachable" -}}
+{{- $root := .root -}}
+{{- $primary := include "securityPolicy.groupPrimary" (dict "root" $root "key" .key) -}}
+{{- if ne $primary "" -}}
+  {{- if eq (include "securityPolicy.isOidc" (dict "root" $root "name" $primary)) "true" -}}
+    {{- $pv := fromYaml (include "service.context" (dict "root" $root "name" $primary)) -}}
+    {{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" ($pv.gateway.paths | default list)) -}}
+    {{- $callback := printf "%s/oauth2/callback" $basePath -}}
+    {{- $covered := false -}}
+    {{- range $n := (splitList " " (include "securityPolicy.groupMembers" (dict "root" $root "key" .key))) -}}
+      {{- if ne $n "" -}}
+        {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $n)) -}}
+        {{- if eq (include "gateway.oidcCallbackCovered" (dict "paths" ($v.gateway.paths | default list) "callback" $callback)) "true" -}}
+          {{- $covered = true -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $covered -}}
+      {{- fail (printf "the OAuth2 callback %q for security policy %q is not covered by any gateway path of the services attached to it (%s), so login would fail. Give one of them a Prefix path that covers it." $callback ((splitList "|" .key) | first) (include "securityPolicy.groupMembers" (dict "root" $root "key" .key))) -}}
+    {{- end -}}
+  {{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -491,17 +473,40 @@ Takes the root context.
 */}}
 {{- define "securityPolicy.definitions" -}}
 {{- $declared := .Values.global.securityPolicies | default dict -}}
-{{- $builtin := dict "oidc" (dict
+{{- $builtinOidc := dict
       "provider" (dict "issuer" "https://czi.okta.com")
       "globalSecretName" "argus-global-oidc"
       "scopes" (list "openid" "profile" "email" "groups")
       "denyRedirect" (dict "enabled" true)
-      "logoutPath" "/logout"
-      "cookieRefresh" "59m"
-    ) -}}
-{{- $defaults := dict "oidc-protected-default" $builtin -}}
-{{- $merged := mergeOverwrite $defaults $declared -}}
-{{/* Normalize every entry over a skeleton so the render can assume the shape */}}
+      "logoutPath" "/logout" -}}
+{{- $authKeys := list "oidc" "basicAuth" "cors" "ipAllowList" "jwt" -}}
+{{- $allowedKeys := concat $authKeys (list "annotations") -}}
+{{- $merged := dict -}}
+{{- range $name, $def := $declared -}}
+  {{- if not (regexMatch "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$" $name) -}}
+    {{- fail (printf "securityPolicies.%s is not a valid policy name. Use lowercase letters, digits and dashes only: the name becomes part of a Kubernetes object name and of the session cookie names." $name) -}}
+  {{- end -}}
+  {{- range $k, $_ := ($def | default dict) -}}
+    {{- if not (has $k $allowedKeys) -}}
+      {{- fail (printf "securityPolicies.%s sets unknown key %q. Valid keys are oidc, basicAuth, cors, ipAllowList, jwt and annotations." $name $k) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $recognized := false -}}
+  {{- range $k := $authKeys -}}
+    {{- if hasKey ($def | default dict) $k -}}{{- $recognized = true -}}{{- end -}}
+  {{- end -}}
+  {{- if not $recognized -}}
+    {{- fail (printf "securityPolicies.%s declares none of oidc, basicAuth, cors, ipAllowList or jwt, so it would attach a policy that enforces nothing. Remove it, or give it a setting." $name) -}}
+  {{- end -}}
+  {{- $base := dict -}}
+  {{- if hasKey ($def | default dict) "oidc" -}}
+    {{- $base = dict "oidc" (deepCopy $builtinOidc) -}}
+  {{- end -}}
+  {{- $_ := set $merged $name (mergeOverwrite $base (deepCopy $def)) -}}
+{{- end -}}
+{{- if not (hasKey $merged "oidc-protected-default") -}}
+  {{- $_ := set $merged "oidc-protected-default" (dict "oidc" (deepCopy $builtinOidc)) -}}
+{{- end -}}
 {{- $skeleton := dict
       "cors" (dict "enabled" false)
       "ipAllowList" (list)
@@ -530,6 +535,15 @@ A service's effective policy name, or "" when it is public. An omitted or "none"
 gateway.securityPolicy means no policy is attached.
 Takes (dict "root" $ "name" <serviceName>).
 */}}
+{{- define "securityPolicy.objectName" -}}
+{{- $default := ((.root.Values.global.gateway) | default dict).host | default "" -}}
+{{- if eq .host $default -}}
+{{- printf "%s-%s" .fullname .policyName -}}
+{{- else -}}
+{{- printf "%s-%s-%s" .fullname .policyName (.host | sha256sum | trunc 8) -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "securityPolicy.name" -}}
 {{- $v := fromYaml (include "service.context" (dict "root" .root "name" .name)) -}}
 {{- $name := (($v.gateway | default dict).securityPolicy | default "") -}}
@@ -571,6 +585,43 @@ Takes (dict "root" $ "name" <serviceName>).
 Services attached to a group key, space separated and sorted.
 Takes (dict "root" $ "key" <groupKey>).
 */}}
+{{- define "securityPolicy.groupKeys" -}}
+{{- $root := .root -}}
+{{- $policy := include "securityPolicy.name" (dict "root" $root "name" .name) -}}
+{{- $keys := list -}}
+{{- if ne $policy "" -}}
+  {{- $v := fromYaml (include "service.context" (dict "root" $root "name" .name)) -}}
+  {{- $g := $v.gateway | default dict -}}
+  {{- $keys = append $keys (printf "%s|%s" $policy ($g.host | default $root.Values.global.gateway.host)) -}}
+  {{- range $g.rules | default list -}}
+    {{- if .host -}}
+      {{- $keys = append $keys (printf "%s|%s" $policy .host) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- join " " ($keys | uniq) -}}
+{{- end -}}
+
+{{- define "securityPolicy.memberRoute" -}}
+{{- $root := .root -}}
+{{- $host := .host -}}
+{{- $v := fromYaml (include "service.context" (dict "root" $root "name" .name)) -}}
+{{- $svc := dict "Chart" $root.Chart "Release" $root.Release "Capabilities" $root.Capabilities "Values" $v -}}
+{{- $full := include "service.fullname" $svc -}}
+{{- $g := $v.gateway | default dict -}}
+{{- if eq $host ($g.host | default $root.Values.global.gateway.host) -}}
+{{- $full -}}
+{{- else -}}
+{{- $out := "" -}}
+{{- range $i, $rule := $g.rules | default list -}}
+  {{- if and (eq $out "") (eq ($rule.host | default "") $host) -}}
+    {{- $out = printf "%s-rule-%d" $full (int $i) -}}
+  {{- end -}}
+{{- end -}}
+{{- $out -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "securityPolicy.groupMembers" -}}
 {{- $root := .root -}}
 {{- $key := .key -}}
@@ -579,7 +630,7 @@ Takes (dict "root" $ "key" <groupKey>).
   {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
   {{- $g := $v.gateway | default dict -}}
   {{- if and $g.enabled (not (($g.tlsPassthrough | default dict).enabled)) -}}
-    {{- if eq (include "securityPolicy.groupKey" (dict "root" $root "name" $name)) $key -}}
+    {{- if has $key (splitList " " (include "securityPolicy.groupKeys" (dict "root" $root "name" $name))) -}}
       {{- $members = append $members $name -}}
     {{- end -}}
   {{- end -}}
@@ -596,13 +647,20 @@ Takes (dict "root" $ "key" <groupKey>).
 {{- $root := .root -}}
 {{- $primary := "" -}}
 {{- $primaryBase := "" -}}
+{{- $primaryCanHost := false -}}
 {{- range $n := (splitList " " (include "securityPolicy.groupMembers" (dict "root" $root "key" .key))) -}}
   {{- if ne $n "" -}}
     {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $n)) -}}
-    {{- $base := include "oidcProxyGateway.basePath" (dict "paths" ($v.gateway.paths | default list)) -}}
-    {{- if or (eq $primary "") (lt (len $base) (len $primaryBase)) -}}
+    {{- $paths := ($v.gateway.paths | default list) -}}
+    {{- $base := include "oidcProxyGateway.basePath" (dict "paths" $paths) -}}
+    {{- $canHost := false -}}
+    {{- range $paths -}}
+      {{- if ne (.pathType | default "Prefix") "Exact" -}}{{- $canHost = true -}}{{- end -}}
+    {{- end -}}
+    {{- if or (eq $primary "") (and $canHost (not $primaryCanHost)) (and (eq $canHost $primaryCanHost) (lt (len $base) (len $primaryBase))) -}}
       {{- $primary = $n -}}
       {{- $primaryBase = $base -}}
+      {{- $primaryCanHost = $canHost -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
@@ -610,29 +668,41 @@ Takes (dict "root" $ "key" <groupKey>).
 {{- end -}}
 
 {{/*
-Reject values that still set the per-service security surface removed in 3.0.0.
+Reject values that still set the per-service security surface removed in 2.55.0.
 A key that no longer does anything is a mistake, and for oidcProtected it would
 silently publish a service that used to require a login, so fail rather than
 ignore it. Takes (dict "root" $ "name" <serviceName>).
 */}}
+{{- define "securityPolicy.validateRemovedGlobalKeys" -}}
+{{- $root := .root -}}
+{{- if hasKey $root.Values.global "oidcProxyGateway" -}}
+  {{- fail "global.oidcProxyGateway was removed in stack 2.55.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy on each service that should share that session." -}}
+{{- end -}}
+{{- range $k := (list "oidcProtected" "cors" "ipAllowList" "basicAuth" "jwt") -}}
+  {{- if hasKey ($root.Values.global.gateway | default dict) $k -}}
+    {{- fail (printf "global.gateway.%s was removed in stack 2.55.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy." $k) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "securityPolicy.validateRemovedKeys" -}}
 {{- $root := .root -}}
 {{- $sv := index $root.Values.services .name -}}
 {{- $g := ($sv.gateway | default dict) -}}
 {{- range $k := (list "oidcProtected" "cors" "ipAllowList" "basicAuth" "jwt") -}}
   {{- if hasKey $g $k -}}
-    {{- fail (printf "service %q sets gateway.%s, which was removed in stack 3.0.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy. See stack/docs/named-security-policies.md." $.name $k) -}}
+    {{- fail (printf "service %q sets gateway.%s, which was removed in stack 2.55.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy. See https://chanzuckerberg.github.io/argus/configuration/security/stack_auth.html." $.name $k) -}}
   {{- end -}}
 {{- end -}}
 {{- if hasKey $sv "oidcProxyGateway" -}}
-  {{- fail (printf "service %q sets oidcProxyGateway, which was removed in stack 3.0.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy." $.name) -}}
+  {{- fail (printf "service %q sets oidcProxyGateway, which was removed in stack 2.55.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy." $.name) -}}
 {{- end -}}
 {{- if hasKey $root.Values.global "oidcProxyGateway" -}}
-  {{- fail "global.oidcProxyGateway was removed in stack 3.0.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy on each service that should share that session." -}}
+  {{- fail "global.oidcProxyGateway was removed in stack 2.55.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy on each service that should share that session." -}}
 {{- end -}}
 {{- range $k := (list "oidcProtected" "cors" "ipAllowList" "basicAuth" "jwt") -}}
   {{- if hasKey ($root.Values.global.gateway | default dict) $k -}}
-    {{- fail (printf "global.gateway.%s was removed in stack 3.0.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy." $k) -}}
+    {{- fail (printf "global.gateway.%s was removed in stack 2.55.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy." $k) -}}
   {{- end -}}
 {{- end -}}
 {{- end -}}

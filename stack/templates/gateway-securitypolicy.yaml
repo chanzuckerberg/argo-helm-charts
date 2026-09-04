@@ -41,28 +41,6 @@
 {{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (ne $policyYaml "") -}}
 {{- $p := fromYaml $policyYaml -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" (dict "policy" $p) -}}
-{{/* The service's own route is covered by one policy per (policy, host), rendered
-     in gateway-securitypolicy-shared.yaml. Extra hosts from gateway.rules and the
-     skipAuth -public route are per-service and per-path, so they render here. */}}
-{{- range $i, $rule := .Values.gateway.rules }}
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: SecurityPolicy
-metadata:
-  name: {{ include "service.fullname" $service }}-rule-{{ $i }}-{{ $suffix }}
-  labels:
-    {{- include "service.labels" $service | nindent 4 }}
-  annotations:
-    {{- with (mergeOverwrite (dict) ($service.Values.annotations) ($p.annotations)) }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  targetRefs:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: {{ include "service.fullname" $service }}-rule-{{ $i }}
-  {{- include "gateway.securityPolicy.body" (dict "ctx" $service "policy" $p "policyName" $policyName "basePath" (include "oidcProxyGateway.basePath" (dict "paths" $service.Values.gateway.paths)) "host" $rule.host "public" false) | nindent 2 }}
-{{- end }}
 {{- if and $p.oidc (gt (len ($p.oidc.skipAuth | default list)) 0) (or ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0)) }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1

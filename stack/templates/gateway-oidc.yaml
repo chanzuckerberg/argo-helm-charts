@@ -34,7 +34,6 @@
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
 {{- include "validate.gatewayRuleHost" . -}}
-{{- include "validate.oidcCallbackReachable" . -}}
 
 {{- if and .Values.gateway.enabled (eq (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
