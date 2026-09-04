@@ -72,7 +72,7 @@ nodepool:
 # you only need to specify the fields that differ per pool. Arrays (like
 # requirements) are replaced wholesale, not merged element-by-element.
 # When empty/unset, the chart renders a single NodePool from `nodepool` above.
-nodepools: [] # @schema type: array; description: List of NodePool overrides. Each entry has the same schema as nodepool and is merged with its defaults.
+nodepools: [] # @schema itemRef: #/properties/nodepool; description: List of NodePool overrides. Each entry has the same schema as nodepool and is merged with its defaults.
 
 priorityClass:
   enabled: true # @schema description: Enable creation of PriorityClass for critical GPU infrastructure.
