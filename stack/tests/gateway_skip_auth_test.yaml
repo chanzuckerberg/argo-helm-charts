@@ -1,0 +1,149 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test skipAuth public routes are per service, not per policy
+templates:
+  - gateway-oidc.yaml
+  - gateway-securitypolicy-shared.yaml
+tests:
+  - it: should give each service a public route carrying only its own skipAuth paths
+    template: gateway-oidc.yaml
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+            skipAuth:
+              - path: /healthz
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+            skipAuth:
+              - path: /api/healthz
+    documentSelector:
+      path: metadata.name
+      value: release-name-stack-frontend-public
+    asserts:
+      - lengthEqual:
+          path: spec.rules
+          count: 1
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /healthz
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: release-name-stack-frontend
+
+  - it: should point a service public route at that service own backend
+    template: gateway-oidc.yaml
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+            skipAuth:
+              - path: /healthz
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+            skipAuth:
+              - path: /api/healthz
+    documentSelector:
+      path: metadata.name
+      value: release-name-stack-backend-public
+    asserts:
+      - lengthEqual:
+          path: spec.rules
+          count: 1
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api/healthz
+      - equal:
+          path: spec.rules[0].backendRefs[0].name
+          value: release-name-stack-backend
+
+  - it: should keep the public route out of external-dns
+    template: gateway-oidc.yaml
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+            skipAuth:
+              - path: /healthz
+    documentSelector:
+      path: metadata.name
+      value: release-name-stack-frontend-public
+    asserts:
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+
+  - it: should not give a public route to a service that declares no skipAuth
+    template: gateway-oidc.yaml
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+            skipAuth:
+              - path: /healthz
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - hasDocuments:
+          count: 3
+
+  - it: should not attach the shared SecurityPolicy to a public route
+    template: gateway-securitypolicy-shared.yaml
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+            skipAuth:
+              - path: /healthz
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - lengthEqual:
+          path: spec.targetRefs
+          count: 2
+      - contains:
+          path: spec.targetRefs
+          content:
+            group: gateway.networking.k8s.io
+            kind: HTTPRoute
+            name: release-name-stack-frontend
+      - contains:
+          path: spec.targetRefs
+          content:
+            group: gateway.networking.k8s.io
+            kind: HTTPRoute
+            name: release-name-stack-backend
