@@ -8,14 +8,14 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                            |
-| ---------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------- |
-| - [dcgmExporter](#dcgmExporter )   | No      | object | No         | -          | -                                                                            |
-| - [nodeReadiness](#nodeReadiness ) | No      | object | No         | -          | -                                                                            |
-| - [nodepool](#nodepool )           | No      | object | No         | -          | -                                                                            |
-| - [nodepools](#nodepools )         | No      | array  | No         | -          | List of NodePool overrides. Each entry is merged with the nodepool defaults. |
-| - [nvidiaDriver](#nvidiaDriver )   | No      | object | No         | -          | -                                                                            |
-| - [priorityClass](#priorityClass ) | No      | object | No         | -          | -                                                                            |
+| Property                           | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                       |
+| ---------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------------------------------------- |
+| - [dcgmExporter](#dcgmExporter )   | No      | object | No         | -          | -                                                                                                       |
+| - [nodeReadiness](#nodeReadiness ) | No      | object | No         | -          | -                                                                                                       |
+| - [nodepool](#nodepool )           | No      | object | No         | -          | -                                                                                                       |
+| - [nodepools](#nodepools )         | No      | array  | No         | -          | List of NodePool overrides. Each entry has the same schema as nodepool and is merged with its defaults. |
+| - [nvidiaDriver](#nvidiaDriver )   | No      | object | No         | -          | -                                                                                                       |
+| - [priorityClass](#priorityClass ) | No      | object | No         | -          | -                                                                                                       |
 
 ## <a name="dcgmExporter"></a>1. Property `karpenter-gpu-nodepool > dcgmExporter`
 
@@ -1015,7 +1015,7 @@ must respect the following conditions
 | **Type**     | `array` |
 | **Required** | No      |
 
-**Description:** List of NodePool overrides. Each entry is merged with the nodepool defaults.
+**Description:** List of NodePool overrides. Each entry has the same schema as nodepool and is merged with its defaults.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
