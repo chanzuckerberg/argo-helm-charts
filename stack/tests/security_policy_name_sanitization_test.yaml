@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test a policy name always yields a valid object name
+templates:
+  - gateway-securitypolicy-shared.yaml
+tests:
+  - it: should not build an object name from an unsanitized policy name
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          Admin_Okta:
+            oidc:
+              provider: {issuer: https://czi.okta.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: Admin_Okta
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - matchRegex:
+          path: metadata.name
+          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+
+  - it: should accept a policy name that is already a DNS-1123 label
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          admin-okta:
+            oidc:
+              provider: {issuer: https://czi.okta.com}
+      services:
+        app:
+          gateway:
+            securityPolicy: admin-okta
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: release-name-stack-admin-okta

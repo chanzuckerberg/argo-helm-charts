@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test the shared SecurityPolicy keeps annotations from every member
+templates:
+  - gateway-securitypolicy-shared.yaml
+tests:
+  - it: should carry an annotation set only on a non-primary member
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          annotations:
+            owner: frontend-team
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          annotations:
+            extra: keepme
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - lengthEqual:
+          path: spec.targetRefs
+          count: 2
+      - equal:
+          path: metadata.annotations.owner
+          value: frontend-team
+      - isSubset:
+          path: metadata
+          content:
+            annotations:
+              extra: keepme
+
+  - it: should take annotations from the policy definition onto the shared policy
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+        securityPolicies:
+          oidc-protected-default:
+            annotations:
+              team: platform
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+        backend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /api, pathType: Prefix}]
+    asserts:
+      - equal:
+          path: metadata.annotations.team
+          value: platform
