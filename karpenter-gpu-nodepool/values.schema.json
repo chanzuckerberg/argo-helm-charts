@@ -372,7 +372,7 @@
       }
     },
     "nodepools": {
-      "description": "List of NodePool overrides. Each entry is merged with the nodepool defaults.",
+      "description": "List of NodePool overrides. Each entry has the same schema as nodepool and is merged with its defaults.",
       "type": "array"
     },
     "nvidiaDriver": {
