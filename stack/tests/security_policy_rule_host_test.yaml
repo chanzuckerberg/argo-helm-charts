@@ -21,13 +21,13 @@ tests:
             paths: [{path: /api, pathType: Prefix}]
             rules:
               - host: alt.example.com
+    documentSelector:
+      path: spec.oidc.cookieNames.accessToken
+      value: AccessToken-oidc-protected-default-alt-example-com
     asserts:
-      - hasDocuments:
-          count: 1
-          documentSelector:
-            path: spec.oidc.cookieNames.accessToken
-            value: AccessToken-oidc-protected-default-alt-example-com
-            matchMany: true
+      - lengthEqual:
+          path: spec.targetRefs
+          count: 2
 
   - it: should cover both rule routes on one host with a single policy
     set:
@@ -47,9 +47,42 @@ tests:
             paths: [{path: /api, pathType: Prefix}]
             rules:
               - host: alt.example.com
+    documentSelector:
+      path: spec.oidc.redirectURL
+      value: https://alt.example.com/oauth2/callback
     asserts:
-      - hasDocuments:
-          count: 1
+      - contains:
+          path: spec.targetRefs
+          content:
+            group: gateway.networking.k8s.io
+            kind: HTTPRoute
+            name: release-name-stack-frontend-rule-0
+      - contains:
+          path: spec.targetRefs
+          content:
+            group: gateway.networking.k8s.io
+            kind: HTTPRoute
+            name: release-name-stack-backend-rule-0
+
+  - it: should render one policy for a rule host served by a single service
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: app.example.com}
+      services:
+        frontend:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+            rules:
+              - host: alt.example.com
+    documentSelector:
+      path: spec.oidc.cookieNames.accessToken
+      value: AccessToken-oidc-protected-default-alt-example-com
+    asserts:
       - lengthEqual:
           path: spec.targetRefs
-          count: 2
+          count: 1
+      - equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-frontend-rule-0
