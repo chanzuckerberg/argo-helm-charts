@@ -491,18 +491,19 @@ Takes the root context.
       {{- fail (printf "securityPolicies.%s sets unknown key %q. Valid keys are oidc, basicAuth, cors, ipAllowList, jwt and annotations." $name $k) -}}
     {{- end -}}
   {{- end -}}
+  {{- $base := dict -}}
+  {{- if or (eq $name "oidc-protected-default") (hasKey ($def | default dict) "oidc") -}}
+    {{- $base = dict "oidc" (deepCopy $builtinOidc) -}}
+  {{- end -}}
+  {{- $entry := mergeOverwrite $base (deepCopy $def) -}}
   {{- $recognized := false -}}
   {{- range $k := $authKeys -}}
-    {{- if hasKey ($def | default dict) $k -}}{{- $recognized = true -}}{{- end -}}
+    {{- if hasKey $entry $k -}}{{- $recognized = true -}}{{- end -}}
   {{- end -}}
   {{- if not $recognized -}}
     {{- fail (printf "securityPolicies.%s declares none of oidc, basicAuth, cors, ipAllowList or jwt, so it would attach a policy that enforces nothing. Remove it, or give it a setting." $name) -}}
   {{- end -}}
-  {{- $base := dict -}}
-  {{- if hasKey ($def | default dict) "oidc" -}}
-    {{- $base = dict "oidc" (deepCopy $builtinOidc) -}}
-  {{- end -}}
-  {{- $_ := set $merged $name (mergeOverwrite $base (deepCopy $def)) -}}
+  {{- $_ := set $merged $name $entry -}}
 {{- end -}}
 {{- if not (hasKey $merged "oidc-protected-default") -}}
   {{- $_ := set $merged "oidc-protected-default" (dict "oidc" (deepCopy $builtinOidc)) -}}
