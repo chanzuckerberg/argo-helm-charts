@@ -478,6 +478,7 @@ Takes the root context.
       "globalSecretName" "argus-global-oidc"
       "scopes" (list "openid" "profile" "email" "groups")
       "denyRedirect" (dict "enabled" true)
+      "forwardIDToken" (dict "enabled" true "header" "X-ID-Token")
       "logoutPath" "/logout" -}}
 {{- $authKeys := list "oidc" "basicAuth" "cors" "ipAllowList" "jwt" -}}
 {{- $allowedKeys := concat $authKeys (list "annotations") -}}
@@ -518,6 +519,7 @@ Takes the root context.
       "provider" (dict)
       "cookieNames" (dict)
       "denyRedirect" (dict "enabled" false)
+      "forwardIDToken" (dict "enabled" false)
       "apiRoutes" (list) -}}
 {{- $out := dict -}}
 {{- range $name, $def := $merged -}}
@@ -854,7 +856,10 @@ oidc:
   {{- if $p.oidc.forwardAccessToken }}
   forwardAccessToken: {{ $p.oidc.forwardAccessToken }}
   {{- end }}
-  {{- if $p.oidc.forwardIDToken }}
+  {{- if $p.oidc.forwardIDToken.enabled }}
+  {{- if not $p.oidc.forwardIDToken.header }}
+  {{- fail (printf "securityPolicies.%s.oidc.forwardIDToken is enabled but sets no header. Name the upstream header that should carry the ID token, or set enabled: false." $policyName) -}}
+  {{- end }}
   forwardIDToken:
     header: {{ $p.oidc.forwardIDToken.header | quote }}
   {{- end }}

@@ -308,7 +308,41 @@ tests:
       - failedTemplate:
           errorMessage: 'global.oidcProxyGateway was removed in stack 2.55.0. Move it under global.securityPolicies.<name>.oidc and attach it with gateway.securityPolicy on each service that should share that session.'
 
-  - it: should forward the ID token to a named header
+  - it: should forward the ID token by default with no configuration
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: www.example.com}
+      services:
+        web:
+          gateway:
+            securityPolicy: oidc-protected-default
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - equal:
+          path: spec.oidc.forwardIDToken.header
+          value: X-ID-Token
+
+  - it: should inherit the ID token default on a custom oidc policy
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: www.example.com}
+        securityPolicies:
+          app-oidc:
+            oidc:
+              logoutPath: /signout
+      services:
+        web:
+          gateway:
+            securityPolicy: app-oidc
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - equal:
+          path: spec.oidc.forwardIDToken.header
+          value: X-ID-Token
+
+  - it: should allow opting out of ID token forwarding
     set:
       global:
         ingress: {enabled: false}
@@ -317,19 +351,17 @@ tests:
           app-oidc:
             oidc:
               forwardIDToken:
-                header: X-ID-Token
+                enabled: false
       services:
         web:
           gateway:
             securityPolicy: app-oidc
             paths: [{path: /, pathType: Prefix}]
     asserts:
-      - hasDocuments: {count: 1}
-      - equal:
-          path: spec.oidc.forwardIDToken.header
-          value: X-ID-Token
+      - notExists:
+          path: spec.oidc.forwardIDToken
 
-  - it: should use the Bearer scheme when the header is Authorization
+  - it: should honour a custom ID token header
     set:
       global:
         ingress: {enabled: false}
@@ -349,19 +381,25 @@ tests:
           path: spec.oidc.forwardIDToken.header
           value: Authorization
 
-  - it: should omit forwardIDToken when unset
+  - it: should not forward an ID token on a jwt-only policy
     set:
       global:
         ingress: {enabled: false}
         gateway: {enabled: true, host: www.example.com}
+        securityPolicies:
+          jwtonly:
+            jwt:
+              enabled: true
+              issuer: https://czi.okta.com
+              remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
       services:
         web:
           gateway:
-            securityPolicy: oidc-protected-default
+            securityPolicy: jwtonly
             paths: [{path: /, pathType: Prefix}]
     asserts:
       - notExists:
-          path: spec.oidc.forwardIDToken
+          path: spec.oidc
 
   - it: should combine forwardIDToken with forwardAccessToken
     set:
@@ -372,8 +410,6 @@ tests:
           app-oidc:
             oidc:
               forwardAccessToken: true
-              forwardIDToken:
-                header: X-ID-Token
       services:
         web:
           gateway:
