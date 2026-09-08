@@ -3804,7 +3804,8 @@ Must be one of:
 | - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
 | - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
 | - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
+| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
 | - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
 | - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
 | - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
@@ -3950,7 +3951,44 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>2.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+**Description:** Forward the access token upstream as Authorization: Bearer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>2.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>2.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>2.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>2.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -3959,14 +3997,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>2.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>2.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>2.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>2.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -3980,7 +4018,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>2.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>2.1.40.1.6.12.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -3989,28 +4027,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.12.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.12.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>2.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>2.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>2.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>2.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4029,14 +4067,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ----------- |
 | [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>2.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>2.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>2.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>2.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4055,7 +4093,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------ | ----------- |
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>2.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>2.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -8180,7 +8218,8 @@ Must be one of:
 | - [cookieNames](#global_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
 | - [csrfTokenTTL](#global_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
 | - [denyRedirect](#global_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#global_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#global_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
+| - [forwardIDToken](#global_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
 | - [globalSecretName](#global_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
 | - [logoutPath](#global_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
 | - [provider](#global_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
@@ -8326,7 +8365,44 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_globalSecretName"></a>3.40.1.6.9. Property `stack > global > securityPolicies > additionalProperties > oidc > globalSecretName`
+**Description:** Forward the access token upstream as Authorization: Bearer
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>3.40.1.6.9. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| --------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#global_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>3.40.1.6.9.1. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>3.40.1.6.9.2. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_globalSecretName"></a>3.40.1.6.10. Property `stack > global > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -8335,14 +8411,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_logoutPath"></a>3.40.1.6.10. Property `stack > global > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="global_securityPolicies_additionalProperties_oidc_logoutPath"></a>3.40.1.6.11. Property `stack > global > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider"></a>3.40.1.6.11. Property `stack > global > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider"></a>3.40.1.6.12. Property `stack > global > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -8356,7 +8432,7 @@ Must be one of:
 | - [issuer](#global_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>3.40.1.6.11.1. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>3.40.1.6.12.1. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -8365,28 +8441,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.11.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.12.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.11.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.12.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_refreshToken"></a>3.40.1.6.12. Property `stack > global > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="global_securityPolicies_additionalProperties_oidc_refreshToken"></a>3.40.1.6.13. Property `stack > global > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_resources"></a>3.40.1.6.13. Property `stack > global > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources"></a>3.40.1.6.14. Property `stack > global > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8405,14 +8481,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------- | ----------- |
 | [resources items](#global_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_resources_items"></a>3.40.1.6.13.1. stack > global > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources_items"></a>3.40.1.6.14.1. stack > global > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_scopes"></a>3.40.1.6.14. Property `stack > global > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes"></a>3.40.1.6.15. Property `stack > global > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8431,7 +8507,7 @@ Must be one of:
 | ------------------------------------------------------------------------------- | ----------- |
 | [scopes items](#global_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_scopes_items"></a>3.40.1.6.14.1. stack > global > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes_items"></a>3.40.1.6.15.1. stack > global > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -12574,7 +12650,8 @@ Must be one of:
 | - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
 | - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
 | - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
+| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
 | - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
 | - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
 | - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
@@ -12720,7 +12797,44 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>4.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+**Description:** Forward the access token upstream as Authorization: Bearer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>4.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>4.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>4.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>4.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -12729,14 +12843,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>4.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>4.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>4.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>4.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -12750,7 +12864,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>4.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>4.1.40.1.6.12.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -12759,28 +12873,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.12.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.12.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>4.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>4.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>4.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>4.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12799,14 +12913,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ----------- |
 | [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>4.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>4.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>4.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>4.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12825,7 +12939,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------ | ----------- |
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>4.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>4.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -17432,7 +17546,8 @@ Must be one of:
 | - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
 | - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
 | - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | -                                                                                               |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
+| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
 | - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
 | - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
 | - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
@@ -17578,7 +17693,44 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>7.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+**Description:** Forward the access token upstream as Authorization: Bearer
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>7.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+| Property                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>7.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>7.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>7.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -17587,14 +17739,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>7.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>7.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>7.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>7.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -17608,7 +17760,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>7.1.40.1.6.11.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>7.1.40.1.6.12.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -17617,28 +17769,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.11.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.12.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.11.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.12.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>7.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>7.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>7.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>7.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -17657,14 +17809,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ----------- |
 | [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>7.1.40.1.6.13.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>7.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>7.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>7.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -17683,7 +17835,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------ | ----------- |
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>7.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>7.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |

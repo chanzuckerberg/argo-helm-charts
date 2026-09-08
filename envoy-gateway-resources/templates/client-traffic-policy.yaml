@@ -1,4 +1,4 @@
-{{- if .Values.proxyProtocol.enabled }}
+{{- if or .Values.proxyProtocol.enabled .Values.hsts.enabled }}
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
 metadata:
@@ -9,6 +9,15 @@ spec:
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: {{ .Values.gatewayName }}
+  {{- if .Values.proxyProtocol.enabled }}
   proxyProtocol:
     optional: {{ .Values.proxyProtocol.optional }}
+  {{- end }}
+  {{- if .Values.hsts.enabled }}
+  headers:
+    lateResponseHeaders:
+      addIfAbsent:
+        - name: Strict-Transport-Security
+          value: {{ .Values.hsts.value | quote }}
+  {{- end }}
 {{- end }}

@@ -25,13 +25,57 @@ tests:
           path: spec.proxyProtocol.optional
           value: false
 
-  - it: should render nothing when disabled
+  - it: should render nothing when proxyProtocol and hsts are both off
     set:
       proxyProtocol:
         enabled: false
     asserts:
       - hasDocuments:
           count: 0
+
+  - it: should not set HSTS by default
+    asserts:
+      - notExists:
+          path: spec.headers
+
+  - it: should add HSTS only if absent when enabled
+    set:
+      hsts:
+        enabled: true
+    asserts:
+      - equal:
+          path: spec.headers.lateResponseHeaders.addIfAbsent[0].name
+          value: Strict-Transport-Security
+      - equal:
+          path: spec.headers.lateResponseHeaders.addIfAbsent[0].value
+          value: "max-age=31536000; includeSubDomains"
+      - notExists:
+          path: spec.headers.lateResponseHeaders.set
+
+  - it: should still render the policy for HSTS when proxyProtocol is off
+    set:
+      proxyProtocol:
+        enabled: false
+      hsts:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - notExists:
+          path: spec.proxyProtocol
+      - equal:
+          path: spec.headers.lateResponseHeaders.addIfAbsent[0].name
+          value: Strict-Transport-Security
+
+  - it: should honour a custom HSTS value
+    set:
+      hsts:
+        enabled: true
+        value: "max-age=63072000; includeSubDomains; preload"
+    asserts:
+      - equal:
+          path: spec.headers.lateResponseHeaders.addIfAbsent[0].value
+          value: "max-age=63072000; includeSubDomains; preload"
 
   - it: should follow a custom gateway name
     set:
