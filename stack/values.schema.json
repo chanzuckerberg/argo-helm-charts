@@ -1346,7 +1346,22 @@
                     "additionalProperties": false
                   },
                   "forwardAccessToken": {
+                    "description": "Forward the access token upstream as Authorization: Bearer",
                     "type": "boolean"
+                  },
+                  "forwardIDToken": {
+                    "type": "object",
+                    "required": [
+                      "header"
+                    ],
+                    "properties": {
+                      "header": {
+                        "description": "Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from",
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "additionalProperties": false
                   },
                   "globalSecretName": {
                     "description": "Fleet-wide client secret name, defaults to argus-global-oidc",
