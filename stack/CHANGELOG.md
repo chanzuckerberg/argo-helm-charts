@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.56.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.55.0...stack-v2.56.0) (2026-09-08)
+
+
+### Features
+
+* **stack:** default forwardIDToken so apps need no identity config ([#560](https://github.com/chanzuckerberg/argo-helm-charts/issues/560)) ([dfc83ae](https://github.com/chanzuckerberg/argo-helm-charts/commit/dfc83ae85b5cba00460e417d805611ec6890dc4d))
+* **stack:** expose oidc.forwardIDToken to unblock identity-header apps ([#557](https://github.com/chanzuckerberg/argo-helm-charts/issues/557)) ([5e6496d](https://github.com/chanzuckerberg/argo-helm-charts/commit/5e6496da2b585e796a7552851538518f836f2648))
+
 ## [2.55.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.54.0...stack-v2.55.0) (2026-09-04)
 
 
