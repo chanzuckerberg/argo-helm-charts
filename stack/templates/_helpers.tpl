@@ -854,6 +854,10 @@ oidc:
   {{- if $p.oidc.forwardAccessToken }}
   forwardAccessToken: {{ $p.oidc.forwardAccessToken }}
   {{- end }}
+  {{- if $p.oidc.forwardIDToken }}
+  forwardIDToken:
+    header: {{ $p.oidc.forwardIDToken.header | quote }}
+  {{- end }}
   {{- if $p.oidc.refreshToken }}
   refreshToken: {{ $p.oidc.refreshToken }}
   {{- end }}
