@@ -1351,12 +1351,13 @@
                   },
                   "forwardIDToken": {
                     "type": "object",
-                    "required": [
-                      "header"
-                    ],
                     "properties": {
+                      "enabled": {
+                        "description": "Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers",
+                        "type": "boolean"
+                      },
                       "header": {
-                        "description": "Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from",
+                        "description": "Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from",
                         "type": "string",
                         "minLength": 1
                       }
