@@ -70,6 +70,10 @@ proxyProtocol:
   enabled: true
   optional: false
 
+hsts:
+  enabled: false
+  value: "max-age=31536000; includeSubDomains"
+
 # When true, drop access logs for successful (2xx) responses; errors, redirects,
 # and reset connections are still logged. For high-traffic clusters where 2xx
 # access-log volume is significant self-ingest.
