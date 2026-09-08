@@ -3961,18 +3961,28 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                              |
-| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header ) | No      | string | No         | -          | Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+| Property                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>2.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>2.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>2.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
-| **Required** | Yes      |
+| **Required** | No       |
 
-**Description:** Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
 
 | Restrictions   |   |
 | -------------- | - |
@@ -8365,18 +8375,28 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                              | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                              |
-| ------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [header](#global_securityPolicies_additionalProperties_oidc_forwardIDToken_header ) | No      | string | No         | -          | Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+| Property                                                                                | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| --------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#global_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>3.40.1.6.9.1. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>3.40.1.6.9.1. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>3.40.1.6.9.2. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
-| **Required** | Yes      |
+| **Required** | No       |
 
-**Description:** Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
 
 | Restrictions   |   |
 | -------------- | - |
@@ -12787,18 +12807,28 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                              |
-| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header ) | No      | string | No         | -          | Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+| Property                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>4.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>4.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>4.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
-| **Required** | Yes      |
+| **Required** | No       |
 
-**Description:** Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
 
 | Restrictions   |   |
 | -------------- | - |
@@ -17673,18 +17703,28 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                         | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                              |
-| ------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| + [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header ) | No      | string | No         | -          | Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
+| Property                                                                                           | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
+| - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>7.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>7.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>7.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
-| **Required** | Yes      |
+| **Required** | No       |
 
-**Description:** Upstream header carrying the ID token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
+**Description:** Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from
 
 | Restrictions   |   |
 | -------------- | - |
