@@ -34,7 +34,7 @@ spec:
           image: "{{ .Values.probe.image.repository }}:{{ .Values.probe.image.tag }}"
           imagePullPolicy: {{ .Values.probe.image.pullPolicy }}
           command:
-            - /bin/sh
+            - /bin/bash
             - /config/probe.sh
           env:
             - name: CLUSTER_NAME
