@@ -7,6 +7,14 @@
     "clusterName"
   ],
   "properties": {
+    "activeDeadlineSeconds": {
+      "description": "Maximum runtime for one probe Job",
+      "type": "integer"
+    },
+    "backoffLimit": {
+      "description": "Number of Job retries after failure",
+      "type": "integer"
+    },
     "clusterName": {
       "description": "Stable cluster identifier added to probe metrics. This value is required.",
       "type": "string"
@@ -34,6 +42,14 @@
           }
         }
       }
+    },
+    "failedJobsHistoryLimit": {
+      "description": "Failed Jobs retained for diagnosis",
+      "type": "integer"
+    },
+    "metricsExposeSeconds": {
+      "description": "Time to keep completed metrics available for annotation-based scraping",
+      "type": "integer"
     },
     "oidc": {
       "description": "Tailscale workload identity settings",
@@ -73,10 +89,6 @@
               "type": "string"
             }
           }
-        },
-        "intervalSeconds": {
-          "description": "Delay after each complete probe cycle",
-          "type": "integer"
         },
         "maxParallel": {
           "description": "Maximum targets tested concurrently",
@@ -187,6 +199,18 @@
           }
         }
       }
+    },
+    "schedule": {
+      "description": "Cron schedule for synthetic probe runs",
+      "type": "string"
+    },
+    "startingDeadlineSeconds": {
+      "description": "Window in which a delayed Job may still start",
+      "type": "integer"
+    },
+    "successfulJobsHistoryLimit": {
+      "description": "Successful Jobs retained for diagnosis",
+      "type": "integer"
     },
     "tailscale": {
       "description": "Tailscale node identity settings",

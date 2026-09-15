@@ -179,7 +179,8 @@ ts up \
   --id-token="file:${TS_TOKEN_FILE}" \
   --reset
 
-while true; do
-  collect
-  sleep "${PROBE_INTERVAL_SECONDS}"
-done
+collect
+
+# Alloy discovers annotated pods on a one-minute interval. Keep the Job and its
+# native sidecar alive long enough for at least one scrape after metrics exist.
+sleep "${METRICS_EXPOSE_SECONDS}"

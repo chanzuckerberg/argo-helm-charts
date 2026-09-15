@@ -8,16 +8,41 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                       | Pattern | Type   | Deprecated | Definition | Title/Description                                                         |
-| ------------------------------ | ------- | ------ | ---------- | ---------- | ------------------------------------------------------------------------- |
-| + [clusterName](#clusterName ) | No      | string | No         | -          | Stable cluster identifier added to probe metrics. This value is required. |
-| - [exporter](#exporter )       | No      | object | No         | -          | Prometheus textfile exporter settings                                     |
-| - [oidc](#oidc )               | No      | object | No         | -          | Tailscale workload identity settings                                      |
-| - [probe](#probe )             | No      | object | No         | -          | Synthetic ping and SSH probe settings                                     |
-| - [resources](#resources )     | No      | object | No         | -          | Container resource requests and limits                                    |
-| - [tailscale](#tailscale )     | No      | object | No         | -          | Tailscale node identity settings                                          |
+| Property                                                     | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
+| ------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
+| - [activeDeadlineSeconds](#activeDeadlineSeconds )           | No      | integer | No         | -          | Maximum runtime for one probe Job                                         |
+| - [backoffLimit](#backoffLimit )                             | No      | integer | No         | -          | Number of Job retries after failure                                       |
+| + [clusterName](#clusterName )                               | No      | string  | No         | -          | Stable cluster identifier added to probe metrics. This value is required. |
+| - [exporter](#exporter )                                     | No      | object  | No         | -          | Prometheus textfile exporter settings                                     |
+| - [failedJobsHistoryLimit](#failedJobsHistoryLimit )         | No      | integer | No         | -          | Failed Jobs retained for diagnosis                                        |
+| - [metricsExposeSeconds](#metricsExposeSeconds )             | No      | integer | No         | -          | Time to keep completed metrics available for annotation-based scraping    |
+| - [oidc](#oidc )                                             | No      | object  | No         | -          | Tailscale workload identity settings                                      |
+| - [probe](#probe )                                           | No      | object  | No         | -          | Synthetic ping and SSH probe settings                                     |
+| - [resources](#resources )                                   | No      | object  | No         | -          | Container resource requests and limits                                    |
+| - [schedule](#schedule )                                     | No      | string  | No         | -          | Cron schedule for synthetic probe runs                                    |
+| - [startingDeadlineSeconds](#startingDeadlineSeconds )       | No      | integer | No         | -          | Window in which a delayed Job may still start                             |
+| - [successfulJobsHistoryLimit](#successfulJobsHistoryLimit ) | No      | integer | No         | -          | Successful Jobs retained for diagnosis                                    |
+| - [tailscale](#tailscale )                                   | No      | object  | No         | -          | Tailscale node identity settings                                          |
 
-## <a name="clusterName"></a>1. Property `tailscale-probe > clusterName`
+## <a name="activeDeadlineSeconds"></a>1. Property `tailscale-probe > activeDeadlineSeconds`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Maximum runtime for one probe Job
+
+## <a name="backoffLimit"></a>2. Property `tailscale-probe > backoffLimit`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Number of Job retries after failure
+
+## <a name="clusterName"></a>3. Property `tailscale-probe > clusterName`
 
 |              |          |
 | ------------ | -------- |
@@ -26,7 +51,7 @@
 
 **Description:** Stable cluster identifier added to probe metrics. This value is required.
 
-## <a name="exporter"></a>2. Property `tailscale-probe > exporter`
+## <a name="exporter"></a>4. Property `tailscale-probe > exporter`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -40,7 +65,7 @@
 | --------------------------- | ------- | ------ | ---------- | ---------- | ------------------- |
 | - [image](#exporter_image ) | No      | object | No         | -          | Node exporter image |
 
-### <a name="exporter_image"></a>2.1. Property `tailscale-probe > exporter > image`
+### <a name="exporter_image"></a>4.1. Property `tailscale-probe > exporter > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -56,7 +81,7 @@
 | - [repository](#exporter_image_repository ) | No      | string | No         | -          | Exporter image repository    |
 | - [tag](#exporter_image_tag )               | No      | string | No         | -          | Exporter image tag           |
 
-#### <a name="exporter_image_pullPolicy"></a>2.1.1. Property `tailscale-probe > exporter > image > pullPolicy`
+#### <a name="exporter_image_pullPolicy"></a>4.1.1. Property `tailscale-probe > exporter > image > pullPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -65,7 +90,7 @@
 
 **Description:** Kubernetes image pull policy
 
-#### <a name="exporter_image_repository"></a>2.1.2. Property `tailscale-probe > exporter > image > repository`
+#### <a name="exporter_image_repository"></a>4.1.2. Property `tailscale-probe > exporter > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -74,7 +99,7 @@
 
 **Description:** Exporter image repository
 
-#### <a name="exporter_image_tag"></a>2.1.3. Property `tailscale-probe > exporter > image > tag`
+#### <a name="exporter_image_tag"></a>4.1.3. Property `tailscale-probe > exporter > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -83,7 +108,25 @@
 
 **Description:** Exporter image tag
 
-## <a name="oidc"></a>3. Property `tailscale-probe > oidc`
+## <a name="failedJobsHistoryLimit"></a>5. Property `tailscale-probe > failedJobsHistoryLimit`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Failed Jobs retained for diagnosis
+
+## <a name="metricsExposeSeconds"></a>6. Property `tailscale-probe > metricsExposeSeconds`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Time to keep completed metrics available for annotation-based scraping
+
+## <a name="oidc"></a>7. Property `tailscale-probe > oidc`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -98,7 +141,7 @@
 | + [clientId](#oidc_clientId )                             | No      | string  | No         | -          | OAuth client ID whose federated identity trusts this cluster. This value is required. |
 | - [tokenExpirationSeconds](#oidc_tokenExpirationSeconds ) | No      | integer | No         | -          | Lifetime of the projected Kubernetes service account token                            |
 
-### <a name="oidc_clientId"></a>3.1. Property `tailscale-probe > oidc > clientId`
+### <a name="oidc_clientId"></a>7.1. Property `tailscale-probe > oidc > clientId`
 
 |              |          |
 | ------------ | -------- |
@@ -107,7 +150,7 @@
 
 **Description:** OAuth client ID whose federated identity trusts this cluster. This value is required.
 
-### <a name="oidc_tokenExpirationSeconds"></a>3.2. Property `tailscale-probe > oidc > tokenExpirationSeconds`
+### <a name="oidc_tokenExpirationSeconds"></a>7.2. Property `tailscale-probe > oidc > tokenExpirationSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -116,7 +159,7 @@
 
 **Description:** Lifetime of the projected Kubernetes service account token
 
-## <a name="probe"></a>4. Property `tailscale-probe > probe`
+## <a name="probe"></a>8. Property `tailscale-probe > probe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -129,14 +172,13 @@
 | Property                                               | Pattern | Type    | Deprecated | Definition | Title/Description                                                         |
 | ------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------- |
 | - [image](#probe_image )                               | No      | object  | No         | -          | Image containing tailscaled, tailscale, OpenSSH, and standard shell tools |
-| - [intervalSeconds](#probe_intervalSeconds )           | No      | integer | No         | -          | Delay after each complete probe cycle                                     |
 | - [maxParallel](#probe_maxParallel )                   | No      | integer | No         | -          | Maximum targets tested concurrently                                       |
 | - [pingCount](#probe_pingCount )                       | No      | integer | No         | -          | Maximum ping attempts used to establish the final path                    |
 | - [pingTimeout](#probe_pingTimeout )                   | No      | string  | No         | -          | Timeout for each ping attempt                                             |
 | - [ssh](#probe_ssh )                                   | No      | object  | No         | -          | Authenticated synthetic SSH transaction settings                          |
 | - [targetHostnamePrefix](#probe_targetHostnamePrefix ) | No      | string  | No         | -          | Tailscale hostname prefix used to discover Reef login nodes               |
 
-### <a name="probe_image"></a>4.1. Property `tailscale-probe > probe > image`
+### <a name="probe_image"></a>8.1. Property `tailscale-probe > probe > image`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -152,7 +194,7 @@
 | - [repository](#probe_image_repository ) | No      | string | No         | -          | Probe image repository       |
 | - [tag](#probe_image_tag )               | No      | string | No         | -          | Probe image tag              |
 
-#### <a name="probe_image_pullPolicy"></a>4.1.1. Property `tailscale-probe > probe > image > pullPolicy`
+#### <a name="probe_image_pullPolicy"></a>8.1.1. Property `tailscale-probe > probe > image > pullPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -161,7 +203,7 @@
 
 **Description:** Kubernetes image pull policy
 
-#### <a name="probe_image_repository"></a>4.1.2. Property `tailscale-probe > probe > image > repository`
+#### <a name="probe_image_repository"></a>8.1.2. Property `tailscale-probe > probe > image > repository`
 
 |              |          |
 | ------------ | -------- |
@@ -170,7 +212,7 @@
 
 **Description:** Probe image repository
 
-#### <a name="probe_image_tag"></a>4.1.3. Property `tailscale-probe > probe > image > tag`
+#### <a name="probe_image_tag"></a>8.1.3. Property `tailscale-probe > probe > image > tag`
 
 |              |          |
 | ------------ | -------- |
@@ -179,16 +221,7 @@
 
 **Description:** Probe image tag
 
-### <a name="probe_intervalSeconds"></a>4.2. Property `tailscale-probe > probe > intervalSeconds`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `integer` |
-| **Required** | No        |
-
-**Description:** Delay after each complete probe cycle
-
-### <a name="probe_maxParallel"></a>4.3. Property `tailscale-probe > probe > maxParallel`
+### <a name="probe_maxParallel"></a>8.2. Property `tailscale-probe > probe > maxParallel`
 
 |              |           |
 | ------------ | --------- |
@@ -197,7 +230,7 @@
 
 **Description:** Maximum targets tested concurrently
 
-### <a name="probe_pingCount"></a>4.4. Property `tailscale-probe > probe > pingCount`
+### <a name="probe_pingCount"></a>8.3. Property `tailscale-probe > probe > pingCount`
 
 |              |           |
 | ------------ | --------- |
@@ -206,7 +239,7 @@
 
 **Description:** Maximum ping attempts used to establish the final path
 
-### <a name="probe_pingTimeout"></a>4.5. Property `tailscale-probe > probe > pingTimeout`
+### <a name="probe_pingTimeout"></a>8.4. Property `tailscale-probe > probe > pingTimeout`
 
 |              |          |
 | ------------ | -------- |
@@ -215,7 +248,7 @@
 
 **Description:** Timeout for each ping attempt
 
-### <a name="probe_ssh"></a>4.6. Property `tailscale-probe > probe > ssh`
+### <a name="probe_ssh"></a>8.5. Property `tailscale-probe > probe > ssh`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -231,7 +264,7 @@
 | - [timeoutSeconds](#probe_ssh_timeoutSeconds ) | No      | integer | No         | -          | End-to-end SSH command timeout                          |
 | - [user](#probe_ssh_user )                     | No      | string  | No         | -          | Dedicated operating system user present on every target |
 
-#### <a name="probe_ssh_command"></a>4.6.1. Property `tailscale-probe > probe > ssh > command`
+#### <a name="probe_ssh_command"></a>8.5.1. Property `tailscale-probe > probe > ssh > command`
 
 |              |          |
 | ------------ | -------- |
@@ -240,7 +273,7 @@
 
 **Description:** Harmless command executed after SSH authentication
 
-#### <a name="probe_ssh_timeoutSeconds"></a>4.6.2. Property `tailscale-probe > probe > ssh > timeoutSeconds`
+#### <a name="probe_ssh_timeoutSeconds"></a>8.5.2. Property `tailscale-probe > probe > ssh > timeoutSeconds`
 
 |              |           |
 | ------------ | --------- |
@@ -249,7 +282,7 @@
 
 **Description:** End-to-end SSH command timeout
 
-#### <a name="probe_ssh_user"></a>4.6.3. Property `tailscale-probe > probe > ssh > user`
+#### <a name="probe_ssh_user"></a>8.5.3. Property `tailscale-probe > probe > ssh > user`
 
 |              |          |
 | ------------ | -------- |
@@ -258,7 +291,7 @@
 
 **Description:** Dedicated operating system user present on every target
 
-### <a name="probe_targetHostnamePrefix"></a>4.7. Property `tailscale-probe > probe > targetHostnamePrefix`
+### <a name="probe_targetHostnamePrefix"></a>8.6. Property `tailscale-probe > probe > targetHostnamePrefix`
 
 |              |          |
 | ------------ | -------- |
@@ -267,7 +300,7 @@
 
 **Description:** Tailscale hostname prefix used to discover Reef login nodes
 
-## <a name="resources"></a>5. Property `tailscale-probe > resources`
+## <a name="resources"></a>9. Property `tailscale-probe > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -282,7 +315,7 @@
 | - [exporter](#resources_exporter ) | No      | object | No         | -          | Exporter container resources |
 | - [probe](#resources_probe )       | No      | object | No         | -          | Probe container resources    |
 
-### <a name="resources_exporter"></a>5.1. Property `tailscale-probe > resources > exporter`
+### <a name="resources_exporter"></a>9.1. Property `tailscale-probe > resources > exporter`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -297,7 +330,7 @@
 | - [limits](#resources_exporter_limits )     | No      | object | No         | -          | Exporter resource limits   |
 | - [requests](#resources_exporter_requests ) | No      | object | No         | -          | Exporter resource requests |
 
-#### <a name="resources_exporter_limits"></a>5.1.1. Property `tailscale-probe > resources > exporter > limits`
+#### <a name="resources_exporter_limits"></a>9.1.1. Property `tailscale-probe > resources > exporter > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -312,7 +345,7 @@
 | - [cpu](#resources_exporter_limits_cpu )       | No      | string | No         | -          | CPU limit         |
 | - [memory](#resources_exporter_limits_memory ) | No      | string | No         | -          | Memory limit      |
 
-##### <a name="resources_exporter_limits_cpu"></a>5.1.1.1. Property `tailscale-probe > resources > exporter > limits > cpu`
+##### <a name="resources_exporter_limits_cpu"></a>9.1.1.1. Property `tailscale-probe > resources > exporter > limits > cpu`
 
 |              |          |
 | ------------ | -------- |
@@ -321,7 +354,7 @@
 
 **Description:** CPU limit
 
-##### <a name="resources_exporter_limits_memory"></a>5.1.1.2. Property `tailscale-probe > resources > exporter > limits > memory`
+##### <a name="resources_exporter_limits_memory"></a>9.1.1.2. Property `tailscale-probe > resources > exporter > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -330,7 +363,7 @@
 
 **Description:** Memory limit
 
-#### <a name="resources_exporter_requests"></a>5.1.2. Property `tailscale-probe > resources > exporter > requests`
+#### <a name="resources_exporter_requests"></a>9.1.2. Property `tailscale-probe > resources > exporter > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -345,7 +378,7 @@
 | - [cpu](#resources_exporter_requests_cpu )       | No      | string | No         | -          | Requested CPU     |
 | - [memory](#resources_exporter_requests_memory ) | No      | string | No         | -          | Requested memory  |
 
-##### <a name="resources_exporter_requests_cpu"></a>5.1.2.1. Property `tailscale-probe > resources > exporter > requests > cpu`
+##### <a name="resources_exporter_requests_cpu"></a>9.1.2.1. Property `tailscale-probe > resources > exporter > requests > cpu`
 
 |              |          |
 | ------------ | -------- |
@@ -354,7 +387,7 @@
 
 **Description:** Requested CPU
 
-##### <a name="resources_exporter_requests_memory"></a>5.1.2.2. Property `tailscale-probe > resources > exporter > requests > memory`
+##### <a name="resources_exporter_requests_memory"></a>9.1.2.2. Property `tailscale-probe > resources > exporter > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -363,7 +396,7 @@
 
 **Description:** Requested memory
 
-### <a name="resources_probe"></a>5.2. Property `tailscale-probe > resources > probe`
+### <a name="resources_probe"></a>9.2. Property `tailscale-probe > resources > probe`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -378,7 +411,7 @@
 | - [limits](#resources_probe_limits )     | No      | object | No         | -          | Probe resource limits   |
 | - [requests](#resources_probe_requests ) | No      | object | No         | -          | Probe resource requests |
 
-#### <a name="resources_probe_limits"></a>5.2.1. Property `tailscale-probe > resources > probe > limits`
+#### <a name="resources_probe_limits"></a>9.2.1. Property `tailscale-probe > resources > probe > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -393,7 +426,7 @@
 | - [cpu](#resources_probe_limits_cpu )       | No      | string | No         | -          | CPU limit         |
 | - [memory](#resources_probe_limits_memory ) | No      | string | No         | -          | Memory limit      |
 
-##### <a name="resources_probe_limits_cpu"></a>5.2.1.1. Property `tailscale-probe > resources > probe > limits > cpu`
+##### <a name="resources_probe_limits_cpu"></a>9.2.1.1. Property `tailscale-probe > resources > probe > limits > cpu`
 
 |              |          |
 | ------------ | -------- |
@@ -402,7 +435,7 @@
 
 **Description:** CPU limit
 
-##### <a name="resources_probe_limits_memory"></a>5.2.1.2. Property `tailscale-probe > resources > probe > limits > memory`
+##### <a name="resources_probe_limits_memory"></a>9.2.1.2. Property `tailscale-probe > resources > probe > limits > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -411,7 +444,7 @@
 
 **Description:** Memory limit
 
-#### <a name="resources_probe_requests"></a>5.2.2. Property `tailscale-probe > resources > probe > requests`
+#### <a name="resources_probe_requests"></a>9.2.2. Property `tailscale-probe > resources > probe > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -426,7 +459,7 @@
 | - [cpu](#resources_probe_requests_cpu )       | No      | string | No         | -          | Requested CPU     |
 | - [memory](#resources_probe_requests_memory ) | No      | string | No         | -          | Requested memory  |
 
-##### <a name="resources_probe_requests_cpu"></a>5.2.2.1. Property `tailscale-probe > resources > probe > requests > cpu`
+##### <a name="resources_probe_requests_cpu"></a>9.2.2.1. Property `tailscale-probe > resources > probe > requests > cpu`
 
 |              |          |
 | ------------ | -------- |
@@ -435,7 +468,7 @@
 
 **Description:** Requested CPU
 
-##### <a name="resources_probe_requests_memory"></a>5.2.2.2. Property `tailscale-probe > resources > probe > requests > memory`
+##### <a name="resources_probe_requests_memory"></a>9.2.2.2. Property `tailscale-probe > resources > probe > requests > memory`
 
 |              |          |
 | ------------ | -------- |
@@ -444,7 +477,34 @@
 
 **Description:** Requested memory
 
-## <a name="tailscale"></a>6. Property `tailscale-probe > tailscale`
+## <a name="schedule"></a>10. Property `tailscale-probe > schedule`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Cron schedule for synthetic probe runs
+
+## <a name="startingDeadlineSeconds"></a>11. Property `tailscale-probe > startingDeadlineSeconds`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Window in which a delayed Job may still start
+
+## <a name="successfulJobsHistoryLimit"></a>12. Property `tailscale-probe > successfulJobsHistoryLimit`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+**Description:** Successful Jobs retained for diagnosis
+
+## <a name="tailscale"></a>13. Property `tailscale-probe > tailscale`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -459,7 +519,7 @@
 | - [hostnamePrefix](#tailscale_hostnamePrefix ) | No      | string | No         | -          | Prefix used to build the probe's unique Tailscale hostname |
 | - [tag](#tailscale_tag )                       | No      | string | No         | -          | Tailnet ACL tag advertised by each probe                   |
 
-### <a name="tailscale_hostnamePrefix"></a>6.1. Property `tailscale-probe > tailscale > hostnamePrefix`
+### <a name="tailscale_hostnamePrefix"></a>13.1. Property `tailscale-probe > tailscale > hostnamePrefix`
 
 |              |          |
 | ------------ | -------- |
@@ -468,7 +528,7 @@
 
 **Description:** Prefix used to build the probe's unique Tailscale hostname
 
-### <a name="tailscale_tag"></a>6.2. Property `tailscale-probe > tailscale > tag`
+### <a name="tailscale_tag"></a>13.2. Property `tailscale-probe > tailscale > tag`
 
 |              |          |
 | ------------ | -------- |

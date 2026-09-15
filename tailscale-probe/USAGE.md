@@ -1,7 +1,7 @@
 # Tailscale probe
 
-This chart deploys one ephemeral Tailscale node into a selected Kubernetes
-cluster. Each node discovers Reef login nodes whose hostname starts with
+This chart schedules an ephemeral Tailscale probe in a selected Kubernetes
+cluster. Each Job discovers Reef login nodes whose hostname starts with
 `login-reef-`, runs `tailscale ping`, authenticates over Tailscale SSH as a
 dedicated synthetic user, and exposes the results as Prometheus metrics.
 
@@ -9,13 +9,16 @@ The probe does not require a dedicated source repository or image:
 
 - The existing `aws-oidc/agent` image supplies `tailscaled`, the Tailscale CLI,
   OpenSSH, and standard shell tools. The chart overrides its entrypoint and
-  executes only the ConfigMap-hosted probe loop.
-- `prometheus/node-exporter` exposes files from its textfile collector.
+  executes only the ConfigMap-hosted probe script.
+- `prometheus/node-exporter` runs as a native sidecar and exposes files from its
+  textfile collector.
 
 The pod annotations select the node-exporter endpoint for Grafana Alloy.
 Synthetic metrics use the existing `probe_` allowlist. Native metrics are
 written with `tailscale metrics write` and retain their documented
-`tailscaled_` names; the fleet allowlists explicitly include that prefix.
+`tailscaled_` names; the fleet allowlists explicitly include that prefix. The
+Job remains alive for two minutes after writing results so Alloy's one-minute
+discovery and scrape interval sees at least one sample.
 
 ## Cluster prerequisites
 

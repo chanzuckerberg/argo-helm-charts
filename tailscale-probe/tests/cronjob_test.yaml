@@ -1,0 +1,64 @@
+suite: tailscale probe workload
+templates:
+  - templates/cronjob.yaml
+set:
+  clusterName: test-aws
+  oidc.clientId: test-client
+tests:
+  - it: schedules non-overlapping probe jobs
+    asserts:
+      - isKind:
+          of: CronJob
+      - equal:
+          path: spec.concurrencyPolicy
+          value: Forbid
+      - equal:
+          path: spec.schedule
+          value: "*/10 * * * *"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[0].restartPolicy
+          value: Always
+
+  - it: exposes only the annotated textfile metrics endpoint
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.annotations["prometheus.io/scrape"]
+          value: "true"
+      - equal:
+          path: spec.jobTemplate.spec.template.metadata.annotations["prometheus.io/port"]
+          value: "9100"
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[0].args[0]
+          value: --collector.disable-defaults
+
+  - it: projects the dedicated Tailscale workload identity
+    asserts:
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.automountServiceAccountToken
+          value: false
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.volumes[3].projected.sources[0].serviceAccountToken.audience
+          value: api.tailscale.com/test-client
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
+            name: TS_CLIENT_ID
+            value: test-client
+
+  - it: configures the source and Reef target identity
+    asserts:
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
+            name: CLUSTER_NAME
+            value: test-aws
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
+            name: TARGET_HOSTNAME_PREFIX
+            value: login-reef-
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
+            name: TS_HOSTNAME
+            value: tailscale-probe-test-aws
