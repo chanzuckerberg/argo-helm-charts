@@ -6,4 +6,4 @@ metadata:
     app.kubernetes.io/name: tailscale-probe
 data:
   probe.sh: |
-    {{- include "tailscale-probe.script" . | nindent 4 }}
+{{ .Files.Get "scripts/probe.sh" | indent 4 }}

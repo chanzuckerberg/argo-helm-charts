@@ -1,4 +1,3 @@
-{{- define "tailscale-probe.script" -}}
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -184,4 +183,3 @@ while true; do
   collect
   sleep "${PROBE_INTERVAL_SECONDS}"
 done
-{{- end -}}
