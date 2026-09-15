@@ -1,0 +1,26 @@
+suite: tailscale probe script
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: emits per-target ping and authenticated SSH metrics
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: tailscale_ping_success
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: tailscale_ssh_success
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: tailscale.*ssh
+
+  - it: writes native Tailscale metrics for the textfile collector
+    asserts:
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: metrics write
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: tailscaled[.]prom

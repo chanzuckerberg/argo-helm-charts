@@ -1,0 +1,46 @@
+clusterName: "" # @schema description: Stable cluster identifier added to probe metrics. This value is required.; required: true
+
+oidc: # @schema description: Tailscale workload identity settings
+  clientId: "" # @schema description: OAuth client ID whose federated identity trusts this cluster. This value is required.; required: true
+  tokenExpirationSeconds: 3600 # @schema description: Lifetime of the projected Kubernetes service account token
+
+tailscale: # @schema description: Tailscale node identity settings
+  tag: tag:tailscale-probe # @schema description: Tailnet ACL tag advertised by each probe
+  hostnamePrefix: tailscale-probe # @schema description: Prefix used to build the probe's unique Tailscale hostname
+
+probe: # @schema description: Synthetic ping and SSH probe settings
+  image: # @schema description: Image containing tailscaled, tailscale, OpenSSH, and standard shell tools
+    repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/aws-oidc/agent # @schema description: Probe image repository
+    tag: sha-e246c09 # @schema description: Probe image tag
+    pullPolicy: IfNotPresent # @schema description: Kubernetes image pull policy
+  intervalSeconds: 300 # @schema description: Delay after each complete probe cycle
+  pingCount: 3 # @schema description: Maximum ping attempts used to establish the final path
+  pingTimeout: 3s # @schema description: Timeout for each ping attempt
+  maxParallel: 8 # @schema description: Maximum targets tested concurrently
+  targetHostnamePrefix: login-reef- # @schema description: Tailscale hostname prefix used to discover Reef login nodes
+  ssh: # @schema description: Authenticated synthetic SSH transaction settings
+    command: "true" # @schema description: Harmless command executed after SSH authentication
+    timeoutSeconds: 15 # @schema description: End-to-end SSH command timeout
+    user: tailscale-probe # @schema description: Dedicated operating system user present on every target
+
+exporter: # @schema description: Prometheus textfile exporter settings
+  image: # @schema description: Node exporter image
+    repository: quay.io/prometheus/node-exporter # @schema description: Exporter image repository
+    tag: v1.12.1 # @schema description: Exporter image tag
+    pullPolicy: IfNotPresent # @schema description: Kubernetes image pull policy
+
+resources: # @schema description: Container resource requests and limits
+  probe: # @schema description: Probe container resources
+    requests: # @schema description: Probe resource requests
+      cpu: 25m # @schema description: Requested CPU
+      memory: 64Mi # @schema description: Requested memory
+    limits: # @schema description: Probe resource limits
+      cpu: 250m # @schema description: CPU limit
+      memory: 256Mi # @schema description: Memory limit
+  exporter: # @schema description: Exporter container resources
+    requests: # @schema description: Exporter resource requests
+      cpu: 5m # @schema description: Requested CPU
+      memory: 16Mi # @schema description: Requested memory
+    limits: # @schema description: Exporter resource limits
+      cpu: 50m # @schema description: CPU limit
+      memory: 64Mi # @schema description: Memory limit
