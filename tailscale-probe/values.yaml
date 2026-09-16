@@ -19,7 +19,7 @@ tailscale: # @schema description: Tailscale node identity settings
 probe: # @schema description: Synthetic ping and SSH probe settings
   image: # @schema description: Image containing tailscaled, tailscale, OpenSSH, and standard shell tools
     repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/aws-oidc/agent # @schema description: Probe image repository
-    tag: sha-e246c09 # @schema description: Probe image tag
+    tag: sha-bdaa60b # @schema description: Probe image tag
     pullPolicy: IfNotPresent # @schema description: Kubernetes image pull policy
   pingCount: 3 # @schema description: Maximum ping attempts used to establish the final path
   pingTimeout: 3s # @schema description: Timeout for each ping attempt
