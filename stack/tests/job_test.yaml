@@ -35,6 +35,9 @@ tests:
           path: metadata.name
           value: "release-name-stack-job1"
       - documentIndex: 0
+        notExists:
+          path: spec.template.spec.terminationGracePeriodSeconds
+      - documentIndex: 0
         equal:
           path: spec.template.spec.containers[0].image
           value: "my-repo:sha-mytag"
@@ -103,6 +106,39 @@ tests:
         equal:
           path: automountServiceAccountToken
           value: true
+  - it: configures a job grace period without changing other jobs
+    set:
+      jobs:
+        custom-job:
+          terminationGracePeriodSeconds: 110
+        other-job: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 110
+      - documentIndex: 1
+        notExists:
+          path: spec.template.spec.terminationGracePeriodSeconds
+
+  - it: inherits the global grace period while preserving a job override of zero
+    set:
+      global:
+        terminationGracePeriodSeconds: 110
+      jobs:
+        inherited-job: {}
+        override-job:
+          terminationGracePeriodSeconds: 0
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 110
+      - documentIndex: 1
+        equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 0
+
   - it: should not make service account for job
     set:
       jobs:

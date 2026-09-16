@@ -69,7 +69,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   dnsPolicy: ClusterFirst # @schema enum: [ClusterFirst, Default, None]; description: DNS policy for the pod
   restartPolicy: Always # @schema enum: [Always, OnFailure, Never]; description: Restart policy for the pod
 
-  # @schema type: [integer, "null"]; minimum: 0; description: Seconds allowed for graceful termination of Deployment and Rollout pods. Null leaves the Kubernetes default unchanged.
+  # @schema type: [integer, "null"]; minimum: 0; description: Seconds allowed for graceful termination of Deployment, Rollout, Job, and CronJob pods. Null leaves the Kubernetes default unchanged.
   terminationGracePeriodSeconds: null
 
   # Probes for the primary container

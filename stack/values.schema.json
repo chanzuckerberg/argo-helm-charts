@@ -1531,7 +1531,7 @@
           "additionalProperties": false
         },
         "terminationGracePeriodSeconds": {
-          "description": "Seconds allowed for graceful termination of Deployment and Rollout pods. Null leaves the Kubernetes default unchanged.",
+          "description": "Seconds allowed for graceful termination of Deployment, Rollout, Job, and CronJob pods. Null leaves the Kubernetes default unchanged.",
           "type": [
             "integer",
             "null"
