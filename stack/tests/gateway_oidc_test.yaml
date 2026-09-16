@@ -380,6 +380,52 @@ tests:
         group: gateway.networking.k8s.io
         kind: ListenerSet
         name: release-name-stack-service1-vanity
+- it: should attach the public skipAuth HTTPRoute to a per-rule vanity ListenerSet
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /healthz
+          method: GET
+        rules:
+        - host: vanity.example.org
+          vanity:
+            enabled: true
+      securityPolicies:
+        oidc-protected-default:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+    services:
+      service1: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-service1-public
+  - documentIndex: 0
+    contains:
+      path: spec.hostnames
+      content: vanity.example.org
+  - documentIndex: 0
+    contains:
+      path: spec.parentRefs
+      content:
+        name: envoy-gateway
+        namespace: envoy-gateway
+  - documentIndex: 0
+    contains:
+      path: spec.parentRefs
+      content:
+        group: gateway.networking.k8s.io
+        kind: ListenerSet
+        name: release-name-stack-service1-vanity-rule-0
 - it: should attach the public skipAuth HTTPRoute to the vanity ListenerSet when vanity is enabled
   set:
     global:
