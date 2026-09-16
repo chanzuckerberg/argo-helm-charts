@@ -53,6 +53,9 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
         spec:
+          {{- if and (hasKey .Values "terminationGracePeriodSeconds") (ne .Values.terminationGracePeriodSeconds nil) }}
+          terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+          {{- end }}
           serviceAccountName: {{ include "service.serviceAccountName" . }}
           containers:
           - name: {{ include "service.fullname" . }}
