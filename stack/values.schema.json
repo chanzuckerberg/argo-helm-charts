@@ -1530,6 +1530,14 @@
           },
           "additionalProperties": false
         },
+        "terminationGracePeriodSeconds": {
+          "description": "Seconds allowed for graceful termination of Deployment and Rollout pods. Null leaves the Kubernetes default unchanged.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
         "tolerations": {
           "description": "Tolerations for the pod",
           "type": "array"

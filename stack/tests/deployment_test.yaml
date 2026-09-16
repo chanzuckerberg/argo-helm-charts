@@ -446,3 +446,49 @@ tests:
               maxsurge: 0
     asserts:
       - failedTemplate: {}
+
+  - it: leaves the pod termination grace period unset by default
+    set:
+      global:
+        deploymentKind: Deployment
+      services:
+        worker: {}
+    asserts:
+      - notExists:
+          path: spec.template.spec.terminationGracePeriodSeconds
+
+  - it: configures a worker grace period without changing other services
+    set:
+      global:
+        deploymentKind: Deployment
+      services:
+        batch-worker:
+          terminationGracePeriodSeconds: 90
+        sync-model: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 90
+      - documentIndex: 1
+        notExists:
+          path: spec.template.spec.terminationGracePeriodSeconds
+
+  - it: inherits the global grace period while preserving a service override of zero
+    set:
+      global:
+        deploymentKind: Deployment
+        terminationGracePeriodSeconds: 90
+      services:
+        inherited-worker: {}
+        override-worker:
+          terminationGracePeriodSeconds: 0
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 90
+      - documentIndex: 1
+        equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 0
