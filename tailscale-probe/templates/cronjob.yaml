@@ -72,6 +72,8 @@ spec:
               env:
                 - name: CLUSTER_NAME
                   value: {{ $clusterName | quote }}
+                - name: HOME
+                  value: /tmp
                 - name: MAX_PARALLEL
                   value: {{ .Values.probe.maxParallel | quote }}
                 - name: METRICS_EXPOSE_SECONDS

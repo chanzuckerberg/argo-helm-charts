@@ -47,6 +47,11 @@ tests:
           content:
             name: TS_CLIENT_ID
             value: test-client
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
+            name: HOME
+            value: /tmp
 
   - it: configures the source and Reef target identity
     asserts:

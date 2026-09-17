@@ -22,10 +22,12 @@ collect_target() {
   ssh_duration_seconds=0
   if [[ -n "${pong}" ]]; then
     ssh_started="$(date +%s%N)"
-    if timeout "${SSH_TIMEOUT_SECONDS}" \
+    if ssh_output="$(timeout "${SSH_TIMEOUT_SECONDS}" \
         tailscale --socket="${TS_SOCKET}" ssh \
-        "${SSH_USER}@${target}" "${SSH_COMMAND}" </dev/null >/dev/null 2>&1; then
+        "${SSH_USER}@${target}" "${SSH_COMMAND}" </dev/null 2>&1)"; then
       ssh_success=1
+    else
+      printf 'SSH probe failed for %s: %s\n' "${target}" "${ssh_output}" >&2
     fi
     ssh_finished="$(date +%s%N)"
     ssh_duration_seconds="$(awk "BEGIN { printf \"%.6f\", (${ssh_finished} - ${ssh_started}) / 1000000000 }")"

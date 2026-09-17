@@ -15,6 +15,9 @@ tests:
       - matchRegex:
           path: data["probe.sh"]
           pattern: tailscale.*ssh
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: SSH probe failed
 
   - it: writes native Tailscale metrics for the textfile collector
     asserts:
