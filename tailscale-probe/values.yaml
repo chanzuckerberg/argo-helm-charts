@@ -24,7 +24,7 @@ probe: # @schema description: Synthetic ping and SSH probe settings
   pingCount: 3 # @schema description: Maximum ping attempts used to establish the final path
   pingTimeout: 3s # @schema description: Timeout for each ping attempt
   maxParallel: 8 # @schema description: Maximum targets tested concurrently
-  targetHostnamePrefix: login-reef- # @schema description: Tailscale hostname prefix used to discover Reef login nodes
+  targetHostnamePrefix: login- # @schema description: Tailscale hostname prefix used to discover login nodes
   ssh: # @schema description: Authenticated synthetic SSH transaction settings
     command: "true" # @schema description: Harmless command executed after SSH authentication
     timeoutSeconds: 15 # @schema description: End-to-end SSH command timeout

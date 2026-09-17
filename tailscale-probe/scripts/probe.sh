@@ -116,7 +116,7 @@ collect() {
     echo '# HELP probe_tailscale_backend_up Whether the local Tailscale daemon is running and authenticated.'
     echo '# TYPE probe_tailscale_backend_up gauge'
     printf 'probe_tailscale_backend_up{source_cluster="%s"} %s\n' "${CLUSTER_NAME}" "${backend_up}"
-    echo '# HELP probe_tailscale_target_count Number of Reef login nodes discovered by hostname prefix.'
+    echo '# HELP probe_tailscale_target_count Number of login nodes discovered by hostname prefix.'
     echo '# TYPE probe_tailscale_target_count gauge'
     printf 'probe_tailscale_target_count{source_cluster="%s"} %s\n' "${CLUSTER_NAME}" "${target_count}"
     echo '# HELP probe_tailscale_ping_success Whether the target returned at least one Tailscale ping response.'

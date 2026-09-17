@@ -1,8 +1,8 @@
 # Tailscale probe
 
 This chart schedules an ephemeral Tailscale probe in a selected Kubernetes
-cluster. Each Job discovers Reef login nodes whose hostname starts with
-`login-reef-`, runs `tailscale ping`, authenticates over Tailscale SSH as the
+cluster. Each Job discovers login nodes whose hostname starts with `login-`,
+runs `tailscale ping`, authenticates over Tailscale SSH as the
 configured non-root user, and exposes the results as Prometheus metrics.
 
 The probe does not require a dedicated source repository or image:
@@ -37,7 +37,7 @@ system:serviceaccount:tailscale-probe:tailscale-probe
 ```
 
 The rule must allow `tag:tailscale-probe`. Tailnet policy must permit that tag
-to reach Reef login nodes and SSH as the configured non-root operating-system
+to reach login nodes and SSH as the configured non-root operating-system
 user. That account must exist on every targeted login node and support a
 non-interactive `true` command.
 

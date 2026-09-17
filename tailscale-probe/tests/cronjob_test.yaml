@@ -53,7 +53,7 @@ tests:
             name: HOME
             value: /tmp
 
-  - it: configures the source and Reef target identity
+  - it: configures the source and login target identity
     asserts:
       - contains:
           path: spec.jobTemplate.spec.template.spec.containers[0].env
@@ -64,7 +64,7 @@ tests:
           path: spec.jobTemplate.spec.template.spec.containers[0].env
           content:
             name: TARGET_HOSTNAME_PREFIX
-            value: login-reef-
+            value: login-
       - contains:
           path: spec.jobTemplate.spec.template.spec.containers[0].env
           content:

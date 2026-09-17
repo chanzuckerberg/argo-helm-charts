@@ -176,7 +176,7 @@
 | - [pingCount](#probe_pingCount )                       | No      | integer | No         | -          | Maximum ping attempts used to establish the final path                    |
 | - [pingTimeout](#probe_pingTimeout )                   | No      | string  | No         | -          | Timeout for each ping attempt                                             |
 | - [ssh](#probe_ssh )                                   | No      | object  | No         | -          | Authenticated synthetic SSH transaction settings                          |
-| - [targetHostnamePrefix](#probe_targetHostnamePrefix ) | No      | string  | No         | -          | Tailscale hostname prefix used to discover Reef login nodes               |
+| - [targetHostnamePrefix](#probe_targetHostnamePrefix ) | No      | string  | No         | -          | Tailscale hostname prefix used to discover login nodes                    |
 
 ### <a name="probe_image"></a>8.1. Property `tailscale-probe > probe > image`
 
@@ -298,7 +298,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Tailscale hostname prefix used to discover Reef login nodes
+**Description:** Tailscale hostname prefix used to discover login nodes
 
 ## <a name="resources"></a>9. Property `tailscale-probe > resources`
 

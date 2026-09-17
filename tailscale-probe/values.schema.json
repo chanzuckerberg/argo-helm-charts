@@ -121,7 +121,7 @@
           }
         },
         "targetHostnamePrefix": {
-          "description": "Tailscale hostname prefix used to discover Reef login nodes",
+          "description": "Tailscale hostname prefix used to discover login nodes",
           "type": "string"
         }
       }
