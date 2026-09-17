@@ -70,6 +70,13 @@ spec:
       sectionName: {{ .Values.gateway.sectionName }}
       {{- end }}
     {{- end }}
+    {{- range $i, $rule := .Values.gateway.rules }}
+    {{- if and $rule.vanity $rule.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ printf "%s-rule-%d" (include "service.vanityListenerSetName" $service) $i }}
+    {{- end }}
+    {{- end }}
   hostnames:
     - {{ .Values.gateway.host }}
   {{- range $i, $rule := .Values.gateway.rules }}
