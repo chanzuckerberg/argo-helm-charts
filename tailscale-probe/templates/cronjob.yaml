@@ -16,6 +16,7 @@ spec:
     spec:
       activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
       backoffLimit: {{ .Values.backoffLimit }}
+      podReplacementPolicy: Failed
       template:
         metadata:
           labels:
