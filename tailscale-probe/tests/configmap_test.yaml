@@ -24,3 +24,9 @@ tests:
       - matchRegex:
           path: data["probe.sh"]
           pattern: tailscaled[.]prom
+
+  - it: waits only for target collectors
+    asserts:
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: wait.*target_pids

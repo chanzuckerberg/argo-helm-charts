@@ -122,16 +122,21 @@ collect() {
   } > "${output}"
 
   active=0
+  target_pids=()
   for target in ${targets}; do
     safe_target="$(printf '%s' "${target}" | tr -c 'a-zA-Z0-9._-' '_')"
     collect_target "${target}" "${work_dir}/${safe_target}.part" &
+    target_pids+=("$!")
     active=$((active + 1))
     if [[ "${active}" -ge "${MAX_PARALLEL}" ]]; then
-      wait
+      wait "${target_pids[@]}"
+      target_pids=()
       active=0
     fi
   done
-  wait
+  if [[ "${#target_pids[@]}" -gt 0 ]]; then
+    wait "${target_pids[@]}"
+  fi
 
   for result in "${work_dir}"/*.part; do
     if [[ -f "${result}" ]]; then
