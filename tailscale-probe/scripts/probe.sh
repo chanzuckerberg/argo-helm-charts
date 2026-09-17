@@ -1,11 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+log_info() {
+  printf '%s INFO %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*"
+}
+
+log_error() {
+  printf '%s ERROR %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*" >&2
+}
+
 ts() {
   tailscale --socket="${TS_SOCKET}" "$@"
 }
 
 cleanup() {
+  log_info "Stopping tailscaled"
   kill "${tailscaled_pid}" 2>/dev/null || true
   wait "${tailscaled_pid}" 2>/dev/null || true
 }
@@ -27,10 +36,14 @@ collect_target() {
         "${SSH_USER}@${target}" "${SSH_COMMAND}" </dev/null 2>&1)"; then
       ssh_success=1
     else
-      printf 'SSH probe failed for %s: %s\n' "${target}" "${ssh_output}" >&2
+      ssh_error="$(printf '%s' "${ssh_output}" | tr '\n' ' ')"
+      log_error "SSH failed target=${target} error=${ssh_error}"
     fi
     ssh_finished="$(date +%s%N)"
     ssh_duration_seconds="$(awk "BEGIN { printf \"%.6f\", (${ssh_finished} - ${ssh_started}) / 1000000000 }")"
+  else
+    ping_error="$(printf '%s' "${ping_output}" | tr '\n' ' ')"
+    log_error "Ping failed target=${target} error=${ping_error}"
   fi
 
   {
@@ -97,6 +110,7 @@ collect() {
     awk -v prefix="${TARGET_HOSTNAME_PREFIX}" -v self="${TS_HOSTNAME}" \
       '$2 ~ ("^" prefix) && $2 != self { print $2 }')"
   target_count="$(printf '%s\n' "${targets}" | awk 'NF { count++ } END { print count + 0 }')"
+  log_info "Discovered targets=${target_count} prefix=${TARGET_HOSTNAME_PREFIX}"
 
   {
     echo '# HELP probe_tailscale_backend_up Whether the local Tailscale daemon is running and authenticated.'
@@ -146,22 +160,36 @@ collect() {
     fi
   done
 
+  native_metrics_success=0
   if collect_builtin_metrics; then
+    native_metrics_success=1
     printf 'probe_tailscaled_metrics_scrape_success{source_cluster="%s"} 1\n' "${CLUSTER_NAME}" >> "${output}"
   else
     printf 'probe_tailscaled_metrics_scrape_success{source_cluster="%s"} 0\n' "${CLUSTER_NAME}" >> "${output}"
   fi
+  cycle_duration_seconds="$(($(date +%s) - collect_started))"
   printf 'probe_tailscale_cycle_duration_seconds{source_cluster="%s"} %s\n' \
-    "${CLUSTER_NAME}" "$(($(date +%s) - collect_started))" >> "${output}"
+    "${CLUSTER_NAME}" "${cycle_duration_seconds}" >> "${output}"
+
+  ping_success_count="$(awk '$1 ~ /^probe_tailscale_ping_success\{/ && $2 == 1 { count++ } END { print count + 0 }' "${output}")"
+  ssh_success_count="$(awk '$1 ~ /^probe_tailscale_ssh_success\{/ && $2 == 1 { count++ } END { print count + 0 }' "${output}")"
+  direct_count="$(awk '$1 ~ /path_type="direct"/ && $2 == 1 { count++ } END { print count + 0 }' "${output}")"
+  derp_count="$(awk '$1 ~ /path_type="derp"/ && $2 == 1 { count++ } END { print count + 0 }' "${output}")"
+  peer_relay_count="$(awk '$1 ~ /path_type="peer_relay"/ && $2 == 1 { count++ } END { print count + 0 }' "${output}")"
+  unavailable_count="$(awk '$1 ~ /path_type="unavailable"/ && $2 == 1 { count++ } END { print count + 0 }' "${output}")"
+
   mv "${output}" /metrics/probe.prom
+  log_info "Collection complete targets=${target_count} ping_success=${ping_success_count} ssh_success=${ssh_success_count} direct=${direct_count} derp=${derp_count} peer_relay=${peer_relay_count} unavailable=${unavailable_count} native_metrics_success=${native_metrics_success} duration_seconds=${cycle_duration_seconds}"
 }
 
+log_info "Probe starting cluster=${CLUSTER_NAME} hostname=${TS_HOSTNAME} max_parallel=${MAX_PARALLEL}"
 mkdir -p "$(dirname "${TS_SOCKET}")" /metrics /tmp/tailscale
 tailscaled \
   --socket="${TS_SOCKET}" \
   --state=mem: \
   --statedir=/tmp/tailscale \
-  --tun=userspace-networking &
+  --tun=userspace-networking \
+  2> >(sed -u '/\[RATELIMIT\] format(/d' >&2) &
 tailscaled_pid="$!"
 trap cleanup EXIT INT TERM
 
@@ -177,7 +205,9 @@ if [[ "${ready}" -ne 1 ]]; then
   echo "tailscaled did not become ready" >&2
   exit 1
 fi
+log_info "Tailscaled socket ready"
 
+log_info "Authenticating Tailscale node"
 ts up \
   --accept-dns=true \
   --advertise-tags="${TS_TAG}" \
@@ -185,9 +215,12 @@ ts up \
   --hostname="${TS_HOSTNAME}" \
   --id-token="file:${TS_TOKEN_FILE}" \
   --reset
+log_info "Tailscale node authenticated"
 
 collect
 
 # Alloy discovers annotated pods on a one-minute interval. Keep the Job and its
 # native sidecar alive long enough for at least one scrape after metrics exist.
+log_info "Exposing metrics seconds=${METRICS_EXPOSE_SECONDS}"
 sleep "${METRICS_EXPOSE_SECONDS}"
+log_info "Probe finished"

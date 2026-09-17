@@ -17,7 +17,7 @@ tests:
           pattern: tailscale.*ssh
       - matchRegex:
           path: data["probe.sh"]
-          pattern: SSH probe failed
+          pattern: SSH failed
 
   - it: writes native Tailscale metrics for the textfile collector
     asserts:
@@ -33,3 +33,15 @@ tests:
       - matchRegex:
           path: data["probe.sh"]
           pattern: wait.*target_pids
+
+  - it: logs lifecycle and collection summaries
+    asserts:
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: Probe starting
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: Collection complete
+      - matchRegex:
+          path: data["probe.sh"]
+          pattern: RATELIMIT.*format
