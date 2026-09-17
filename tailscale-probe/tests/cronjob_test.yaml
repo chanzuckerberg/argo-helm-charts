@@ -60,5 +60,10 @@ tests:
       - contains:
           path: spec.jobTemplate.spec.template.spec.containers[0].env
           content:
+            name: SSH_USER
+            value: jheath
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.containers[0].env
+          content:
             name: TS_HOSTNAME
             value: tailscale-probe-test-aws

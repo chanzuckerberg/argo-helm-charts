@@ -28,7 +28,7 @@ probe: # @schema description: Synthetic ping and SSH probe settings
   ssh: # @schema description: Authenticated synthetic SSH transaction settings
     command: "true" # @schema description: Harmless command executed after SSH authentication
     timeoutSeconds: 15 # @schema description: End-to-end SSH command timeout
-    user: tailscale-probe # @schema description: Dedicated operating system user present on every target
+    user: jheath # @schema description: Non-root operating system user used for the synthetic SSH transaction
 
 exporter: # @schema description: Prometheus textfile exporter settings
   image: # @schema description: Node exporter image

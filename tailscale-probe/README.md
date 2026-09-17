@@ -258,11 +258,11 @@
 
 **Description:** Authenticated synthetic SSH transaction settings
 
-| Property                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                       |
-| ---------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------- |
-| - [command](#probe_ssh_command )               | No      | string  | No         | -          | Harmless command executed after SSH authentication      |
-| - [timeoutSeconds](#probe_ssh_timeoutSeconds ) | No      | integer | No         | -          | End-to-end SSH command timeout                          |
-| - [user](#probe_ssh_user )                     | No      | string  | No         | -          | Dedicated operating system user present on every target |
+| Property                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                     |
+| ---------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------- |
+| - [command](#probe_ssh_command )               | No      | string  | No         | -          | Harmless command executed after SSH authentication                    |
+| - [timeoutSeconds](#probe_ssh_timeoutSeconds ) | No      | integer | No         | -          | End-to-end SSH command timeout                                        |
+| - [user](#probe_ssh_user )                     | No      | string  | No         | -          | Non-root operating system user used for the synthetic SSH transaction |
 
 #### <a name="probe_ssh_command"></a>8.5.1. Property `tailscale-probe > probe > ssh > command`
 
@@ -289,7 +289,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Dedicated operating system user present on every target
+**Description:** Non-root operating system user used for the synthetic SSH transaction
 
 ### <a name="probe_targetHostnamePrefix"></a>8.6. Property `tailscale-probe > probe > targetHostnamePrefix`
 

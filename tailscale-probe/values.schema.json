@@ -115,7 +115,7 @@
               "type": "integer"
             },
             "user": {
-              "description": "Dedicated operating system user present on every target",
+              "description": "Non-root operating system user used for the synthetic SSH transaction",
               "type": "string"
             }
           }
