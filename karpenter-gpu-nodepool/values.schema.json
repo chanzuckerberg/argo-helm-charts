@@ -368,6 +368,13 @@
               }
             }
           }
+        },
+        "weight": {
+          "description": "Priority weight for this NodePool (higher = preferred). Karpenter schedules pods to the highest-weight pool that can satisfy their requirements.",
+          "type": [
+            "integer",
+            "null"
+          ]
         }
       }
     },
