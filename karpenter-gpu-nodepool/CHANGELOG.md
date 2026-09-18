@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.6.0...karpenter-gpu-nodepool-v0.7.0) (2026-09-18)
+
+
+### Features
+
+* add NodePool weight field for scheduling priority ([#566](https://github.com/chanzuckerberg/argo-helm-charts/issues/566)) ([64d3d93](https://github.com/chanzuckerberg/argo-helm-charts/commit/64d3d93e949dd9b05c5377f2fc5c70ab327913c4))
+
 ## [0.6.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/karpenter-gpu-nodepool-v0.5.0...karpenter-gpu-nodepool-v0.6.0) (2026-09-04)
 
 

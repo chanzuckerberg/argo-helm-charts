@@ -607,13 +607,14 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                              | Pattern | Type    | Deprecated | Definition | Title/Description                                                                               |
-| ------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| - [disruption](#nodepool_disruption ) | No      | object  | No         | -          | -                                                                                               |
-| - [enabled](#nodepool_enabled )       | No      | boolean | No         | -          | Enable deployment of NodePool.                                                                  |
-| - [limits](#nodepool_limits )         | No      | object  | No         | -          | Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1"). |
-| - [name](#nodepool_name )             | No      | string  | No         | -          | Name of the NodePool.                                                                           |
-| - [template](#nodepool_template )     | No      | object  | No         | -          | -                                                                                               |
+| Property                              | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                |
+| ------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [disruption](#nodepool_disruption ) | No      | object          | No         | -          | -                                                                                                                                                |
+| - [enabled](#nodepool_enabled )       | No      | boolean         | No         | -          | Enable deployment of NodePool.                                                                                                                   |
+| - [limits](#nodepool_limits )         | No      | object          | No         | -          | Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1").                                                  |
+| - [name](#nodepool_name )             | No      | string          | No         | -          | Name of the NodePool.                                                                                                                            |
+| - [template](#nodepool_template )     | No      | object          | No         | -          | -                                                                                                                                                |
+| - [weight](#nodepool_weight )         | No      | integer or null | No         | -          | Priority weight for this NodePool (higher = preferred). Karpenter schedules pods to the highest-weight pool that can satisfy their requirements. |
 
 ### <a name="nodepool_disruption"></a>3.1. Property `karpenter-gpu-nodepool > nodepool > disruption`
 
@@ -1008,6 +1009,15 @@ must respect the following conditions
 
 **Description:** Maximum time a node may be draining before its remaining pods are forcibly deleted (e.g., 1h). When set, drift can disrupt nodes whose pods have blocking PDBs or the do-not-disrupt annotation, and forceful drains (expiration) are bounded instead of hanging on blocked evictions. Unset omits the field, preserving unbounded drains.
 
+### <a name="nodepool_weight"></a>3.6. Property `karpenter-gpu-nodepool > nodepool > weight`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `integer or null` |
+| **Required** | No                |
+
+**Description:** Priority weight for this NodePool (higher = preferred). Karpenter schedules pods to the highest-weight pool that can satisfy their requirements.
+
 ## <a name="nodepools"></a>4. Property `karpenter-gpu-nodepool > nodepools`
 
 |                           |                  |
@@ -1034,13 +1044,14 @@ must respect the following conditions
 | **Additional properties** | Any type allowed      |
 | **Defined in**            | #/properties/nodepool |
 
-| Property                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                               |
-| ----------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| - [disruption](#nodepools_pattern1_disruption ) | No      | object  | No         | -          | -                                                                                               |
-| - [enabled](#nodepools_pattern1_enabled )       | No      | boolean | No         | -          | Enable deployment of NodePool.                                                                  |
-| - [limits](#nodepools_pattern1_limits )         | No      | object  | No         | -          | Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1"). |
-| - [name](#nodepools_pattern1_name )             | No      | string  | No         | -          | Name of the NodePool.                                                                           |
-| - [template](#nodepools_pattern1_template )     | No      | object  | No         | -          | -                                                                                               |
+| Property                                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                |
+| ----------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [disruption](#nodepools_pattern1_disruption ) | No      | object          | No         | -          | -                                                                                                                                                |
+| - [enabled](#nodepools_pattern1_enabled )       | No      | boolean         | No         | -          | Enable deployment of NodePool.                                                                                                                   |
+| - [limits](#nodepools_pattern1_limits )         | No      | object          | No         | -          | Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1").                                                  |
+| - [name](#nodepools_pattern1_name )             | No      | string          | No         | -          | Name of the NodePool.                                                                                                                            |
+| - [template](#nodepools_pattern1_template )     | No      | object          | No         | -          | -                                                                                                                                                |
+| - [weight](#nodepools_pattern1_weight )         | No      | integer or null | No         | -          | Priority weight for this NodePool (higher = preferred). Karpenter schedules pods to the highest-weight pool that can satisfy their requirements. |
 
 #### <a name="nodepools_pattern1_disruption"></a>4.1.1. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > disruption`
 
@@ -1434,6 +1445,15 @@ must respect the following conditions
 | **Required** | No               |
 
 **Description:** Maximum time a node may be draining before its remaining pods are forcibly deleted (e.g., 1h). When set, drift can disrupt nodes whose pods have blocking PDBs or the do-not-disrupt annotation, and forceful drains (expiration) are bounded instead of hanging on blocked evictions. Unset omits the field, preserving unbounded drains.
+
+#### <a name="nodepools_pattern1_weight"></a>4.1.6. Property `karpenter-gpu-nodepool > nodepools > ^.*$ > weight`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `integer or null` |
+| **Required** | No                |
+
+**Description:** Priority weight for this NodePool (higher = preferred). Karpenter schedules pods to the highest-weight pool that can satisfy their requirements.
 
 ## <a name="nvidiaDriver"></a>5. Property `karpenter-gpu-nodepool > nvidiaDriver`
 
