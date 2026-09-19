@@ -22,6 +22,9 @@ metadata:
   labels:
     {{- include "karpenter-gpu-nodepool.labels" $ | nindent 4 }}
 spec:
+  {{- with $merged.weight }}
+  weight: {{ . }}
+  {{- end }}
   disruption:
     consolidationPolicy: {{ $merged.disruption.consolidationPolicy }}
     consolidateAfter: {{ $merged.disruption.consolidateAfter }}

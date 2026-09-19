@@ -1,6 +1,7 @@
 nodepool:
   enabled: true # @schema description: Enable deployment of NodePool.
   name: gpu-workloads # @schema description: Name of the NodePool.
+  weight: null # @schema type: [integer, null]; description: Priority weight for this NodePool (higher = preferred). Karpenter schedules pods to the highest-weight pool that can satisfy their requirements.
   
   limits: {} # @schema description: Resource limits for the NodePool to cap total provisioned capacity (e.g., nvidia.com/gpu: "1").; patternProperties: { "^.*$": { "type": "string" } }
 

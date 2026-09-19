@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.57.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.57.0...stack-v2.57.1) (2026-09-16)
+
+
+### Bug Fixes
+
+* **stack:** make skipAuth paths public on per-rule vanity hosts ([#564](https://github.com/chanzuckerberg/argo-helm-charts/issues/564)) ([18352f6](https://github.com/chanzuckerberg/argo-helm-charts/commit/18352f6f64a3b9eb352b95d6e56dc855a2f6ff7d))
+
+## [2.57.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.56.0...stack-v2.57.0) (2026-09-16)
+
+
+### Features
+
+* add terminationGracePeriodSeconds ([#562](https://github.com/chanzuckerberg/argo-helm-charts/issues/562)) ([fc8b544](https://github.com/chanzuckerberg/argo-helm-charts/commit/fc8b544ff8f723157e20426819457bb869193cf0))
+
 ## [2.56.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.55.0...stack-v2.56.0) (2026-09-08)
 
 
