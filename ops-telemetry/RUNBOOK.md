@@ -136,6 +136,8 @@ requires a reviewed ConfigMap update plus workload restart.
 ## Validation
 
 ```sh
+# Uses the repository-standard helm-unittest plugin and CI workflow:
+helm unittest --strict ops-telemetry
 HELM=helm python -m unittest discover -s tools/ops-telemetry/tests -p test_deployment.py -v
 # Requires an EMPTY disposable PostgreSQL database; never a shared/production DB:
 OPS_TEST_DATABASE_URL=... python -m unittest discover -s tools/ops-telemetry/tests -p test_migrations.py -v

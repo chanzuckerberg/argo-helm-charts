@@ -1,0 +1,138 @@
+suite: collector
+templates:
+- collector.yaml
+set:
+  image: 577638397886.dkr.ecr.us-east-1.amazonaws.com/ops-telemetry@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+tests:
+- it: keeps a single scrape-owning exporter during rollout
+  asserts:
+  - equal:
+      path: spec.replicas
+      value: 1
+    documentIndex: 0
+  - equal:
+      path: spec.strategy.type
+      value: Recreate
+    documentIndex: 0
+  - equal:
+      path: spec.template.metadata.annotations["prometheus.io/scrape"]
+      value: 'true'
+    documentIndex: 0
+  - equal:
+      path: spec.template.metadata.annotations["prometheus.io/path"]
+      value: /metrics
+    documentIndex: 0
+  - notExists:
+      path: metadata.annotations["prometheus.io/scrape"]
+    documentIndex: 1
+- it: exposes only the authenticated API through the HTTPS gateway
+  set:
+    hostname: ops.test.example
+    dnsTarget: gateway.test.example
+  asserts:
+  - equal:
+      path: spec.parentRefs
+      value:
+      - name: envoy-gateway
+        namespace: envoy-gateway
+        sectionName: https
+    documentIndex: 2
+  - equal:
+      path: spec.hostnames
+      value:
+      - ops.test.example
+    documentIndex: 2
+  - equal:
+      path: metadata.annotations["external-dns.alpha.kubernetes.io/target"]
+      value: gateway.test.example
+    documentIndex: 2
+  - equal:
+      path: spec.rules
+      value:
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1
+        backendRefs:
+        - name: ops-telemetry
+          port: 9090
+    documentIndex: 2
+- it: restricts incoming connections to Alloy and the gateway pods
+  asserts:
+  - equal:
+      path: spec.policyTypes
+      value:
+      - Ingress
+    documentIndex: 3
+  - equal:
+      path: spec.ingress
+      value:
+      - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: loki
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: alloy
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: envoy-gateway-controller
+          podSelector:
+            matchLabels:
+              gateway.envoyproxy.io/owning-gateway-name: envoy-gateway
+              gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway
+        ports:
+        - protocol: TCP
+          port: 9090
+    documentIndex: 3
+- it: uses runtime credentials only and starts after migration
+  asserts:
+  - equal:
+      path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+      value: '1'
+    documentIndex: 0
+  - equal:
+      path: spec.template.spec.containers[0].env
+      value:
+      - name: OPS_OBSERVABILITY_DATABASE_URL
+        valueFrom:
+          secretKeyRef:
+            name: ops-telemetry-runtime
+            key: database-url
+      - name: OPS_TELEMETRY_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: ops-telemetry-runtime
+            key: ingestion-token
+    documentIndex: 0
+  - equal:
+      path: spec.template.spec.containers[0].image
+      value: 577638397886.dkr.ecr.us-east-1.amazonaws.com/ops-telemetry@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    documentIndex: 0
+- it: runs without a service account token or writable root filesystem
+  asserts:
+  - equal:
+      path: spec.template.spec.automountServiceAccountToken
+      value: false
+    documentIndex: 0
+  - equal:
+      path: spec.template.spec.securityContext.runAsNonRoot
+      value: true
+    documentIndex: 0
+  - equal:
+      path: spec.template.spec.containers[0].securityContext
+      value:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+          - ALL
+    documentIndex: 0
+  - equal:
+      path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+      value: /readyz
+    documentIndex: 0
+  - equal:
+      path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+      value: /healthz
+    documentIndex: 0
