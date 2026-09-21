@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ops-telemetry
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ops-observer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ops-observer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9090"
+        ops.czi.team/source-revision: {{ .Values.sourceRevision | quote }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: collector
+          image: {{ .Values.image | quote }}
+          ports:
+            - {name: http-metrics, containerPort: 9090}
+          env:
+            - name: OPS_OBSERVABILITY_DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: ops-telemetry-runtime, key: database-url}
+            - name: OPS_TELEMETRY_TOKEN
+              valueFrom:
+                secretKeyRef: {name: ops-telemetry-runtime, key: ingestion-token}
+          readinessProbe:
+            httpGet: {path: /readyz, port: http-metrics}
+          livenessProbe:
+            httpGet: {path: /healthz, port: http-metrics}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: "1", memory: 512Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: rds-ca, mountPath: /etc/ops-rds-ca, readOnly: true}
+      volumes:
+        - name: rds-ca
+          configMap: {name: ops-rds-ca}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ops-telemetry
+spec:
+  selector: {app.kubernetes.io/name: ops-observer}
+  ports:
+    - {name: http-metrics, port: 9090, targetPort: http-metrics}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ops-telemetry
+  annotations:
+    external-dns.alpha.kubernetes.io/target: {{ .Values.dnsTarget | quote }}
+spec:
+  parentRefs:
+    - {name: envoy-gateway, namespace: envoy-gateway, sectionName: https}
+  hostnames: [{{ .Values.hostname | quote }}]
+  rules:
+    - matches:
+        - path: {type: PathPrefix, value: /api/v1}
+      backendRefs:
+        - {name: ops-telemetry, port: 9090}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ops-telemetry
+spec:
+  podSelector:
+    matchLabels: {app.kubernetes.io/name: ops-observer}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: loki}
+          podSelector:
+            matchLabels: {app.kubernetes.io/name: alloy}
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: envoy-gateway-controller}
+          podSelector:
+            matchLabels:
+              gateway.envoyproxy.io/owning-gateway-name: envoy-gateway
+              gateway.envoyproxy.io/owning-gateway-namespace: envoy-gateway
+      ports: [{protocol: TCP, port: 9090}]

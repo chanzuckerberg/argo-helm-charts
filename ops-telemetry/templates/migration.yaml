@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ops-telemetry-migrate
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 600
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: migrate
+          image: {{ .Values.image | quote }}
+          command: [python, /migrations/migrate.py]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: ops-telemetry-migration, key: database-url}
+            - name: RUNTIME_PASSWORD
+              valueFrom:
+                secretKeyRef: {name: ops-telemetry-migration, key: runtime-password}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: "1", memory: 512Mi}
+          volumeMounts:
+            - {name: migrations, mountPath: /migrations, readOnly: true}
+            - {name: rds-ca, mountPath: /etc/ops-rds-ca, readOnly: true}
+      volumes:
+        - name: migrations
+          configMap: {name: ops-telemetry-migrations}
+        - name: rds-ca
+          configMap: {name: ops-rds-ca}
