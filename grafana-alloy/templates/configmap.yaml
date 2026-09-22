@@ -247,6 +247,9 @@ data:
       }
     }
 
+    {{- end }}
+    {{- if or .Values.alloyConfig.podLogs.enabled .Values.alloyConfig.events.enabled .Values.alloyConfig.otlpProducers }}
+
     loki.write "endpoints" {
       {{- range $idx, $endpoint := .Values.loki.endpoints }}
       endpoint {
@@ -1111,6 +1114,80 @@ data:
       targets    = beyla.ebpf.default.targets
       forward_to = [prometheus.remote_write.endpoint_0.receiver]
       scrape_interval = "15s"
+    }
+    {{- end }}
+
+    {{- range $producer := .Values.alloyConfig.otlpProducers }}
+    {{- $id := regexReplaceAll "[^a-zA-Z0-9_]" $producer.name "_" }}
+    {{- $remoteWrite := list }}
+    {{- range $idx, $endpoint := $.Values.prometheusRemoteWrite.endpoints }}
+    {{- $remoteWrite = append $remoteWrite (printf "prometheus.remote_write.endpoint_%d.receiver" $idx) }}
+    {{- end }}
+
+    otelcol.receiver.otlp "{{ $id }}" {
+      http {
+        endpoint = "0.0.0.0:{{ $producer.httpPort }}"
+      }
+      output {
+        metrics = [otelcol.processor.transform.{{ $id }}.input]
+        logs    = [otelcol.processor.transform.{{ $id }}.input]
+      }
+    }
+
+    otelcol.processor.transform "{{ $id }}" {
+      error_mode = "ignore"
+
+      metric_statements {
+        context = "datapoint"
+        statements = [
+          `set(attributes["source"], "{{ $producer.name }}")`,
+          {{- range $attr := $producer.promoteResourceAttributes }}
+          `set(attributes["{{ $attr }}"], resource.attributes["{{ $attr }}"])`,
+          {{- end }}
+        ]
+      }
+
+      log_statements {
+        context = "resource"
+        statements = [
+          `set(attributes["source"], "{{ $producer.name }}")`,
+          {{- with $producer.logFormat }}
+          `set(attributes["loki.format"], "{{ . }}")`,
+          {{- end }}
+          {{- with $producer.promoteResourceAttributes }}
+          `set(attributes["loki.resource.labels"], "source, {{ join ", " . }}")`,
+          {{- end }}
+        ]
+      }
+
+      output {
+        metrics = [otelcol.exporter.prometheus.{{ $id }}.input]
+        logs    = [otelcol.exporter.loki.{{ $id }}.input]
+      }
+    }
+
+    otelcol.exporter.prometheus "{{ $id }}" {
+      include_target_info = {{ dig "includeTargetInfo" true $producer }}
+      add_metric_suffixes = {{ dig "addMetricSuffixes" true $producer }}
+      {{- if $producer.dropMetricLabels }}
+      forward_to          = [prometheus.relabel.{{ $id }}.receiver]
+      {{- else }}
+      forward_to          = [{{ join ", " $remoteWrite }}]
+      {{- end }}
+    }
+
+    {{- if $producer.dropMetricLabels }}
+    prometheus.relabel "{{ $id }}" {
+      rule {
+        action = "labeldrop"
+        regex  = "{{ join "|" $producer.dropMetricLabels }}"
+      }
+      forward_to = [{{ join ", " $remoteWrite }}]
+    }
+    {{- end }}
+
+    otelcol.exporter.loki "{{ $id }}" {
+      forward_to = [loki.write.endpoints.receiver]
     }
     {{- end }}
 {{- end }}
