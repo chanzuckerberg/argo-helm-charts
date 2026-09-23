@@ -1,4 +1,4 @@
 apiVersion: v2
 name: ops-telemetry
-version: 0.1.0
+version: 0.2.0
 description: Durable OPS collector and native pipeline canary ingress
