@@ -336,6 +336,10 @@
             }
           }
         },
+        "otlpProducers": {
+          "description": "External OTLP/HTTP producers to accept push telemetry from. Each item takes name, httpPort, promoteResourceAttributes, dropMetricLabels, addMetricSuffixes, includeTargetInfo and logFormat, and gets its own receiver and processing chain forwarding to loki.endpoints and prometheusRemoteWrite.endpoints.",
+          "type": "array"
+        },
         "podLogs": {
           "description": "Enable pod log collection",
           "type": "object",
