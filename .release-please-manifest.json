@@ -9,5 +9,5 @@
   "karpenter-gpu-nodepool": "0.7.0",
   "grafana-alloy": "0.10.1",
   "karpenter-nodepool": "0.1.0",
-  "ops-telemetry": "0.1.0"
+  "ops-telemetry": "0.2.0"
 }
