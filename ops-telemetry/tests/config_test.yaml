@@ -1,0 +1,51 @@
+suite: config
+templates:
+- config.yaml
+set:
+  image: 577638397886.dkr.ecr.us-east-1.amazonaws.com/ops-telemetry@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+tests:
+- it: rejects a missing image
+  set:
+    image: ''
+  asserts:
+  - failedTemplate:
+      errorMessage: image must be the published ops-telemetry ECR sha256 digest
+- it: rejects mutable image tags
+  set:
+    image: 577638397886.dkr.ecr.us-east-1.amazonaws.com/ops-telemetry:latest
+  asserts:
+  - failedTemplate:
+      errorMessage: image must be the published ops-telemetry ECR sha256 digest
+- it: rejects images from another registry
+  set:
+    image: 000000000000.dkr.ecr.us-east-1.amazonaws.com/ops-telemetry@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  asserts:
+  - failedTemplate:
+      errorMessage: image must be the published ops-telemetry ECR sha256 digest
+- it: rejects a source revision without refreshed migration provenance
+  set:
+    sourceRevision: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  asserts:
+  - failedTemplate:
+      errorMessage: refresh bundled migrations and provenance before changing sourceRevision
+- it: bundles both migrations and the RDS trust bundle before migration
+  asserts:
+  - hasDocuments:
+      count: 2
+  - equal:
+      path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+      value: '-2'
+    documentIndex: 0
+  - isNotEmpty:
+      path: data["0001_live_telemetry.sql"]
+    documentIndex: 0
+  - isNotEmpty:
+      path: data["0002_processing_telemetry.sql"]
+    documentIndex: 0
+  - isNotEmpty:
+      path: data["migrate.py"]
+    documentIndex: 0
+  - matchRegex:
+      path: data["global-bundle.pem"]
+      pattern: '-----BEGIN CERTIFICATE-----'
+    documentIndex: 1

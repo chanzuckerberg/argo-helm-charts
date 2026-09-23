@@ -50,6 +50,9 @@
     },
     "karpenter-nodepool": {
       "package-name": "karpenter-nodepool"
+    },
+    "ops-telemetry": {
+      "package-name": "ops-telemetry"
     }
   }
 }

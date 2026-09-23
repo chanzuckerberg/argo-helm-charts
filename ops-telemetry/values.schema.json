@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/ops-telemetry",
+  "title": "ops-telemetry",
+  "type": "object",
+  "properties": {
+    "dnsTarget": {
+      "type": "string"
+    },
+    "hostname": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "secretPrefix": {
+      "type": "string"
+    },
+    "secretStore": {
+      "type": "string"
+    },
+    "sourceRevision": {
+      "type": "string"
+    }
+  }
+}

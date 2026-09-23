@@ -1,0 +1,26 @@
+{{- if not (regexMatch "^577638397886\\.dkr\\.ecr\\.us-east-1\\.amazonaws\\.com/ops-telemetry@sha256:[0-9a-f]{64}$" .Values.image) }}
+{{- fail "image must be the published ops-telemetry ECR sha256 digest" }}
+{{- end }}
+{{- if ne .Values.sourceRevision "e6b04967e804e7449b565409c85f55d6953111ee" }}
+{{- fail "refresh bundled migrations and provenance before changing sourceRevision" }}
+{{- end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ops-telemetry-migrations
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+data:
+{{ (.Files.Glob "files/migrations/*").AsConfig | indent 2 }}
+  migrate.py: |
+{{ .Files.Get "files/migrate.py" | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ops-rds-ca
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+data:
+  global-bundle.pem: |
+{{ .Files.Get "files/global-bundle.pem" | indent 4 }}
