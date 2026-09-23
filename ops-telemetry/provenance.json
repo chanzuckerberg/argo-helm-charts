@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/czbiohub-sf/ops_monorepo",
+  "revision": "e6b04967e804e7449b565409c85f55d6953111ee",
+  "migrations": {
+    "0002_processing_telemetry.sql": "9284ecacab3eedd7edf85586dd932334966501ec5451a00d0f851cd081bf301d",
+    "0001_live_telemetry.sql": "7fb581c7c3fade6caed5477818f580df9499fca3b52620530450eb961c4b5516"
+  }
+}

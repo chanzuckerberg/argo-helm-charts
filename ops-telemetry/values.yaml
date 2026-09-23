@@ -1,0 +1,7 @@
+# Supply the published immutable digest; rendering fails closed without it.
+image: ""
+sourceRevision: e6b04967e804e7449b565409c85f55d6953111ee
+hostname: ops-telemetry.prod-sci-data.prod.czi.team
+dnsTarget: access-gw.prod-sci-data.prod.czi.team
+secretStore: aws-secretsmanager-us-east-1
+secretPrefix: prod-sci-data/prod-sci-data/ops-telemetry
