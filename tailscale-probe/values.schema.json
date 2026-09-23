@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/tailscale-probe",
+  "title": "tailscale-probe",
+  "type": "object",
+  "required": [
+    "clusterName"
+  ],
+  "properties": {
+    "activeDeadlineSeconds": {
+      "description": "Maximum runtime for one probe Job",
+      "type": "integer"
+    },
+    "backoffLimit": {
+      "description": "Number of Job retries after failure",
+      "type": "integer"
+    },
+    "clusterName": {
+      "description": "Stable cluster identifier added to probe metrics. This value is required.",
+      "type": "string"
+    },
+    "exporter": {
+      "description": "Prometheus textfile exporter settings",
+      "type": "object",
+      "properties": {
+        "image": {
+          "description": "Node exporter image",
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "description": "Kubernetes image pull policy",
+              "type": "string"
+            },
+            "repository": {
+              "description": "Exporter image repository",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Exporter image tag",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "failedJobsHistoryLimit": {
+      "description": "Failed Jobs retained for diagnosis",
+      "type": "integer"
+    },
+    "metricsExposeSeconds": {
+      "description": "Time to keep completed metrics available for annotation-based scraping",
+      "type": "integer"
+    },
+    "oidc": {
+      "description": "Tailscale workload identity settings",
+      "type": "object",
+      "required": [
+        "clientId"
+      ],
+      "properties": {
+        "clientId": {
+          "description": "OAuth client ID whose federated identity trusts this cluster. This value is required.",
+          "type": "string"
+        },
+        "tokenExpirationSeconds": {
+          "description": "Lifetime of the projected Kubernetes service account token",
+          "type": "integer"
+        }
+      }
+    },
+    "probe": {
+      "description": "Synthetic ping and SSH probe settings",
+      "type": "object",
+      "properties": {
+        "image": {
+          "description": "Image containing tailscaled, tailscale, OpenSSH, and standard shell tools",
+          "type": "object",
+          "properties": {
+            "pullPolicy": {
+              "description": "Kubernetes image pull policy",
+              "type": "string"
+            },
+            "repository": {
+              "description": "Probe image repository",
+              "type": "string"
+            },
+            "tag": {
+              "description": "Probe image tag",
+              "type": "string"
+            }
+          }
+        },
+        "maxParallel": {
+          "description": "Maximum targets tested concurrently",
+          "type": "integer"
+        },
+        "pingCount": {
+          "description": "Maximum ping attempts used to establish the final path",
+          "type": "integer"
+        },
+        "pingTimeout": {
+          "description": "Timeout for each ping attempt",
+          "type": "string"
+        },
+        "ssh": {
+          "description": "Authenticated synthetic SSH transaction settings",
+          "type": "object",
+          "properties": {
+            "command": {
+              "description": "Harmless command executed after SSH authentication",
+              "type": "string"
+            },
+            "timeoutSeconds": {
+              "description": "End-to-end SSH command timeout",
+              "type": "integer"
+            },
+            "user": {
+              "description": "Non-root operating system user used for the synthetic SSH transaction",
+              "type": "string"
+            }
+          }
+        },
+        "targetHostnamePrefix": {
+          "description": "Tailscale hostname prefix used to discover login nodes",
+          "type": "string"
+        }
+      }
+    },
+    "resources": {
+      "description": "Container resource requests and limits",
+      "type": "object",
+      "properties": {
+        "exporter": {
+          "description": "Exporter container resources",
+          "type": "object",
+          "properties": {
+            "limits": {
+              "description": "Exporter resource limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU limit",
+                  "type": "string"
+                },
+                "memory": {
+                  "description": "Memory limit",
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "description": "Exporter resource requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "Requested CPU",
+                  "type": "string"
+                },
+                "memory": {
+                  "description": "Requested memory",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "probe": {
+          "description": "Probe container resources",
+          "type": "object",
+          "properties": {
+            "limits": {
+              "description": "Probe resource limits",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "CPU limit",
+                  "type": "string"
+                },
+                "memory": {
+                  "description": "Memory limit",
+                  "type": "string"
+                }
+              }
+            },
+            "requests": {
+              "description": "Probe resource requests",
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "description": "Requested CPU",
+                  "type": "string"
+                },
+                "memory": {
+                  "description": "Requested memory",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schedule": {
+      "description": "Cron schedule for synthetic probe runs",
+      "type": "string"
+    },
+    "startingDeadlineSeconds": {
+      "description": "Window in which a delayed Job may still start",
+      "type": "integer"
+    },
+    "successfulJobsHistoryLimit": {
+      "description": "Successful Jobs retained for diagnosis",
+      "type": "integer"
+    },
+    "tailscale": {
+      "description": "Tailscale node identity settings",
+      "type": "object",
+      "properties": {
+        "hostnamePrefix": {
+          "description": "Prefix used to build the probe's unique Tailscale hostname",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Tailnet ACL tag advertised by each probe",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
