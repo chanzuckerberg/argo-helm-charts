@@ -28,7 +28,7 @@ tests:
   asserts:
   - failedTemplate:
       errorMessage: refresh bundled migrations and provenance before changing sourceRevision
-- it: bundles both migrations and the RDS trust bundle before migration
+- it: bundles all three migrations and the RDS trust bundle before migration
   asserts:
   - hasDocuments:
       count: 2
@@ -41,6 +41,14 @@ tests:
     documentIndex: 0
   - isNotEmpty:
       path: data["0002_processing_telemetry.sql"]
+    documentIndex: 0
+  - matchRegex:
+      path: data["0003_worker_timing.sql"]
+      pattern: 'ADD COLUMN worker_started_at TIMESTAMPTZ'
+    documentIndex: 0
+  - matchRegex:
+      path: data["0003_worker_timing.sql"]
+      pattern: 'GENERATED ALWAYS AS'
     documentIndex: 0
   - isNotEmpty:
       path: data["migrate.py"]

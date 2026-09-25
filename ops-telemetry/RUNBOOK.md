@@ -28,21 +28,55 @@ verified OPS release ([DT-196](https://czi.atlassian.net/browse/DT-196)).
 
 ## Order: infrastructure and live canary before OPS-main merges
 
+### Updating the existing collector for worker timing
+
+The chart pins source `761c718e06c106a215aea3d79691a6b527d225e7` and bundles additive
+migration `0003_worker_timing.sql`. Applied `0001` and `0002` are unchanged. The
+new producer's `queued_at`, `worker_started_at` and `worker_finished_at` fields
+are rejected by the earlier collector; deploy the compatible collector first.
+
+1. Review this chart/source revision, publish its image with the helper below,
+   and record the immutable image digest. This chart keeps `image` empty so a
+   source/chart merge cannot choose an image implicitly.
+2. Update the existing ApplicationSet's reviewed chart commit, image digest and
+   `sourceRevision` pins in `argus-infra-stacks`. Preserve manual sync. The existing
+   Application is managed by that ApplicationSet: do not create a second
+   hand-managed Application or overwrite its generated source configuration.
+   The `application` helper below is for an initial deployment only.
+3. Manually sync the existing Application. Its migration hook verifies historical
+   checksums, applies only `0003` and retains the runtime grants; collector wave 1
+   follows migration wave 0. Confirm three migration-ledger entries, unchanged
+   existing records, and compatible API/metrics before enabling timed producers.
+4. Deploy Alloy's allowlist for `ops_worker_queue_wait_seconds_bucket` and
+   `ops_worker_duration_seconds_bucket`, and separate worker timing Grafana panels.
+   Keep the existing logical task timing charts separate. Queue timing measures
+   submission-attempt to worker entry, including submission/startup overhead;
+   execution timing measures worker entry to exit. Missing clocks stay unavailable.
+5. Run the isolated real success/failure acceptance with the new producer, then
+   replay its identical journal and verify API records and histogram counts stay
+   unchanged. Retain Alan's operational-release gate for OPS-main merges.
+
+Migration `0003` is additive and deliberately refuses schema downgrade. On rollback,
+pause the new producer and preserve queued events and worker columns; do not send
+new timed events to the earlier collector or remove already applied migration files.
+
+### Initial deployment
+
 1. In `chanzuckerberg/argus-infra-stacks`, review the Terraform plan (dedicated database, secrets, ECR), merge/apply this
    component through the normal workflow. No application is automatically synced
    by this PR. Confirm the two ExternalSecret source names exist and the existing
    secret-store role can read them. Terraform state contains generated credentials
    and must retain the platform backend's existing access controls.
-2. From the root of a reviewed `chanzuckerberg/argo-helm-charts` checkout, publish the collector from the immutable revision in `provenance.json` (#94,
-   including the #85 foundation). On a build host with Python >=3.12, GitHub access,
+2. From the root of a reviewed `chanzuckerberg/argo-helm-charts` checkout, publish the collector from the immutable revision in `provenance.json` (the worker-timing update on the #94/#85 foundation). On a build host with Python >=3.12, GitHub access,
    Docker/buildx and ECR push permission, authenticate Docker using the normal AWS
    ECR login, then run `python scripts/ops-collector-release.py build`. The script
-   downloads that exact revision, verifies migration checksums, and builds/pushes
+   downloads that exact revision, verifies the complete source/chart migration
+   sets and checksums, and builds/pushes
    a Linux amd64/arm64 image tagged with its source SHA. Obtain and record the digest:
 
    ```sh
    aws ecr describe-images --region us-east-1 --repository-name ops-telemetry \
-     --image-ids imageTag=e6b04967e804e7449b565409c85f55d6953111ee \
+     --image-ids imageTag=761c718e06c106a215aea3d79691a6b527d225e7 \
      --query 'imageDetails[0].imageDigest' --output text
    ```
 
@@ -76,7 +110,7 @@ verified OPS release ([DT-196](https://czi.atlassian.net/browse/DT-196)).
    target: only the collector pod carries scrape annotations, never its Service.
    `Recreate` plus one replica avoids overlapping aggregate exporters; do not scale
    horizontally until metrics leader election/deduplication is implemented.
-6. Install pinned #94 code in an isolated Bruno checkout and set its explicit
+6. Install the pinned producer code in an isolated Bruno checkout and set its explicit
    `OPS_PROCESSING_TELEMETRY=1`, `OPS_TELEMETRY_ENDPOINT` (API host without `/api/v1`),
    `OPS_TELEMETRY_TOKEN`, private spool and test output roots. Deliver the token via
    the approved secret channel, not command-line arguments or ticket comments.
