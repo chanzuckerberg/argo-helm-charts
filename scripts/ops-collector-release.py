@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build a pinned collector or render a manually synced Argo application."""
 import argparse
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -31,6 +32,17 @@ def application(image, revision):
                      'syncPolicy': {'syncOptions': ['CreateNamespace=true']}}}
 
 
+def verify_migrations(context):
+    """Require the complete source and chart bundles to match pinned provenance."""
+    expected = json.loads((CHART / 'provenance.json').read_text())['migrations']
+    for label, directory in (('source', Path(context) / 'database/migrations'),
+                             ('chart', CHART / 'files/migrations')):
+        actual = {path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                  for path in directory.glob('*.sql')}
+        if actual != expected:
+            raise ValueError(f'{label} migrations do not match pinned provenance')
+
+
 def build():
     with tempfile.TemporaryDirectory(prefix='ops-collector-build-') as directory:
         archive = subprocess.check_output(['gh', 'api', f'repos/czbiohub-sf/ops_monorepo/tarball/{SOURCE}'])
@@ -38,10 +50,7 @@ def build():
         with tarfile.open(fileobj=io.BytesIO(archive), mode='r:gz') as tar:
             tar.extractall(root, filter='data')
         context = next(root.iterdir()) / 'services/ops-telemetry'
-        provenance = json.loads((CHART / 'provenance.json').read_text())
-        import hashlib
-        for name, digest in provenance['migrations'].items():
-            assert hashlib.sha256((context / 'database/migrations' / name).read_bytes()).hexdigest() == digest
+        verify_migrations(context)
         image = f'{REPOSITORY}:{SOURCE}'
         # No implicit registry login or credential printing; operator authenticates Docker first.
         subprocess.run(['docker', 'buildx', 'build', '--platform', 'linux/amd64,linux/arm64', '--push',
