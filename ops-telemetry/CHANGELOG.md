@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/ops-telemetry-v0.2.0...ops-telemetry-v0.2.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* **ops-telemetry:** bundle worker timing migration and pin compatible source ([#572](https://github.com/chanzuckerberg/argo-helm-charts/issues/572)) ([cf4b898](https://github.com/chanzuckerberg/argo-helm-charts/commit/cf4b898ec183a744d110db6625ebccaa06793e21))
+
 ## [0.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/ops-telemetry-v0.1.0...ops-telemetry-v0.2.0) (2026-09-23)
 
 
