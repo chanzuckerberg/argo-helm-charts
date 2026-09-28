@@ -38,21 +38,32 @@ are rejected by the earlier collector; deploy the compatible collector first.
 1. Review this chart/source revision, publish its image with the helper below,
    and record the immutable image digest. This chart keeps `image` empty so a
    source/chart merge cannot choose an image implicitly.
-2. Update the existing ApplicationSet's reviewed chart commit, image digest and
-   `sourceRevision` pins in `argus-infra-stacks`. Preserve manual sync. The existing
-   Application is managed by that ApplicationSet: do not create a second
+2. Merge the chart changes, then review and merge the repository's generated
+   Release Please PR for `ops-telemetry`. Release Please owns the chart version,
+   changelog and release manifest; do not bump them manually in the feature/fix PR.
+   After its release is published, wait for the `Release Charts` workflow to package
+   the chart and update the Helm repository index. This fix is expected to produce
+   `0.2.1`; verify the actual released version and package before rollout, and use
+   that version if Release Please selects a different one. Check that the package
+   contains migration `0003` and the pinned source/checksums in `provenance.json`.
+3. Update the existing ApplicationSet in `argus-infra-stacks` to use the published
+   Helm repository `https://chanzuckerberg.github.io/argo-helm-charts`,
+   `chart: ops-telemetry` and its exact released version as `targetRevision`,
+   alongside the reviewed image digest and `sourceRevision` pins. Keep the rollout
+   PR draft until the release/package has been verified. Preserve manual sync.
+   The existing Application is managed by that ApplicationSet: do not create a second
    hand-managed Application or overwrite its generated source configuration.
    The `application` helper below is for an initial deployment only.
-3. Manually sync the existing Application. Its migration hook verifies historical
+4. Manually sync the existing Application. Its migration hook verifies historical
    checksums, applies only `0003` and retains the runtime grants; collector wave 1
    follows migration wave 0. Confirm three migration-ledger entries, unchanged
    existing records, and compatible API/metrics before enabling timed producers.
-4. Deploy Alloy's allowlist for `ops_worker_queue_wait_seconds_bucket` and
+5. Deploy Alloy's allowlist for `ops_worker_queue_wait_seconds_bucket` and
    `ops_worker_duration_seconds_bucket`, and separate worker timing Grafana panels.
    Keep the existing logical task timing charts separate. Queue timing measures
    submission-attempt to worker entry, including submission/startup overhead;
    execution timing measures worker entry to exit. Missing clocks stay unavailable.
-5. Run the isolated real success/failure acceptance with the new producer, then
+6. Run the isolated real success/failure acceptance with the new producer, then
    replay its identical journal and verify API records and histogram counts stay
    unchanged. Retain Alan's operational-release gate for OPS-main merges.
 
@@ -69,7 +80,7 @@ new timed events to the earlier collector or remove already applied migration fi
    and must retain the platform backend's existing access controls.
 2. From the root of a reviewed `chanzuckerberg/argo-helm-charts` checkout, publish the collector from the immutable revision in `provenance.json` (the worker-timing update on the #94/#85 foundation). On a build host with Python >=3.12, GitHub access,
    Docker/buildx and ECR push permission, authenticate Docker using the normal AWS
-   ECR login, then run `python scripts/ops-collector-release.py build`. The script
+   ECR login, then run `python ops-telemetry/scripts/ops-collector-release.py build`. The script
    downloads that exact revision, verifies the complete source/chart migration
    sets and checksums, and builds/pushes
    a Linux amd64/arm64 image tagged with its source SHA. Obtain and record the digest:
@@ -84,15 +95,18 @@ new timed events to the earlier collector or remove already applied migration fi
    Never substitute `latest`. Image rendering fails without a valid digest. Updating
    the source revision requires refreshing the SQL files, provenance checksums and
    source pin check together; generated SQL is not independently edited.
-3. Render a manual Argo application pointing to the reviewed **argo-helm-charts commit SHA**:
+3. Complete the Release Please and chart publication sequence above, then render a
+   manual Argo application pointing to the verified **published chart version**:
 
    ```sh
-   python scripts/ops-collector-release.py application \
-     --image "$OPS_COLLECTOR_IMAGE_DIGEST" --chart-revision "$OPS_CHART_COMMIT" \
+   python ops-telemetry/scripts/ops-collector-release.py application \
+     --image "$OPS_COLLECTOR_IMAGE_DIGEST" --chart-version "$OPS_CHART_VERSION" \
      > /tmp/ops-telemetry-application.json
    ```
 
    `OPS_COLLECTOR_IMAGE_DIGEST` is the full ECR URL with `@sha256:...`.
+   `OPS_CHART_VERSION` is the exact published `MAJOR.MINOR.PATCH` version from the
+   Helm repository index, whose package matches this checkout's provenance.
    Review/apply this Application in the platform Argo control cluster and sync it
    manually. Do not apply it in the workload cluster's nonexistent Argo namespace.
    It is intentionally outside the auto-discovered ApplicationSet directory so
@@ -172,9 +186,9 @@ requires a reviewed ConfigMap update plus workload restart.
 ```sh
 # Uses the repository-standard helm-unittest plugin and CI workflow:
 helm unittest --strict ops-telemetry
-HELM=helm python -m unittest discover -s tools/ops-telemetry/tests -p test_deployment.py -v
+HELM=helm python -m unittest discover -s ops-telemetry/tests -p test_deployment.py -v
 # Requires an EMPTY disposable PostgreSQL database; never a shared/production DB:
-OPS_TEST_DATABASE_URL=... python -m unittest discover -s tools/ops-telemetry/tests -p test_migrations.py -v
+OPS_TEST_DATABASE_URL=... python -m unittest discover -s ops-telemetry/tests -p test_migrations.py -v
 ```
 
 The dedicated CI workflow runs rendering, migration/replay/drift/privilege tests

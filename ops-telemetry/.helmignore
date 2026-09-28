@@ -1,0 +1,5 @@
+# Keep development tooling and tests out of the published chart.
+scripts/
+tests/
+__pycache__/
+*.pyc

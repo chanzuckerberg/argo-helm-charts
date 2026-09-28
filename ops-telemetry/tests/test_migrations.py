@@ -9,8 +9,7 @@ import unittest
 import psycopg
 from psycopg.conninfo import make_conninfo
 
-ROOT = Path(__file__).resolve().parents[3]
-FILES = ROOT / 'ops-telemetry/files'
+FILES = Path(__file__).resolve().parents[1] / 'files'
 spec = importlib.util.spec_from_file_location('migrate', FILES/'migrate.py')
 migration = importlib.util.module_from_spec(spec); spec.loader.exec_module(migration)
 
