@@ -102,8 +102,7 @@ spec:
             {{- end }}
             value: {{ .path }}
       backendRefs:
-        - name: {{ include "service.backend.name" $service }}
-          port: {{ include "service.backend.port" $service }}
+        {{- include "service.backend.refs" $service | nindent 8 }}
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}
@@ -182,8 +181,7 @@ spec:
             {{- end }}
             value: {{ .path }}
       backendRefs:
-        - name: {{ include "service.backend.name" $service }}
-          port: {{ include "service.backend.port" $service }}
+        {{- include "service.backend.refs" $service | nindent 8 }}
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}

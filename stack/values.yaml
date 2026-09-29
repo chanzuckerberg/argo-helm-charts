@@ -254,6 +254,7 @@ global: # @schema description: Global configuration for the stack - this serves 
       hostname: "" # @schema description: SNI/validation hostname presented by the upstream (required when enabled)
       wellKnownCACertificates: System # @schema description: Use the System trust store, or set "" and use caCertificateRefs for a private CA
       caCertificateRefs: [] # @schema description: ConfigMap refs holding the CA bundle for self-signed/internal upstreams
+      insecureSkipVerify: false # @schema description: Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs
     hostRewrite: "" # @schema description: Rewrite the Host header sent upstream via an HTTPRoute URLRewrite filter, empty disables it
     requestHeaders: # @schema description: Request header modifications (HTTPRoute RequestHeaderModifier filter)
       set: [] # @schema description: Headers to set, list of {name,value}

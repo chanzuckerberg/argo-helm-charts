@@ -1,0 +1,129 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway Backend (upstream TLS without verification)
+templates:
+  - gateway-backend.yaml
+  - gateway-backendtlspolicy.yaml
+  - httproute.yaml
+tests:
+  - it: should create no Backend when insecureSkipVerify is off
+    templates:
+      - gateway-backend.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          backendTLS:
+            enabled: true
+            hostname: upstream.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render a Backend pointing at the Service FQDN with verification skipped
+    templates:
+      - gateway-backend.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          backendTLS:
+            enabled: true
+            insecureSkipVerify: true
+        service:
+          port: 443
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Backend
+      - equal:
+          path: apiVersion
+          value: gateway.envoyproxy.io/v1alpha1
+      - equal:
+          path: spec.tls.insecureSkipVerify
+          value: true
+      - equal:
+          path: spec.endpoints[0].fqdn.port
+          value: 443
+      - matchRegex:
+          path: spec.endpoints[0].fqdn.hostname
+          pattern: \.svc\.cluster\.local$
+
+  - it: should not render a BackendTLSPolicy when the Backend takes over
+    templates:
+      - gateway-backendtlspolicy.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          backendTLS:
+            enabled: true
+            insecureSkipVerify: true
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should point the HTTPRoute at the Backend rather than the Service
+    templates:
+      - httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          backendTLS:
+            enabled: true
+            insecureSkipVerify: true
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.rules[0].backendRefs[0].group
+          value: gateway.envoyproxy.io
+      - equal:
+          path: spec.rules[0].backendRefs[0].kind
+          value: Backend
+      - matchRegex:
+          path: spec.rules[0].backendRefs[0].name
+          pattern: -backend$
+
+  - it: should keep pointing the HTTPRoute at the Service when verification is not skipped
+    templates:
+      - httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - isNull:
+          path: spec.rules[0].backendRefs[0].kind
+      - isNotNull:
+          path: spec.rules[0].backendRefs[0].port

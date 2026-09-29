@@ -753,12 +753,13 @@ Must be one of:
 
 **Description:** TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
 
-| Property                                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                |
-| ------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
-| - [caCertificateRefs](#cronJobs_pattern1_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams          |
-| - [enabled](#cronJobs_pattern1_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                              |
-| - [hostname](#cronJobs_pattern1_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)        |
-| - [wellKnownCACertificates](#cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA |
+| Property                                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [caCertificateRefs](#cronJobs_pattern1_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams                                                                                                                                                                                                                                                                                    |
+| - [enabled](#cronJobs_pattern1_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                                                                                                                                                                                                                                                                                                        |
+| - [hostname](#cronJobs_pattern1_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)                                                                                                                                                                                                                                                                                  |
+| - [insecureSkipVerify](#cronJobs_pattern1_gateway_backendTLS_insecureSkipVerify )           | No      | boolean | No         | -          | Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs |
+| - [wellKnownCACertificates](#cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA                                                                                                                                                                                                                                                                           |
 
 ###### <a name="cronJobs_pattern1_gateway_backendTLS_caCertificateRefs"></a>2.1.16.2.1. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > caCertificateRefs`
 
@@ -795,7 +796,16 @@ Must be one of:
 
 **Description:** SNI/validation hostname presented by the upstream (required when enabled)
 
-###### <a name="cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates"></a>2.1.16.2.4. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > wellKnownCACertificates`
+###### <a name="cronJobs_pattern1_gateway_backendTLS_insecureSkipVerify"></a>2.1.16.2.4. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > insecureSkipVerify`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs
+
+###### <a name="cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates"></a>2.1.16.2.5. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > wellKnownCACertificates`
 
 |              |          |
 | ------------ | -------- |
@@ -5181,12 +5191,13 @@ Must be one of:
 
 **Description:** TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
 
-| Property                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                |
-| -------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
-| - [caCertificateRefs](#global_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams          |
-| - [enabled](#global_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                              |
-| - [hostname](#global_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)        |
-| - [wellKnownCACertificates](#global_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA |
+| Property                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [caCertificateRefs](#global_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams                                                                                                                                                                                                                                                                                    |
+| - [enabled](#global_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                                                                                                                                                                                                                                                                                                        |
+| - [hostname](#global_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)                                                                                                                                                                                                                                                                                  |
+| - [insecureSkipVerify](#global_gateway_backendTLS_insecureSkipVerify )           | No      | boolean | No         | -          | Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs |
+| - [wellKnownCACertificates](#global_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA                                                                                                                                                                                                                                                                           |
 
 ##### <a name="global_gateway_backendTLS_caCertificateRefs"></a>3.16.2.1. Property `stack > global > gateway > backendTLS > caCertificateRefs`
 
@@ -5223,7 +5234,16 @@ Must be one of:
 
 **Description:** SNI/validation hostname presented by the upstream (required when enabled)
 
-##### <a name="global_gateway_backendTLS_wellKnownCACertificates"></a>3.16.2.4. Property `stack > global > gateway > backendTLS > wellKnownCACertificates`
+##### <a name="global_gateway_backendTLS_insecureSkipVerify"></a>3.16.2.4. Property `stack > global > gateway > backendTLS > insecureSkipVerify`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs
+
+##### <a name="global_gateway_backendTLS_wellKnownCACertificates"></a>3.16.2.5. Property `stack > global > gateway > backendTLS > wellKnownCACertificates`
 
 |              |          |
 | ------------ | -------- |
@@ -9627,12 +9647,13 @@ Must be one of:
 
 **Description:** TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
 
-| Property                                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                |
-| ------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
-| - [caCertificateRefs](#cronJobs_pattern1_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams          |
-| - [enabled](#cronJobs_pattern1_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                              |
-| - [hostname](#cronJobs_pattern1_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)        |
-| - [wellKnownCACertificates](#cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA |
+| Property                                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [caCertificateRefs](#cronJobs_pattern1_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams                                                                                                                                                                                                                                                                                    |
+| - [enabled](#cronJobs_pattern1_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                                                                                                                                                                                                                                                                                                        |
+| - [hostname](#cronJobs_pattern1_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)                                                                                                                                                                                                                                                                                  |
+| - [insecureSkipVerify](#cronJobs_pattern1_gateway_backendTLS_insecureSkipVerify )           | No      | boolean | No         | -          | Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs |
+| - [wellKnownCACertificates](#cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA                                                                                                                                                                                                                                                                           |
 
 ###### <a name="cronJobs_pattern1_gateway_backendTLS_caCertificateRefs"></a>4.1.16.2.1. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > caCertificateRefs`
 
@@ -9669,7 +9690,16 @@ Must be one of:
 
 **Description:** SNI/validation hostname presented by the upstream (required when enabled)
 
-###### <a name="cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates"></a>4.1.16.2.4. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > wellKnownCACertificates`
+###### <a name="cronJobs_pattern1_gateway_backendTLS_insecureSkipVerify"></a>4.1.16.2.4. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > insecureSkipVerify`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs
+
+###### <a name="cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates"></a>4.1.16.2.5. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > wellKnownCACertificates`
 
 |              |          |
 | ------------ | -------- |
@@ -14537,12 +14567,13 @@ Must be one of:
 
 **Description:** TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)
 
-| Property                                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                |
-| ------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
-| - [caCertificateRefs](#cronJobs_pattern1_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams          |
-| - [enabled](#cronJobs_pattern1_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                              |
-| - [hostname](#cronJobs_pattern1_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)        |
-| - [wellKnownCACertificates](#cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA |
+| Property                                                                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [caCertificateRefs](#cronJobs_pattern1_gateway_backendTLS_caCertificateRefs )             | No      | array   | No         | -          | ConfigMap refs holding the CA bundle for self-signed/internal upstreams                                                                                                                                                                                                                                                                                    |
+| - [enabled](#cronJobs_pattern1_gateway_backendTLS_enabled )                                 | No      | boolean | No         | -          | Enable upstream TLS                                                                                                                                                                                                                                                                                                                                        |
+| - [hostname](#cronJobs_pattern1_gateway_backendTLS_hostname )                               | No      | string  | No         | -          | SNI/validation hostname presented by the upstream (required when enabled)                                                                                                                                                                                                                                                                                  |
+| - [insecureSkipVerify](#cronJobs_pattern1_gateway_backendTLS_insecureSkipVerify )           | No      | boolean | No         | -          | Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs |
+| - [wellKnownCACertificates](#cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates ) | No      | string  | No         | -          | Use the System trust store, or set "" and use caCertificateRefs for a private CA                                                                                                                                                                                                                                                                           |
 
 ###### <a name="cronJobs_pattern1_gateway_backendTLS_caCertificateRefs"></a>7.1.16.2.1. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > caCertificateRefs`
 
@@ -14579,7 +14610,16 @@ Must be one of:
 
 **Description:** SNI/validation hostname presented by the upstream (required when enabled)
 
-###### <a name="cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates"></a>7.1.16.2.4. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > wellKnownCACertificates`
+###### <a name="cronJobs_pattern1_gateway_backendTLS_insecureSkipVerify"></a>7.1.16.2.4. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > insecureSkipVerify`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs
+
+###### <a name="cronJobs_pattern1_gateway_backendTLS_wellKnownCACertificates"></a>7.1.16.2.5. Property `stack > cronJobs > ^.*$ > gateway > backendTLS > wellKnownCACertificates`
 
 |              |          |
 | ------------ | -------- |

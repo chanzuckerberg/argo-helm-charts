@@ -92,8 +92,7 @@ spec:
           method: {{ .method }}
           {{- end }}
       backendRefs:
-        - name: {{ include "service.fullname" $service }}
-          port: {{ $service.Values.service.port | int }}
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
       {{- if $filters }}
       filters:
         {{- $filters | nindent 8 }}
@@ -146,8 +145,7 @@ spec:
             {{- end }}
             value: {{ .path }}
       backendRefs:
-        - name: {{ include "service.fullname" $service }}
-          port: {{ $service.Values.service.port | int }}
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}
@@ -204,8 +202,7 @@ spec:
             {{- end }}
             value: {{ .path }}
       backendRefs:
-        - name: {{ include "service.fullname" $service }}
-          port: {{ $service.Values.service.port | int }}
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
           {{- if .weight }}
           weight: {{ .weight }}
           {{- end }}

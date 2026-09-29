@@ -277,6 +277,10 @@
                   "description": "SNI/validation hostname presented by the upstream (required when enabled)",
                   "type": "string"
                 },
+                "insecureSkipVerify": {
+                  "description": "Connect to the upstream over TLS without validating its certificate, via an Envoy Gateway Backend instead of a BackendTLSPolicy. Only for an upstream whose certificate cannot be validated, such as one self-signed per pod. Requires extensionApis.enableBackend on the Envoy Gateway controller. Mutually exclusive with hostname and caCertificateRefs",
+                  "type": "boolean"
+                },
                 "wellKnownCACertificates": {
                   "description": "Use the System trust store, or set \"\" and use caCertificateRefs for a private CA",
                   "type": "string"
