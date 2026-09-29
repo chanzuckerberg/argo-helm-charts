@@ -1,7 +1,7 @@
 {{- if not (regexMatch "^577638397886\\.dkr\\.ecr\\.us-east-1\\.amazonaws\\.com/ops-telemetry@sha256:[0-9a-f]{64}$" .Values.image) }}
 {{- fail "image must be the published ops-telemetry ECR sha256 digest" }}
 {{- end }}
-{{- if ne .Values.sourceRevision "e6b04967e804e7449b565409c85f55d6953111ee" }}
+{{- if ne .Values.sourceRevision "761c718e06c106a215aea3d79691a6b527d225e7" }}
 {{- fail "refresh bundled migrations and provenance before changing sourceRevision" }}
 {{- end }}
 apiVersion: v1
