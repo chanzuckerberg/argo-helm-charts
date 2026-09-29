@@ -39,6 +39,38 @@ port:
 {{- end -}}
 {{- end -}}
 
+{{- define "service.backend.useBackendResource" -}}
+{{- if and (.Values.gateway).backendTLS -}}
+{{- if and .Values.gateway.backendTLS.enabled .Values.gateway.backendTLS.insecureSkipVerify -}}true{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "service.backend.resourceName" -}}
+{{- printf "%s-backend" (include "service.fullname" .) -}}
+{{- end -}}
+
+{{- define "service.backend.refs" -}}
+{{- if eq (include "service.backend.useBackendResource" .) "true" -}}
+- group: gateway.envoyproxy.io
+  kind: Backend
+  name: {{ include "service.backend.resourceName" . }}
+{{- else -}}
+- name: {{ include "service.backend.name" . }}
+  port: {{ include "service.backend.port" . }}
+{{- end -}}
+{{- end -}}
+
+{{- define "service.backend.refs.direct" -}}
+{{- if eq (include "service.backend.useBackendResource" .) "true" -}}
+- group: gateway.envoyproxy.io
+  kind: Backend
+  name: {{ include "service.backend.resourceName" . }}
+{{- else -}}
+- name: {{ include "service.fullname" . }}
+  port: {{ .Values.service.port | int }}
+{{- end -}}
+{{- end -}}
+
 {{- define "service.backend.port" -}}
 {{- if or .Values.ingress.oidcProtected .Values.gateway.oidcProtected -}}
 {{- include "oidcProxy.port" . }}
