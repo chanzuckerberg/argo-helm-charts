@@ -1738,3 +1738,19 @@ Expects a dict with keys: global, cronJob
 -}}
 {{- $panelDict | toYaml -}}
 {{- end -}}
+
+{{- define "gateway.effectiveSectionName" -}}
+{{- if .Values.gateway.sectionName -}}
+{{- .Values.gateway.sectionName -}}
+{{- else if (.Values.gateway.httpsRedirect).enabled -}}
+https
+{{- end -}}
+{{- end -}}
+
+{{- define "gateway.httpsRedirectHosts" -}}
+{{- $hosts := list .Values.gateway.host -}}
+{{- range .Values.gateway.rules -}}
+{{- $hosts = append $hosts .host -}}
+{{- end -}}
+{{- toYaml (uniq (compact $hosts)) -}}
+{{- end -}}
