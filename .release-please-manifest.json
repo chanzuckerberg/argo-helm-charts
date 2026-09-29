@@ -1,5 +1,5 @@
 {
-  "stack": "2.57.1",
+  "stack": "2.58.0",
   "argus-config": "1.8.0",
   "sso-secret": "0.3.0",
   "grafana": "0.12.0",

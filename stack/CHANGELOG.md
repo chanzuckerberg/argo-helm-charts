@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.58.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.57.1...stack-v2.58.0) (2026-09-29)
+
+
+### Features
+
+* **stack:** allow upstream TLS without certificate verification ([#574](https://github.com/chanzuckerberg/argo-helm-charts/issues/574)) ([121fd0c](https://github.com/chanzuckerberg/argo-helm-charts/commit/121fd0c789ab0306ce83463d57be398597153ff6))
+
 ## [2.57.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.57.0...stack-v2.57.1) (2026-09-16)
 
 
