@@ -32,30 +32,21 @@
 
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
-{{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
-{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) .Values.gateway.backendTLS.enabled (ne (include "service.backend.useBackendResource" .) "true") -}}
-{{- $bt := .Values.gateway.backendTLS -}}
+{{- if eq (include "service.backend.useBackendResource" .) "true" -}}
 ---
-apiVersion: gateway.networking.k8s.io/v1
-kind: BackendTLSPolicy
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
 metadata:
-  name: {{ include "service.fullname" . }}-btls
+  name: {{ include "service.backend.resourceName" . }}
   labels:
     {{- include "service.labels" . | nindent 4 }}
 spec:
-  targetRefs:
-    - group: ""
-      kind: Service
-      name: {{ include "service.fullname" . }}
-      sectionName: http
-  validation:
-    hostname: {{ required "gateway.backendTLS.hostname is required when gateway.backendTLS.enabled is true" $bt.hostname | quote }}
-    {{- if $bt.caCertificateRefs }}
-    caCertificateRefs:
-      {{- toYaml $bt.caCertificateRefs | nindent 6 }}
-    {{- else }}
-    wellKnownCACertificates: {{ $bt.wellKnownCACertificates | default "System" }}
-    {{- end }}
+  endpoints:
+    - fqdn:
+        hostname: {{ printf "%s.%s.svc.cluster.local" (include "service.fullname" .) $global.Release.Namespace | quote }}
+        port: {{ .Values.service.port | int }}
+  tls:
+    insecureSkipVerify: true
 {{- end }}
 {{- end }}
-{{ end }}
+{{- end }}
