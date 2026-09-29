@@ -224,7 +224,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     gatewayNamespace: envoy-gateway # @schema description: Namespace of the Gateway resource
     sectionName: "" # @schema description: Optional section name (listener name) on the Gateway
     httpsRedirect: # @schema description: Answer plain HTTP with a redirect to HTTPS instead of serving the application over cleartext
-      enabled: true # @schema description: Render a redirect-only HTTPRoute on the Gateway's HTTP listener and pin this service's own routes to the HTTPS listener. Restores the behaviour of the nginx ssl-redirect annotation. Set false only for a host that must be reachable over plain HTTP; the application is then served in cleartext
+      enabled: true # @schema description: Render a redirect-only HTTPRoute on the Gateway's HTTP listener and pin this service's own routes to the HTTPS listener. Restores the behaviour of the nginx ssl-redirect annotation. Set false only for a host that must be reachable over plain HTTP, which means the application is served in cleartext
       statusCode: 301 # @schema description: Redirect status code (301 or 302)
     host: chart-example.local # @schema description: Hostname for HTTPRoute
     paths: # @schema description: List of HTTPRoute paths

@@ -325,6 +325,20 @@
                 }
               }
             },
+            "httpsRedirect": {
+              "description": "Answer plain HTTP with a redirect to HTTPS instead of serving the application over cleartext",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Render a redirect-only HTTPRoute on the Gateway's HTTP listener and pin this service's own routes to the HTTPS listener. Restores the behaviour of the nginx ssl-redirect annotation. Set false only for a host that must be reachable over plain HTTP, which means the application is served in cleartext",
+                  "type": "boolean"
+                },
+                "statusCode": {
+                  "description": "Redirect status code (301 or 302)",
+                  "type": "integer"
+                }
+              }
+            },
             "paths": {
               "description": "List of HTTPRoute paths",
               "type": "array",
