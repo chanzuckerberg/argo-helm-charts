@@ -99,3 +99,56 @@ tests:
       - contains:
           path: spec.accessModes
           content: "ReadWriteMany"
+
+  - it: defaults prune protection on a shared claim
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "shared-bucket"
+          pvcName: "shared-s3"
+    asserts:
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: "Prune=false,Delete=false"
+
+  - it: leaves a private auto-named claim prunable
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "private-bucket"
+    asserts:
+      - notExists:
+          path: metadata.annotations
+
+  - it: lets an explicit sync-options value win
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "shared-bucket"
+          pvcName: "shared-s3"
+          annotations:
+            argocd.argoproj.io/sync-options: Prune=true
+    asserts:
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: "Prune=true"
+
+  - it: keeps unrelated annotations alongside the default
+    set:
+      global:
+        s3Storage:
+          enabled: true
+          bucketName: "shared-bucket"
+          pvcName: "shared-s3"
+          annotations:
+            example.com/owner: platform
+    asserts:
+      - equal:
+          path: metadata.annotations["example.com/owner"]
+          value: "platform"
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: "Prune=false,Delete=false"
