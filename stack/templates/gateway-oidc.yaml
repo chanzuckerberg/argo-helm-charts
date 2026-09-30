@@ -66,8 +66,8 @@ spec:
     {{- else }}
     - name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
-      {{- if .Values.gateway.sectionName }}
-      sectionName: {{ .Values.gateway.sectionName }}
+      {{- with (include "gateway.effectiveSectionName" .) }}
+      sectionName: {{ . }}
       {{- end }}
     {{- end }}
     {{- range $i, $rule := .Values.gateway.rules }}
@@ -128,8 +128,8 @@ spec:
     {{- else }}
     - name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
-      {{- if .Values.gateway.sectionName }}
-      sectionName: {{ .Values.gateway.sectionName }}
+      {{- with (include "gateway.effectiveSectionName" .) }}
+      sectionName: {{ . }}
       {{- end }}
     {{- end }}
   hostnames:
@@ -184,8 +184,8 @@ spec:
     {{- else }}
     - name: {{ $service.Values.gateway.gatewayName }}
       namespace: {{ $service.Values.gateway.gatewayNamespace }}
-      {{- if $service.Values.gateway.sectionName }}
-      sectionName: {{ $service.Values.gateway.sectionName }}
+      {{- with (include "gateway.effectiveSectionName" $service) }}
+      sectionName: {{ . }}
       {{- end }}
     {{- end }}
   hostnames:

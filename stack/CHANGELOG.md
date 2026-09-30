@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.59.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.58.0...stack-v2.59.0) (2026-09-30)
+
+
+### Features
+
+* **stack:** restore the HTTP-to-HTTPS redirect lost when moving to the gateway ([#576](https://github.com/chanzuckerberg/argo-helm-charts/issues/576)) ([d57adff](https://github.com/chanzuckerberg/argo-helm-charts/commit/d57adff09904a8425c84a60484ea234138c22b98))
+
 ## [2.58.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.57.1...stack-v2.58.0) (2026-09-29)
 
 

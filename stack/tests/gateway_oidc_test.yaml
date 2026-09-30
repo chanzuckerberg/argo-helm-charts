@@ -419,6 +419,7 @@ tests:
       content:
         name: envoy-gateway
         namespace: envoy-gateway
+        sectionName: https
   - documentIndex: 0
     contains:
       path: spec.parentRefs
