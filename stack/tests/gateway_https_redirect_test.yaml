@@ -1,0 +1,130 @@
+suite: test gateway HTTP to HTTPS redirect
+templates:
+  - templates/httproute-https-redirect.yaml
+  - templates/httproute.yaml
+tests:
+  - it: renders a redirect-only route on the HTTP listener by default
+    template: templates/httproute-https-redirect.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: metadata.name
+          value: release-name-stack-service1-https-redirect
+      - equal:
+          path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+          value: "true"
+      - equal:
+          path: spec.parentRefs[0].sectionName
+          value: http
+      - equal:
+          path: spec.hostnames
+          value:
+            - app.example.com
+      - equal:
+          path: spec.rules[0].filters[0].requestRedirect
+          value:
+            scheme: https
+            statusCode: 308
+
+  - it: pins the application route to the HTTPS listener by default
+    template: templates/httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.parentRefs[0].sectionName
+          value: https
+
+  - it: leaves both untouched when the redirect is disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          httpsRedirect:
+            enabled: false
+      services:
+        service1: {}
+    asserts:
+      - template: templates/httproute-https-redirect.yaml
+        hasDocuments:
+          count: 0
+      - template: templates/httproute.yaml
+        notExists:
+          path: spec.parentRefs[0].sectionName
+
+  - it: honours an explicit sectionName over the default
+    template: templates/httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          sectionName: custom
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.parentRefs[0].sectionName
+          value: custom
+
+  - it: covers every rule host, vanity included, since the redirect sits on the HTTP listener
+    template: templates/httproute-https-redirect.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          rules:
+            - host: plain.example.com
+            - host: vanity.example.org
+              vanity:
+                enabled: true
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.hostnames
+          value:
+            - app.example.com
+            - plain.example.com
+            - vanity.example.org
+
+  - it: honours a custom redirect status code
+    template: templates/httproute-https-redirect.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          httpsRedirect:
+            statusCode: 302
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.rules[0].filters[0].requestRedirect.statusCode
+          value: 302
