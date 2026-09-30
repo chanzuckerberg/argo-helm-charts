@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.59.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.59.0...stack-v2.59.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* **stack:** stop one stack's teardown deleting a shared S3 claim ([#578](https://github.com/chanzuckerberg/argo-helm-charts/issues/578)) ([d8f4f6e](https://github.com/chanzuckerberg/argo-helm-charts/commit/d8f4f6e9e0f7f66b85aad4850dda70fdcec48142))
+
 ## [2.59.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.58.0...stack-v2.59.0) (2026-09-30)
 
 
