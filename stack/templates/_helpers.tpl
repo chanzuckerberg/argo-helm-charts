@@ -1754,3 +1754,14 @@ https
 {{- end -}}
 {{- toYaml (uniq (compact $hosts)) -}}
 {{- end -}}
+
+{{- define "s3Storage.annotations" -}}
+{{- $s3 := .Values.global.s3Storage -}}
+{{- $annotations := deepCopy ($s3.annotations | default dict) -}}
+{{- if and $s3.pvcName (not (hasKey $annotations "argocd.argoproj.io/sync-options")) -}}
+{{- $_ := set $annotations "argocd.argoproj.io/sync-options" "Prune=false,Delete=false" -}}
+{{- end -}}
+{{- if $annotations -}}
+{{- toYaml $annotations -}}
+{{- end -}}
+{{- end -}}

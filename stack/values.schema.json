@@ -1164,7 +1164,7 @@
               }
             },
             "annotations": {
-              "description": "Additional annotations for PV/PVC",
+              "description": "Additional annotations for PV/PVC. When pvcName is set the claim is shared by every stack in the namespace rather than private to one, so argocd.argoproj.io/sync-options defaults to Prune=false,Delete=false to stop one stack's teardown deleting storage its siblings still mount. Set that key here to override",
               "type": "object"
             },
             "bucketName": {
