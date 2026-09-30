@@ -909,7 +909,7 @@ Must be one of:
 | Property                                                             | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
 | -------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#cronJobs_pattern1_gateway_httpsRedirect_enabled )       | No      | boolean | No         | -          | Render a redirect-only HTTPRoute on the Gateway's HTTP listener and pin this service's own routes to the HTTPS listener. Restores the behaviour of the nginx ssl-redirect annotation. Set false only for a host that must be reachable over plain HTTP, which means the application is served in cleartext |
-| - [statusCode](#cronJobs_pattern1_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                                                                                                                                                                                                                                                                          |
+| - [statusCode](#cronJobs_pattern1_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET                                                                                                                               |
 
 ###### <a name="cronJobs_pattern1_gateway_httpsRedirect_enabled"></a>2.1.16.10.1. Property `stack > cronJobs > ^.*$ > gateway > httpsRedirect > enabled`
 
@@ -927,7 +927,7 @@ Must be one of:
 | **Type**     | `integer` |
 | **Required** | No        |
 
-**Description:** Redirect status code (301 or 302)
+**Description:** Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET
 
 ##### <a name="cronJobs_pattern1_gateway_paths"></a>2.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > paths`
 
@@ -5381,7 +5381,7 @@ Must be one of:
 | Property                                                  | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
 | --------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#global_gateway_httpsRedirect_enabled )       | No      | boolean | No         | -          | Render a redirect-only HTTPRoute on the Gateway's HTTP listener and pin this service's own routes to the HTTPS listener. Restores the behaviour of the nginx ssl-redirect annotation. Set false only for a host that must be reachable over plain HTTP, which means the application is served in cleartext |
-| - [statusCode](#global_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                                                                                                                                                                                                                                                                          |
+| - [statusCode](#global_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET                                                                                                                               |
 
 ##### <a name="global_gateway_httpsRedirect_enabled"></a>3.16.10.1. Property `stack > global > gateway > httpsRedirect > enabled`
 
@@ -5399,7 +5399,7 @@ Must be one of:
 | **Type**     | `integer` |
 | **Required** | No        |
 
-**Description:** Redirect status code (301 or 302)
+**Description:** Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET
 
 #### <a name="global_gateway_paths"></a>3.16.11. Property `stack > global > gateway > paths`
 
@@ -9871,7 +9871,7 @@ Must be one of:
 | Property                                                             | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
 | -------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#cronJobs_pattern1_gateway_httpsRedirect_enabled )       | No      | boolean | No         | -          | Render a redirect-only HTTPRoute on the Gateway's HTTP listener and pin this service's own routes to the HTTPS listener. Restores the behaviour of the nginx ssl-redirect annotation. Set false only for a host that must be reachable over plain HTTP, which means the application is served in cleartext |
-| - [statusCode](#cronJobs_pattern1_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                                                                                                                                                                                                                                                                          |
+| - [statusCode](#cronJobs_pattern1_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET                                                                                                                               |
 
 ###### <a name="cronJobs_pattern1_gateway_httpsRedirect_enabled"></a>4.1.16.10.1. Property `stack > cronJobs > ^.*$ > gateway > httpsRedirect > enabled`
 
@@ -9889,7 +9889,7 @@ Must be one of:
 | **Type**     | `integer` |
 | **Required** | No        |
 
-**Description:** Redirect status code (301 or 302)
+**Description:** Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET
 
 ##### <a name="cronJobs_pattern1_gateway_paths"></a>4.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > paths`
 
@@ -14825,7 +14825,7 @@ Must be one of:
 | Property                                                             | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
 | -------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [enabled](#cronJobs_pattern1_gateway_httpsRedirect_enabled )       | No      | boolean | No         | -          | Render a redirect-only HTTPRoute on the Gateway's HTTP listener and pin this service's own routes to the HTTPS listener. Restores the behaviour of the nginx ssl-redirect annotation. Set false only for a host that must be reachable over plain HTTP, which means the application is served in cleartext |
-| - [statusCode](#cronJobs_pattern1_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                                                                                                                                                                                                                                                                          |
+| - [statusCode](#cronJobs_pattern1_gateway_httpsRedirect_statusCode ) | No      | integer | No         | -          | Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET                                                                                                                               |
 
 ###### <a name="cronJobs_pattern1_gateway_httpsRedirect_enabled"></a>7.1.16.10.1. Property `stack > cronJobs > ^.*$ > gateway > httpsRedirect > enabled`
 
@@ -14843,7 +14843,7 @@ Must be one of:
 | **Type**     | `integer` |
 | **Required** | No        |
 
-**Description:** Redirect status code (301 or 302)
+**Description:** Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET
 
 ##### <a name="cronJobs_pattern1_gateway_paths"></a>7.1.16.11. Property `stack > cronJobs > ^.*$ > gateway > paths`
 
