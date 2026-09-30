@@ -334,7 +334,7 @@
                   "type": "boolean"
                 },
                 "statusCode": {
-                  "description": "Redirect status code (301 or 302)",
+                  "description": "Redirect status code. 308 preserves the request method and body, matching what the nginx ssl-redirect annotation returned. 301 and 302 let clients rewrite a POST into a GET",
                   "type": "integer"
                 }
               }

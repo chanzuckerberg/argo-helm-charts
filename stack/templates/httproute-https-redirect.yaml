@@ -63,7 +63,7 @@ spec:
         - type: RequestRedirect
           requestRedirect:
             scheme: https
-            statusCode: {{ (.Values.gateway.httpsRedirect).statusCode | default 301 | int }}
+            statusCode: {{ (.Values.gateway.httpsRedirect).statusCode | default 308 | int }}
 {{- end }}
 {{- end }}
 {{- end }}

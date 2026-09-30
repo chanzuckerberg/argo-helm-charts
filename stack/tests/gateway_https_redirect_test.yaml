@@ -32,7 +32,7 @@ tests:
           path: spec.rules[0].filters[0].requestRedirect
           value:
             scheme: https
-            statusCode: 301
+            statusCode: 308
 
   - it: pins the application route to the HTTPS listener by default
     template: templates/httproute.yaml
