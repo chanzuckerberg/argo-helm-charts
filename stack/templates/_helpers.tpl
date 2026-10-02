@@ -374,7 +374,22 @@ Return the OIDC issuer URL.
 
 {{- define "securityPolicy.secretName" -}}
 {{- $o := .policy.oidc | default dict -}}
-{{- if $o.clientSecretName -}}{{- $o.clientSecretName -}}{{- else -}}{{- $o.globalSecretName | default "argus-global-oidc" -}}{{- end -}}
+{{- if ($o.clientSecretFrom).property -}}
+{{- include "securityPolicy.projectedSecretName" (dict "release" .release "name" .name) -}}
+{{- else if $o.clientSecretName -}}{{- $o.clientSecretName -}}{{- else -}}{{- $o.globalSecretName | default "argus-global-oidc" -}}{{- end -}}
+{{- end -}}
+
+{{- define "securityPolicy.projectedSecretName" -}}
+{{- printf "%s-oidc-%s" .release .name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "securityPolicy.clientSecretFromRemoteKey" -}}
+{{- $from := .from -}}
+{{- $key := $from.remoteKey | default ((((.root.Values.global).appSecrets).envSecret).secretKey) -}}
+{{- if not $key -}}
+{{- fail (printf "securityPolicies.%s.oidc.clientSecretFrom is set but no remote secret could be resolved. The chart falls back to global.appSecrets.envSecret.secretKey, which is empty here, so set clientSecretFrom.remoteKey explicitly." .name) -}}
+{{- end -}}
+{{- $key -}}
 {{- end -}}
 
 
@@ -877,10 +892,10 @@ oidc:
   clientID: {{ $p.oidc.clientID | quote }}
   {{- else }}
   clientIDRef:
-    name: {{ include "securityPolicy.secretName" (dict "policy" $p) }}
+    name: {{ include "securityPolicy.secretName" (dict "policy" $p "name" $policyName "release" $.Release.Name) }}
   {{- end }}
   clientSecret:
-    name: {{ include "securityPolicy.secretName" (dict "policy" $p) }}
+    name: {{ include "securityPolicy.secretName" (dict "policy" $p "name" $policyName "release" $.Release.Name) }}
   redirectURL: https://{{ .host }}{{ $basePath }}/oauth2/callback
   {{- if $p.oidc.logoutPath }}
   logoutPath: {{ printf "%s%s" $basePath $p.oidc.logoutPath | quote }}
