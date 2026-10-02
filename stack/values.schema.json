@@ -1340,7 +1340,7 @@
                         "type": "object"
                       },
                       "clientIDProperty": {
-                        "description": "Property holding the client id, projected as client-id. Use instead of clientID when the id is also a secret",
+                        "description": "Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID",
                         "type": "string"
                       },
                       "property": {

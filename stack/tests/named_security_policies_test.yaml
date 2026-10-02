@@ -422,3 +422,34 @@ tests:
       - equal:
           path: spec.oidc.forwardIDToken.header
           value: X-ID-Token
+
+  - it: should take a plaintext client id while only the secret is projected
+    set:
+      global:
+        ingress: {enabled: false}
+        gateway: {enabled: true, host: www.example.com}
+        appSecrets:
+          envSecret:
+            secretKey: /example/app=demo/env=prod
+        securityPolicies:
+          app-oidc:
+            oidc:
+              clientID: public-client-id
+              clientSecretFrom:
+                property: CLIENT_SECRET
+              provider:
+                issuer: https://idp.example.test
+      services:
+        web:
+          gateway:
+            securityPolicy: app-oidc
+            paths: [{path: /, pathType: Prefix}]
+    asserts:
+      - equal:
+          path: spec.oidc.clientID
+          value: public-client-id
+      - notExists:
+          path: spec.oidc.clientIDRef
+      - equal:
+          path: spec.oidc.clientSecret.name
+          value: RELEASE-NAME-oidc-app-oidc
