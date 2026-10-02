@@ -1331,6 +1331,46 @@
                     "description": "OIDC client id, defaults to the shared Argus Okta client",
                     "type": "string"
                   },
+                  "clientSecretFrom": {
+                    "description": "Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName",
+                    "type": "object",
+                    "properties": {
+                      "annotations": {
+                        "description": "Extra annotations on the rendered ExternalSecret",
+                        "type": "object"
+                      },
+                      "clientIDProperty": {
+                        "description": "Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID",
+                        "type": "string"
+                      },
+                      "property": {
+                        "description": "Property in the remote secret holding the client secret, for example CLIENT_SECRET",
+                        "type": "string"
+                      },
+                      "refreshInterval": {
+                        "description": "ExternalSecret refresh interval, defaults to 1m",
+                        "type": "string"
+                      },
+                      "remoteKey": {
+                        "description": "Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here",
+                        "type": "string"
+                      },
+                      "secretStoreRef": {
+                        "description": "Store to read from, defaulting to the fleet ClusterSecretStore",
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "additionalProperties": false
+                  },
                   "clientSecretName": {
                     "description": "Secret in the stack namespace with client-id and client-secret keys, set together with clientID",
                     "type": "string"

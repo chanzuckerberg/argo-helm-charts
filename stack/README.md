@@ -3840,23 +3840,24 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
-| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
-| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
-| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
-| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
-| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
-| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
-| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
-| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
-| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
-| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
-| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
-| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
-| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
-| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [clientSecretFrom](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom )     | No      | object          | No         | -          | Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>2.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -3918,7 +3919,101 @@ Must be one of:
 
 **Description:** OIDC client id, defaults to the shared Argus Okta client
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>2.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom"></a>2.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName
+
+| Property                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations )           | No      | object | No         | -          | Extra annotations on the rendered ExternalSecret                                                                                                                                                                                                                                                           |
+| - [clientIDProperty](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty ) | No      | string | No         | -          | Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID |
+| - [property](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_property )                 | No      | string | No         | -          | Property in the remote secret holding the client secret, for example CLIENT_SECRET                                                                                                                                                                                                                         |
+| - [refreshInterval](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval )   | No      | string | No         | -          | ExternalSecret refresh interval, defaults to 1m                                                                                                                                                                                                                                                            |
+| - [remoteKey](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey )               | No      | string | No         | -          | Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here                                                                                                                                                                                       |
+| - [secretStoreRef](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef )     | No      | object | No         | -          | Store to read from, defaulting to the fleet ClusterSecretStore                                                                                                                                                                                                                                             |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations"></a>2.1.40.1.6.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered ExternalSecret
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty"></a>2.1.40.1.6.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > clientIDProperty`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_property"></a>2.1.40.1.6.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > property`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Property in the remote secret holding the client secret, for example CLIENT_SECRET
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval"></a>2.1.40.1.6.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > refreshInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** ExternalSecret refresh interval, defaults to 1m
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey"></a>2.1.40.1.6.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > remoteKey`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef"></a>2.1.40.1.6.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Store to read from, defaulting to the fleet ClusterSecretStore
+
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [kind](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind ) | No      | string | No         | -          | -                 |
+| - [name](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind"></a>2.1.40.1.6.3.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name"></a>2.1.40.1.6.3.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>2.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -3927,14 +4022,14 @@ Must be one of:
 
 **Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>2.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>2.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>2.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>2.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -3947,28 +4042,28 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
 | - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>2.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>2.1.40.1.6.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>2.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>2.1.40.1.6.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>2.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>2.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>2.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>2.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -3980,7 +4075,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
 | - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>2.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>2.1.40.1.6.8.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -3989,7 +4084,7 @@ Must be one of:
 
 **Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>2.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>2.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -3998,7 +4093,7 @@ Must be one of:
 
 **Description:** Forward the access token upstream as Authorization: Bearer
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>2.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>2.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -4011,7 +4106,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
 | - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>2.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>2.1.40.1.6.10.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -4020,7 +4115,7 @@ Must be one of:
 
 **Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>2.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>2.1.40.1.6.10.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
@@ -4033,7 +4128,7 @@ Must be one of:
 | -------------- | - |
 | **Min length** | 1 |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>2.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>2.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -4042,14 +4137,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>2.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>2.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>2.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>2.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -4063,7 +4158,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>2.1.40.1.6.12.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>2.1.40.1.6.13.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -4072,28 +4167,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.12.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.13.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.12.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.13.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>2.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>2.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>2.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>2.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4112,14 +4207,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ----------- |
 | [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>2.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>2.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>2.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>2.1.40.1.6.16. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -4138,7 +4233,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------ | ----------- |
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>2.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>2.1.40.1.6.16.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -8312,23 +8407,24 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
-| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| - [apiRoutes](#global_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
-| - [clientID](#global_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
-| - [clientSecretName](#global_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
-| - [cookieDomain](#global_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
-| - [cookieNames](#global_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
-| - [csrfTokenTTL](#global_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
-| - [denyRedirect](#global_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#global_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
-| - [forwardIDToken](#global_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
-| - [globalSecretName](#global_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
-| - [logoutPath](#global_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
-| - [provider](#global_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
-| - [refreshToken](#global_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
-| - [resources](#global_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
-| - [scopes](#global_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [apiRoutes](#global_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientID](#global_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [clientSecretFrom](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom )     | No      | object          | No         | -          | Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName |
+| - [clientSecretName](#global_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [cookieDomain](#global_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [cookieNames](#global_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [csrfTokenTTL](#global_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [denyRedirect](#global_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [forwardAccessToken](#global_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [forwardIDToken](#global_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [globalSecretName](#global_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [logoutPath](#global_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [provider](#global_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [refreshToken](#global_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [resources](#global_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [scopes](#global_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="global_securityPolicies_additionalProperties_oidc_apiRoutes"></a>3.40.1.6.1. Property `stack > global > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -8390,7 +8486,101 @@ Must be one of:
 
 **Description:** OIDC client id, defaults to the shared Argus Okta client
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretName"></a>3.40.1.6.3. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretName`
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom"></a>3.40.1.6.3. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName
+
+| Property                                                                                                    | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations )           | No      | object | No         | -          | Extra annotations on the rendered ExternalSecret                                                                                                                                                                                                                                                           |
+| - [clientIDProperty](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty ) | No      | string | No         | -          | Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID |
+| - [property](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_property )                 | No      | string | No         | -          | Property in the remote secret holding the client secret, for example CLIENT_SECRET                                                                                                                                                                                                                         |
+| - [refreshInterval](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval )   | No      | string | No         | -          | ExternalSecret refresh interval, defaults to 1m                                                                                                                                                                                                                                                            |
+| - [remoteKey](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey )               | No      | string | No         | -          | Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here                                                                                                                                                                                       |
+| - [secretStoreRef](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef )     | No      | object | No         | -          | Store to read from, defaulting to the fleet ClusterSecretStore                                                                                                                                                                                                                                             |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations"></a>3.40.1.6.3.1. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered ExternalSecret
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty"></a>3.40.1.6.3.2. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > clientIDProperty`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_property"></a>3.40.1.6.3.3. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > property`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Property in the remote secret holding the client secret, for example CLIENT_SECRET
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval"></a>3.40.1.6.3.4. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > refreshInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** ExternalSecret refresh interval, defaults to 1m
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey"></a>3.40.1.6.3.5. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > remoteKey`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef"></a>3.40.1.6.3.6. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Store to read from, defaulting to the fleet ClusterSecretStore
+
+| Property                                                                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [kind](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind ) | No      | string | No         | -          | -                 |
+| - [name](#global_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind"></a>3.40.1.6.3.6.1. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name"></a>3.40.1.6.3.6.2. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_clientSecretName"></a>3.40.1.6.4. Property `stack > global > securityPolicies > additionalProperties > oidc > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -8399,14 +8589,14 @@ Must be one of:
 
 **Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_cookieDomain"></a>3.40.1.6.4. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieDomain`
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieDomain"></a>3.40.1.6.5. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames"></a>3.40.1.6.5. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames`
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames"></a>3.40.1.6.6. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -8419,28 +8609,28 @@ Must be one of:
 | - [accessToken](#global_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
 | - [idToken](#global_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>3.40.1.6.5.1. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>3.40.1.6.6.1. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>3.40.1.6.5.2. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+###### <a name="global_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>3.40.1.6.6.2. Property `stack > global > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>3.40.1.6.6. Property `stack > global > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+###### <a name="global_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>3.40.1.6.7. Property `stack > global > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect"></a>3.40.1.6.7. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect`
+###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect"></a>3.40.1.6.8. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -8452,7 +8642,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
 | - [enabled](#global_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>3.40.1.6.7.1. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+###### <a name="global_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>3.40.1.6.8.1. Property `stack > global > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8461,7 +8651,7 @@ Must be one of:
 
 **Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>3.40.1.6.8. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>3.40.1.6.9. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -8470,7 +8660,7 @@ Must be one of:
 
 **Description:** Forward the access token upstream as Authorization: Bearer
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>3.40.1.6.9. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken`
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>3.40.1.6.10. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -8483,7 +8673,7 @@ Must be one of:
 | - [enabled](#global_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
 | - [header](#global_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>3.40.1.6.9.1. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>3.40.1.6.10.1. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -8492,7 +8682,7 @@ Must be one of:
 
 **Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>3.40.1.6.9.2. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="global_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>3.40.1.6.10.2. Property `stack > global > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
@@ -8505,7 +8695,7 @@ Must be one of:
 | -------------- | - |
 | **Min length** | 1 |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_globalSecretName"></a>3.40.1.6.10. Property `stack > global > securityPolicies > additionalProperties > oidc > globalSecretName`
+###### <a name="global_securityPolicies_additionalProperties_oidc_globalSecretName"></a>3.40.1.6.11. Property `stack > global > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -8514,14 +8704,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_logoutPath"></a>3.40.1.6.11. Property `stack > global > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="global_securityPolicies_additionalProperties_oidc_logoutPath"></a>3.40.1.6.12. Property `stack > global > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider"></a>3.40.1.6.12. Property `stack > global > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider"></a>3.40.1.6.13. Property `stack > global > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -8535,7 +8725,7 @@ Must be one of:
 | - [issuer](#global_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>3.40.1.6.12.1. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>3.40.1.6.13.1. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -8544,28 +8734,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.12.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.13.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.12.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.13.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_refreshToken"></a>3.40.1.6.13. Property `stack > global > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="global_securityPolicies_additionalProperties_oidc_refreshToken"></a>3.40.1.6.14. Property `stack > global > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_resources"></a>3.40.1.6.14. Property `stack > global > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources"></a>3.40.1.6.15. Property `stack > global > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8584,14 +8774,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------- | ----------- |
 | [resources items](#global_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_resources_items"></a>3.40.1.6.14.1. stack > global > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="global_securityPolicies_additionalProperties_oidc_resources_items"></a>3.40.1.6.15.1. stack > global > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_scopes"></a>3.40.1.6.15. Property `stack > global > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes"></a>3.40.1.6.16. Property `stack > global > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8610,7 +8800,7 @@ Must be one of:
 | ------------------------------------------------------------------------------- | ----------- |
 | [scopes items](#global_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_scopes_items"></a>3.40.1.6.15.1. stack > global > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="global_securityPolicies_additionalProperties_oidc_scopes_items"></a>3.40.1.6.16.1. stack > global > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -12802,23 +12992,24 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
-| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
-| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
-| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
-| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
-| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
-| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
-| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
-| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
-| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
-| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
-| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
-| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
-| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
-| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [clientSecretFrom](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom )     | No      | object          | No         | -          | Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>4.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -12880,7 +13071,101 @@ Must be one of:
 
 **Description:** OIDC client id, defaults to the shared Argus Okta client
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>4.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom"></a>4.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName
+
+| Property                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations )           | No      | object | No         | -          | Extra annotations on the rendered ExternalSecret                                                                                                                                                                                                                                                           |
+| - [clientIDProperty](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty ) | No      | string | No         | -          | Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID |
+| - [property](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_property )                 | No      | string | No         | -          | Property in the remote secret holding the client secret, for example CLIENT_SECRET                                                                                                                                                                                                                         |
+| - [refreshInterval](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval )   | No      | string | No         | -          | ExternalSecret refresh interval, defaults to 1m                                                                                                                                                                                                                                                            |
+| - [remoteKey](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey )               | No      | string | No         | -          | Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here                                                                                                                                                                                       |
+| - [secretStoreRef](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef )     | No      | object | No         | -          | Store to read from, defaulting to the fleet ClusterSecretStore                                                                                                                                                                                                                                             |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations"></a>4.1.40.1.6.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered ExternalSecret
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty"></a>4.1.40.1.6.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > clientIDProperty`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_property"></a>4.1.40.1.6.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > property`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Property in the remote secret holding the client secret, for example CLIENT_SECRET
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval"></a>4.1.40.1.6.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > refreshInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** ExternalSecret refresh interval, defaults to 1m
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey"></a>4.1.40.1.6.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > remoteKey`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef"></a>4.1.40.1.6.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Store to read from, defaulting to the fleet ClusterSecretStore
+
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [kind](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind ) | No      | string | No         | -          | -                 |
+| - [name](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind"></a>4.1.40.1.6.3.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name"></a>4.1.40.1.6.3.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>4.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -12889,14 +13174,14 @@ Must be one of:
 
 **Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>4.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>4.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>4.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>4.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -12909,28 +13194,28 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
 | - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>4.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>4.1.40.1.6.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>4.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>4.1.40.1.6.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>4.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>4.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>4.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>4.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -12942,7 +13227,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
 | - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>4.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>4.1.40.1.6.8.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -12951,7 +13236,7 @@ Must be one of:
 
 **Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>4.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>4.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -12960,7 +13245,7 @@ Must be one of:
 
 **Description:** Forward the access token upstream as Authorization: Bearer
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>4.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>4.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -12973,7 +13258,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
 | - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>4.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>4.1.40.1.6.10.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -12982,7 +13267,7 @@ Must be one of:
 
 **Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>4.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>4.1.40.1.6.10.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
@@ -12995,7 +13280,7 @@ Must be one of:
 | -------------- | - |
 | **Min length** | 1 |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>4.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>4.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -13004,14 +13289,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>4.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>4.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>4.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>4.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -13025,7 +13310,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>4.1.40.1.6.12.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>4.1.40.1.6.13.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -13034,28 +13319,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.12.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.13.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.12.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.13.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>4.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>4.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>4.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>4.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -13074,14 +13359,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ----------- |
 | [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>4.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>4.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>4.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>4.1.40.1.6.16. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -13100,7 +13385,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------ | ----------- |
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>4.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>4.1.40.1.6.16.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
@@ -17756,23 +18041,24 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                               |
-| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                               |
-| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                        |
-| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID |
-| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                               |
-| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                               |
-| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                               |
-| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                               |
-| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                      |
-| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                               |
-| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                    |
-| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                               |
-| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                               |
-| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                               |
-| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                               |
-| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                               |
+| Property                                                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - [apiRoutes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes )                   | No      | array of object | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [clientID](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientID )                     | No      | string          | No         | -          | OIDC client id, defaults to the shared Argus Okta client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [clientSecretFrom](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom )     | No      | object          | No         | -          | Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName |
+| - [clientSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName )     | No      | string          | No         | -          | Secret in the stack namespace with client-id and client-secret keys, set together with clientID                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| - [cookieDomain](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [cookieNames](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames )               | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [csrfTokenTTL](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL )             | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [denyRedirect](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect )             | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [forwardAccessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken ) | No      | boolean         | No         | -          | Forward the access token upstream as Authorization: Bearer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [forwardIDToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken )         | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [globalSecretName](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName )     | No      | string          | No         | -          | Fleet-wide client secret name, defaults to argus-global-oidc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| - [logoutPath](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath )                 | No      | string          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [provider](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider )                     | No      | object          | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [refreshToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken )             | No      | boolean         | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [resources](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources )                   | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| - [scopes](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes )                         | No      | array of string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_apiRoutes"></a>7.1.40.1.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > apiRoutes`
 
@@ -17834,7 +18120,101 @@ Must be one of:
 
 **Description:** OIDC client id, defaults to the shared Argus Okta client
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>7.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom"></a>7.1.40.1.6.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Ask the chart to project a Secret holding the OIDC client credentials under the key names Envoy Gateway requires. Envoy Gateway reads the client secret only from a key literally named client-secret and offers no way to name a different one, while Argus stores env secret keys in upper snake case, so an Argus-managed env secret can never satisfy it directly. Setting property makes the chart render an ExternalSecret that re-projects the same remote secret under client-secret, and point the policy at it. Mutually exclusive with clientSecretName
+
+| Property                                                                                                               | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations )           | No      | object | No         | -          | Extra annotations on the rendered ExternalSecret                                                                                                                                                                                                                                                           |
+| - [clientIDProperty](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty ) | No      | string | No         | -          | Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID |
+| - [property](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_property )                 | No      | string | No         | -          | Property in the remote secret holding the client secret, for example CLIENT_SECRET                                                                                                                                                                                                                         |
+| - [refreshInterval](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval )   | No      | string | No         | -          | ExternalSecret refresh interval, defaults to 1m                                                                                                                                                                                                                                                            |
+| - [remoteKey](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey )               | No      | string | No         | -          | Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here                                                                                                                                                                                       |
+| - [secretStoreRef](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef )     | No      | object | No         | -          | Store to read from, defaulting to the fleet ClusterSecretStore                                                                                                                                                                                                                                             |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_annotations"></a>7.1.40.1.6.3.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > annotations`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Extra annotations on the rendered ExternalSecret
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_clientIDProperty"></a>7.1.40.1.6.3.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > clientIDProperty`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Optional, and only needed when the client id is itself sensitive. A client id is usually not a secret: leave this unset and put it in oidc.clientID as plain text, and then only the client secret is projected. Set this to have the id read from the remote secret too, in which case omit oidc.clientID
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_property"></a>7.1.40.1.6.3.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > property`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Property in the remote secret holding the client secret, for example CLIENT_SECRET
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_refreshInterval"></a>7.1.40.1.6.3.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > refreshInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** ExternalSecret refresh interval, defaults to 1m
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_remoteKey"></a>7.1.40.1.6.3.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > remoteKey`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Remote secret to read, defaulting to global.appSecrets.envSecret.secretKey so an Argus env secret needs no path here
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef"></a>7.1.40.1.6.3.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef`
+
+|                           |             |
+| ------------------------- | ----------- |
+| **Type**                  | `object`    |
+| **Required**              | No          |
+| **Additional properties** | Not allowed |
+
+**Description:** Store to read from, defaulting to the fleet ClusterSecretStore
+
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [kind](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind ) | No      | string | No         | -          | -                 |
+| - [name](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_kind"></a>7.1.40.1.6.3.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > kind`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretFrom_secretStoreRef_name"></a>7.1.40.1.6.3.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretFrom > secretStoreRef > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_clientSecretName"></a>7.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > clientSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -17843,14 +18223,14 @@ Must be one of:
 
 **Description:** Secret in the stack namespace with client-id and client-secret keys, set together with clientID
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>7.1.40.1.6.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieDomain"></a>7.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieDomain`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>7.1.40.1.6.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames"></a>7.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -17863,28 +18243,28 @@ Must be one of:
 | - [accessToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken ) | No      | string | No         | -          | -                 |
 | - [idToken](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken )         | No      | string | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>7.1.40.1.6.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_accessToken"></a>7.1.40.1.6.6.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > accessToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>7.1.40.1.6.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_cookieNames_idToken"></a>7.1.40.1.6.6.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > cookieNames > idToken`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>7.1.40.1.6.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_csrfTokenTTL"></a>7.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > csrfTokenTTL`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>7.1.40.1.6.7. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect"></a>7.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -17896,7 +18276,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------ |
 | - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled ) | No      | boolean | No         | -          | Answer unauthenticated fetch/XHR requests with 401 instead of a redirect |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>7.1.40.1.6.7.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_denyRedirect_enabled"></a>7.1.40.1.6.8.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > denyRedirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -17905,7 +18285,7 @@ Must be one of:
 
 **Description:** Answer unauthenticated fetch/XHR requests with 401 instead of a redirect
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>7.1.40.1.6.8. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardAccessToken"></a>7.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardAccessToken`
 
 |              |           |
 | ------------ | --------- |
@@ -17914,7 +18294,7 @@ Must be one of:
 
 **Description:** Forward the access token upstream as Authorization: Bearer
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>7.1.40.1.6.9. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken"></a>7.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -17927,7 +18307,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled ) | No      | boolean | No         | -          | Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers                                |
 | - [header](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header )   | No      | string  | No         | -          | Upstream header carrying the ID token, defaults to X-ID-Token. Authorization gets a Bearer prefix, any other header gets the raw JWT for the app to decode claims from |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>7.1.40.1.6.9.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_enabled"></a>7.1.40.1.6.10.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -17936,7 +18316,7 @@ Must be one of:
 
 **Description:** Forward the OIDC ID token upstream, on by default so apps can read the signed-in user without the retired oauth2-proxy identity headers
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>7.1.40.1.6.9.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_forwardIDToken_header"></a>7.1.40.1.6.10.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > forwardIDToken > header`
 
 |              |          |
 | ------------ | -------- |
@@ -17949,7 +18329,7 @@ Must be one of:
 | -------------- | - |
 | **Min length** | 1 |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>7.1.40.1.6.10. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_globalSecretName"></a>7.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > globalSecretName`
 
 |              |          |
 | ------------ | -------- |
@@ -17958,14 +18338,14 @@ Must be one of:
 
 **Description:** Fleet-wide client secret name, defaults to argus-global-oidc
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>7.1.40.1.6.11. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_logoutPath"></a>7.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > logoutPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>7.1.40.1.6.12. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider"></a>7.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider`
 
 |                           |             |
 | ------------------------- | ----------- |
@@ -17979,7 +18359,7 @@ Must be one of:
 | - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
 | - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>7.1.40.1.6.12.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>7.1.40.1.6.13.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
 |              |          |
 | ------------ | -------- |
@@ -17988,28 +18368,28 @@ Must be one of:
 
 **Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.12.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.13.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.12.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.13.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>7.1.40.1.6.13. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>7.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>7.1.40.1.6.14. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources"></a>7.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -18028,14 +18408,14 @@ Must be one of:
 | ------------------------------------------------------------------------------------------------ | ----------- |
 | [resources items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>7.1.40.1.6.14.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_resources_items"></a>7.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > resources > resources items
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>7.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes"></a>7.1.40.1.6.16. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -18054,7 +18434,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------------ | ----------- |
 | [scopes items](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>7.1.40.1.6.15.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_scopes_items"></a>7.1.40.1.6.16.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > scopes > scopes items
 
 |              |          |
 | ------------ | -------- |
