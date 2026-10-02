@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.60.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.59.1...stack-v2.60.0) (2026-10-02)
+
+
+### Features
+
+* **stack:** project a policy's OIDC client secret under Envoy's key name ([#580](https://github.com/chanzuckerberg/argo-helm-charts/issues/580)) ([1281acd](https://github.com/chanzuckerberg/argo-helm-charts/commit/1281acd7c32acbae7b7052280ac10c1db5c180ec))
+
 ## [2.59.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.59.0...stack-v2.59.1) (2026-09-30)
 
 
