@@ -306,3 +306,121 @@ tests:
       path: spec.jwt.providers[0].claimToHeaders
   - notExists:
       path: spec.jwt.providers[0].extractFrom
+
+- it: should render the built-in oidc-identity-headers policy from the name alone
+  # Declares no securityPolicies block at all, so every asserted value comes
+  # from the chart's built-in rather than from this test. Without that, a test
+  # that both names the policy and redeclares it asserts only its own input:
+  # mergeOverwrite replaces providers wholesale, discarding the built-in.
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - isKind:
+      of: SecurityPolicy
+  # it is oidc-protected-default plus a provider, so the OIDC half must survive
+  - equal:
+      path: spec.oidc.provider.issuer
+      value: https://czi.okta.com
+  - equal:
+      path: spec.oidc.forwardIDToken.header
+      value: X-ID-Token
+  - equal:
+      path: spec.oidc.clientIDRef.name
+      value: argus-global-oidc
+  # the provider itself
+  - equal:
+      path: spec.jwt.providers[0].name
+      value: okta-id-token
+  - equal:
+      path: spec.jwt.providers[0].issuer
+      value: https://czi.okta.com
+  - equal:
+      path: spec.jwt.providers[0].remoteJWKS.uri
+      value: https://czi.okta.com/oauth2/v1/keys
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.headers[0].name
+      value: X-ID-Token
+  - lengthEqual:
+      path: spec.jwt.providers[0].claimToHeaders
+      count: 3
+  - contains:
+      path: spec.jwt.providers[0].claimToHeaders
+      content:
+        claim: email
+        header: X-Forwarded-Email
+  - contains:
+      path: spec.jwt.providers[0].claimToHeaders
+      content:
+        claim: email
+        header: X-Auth-Request-Email
+  - contains:
+      path: spec.jwt.providers[0].claimToHeaders
+      content:
+        claim: sub
+        header: X-Forwarded-User
+
+- it: should point the built-in provider at whichever issuer the policy authenticates against
+  # Overriding oidc.provider.issuer changes who signs the ID token. A provider
+  # left on the default issuer would reject every token it is handed — a 401
+  # behind an Accepted policy, with nothing to see in the render.
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            provider:
+              issuer: https://login.example-idp.com
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.oidc.provider.issuer
+      value: https://login.example-idp.com
+  - equal:
+      path: spec.jwt.providers[0].issuer
+      value: https://login.example-idp.com
+  - equal:
+      path: spec.jwt.providers[0].remoteJWKS.uri
+      value: https://login.example-idp.com/oauth2/v1/keys
+
+- it: should render audiences when a provider pins them
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: pinned
+      securityPolicies:
+        pinned:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              audiences:
+              - 0oaSOMECLIENTID
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.jwt.providers[0].audiences[0]
+      value: 0oaSOMECLIENTID

@@ -564,6 +564,26 @@ for it are unaffected. Emits email twice because consumers read either spelling.
     {{- $_ := set $base "jwt" (deepCopy $builtinIdentityJwt) -}}
   {{- end -}}
   {{- $entry := mergeOverwrite $base (deepCopy $def) -}}
+  {{/*
+  Keep the identity provider pointed at whichever issuer the policy actually
+  authenticates against. Overriding oidc.provider.issuer changes who signs the
+  ID token, so a provider left on the default issuer would reject every token
+  it is handed — a silent 401 behind an Accepted policy. Only the built-in
+  provider is realigned; a hand-declared one is left exactly as written.
+  */}}
+  {{- if eq $name "oidc-identity-headers" -}}
+    {{- $iss := ((($entry.oidc | default dict).provider | default dict).issuer | default "") -}}
+    {{- if and $iss (ne $iss "https://czi.okta.com") -}}
+      {{- range $p := (($entry.jwt | default dict).providers | default list) -}}
+        {{- if eq $p.name "okta-id-token" -}}
+          {{- if not (hasKey ($def | default dict) "jwt") -}}
+            {{- $_ := set $p "issuer" $iss -}}
+            {{- $_ := set $p "remoteJWKSUri" (printf "%s/oauth2/v1/keys" (trimSuffix "/" $iss)) -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
   {{- $recognized := false -}}
   {{- range $k := $authKeys -}}
     {{- if hasKey $entry $k -}}{{- $recognized = true -}}{{- end -}}
@@ -1005,6 +1025,10 @@ jwt:
       remoteJWKS:
         uri: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].remoteJWKSUri is required. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $i) $provider.remoteJWKSUri | quote }}
       issuer: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer | quote }}
+      {{- if $provider.audiences }}
+      audiences:
+        {{- toYaml $provider.audiences | nindent 8 }}
+      {{- end }}
       {{- if $provider.extractFrom }}
       extractFrom:
         {{- toYaml $provider.extractFrom | nindent 8 }}
