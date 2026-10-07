@@ -527,6 +527,23 @@ Takes the root context.
       "denyRedirect" (dict "enabled" true)
       "forwardIDToken" (dict "enabled" true "header" "X-ID-Token")
       "logoutPath" "/logout" -}}
+{{/*
+oidc-identity-headers: oidc-protected-default plus a JWT provider that reads the
+forwarded ID token and copies its claims into the request headers oauth2-proxy
+used to set. Opt-in by name, so the default policy and every stack not asking
+for it are unaffected. Emits email twice because consumers read either spelling.
+*/}}
+{{- $builtinIdentityJwt := dict
+      "enabled" true
+      "providers" (list (dict
+        "name" "okta-id-token"
+        "issuer" "https://czi.okta.com"
+        "remoteJWKSUri" "https://czi.okta.com/oauth2/v1/keys"
+        "extractFrom" (dict "headers" (list (dict "name" "X-ID-Token")))
+        "claimToHeaders" (list
+          (dict "claim" "email" "header" "X-Forwarded-Email")
+          (dict "claim" "email" "header" "X-Auth-Request-Email")
+          (dict "claim" "sub" "header" "X-Forwarded-User")))) -}}
 {{- $authKeys := list "oidc" "basicAuth" "cors" "ipAllowList" "jwt" -}}
 {{- $allowedKeys := concat $authKeys (list "annotations") -}}
 {{- $merged := dict -}}
@@ -540,8 +557,11 @@ Takes the root context.
     {{- end -}}
   {{- end -}}
   {{- $base := dict -}}
-  {{- if or (eq $name "oidc-protected-default") (hasKey ($def | default dict) "oidc") -}}
+  {{- if or (eq $name "oidc-protected-default") (eq $name "oidc-identity-headers") (hasKey ($def | default dict) "oidc") -}}
     {{- $base = dict "oidc" (deepCopy $builtinOidc) -}}
+  {{- end -}}
+  {{- if eq $name "oidc-identity-headers" -}}
+    {{- $_ := set $base "jwt" (deepCopy $builtinIdentityJwt) -}}
   {{- end -}}
   {{- $entry := mergeOverwrite $base (deepCopy $def) -}}
   {{- $recognized := false -}}
@@ -555,6 +575,9 @@ Takes the root context.
 {{- end -}}
 {{- if not (hasKey $merged "oidc-protected-default") -}}
   {{- $_ := set $merged "oidc-protected-default" (dict "oidc" (deepCopy $builtinOidc)) -}}
+{{- end -}}
+{{- if not (hasKey $merged "oidc-identity-headers") -}}
+  {{- $_ := set $merged "oidc-identity-headers" (dict "oidc" (deepCopy $builtinOidc) "jwt" (deepCopy $builtinIdentityJwt)) -}}
 {{- end -}}
 {{- $skeleton := dict
       "cors" (dict "enabled" false)
@@ -982,6 +1005,17 @@ jwt:
       remoteJWKS:
         uri: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].remoteJWKSUri is required. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $i) $provider.remoteJWKSUri | quote }}
       issuer: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer | quote }}
+      {{- if $provider.extractFrom }}
+      extractFrom:
+        {{- toYaml $provider.extractFrom | nindent 8 }}
+      {{- end }}
+      {{- if $provider.claimToHeaders }}
+      claimToHeaders:
+        {{- range $c := $provider.claimToHeaders }}
+        - claim: {{ required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].claim is required. Name the JWT claim to read, for example email or sub" $c.claim | quote }}
+          header: {{ required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].header is required. Name the upstream request header to write the claim into, for example X-Forwarded-Email" $c.header | quote }}
+        {{- end }}
+      {{- end }}
   {{- end }}
 {{- else }}
     - name: default

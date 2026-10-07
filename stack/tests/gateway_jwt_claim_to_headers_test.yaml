@@ -1,0 +1,308 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway SecurityPolicy JWT claimToHeaders and extractFrom
+templates:
+- gateway-securitypolicy-shared.yaml
+tests:
+- it: should render claimToHeaders and extractFrom on a provider that sets them
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            forwardIDToken:
+              enabled: true
+              header: X-ID-Token
+          jwt:
+            enabled: true
+            providers:
+            - name: okta-id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                headers:
+                - name: X-ID-Token
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+              - claim: sub
+                header: X-Forwarded-User
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - isKind:
+      of: SecurityPolicy
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.headers[0].name
+      value: X-ID-Token
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[0].claim
+      value: email
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[0].header
+      value: X-Forwarded-Email
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[1].claim
+      value: sub
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[1].header
+      value: X-Forwarded-User
+
+- it: should emit one claim into several headers so every consumer shape is served
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta-id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+              - claim: email
+                header: X-Auth-Request-Email
+    services:
+      service1: {}
+  asserts:
+  - lengthEqual:
+      path: spec.jwt.providers[0].claimToHeaders
+      count: 2
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[0].header
+      value: X-Forwarded-Email
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[1].header
+      value: X-Auth-Request-Email
+
+- it: should omit both keys when a provider does not set them
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: jwt-only
+      securityPolicies:
+        jwt-only:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+    services:
+      service1: {}
+  asserts:
+  - notExists:
+      path: spec.jwt.providers[0].claimToHeaders
+  - notExists:
+      path: spec.jwt.providers[0].extractFrom
+
+- it: should fail when a claimToHeaders entry omits claim
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: bad-policy
+      securityPolicies:
+        bad-policy:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              claimToHeaders:
+              - header: X-Forwarded-Email
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorMessage: "securityPolicies.<name>.jwt.providers[].claimToHeaders[].claim is required. Name the JWT claim to read, for example email or sub"
+
+- it: should fail when a claimToHeaders entry omits header
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: bad-policy
+      securityPolicies:
+        bad-policy:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              claimToHeaders:
+              - claim: email
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorMessage: "securityPolicies.<name>.jwt.providers[].claimToHeaders[].header is required. Name the upstream request header to write the claim into, for example X-Forwarded-Email"
+
+- it: should pin that the built-in oidc-protected-default renders no jwt block and so injects no claim headers
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: metadata.name
+      value: release-name-stack-oidc-protected-default
+  - exists:
+      path: spec.oidc
+  - notExists:
+      path: spec.jwt
+  - equal:
+      path: spec.oidc.forwardIDToken.header
+      value: X-ID-Token
+
+- it: should keep claimToHeaders per provider when a policy declares several
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: two-issuers
+      securityPolicies:
+        two-issuers:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+            - name: github-actions
+              issuer: https://token.actions.githubusercontent.com
+              remoteJWKSUri: https://token.actions.githubusercontent.com/.well-known/jwks
+              claimToHeaders:
+              - claim: repository
+                header: X-CI-Repository
+    services:
+      service1: {}
+  asserts:
+  - lengthEqual:
+      path: spec.jwt.providers
+      count: 2
+  - lengthEqual:
+      path: spec.jwt.providers[0].claimToHeaders
+      count: 1
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[0].header
+      value: X-Forwarded-Email
+  - lengthEqual:
+      path: spec.jwt.providers[1].claimToHeaders
+      count: 1
+  - equal:
+      path: spec.jwt.providers[1].claimToHeaders[0].claim
+      value: repository
+  - equal:
+      path: spec.jwt.providers[1].claimToHeaders[0].header
+      value: X-CI-Repository
+
+- it: should pass extractFrom through unchanged when the token arrives in a cookie or a query param
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta-id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                cookies:
+                - IdToken-oidc-identity-headers-api-example-com
+                params:
+                - access_token
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.cookies[0]
+      value: IdToken-oidc-identity-headers-api-example-com
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.params[0]
+      value: access_token
+  - notExists:
+      path: spec.jwt.providers[0].extractFrom.headers
+
+- it: should render the single-provider jwt shorthand with no claimToHeaders, which only the providers list can carry
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: jwt-shorthand
+      securityPolicies:
+        jwt-shorthand:
+          jwt:
+            enabled: true
+            remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+            issuer: https://auth.example.com
+    services:
+      service1: {}
+  asserts:
+  - lengthEqual:
+      path: spec.jwt.providers
+      count: 1
+  - equal:
+      path: spec.jwt.providers[0].name
+      value: default
+  - notExists:
+      path: spec.jwt.providers[0].claimToHeaders
+  - notExists:
+      path: spec.jwt.providers[0].extractFrom
