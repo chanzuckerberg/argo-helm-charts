@@ -1288,9 +1288,17 @@
                   "enabled": {
                     "type": "boolean"
                   },
+                  "failOpen": {
+                    "description": "Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate",
+                    "type": "boolean"
+                  },
                   "issuer": {
                     "description": "Defaults to the policy oidc provider issuer",
                     "type": "string"
+                  },
+                  "optional": {
+                    "description": "Tolerate a missing JWT. An invalid one is still rejected",
+                    "type": "boolean"
                   },
                   "providers": {
                     "type": "array",

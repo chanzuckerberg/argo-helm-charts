@@ -3775,12 +3775,14 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
-| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
-| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
-| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
-| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                                                                                                                                                                |
+| - [failOpen](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_failOpen )           | No      | boolean         | No         | -          | Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer                                                                                                                                      |
+| - [optional](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_optional )           | No      | boolean         | No         | -          | Tolerate a missing JWT. An invalid one is still rejected                                                                                                                         |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                                                                                                                                                                |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                                                                                                                                                                |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>2.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
 
@@ -3789,7 +3791,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>2.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_failOpen"></a>2.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > failOpen`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>2.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -3798,7 +3809,16 @@ Must be one of:
 
 **Description:** Defaults to the policy oidc provider issuer
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>2.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_optional"></a>2.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > optional`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing JWT. An invalid one is still rejected
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>2.1.40.1.5.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -3817,7 +3837,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------- | ----------- |
 | [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>2.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>2.1.40.1.5.5.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -3825,7 +3845,7 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>2.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>2.1.40.1.5.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
 
 |              |          |
 | ------------ | -------- |
@@ -8342,12 +8362,14 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                            | Pattern | Type            | Deprecated | Definition | Title/Description                           |
-| ----------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
-| - [enabled](#global_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
-| - [issuer](#global_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
-| - [providers](#global_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
-| - [remoteJWKSUri](#global_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+| Property                                                                            | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                |
+| ----------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                                                                                                                                                                |
+| - [failOpen](#global_securityPolicies_additionalProperties_jwt_failOpen )           | No      | boolean         | No         | -          | Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate |
+| - [issuer](#global_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer                                                                                                                                      |
+| - [optional](#global_securityPolicies_additionalProperties_jwt_optional )           | No      | boolean         | No         | -          | Tolerate a missing JWT. An invalid one is still rejected                                                                                                                         |
+| - [providers](#global_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                                                                                                                                                                |
+| - [remoteJWKSUri](#global_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                                                                                                                                                                |
 
 ###### <a name="global_securityPolicies_additionalProperties_jwt_enabled"></a>3.40.1.5.1. Property `stack > global > securityPolicies > additionalProperties > jwt > enabled`
 
@@ -8356,7 +8378,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="global_securityPolicies_additionalProperties_jwt_issuer"></a>3.40.1.5.2. Property `stack > global > securityPolicies > additionalProperties > jwt > issuer`
+###### <a name="global_securityPolicies_additionalProperties_jwt_failOpen"></a>3.40.1.5.2. Property `stack > global > securityPolicies > additionalProperties > jwt > failOpen`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_issuer"></a>3.40.1.5.3. Property `stack > global > securityPolicies > additionalProperties > jwt > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -8365,7 +8396,16 @@ Must be one of:
 
 **Description:** Defaults to the policy oidc provider issuer
 
-###### <a name="global_securityPolicies_additionalProperties_jwt_providers"></a>3.40.1.5.3. Property `stack > global > securityPolicies > additionalProperties > jwt > providers`
+###### <a name="global_securityPolicies_additionalProperties_jwt_optional"></a>3.40.1.5.4. Property `stack > global > securityPolicies > additionalProperties > jwt > optional`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing JWT. An invalid one is still rejected
+
+###### <a name="global_securityPolicies_additionalProperties_jwt_providers"></a>3.40.1.5.5. Property `stack > global > securityPolicies > additionalProperties > jwt > providers`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -8384,7 +8424,7 @@ Must be one of:
 | ------------------------------------------------------------------------------------ | ----------- |
 | [providers items](#global_securityPolicies_additionalProperties_jwt_providers_items) | -           |
 
-###### <a name="global_securityPolicies_additionalProperties_jwt_providers_items"></a>3.40.1.5.3.1. stack > global > securityPolicies > additionalProperties > jwt > providers > providers items
+###### <a name="global_securityPolicies_additionalProperties_jwt_providers_items"></a>3.40.1.5.5.1. stack > global > securityPolicies > additionalProperties > jwt > providers > providers items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -8392,7 +8432,7 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-###### <a name="global_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>3.40.1.5.4. Property `stack > global > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+###### <a name="global_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>3.40.1.5.6. Property `stack > global > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
 
 |              |          |
 | ------------ | -------- |
@@ -12927,12 +12967,14 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
-| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
-| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
-| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
-| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                                                                                                                                                                |
+| - [failOpen](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_failOpen )           | No      | boolean         | No         | -          | Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer                                                                                                                                      |
+| - [optional](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_optional )           | No      | boolean         | No         | -          | Tolerate a missing JWT. An invalid one is still rejected                                                                                                                         |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                                                                                                                                                                |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                                                                                                                                                                |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>4.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
 
@@ -12941,7 +12983,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>4.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_failOpen"></a>4.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > failOpen`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>4.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -12950,7 +13001,16 @@ Must be one of:
 
 **Description:** Defaults to the policy oidc provider issuer
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>4.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_optional"></a>4.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > optional`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing JWT. An invalid one is still rejected
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>4.1.40.1.5.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -12969,7 +13029,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------- | ----------- |
 | [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>4.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>4.1.40.1.5.5.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -12977,7 +13037,7 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>4.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>4.1.40.1.5.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
 
 |              |          |
 | ------------ | -------- |
@@ -17976,12 +18036,14 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                           |
-| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                           |
-| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer |
-| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                           |
-| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                           |
+| Property                                                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled )             | No      | boolean         | No         | -          | -                                                                                                                                                                                |
+| - [failOpen](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_failOpen )           | No      | boolean         | No         | -          | Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer )               | No      | string          | No         | -          | Defaults to the policy oidc provider issuer                                                                                                                                      |
+| - [optional](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_optional )           | No      | boolean         | No         | -          | Tolerate a missing JWT. An invalid one is still rejected                                                                                                                         |
+| - [providers](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers )         | No      | array of object | No         | -          | -                                                                                                                                                                                |
+| - [remoteJWKSUri](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri ) | No      | string          | No         | -          | -                                                                                                                                                                                |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_enabled"></a>7.1.40.1.5.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > enabled`
 
@@ -17990,7 +18052,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>7.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_failOpen"></a>7.1.40.1.5.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > failOpen`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_issuer"></a>7.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > issuer`
 
 |              |          |
 | ------------ | -------- |
@@ -17999,7 +18070,16 @@ Must be one of:
 
 **Description:** Defaults to the policy oidc provider issuer
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>7.1.40.1.5.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_optional"></a>7.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > optional`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Tolerate a missing JWT. An invalid one is still rejected
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers"></a>7.1.40.1.5.5. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -18018,7 +18098,7 @@ Must be one of:
 | ----------------------------------------------------------------------------------------------- | ----------- |
 | [providers items](#cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items) | -           |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>7.1.40.1.5.3.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_providers_items"></a>7.1.40.1.5.5.1. stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > providers > providers items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -18026,7 +18106,7 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>7.1.40.1.5.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_jwt_remoteJWKSUri"></a>7.1.40.1.5.6. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > jwt > remoteJWKSUri`
 
 |              |          |
 | ------------ | -------- |
