@@ -369,10 +369,11 @@ tests:
         claim: sub
         header: X-Forwarded-User
 
-- it: should point the built-in provider at whichever issuer the policy authenticates against
-  # Overriding oidc.provider.issuer changes who signs the ID token. A provider
-  # left on the default issuer would reject every token it is handed — a 401
-  # behind an Accepted policy, with nothing to see in the render.
+- it: should refuse to render the built-in policy against a non-default issuer
+  # Overriding oidc.provider.issuer changes who signs the ID token. The built-in
+  # provider validates against Okta, and another IdP's JWKS path cannot be
+  # guessed, so a rendered policy would 401 every request while reporting
+  # Accepted. Fail the render instead.
   set:
     global:
       ingress:
@@ -389,15 +390,92 @@ tests:
     services:
       service1: {}
   asserts:
-  - equal:
-      path: spec.oidc.provider.issuer
-      value: https://login.example-idp.com
-  - equal:
-      path: spec.jwt.providers[0].issuer
-      value: https://login.example-idp.com
+  - failedTemplate:
+      errorPattern: "overrides oidc.provider.issuer to https://login.example-idp.com"
+
+- it: should let a hand-declared jwt block override the built-in issuer check
+  # mergeOverwrite has already replaced the provider list wholesale, so the
+  # built-in's assumptions no longer apply and the override must be allowed.
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            provider:
+              issuer: https://login.example-idp.com
+          jwt:
+            enabled: true
+            providers:
+            - name: idp-id-token
+              issuer: https://login.example-idp.com
+              remoteJWKSUri: https://login.example-idp.com/.well-known/jwks.json
+              extractFrom:
+                headers:
+                - name: X-ID-Token
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+    services:
+      service1: {}
+  asserts:
   - equal:
       path: spec.jwt.providers[0].remoteJWKS.uri
-      value: https://login.example-idp.com/oauth2/v1/keys
+      value: https://login.example-idp.com/.well-known/jwks.json
+  - lengthEqual:
+      path: spec.jwt.providers
+      count: 1
+
+- it: should extract from whichever header forwardIDToken writes
+  # The provider reads the header the OIDC block writes. Leaving it on the
+  # default while oidc.forwardIDToken.header is renamed is the same silent 401.
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            forwardIDToken:
+              enabled: true
+              header: X-Okta-ID-Token
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.headers[0].name
+      value: X-Okta-ID-Token
+
+- it: should refuse to render the built-in policy with forwardIDToken disabled
+  # Without the forwarded token there is no credential for the provider to
+  # read, so every request 401s behind a policy that reports Accepted.
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            forwardIDToken:
+              enabled: false
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: "forwardIDToken.enabled: false"
 
 - it: should render audiences when a provider pins them
   set:
@@ -424,3 +502,108 @@ tests:
   - equal:
       path: spec.jwt.providers[0].audiences[0]
       value: 0oaSOMECLIENTID
+
+- it: should pass provider fields through to the CRD verbatim
+  # localJWKS, recomputeRoute and the remoteJWKS tuning knobs are real
+  # JWTProvider fields. Rendering a hand-picked subset dropped the rest
+  # silently, so the policy applied clean while doing something else.
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: tuned
+      securityPolicies:
+        tuned:
+          jwt:
+            enabled: true
+            optional: true
+            providers:
+            - name: cached
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              recomputeRoute: true
+              claimToHeaders:
+              - claim: sub
+                header: X-Forwarded-User
+              remoteJWKS:
+                cacheDuration: 900s
+                failedRefetchDuration: 30s
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.jwt.optional
+      value: true
+  - equal:
+      path: spec.jwt.providers[0].recomputeRoute
+      value: true
+  - equal:
+      path: spec.jwt.providers[0].remoteJWKS
+      value:
+        uri: https://auth.example.com/keys
+        cacheDuration: 900s
+        failedRefetchDuration: 30s
+  - notExists:
+      path: spec.jwt.providers[0].remoteJWKSUri
+
+- it: should accept a local key set in place of a remote one
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: local
+      securityPolicies:
+        local:
+          jwt:
+            enabled: true
+            failOpen: false
+            providers:
+            - name: inline
+              issuer: https://auth.example.com
+              localJWKS:
+                type: ValueRef
+                valueRef:
+                  name: jwks-configmap
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.jwt.failOpen
+      value: false
+  - equal:
+      path: spec.jwt.providers[0].localJWKS.valueRef.name
+      value: jwks-configmap
+  - notExists:
+      path: spec.jwt.providers[0].remoteJWKS
+
+- it: should reject a provider that names both key sources
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: both
+      securityPolicies:
+        both:
+          jwt:
+            enabled: true
+            providers:
+            - name: ambiguous
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              localJWKS:
+                type: Inline
+                inline: "{}"
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: "the CRD permits exactly one"

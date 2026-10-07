@@ -565,22 +565,29 @@ for it are unaffected. Emits email twice because consumers read either spelling.
   {{- end -}}
   {{- $entry := mergeOverwrite $base (deepCopy $def) -}}
   {{/*
-  Keep the identity provider pointed at whichever issuer the policy actually
-  authenticates against. Overriding oidc.provider.issuer changes who signs the
-  ID token, so a provider left on the default issuer would reject every token
-  it is handed — a silent 401 behind an Accepted policy. Only the built-in
-  provider is realigned; a hand-declared one is left exactly as written.
+  The built-in identity provider only works while it agrees with the policy it
+  sits in. Two keys can disagree with it, and both would 401 every request
+  behind an Accepted policy, so both fail the render instead.
+
+  A hand-declared jwt block is left exactly as written — mergeOverwrite has
+  already replaced the built-in provider wholesale, so none of this applies.
   */}}
-  {{- if eq $name "oidc-identity-headers" -}}
-    {{- $iss := ((($entry.oidc | default dict).provider | default dict).issuer | default "") -}}
+  {{- if and (eq $name "oidc-identity-headers") (not (hasKey ($def | default dict) "jwt")) -}}
+    {{- $o := ($entry.oidc | default dict) -}}
+    {{/* The provider reads the header forwardIDToken writes, so it must be on. */}}
+    {{- if and (hasKey $o "forwardIDToken") (not (($o.forwardIDToken | default dict).enabled | default false)) -}}
+      {{- fail "securityPolicies.oidc-identity-headers sets oidc.forwardIDToken.enabled: false, but its JWT provider reads the token from that header, so no request could be verified. Remove the override, or declare your own jwt block." -}}
+    {{- end -}}
+    {{- $hdr := (($o.forwardIDToken | default dict).header | default "X-ID-Token") -}}
+    {{- $iss := (($o.provider | default dict).issuer | default "") -}}
+    {{/* A non-default issuer means a different IdP, whose JWKS path we cannot
+         guess — deriving one produced a wrong URL for Okta custom auth servers. */}}
     {{- if and $iss (ne $iss "https://czi.okta.com") -}}
-      {{- range $p := (($entry.jwt | default dict).providers | default list) -}}
-        {{- if eq $p.name "okta-id-token" -}}
-          {{- if not (hasKey ($def | default dict) "jwt") -}}
-            {{- $_ := set $p "issuer" $iss -}}
-            {{- $_ := set $p "remoteJWKSUri" (printf "%s/oauth2/v1/keys" (trimSuffix "/" $iss)) -}}
-          {{- end -}}
-        {{- end -}}
+      {{- fail (printf "securityPolicies.oidc-identity-headers overrides oidc.provider.issuer to %s, but its built-in JWT provider validates against https://czi.okta.com and the JWKS path of another issuer cannot be derived. Declare your own jwt.providers entry with the right issuer and remoteJWKSUri." $iss) -}}
+    {{- end -}}
+    {{- range $p := (($entry.jwt | default dict).providers | default list) -}}
+      {{- if eq $p.name "okta-id-token" -}}
+        {{- $_ := set $p "extractFrom" (dict "headers" (list (dict "name" $hdr))) -}}
       {{- end -}}
     {{- end -}}
   {{- end -}}
@@ -1018,28 +1025,41 @@ oidc:
 {{- end }}
 {{- if and (not .public) $p.jwt.enabled }}
 jwt:
+  {{- if hasKey $p.jwt "optional" }}
+  optional: {{ $p.jwt.optional }}
+  {{- end }}
+  {{- if hasKey $p.jwt "failOpen" }}
+  failOpen: {{ $p.jwt.failOpen }}
+  {{- end }}
   providers:
 {{- if and $p.jwt.providers (gt (len $p.jwt.providers) 0) }}
   {{- range $i, $provider := $p.jwt.providers }}
-    - name: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].name is required. Provide a unique identifier for this JWT provider (e.g., 'okta', 'github-actions', 'eks-dev')" $i) $provider.name | quote }}
-      remoteJWKS:
-        uri: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].remoteJWKSUri is required. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $i) $provider.remoteJWKSUri | quote }}
-      issuer: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer | quote }}
-      {{- if $provider.audiences }}
-      audiences:
-        {{- toYaml $provider.audiences | nindent 8 }}
-      {{- end }}
-      {{- if $provider.extractFrom }}
-      extractFrom:
-        {{- toYaml $provider.extractFrom | nindent 8 }}
-      {{- end }}
-      {{- if $provider.claimToHeaders }}
-      claimToHeaders:
-        {{- range $c := $provider.claimToHeaders }}
-        - claim: {{ required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].claim is required. Name the JWT claim to read, for example email or sub" $c.claim | quote }}
-          header: {{ required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].header is required. Name the upstream request header to write the claim into, for example X-Forwarded-Email" $c.header | quote }}
-        {{- end }}
-      {{- end }}
+    {{/* Each provider passes through verbatim, so every JWTProvider field the
+         CRD accepts — localJWKS, recomputeRoute, remoteJWKS cache and backend
+         settings — reaches it, and a key this chart has never heard of fails
+         loudly at the API server instead of vanishing here. Only
+         remoteJWKSUri, the chart's own shorthand, is rewritten. */}}
+    {{- $out := omit $provider "remoteJWKSUri" -}}
+    {{- $rj := deepCopy ($provider.remoteJWKS | default dict) -}}
+    {{- if and $provider.remoteJWKSUri (not $rj.uri) -}}
+      {{- $_ := set $rj "uri" $provider.remoteJWKSUri -}}
+    {{- end -}}
+    {{- if $rj -}}
+      {{- $_ := set $out "remoteJWKS" $rj -}}
+    {{- end -}}
+    {{- if and (not $rj.uri) (not $provider.localJWKS) -}}
+      {{- fail (printf "securityPolicies.<name>.jwt.providers[%d] needs a key source: set remoteJWKSUri (find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri), or localJWKS for an inline or ConfigMap key set." $i) -}}
+    {{- end -}}
+    {{- if and $rj.uri $provider.localJWKS -}}
+      {{- fail (printf "securityPolicies.<name>.jwt.providers[%d] sets both a remote and a local key source; the CRD permits exactly one." $i) -}}
+    {{- end -}}
+    {{- $_ := required (printf "securityPolicies.<name>.jwt.providers[%d].name is required. Provide a unique identifier for this JWT provider (e.g., 'okta', 'github-actions', 'eks-dev')" $i) $provider.name -}}
+    {{- $_ := required (printf "securityPolicies.<name>.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer -}}
+    {{- range $c := ($provider.claimToHeaders | default list) -}}
+      {{- $_ := required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].claim is required. Name the JWT claim to read, for example email or sub" $c.claim -}}
+      {{- $_ := required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].header is required. Name the upstream request header to write the claim into, for example X-Forwarded-Email" $c.header -}}
+    {{- end }}
+    - {{ toYaml $out | nindent 6 | trim }}
   {{- end }}
 {{- else }}
     - name: default
