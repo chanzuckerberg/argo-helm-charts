@@ -1,0 +1,153 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway JWT claimToHeaders against gateway.requestHeaders.remove
+templates:
+- gateway-securitypolicy-shared.yaml
+- httproute.yaml
+- gateway-oidc.yaml
+tests:
+# The chart has no view of Envoy's filter order, so these cases only pin what the
+# chart emits: it renders both sides of the overlap and does not reject it. They
+# exist so the overlap is visible in the rendered manifests rather than implied.
+# A policy carrying oidc moves the service HTTPRoute from httproute.yaml to
+# gateway-oidc.yaml, so both are in scope and every assert names its template.
+- it: should render both sides when a claimToHeaders header is also in requestHeaders.remove
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: claim-injection-test
+        paths:
+        - path: /
+          pathType: Prefix
+        requestHeaders:
+          remove:
+          - X-Forwarded-Email
+      securityPolicies:
+        claim-injection-test:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta-id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+    template: gateway-securitypolicy-shared.yaml
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[0].header
+      value: X-Forwarded-Email
+    template: gateway-securitypolicy-shared.yaml
+  - hasDocuments:
+      count: 1
+    template: httproute.yaml
+  - equal:
+      path: spec.rules[0].filters[0].type
+      value: RequestHeaderModifier
+    template: httproute.yaml
+  - contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Forwarded-Email
+    template: httproute.yaml
+
+- it: should render both sides when requestHeaders.remove names the header a provider extracts the token from
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: claim-injection-test
+        paths:
+        - path: /
+          pathType: Prefix
+        requestHeaders:
+          remove:
+          - X-ID-Token
+      securityPolicies:
+        claim-injection-test:
+          oidc:
+            forwardIDToken:
+              enabled: true
+              header: X-ID-Token
+          jwt:
+            enabled: true
+            providers:
+            - name: okta-id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                headers:
+                - name: X-ID-Token
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.oidc.forwardIDToken.header
+      value: X-ID-Token
+    template: gateway-securitypolicy-shared.yaml
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.headers[0].name
+      value: X-ID-Token
+    template: gateway-securitypolicy-shared.yaml
+  - hasDocuments:
+      count: 1
+    template: gateway-oidc.yaml
+  - contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-ID-Token
+    template: gateway-oidc.yaml
+  - hasDocuments:
+      count: 0
+    template: httproute.yaml
+
+- it: should leave the remove list alone when it names no injected header
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: claim-injection-test
+        paths:
+        - path: /
+          pathType: Prefix
+        requestHeaders:
+          remove:
+          - X-Client-Supplied
+      securityPolicies:
+        claim-injection-test:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta-id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              claimToHeaders:
+              - claim: email
+                header: X-Forwarded-Email
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Client-Supplied
+    template: httproute.yaml
+  - equal:
+      path: spec.jwt.providers[0].claimToHeaders[0].header
+      value: X-Forwarded-Email
+    template: gateway-securitypolicy-shared.yaml

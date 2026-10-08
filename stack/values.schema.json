@@ -445,7 +445,7 @@
               "type": "string"
             },
             "securityPolicy": {
-              "description": "Name of a global.securityPolicies entry to attach to this service, or oidc-protected-default for zero-config OIDC. Empty or none means no policy is attached and the route stays public. Services naming the same policy on the same hostname share one SecurityPolicy and therefore one OIDC session",
+              "description": "Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services",
               "type": "string"
             },
             "sessionAffinity": {
@@ -1214,7 +1214,7 @@
           "type": "object"
         },
         "securityPolicies": {
-          "description": "Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. The oidc-protected-default entry is built in and needs no declaration",
+          "description": "Named SecurityPolicy definitions. Each entry carries oidc, basicAuth, jwt, cors, ipAllowList and annotations. Services attach one by name with gateway.securityPolicy. A policy is realized once per hostname, so services naming the same policy on the same host share one SecurityPolicy and therefore one OIDC session. oidc-protected-default and oidc-identity-headers are built in and need no declaration",
           "type": "object",
           "additionalProperties": {
             "type": "object",
@@ -1288,9 +1288,17 @@
                   "enabled": {
                     "type": "boolean"
                   },
+                  "failOpen": {
+                    "description": "Tolerate a missing or invalid JWT, so a header that may also carry a non-JWT value still reaches the backend. Enforces nothing on its own, so pair it with an authorization gate",
+                    "type": "boolean"
+                  },
                   "issuer": {
                     "description": "Defaults to the policy oidc provider issuer",
                     "type": "string"
+                  },
+                  "optional": {
+                    "description": "Tolerate a missing JWT. An invalid one is still rejected",
+                    "type": "boolean"
                   },
                   "providers": {
                     "type": "array",
