@@ -1260,7 +1260,7 @@ tests:
       service1: {}
   asserts:
   - failedTemplate:
-      errorPattern: securityPolicies.<name>.jwt.providers\[0\].remoteJWKSUri is required
+      errorPattern: securityPolicies.<name>.jwt.providers\[0\] needs a key source
   template: gateway-securitypolicy-shared.yaml
 - it: should fall back to legacy single provider when providers list is empty
   set:

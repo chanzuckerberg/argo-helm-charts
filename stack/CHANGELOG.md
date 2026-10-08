@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.61.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.60.0...stack-v2.61.0) (2026-10-08)
+
+
+### Features
+
+* **stack:** render JWT claimToHeaders and add an identity-header policy ([#582](https://github.com/chanzuckerberg/argo-helm-charts/issues/582)) ([e661e92](https://github.com/chanzuckerberg/argo-helm-charts/commit/e661e9265fae1d3dca2e6c69a4385306e41b9d02))
+
 ## [2.60.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.59.1...stack-v2.60.0) (2026-10-02)
 
 

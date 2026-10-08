@@ -514,8 +514,9 @@ auto-enable and auto-disable rules. Takes (dict "root" $ "name" <serviceName>).
 {{- end -}}
 
 {{/*
-Declared securityPolicies with the built-in oidc-protected-default merged in, so
-gateway.securityPolicy: oidc-protected-default needs no configuration.
+Declared securityPolicies with the two built-ins merged in, so
+gateway.securityPolicy: oidc-protected-default and oidc-identity-headers both
+need no configuration.
 Takes the root context.
 */}}
 {{- define "securityPolicy.definitions" -}}
@@ -527,6 +528,23 @@ Takes the root context.
       "denyRedirect" (dict "enabled" true)
       "forwardIDToken" (dict "enabled" true "header" "X-ID-Token")
       "logoutPath" "/logout" -}}
+{{/*
+oidc-identity-headers: oidc-protected-default plus a JWT provider that reads the
+forwarded ID token and copies its claims into the request headers oauth2-proxy
+used to set. Opt-in by name, so the default policy and every stack not asking
+for it are unaffected. Emits email twice because consumers read either spelling.
+*/}}
+{{- $builtinIdentityJwt := dict
+      "enabled" true
+      "providers" (list (dict
+        "name" "okta-id-token"
+        "issuer" "https://czi.okta.com"
+        "remoteJWKSUri" "https://czi.okta.com/oauth2/v1/keys"
+        "extractFrom" (dict "headers" (list (dict "name" "X-ID-Token")))
+        "claimToHeaders" (list
+          (dict "claim" "email" "header" "X-Forwarded-Email")
+          (dict "claim" "email" "header" "X-Auth-Request-Email")
+          (dict "claim" "sub" "header" "X-Forwarded-User")))) -}}
 {{- $authKeys := list "oidc" "basicAuth" "cors" "ipAllowList" "jwt" -}}
 {{- $allowedKeys := concat $authKeys (list "annotations") -}}
 {{- $merged := dict -}}
@@ -540,10 +558,41 @@ Takes the root context.
     {{- end -}}
   {{- end -}}
   {{- $base := dict -}}
-  {{- if or (eq $name "oidc-protected-default") (hasKey ($def | default dict) "oidc") -}}
+  {{- if or (eq $name "oidc-protected-default") (eq $name "oidc-identity-headers") (hasKey ($def | default dict) "oidc") -}}
     {{- $base = dict "oidc" (deepCopy $builtinOidc) -}}
   {{- end -}}
+  {{- if eq $name "oidc-identity-headers" -}}
+    {{- $_ := set $base "jwt" (deepCopy $builtinIdentityJwt) -}}
+  {{- end -}}
   {{- $entry := mergeOverwrite $base (deepCopy $def) -}}
+  {{/*
+  The built-in identity provider only works while it agrees with the policy it
+  sits in. Two keys can disagree with it, and both would 401 every request
+  behind an Accepted policy, so both fail the render instead.
+
+  Declaring your own jwt.providers replaces the built-in list outright, so none
+  of this applies. Any other jwt key merges into the built-in and leaves the
+  provider in place, so the checks still have to run.
+  */}}
+  {{- if and (eq $name "oidc-identity-headers") (not (hasKey (($def | default dict).jwt | default dict) "providers")) -}}
+    {{- $o := ($entry.oidc | default dict) -}}
+    {{/* The provider reads the header forwardIDToken writes, so it must be on. */}}
+    {{- if and (hasKey $o "forwardIDToken") (not (($o.forwardIDToken | default dict).enabled | default false)) -}}
+      {{- fail "securityPolicies.oidc-identity-headers sets oidc.forwardIDToken.enabled: false, but its JWT provider reads the token from that header, so no request could be verified. Remove the override, or declare your own jwt.providers." -}}
+    {{- end -}}
+    {{- $hdr := (($o.forwardIDToken | default dict).header | default "X-ID-Token") -}}
+    {{- $iss := (($o.provider | default dict).issuer | default "") -}}
+    {{/* A non-default issuer means a different IdP, whose JWKS path we cannot
+         guess — deriving one produced a wrong URL for Okta custom auth servers. */}}
+    {{- if and $iss (ne $iss "https://czi.okta.com") -}}
+      {{- fail (printf "securityPolicies.oidc-identity-headers overrides oidc.provider.issuer to %s, but its built-in JWT provider validates against https://czi.okta.com and the JWKS path of another issuer cannot be derived. Declare your own jwt.providers entry with the right issuer and remoteJWKSUri." $iss) -}}
+    {{- end -}}
+    {{- range $p := (($entry.jwt | default dict).providers | default list) -}}
+      {{- if eq $p.name "okta-id-token" -}}
+        {{- $_ := set $p "extractFrom" (dict "headers" (list (dict "name" $hdr))) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
   {{- $recognized := false -}}
   {{- range $k := $authKeys -}}
     {{- if hasKey $entry $k -}}{{- $recognized = true -}}{{- end -}}
@@ -555,6 +604,9 @@ Takes the root context.
 {{- end -}}
 {{- if not (hasKey $merged "oidc-protected-default") -}}
   {{- $_ := set $merged "oidc-protected-default" (dict "oidc" (deepCopy $builtinOidc)) -}}
+{{- end -}}
+{{- if not (hasKey $merged "oidc-identity-headers") -}}
+  {{- $_ := set $merged "oidc-identity-headers" (dict "oidc" (deepCopy $builtinOidc) "jwt" (deepCopy $builtinIdentityJwt)) -}}
 {{- end -}}
 {{- $skeleton := dict
       "cors" (dict "enabled" false)
@@ -975,13 +1027,41 @@ oidc:
 {{- end }}
 {{- if and (not .public) $p.jwt.enabled }}
 jwt:
+  {{- if hasKey $p.jwt "optional" }}
+  optional: {{ $p.jwt.optional }}
+  {{- end }}
+  {{- if hasKey $p.jwt "failOpen" }}
+  failOpen: {{ $p.jwt.failOpen }}
+  {{- end }}
   providers:
 {{- if and $p.jwt.providers (gt (len $p.jwt.providers) 0) }}
   {{- range $i, $provider := $p.jwt.providers }}
-    - name: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].name is required. Provide a unique identifier for this JWT provider (e.g., 'okta', 'github-actions', 'eks-dev')" $i) $provider.name | quote }}
-      remoteJWKS:
-        uri: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].remoteJWKSUri is required. Find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri" $i) $provider.remoteJWKSUri | quote }}
-      issuer: {{ required (printf "securityPolicies.<name>.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer | quote }}
+    {{- /* Each provider passes through verbatim, so every JWTProvider field the
+         CRD accepts — localJWKS, recomputeRoute, remoteJWKS cache and backend
+         settings — reaches it, and a key this chart has never heard of fails
+         loudly at the API server instead of vanishing here. Only
+         remoteJWKSUri, the chart's own shorthand, is rewritten. */ -}}
+    {{- $out := omit $provider "remoteJWKSUri" -}}
+    {{- $rj := deepCopy ($provider.remoteJWKS | default dict) -}}
+    {{- if and $provider.remoteJWKSUri (not $rj.uri) -}}
+      {{- $_ := set $rj "uri" $provider.remoteJWKSUri -}}
+    {{- end -}}
+    {{- if $rj -}}
+      {{- $_ := set $out "remoteJWKS" $rj -}}
+    {{- end -}}
+    {{- if and (not $rj.uri) (not $provider.localJWKS) -}}
+      {{- fail (printf "securityPolicies.<name>.jwt.providers[%d] needs a key source: set remoteJWKSUri (find it with: curl -s <issuer>/.well-known/openid-configuration | jq -r .jwks_uri), or localJWKS for an inline or ConfigMap key set." $i) -}}
+    {{- end -}}
+    {{- if and $rj.uri $provider.localJWKS -}}
+      {{- fail (printf "securityPolicies.<name>.jwt.providers[%d] sets both a remote and a local key source; the CRD permits exactly one." $i) -}}
+    {{- end -}}
+    {{- $_ := required (printf "securityPolicies.<name>.jwt.providers[%d].name is required. Provide a unique identifier for this JWT provider (e.g., 'okta', 'github-actions', 'eks-dev')" $i) $provider.name -}}
+    {{- $_ := required (printf "securityPolicies.<name>.jwt.providers[%d].issuer is required. This should match the 'iss' claim in your JWT tokens" $i) $provider.issuer -}}
+    {{- range $c := ($provider.claimToHeaders | default list) -}}
+      {{- $_ := required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].claim is required. Name the JWT claim to read, for example email or sub" $c.claim -}}
+      {{- $_ := required "securityPolicies.<name>.jwt.providers[].claimToHeaders[].header is required. Name the upstream request header to write the claim into, for example X-Forwarded-Email" $c.header -}}
+    {{- end }}
+    - {{ toYaml $out | nindent 6 | trim }}
   {{- end }}
 {{- else }}
     - name: default
