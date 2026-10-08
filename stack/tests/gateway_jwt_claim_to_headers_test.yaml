@@ -311,7 +311,7 @@ tests:
   # Declares no securityPolicies block at all, so every asserted value comes
   # from the chart's built-in rather than from this test. Without that, a test
   # that both names the policy and redeclares it asserts only its own input:
-  # mergeOverwrite replaces providers wholesale, discarding the built-in.
+  # Declaring providers replaces the built-in list outright.
   set:
     global:
       ingress:
@@ -394,8 +394,8 @@ tests:
       errorPattern: "overrides oidc.provider.issuer to https://login.example-idp.com"
 
 - it: should let a hand-declared jwt block override the built-in issuer check
-  # mergeOverwrite has already replaced the provider list wholesale, so the
-  # built-in's assumptions no longer apply and the override must be allowed.
+  # Declaring providers replaces the built-in list outright, so the built-in's
+  # assumptions no longer apply and the override must be allowed.
   set:
     global:
       ingress:
@@ -607,3 +607,52 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: "the CRD permits exactly one"
+
+- it: should still guard the built-in when jwt is present without providers
+  # jwt keys other than providers merge into the built-in and leave its provider
+  # in place, so a renamed header would 401 every request. Only a declared
+  # providers list takes the policy out of the chart's hands.
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            forwardIDToken:
+              enabled: true
+              header: X-Custom-Id
+          jwt:
+            enabled: true
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.headers[0].name
+      value: X-Custom-Id
+
+- it: should reject forwardIDToken disabled even when jwt is present without providers
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            forwardIDToken:
+              enabled: false
+          jwt:
+            optional: true
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: "forwardIDToken.enabled: false"

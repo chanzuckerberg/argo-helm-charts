@@ -514,8 +514,9 @@ auto-enable and auto-disable rules. Takes (dict "root" $ "name" <serviceName>).
 {{- end -}}
 
 {{/*
-Declared securityPolicies with the built-in oidc-protected-default merged in, so
-gateway.securityPolicy: oidc-protected-default needs no configuration.
+Declared securityPolicies with the two built-ins merged in, so
+gateway.securityPolicy: oidc-protected-default and oidc-identity-headers both
+need no configuration.
 Takes the root context.
 */}}
 {{- define "securityPolicy.definitions" -}}
@@ -569,14 +570,15 @@ for it are unaffected. Emits email twice because consumers read either spelling.
   sits in. Two keys can disagree with it, and both would 401 every request
   behind an Accepted policy, so both fail the render instead.
 
-  A hand-declared jwt block is left exactly as written — mergeOverwrite has
-  already replaced the built-in provider wholesale, so none of this applies.
+  Declaring your own jwt.providers replaces the built-in list outright, so none
+  of this applies. Any other jwt key merges into the built-in and leaves the
+  provider in place, so the checks still have to run.
   */}}
-  {{- if and (eq $name "oidc-identity-headers") (not (hasKey ($def | default dict) "jwt")) -}}
+  {{- if and (eq $name "oidc-identity-headers") (not (hasKey (($def | default dict).jwt | default dict) "providers")) -}}
     {{- $o := ($entry.oidc | default dict) -}}
     {{/* The provider reads the header forwardIDToken writes, so it must be on. */}}
     {{- if and (hasKey $o "forwardIDToken") (not (($o.forwardIDToken | default dict).enabled | default false)) -}}
-      {{- fail "securityPolicies.oidc-identity-headers sets oidc.forwardIDToken.enabled: false, but its JWT provider reads the token from that header, so no request could be verified. Remove the override, or declare your own jwt block." -}}
+      {{- fail "securityPolicies.oidc-identity-headers sets oidc.forwardIDToken.enabled: false, but its JWT provider reads the token from that header, so no request could be verified. Remove the override, or declare your own jwt.providers." -}}
     {{- end -}}
     {{- $hdr := (($o.forwardIDToken | default dict).header | default "X-ID-Token") -}}
     {{- $iss := (($o.provider | default dict).issuer | default "") -}}
@@ -1034,11 +1036,11 @@ jwt:
   providers:
 {{- if and $p.jwt.providers (gt (len $p.jwt.providers) 0) }}
   {{- range $i, $provider := $p.jwt.providers }}
-    {{/* Each provider passes through verbatim, so every JWTProvider field the
+    {{- /* Each provider passes through verbatim, so every JWTProvider field the
          CRD accepts — localJWKS, recomputeRoute, remoteJWKS cache and backend
          settings — reaches it, and a key this chart has never heard of fails
          loudly at the API server instead of vanishing here. Only
-         remoteJWKSUri, the chart's own shorthand, is rewritten. */}}
+         remoteJWKSUri, the chart's own shorthand, is rewritten. */ -}}
     {{- $out := omit $provider "remoteJWKSUri" -}}
     {{- $rj := deepCopy ($provider.remoteJWKS | default dict) -}}
     {{- if and $provider.remoteJWKSUri (not $rj.uri) -}}
