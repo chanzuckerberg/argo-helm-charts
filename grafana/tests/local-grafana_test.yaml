@@ -1,0 +1,132 @@
+suite: test localGrafana toggles
+templates:
+  - templates/grafana.yaml
+  - templates/sso-secret.yaml
+  - templates/datasources.yaml
+  - templates/dashboards.yaml
+  - templates/folders.yaml
+  - templates/central-grafana.yaml
+
+tests:
+  - it: should render every local and central resource by default
+    set:
+      centralGrafana:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+        template: templates/grafana.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/sso-secret.yaml
+      - hasDocuments:
+          count: 4
+        template: templates/datasources.yaml
+      - hasDocuments:
+          count: 2
+        template: templates/folders.yaml
+      - isKind:
+          of: GrafanaDashboard
+        template: templates/dashboards.yaml
+        documentIndex: 0
+      - hasDocuments:
+          count: 1
+        template: templates/central-grafana.yaml
+
+  - it: should remove only the content when localGrafana.content.enabled is false
+    set:
+      localGrafana:
+        content:
+          enabled: false
+      centralGrafana:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/datasources.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/dashboards.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/folders.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/grafana.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/sso-secret.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/central-grafana.yaml
+
+  - it: should remove the local Grafana and keep central-grafana when localGrafana.enabled is false
+    set:
+      localGrafana:
+        enabled: false
+        content:
+          enabled: false
+      centralGrafana:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/datasources.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/dashboards.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/folders.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/grafana.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/sso-secret.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/central-grafana.yaml
+      - equal:
+          path: metadata.name
+          value: central-grafana
+        template: templates/central-grafana.yaml
+
+  - it: should not render central-grafana when localGrafana.enabled is false and centralGrafana.enabled is false
+    set:
+      localGrafana:
+        enabled: false
+      centralGrafana:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/central-grafana.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/grafana.yaml
+
+  - it: should render nothing when enabled is false
+    set:
+      enabled: false
+      centralGrafana:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/grafana.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/sso-secret.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/datasources.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/dashboards.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/folders.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/central-grafana.yaml
