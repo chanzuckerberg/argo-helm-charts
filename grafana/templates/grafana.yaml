@@ -1,4 +1,4 @@
-{{ if .Values.enabled }}
+{{ if and .Values.enabled .Values.localGrafana.enabled }}
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:

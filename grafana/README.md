@@ -24,6 +24,7 @@
 | - [grafanaBaseImage](#grafanaBaseImage )             | No      | string           | No         | -          | Base image for the Grafana instance.                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | - [grafanaName](#grafanaName )                       | No      | string           | No         | -          | Name of the Grafana instance to create.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [grafanaSubdomain](#grafanaSubdomain )             | No      | string           | No         | -          | Subdomain to use for the Grafana instance.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| - [localGrafana](#localGrafana )                     | No      | object           | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | - [replicas](#replicas )                             | No      | integer          | No         | -          | Number of Grafana replicas to create. When greater than 1, database persistence is required (not supported yet), as well as session affinity.                                                                                                                                                                                                                                                                                                                                                                      |
 | - [resources](#resources )                           | No      | object           | No         | -          | Resource requests and limits for the Grafana container. When empty, the grafana-operator applies its own defaults (requests 100m CPU / 256Mi memory, limits 1Gi memory).                                                                                                                                                                                                                                                                                                                                           |
 | - [roleAttributePath](#roleAttributePath )           | No      | string           | No         | -          | JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .                                                                                                                                                                                                                                                                                                                               |
@@ -432,7 +433,50 @@ must respect the following conditions
 
 **Description:** Subdomain to use for the Grafana instance.
 
-## <a name="replicas"></a>15. Property `grafana > replicas`
+## <a name="localGrafana"></a>15. Property `grafana > localGrafana`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                     |
+| ----------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [content](#localGrafana_content ) | No      | object  | No         | -          | -                                                                                                                                                                                                                                     |
+| - [enabled](#localGrafana_enabled ) | No      | boolean | No         | -          | Render the cluster-local Grafana instance and its SSO secret. Set to false only after localGrafana.content.enabled is false and the content CRs have been removed, so the operator can finalize them. Does not affect centralGrafana. |
+
+### <a name="localGrafana_content"></a>15.1. Property `grafana > localGrafana > content`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                  |
+| ------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#localGrafana_content_enabled ) | No      | boolean | No         | -          | Render the datasources, dashboards and folders that target the cluster-local Grafana instance. Set to false before localGrafana.enabled so these CRs are removed while their Grafana still exists. Does not affect centralGrafana. |
+
+#### <a name="localGrafana_content_enabled"></a>15.1.1. Property `grafana > localGrafana > content > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Render the datasources, dashboards and folders that target the cluster-local Grafana instance. Set to false before localGrafana.enabled so these CRs are removed while their Grafana still exists. Does not affect centralGrafana.
+
+### <a name="localGrafana_enabled"></a>15.2. Property `grafana > localGrafana > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Render the cluster-local Grafana instance and its SSO secret. Set to false only after localGrafana.content.enabled is false and the content CRs have been removed, so the operator can finalize them. Does not affect centralGrafana.
+
+## <a name="replicas"></a>16. Property `grafana > replicas`
 
 |              |           |
 | ------------ | --------- |
@@ -445,7 +489,7 @@ must respect the following conditions
 | ------------ | ------ |
 | **Maximum**  | &le; 1 |
 
-## <a name="resources"></a>16. Property `grafana > resources`
+## <a name="resources"></a>17. Property `grafana > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -455,7 +499,7 @@ must respect the following conditions
 
 **Description:** Resource requests and limits for the Grafana container. When empty, the grafana-operator applies its own defaults (requests 100m CPU / 256Mi memory, limits 1Gi memory).
 
-## <a name="roleAttributePath"></a>17. Property `grafana > roleAttributePath`
+## <a name="roleAttributePath"></a>18. Property `grafana > roleAttributePath`
 
 |              |          |
 | ------------ | -------- |
@@ -464,7 +508,7 @@ must respect the following conditions
 
 **Description:** JMESPath expression to use to determine the role of the user. See https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/ .
 
-## <a name="secretStoreRef"></a>18. Property `grafana > secretStoreRef`
+## <a name="secretStoreRef"></a>19. Property `grafana > secretStoreRef`
 
 |              |          |
 | ------------ | -------- |
@@ -473,7 +517,7 @@ must respect the following conditions
 
 **Description:** Name of the secret store to use for external secrets.
 
-## <a name="serviceAccount"></a>19. Property `grafana > serviceAccount`
+## <a name="serviceAccount"></a>20. Property `grafana > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -485,7 +529,7 @@ must respect the following conditions
 | --------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | Annotations to add to the service account. |
 
-### <a name="serviceAccount_annotations"></a>19.1. Property `grafana > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>20.1. Property `grafana > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -499,7 +543,7 @@ must respect the following conditions
 | ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [^.*$](#serviceAccount_annotations_pattern1 ) | Yes     | string | No         | -          | -                 |
 
-#### <a name="serviceAccount_annotations_pattern1"></a>19.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
+#### <a name="serviceAccount_annotations_pattern1"></a>20.1.1. Pattern Property `grafana > serviceAccount > annotations > ^.*$`
 > All properties whose name matches the regular expression
 ```^.*$``` ([Test](https://regex101.com/?regex=%5E.%2A%24))
 must respect the following conditions
