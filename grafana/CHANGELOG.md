@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.12.0...grafana-v0.13.0) (2026-10-13)
+
+
+### Features
+
+* **grafana:** allow removing the local Grafana without touching central-grafana ([#584](https://github.com/chanzuckerberg/argo-helm-charts/issues/584)) ([8e9a82b](https://github.com/chanzuckerberg/argo-helm-charts/commit/8e9a82b8858554bda5aa9178dcbb798870c3cc94))
+
 ## [0.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-v0.11.1...grafana-v0.12.0) (2026-08-24)
 
 
