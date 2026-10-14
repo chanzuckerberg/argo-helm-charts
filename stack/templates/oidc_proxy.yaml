@@ -97,10 +97,14 @@ spec:
 
             {{- range .Values.oidcProxy.skipAuth }}
             {{- $method := default "*" .method }}
+            {{- $path := .path }}
+            {{- if not (hasPrefix "^" $path) }}
+            {{- $path = printf "^%s" $path }}
+            {{- end }}
             {{- if contains "*" $method }}
-            - --skip-auth-route={{ .path }}
+            - --skip-auth-route={{ $path }}
             {{- else }}
-            - --skip-auth-route={{ $method }}={{ .path }}
+            - --skip-auth-route={{ $method }}={{ $path }}
             {{- end }}
             {{- end }}
 

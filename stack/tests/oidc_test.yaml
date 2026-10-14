@@ -187,15 +187,15 @@ tests:
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: "--skip-auth-route=/v1/api/llm/.*"
+          content: "--skip-auth-route=^/v1/api/llm/.*"
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: "--skip-auth-route=GET=/v1/api/docs2"
+          content: "--skip-auth-route=GET=^/v1/api/docs2"
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: "--skip-auth-route=POST=/v1/api/docs3"
+          content: "--skip-auth-route=POST=^/v1/api/docs3"
       - documentIndex: 0
         lengthEqual:
           path: spec.template.spec.containers[0].args
@@ -229,11 +229,33 @@ tests:
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: "--skip-auth-route=/healthz"
+          content: "--skip-auth-route=^/healthz"
       - documentIndex: 0
         contains:
           path: spec.template.spec.containers[0].args
-          content: "--skip-auth-route=GET=/v1/api/docs"
+          content: "--skip-auth-route=GET=^/v1/api/docs"
+  - it: does not double-anchor skipAuth paths that already start with ^
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          skipAuth:
+            - path: "^/already"
+              method: GET
+            - path: "/bare"
+    asserts:
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=GET=^/already"
+      - documentIndex: 0
+        notContains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=GET=^^/already"
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: "--skip-auth-route=^/bare"
   - it: overwrites the name
     set:
       global:
