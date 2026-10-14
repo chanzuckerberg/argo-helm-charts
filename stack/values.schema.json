@@ -467,7 +467,7 @@
               }
             },
             "skipAuth": {
-              "description": "Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths",
+              "description": "Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths. Each path is a literal Gateway API PathPrefix, not a regex, and must start with a slash: regex syntax carried over from oidcProxy.skipAuth would be matched literally, match no request, and silently leave the endpoint authenticated. A path of / is rejected because the public route would shadow the protected one for every request",
               "type": "array",
               "items": {
                 "type": "object",
@@ -911,7 +911,7 @@
               }
             },
             "skipAuth": {
-              "description": "Paths to skip authentication",
+              "description": "Paths served without authentication. A path starting with a slash is anchored to the start of the request URI before being passed to oauth2-proxy, because oauth2-proxy matches these as unanchored regexes against the URI including its query string, so an unanchored /api/health would also match GET /other?x=/api/health and skip auth on a protected path. A value not starting with a slash is passed through verbatim and you own anchoring it",
               "type": "array",
               "items": {
                 "type": "object",
