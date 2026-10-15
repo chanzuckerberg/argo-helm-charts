@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/ops-telemetry-v0.2.1...ops-telemetry-v0.3.0) (2026-10-15)
+
+
+### Features
+
+* **ops-telemetry:** pin collector source with batch ingestion ([#591](https://github.com/chanzuckerberg/argo-helm-charts/issues/591)) ([c724180](https://github.com/chanzuckerberg/argo-helm-charts/commit/c724180d1abc398aa9c204581bf5e7928576f54a))
+
 ## [0.2.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/ops-telemetry-v0.2.0...ops-telemetry-v0.2.1) (2026-09-28)
 
 
