@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test skipAuth path anchoring on the nginx proxy and literal prefixes on the gateway
+templates:
+- oidc_proxy.yaml
+tests:
+- it: should anchor a plain path so a query string cannot smuggle it onto a protected path
+  set:
+    global:
+      ingress:
+        enabled: true
+        oidcProtected: true
+      oidcProxy:
+        enabled: true
+        skipAuth:
+        - path: /bare
+    services:
+      app:
+        ingress:
+          oidcProtected: true
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.template.spec.containers[0].args
+      content: --skip-auth-route=^/bare
+  - documentIndex: 0
+    notContains:
+      path: spec.template.spec.containers[0].args
+      content: --skip-auth-route=/bare
+
+- it: should anchor a path that carries a method
+  set:
+    global:
+      ingress:
+        enabled: true
+        oidcProtected: true
+      oidcProxy:
+        enabled: true
+        skipAuth:
+        - path: /api/health
+          method: GET
+    services:
+      app:
+        ingress:
+          oidcProtected: true
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.template.spec.containers[0].args
+      content: --skip-auth-route=GET=^/api/health
+
+- it: should leave an already-anchored pattern alone rather than double-anchoring it
+  set:
+    global:
+      ingress:
+        enabled: true
+        oidcProtected: true
+      oidcProxy:
+        enabled: true
+        skipAuth:
+        - path: "^/healthz$"
+    services:
+      app:
+        ingress:
+          oidcProtected: true
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.template.spec.containers[0].args
+      content: --skip-auth-route=^/healthz$
+
+- it: should pass a negated route through untouched, since prefixing it would corrupt the operator
+  set:
+    global:
+      ingress:
+        enabled: true
+        oidcProtected: true
+      oidcProxy:
+        enabled: true
+        skipAuth:
+        - path: "!=^/admin"
+    services:
+      app:
+        ingress:
+          oidcProtected: true
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.template.spec.containers[0].args
+      content: --skip-auth-route=!=^/admin

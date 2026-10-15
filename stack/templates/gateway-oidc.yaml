@@ -84,6 +84,12 @@ spec:
   {{- end }}
   rules:
     {{- range (.Values.gateway.skipAuth | default list) }}
+    {{- if not (hasPrefix "/" .path) }}
+    {{- fail (printf "gateway.skipAuth path %q must start with /. The gateway matches these as literal path prefixes, not regexes, so anchors and quantifiers carried over from the nginx oidcProxy.skipAuth form would be taken literally, match no real request, and silently leave the endpoint authenticated. Write the plain prefix, for example /public/ rather than ^/public/." .path) }}
+    {{- end }}
+    {{- if eq .path "/" }}
+    {{- fail "gateway.skipAuth path / would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead." }}
+    {{- end }}
     - matches:
         - path:
             type: PathPrefix

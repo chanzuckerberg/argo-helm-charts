@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.61.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.61.0...stack-v2.61.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* **stack:** anchor skipAuth paths so a query string cannot bypass auth [CCIE-7552] ([#588](https://github.com/chanzuckerberg/argo-helm-charts/issues/588)) ([e335d27](https://github.com/chanzuckerberg/argo-helm-charts/commit/e335d27df3729a4783b66345914ac3546b2cfc0c))
+
 ## [2.61.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.60.0...stack-v2.61.0) (2026-10-08)
 
 
