@@ -28,9 +28,19 @@ verified OPS release ([DT-196](https://czi.atlassian.net/browse/DT-196)).
 
 ## Order: infrastructure and live canary before OPS-main merges
 
+### Updating the collector for batch ingestion
+
+The chart pins source `e4be06490c14172b198f62ece2ced512d388537e` (OPS PR #85), which adds
+`POST /api/v1/events:batch`. Producers send up to 500 events per request and fall
+back to one request per event when the collector answers 404, so the earlier
+collector keeps working with new producers and this upgrade is a plain image roll:
+migrations `0001`-`0003` and their checksums are unchanged, and there is no new
+migration. Publish the image from this source with the helper below, then roll
+it out through the ApplicationSet (steps 2-4 of the next section).
+
 ### Updating the existing collector for worker timing
 
-The chart pins source `761c718e06c106a215aea3d79691a6b527d225e7` and bundles additive
+The earlier release pinned source `761c718e06c106a215aea3d79691a6b527d225e7` and bundled additive
 migration `0003_worker_timing.sql`. Applied `0001` and `0002` are unchanged. The
 new producer's `queued_at`, `worker_started_at` and `worker_finished_at` fields
 are rejected by the earlier collector; deploy the compatible collector first.
@@ -87,7 +97,7 @@ new timed events to the earlier collector or remove already applied migration fi
 
    ```sh
    aws ecr describe-images --region us-east-1 --repository-name ops-telemetry \
-     --image-ids imageTag=761c718e06c106a215aea3d79691a6b527d225e7 \
+     --image-ids imageTag=e4be06490c14172b198f62ece2ced512d388537e \
      --query 'imageDetails[0].imageDigest' --output text
    ```
 
