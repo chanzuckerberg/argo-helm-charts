@@ -39,6 +39,80 @@
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
+{{- $protected := .Values.gateway.protectedPaths | default list -}}
+{{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths) -}}
+{{- /* protectedPaths: only the listed prefixes stay on the policy-protected route; everything else goes through a policy-less -open route */ -}}
+{{- if gt (len $protected) 0 -}}
+{{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- fail "gateway.protectedPaths and gateway.skipAuth are mutually exclusive: one lists the paths that need authentication, the other the paths that do not. Keep whichever list is shorter." -}}
+{{- end -}}
+{{- if gt (len (.Values.gateway.rules | default list)) 0 -}}
+{{- fail "gateway.protectedPaths is not supported together with gateway.rules: extra hosts render their own routes, which protectedPaths does not split." -}}
+{{- end -}}
+{{- range $protected -}}
+{{- if not (hasPrefix "/" .path) -}}
+{{- fail (printf "gateway.protectedPaths path %q must start with /. Paths are literal Gateway API prefixes, not regexes." .path) -}}
+{{- end -}}
+{{- if eq .path "/" -}}
+{{- fail "gateway.protectedPaths path / would protect the whole service: drop protectedPaths and attach the policy to the route as usual." -}}
+{{- end -}}
+{{- end -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "service.fullname" .  }}-open
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                (.Values.annotations)
+                (.Values.gateway.annotations)
+                (dict "external-dns.alpha.kubernetes.io/exclude" "true")
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- if .Values.gateway.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ include "service.vanityListenerSetName" . }}
+    {{- else }}
+    - name: {{ .Values.gateway.gatewayName }}
+      namespace: {{ .Values.gateway.gatewayNamespace }}
+      {{- with (include "gateway.effectiveSectionName" .) }}
+      sectionName: {{ . }}
+      {{- end }}
+    {{- end }}
+  hostnames:
+    - {{ .Values.gateway.host }}
+  rules:
+    {{- range $service.Values.gateway.paths }}
+    - matches:
+        - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
+            type: PathPrefix
+            {{- end }}
+            value: {{ .path }}
+      backendRefs:
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
+          {{- if .weight }}
+          weight: {{ .weight }}
+          {{- end }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
+{{- end }}
 {{- /* Create public HTTPRoute for skipAuth paths if configured */ -}}
 {{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
 ---
@@ -141,6 +215,32 @@ spec:
   hostnames:
     - {{ .Values.gateway.host }}
   rules:
+    {{- if gt (len $protected) 0 }}
+    {{- /* The OIDC callback and logout must stay on the protected route: the OAuth2 filter answers them, and on the -open route nothing would */ -}}
+    {{- $protectedRules := list (dict "path" (printf "%s/oauth2" $basePath) "pathType" "PathPrefix") }}
+    {{- if $p.oidc.logoutPath }}
+    {{- $protectedRules = append $protectedRules (dict "path" (printf "%s%s" $basePath $p.oidc.logoutPath) "pathType" "Exact") }}
+    {{- end }}
+    {{- range $protected }}
+    {{- $protectedRules = append $protectedRules (dict "path" .path "pathType" "PathPrefix") }}
+    {{- end }}
+    {{- range $protectedRules }}
+    - matches:
+        - path:
+            type: {{ .pathType }}
+            value: {{ .path }}
+      backendRefs:
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    {{- else }}
     {{- range $service.Values.gateway.paths }}
     - matches:
         - path:
@@ -163,6 +263,7 @@ spec:
       timeouts:
         {{- $timeouts | nindent 8 }}
       {{- end }}
+    {{- end }}
     {{- end }}
 {{- range $i, $rule := .Values.gateway.rules }}
 ---

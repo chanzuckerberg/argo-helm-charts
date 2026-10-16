@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway.protectedPaths SecurityPolicy targeting
+templates:
+- gateway-securitypolicy.yaml
+- gateway-securitypolicy-shared.yaml
+tests:
+- it: should target only the protected route with the OIDC policy
+  template: gateway-securitypolicy-shared.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: /admin
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: spec.targetRefs
+      value:
+      - group: gateway.networking.k8s.io
+        kind: HTTPRoute
+        name: release-name-stack-app
+  - exists:
+      path: spec.oidc
+- it: should render an -open-security policy carrying only CORS when the policy sets cors
+  template: gateway-securitypolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: admin-only
+        protectedPaths:
+        - path: /admin
+      securityPolicies:
+        admin-only:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+          cors:
+            enabled: true
+            allowOrigins:
+            - https://ui.example.com
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: metadata.name
+      value: release-name-stack-app-open-security
+  - equal:
+      path: spec.targetRefs[0].name
+      value: release-name-stack-app-open
+  - notExists:
+      path: spec.oidc
+  - exists:
+      path: spec.cors

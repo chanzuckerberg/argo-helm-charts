@@ -1,0 +1,185 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway.protectedPaths (OIDC on a subtree only)
+templates:
+- gateway-oidc.yaml
+tests:
+- it: should split the routes, keeping only protectedPaths plus the OIDC callback and logout on the protected route
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: /admin
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-open
+  - documentIndex: 0
+    equal:
+      path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+      value: "true"
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: PathPrefix
+        value: /
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].backendRefs[0].name
+      value: release-name-stack-app
+  - documentIndex: 1
+    equal:
+      path: metadata.name
+      value: release-name-stack-app
+  - documentIndex: 1
+    notExists:
+      path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+  - documentIndex: 1
+    equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: PathPrefix
+        value: /oauth2
+  - documentIndex: 1
+    equal:
+      path: spec.rules[1].matches[0].path
+      value:
+        type: Exact
+        value: /logout
+  - documentIndex: 1
+    equal:
+      path: spec.rules[2].matches[0].path
+      value:
+        type: PathPrefix
+        value: /admin
+  - documentIndex: 1
+    lengthEqual:
+      path: spec.rules
+      count: 3
+- it: should prefix the callback and logout with the basePath
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /api
+          pathType: Prefix
+        protectedPaths:
+        - path: /api/admin
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 1
+    equal:
+      path: spec.rules[0].matches[0].path.value
+      value: /api/oauth2
+  - documentIndex: 1
+    equal:
+      path: spec.rules[1].matches[0].path.value
+      value: /api/logout
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.value
+      value: /api
+- it: should render nothing extra when protectedPaths is empty
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths: []
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app
+- it: should fail when protectedPaths and skipAuth are both set
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: /admin
+        skipAuth:
+        - path: /health
+          method: GET
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: protectedPaths and gateway.skipAuth are mutually exclusive
+- it: should fail when protectedPaths is combined with gateway.rules
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: /admin
+        rules:
+        - host: other.example.com
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: not supported together with gateway.rules
+- it: should fail on a path that does not start with a slash
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: ^/admin
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: must start with /
+- it: should fail on a path of /
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: /
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: would protect the whole service

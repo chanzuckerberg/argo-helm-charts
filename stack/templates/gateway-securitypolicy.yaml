@@ -60,6 +60,25 @@ spec:
       name: {{ include "service.fullname" . }}-public
   {{- include "gateway.securityPolicy.body" (dict "ctx" . "policy" $p "policyName" $policyName "basePath" (include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths)) "host" .Values.gateway.host "public" true) | nindent 2 }}
 {{- end }}
+{{- if and $p.oidc (gt (len (.Values.gateway.protectedPaths | default list)) 0) (or ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0)) }}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: {{ include "service.fullname" . }}-open-security
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite (dict) (.Values.annotations) ($p.annotations)) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ include "service.fullname" . }}-open
+  {{- include "gateway.securityPolicy.body" (dict "ctx" . "policy" $p "policyName" $policyName "basePath" (include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths)) "host" .Values.gateway.host "public" true) | nindent 2 }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
