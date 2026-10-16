@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.62.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.61.1...stack-v2.62.0) (2026-10-16)
+
+
+### Features
+
+* **stack:** let an OIDC policy pass bearer-token clients to its JWT provider ([#587](https://github.com/chanzuckerberg/argo-helm-charts/issues/587)) ([6ca6bef](https://github.com/chanzuckerberg/argo-helm-charts/commit/6ca6bef2445252e004205bdf8a5a0583525e5c0f))
+
 ## [2.61.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.61.0...stack-v2.61.1) (2026-10-15)
 
 
