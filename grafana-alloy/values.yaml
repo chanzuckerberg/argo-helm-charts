@@ -211,6 +211,8 @@ alloyConfig:
     enabled: false # @schema description: Enable Beyla integration (requires prometheusRemoteWrite.enabled=true)
     debug: false # @schema description: Enable debug logging for Beyla BPF component
 
+  otlpProducers: [] # @schema description: External OTLP/HTTP producers to accept push telemetry from. Each item takes name, httpPort, promoteResourceAttributes, dropMetricLabels, addMetricSuffixes, includeTargetInfo and logFormat, and gets its own receiver and processing chain forwarding to loki.endpoints and prometheusRemoteWrite.endpoints.
+
 # Alloy subchart configuration
 # Reference: https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy
 alloy:

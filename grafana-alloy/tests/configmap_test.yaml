@@ -2082,3 +2082,156 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'discovery\.relabel "dcgm_exporter" \{[\s\S]*?action        = "keepequal"'
+
+  - it: should not render any OTLP receiver when alloyConfig.otlpProducers is empty
+    set:
+      enabled: true
+      clusterName: test-cluster
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.receiver\.otlp'
+
+  - it: should render a receiver, transform and exporters per otlp producer
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        otlpProducers:
+          - name: modal
+            httpPort: 4319
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.receiver\.otlp "modal" \{\s*http \{\s*endpoint = "0\.0\.0\.0:4319"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.processor\.transform "modal"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.exporter\.loki "modal" \{\s*forward_to = \[loki\.write\.endpoints\.receiver\]'
+
+  - it: should sanitize hyphens in component labels but keep the producer name as the source value
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        otlpProducers:
+          - name: ai-agent
+            httpPort: 4318
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'otelcol\.receiver\.otlp "ai_agent"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'metrics = \[otelcol\.processor\.transform\.ai_agent\.input\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'set\(attributes\["source"\], "ai-agent"\)'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'transform\.ai-agent'
+
+  - it: should default metric suffixes and target_info to the OpenTelemetry defaults
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        otlpProducers:
+          - name: legacy
+            httpPort: 4318
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'include_target_info = true'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'add_metric_suffixes = true'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "legacy"'
+
+  - it: should promote listed resource attributes and drop listed metric labels
+    set:
+      enabled: true
+      clusterName: test-cluster
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: https://example.invalid/api/v1/remote_write
+      alloyConfig:
+        otlpProducers:
+          - name: modal
+            httpPort: 4319
+            promoteResourceAttributes: [app_name, function_name]
+            dropMetricLabels: [container_id, app_id]
+            addMetricSuffixes: false
+            includeTargetInfo: false
+            logFormat: json
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'set\(attributes\["app_name"\], resource\.attributes\["app_name"\]\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'set\(attributes\["loki\.format"\], "json"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'set\(attributes\["loki\.resource\.labels"\], "source, app_name, function_name"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'include_target_info = false'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "modal" \{[\s\S]*?regex  = "container_id\|app_id"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'forward_to          = \[prometheus\.relabel\.modal\.receiver\]'
+
+  - it: should omit the loki hints when the producer configures neither
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        otlpProducers:
+          - name: plain
+            httpPort: 4318
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.format'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.resource\.labels'
+
+  - it: should render loki.write for otlp producers even when pod logs and events are disabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        podLogs:
+          enabled: false
+        events:
+          enabled: false
+        otlpProducers:
+          - name: modal
+            httpPort: 4319
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.write "endpoints"'
+
+  - it: should not render loki.write when pod logs, events and otlp producers are all off
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        podLogs:
+          enabled: false
+        events:
+          enabled: false
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'loki\.write "endpoints"'
