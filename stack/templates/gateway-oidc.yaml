@@ -35,12 +35,174 @@
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
+{{- if and .Values.gateway.enabled .Values.gateway.tlsPassthrough.enabled (gt (len (.Values.gateway.protectedPaths | default list)) 0) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with tlsPassthrough enabled. A passthrough TLSRoute carries no HTTP paths and no SecurityPolicy, so nothing could be protected. Remove protectedPaths or disable tlsPassthrough." .Values.name) -}}
+{{- end -}}
 {{- if and .Values.gateway.enabled (eq (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
-{{- /* Create public HTTPRoute for skipAuth paths if configured */ -}}
+{{- $protected := .Values.gateway.protectedPaths | default list -}}
+{{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths) -}}
+{{- /* protectedPaths: only the listed prefixes, plus the OIDC callback and logout, stay on the
+       policy-protected route; every other gateway.paths request goes through the -public route */ -}}
+{{- $protectedRules := list -}}
+{{- if gt (len $protected) 0 -}}
 {{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- fail (printf "service %s sets both gateway.protectedPaths and gateway.skipAuth. Keep protectedPaths and list the public prefixes in gateway.paths, or keep skipAuth and remove protectedPaths." .Values.name) -}}
+{{- end -}}
+{{- if gt (len (.Values.gateway.rules | default list)) 0 -}}
+{{- fail (printf "service %s sets gateway.protectedPaths together with gateway.rules, which is not supported: extra hosts render their own routes, which protectedPaths does not split. Move the extra hosts to their own service." .Values.name) -}}
+{{- end -}}
+{{- /* The OAuth2 filter answers the callback and logout only on the route the policy targets */ -}}
+{{- $protectedRules = append $protectedRules (dict "path" (printf "%s/oauth2" $basePath) "pathType" "PathPrefix" "auto" true) -}}
+{{- if $p.oidc.logoutPath -}}
+{{- $lp := printf "%s%s" $basePath $p.oidc.logoutPath -}}
+{{- if or (not (hasPrefix "/" $lp)) (not (regexMatch "^[-A-Za-z0-9/._~!$&'()*+,;=:@]+$" $lp)) -}}
+{{- fail (printf "securityPolicies.%s.oidc.logoutPath %q renders as %q, which the HTTPRoute API rejects. With protectedPaths the API server would refuse the protected route while accepting the -public route, leaving every path unauthenticated. Use a plain path starting with /." (include "securityPolicy.name" (dict "root" $global "name" $service.Values.name)) $p.oidc.logoutPath $lp) -}}
+{{- end -}}
+{{- $protectedRules = append $protectedRules (dict "path" $lp "pathType" "Exact" "auto" true) -}}
+{{- end -}}
+{{- range $protected -}}
+{{- $pp := .path | default "" -}}
+{{- if eq $pp "" -}}
+{{- fail (printf "a gateway.protectedPaths entry on service %s has no path. Each entry needs path: /<prefix>." $service.Values.name) -}}
+{{- end -}}
+{{- if ne $pp (trim $pp) -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s has leading or trailing whitespace. Write the path exactly as the application serves it." $pp $service.Values.name) -}}
+{{- end -}}
+{{- if not (hasPrefix "/" $pp) -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s must start with /. Paths are literal Gateway API prefixes, not regexes." $pp $service.Values.name) -}}
+{{- end -}}
+{{- if eq $pp "/" -}}
+{{- fail (printf "gateway.protectedPaths path / on service %s would protect the whole service. Remove protectedPaths and attach the policy to the route as usual." $service.Values.name) -}}
+{{- end -}}
+{{- /* Anything the HTTPRoute CRD would reject must fail here: a rejected protected route with an accepted -public route leaves the whole service unauthenticated. */ -}}
+{{- if not (regexMatch "^[-A-Za-z0-9/._~!$&'()*+,;=:@]+$" $pp) -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s contains characters the HTTPRoute API rejects or that Envoy normalises before matching (percent-encoding, non-ASCII). A rejected protected route with an accepted -public route leaves every path unauthenticated; a percent-encoded prefix never matches the decoded request path. Write the plain path." $pp $service.Values.name) -}}
+{{- end -}}
+{{- if or (contains "//" $pp) (contains "/./" $pp) (contains "/../" $pp) (hasSuffix "/." $pp) (hasSuffix "/.." $pp) -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s contains a double slash or dot segment. The HTTPRoute API rejects these, and Envoy normalises them away before matching, so write the plain path." $pp $service.Values.name) -}}
+{{- end -}}
+{{- if hasSuffix "/" $pp -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s must be written without the trailing slash, as %q. Gateway API ignores a trailing slash in a PathPrefix, so the two spellings would be the same prefix under two names." $pp $service.Values.name (trimSuffix "/" $pp)) -}}
+{{- end -}}
+{{- $covered := false -}}
+{{- range $service.Values.gateway.paths -}}
+{{- if and (ne (.pathType | default "Prefix") "Exact") (or (eq (trimSuffix "/" (.path | default "/")) "") (hasPrefix (printf "%s/" (trimSuffix "/" (.path | default "/"))) $pp)) -}}
+{{- $covered = true -}}
+{{- end -}}
+{{- end -}}
+{{- if not $covered -}}
+{{- fail (printf "gateway.protectedPaths %q on service %s is not under any Prefix entry of gateway.paths, so the service never routed it. Add a broader gateway.paths prefix or correct the protected path." $pp $service.Values.name) -}}
+{{- end -}}
+{{- $dup := false -}}
+{{- range $protectedRules -}}
+{{- if eq .path $pp -}}
+{{- if .auto -}}
+{{- fail (printf "gateway.protectedPaths %q on service %s is the OIDC %s path, which the chart already keeps on the protected route as an Exact match. Protecting the whole subtree under it would shadow the OAuth2 filter's own endpoint; pick a different prefix." $pp $service.Values.name (ternary "logout" "callback" (eq .pathType "Exact"))) -}}
+{{- end -}}
+{{- $dup = true -}}
+{{- end -}}
+{{- end -}}
+{{- if not $dup -}}
+{{- if eq (toString .caseSensitive) "true" -}}
+{{- $protectedRules = append $protectedRules (dict "path" $pp "pathType" "PathPrefix" "auto" false) -}}
+{{- else -}}
+{{- /* Case-insensitive by default: Express, Remix and IIS route /Admin as /admin, and PathPrefix would send /Admin to the -public route. The boundary admits any non-identifier character, so /admin., /admin.json and /admin:x (trailing-dot trimming, suffix patterns) are protected while /administrator and /admin-v2 stay distinct. RegularExpression ranks above PathPrefix in Envoy Gateway, so this still beats the public prefix. */ -}}
+{{- $protectedRules = append $protectedRules (dict "path" $pp "pathType" "RegularExpression" "regex" (printf "(?i)^%s([^A-Za-z0-9_-].*)?$" (regexQuoteMeta $pp)) "auto" false) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- if ne (toString .Values.gateway.protectedPathsAmbiguousToProtected) "false" -}}
+{{- /* Envoy decodes unreserved percent-escapes but keeps reserved, control and non-ASCII ones (%20, %3B, %C4%B0), and never strips ;matrix parameters, while servlet containers strip them before mapping (/admin;x, /public/..;/admin). Fail closed: any path carrying a percent sign or semicolon goes through the policy. */ -}}
+{{- $protectedRules = append $protectedRules (dict "path" "%XX" "pathType" "RegularExpression" "regex" ".*[%;].*" "auto" true "encoded" true) -}}
+{{- end -}}
+{{- range $protectedRules -}}
+{{- if gt (len (.regex | default .path)) 1024 -}}
+{{- fail (printf "the protected route of service %s would carry the path %q (%d characters), but the HTTPRoute API allows 1024. The API server would refuse the protected route while accepting the -public route. Shorten the path or the base path it is prefixed with." $service.Values.name (trunc 60 .path) (len (.regex | default .path))) -}}
+{{- end -}}
+{{- end -}}
+{{- if gt (len $protectedRules) 16 -}}
+{{- fail (printf "service %s would render %d rules on its protected HTTPRoute (protectedPaths plus the OIDC callback and logout), but the HTTPRoute API allows 16. The API server would refuse the protected route while accepting the -public route. Protect at most %d prefixes, or group them under a shared prefix." $service.Values.name (len $protectedRules) (sub 16 (sub (len $protectedRules) (len $protected)))) -}}
+{{- end -}}
+{{- /* Every gateway.paths entry must be strictly broader than every protected rule, including the
+       auto-added callback and logout. An equal or narrower entry on the -public route would win
+       Gateway API precedence and serve the protected path without authentication. */ -}}
+{{- range $pr := $protectedRules -}}
+{{- if not $pr.encoded -}}
+{{- range $service.Values.gateway.paths -}}
+{{- $gp := .path | default "/" -}}
+{{- $cmpGp := $gp -}}{{- $cmpPr := $pr.path -}}
+{{- if eq $pr.pathType "RegularExpression" -}}{{- $cmpGp = lower $gp -}}{{- $cmpPr = lower $pr.path -}}{{- end -}}
+{{- if or (eq $cmpGp $cmpPr) (eq (trimSuffix "/" $cmpGp) $cmpPr) (hasPrefix (printf "%s/" $cmpPr) $cmpGp) -}}
+{{- if $pr.auto -}}
+{{- fail (printf "gateway.paths entry %q on service %s collides with the OIDC path %q that protectedPaths keeps on the protected route. Remove it from gateway.paths; the login flow is routed automatically." $gp $service.Values.name $pr.path) -}}
+{{- else -}}
+{{- fail (printf "gateway.paths entry %q on service %s lies within gateway.protectedPaths %q and would be served by the unauthenticated -public route, which wins precedence for that subtree. Remove it from gateway.paths or widen protectedPaths." $gp $service.Values.name $pr.path) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- /* Another service on the same host may render policy-less rules too; one under a protected prefix would win precedence just like a gateway.paths entry of this service. */ -}}
+{{- range $otherName, $_ := $global.Values.services -}}
+{{- if ne $otherName $service.Values.name -}}
+{{- $ov := fromYaml (include "service.context" (dict "root" $global "name" $otherName)) -}}
+{{- $og := $ov.gateway | default dict -}}
+{{- if and $og.enabled (not (($og.tlsPassthrough | default dict).enabled)) -}}
+{{- $otherOidc := eq (include "securityPolicy.isOidc" (dict "root" $global "name" $otherName)) "true" -}}
+{{- $otherPublic := list -}}
+{{- /* rules on the other service's main host */ -}}
+{{- if eq ($og.host | default "") $service.Values.gateway.host -}}
+{{- if or (not $otherOidc) (gt (len ($og.protectedPaths | default list)) 0) -}}
+{{- range ($og.paths | default list) -}}{{- $otherPublic = append $otherPublic (.path | default "/") -}}{{- end -}}
+{{- end -}}
+{{- range ($og.skipAuth | default list) -}}{{- $otherPublic = append $otherPublic (.path | default "/") -}}{{- end -}}
+{{- end -}}
+{{- /* rules on the other service's extra hosts */ -}}
+{{- range ($og.rules | default list) -}}
+{{- if eq (.host | default "") $service.Values.gateway.host -}}
+{{- if not $otherOidc -}}
+{{- range (.paths | default ($og.paths | default list)) -}}{{- $otherPublic = append $otherPublic (.path | default "/") -}}{{- end -}}
+{{- end -}}
+{{- range ($og.skipAuth | default list) -}}{{- $otherPublic = append $otherPublic (.path | default "/") -}}{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $op := $otherPublic -}}
+{{- range $pr := $protectedRules -}}
+{{- if not $pr.encoded -}}
+{{- $cmpOp := $op -}}{{- $cmpPr := $pr.path -}}
+{{- if eq $pr.pathType "RegularExpression" -}}{{- $cmpOp = lower $op -}}{{- $cmpPr = lower $pr.path -}}{{- end -}}
+{{- if or (eq $cmpOp $cmpPr) (eq (trimSuffix "/" $cmpOp) $cmpPr) (hasPrefix (printf "%s/" $cmpPr) $cmpOp) -}}
+{{- fail (printf "service %s routes %q on host %s outside the OIDC policy, inside the path %q that service %s protects with gateway.protectedPaths. That rule would win precedence over the protected one. Remove it or move one service to its own host." $otherName $op $service.Values.gateway.host $pr.path $service.Values.name) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- /* Rules for the policy-less -public route: skipAuth entries, or under protectedPaths every gateway.paths entry */ -}}
+{{- $publicRules := list -}}
+{{- if gt (len $protected) 0 -}}
+{{- range $service.Values.gateway.paths -}}
+{{- $publicRules = append $publicRules (dict "path" (.path | default "/") "pathType" (.pathType | default "Prefix") "method" "" "weight" (.weight | default 0)) -}}
+{{- end -}}
+{{- else -}}
+{{- range (.Values.gateway.skipAuth | default list) -}}
+{{- if not (hasPrefix "/" .path) -}}
+{{- fail (printf "gateway.skipAuth path %q must start with /. The gateway matches these as literal path prefixes, not regexes, so anchors and quantifiers carried over from the nginx oidcProxy.skipAuth form would be taken literally, match no real request, and silently leave the endpoint authenticated. Write the plain prefix, for example /public/ rather than ^/public/." .path) -}}
+{{- end -}}
+{{- if eq .path "/" -}}
+{{- fail "gateway.skipAuth path / would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead." -}}
+{{- end -}}
+{{- $publicRules = append $publicRules (dict "path" .path "pathType" "Prefix" "method" (.method | default "") "weight" 0) -}}
+{{- end -}}
+{{- end -}}
+{{- if gt (len $publicRules) 0 -}}
+{{- $publicFilters := include "gateway.publicRuleFiltersInner" (dict "Values" .Values "policy" $p) | trim -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -83,25 +245,26 @@ spec:
     - {{ $rule.host }}
   {{- end }}
   rules:
-    {{- range (.Values.gateway.skipAuth | default list) }}
-    {{- if not (hasPrefix "/" .path) }}
-    {{- fail (printf "gateway.skipAuth path %q must start with /. The gateway matches these as literal path prefixes, not regexes, so anchors and quantifiers carried over from the nginx oidcProxy.skipAuth form would be taken literally, match no real request, and silently leave the endpoint authenticated. Write the plain prefix, for example /public/ rather than ^/public/." .path) }}
-    {{- end }}
-    {{- if eq .path "/" }}
-    {{- fail "gateway.skipAuth path / would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead." }}
-    {{- end }}
+    {{- range $publicRules }}
     - matches:
         - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
             type: PathPrefix
+            {{- end }}
             value: {{ .path }}
           {{- if and .method (ne .method "*") }}
           method: {{ .method }}
           {{- end }}
       backendRefs:
         {{- include "service.backend.refs.direct" $service | nindent 8 }}
-      {{- if $filters }}
+          {{- if .weight }}
+          weight: {{ .weight }}
+          {{- end }}
+      {{- if $publicFilters }}
       filters:
-        {{- $filters | nindent 8 }}
+        {{- $publicFilters | nindent 8 }}
       {{- end }}
       {{- if $timeouts }}
       timeouts:
@@ -141,6 +304,28 @@ spec:
   hostnames:
     - {{ .Values.gateway.host }}
   rules:
+    {{- if gt (len $protectedRules) 0 }}
+    {{- range $protectedRules }}
+    - matches:
+        - path:
+            type: {{ .pathType }}
+            {{- if eq .pathType "RegularExpression" }}
+            value: {{ .regex | quote }}
+            {{- else }}
+            value: {{ .path }}
+            {{- end }}
+      backendRefs:
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    {{- else }}
     {{- range $service.Values.gateway.paths }}
     - matches:
         - path:
@@ -163,6 +348,7 @@ spec:
       timeouts:
         {{- $timeouts | nindent 8 }}
       {{- end }}
+    {{- end }}
     {{- end }}
 {{- range $i, $rule := .Values.gateway.rules }}
 ---

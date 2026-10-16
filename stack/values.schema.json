@@ -356,6 +356,18 @@
                 }
               }
             },
+            "protectedPaths": {
+              "description": "Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no policy and strips the identity headers a policy would inject. The OIDC callback and logout paths are added to the protected route automatically (under the base path derived from the first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Matching is case-sensitive and per path element, so /Admin or /admin.x are not under /admin. An application whose router folds case or strips matrix parameters must enforce authentication for those spellings itself",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
             "rateLimit": {
               "description": "Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)",
               "type": "object",
