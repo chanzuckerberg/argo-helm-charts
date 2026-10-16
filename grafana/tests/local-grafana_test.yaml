@@ -8,8 +8,36 @@ templates:
   - templates/central-grafana.yaml
 
 tests:
-  - it: should render every local and central resource by default
+  - it: should render only central-grafana by default
     set:
+      centralGrafana:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/grafana.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/sso-secret.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/datasources.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/dashboards.yaml
+      - hasDocuments:
+          count: 0
+        template: templates/folders.yaml
+      - hasDocuments:
+          count: 1
+        template: templates/central-grafana.yaml
+
+  - it: should render every local and central resource when both local flags are true
+    set:
+      localGrafana:
+        enabled: true
+        content:
+          enabled: true
       centralGrafana:
         enabled: true
     asserts:
@@ -36,6 +64,7 @@ tests:
   - it: should remove only the content when localGrafana.content.enabled is false
     set:
       localGrafana:
+        enabled: true
         content:
           enabled: false
       centralGrafana:

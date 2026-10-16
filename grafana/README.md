@@ -444,7 +444,7 @@ must respect the following conditions
 | Property                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                     |
 | ----------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | - [content](#localGrafana_content ) | No      | object  | No         | -          | -                                                                                                                                                                                                                                     |
-| - [enabled](#localGrafana_enabled ) | No      | boolean | No         | -          | Render the cluster-local Grafana instance and its SSO secret. Set to false only after localGrafana.content.enabled is false and the content CRs have been removed, so the operator can finalize them. Does not affect centralGrafana. |
+| - [enabled](#localGrafana_enabled ) | No      | boolean | No         | -          | Render the cluster-local Grafana instance and its SSO secret. Off by default; set to true only on a cluster that keeps an in-cluster Grafana. To remove one, set localGrafana.content.enabled to false first and wait for the content CRs to be removed, so the operator can finalize them. Does not affect centralGrafana. |
 
 ### <a name="localGrafana_content"></a>15.1. Property `grafana > localGrafana > content`
 
@@ -456,7 +456,7 @@ must respect the following conditions
 
 | Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                  |
 | ------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [enabled](#localGrafana_content_enabled ) | No      | boolean | No         | -          | Render the datasources, dashboards and folders that target the cluster-local Grafana instance. Set to false before localGrafana.enabled so these CRs are removed while their Grafana still exists. Does not affect centralGrafana. |
+| - [enabled](#localGrafana_content_enabled ) | No      | boolean | No         | -          | Render the datasources, dashboards and folders that target the cluster-local Grafana instance. Off by default; set to true together with localGrafana.enabled on a cluster that keeps an in-cluster Grafana. Set to false before localGrafana.enabled when removing one, so these CRs are removed while their Grafana still exists. Does not affect centralGrafana. |
 
 #### <a name="localGrafana_content_enabled"></a>15.1.1. Property `grafana > localGrafana > content > enabled`
 
@@ -465,7 +465,7 @@ must respect the following conditions
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Render the datasources, dashboards and folders that target the cluster-local Grafana instance. Set to false before localGrafana.enabled so these CRs are removed while their Grafana still exists. Does not affect centralGrafana.
+**Description:** Render the datasources, dashboards and folders that target the cluster-local Grafana instance. Off by default; set to true together with localGrafana.enabled on a cluster that keeps an in-cluster Grafana. Set to false before localGrafana.enabled when removing one, so these CRs are removed while their Grafana still exists. Does not affect centralGrafana.
 
 ### <a name="localGrafana_enabled"></a>15.2. Property `grafana > localGrafana > enabled`
 
@@ -474,7 +474,7 @@ must respect the following conditions
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Render the cluster-local Grafana instance and its SSO secret. Set to false only after localGrafana.content.enabled is false and the content CRs have been removed, so the operator can finalize them. Does not affect centralGrafana.
+**Description:** Render the cluster-local Grafana instance and its SSO secret. Off by default; set to true only on a cluster that keeps an in-cluster Grafana. To remove one, set localGrafana.content.enabled to false first and wait for the content CRs to be removed, so the operator can finalize them. Does not affect centralGrafana.
 
 ## <a name="replicas"></a>16. Property `grafana > replicas`
 

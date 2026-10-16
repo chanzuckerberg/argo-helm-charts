@@ -2,6 +2,12 @@ suite: test dashboards.yaml
 templates:
   - dashboards.yaml
 
+set:
+  localGrafana:
+    enabled: true
+    content:
+      enabled: true
+
 tests:
   - it: should render a GrafanaDashboard resource
     asserts:

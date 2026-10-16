@@ -2,6 +2,12 @@ suite: test grafana.yaml
 templates:
   - grafana.yaml
 
+set:
+  localGrafana:
+    enabled: true
+    content:
+      enabled: true
+
 tests:
   - it: should not render anything if .Values.enabled is false
     set:
