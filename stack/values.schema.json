@@ -1437,6 +1437,10 @@
                   "logoutPath": {
                     "type": "string"
                   },
+                  "passThroughAuthHeader": {
+                    "description": "Skip OIDC for a request that already carries the header the jwt filter reads, which is Authorization unless a provider sets extractFrom. Non-browser clients holding a bearer token then authenticate against jwt.providers instead of being redirected to a login page they cannot complete, which is what oauth2-proxy --extra-jwt-issuers did. Requires a jwt block, otherwise any request bearing the header would reach the backend unverified",
+                    "type": "boolean"
+                  },
                   "provider": {
                     "type": "object",
                     "properties": {

@@ -955,6 +955,12 @@ oidc:
   {{- if $p.oidc.forwardAccessToken }}
   forwardAccessToken: {{ $p.oidc.forwardAccessToken }}
   {{- end }}
+  {{- if $p.oidc.passThroughAuthHeader }}
+  {{- if not $p.jwt.enabled }}
+  {{- fail (printf "securityPolicies.%s.oidc.passThroughAuthHeader skips OIDC for any request carrying the JWT filter's header, but the policy has no jwt block to verify it, so every such request would reach the backend unauthenticated. Set jwt.enabled: true with a providers entry for the clients you mean to admit." $policyName) -}}
+  {{- end }}
+  passThroughAuthHeader: {{ $p.oidc.passThroughAuthHeader }}
+  {{- end }}
   {{- if $p.oidc.forwardIDToken.enabled }}
   {{- if not $p.oidc.forwardIDToken.header }}
   {{- fail (printf "securityPolicies.%s.oidc.forwardIDToken is enabled but sets no header. Name the upstream header that should carry the ID token, or set enabled: false." $policyName) -}}
