@@ -863,6 +863,58 @@ HTTPRoute per-rule filters list (no "filters:" key). Caller indents under a rule
 Covers hostRewrite (URLRewrite) and request/response header modifiers. Redirect is
 handled separately as a whole-route rule.
 */}}
+{{/*
+Rule filters for a policy-less public route (skipAuth or the protectedPaths
+remainder). Same as gateway.ruleFiltersInner, plus a RequestHeaderModifier that
+removes the identity headers a SecurityPolicy would otherwise inject (the fixed
+oauth2-proxy set plus whatever the resolved policy writes), so a client cannot
+forge them on a route no policy sanitises. Mirrors oauth2-proxy's
+--skip-auth-strip-headers. Merged into any operator-set requestHeaders.remove,
+because a rule may carry only one RequestHeaderModifier. Input dict: "Values",
+optional "policy" (the resolved SecurityPolicy).
+*/}}
+{{- define "gateway.publicRuleFiltersInner" -}}
+{{- $gw := deepCopy .Values.gateway -}}
+{{- $rh := deepCopy ($gw.requestHeaders | default dict) -}}
+{{- $remove := $rh.remove | default list -}}
+{{- $identity := list "X-Forwarded-Email" "X-Forwarded-User" "X-Forwarded-Preferred-Username" "X-Forwarded-Groups" "X-Auth-Request-Email" "X-Auth-Request-User" "X-Auth-Request-Preferred-Username" "X-Auth-Request-Groups" "X-ID-Token" -}}
+{{- /* Headers this particular policy writes: the forwarded ID token and every claim target */ -}}
+{{- with .policy -}}
+{{- with ((.oidc | default dict).forwardIDToken | default dict).header -}}
+{{- $identity = append $identity . -}}
+{{- end -}}
+{{- if (.oidc | default dict).forwardAccessToken -}}
+{{- /* the OAuth2 filter rewrites Authorization to the access token on protected paths, so a client-sent one would look gateway-issued */ -}}
+{{- $identity = append $identity "Authorization" -}}
+{{- end -}}
+{{- range ((.jwt | default dict).providers | default list) -}}
+{{- range (.claimToHeaders | default list) -}}
+{{- with .header -}}
+{{- $identity = append $identity . -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $h := $identity -}}
+{{- range concat ($rh.set | default list) ($rh.add | default list) -}}
+{{- if eq (lower (.name | default "")) (lower $h) -}}
+{{- fail (printf "gateway.requestHeaders sets or adds %q, which the unauthenticated -public route removes to stop clients forging it. Envoy applies set and add after remove, so the value would reach the backend on public paths. Remove it from gateway.requestHeaders on this service." .name) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $identity -}}
+{{- if not (has . $remove) -}}
+{{- $remove = append $remove . -}}
+{{- end -}}
+{{- end -}}
+{{- if gt (len $remove) 16 -}}
+{{- fail (printf "the public route's RequestHeaderModifier would remove %d headers, but Gateway API allows 16. gateway.requestHeaders.remove may list at most %d headers on a service with skipAuth or protectedPaths, because %d identity headers are removed there automatically." (len $remove) (sub 16 (sub (len $remove) (len (.Values.gateway.requestHeaders | default dict).remove | default list))) (sub (len $remove) (len ((.Values.gateway.requestHeaders | default dict).remove | default list)))) -}}
+{{- end -}}
+{{- $_ := set $rh "remove" $remove -}}
+{{- $_ := set $gw "requestHeaders" $rh -}}
+{{- include "gateway.ruleFiltersInner" (dict "Values" (dict "gateway" $gw)) -}}
+{{- end -}}
+
 {{- define "gateway.ruleFiltersInner" -}}
 {{- $g := .Values.gateway -}}
 {{- if $g.hostRewrite }}

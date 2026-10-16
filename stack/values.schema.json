@@ -356,6 +356,25 @@
                 }
               }
             },
+            "protectedPaths": {
+              "description": "Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no policy and strips the identity headers a policy would inject. The OIDC callback and logout paths are added to the protected route automatically (under the base path derived from the first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched case-insensitively by default (a RegularExpression rule, which outranks PathPrefix), because Express, Remix and IIS route /Admin as /admin, and the prefix boundary is any non-identifier character, so /admin., /admin.json and /admin:x are protected while /administrator is not. Set caseSensitive true on an entry for a plain PathPrefix. Paths carrying a percent sign or semicolon are routed through the protected route by default (protectedPathsAmbiguousToProtected)",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "caseSensitive": {
+                    "type": "boolean"
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "protectedPathsAmbiguousToProtected": {
+              "description": "With protectedPaths, also route every path containing a percent sign or a semicolon through the protected route. Envoy keeps reserved, control and non-ASCII percent-escapes as sent and never strips matrix parameters, while servlet containers drop a semicolon suffix or resolve a dot-dot-semicolon traversal to /admin before mapping, and some stacks decode before routing, so such requests would otherwise be served from the -public route. On by default because that fails closed. Set false if public URLs legitimately carry encoded characters or semicolons in the path (spaces, non-ASCII slugs). Query strings are never affected",
+              "type": "boolean"
+            },
             "rateLimit": {
               "description": "Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)",
               "type": "object",
