@@ -1,4 +1,4 @@
-{{- if or .Values.proxyProtocol.enabled .Values.hsts.enabled }}
+{{- if or .Values.proxyProtocol.enabled .Values.hsts.enabled .Values.path.enabled }}
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
 metadata:
@@ -9,6 +9,13 @@ spec:
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: {{ .Values.gatewayName }}
+  {{- if .Values.path.enabled }}
+  path:
+    escapedSlashesAction: {{ .Values.path.escapedSlashesAction }}
+    {{- if not .Values.path.mergeSlashes }}
+    disableMergeSlashes: true
+    {{- end }}
+  {{- end }}
   {{- if .Values.proxyProtocol.enabled }}
   proxyProtocol:
     optional: {{ .Values.proxyProtocol.optional }}

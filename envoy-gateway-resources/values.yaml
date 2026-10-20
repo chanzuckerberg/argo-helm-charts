@@ -74,6 +74,17 @@ hsts:
   enabled: false
   value: "max-age=31536000; includeSubDomains"
 
+# Path-confusion handling, pinned explicitly rather than relying on the Envoy
+# Gateway default so a future default change cannot silently weaken it.
+path:
+  enabled: true
+  # How %2f, %2F, %5c, or %5C in the request path are handled. UnescapeAndRedirect
+  # (the Envoy Gateway default) unescapes and 307-redirects so every hop sees the
+  # decoded path. RejectRequest returns 400 for any encoded slash (stricter).
+  escapedSlashesAction: UnescapeAndRedirect
+  # Collapse adjacent slashes (//a to /a). On by default in Envoy; set false to disable.
+  mergeSlashes: true
+
 # When true, drop access logs for successful (2xx) responses; errors, redirects,
 # and reset connections are still logged. For high-traffic clusters where 2xx
 # access-log volume is significant self-ingest.

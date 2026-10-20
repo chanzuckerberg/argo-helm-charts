@@ -88,6 +88,20 @@
         }
       }
     },
+    "path": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "escapedSlashesAction": {
+          "type": "string"
+        },
+        "mergeSlashes": {
+          "type": "boolean"
+        }
+      }
+    },
     "proxyProtocol": {
       "type": "object",
       "properties": {

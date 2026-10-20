@@ -24,10 +24,17 @@ tests:
       - equal:
           path: spec.proxyProtocol.optional
           value: false
+      - equal:
+          path: spec.path.escapedSlashesAction
+          value: UnescapeAndRedirect
+      - notExists:
+          path: spec.path.disableMergeSlashes
 
-  - it: should render nothing when proxyProtocol and hsts are both off
+  - it: should render nothing when proxyProtocol, hsts, and path are all off
     set:
       proxyProtocol:
+        enabled: false
+      path:
         enabled: false
     asserts:
       - hasDocuments:
@@ -96,3 +103,32 @@ tests:
       - equal:
           path: spec.proxyProtocol.optional
           value: true
+
+  - it: should pin escapedSlashesAction to RejectRequest when configured
+    set:
+      path:
+        escapedSlashesAction: RejectRequest
+    asserts:
+      - equal:
+          path: spec.path.escapedSlashesAction
+          value: RejectRequest
+
+  - it: should disable merge slashes when mergeSlashes is false
+    set:
+      path:
+        mergeSlashes: false
+    asserts:
+      - equal:
+          path: spec.path.disableMergeSlashes
+          value: true
+
+  - it: should omit the path block when path is disabled
+    set:
+      path:
+        enabled: false
+    asserts:
+      - notExists:
+          path: spec.path
+      - isKind:
+          of: ClientTrafficPolicy
+
