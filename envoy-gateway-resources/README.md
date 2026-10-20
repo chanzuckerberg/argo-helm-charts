@@ -20,6 +20,7 @@
 | - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
 | - [hsts](#hsts )                     | No      | object | No         | -          | -                 |
 | - [listenerSets](#listenerSets )     | No      | object | No         | -          | -                 |
+| - [path](#path )                     | No      | object | No         | -          | -                 |
 | - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                 |
 | - [resources](#resources )           | No      | object | No         | -          | -                 |
 | - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
@@ -251,7 +252,42 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-## <a name="proxyProtocol"></a>11. Property `envoy-gateway-resources > proxyProtocol`
+## <a name="path"></a>11. Property `envoy-gateway-resources > path`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                              | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [enabled](#path_enabled )                           | No      | boolean | No         | -          | -                 |
+| - [escapedSlashesAction](#path_escapedSlashesAction ) | No      | string  | No         | -          | -                 |
+| - [mergeSlashes](#path_mergeSlashes )                 | No      | boolean | No         | -          | -                 |
+
+### <a name="path_enabled"></a>11.1. Property `envoy-gateway-resources > path > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+### <a name="path_escapedSlashesAction"></a>11.2. Property `envoy-gateway-resources > path > escapedSlashesAction`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="path_mergeSlashes"></a>11.3. Property `envoy-gateway-resources > path > mergeSlashes`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+## <a name="proxyProtocol"></a>12. Property `envoy-gateway-resources > proxyProtocol`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -264,21 +300,21 @@
 | - [enabled](#proxyProtocol_enabled )   | No      | boolean | No         | -          | -                 |
 | - [optional](#proxyProtocol_optional ) | No      | boolean | No         | -          | -                 |
 
-### <a name="proxyProtocol_enabled"></a>11.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
+### <a name="proxyProtocol_enabled"></a>12.1. Property `envoy-gateway-resources > proxyProtocol > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="proxyProtocol_optional"></a>11.2. Property `envoy-gateway-resources > proxyProtocol > optional`
+### <a name="proxyProtocol_optional"></a>12.2. Property `envoy-gateway-resources > proxyProtocol > optional`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-## <a name="resources"></a>12. Property `envoy-gateway-resources > resources`
+## <a name="resources"></a>13. Property `envoy-gateway-resources > resources`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -291,7 +327,7 @@
 | - [limits](#resources_limits )     | No      | object | No         | -          | -                 |
 | - [requests](#resources_requests ) | No      | object | No         | -          | -                 |
 
-### <a name="resources_limits"></a>12.1. Property `envoy-gateway-resources > resources > limits`
+### <a name="resources_limits"></a>13.1. Property `envoy-gateway-resources > resources > limits`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -303,14 +339,14 @@
 | ------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [memory](#resources_limits_memory ) | No      | string | No         | -          | -                 |
 
-#### <a name="resources_limits_memory"></a>12.1.1. Property `envoy-gateway-resources > resources > limits > memory`
+#### <a name="resources_limits_memory"></a>13.1.1. Property `envoy-gateway-resources > resources > limits > memory`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="resources_requests"></a>12.2. Property `envoy-gateway-resources > resources > requests`
+### <a name="resources_requests"></a>13.2. Property `envoy-gateway-resources > resources > requests`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -323,21 +359,21 @@
 | - [cpu](#resources_requests_cpu )       | No      | string | No         | -          | -                 |
 | - [memory](#resources_requests_memory ) | No      | string | No         | -          | -                 |
 
-#### <a name="resources_requests_cpu"></a>12.2.1. Property `envoy-gateway-resources > resources > requests > cpu`
+#### <a name="resources_requests_cpu"></a>13.2.1. Property `envoy-gateway-resources > resources > requests > cpu`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="resources_requests_memory"></a>12.2.2. Property `envoy-gateway-resources > resources > requests > memory`
+#### <a name="resources_requests_memory"></a>13.2.2. Property `envoy-gateway-resources > resources > requests > memory`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="serviceAccount"></a>13. Property `envoy-gateway-resources > serviceAccount`
+## <a name="serviceAccount"></a>14. Property `envoy-gateway-resources > serviceAccount`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -350,7 +386,7 @@
 | - [annotations](#serviceAccount_annotations ) | No      | object | No         | -          | -                 |
 | - [name](#serviceAccount_name )               | No      | string | No         | -          | -                 |
 
-### <a name="serviceAccount_annotations"></a>13.1. Property `envoy-gateway-resources > serviceAccount > annotations`
+### <a name="serviceAccount_annotations"></a>14.1. Property `envoy-gateway-resources > serviceAccount > annotations`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -358,14 +394,14 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-### <a name="serviceAccount_name"></a>13.2. Property `envoy-gateway-resources > serviceAccount > name`
+### <a name="serviceAccount_name"></a>14.2. Property `envoy-gateway-resources > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="tlsPassthrough"></a>14. Property `envoy-gateway-resources > tlsPassthrough`
+## <a name="tlsPassthrough"></a>15. Property `envoy-gateway-resources > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -378,14 +414,14 @@
 | - [enabled](#tlsPassthrough_enabled )     | No      | boolean | No         | -          | -                 |
 | - [hostnames](#tlsPassthrough_hostnames ) | No      | array   | No         | -          | -                 |
 
-### <a name="tlsPassthrough_enabled"></a>14.1. Property `envoy-gateway-resources > tlsPassthrough > enabled`
+### <a name="tlsPassthrough_enabled"></a>15.1. Property `envoy-gateway-resources > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-### <a name="tlsPassthrough_hostnames"></a>14.2. Property `envoy-gateway-resources > tlsPassthrough > hostnames`
+### <a name="tlsPassthrough_hostnames"></a>15.2. Property `envoy-gateway-resources > tlsPassthrough > hostnames`
 
 |              |         |
 | ------------ | ------- |
