@@ -60,7 +60,7 @@ spec:
     {{- if .Values.gateway.vanity.enabled }}
     - group: gateway.networking.k8s.io
       kind: ListenerSet
-      name: {{ include "service.vanityListenerSetName" . }}
+      name: {{ include "stack.canonicalVanityListenerSet" (dict "root" $global "hostname" (.Values.gateway.vanity.hostname | default .Values.gateway.host)) }}
     {{- else }}
     - name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
@@ -138,7 +138,7 @@ spec:
     {{- if and $rule.vanity $rule.vanity.enabled }}
     - group: gateway.networking.k8s.io
       kind: ListenerSet
-      name: {{ printf "%s-rule-%d" (include "service.vanityListenerSetName" $service) $i }}
+      name: {{ include "stack.canonicalVanityListenerSet" (dict "root" $global "hostname" ($rule.vanity.hostname | default $rule.host)) }}
     {{- else }}
     - name: {{ $service.Values.gateway.gatewayName }}
       namespace: {{ $service.Values.gateway.gatewayNamespace }}
