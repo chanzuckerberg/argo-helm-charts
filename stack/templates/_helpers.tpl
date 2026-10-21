@@ -121,6 +121,35 @@ and the HTTPRoute parentRef, so keep it in one place.
 {{- end }}
 
 {{/*
+Owning vanity ListenerSet for a hostname. A hostname may be declared once per
+Gateway, so the first service to declare it owns the object and the others
+parentRef it. Input: dict "root" $global "hostname" <string>.
+*/}}
+{{- define "stack.canonicalVanityListenerSet" -}}
+{{- $root := .root -}}
+{{- $want := .hostname -}}
+{{- $found := "" -}}
+{{- range $sname, $sv := $root.Values.services -}}
+  {{- $sv = $sv | default dict -}}
+  {{- $g := mergeOverwrite (deepCopy (($root.Values.global).gateway | default dict)) ((get $sv "gateway") | default dict) -}}
+  {{- $off := and (hasKey $g "enabled") (eq ($g.enabled | toString) "false") -}}
+  {{- if not $off -}}
+    {{- $ctx := dict "Chart" $root.Chart "Release" $root.Release "Values" (dict "name" $sname) -}}
+    {{- $base := include "service.vanityListenerSetName" $ctx -}}
+    {{- if and (eq $found "") ($g.vanity).enabled (eq ((($g.vanity).hostname) | default $g.host) $want) -}}
+      {{- $found = $base -}}
+    {{- end -}}
+    {{- range $i, $rule := ($g.rules | default list) -}}
+      {{- if and (eq $found "") ($rule.vanity).enabled (eq (($rule.vanity).hostname | default $rule.host) $want) -}}
+        {{- $found = printf "%s-rule-%d" $base $i -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $found -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "stack.chart" -}}

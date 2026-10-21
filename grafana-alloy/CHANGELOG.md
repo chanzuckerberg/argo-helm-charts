@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.10.1...grafana-alloy-v0.11.0) (2026-10-21)
+
+
+### Features
+
+* **grafana-alloy:** add bearerAuth to Loki endpoints for token file authentication ([#599](https://github.com/chanzuckerberg/argo-helm-charts/issues/599)) ([56e846d](https://github.com/chanzuckerberg/argo-helm-charts/commit/56e846df314f68cb9eac6d1bdc9fc76be7b60659))
+
 ## [0.10.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.10.0...grafana-alloy-v0.10.1) (2026-07-08)
 
 
