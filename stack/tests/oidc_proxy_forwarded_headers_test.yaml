@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: oidc proxy does not trust client-supplied forwarded headers
+templates:
+  - oidc_proxy.yaml
+tests:
+  - it: omits --reverse-proxy so X-Forwarded-Uri cannot select a skip-auth route
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          skipAuth:
+            - path: /healthz
+              method: GET
+    asserts:
+      - documentIndex: 0
+        notContains:
+          path: spec.template.spec.containers[0].args
+          content: --reverse-proxy
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --cookie-secure=true
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --skip-auth-route=GET=^/healthz
+  - it: keeps the rest of the hardcoded argument set
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+    asserts:
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --provider=oidc
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --pass-authorization-header=true
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --skip-jwt-bearer-tokens
+  - it: still passes unrelated extraArgs through
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - --upstream-timeout=300s
+            - --skip-auth-route=GET=^/health$
+    asserts:
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --upstream-timeout=300s
+      - documentIndex: 0
+        contains:
+          path: spec.template.spec.containers[0].args
+          content: --skip-auth-route=GET=^/health$
+  - it: refuses --reverse-proxy in extraArgs
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - --reverse-proxy
+    asserts:
+      - failedTemplate:
+          errorPattern: must not set --reverse-proxy
+  - it: refuses --reverse-proxy=true in extraArgs
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - --reverse-proxy=true
+    asserts:
+      - failedTemplate:
+          errorPattern: must not set --reverse-proxy
+  - it: refuses --trusted-ip, which would compare against the ingress pod address
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - --trusted-ip=10.0.0.0/8
+    asserts:
+      - failedTemplate:
+          errorPattern: has no effect without --reverse-proxy
+  - it: refuses --real-client-ip-header, which is never read without --reverse-proxy
+    set:
+      global:
+        oidcProxy:
+          enabled: true
+          extraArgs:
+            - --real-client-ip-header=X-Real-IP
+    asserts:
+      - failedTemplate:
+          errorPattern: has no effect without --reverse-proxy
