@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.62.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.62.0...stack-v2.62.1) (2026-10-21)
+
+
+### Bug Fixes
+
+* **stack:** render one vanity ListenerSet per host, not per service (CCIE-7595) ([#601](https://github.com/chanzuckerberg/argo-helm-charts/issues/601)) ([410a784](https://github.com/chanzuckerberg/argo-helm-charts/commit/410a7841b150af6b1d245c9d264e1e67b4d5d85e))
+
 ## [2.62.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.61.1...stack-v2.62.0) (2026-10-16)
 
 
