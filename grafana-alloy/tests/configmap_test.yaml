@@ -102,6 +102,75 @@ tests:
           path: data["config.alloy"]
           pattern: 'BASIC_AUTH_CREDENTIALS'
 
+  - it: should render bearer_token_file for a loki endpoint with bearerAuth
+    set:
+      enabled: true
+      clusterName: test-cluster
+      loki:
+        endpoints:
+          - url: "https://loki-gateway.example.com/loki/api/v1/push"
+            bearerAuth:
+              tokenFile: "/var/run/secrets/sts-token/loki"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'bearer_token_file\s*=\s*"/var/run/secrets/sts-token/loki"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: '"Authorization"\s*='
+
+  - it: should not render bearer_token_file when bearerAuth is not set
+    set:
+      enabled: true
+      clusterName: test-cluster
+      loki:
+        endpoints:
+          - url: "https://loki-gateway.example.com/loki/api/v1/push"
+            basicAuth:
+              envVar: "BASIC_AUTH_CREDENTIALS"
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'bearer_token_file'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '"Authorization"\s*=\s*"Basic "'
+
+  - it: should render bearer and basic endpoints side by side
+    set:
+      enabled: true
+      clusterName: test-cluster
+      loki:
+        endpoints:
+          - url: "https://loki-a.example.com/loki/api/v1/push"
+            basicAuth:
+              envVar: "BASIC_AUTH_CREDENTIALS"
+          - url: "https://loki-b.example.com/loki/api/v1/push"
+            bearerAuth:
+              tokenFile: "/tok/loki"
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'bearer_token_file\s*=\s*"/tok/loki"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'env\("BASIC_AUTH_CREDENTIALS"\)'
+
+  - it: should fail when an endpoint sets both basicAuth and bearerAuth
+    set:
+      enabled: true
+      clusterName: test-cluster
+      loki:
+        endpoints:
+          - url: "https://loki-gateway.example.com/loki/api/v1/push"
+            basicAuth:
+              envVar: "BASIC_AUTH_CREDENTIALS"
+            bearerAuth:
+              tokenFile: "/tok/loki"
+    asserts:
+      - failedTemplate:
+          errorPattern: 'sets both basicAuth and bearerAuth'
+
   - it: should use custom basicAuthEnvVar when provided
     set:
       enabled: true

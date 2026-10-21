@@ -11,6 +11,8 @@ loki:
     - url: "http://loki.loki.svc:3100/loki/api/v1/push" # @schema description: URL of the Loki endpoint
       # basicAuth: # @schema description: Basic authentication configuration (optional)
       #   envVar: "BASIC_AUTH_CREDENTIALS" # @schema description: Name of the environment variable containing basic auth credentials
+      # bearerAuth: # @schema description: Bearer token authentication configuration (optional); cannot be combined with basicAuth
+      #   tokenFile: "/var/run/secrets/sts-token/loki" # @schema description: Path to a file containing the bearer token, re-read on every request, for example a projected service account token
 
 # Example with multiple endpoints:
 # loki:
