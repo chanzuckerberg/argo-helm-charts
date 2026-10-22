@@ -33,18 +33,38 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
+{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
+{{- if and .Values.gateway.enabled .Values.gateway.tlsPassthrough.enabled (gt (len (.Values.gateway.protectedPaths | default list)) 0) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with tlsPassthrough enabled. A passthrough TLSRoute carries no HTTP paths and no SecurityPolicy, so nothing could be protected. Remove protectedPaths or disable tlsPassthrough." .Values.name) -}}
+{{- end -}}
 {{- if and .Values.gateway.enabled (eq (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
-{{- /* The -public route carries no OIDC policy, so strip the identity headers a policy would inject. Only computed when a public route exists, so a plain OIDC service that sets such a header is unaffected. */ -}}
+{{- $protected := .Values.gateway.protectedPaths | default list -}}
+{{- /* protectedPaths: only the listed prefixes, plus the OIDC callback and logout, stay on the
+       policy-protected route; every other gateway.paths request goes through the -public route */ -}}
+{{- $protectedRules := list -}}
+{{- $publicRules := list -}}
+{{- if gt (len $protected) 0 -}}
+{{- /* Base path for the auto OIDC callback/logout rules: the group primary's base when the policy is shared. */ -}}
+{{- $basePath := include "stack.gateway.callbackBasePath" (dict "root" $global "service" $service) -}}
+{{- $protectedRules = fromYamlArray (include "stack.gateway.protectedRules" (dict "root" $global "service" $service "policy" $p "basePath" $basePath)) -}}
+{{- include "stack.gateway.assertNoCollisions" (dict "root" $global "service" $service "rules" $protectedRules) -}}
+{{- /* the -public route carries every gateway.paths entry, i.e. the public remainder */ -}}
+{{- range $service.Values.gateway.paths -}}
+{{- $publicRules = append $publicRules (dict "path" (.path | default "/") "pathType" (include "gateway.pathMatchType" .pathType) "method" "" "weight" (.weight | default 0)) -}}
+{{- end -}}
+{{- end -}}
+{{- /* The -public route carries no OIDC policy, so strip the identity headers the policy would inject. Only computed when a public route exists (skipAuth, or the protectedPaths remainder), so a plain OIDC service that sets such a header is unaffected. */ -}}
 {{- $publicFilters := $filters -}}
-{{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- if or (gt (len $publicRules) 0) (gt (len (.Values.gateway.skipAuth | default list)) 0) -}}
 {{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "ctx" $service "Values" .Values "policy" $p) | trim -}}
 {{- end -}}
-{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts) }}
+{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts "rules" $publicRules) }}
+{{- /* Protected HTTPRoute: the OIDC SecurityPolicy targets this route, so everything on it requires login. */}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -77,6 +97,26 @@ spec:
   hostnames:
     - {{ .Values.gateway.host }}
   rules:
+    {{- if gt (len $protectedRules) 0 }}
+    {{- /* protectedPaths set: only the listed prefixes, plus the auto /oauth2 callback and /logout, stay on this protected route. */ -}}
+    {{- range $protectedRules }}
+    - matches:
+        - path:
+            type: {{ .pathType }}
+            value: {{ .path }}
+      backendRefs:
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    {{- else }}
+    {{- /* No protectedPaths: the whole service (every gateway.paths entry) sits behind the policy. */ -}}
     {{- range $service.Values.gateway.paths }}
     - matches:
         - path:
@@ -96,6 +136,8 @@ spec:
         {{- $timeouts | nindent 8 }}
       {{- end }}
     {{- end }}
+    {{- end }}
+{{- /* One extra HTTPRoute per additional host in gateway.rules: the same paths and policy on each host. */ -}}
 {{- range $i, $rule := .Values.gateway.rules }}
 ---
 apiVersion: gateway.networking.k8s.io/v1

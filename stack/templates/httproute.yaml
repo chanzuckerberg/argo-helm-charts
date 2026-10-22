@@ -33,9 +33,13 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
+{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
 {{- if and .Values.gateway.enabled (ne (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
+{{- if gt (len (.Values.gateway.protectedPaths | default list)) 0 -}}
+{{- fail (printf "service %s sets gateway.protectedPaths but its gateway.securityPolicy is not an OIDC policy, so there is nothing to protect the listed paths with. Set an OIDC securityPolicy or remove protectedPaths." .Values.name) -}}
+{{- end -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- $redirect := .Values.gateway.redirect -}}

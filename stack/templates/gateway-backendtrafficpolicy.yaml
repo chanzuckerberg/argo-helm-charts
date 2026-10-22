@@ -33,6 +33,7 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
+{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
 
 {{- $hasTrafficSettings := eq (include "gateway.hasBackendTrafficPolicy" .) "true" -}}
 {{- $realm := include "gateway.basicAuthRealm" (dict "root" $global "name" .Values.name) -}}
@@ -44,7 +45,8 @@
   {{- $routes = append $routes (printf "%s-rule-%d" (include "service.fullname" $service) $i) -}}
 {{- end -}}
 {{- $publicRoute := "" -}}
-{{- if and $hasTrafficSettings (gt (len (.Values.gateway.skipAuth | default list)) 0) (ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "") -}}
+{{- /* the -public route exists for skipAuth entries, or for the gateway.paths remainder under protectedPaths, and carries the same traffic settings */ -}}
+{{- if and $hasTrafficSettings (or (gt (len (.Values.gateway.skipAuth | default list)) 0) (gt (len (.Values.gateway.protectedPaths | default list)) 0)) (ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "") -}}
   {{- $publicRoute = printf "%s-public" (include "service.fullname" $service) -}}
   {{- $routes = append $routes $publicRoute -}}
 {{- end -}}
