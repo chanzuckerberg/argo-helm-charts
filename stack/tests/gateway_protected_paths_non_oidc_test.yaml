@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway.protectedPaths requires an OIDC policy
+templates:
+- httproute.yaml
+tests:
+- it: should fail when protectedPaths is set with no securityPolicy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: is not an OIDC policy
+- it: should fail when protectedPaths is set with a basicAuth policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: basic
+      securityPolicies:
+        basic:
+          basicAuth:
+            enabled: true
+            secretName: basic-auth
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: is not an OIDC policy

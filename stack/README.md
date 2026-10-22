@@ -721,6 +721,7 @@ Must be one of:
 | - [httpsRedirect](#cronJobs_pattern1_gateway_httpsRedirect )                                 | No      | object           | No         | -          | Answer plain HTTP with a redirect to HTTPS instead of serving the application over cleartext                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | - [pathRewrite](#cronJobs_pattern1_gateway_pathRewrite )                                     | No      | object           | No         | -          | Rewrite the request path by regex before it reaches the backend, the equivalent of the nginx rewrite-target annotation. Renders an Envoy Gateway HTTPRouteFilter and attaches it to every rule on this service's route, because the Gateway API URLRewrite filter can only replace a whole path or a prefix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [paths](#cronJobs_pattern1_gateway_paths )                                                 | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [protectedPaths](#cronJobs_pattern1_gateway_protectedPaths )                               | No      | array of object  | No         | -          | Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate                      |
 | - [rateLimit](#cronJobs_pattern1_gateway_rateLimit )                                         | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [redirect](#cronJobs_pattern1_gateway_redirect )                                           | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [requestBuffer](#cronJobs_pattern1_gateway_requestBuffer )                                 | No      | object           | No         | -          | Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -731,7 +732,7 @@ Must be one of:
 | - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )                               | No      | string           | No         | -          | Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )                             | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                                           | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths. Each path is a literal Gateway API path match, not a regex, and must start with a slash: regex syntax carried over from oidcProxy.skipAuth would be matched literally, match no request, and silently leave the endpoint authenticated. pathType defaults to PathPrefix, and Exact exposes a single path without its subtree, which is what an nginx Exact pathType exemption converts to. A path of / is rejected under PathPrefix because the public route would shadow the protected one for every request, but is allowed under Exact, where it exposes only the root. Because the -public route carries no SecurityPolicy, it strips exactly the identity headers the resolved policy injects on the protected route, so a client cannot forge them on an unauthenticated route. An oidc policy injects and therefore strips the oauth2-proxy set (X-Forwarded-Email, X-Forwarded-User, X-Forwarded-Preferred-Username, X-Forwarded-Groups, X-Auth-Request-Email, X-Auth-Request-User, X-Auth-Request-Preferred-Username, X-Auth-Request-Groups, X-ID-Token, X-Forwarded-Access-Token, X-Auth-Request-Access-Token) plus any header its forwardIDToken writes, plus Authorization when it sets oidc.forwardAccessToken, plus any JWT claimToHeaders target. A jwt-only policy with no oidc block injects only its claimToHeaders targets, so only those are stripped and the fixed oauth2-proxy set is not. basicAuth, cors and ipAllowList inject no identity headers, so nothing is stripped and no RequestHeaderModifier is added, matching the protected route which does not strip them either. securityPolicy none renders no separate -public route, so nothing is stripped there. A skipAuth endpoint that does its own bearer auth should set gateway.skipAuthPreserveAuthorization true to keep Authorization. A jwt provider's extractFrom source header is not among these strips, so a public endpoint behind a jwt policy must validate it rather than trust its contents |
-| - [skipAuthPreserveAuthorization](#cronJobs_pattern1_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuthPreserveAuthorization](#cronJobs_pattern1_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                                           | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )                               | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                                               | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -1027,7 +1028,47 @@ Must be one of:
 
 **Description:** HTTPRoute path match type, one of Prefix, Exact or RegularExpression. RegularExpression takes an RE2 pattern matched against the whole path and is the equivalent of an nginx use-regex location. Anything else is treated as Prefix
 
-##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>2.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
+##### <a name="cronJobs_pattern1_gateway_protectedPaths"></a>2.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > protectedPaths`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                         | Description |
+| ----------------------------------------------------------------------- | ----------- |
+| [protectedPaths items](#cronJobs_pattern1_gateway_protectedPaths_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_protectedPaths_items"></a>2.1.16.13.1. stack > cronJobs > ^.*$ > gateway > protectedPaths > protectedPaths items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [path](#cronJobs_pattern1_gateway_protectedPaths_items_path ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_protectedPaths_items_path"></a>2.1.16.13.1.1. Property `stack > cronJobs > ^.*$ > gateway > protectedPaths > protectedPaths items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>2.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1043,7 +1084,7 @@ Must be one of:
 | - [requests](#cronJobs_pattern1_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#cronJobs_pattern1_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>2.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>2.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1052,7 +1093,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>2.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>2.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -1061,7 +1102,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>2.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>2.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -1070,7 +1111,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-##### <a name="cronJobs_pattern1_gateway_redirect"></a>2.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > redirect`
+##### <a name="cronJobs_pattern1_gateway_redirect"></a>2.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1088,7 +1129,7 @@ Must be one of:
 | - [scheme](#cronJobs_pattern1_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#cronJobs_pattern1_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>2.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
+###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>2.1.16.15.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1097,7 +1138,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>2.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
+###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>2.1.16.15.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -1106,7 +1147,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>2.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
+###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>2.1.16.15.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -1115,7 +1156,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>2.1.16.14.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
+###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>2.1.16.15.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -1124,7 +1165,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>2.1.16.14.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
+###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>2.1.16.15.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -1133,7 +1174,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-##### <a name="cronJobs_pattern1_gateway_requestBuffer"></a>2.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer`
+##### <a name="cronJobs_pattern1_gateway_requestBuffer"></a>2.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1148,7 +1189,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
 | - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
-###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>2.1.16.15.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
+###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>2.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1157,7 +1198,7 @@ Must be one of:
 
 **Description:** Enable request body buffering and its size limit
 
-###### <a name="cronJobs_pattern1_gateway_requestBuffer_limit"></a>2.1.16.15.2. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > limit`
+###### <a name="cronJobs_pattern1_gateway_requestBuffer_limit"></a>2.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > limit`
 
 |              |          |
 | ------------ | -------- |
@@ -1166,7 +1207,7 @@ Must be one of:
 
 **Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
-##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>2.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
+##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>2.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1182,7 +1223,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>2.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>2.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -1199,7 +1240,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>2.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>2.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -1216,7 +1257,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>2.1.16.16.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>2.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -1233,7 +1274,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>2.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
+##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>2.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1249,7 +1290,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>2.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>2.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -1266,7 +1307,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>2.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>2.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -1283,7 +1324,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>2.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>2.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -1300,7 +1341,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_rules"></a>2.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > rules`
+##### <a name="cronJobs_pattern1_gateway_rules"></a>2.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -1317,7 +1358,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_sectionName"></a>2.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
+##### <a name="cronJobs_pattern1_gateway_sectionName"></a>2.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -1326,7 +1367,7 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>2.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>2.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -1335,7 +1376,7 @@ Must be one of:
 
 **Description:** Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>2.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>2.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1351,7 +1392,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>2.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>2.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -1360,7 +1401,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>2.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>2.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1369,7 +1410,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>2.1.16.21.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>2.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -1378,7 +1419,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>2.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>2.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -1399,7 +1440,7 @@ Must be one of:
 | ----------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>2.1.16.22.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>2.1.16.23.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1413,21 +1454,21 @@ Must be one of:
 | - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )         | No      | string           | No         | -          | -                 |
 | - [pathType](#cronJobs_pattern1_gateway_skipAuth_items_pathType ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>2.1.16.22.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>2.1.16.23.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>2.1.16.22.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>2.1.16.23.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_pathType"></a>2.1.16.22.1.3. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > pathType`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_pathType"></a>2.1.16.23.1.3. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > pathType`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -1438,16 +1479,16 @@ Must be one of:
 * "PathPrefix"
 * "Exact"
 
-##### <a name="cronJobs_pattern1_gateway_skipAuthPreserveAuthorization"></a>2.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > skipAuthPreserveAuthorization`
+##### <a name="cronJobs_pattern1_gateway_skipAuthPreserveAuthorization"></a>2.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > skipAuthPreserveAuthorization`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
+**Description:** Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>2.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1463,7 +1504,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>2.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -1472,7 +1513,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>2.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -1481,7 +1522,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.24.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>2.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -1490,7 +1531,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>2.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1505,7 +1546,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>2.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1514,7 +1555,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>2.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -1523,7 +1564,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>2.1.16.27. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1539,7 +1580,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>2.1.16.27.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -1548,7 +1589,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>2.1.16.27.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1557,7 +1598,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.26.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>2.1.16.27.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -5479,6 +5520,7 @@ Must be one of:
 | - [httpsRedirect](#global_gateway_httpsRedirect )                                 | No      | object           | No         | -          | Answer plain HTTP with a redirect to HTTPS instead of serving the application over cleartext                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | - [pathRewrite](#global_gateway_pathRewrite )                                     | No      | object           | No         | -          | Rewrite the request path by regex before it reaches the backend, the equivalent of the nginx rewrite-target annotation. Renders an Envoy Gateway HTTPRouteFilter and attaches it to every rule on this service's route, because the Gateway API URLRewrite filter can only replace a whole path or a prefix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [paths](#global_gateway_paths )                                                 | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [protectedPaths](#global_gateway_protectedPaths )                               | No      | array of object  | No         | -          | Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate                      |
 | - [rateLimit](#global_gateway_rateLimit )                                         | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [redirect](#global_gateway_redirect )                                           | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [requestBuffer](#global_gateway_requestBuffer )                                 | No      | object           | No         | -          | Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -5489,7 +5531,7 @@ Must be one of:
 | - [securityPolicy](#global_gateway_securityPolicy )                               | No      | string           | No         | -          | Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [sessionAffinity](#global_gateway_sessionAffinity )                             | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [skipAuth](#global_gateway_skipAuth )                                           | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths. Each path is a literal Gateway API path match, not a regex, and must start with a slash: regex syntax carried over from oidcProxy.skipAuth would be matched literally, match no request, and silently leave the endpoint authenticated. pathType defaults to PathPrefix, and Exact exposes a single path without its subtree, which is what an nginx Exact pathType exemption converts to. A path of / is rejected under PathPrefix because the public route would shadow the protected one for every request, but is allowed under Exact, where it exposes only the root. Because the -public route carries no SecurityPolicy, it strips exactly the identity headers the resolved policy injects on the protected route, so a client cannot forge them on an unauthenticated route. An oidc policy injects and therefore strips the oauth2-proxy set (X-Forwarded-Email, X-Forwarded-User, X-Forwarded-Preferred-Username, X-Forwarded-Groups, X-Auth-Request-Email, X-Auth-Request-User, X-Auth-Request-Preferred-Username, X-Auth-Request-Groups, X-ID-Token, X-Forwarded-Access-Token, X-Auth-Request-Access-Token) plus any header its forwardIDToken writes, plus Authorization when it sets oidc.forwardAccessToken, plus any JWT claimToHeaders target. A jwt-only policy with no oidc block injects only its claimToHeaders targets, so only those are stripped and the fixed oauth2-proxy set is not. basicAuth, cors and ipAllowList inject no identity headers, so nothing is stripped and no RequestHeaderModifier is added, matching the protected route which does not strip them either. securityPolicy none renders no separate -public route, so nothing is stripped there. A skipAuth endpoint that does its own bearer auth should set gateway.skipAuthPreserveAuthorization true to keep Authorization. A jwt provider's extractFrom source header is not among these strips, so a public endpoint behind a jwt policy must validate it rather than trust its contents |
-| - [skipAuthPreserveAuthorization](#global_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuthPreserveAuthorization](#global_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [timeouts](#global_gateway_timeouts )                                           | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [tlsPassthrough](#global_gateway_tlsPassthrough )                               | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [vanity](#global_gateway_vanity )                                               | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -5785,7 +5827,47 @@ Must be one of:
 
 **Description:** HTTPRoute path match type, one of Prefix, Exact or RegularExpression. RegularExpression takes an RE2 pattern matched against the whole path and is the equivalent of an nginx use-regex location. Anything else is treated as Prefix
 
-#### <a name="global_gateway_rateLimit"></a>3.16.13. Property `stack > global > gateway > rateLimit`
+#### <a name="global_gateway_protectedPaths"></a>3.16.13. Property `stack > global > gateway > protectedPaths`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                              | Description |
+| ------------------------------------------------------------ | ----------- |
+| [protectedPaths items](#global_gateway_protectedPaths_items) | -           |
+
+##### <a name="global_gateway_protectedPaths_items"></a>3.16.13.1. stack > global > gateway > protectedPaths > protectedPaths items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                             | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [path](#global_gateway_protectedPaths_items_path ) | No      | string | No         | -          | -                 |
+
+###### <a name="global_gateway_protectedPaths_items_path"></a>3.16.13.1.1. Property `stack > global > gateway > protectedPaths > protectedPaths items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="global_gateway_rateLimit"></a>3.16.14. Property `stack > global > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5801,7 +5883,7 @@ Must be one of:
 | - [requests](#global_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#global_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-##### <a name="global_gateway_rateLimit_enabled"></a>3.16.13.1. Property `stack > global > gateway > rateLimit > enabled`
+##### <a name="global_gateway_rateLimit_enabled"></a>3.16.14.1. Property `stack > global > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5810,7 +5892,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-##### <a name="global_gateway_rateLimit_requests"></a>3.16.13.2. Property `stack > global > gateway > rateLimit > requests`
+##### <a name="global_gateway_rateLimit_requests"></a>3.16.14.2. Property `stack > global > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -5819,7 +5901,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-##### <a name="global_gateway_rateLimit_unit"></a>3.16.13.3. Property `stack > global > gateway > rateLimit > unit`
+##### <a name="global_gateway_rateLimit_unit"></a>3.16.14.3. Property `stack > global > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -5828,7 +5910,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-#### <a name="global_gateway_redirect"></a>3.16.14. Property `stack > global > gateway > redirect`
+#### <a name="global_gateway_redirect"></a>3.16.15. Property `stack > global > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5846,7 +5928,7 @@ Must be one of:
 | - [scheme](#global_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#global_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-##### <a name="global_gateway_redirect_enabled"></a>3.16.14.1. Property `stack > global > gateway > redirect > enabled`
+##### <a name="global_gateway_redirect_enabled"></a>3.16.15.1. Property `stack > global > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5855,7 +5937,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-##### <a name="global_gateway_redirect_hostname"></a>3.16.14.2. Property `stack > global > gateway > redirect > hostname`
+##### <a name="global_gateway_redirect_hostname"></a>3.16.15.2. Property `stack > global > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -5864,7 +5946,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-##### <a name="global_gateway_redirect_path"></a>3.16.14.3. Property `stack > global > gateway > redirect > path`
+##### <a name="global_gateway_redirect_path"></a>3.16.15.3. Property `stack > global > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -5873,7 +5955,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-##### <a name="global_gateway_redirect_scheme"></a>3.16.14.4. Property `stack > global > gateway > redirect > scheme`
+##### <a name="global_gateway_redirect_scheme"></a>3.16.15.4. Property `stack > global > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -5882,7 +5964,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-##### <a name="global_gateway_redirect_statusCode"></a>3.16.14.5. Property `stack > global > gateway > redirect > statusCode`
+##### <a name="global_gateway_redirect_statusCode"></a>3.16.15.5. Property `stack > global > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -5891,7 +5973,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-#### <a name="global_gateway_requestBuffer"></a>3.16.15. Property `stack > global > gateway > requestBuffer`
+#### <a name="global_gateway_requestBuffer"></a>3.16.16. Property `stack > global > gateway > requestBuffer`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5906,7 +5988,7 @@ Must be one of:
 | - [enabled](#global_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
 | - [limit](#global_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
-##### <a name="global_gateway_requestBuffer_enabled"></a>3.16.15.1. Property `stack > global > gateway > requestBuffer > enabled`
+##### <a name="global_gateway_requestBuffer_enabled"></a>3.16.16.1. Property `stack > global > gateway > requestBuffer > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -5915,7 +5997,7 @@ Must be one of:
 
 **Description:** Enable request body buffering and its size limit
 
-##### <a name="global_gateway_requestBuffer_limit"></a>3.16.15.2. Property `stack > global > gateway > requestBuffer > limit`
+##### <a name="global_gateway_requestBuffer_limit"></a>3.16.16.2. Property `stack > global > gateway > requestBuffer > limit`
 
 |              |          |
 | ------------ | -------- |
@@ -5924,7 +6006,7 @@ Must be one of:
 
 **Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
-#### <a name="global_gateway_requestHeaders"></a>3.16.16. Property `stack > global > gateway > requestHeaders`
+#### <a name="global_gateway_requestHeaders"></a>3.16.17. Property `stack > global > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -5940,7 +6022,7 @@ Must be one of:
 | - [remove](#global_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#global_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-##### <a name="global_gateway_requestHeaders_add"></a>3.16.16.1. Property `stack > global > gateway > requestHeaders > add`
+##### <a name="global_gateway_requestHeaders_add"></a>3.16.17.1. Property `stack > global > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -5957,7 +6039,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_requestHeaders_remove"></a>3.16.16.2. Property `stack > global > gateway > requestHeaders > remove`
+##### <a name="global_gateway_requestHeaders_remove"></a>3.16.17.2. Property `stack > global > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -5974,7 +6056,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_requestHeaders_set"></a>3.16.16.3. Property `stack > global > gateway > requestHeaders > set`
+##### <a name="global_gateway_requestHeaders_set"></a>3.16.17.3. Property `stack > global > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -5991,7 +6073,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_gateway_responseHeaders"></a>3.16.17. Property `stack > global > gateway > responseHeaders`
+#### <a name="global_gateway_responseHeaders"></a>3.16.18. Property `stack > global > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6007,7 +6089,7 @@ Must be one of:
 | - [remove](#global_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#global_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-##### <a name="global_gateway_responseHeaders_add"></a>3.16.17.1. Property `stack > global > gateway > responseHeaders > add`
+##### <a name="global_gateway_responseHeaders_add"></a>3.16.18.1. Property `stack > global > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -6024,7 +6106,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_responseHeaders_remove"></a>3.16.17.2. Property `stack > global > gateway > responseHeaders > remove`
+##### <a name="global_gateway_responseHeaders_remove"></a>3.16.18.2. Property `stack > global > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -6041,7 +6123,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="global_gateway_responseHeaders_set"></a>3.16.17.3. Property `stack > global > gateway > responseHeaders > set`
+##### <a name="global_gateway_responseHeaders_set"></a>3.16.18.3. Property `stack > global > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -6058,7 +6140,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_gateway_rules"></a>3.16.18. Property `stack > global > gateway > rules`
+#### <a name="global_gateway_rules"></a>3.16.19. Property `stack > global > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -6075,7 +6157,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="global_gateway_sectionName"></a>3.16.19. Property `stack > global > gateway > sectionName`
+#### <a name="global_gateway_sectionName"></a>3.16.20. Property `stack > global > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -6084,7 +6166,7 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-#### <a name="global_gateway_securityPolicy"></a>3.16.20. Property `stack > global > gateway > securityPolicy`
+#### <a name="global_gateway_securityPolicy"></a>3.16.21. Property `stack > global > gateway > securityPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -6093,7 +6175,7 @@ Must be one of:
 
 **Description:** Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services
 
-#### <a name="global_gateway_sessionAffinity"></a>3.16.21. Property `stack > global > gateway > sessionAffinity`
+#### <a name="global_gateway_sessionAffinity"></a>3.16.22. Property `stack > global > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6109,7 +6191,7 @@ Must be one of:
 | - [enabled](#global_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#global_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-##### <a name="global_gateway_sessionAffinity_cookieName"></a>3.16.21.1. Property `stack > global > gateway > sessionAffinity > cookieName`
+##### <a name="global_gateway_sessionAffinity_cookieName"></a>3.16.22.1. Property `stack > global > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -6118,7 +6200,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-##### <a name="global_gateway_sessionAffinity_enabled"></a>3.16.21.2. Property `stack > global > gateway > sessionAffinity > enabled`
+##### <a name="global_gateway_sessionAffinity_enabled"></a>3.16.22.2. Property `stack > global > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6127,7 +6209,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-##### <a name="global_gateway_sessionAffinity_ttl"></a>3.16.21.3. Property `stack > global > gateway > sessionAffinity > ttl`
+##### <a name="global_gateway_sessionAffinity_ttl"></a>3.16.22.3. Property `stack > global > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -6136,7 +6218,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-#### <a name="global_gateway_skipAuth"></a>3.16.22. Property `stack > global > gateway > skipAuth`
+#### <a name="global_gateway_skipAuth"></a>3.16.23. Property `stack > global > gateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -6157,7 +6239,7 @@ Must be one of:
 | ------------------------------------------------ | ----------- |
 | [skipAuth items](#global_gateway_skipAuth_items) | -           |
 
-##### <a name="global_gateway_skipAuth_items"></a>3.16.22.1. stack > global > gateway > skipAuth > skipAuth items
+##### <a name="global_gateway_skipAuth_items"></a>3.16.23.1. stack > global > gateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6171,21 +6253,21 @@ Must be one of:
 | - [path](#global_gateway_skipAuth_items_path )         | No      | string           | No         | -          | -                 |
 | - [pathType](#global_gateway_skipAuth_items_pathType ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="global_gateway_skipAuth_items_method"></a>3.16.22.1.1. Property `stack > global > gateway > skipAuth > skipAuth items > method`
+###### <a name="global_gateway_skipAuth_items_method"></a>3.16.23.1.1. Property `stack > global > gateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_gateway_skipAuth_items_path"></a>3.16.22.1.2. Property `stack > global > gateway > skipAuth > skipAuth items > path`
+###### <a name="global_gateway_skipAuth_items_path"></a>3.16.23.1.2. Property `stack > global > gateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_gateway_skipAuth_items_pathType"></a>3.16.22.1.3. Property `stack > global > gateway > skipAuth > skipAuth items > pathType`
+###### <a name="global_gateway_skipAuth_items_pathType"></a>3.16.23.1.3. Property `stack > global > gateway > skipAuth > skipAuth items > pathType`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -6196,16 +6278,16 @@ Must be one of:
 * "PathPrefix"
 * "Exact"
 
-#### <a name="global_gateway_skipAuthPreserveAuthorization"></a>3.16.23. Property `stack > global > gateway > skipAuthPreserveAuthorization`
+#### <a name="global_gateway_skipAuthPreserveAuthorization"></a>3.16.24. Property `stack > global > gateway > skipAuthPreserveAuthorization`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
+**Description:** Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
 
-#### <a name="global_gateway_timeouts"></a>3.16.24. Property `stack > global > gateway > timeouts`
+#### <a name="global_gateway_timeouts"></a>3.16.25. Property `stack > global > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6221,7 +6303,7 @@ Must be one of:
 | - [connect](#global_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#global_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.24.1. Property `stack > global > gateway > timeouts > backendRequest`
+##### <a name="global_gateway_timeouts_backendRequest"></a>3.16.25.1. Property `stack > global > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -6230,7 +6312,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-##### <a name="global_gateway_timeouts_connect"></a>3.16.24.2. Property `stack > global > gateway > timeouts > connect`
+##### <a name="global_gateway_timeouts_connect"></a>3.16.25.2. Property `stack > global > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -6239,7 +6321,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-##### <a name="global_gateway_timeouts_request"></a>3.16.24.3. Property `stack > global > gateway > timeouts > request`
+##### <a name="global_gateway_timeouts_request"></a>3.16.25.3. Property `stack > global > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -6248,7 +6330,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-#### <a name="global_gateway_tlsPassthrough"></a>3.16.25. Property `stack > global > gateway > tlsPassthrough`
+#### <a name="global_gateway_tlsPassthrough"></a>3.16.26. Property `stack > global > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6263,7 +6345,7 @@ Must be one of:
 | - [enabled](#global_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#global_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.25.1. Property `stack > global > gateway > tlsPassthrough > enabled`
+##### <a name="global_gateway_tlsPassthrough_enabled"></a>3.16.26.1. Property `stack > global > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6272,7 +6354,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.25.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
+##### <a name="global_gateway_tlsPassthrough_sectionName"></a>3.16.26.2. Property `stack > global > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -6281,7 +6363,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-#### <a name="global_gateway_vanity"></a>3.16.26. Property `stack > global > gateway > vanity`
+#### <a name="global_gateway_vanity"></a>3.16.27. Property `stack > global > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -6297,7 +6379,7 @@ Must be one of:
 | - [enabled](#global_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#global_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.26.1. Property `stack > global > gateway > vanity > clusterIssuer`
+##### <a name="global_gateway_vanity_clusterIssuer"></a>3.16.27.1. Property `stack > global > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -6306,7 +6388,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-##### <a name="global_gateway_vanity_enabled"></a>3.16.26.2. Property `stack > global > gateway > vanity > enabled`
+##### <a name="global_gateway_vanity_enabled"></a>3.16.27.2. Property `stack > global > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -6315,7 +6397,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-##### <a name="global_gateway_vanity_hostname"></a>3.16.26.3. Property `stack > global > gateway > vanity > hostname`
+##### <a name="global_gateway_vanity_hostname"></a>3.16.27.3. Property `stack > global > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -10255,6 +10337,7 @@ Must be one of:
 | - [httpsRedirect](#cronJobs_pattern1_gateway_httpsRedirect )                                 | No      | object           | No         | -          | Answer plain HTTP with a redirect to HTTPS instead of serving the application over cleartext                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | - [pathRewrite](#cronJobs_pattern1_gateway_pathRewrite )                                     | No      | object           | No         | -          | Rewrite the request path by regex before it reaches the backend, the equivalent of the nginx rewrite-target annotation. Renders an Envoy Gateway HTTPRouteFilter and attaches it to every rule on this service's route, because the Gateway API URLRewrite filter can only replace a whole path or a prefix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [paths](#cronJobs_pattern1_gateway_paths )                                                 | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [protectedPaths](#cronJobs_pattern1_gateway_protectedPaths )                               | No      | array of object  | No         | -          | Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate                      |
 | - [rateLimit](#cronJobs_pattern1_gateway_rateLimit )                                         | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [redirect](#cronJobs_pattern1_gateway_redirect )                                           | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [requestBuffer](#cronJobs_pattern1_gateway_requestBuffer )                                 | No      | object           | No         | -          | Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -10265,7 +10348,7 @@ Must be one of:
 | - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )                               | No      | string           | No         | -          | Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )                             | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                                           | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths. Each path is a literal Gateway API path match, not a regex, and must start with a slash: regex syntax carried over from oidcProxy.skipAuth would be matched literally, match no request, and silently leave the endpoint authenticated. pathType defaults to PathPrefix, and Exact exposes a single path without its subtree, which is what an nginx Exact pathType exemption converts to. A path of / is rejected under PathPrefix because the public route would shadow the protected one for every request, but is allowed under Exact, where it exposes only the root. Because the -public route carries no SecurityPolicy, it strips exactly the identity headers the resolved policy injects on the protected route, so a client cannot forge them on an unauthenticated route. An oidc policy injects and therefore strips the oauth2-proxy set (X-Forwarded-Email, X-Forwarded-User, X-Forwarded-Preferred-Username, X-Forwarded-Groups, X-Auth-Request-Email, X-Auth-Request-User, X-Auth-Request-Preferred-Username, X-Auth-Request-Groups, X-ID-Token, X-Forwarded-Access-Token, X-Auth-Request-Access-Token) plus any header its forwardIDToken writes, plus Authorization when it sets oidc.forwardAccessToken, plus any JWT claimToHeaders target. A jwt-only policy with no oidc block injects only its claimToHeaders targets, so only those are stripped and the fixed oauth2-proxy set is not. basicAuth, cors and ipAllowList inject no identity headers, so nothing is stripped and no RequestHeaderModifier is added, matching the protected route which does not strip them either. securityPolicy none renders no separate -public route, so nothing is stripped there. A skipAuth endpoint that does its own bearer auth should set gateway.skipAuthPreserveAuthorization true to keep Authorization. A jwt provider's extractFrom source header is not among these strips, so a public endpoint behind a jwt policy must validate it rather than trust its contents |
-| - [skipAuthPreserveAuthorization](#cronJobs_pattern1_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuthPreserveAuthorization](#cronJobs_pattern1_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                                           | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )                               | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                                               | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -10561,7 +10644,47 @@ Must be one of:
 
 **Description:** HTTPRoute path match type, one of Prefix, Exact or RegularExpression. RegularExpression takes an RE2 pattern matched against the whole path and is the equivalent of an nginx use-regex location. Anything else is treated as Prefix
 
-##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>4.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
+##### <a name="cronJobs_pattern1_gateway_protectedPaths"></a>4.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > protectedPaths`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                         | Description |
+| ----------------------------------------------------------------------- | ----------- |
+| [protectedPaths items](#cronJobs_pattern1_gateway_protectedPaths_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_protectedPaths_items"></a>4.1.16.13.1. stack > cronJobs > ^.*$ > gateway > protectedPaths > protectedPaths items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [path](#cronJobs_pattern1_gateway_protectedPaths_items_path ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_protectedPaths_items_path"></a>4.1.16.13.1.1. Property `stack > cronJobs > ^.*$ > gateway > protectedPaths > protectedPaths items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>4.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10577,7 +10700,7 @@ Must be one of:
 | - [requests](#cronJobs_pattern1_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#cronJobs_pattern1_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>4.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>4.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10586,7 +10709,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>4.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>4.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -10595,7 +10718,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>4.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>4.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -10604,7 +10727,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-##### <a name="cronJobs_pattern1_gateway_redirect"></a>4.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > redirect`
+##### <a name="cronJobs_pattern1_gateway_redirect"></a>4.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10622,7 +10745,7 @@ Must be one of:
 | - [scheme](#cronJobs_pattern1_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#cronJobs_pattern1_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>4.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
+###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>4.1.16.15.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10631,7 +10754,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>4.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
+###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>4.1.16.15.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -10640,7 +10763,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>4.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
+###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>4.1.16.15.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -10649,7 +10772,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>4.1.16.14.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
+###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>4.1.16.15.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -10658,7 +10781,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>4.1.16.14.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
+###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>4.1.16.15.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -10667,7 +10790,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-##### <a name="cronJobs_pattern1_gateway_requestBuffer"></a>4.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer`
+##### <a name="cronJobs_pattern1_gateway_requestBuffer"></a>4.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10682,7 +10805,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
 | - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
-###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>4.1.16.15.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
+###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>4.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10691,7 +10814,7 @@ Must be one of:
 
 **Description:** Enable request body buffering and its size limit
 
-###### <a name="cronJobs_pattern1_gateway_requestBuffer_limit"></a>4.1.16.15.2. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > limit`
+###### <a name="cronJobs_pattern1_gateway_requestBuffer_limit"></a>4.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > limit`
 
 |              |          |
 | ------------ | -------- |
@@ -10700,7 +10823,7 @@ Must be one of:
 
 **Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
-##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>4.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
+##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>4.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10716,7 +10839,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>4.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>4.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -10733,7 +10856,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>4.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>4.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -10750,7 +10873,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>4.1.16.16.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>4.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -10767,7 +10890,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>4.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
+##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>4.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10783,7 +10906,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>4.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>4.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -10800,7 +10923,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>4.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>4.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -10817,7 +10940,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>4.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>4.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -10834,7 +10957,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_rules"></a>4.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > rules`
+##### <a name="cronJobs_pattern1_gateway_rules"></a>4.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -10851,7 +10974,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_sectionName"></a>4.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
+##### <a name="cronJobs_pattern1_gateway_sectionName"></a>4.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -10860,7 +10983,7 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>4.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>4.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -10869,7 +10992,7 @@ Must be one of:
 
 **Description:** Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>4.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>4.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10885,7 +11008,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>4.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>4.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -10894,7 +11017,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>4.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>4.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -10903,7 +11026,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>4.1.16.21.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>4.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -10912,7 +11035,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>4.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>4.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -10933,7 +11056,7 @@ Must be one of:
 | ----------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>4.1.16.22.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>4.1.16.23.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10947,21 +11070,21 @@ Must be one of:
 | - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )         | No      | string           | No         | -          | -                 |
 | - [pathType](#cronJobs_pattern1_gateway_skipAuth_items_pathType ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>4.1.16.22.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>4.1.16.23.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>4.1.16.22.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>4.1.16.23.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_pathType"></a>4.1.16.22.1.3. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > pathType`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_pathType"></a>4.1.16.23.1.3. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > pathType`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -10972,16 +11095,16 @@ Must be one of:
 * "PathPrefix"
 * "Exact"
 
-##### <a name="cronJobs_pattern1_gateway_skipAuthPreserveAuthorization"></a>4.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > skipAuthPreserveAuthorization`
+##### <a name="cronJobs_pattern1_gateway_skipAuthPreserveAuthorization"></a>4.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > skipAuthPreserveAuthorization`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
+**Description:** Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>4.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -10997,7 +11120,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>4.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -11006,7 +11129,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>4.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -11015,7 +11138,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.24.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>4.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -11024,7 +11147,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>4.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11039,7 +11162,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>4.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -11048,7 +11171,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>4.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -11057,7 +11180,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>4.1.16.27. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -11073,7 +11196,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>4.1.16.27.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -11082,7 +11205,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>4.1.16.27.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -11091,7 +11214,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.26.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>4.1.16.27.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -15495,6 +15618,7 @@ Must be one of:
 | - [httpsRedirect](#cronJobs_pattern1_gateway_httpsRedirect )                                 | No      | object           | No         | -          | Answer plain HTTP with a redirect to HTTPS instead of serving the application over cleartext                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | - [pathRewrite](#cronJobs_pattern1_gateway_pathRewrite )                                     | No      | object           | No         | -          | Rewrite the request path by regex before it reaches the backend, the equivalent of the nginx rewrite-target annotation. Renders an Envoy Gateway HTTPRouteFilter and attaches it to every rule on this service's route, because the Gateway API URLRewrite filter can only replace a whole path or a prefix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [paths](#cronJobs_pattern1_gateway_paths )                                                 | No      | array of object  | No         | -          | List of HTTPRoute paths                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [protectedPaths](#cronJobs_pattern1_gateway_protectedPaths )                               | No      | array of object  | No         | -          | Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate                      |
 | - [rateLimit](#cronJobs_pattern1_gateway_rateLimit )                                         | No      | object           | No         | -          | Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [redirect](#cronJobs_pattern1_gateway_redirect )                                           | No      | object           | No         | -          | Whole-route redirect via an HTTPRoute RequestRedirect filter, replaces backend routing for the host                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [requestBuffer](#cronJobs_pattern1_gateway_requestBuffer )                                 | No      | object           | No         | -          | Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -15505,7 +15629,7 @@ Must be one of:
 | - [securityPolicy](#cronJobs_pattern1_gateway_securityPolicy )                               | No      | string           | No         | -          | Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [sessionAffinity](#cronJobs_pattern1_gateway_sessionAffinity )                             | No      | object           | No         | -          | Cookie-based sticky sessions via a BackendTrafficPolicy. Off by default (the ingress cookie-affinity default is not carried to the gateway)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | - [skipAuth](#cronJobs_pattern1_gateway_skipAuth )                                           | No      | array of object  | No         | -          | Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths. Each path is a literal Gateway API path match, not a regex, and must start with a slash: regex syntax carried over from oidcProxy.skipAuth would be matched literally, match no request, and silently leave the endpoint authenticated. pathType defaults to PathPrefix, and Exact exposes a single path without its subtree, which is what an nginx Exact pathType exemption converts to. A path of / is rejected under PathPrefix because the public route would shadow the protected one for every request, but is allowed under Exact, where it exposes only the root. Because the -public route carries no SecurityPolicy, it strips exactly the identity headers the resolved policy injects on the protected route, so a client cannot forge them on an unauthenticated route. An oidc policy injects and therefore strips the oauth2-proxy set (X-Forwarded-Email, X-Forwarded-User, X-Forwarded-Preferred-Username, X-Forwarded-Groups, X-Auth-Request-Email, X-Auth-Request-User, X-Auth-Request-Preferred-Username, X-Auth-Request-Groups, X-ID-Token, X-Forwarded-Access-Token, X-Auth-Request-Access-Token) plus any header its forwardIDToken writes, plus Authorization when it sets oidc.forwardAccessToken, plus any JWT claimToHeaders target. A jwt-only policy with no oidc block injects only its claimToHeaders targets, so only those are stripped and the fixed oauth2-proxy set is not. basicAuth, cors and ipAllowList inject no identity headers, so nothing is stripped and no RequestHeaderModifier is added, matching the protected route which does not strip them either. securityPolicy none renders no separate -public route, so nothing is stripped there. A skipAuth endpoint that does its own bearer auth should set gateway.skipAuthPreserveAuthorization true to keep Authorization. A jwt provider's extractFrom source header is not among these strips, so a public endpoint behind a jwt policy must validate it rather than trust its contents |
-| - [skipAuthPreserveAuthorization](#cronJobs_pattern1_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| - [skipAuthPreserveAuthorization](#cronJobs_pattern1_gateway_skipAuthPreserveAuthorization ) | No      | boolean          | No         | -          | Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | - [timeouts](#cronJobs_pattern1_gateway_timeouts )                                           | No      | object           | No         | -          | HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | - [tlsPassthrough](#cronJobs_pattern1_gateway_tlsPassthrough )                               | No      | object           | No         | -          | TLS passthrough via a TLSRoute (the Gateway does not terminate TLS). Mutually exclusive with the L7 gateway features, and requires a Passthrough listener on the shared Gateway                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | - [vanity](#cronJobs_pattern1_gateway_vanity )                                               | No      | object           | No         | -          | Self-serve public/vanity-domain TLS via a tenant-owned Gateway API ListenerSet (requires Envoy Gateway >= v1.8 and cert-manager >= v1.20)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
@@ -15801,7 +15925,47 @@ Must be one of:
 
 **Description:** HTTPRoute path match type, one of Prefix, Exact or RegularExpression. RegularExpression takes an RE2 pattern matched against the whole path and is the equivalent of an nginx use-regex location. Anything else is treated as Prefix
 
-##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>7.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
+##### <a name="cronJobs_pattern1_gateway_protectedPaths"></a>7.1.16.13. Property `stack > cronJobs > ^.*$ > gateway > protectedPaths`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+**Description:** Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.<name>.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                         | Description |
+| ----------------------------------------------------------------------- | ----------- |
+| [protectedPaths items](#cronJobs_pattern1_gateway_protectedPaths_items) | -           |
+
+###### <a name="cronJobs_pattern1_gateway_protectedPaths_items"></a>7.1.16.13.1. stack > cronJobs > ^.*$ > gateway > protectedPaths > protectedPaths items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                        | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [path](#cronJobs_pattern1_gateway_protectedPaths_items_path ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_gateway_protectedPaths_items_path"></a>7.1.16.13.1.1. Property `stack > cronJobs > ^.*$ > gateway > protectedPaths > protectedPaths items > path`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_gateway_rateLimit"></a>7.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > rateLimit`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15817,7 +15981,7 @@ Must be one of:
 | - [requests](#cronJobs_pattern1_gateway_rateLimit_requests ) | No      | integer | No         | -          | Allowed requests per unit                   |
 | - [unit](#cronJobs_pattern1_gateway_rateLimit_unit )         | No      | string  | No         | -          | Rate limit unit (Second, Minute, Hour, Day) |
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>7.1.16.13.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_enabled"></a>7.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15826,7 +15990,7 @@ Must be one of:
 
 **Description:** Enable local rate limiting
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>7.1.16.13.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_requests"></a>7.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > requests`
 
 |              |           |
 | ------------ | --------- |
@@ -15835,7 +15999,7 @@ Must be one of:
 
 **Description:** Allowed requests per unit
 
-###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>7.1.16.13.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
+###### <a name="cronJobs_pattern1_gateway_rateLimit_unit"></a>7.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > rateLimit > unit`
 
 |              |          |
 | ------------ | -------- |
@@ -15844,7 +16008,7 @@ Must be one of:
 
 **Description:** Rate limit unit (Second, Minute, Hour, Day)
 
-##### <a name="cronJobs_pattern1_gateway_redirect"></a>7.1.16.14. Property `stack > cronJobs > ^.*$ > gateway > redirect`
+##### <a name="cronJobs_pattern1_gateway_redirect"></a>7.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > redirect`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15862,7 +16026,7 @@ Must be one of:
 | - [scheme](#cronJobs_pattern1_gateway_redirect_scheme )         | No      | string  | No         | -          | Target scheme, e.g. https                                       |
 | - [statusCode](#cronJobs_pattern1_gateway_redirect_statusCode ) | No      | integer | No         | -          | Redirect status code (301 or 302)                               |
 
-###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>7.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
+###### <a name="cronJobs_pattern1_gateway_redirect_enabled"></a>7.1.16.15.1. Property `stack > cronJobs > ^.*$ > gateway > redirect > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15871,7 +16035,7 @@ Must be one of:
 
 **Description:** Enable a redirect-only route
 
-###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>7.1.16.14.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
+###### <a name="cronJobs_pattern1_gateway_redirect_hostname"></a>7.1.16.15.2. Property `stack > cronJobs > ^.*$ > gateway > redirect > hostname`
 
 |              |          |
 | ------------ | -------- |
@@ -15880,7 +16044,7 @@ Must be one of:
 
 **Description:** Target hostname, empty keeps the request host
 
-###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>7.1.16.14.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
+###### <a name="cronJobs_pattern1_gateway_redirect_path"></a>7.1.16.15.3. Property `stack > cronJobs > ^.*$ > gateway > redirect > path`
 
 |              |          |
 | ------------ | -------- |
@@ -15889,7 +16053,7 @@ Must be one of:
 
 **Description:** Replacement full path via ReplaceFullPath, empty keeps the path
 
-###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>7.1.16.14.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
+###### <a name="cronJobs_pattern1_gateway_redirect_scheme"></a>7.1.16.15.4. Property `stack > cronJobs > ^.*$ > gateway > redirect > scheme`
 
 |              |          |
 | ------------ | -------- |
@@ -15898,7 +16062,7 @@ Must be one of:
 
 **Description:** Target scheme, e.g. https
 
-###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>7.1.16.14.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
+###### <a name="cronJobs_pattern1_gateway_redirect_statusCode"></a>7.1.16.15.5. Property `stack > cronJobs > ^.*$ > gateway > redirect > statusCode`
 
 |              |           |
 | ------------ | --------- |
@@ -15907,7 +16071,7 @@ Must be one of:
 
 **Description:** Redirect status code (301 or 302)
 
-##### <a name="cronJobs_pattern1_gateway_requestBuffer"></a>7.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer`
+##### <a name="cronJobs_pattern1_gateway_requestBuffer"></a>7.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15922,7 +16086,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
 | - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
-###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>7.1.16.15.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
+###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>7.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -15931,7 +16095,7 @@ Must be one of:
 
 **Description:** Enable request body buffering and its size limit
 
-###### <a name="cronJobs_pattern1_gateway_requestBuffer_limit"></a>7.1.16.15.2. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > limit`
+###### <a name="cronJobs_pattern1_gateway_requestBuffer_limit"></a>7.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > limit`
 
 |              |          |
 | ------------ | -------- |
@@ -15940,7 +16104,7 @@ Must be one of:
 
 **Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
-##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>7.1.16.16. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
+##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>7.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -15956,7 +16120,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_requestHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_requestHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>7.1.16.16.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_add"></a>7.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -15973,7 +16137,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>7.1.16.16.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_remove"></a>7.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -15990,7 +16154,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>7.1.16.16.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_requestHeaders_set"></a>7.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -16007,7 +16171,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>7.1.16.17. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
+##### <a name="cronJobs_pattern1_gateway_responseHeaders"></a>7.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16023,7 +16187,7 @@ Must be one of:
 | - [remove](#cronJobs_pattern1_gateway_responseHeaders_remove ) | No      | array | No         | -          | Header names to remove               |
 | - [set](#cronJobs_pattern1_gateway_responseHeaders_set )       | No      | array | No         | -          | Headers to set, list of {name,value} |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>7.1.16.17.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_add"></a>7.1.16.18.1. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > add`
 
 |              |         |
 | ------------ | ------- |
@@ -16040,7 +16204,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>7.1.16.17.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_remove"></a>7.1.16.18.2. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > remove`
 
 |              |         |
 | ------------ | ------- |
@@ -16057,7 +16221,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>7.1.16.17.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
+###### <a name="cronJobs_pattern1_gateway_responseHeaders_set"></a>7.1.16.18.3. Property `stack > cronJobs > ^.*$ > gateway > responseHeaders > set`
 
 |              |         |
 | ------------ | ------- |
@@ -16074,7 +16238,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_rules"></a>7.1.16.18. Property `stack > cronJobs > ^.*$ > gateway > rules`
+##### <a name="cronJobs_pattern1_gateway_rules"></a>7.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > rules`
 
 |              |         |
 | ------------ | ------- |
@@ -16091,7 +16255,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-##### <a name="cronJobs_pattern1_gateway_sectionName"></a>7.1.16.19. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
+##### <a name="cronJobs_pattern1_gateway_sectionName"></a>7.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -16100,7 +16264,7 @@ Must be one of:
 
 **Description:** Optional section name (listener name) on the Gateway
 
-##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>7.1.16.20. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
+##### <a name="cronJobs_pattern1_gateway_securityPolicy"></a>7.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > securityPolicy`
 
 |              |          |
 | ------------ | -------- |
@@ -16109,7 +16273,7 @@ Must be one of:
 
 **Description:** Name of a global.securityPolicies entry, or oidc-protected-default for zero-config OIDC. Use oidc-identity-headers where the app reads X-Forwarded-Email, X-Auth-Request-Email or X-Forwarded-User: the same policy plus a JWT provider copying the ID token's email and sub into those headers, so no app change. groups is not carried: a list claim arrives base64-encoded JSON no consumer parses. skipAuth routes carry no policy, so no identity headers. Empty or none leaves the route public. One policy on one hostname is shared across services
 
-##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>7.1.16.21. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
+##### <a name="cronJobs_pattern1_gateway_sessionAffinity"></a>7.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16125,7 +16289,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_sessionAffinity_enabled )       | No      | boolean | No         | -          | Enable consistent-hash cookie session affinity |
 | - [ttl](#cronJobs_pattern1_gateway_sessionAffinity_ttl )               | No      | string  | No         | -          | Affinity cookie TTL                            |
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>7.1.16.21.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_cookieName"></a>7.1.16.22.1. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > cookieName`
 
 |              |          |
 | ------------ | -------- |
@@ -16134,7 +16298,7 @@ Must be one of:
 
 **Description:** Affinity cookie name
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>7.1.16.21.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_enabled"></a>7.1.16.22.2. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -16143,7 +16307,7 @@ Must be one of:
 
 **Description:** Enable consistent-hash cookie session affinity
 
-###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>7.1.16.21.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
+###### <a name="cronJobs_pattern1_gateway_sessionAffinity_ttl"></a>7.1.16.22.3. Property `stack > cronJobs > ^.*$ > gateway > sessionAffinity > ttl`
 
 |              |          |
 | ------------ | -------- |
@@ -16152,7 +16316,7 @@ Must be one of:
 
 **Description:** Affinity cookie TTL
 
-##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>7.1.16.22. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
+##### <a name="cronJobs_pattern1_gateway_skipAuth"></a>7.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > skipAuth`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -16173,7 +16337,7 @@ Must be one of:
 | ----------------------------------------------------------- | ----------- |
 | [skipAuth items](#cronJobs_pattern1_gateway_skipAuth_items) | -           |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>7.1.16.22.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items"></a>7.1.16.23.1. stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16187,21 +16351,21 @@ Must be one of:
 | - [path](#cronJobs_pattern1_gateway_skipAuth_items_path )         | No      | string           | No         | -          | -                 |
 | - [pathType](#cronJobs_pattern1_gateway_skipAuth_items_pathType ) | No      | enum (of string) | No         | -          | -                 |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>7.1.16.22.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_method"></a>7.1.16.23.1.1. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > method`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>7.1.16.22.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_path"></a>7.1.16.23.1.2. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > path`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_gateway_skipAuth_items_pathType"></a>7.1.16.22.1.3. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > pathType`
+###### <a name="cronJobs_pattern1_gateway_skipAuth_items_pathType"></a>7.1.16.23.1.3. Property `stack > cronJobs > ^.*$ > gateway > skipAuth > skipAuth items > pathType`
 
 |              |                    |
 | ------------ | ------------------ |
@@ -16212,16 +16376,16 @@ Must be one of:
 * "PathPrefix"
 * "Exact"
 
-##### <a name="cronJobs_pattern1_gateway_skipAuthPreserveAuthorization"></a>7.1.16.23. Property `stack > cronJobs > ^.*$ > gateway > skipAuthPreserveAuthorization`
+##### <a name="cronJobs_pattern1_gateway_skipAuthPreserveAuthorization"></a>7.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > skipAuthPreserveAuthorization`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-**Description:** Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
+**Description:** Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it
 
-##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.24. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
+##### <a name="cronJobs_pattern1_gateway_timeouts"></a>7.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > timeouts`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16237,7 +16401,7 @@ Must be one of:
 | - [connect](#cronJobs_pattern1_gateway_timeouts_connect )               | No      | string | No         | -          | Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default |
 | - [request](#cronJobs_pattern1_gateway_timeouts_request )               | No      | string | No         | -          | Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets           |
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.24.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
+###### <a name="cronJobs_pattern1_gateway_timeouts_backendRequest"></a>7.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > timeouts > backendRequest`
 
 |              |          |
 | ------------ | -------- |
@@ -16246,7 +16410,7 @@ Must be one of:
 
 **Description:** Per-try backend request timeout (HTTPRoute rules[].timeouts.backendRequest). Must be <= request
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.24.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
+###### <a name="cronJobs_pattern1_gateway_timeouts_connect"></a>7.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > timeouts > connect`
 
 |              |          |
 | ------------ | -------- |
@@ -16255,7 +16419,7 @@ Must be one of:
 
 **Description:** Optional upstream TCP connect timeout (renders BackendTrafficPolicy timeout.tcp.connectTimeout), empty uses the Envoy default
 
-###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.24.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
+###### <a name="cronJobs_pattern1_gateway_timeouts_request"></a>7.1.16.25.3. Property `stack > cronJobs > ^.*$ > gateway > timeouts > request`
 
 |              |          |
 | ------------ | -------- |
@@ -16264,7 +16428,7 @@ Must be one of:
 
 **Description:** Overall request timeout (HTTPRoute rules[].timeouts.request). Set "0s" to disable, e.g. for streaming or websockets
 
-##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.25. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
+##### <a name="cronJobs_pattern1_gateway_tlsPassthrough"></a>7.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16279,7 +16443,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_tlsPassthrough_enabled )         | No      | boolean | No         | -          | Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service                                 |
 | - [sectionName](#cronJobs_pattern1_gateway_tlsPassthrough_sectionName ) | No      | string  | No         | -          | Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case |
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.25.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_enabled"></a>7.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -16288,7 +16452,7 @@ Must be one of:
 
 **Description:** Render a TLSRoute instead of an HTTPRoute and skip TLS termination for this service
 
-###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.25.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
+###### <a name="cronJobs_pattern1_gateway_tlsPassthrough_sectionName"></a>7.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > tlsPassthrough > sectionName`
 
 |              |          |
 | ------------ | -------- |
@@ -16297,7 +16461,7 @@ Must be one of:
 
 **Description:** Optional Passthrough listener name to pin to. Empty attaches by hostname plus TLS protocol, which is the usual case
 
-##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.26. Property `stack > cronJobs > ^.*$ > gateway > vanity`
+##### <a name="cronJobs_pattern1_gateway_vanity"></a>7.1.16.27. Property `stack > cronJobs > ^.*$ > gateway > vanity`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -16313,7 +16477,7 @@ Must be one of:
 | - [enabled](#cronJobs_pattern1_gateway_vanity_enabled )             | No      | boolean | No         | -          | Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway                                                  |
 | - [hostname](#cronJobs_pattern1_gateway_vanity_hostname )           | No      | string  | No         | -          | Listener SNI hostname (defaults to gateway.host). A wildcard such as *.parent requires a dns01-capable issuer because http01 cannot issue wildcard certs |
 
-###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.26.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
+###### <a name="cronJobs_pattern1_gateway_vanity_clusterIssuer"></a>7.1.16.27.1. Property `stack > cronJobs > ^.*$ > gateway > vanity > clusterIssuer`
 
 |              |          |
 | ------------ | -------- |
@@ -16322,7 +16486,7 @@ Must be one of:
 
 **Description:** cert-manager ClusterIssuer used by the gateway-shim to issue the listener certificate
 
-###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.26.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
+###### <a name="cronJobs_pattern1_gateway_vanity_enabled"></a>7.1.16.27.2. Property `stack > cronJobs > ^.*$ > gateway > vanity > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -16331,7 +16495,7 @@ Must be one of:
 
 **Description:** Render a ListenerSet attaching an HTTPS listener for this service's vanity domain to the shared Gateway
 
-###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.26.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
+###### <a name="cronJobs_pattern1_gateway_vanity_hostname"></a>7.1.16.27.3. Property `stack > cronJobs > ^.*$ > gateway > vanity > hostname`
 
 |              |          |
 | ------------ | -------- |
