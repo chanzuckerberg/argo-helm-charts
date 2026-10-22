@@ -3,6 +3,24 @@ suite: test ingress
 templates:
   - ingress.yaml
 tests:
+  - it: fails when protectedPaths is set at the global level
+    set:
+      global:
+        ingress:
+          host: "stack.play.dev.czi.team"
+          oidcProtected: false
+        gateway:
+          protectedPaths:
+            - path: /admin
+      services:
+        service1:
+          ingress:
+            paths:
+              - path: "/"
+                pathType: Prefix
+    asserts:
+      - failedTemplate:
+          errorPattern: must be set per service
   - it: adds nginx auth annotations when oidcProxy.enabled=true
     set:
       global:
@@ -170,3 +188,63 @@ tests:
       - equal:
           path: metadata.labels["argus/env-name"]
           value: "production"
+  - it: renders a public ingress-only sibling when another service declares protectedPaths per service
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /
+      services:
+        app:
+          gateway:
+            protectedPaths:
+              - path: /admin
+        docs:
+          ingress:
+            enabled: true
+            host: docs.example.com
+    asserts:
+      - isKind:
+          of: Ingress
+  - it: fails when the service itself sets protectedPaths but renders an unprotected nginx Ingress
+    set:
+      global:
+        ingress:
+          host: app.example.com
+      services:
+        app:
+          ingress:
+            enabled: true
+          gateway:
+            securityPolicy: oidc-protected-default
+            protectedPaths:
+              - path: /admin
+    asserts:
+      - failedTemplate:
+          errorPattern: served without authentication
+  - it: allows an oidcProtected Ingress whose skipAuth does not touch the protected prefix
+    set:
+      global:
+        ingress:
+          host: app.example.com
+          oidcProtected: true
+        oidcProxy:
+          enabled: true
+          skipAuth:
+            - path: /public
+      services:
+        app:
+          ingress:
+            enabled: true
+            oidcProtected: true
+          gateway:
+            protectedPaths:
+              - path: /admin
+    asserts:
+      - isKind:
+          of: Ingress
