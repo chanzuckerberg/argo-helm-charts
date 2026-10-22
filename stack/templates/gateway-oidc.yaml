@@ -33,14 +33,50 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
+{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
+{{- if and .Values.gateway.enabled .Values.gateway.tlsPassthrough.enabled (gt (len (.Values.gateway.protectedPaths | default list)) 0) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with tlsPassthrough enabled. A passthrough TLSRoute carries no HTTP paths and no SecurityPolicy, so nothing could be protected. Remove protectedPaths or disable tlsPassthrough." .Values.name) -}}
+{{- end -}}
 {{- if and .Values.gateway.enabled (eq (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
-{{- /* Create public HTTPRoute for skipAuth paths if configured */ -}}
-{{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- $protected := .Values.gateway.protectedPaths | default list -}}
+{{- /* Base path for the auto OIDC callback/logout rules: the group primary's base when the policy is shared. */ -}}
+{{- $basePath := include "stack.gateway.callbackBasePath" (dict "root" $global "service" $service) -}}
+{{- /* protectedPaths: only the listed prefixes, plus the OIDC callback and logout, stay on the
+       policy-protected route; every other gateway.paths request goes through the -public route */ -}}
+{{- $protectedRules := list -}}
+{{- if gt (len $protected) 0 -}}
+{{- $protectedRules = fromYamlArray (include "stack.gateway.protectedRules" (dict "root" $global "service" $service "policy" $p "basePath" $basePath)) -}}
+{{- include "stack.gateway.assertNoCollisions" (dict "root" $global "service" $service "rules" $protectedRules) -}}
+{{- end -}}
+{{- /* Rules for the OIDC-policy-less -public route: skipAuth entries, or under protectedPaths every gateway.paths entry */ -}}
+{{- $publicRules := list -}}
+{{- if gt (len $protected) 0 -}}
+{{- range $service.Values.gateway.paths -}}
+{{- $publicRules = append $publicRules (dict "path" (.path | default "/") "pathType" (.pathType | default "Prefix") "method" "" "weight" (.weight | default 0)) -}}
+{{- end -}}
+{{- else -}}
+{{- range (.Values.gateway.skipAuth | default list) -}}
+{{- if not (hasPrefix "/" .path) -}}
+{{- fail (printf "gateway.skipAuth path %q must start with /. The gateway matches these as literal path prefixes, not regexes, so anchors and quantifiers carried over from the nginx oidcProxy.skipAuth form would be taken literally, match no real request, and silently leave the endpoint authenticated. Write the plain prefix, for example /public/ rather than ^/public/." .path) -}}
+{{- end -}}
+{{- if eq .path "/" -}}
+{{- fail "gateway.skipAuth path / would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead." -}}
+{{- end -}}
+{{- /* skipAuth renders onto the OIDC-policy-less -public route exactly like gateway.paths, so hold it to the
+       same charset/whitespace/dot-segment rules. A value such as "/ " or "/ #x" YAML-normalises to / and
+       would otherwise slip past the explicit / rejection above, making the whole service public. */ -}}
+{{- include "stack.gateway.assertPublicPathValid" (dict "value" .path "service" $service.Values.name) -}}
+{{- $publicRules = append $publicRules (dict "path" .path "pathType" "Prefix" "method" (.method | default "") "weight" 0) -}}
+{{- end -}}
+{{- end -}}
+{{- if gt (len $publicRules) 0 -}}
+{{- $publicFilters := include "gateway.publicRuleFiltersInner" (dict "Values" .Values "policy" $p) | trim -}}
+{{- /* -public HTTPRoute: the unauthenticated routes (skipAuth entries, or every gateway.paths entry when protectedPaths is set). Carries no OIDC SecurityPolicy, and strips the identity headers so a client cannot forge them. */ -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -83,25 +119,26 @@ spec:
     - {{ $rule.host }}
   {{- end }}
   rules:
-    {{- range (.Values.gateway.skipAuth | default list) }}
-    {{- if not (hasPrefix "/" .path) }}
-    {{- fail (printf "gateway.skipAuth path %q must start with /. The gateway matches these as literal path prefixes, not regexes, so anchors and quantifiers carried over from the nginx oidcProxy.skipAuth form would be taken literally, match no real request, and silently leave the endpoint authenticated. Write the plain prefix, for example /public/ rather than ^/public/." .path) }}
-    {{- end }}
-    {{- if eq .path "/" }}
-    {{- fail "gateway.skipAuth path / would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead." }}
-    {{- end }}
+    {{- range $publicRules }}
     - matches:
         - path:
+            {{- if eq .pathType "Exact" }}
+            type: Exact
+            {{- else }}
             type: PathPrefix
+            {{- end }}
             value: {{ .path }}
           {{- if and .method (ne .method "*") }}
           method: {{ .method }}
           {{- end }}
       backendRefs:
         {{- include "service.backend.refs.direct" $service | nindent 8 }}
-      {{- if $filters }}
+          {{- if .weight }}
+          weight: {{ .weight }}
+          {{- end }}
+      {{- if $publicFilters }}
       filters:
-        {{- $filters | nindent 8 }}
+        {{- $publicFilters | nindent 8 }}
       {{- end }}
       {{- if $timeouts }}
       timeouts:
@@ -109,6 +146,7 @@ spec:
       {{- end }}
     {{- end }}
 {{- end }}
+{{- /* Protected HTTPRoute: the OIDC SecurityPolicy targets this route, so everything on it requires login. */}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -141,6 +179,26 @@ spec:
   hostnames:
     - {{ .Values.gateway.host }}
   rules:
+    {{- if gt (len $protectedRules) 0 }}
+    {{- /* protectedPaths set: only the listed prefixes, plus the auto /oauth2 callback and /logout, stay on this protected route. */ -}}
+    {{- range $protectedRules }}
+    - matches:
+        - path:
+            type: {{ .pathType }}
+            value: {{ .path }}
+      backendRefs:
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
+    {{- else }}
+    {{- /* No protectedPaths: the whole service (every gateway.paths entry) sits behind the policy. */ -}}
     {{- range $service.Values.gateway.paths }}
     - matches:
         - path:
@@ -164,6 +222,8 @@ spec:
         {{- $timeouts | nindent 8 }}
       {{- end }}
     {{- end }}
+    {{- end }}
+{{- /* One extra HTTPRoute per additional host in gateway.rules: the same paths and policy on each host. */ -}}
 {{- range $i, $rule := .Values.gateway.rules }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
