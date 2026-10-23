@@ -383,13 +383,14 @@ must respect the following conditions
 
 **Description:** Argus metadata (provided by Argus API)
 
-| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                          |
-| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
-| - [appName](#cronJobs_pattern1_argusMetadata_appName )     | No      | string | No         | -          | Set by Argus API to Argus app name         |
-| - [envName](#cronJobs_pattern1_argusMetadata_envName )     | No      | string | No         | -          | Set by Argus API to Argus environment name |
-| - [repoName](#cronJobs_pattern1_argusMetadata_repoName )   | No      | string | No         | -          | Set by Argus API to Argus repository name  |
-| - [repoOwner](#cronJobs_pattern1_argusMetadata_repoOwner ) | No      | string | No         | -          | Set by Argus API to Argus repository owner |
-| - [stackName](#cronJobs_pattern1_argusMetadata_stackName ) | No      | string | No         | -          | Set by Argus API to Argus stack name       |
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                      |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| - [appName](#cronJobs_pattern1_argusMetadata_appName )                   | No      | string | No         | -          | Set by Argus API to Argus app name                                                                                                     |
+| - [envName](#cronJobs_pattern1_argusMetadata_envName )                   | No      | string | No         | -          | Set by Argus API to Argus environment name                                                                                             |
+| - [grafanaFolderUID](#cronJobs_pattern1_argusMetadata_grafanaFolderUID ) | No      | string | No         | -          | Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName |
+| - [repoName](#cronJobs_pattern1_argusMetadata_repoName )                 | No      | string | No         | -          | Set by Argus API to Argus repository name                                                                                              |
+| - [repoOwner](#cronJobs_pattern1_argusMetadata_repoOwner )               | No      | string | No         | -          | Set by Argus API to Argus repository owner                                                                                             |
+| - [stackName](#cronJobs_pattern1_argusMetadata_stackName )               | No      | string | No         | -          | Set by Argus API to Argus stack name                                                                                                   |
 
 ##### <a name="cronJobs_pattern1_argusMetadata_appName"></a>2.1.7.1. Property `stack > cronJobs > ^.*$ > argusMetadata > appName`
 
@@ -409,7 +410,16 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus environment name
 
-##### <a name="cronJobs_pattern1_argusMetadata_repoName"></a>2.1.7.3. Property `stack > cronJobs > ^.*$ > argusMetadata > repoName`
+##### <a name="cronJobs_pattern1_argusMetadata_grafanaFolderUID"></a>2.1.7.3. Property `stack > cronJobs > ^.*$ > argusMetadata > grafanaFolderUID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName
+
+##### <a name="cronJobs_pattern1_argusMetadata_repoName"></a>2.1.7.4. Property `stack > cronJobs > ^.*$ > argusMetadata > repoName`
 
 |              |          |
 | ------------ | -------- |
@@ -418,7 +428,7 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus repository name
 
-##### <a name="cronJobs_pattern1_argusMetadata_repoOwner"></a>2.1.7.4. Property `stack > cronJobs > ^.*$ > argusMetadata > repoOwner`
+##### <a name="cronJobs_pattern1_argusMetadata_repoOwner"></a>2.1.7.5. Property `stack > cronJobs > ^.*$ > argusMetadata > repoOwner`
 
 |              |          |
 | ------------ | -------- |
@@ -427,7 +437,7 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus repository owner
 
-##### <a name="cronJobs_pattern1_argusMetadata_stackName"></a>2.1.7.5. Property `stack > cronJobs > ^.*$ > argusMetadata > stackName`
+##### <a name="cronJobs_pattern1_argusMetadata_stackName"></a>2.1.7.6. Property `stack > cronJobs > ^.*$ > argusMetadata > stackName`
 
 |              |          |
 | ------------ | -------- |
@@ -1474,14 +1484,14 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                             |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                             |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                            |
-| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                                  |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                                   |
-| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                                        |
-| - [resyncPeriod](#cronJobs_pattern1_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect) |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                 |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                 |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                      |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                       |
+| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                            |
+| - [resyncPeriod](#cronJobs_pattern1_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect) |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>2.1.17.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -1705,7 +1715,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)
+**Description:** How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect)
 
 | Restrictions                      |                                                                                        |
 | --------------------------------- | -------------------------------------------------------------------------------------- |
@@ -4980,13 +4990,14 @@ Must be one of:
 
 **Description:** Argus metadata (provided by Argus API)
 
-| Property                                        | Pattern | Type   | Deprecated | Definition | Title/Description                          |
-| ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
-| - [appName](#global_argusMetadata_appName )     | No      | string | No         | -          | Set by Argus API to Argus app name         |
-| - [envName](#global_argusMetadata_envName )     | No      | string | No         | -          | Set by Argus API to Argus environment name |
-| - [repoName](#global_argusMetadata_repoName )   | No      | string | No         | -          | Set by Argus API to Argus repository name  |
-| - [repoOwner](#global_argusMetadata_repoOwner ) | No      | string | No         | -          | Set by Argus API to Argus repository owner |
-| - [stackName](#global_argusMetadata_stackName ) | No      | string | No         | -          | Set by Argus API to Argus stack name       |
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                      |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| - [appName](#global_argusMetadata_appName )                   | No      | string | No         | -          | Set by Argus API to Argus app name                                                                                                     |
+| - [envName](#global_argusMetadata_envName )                   | No      | string | No         | -          | Set by Argus API to Argus environment name                                                                                             |
+| - [grafanaFolderUID](#global_argusMetadata_grafanaFolderUID ) | No      | string | No         | -          | Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName |
+| - [repoName](#global_argusMetadata_repoName )                 | No      | string | No         | -          | Set by Argus API to Argus repository name                                                                                              |
+| - [repoOwner](#global_argusMetadata_repoOwner )               | No      | string | No         | -          | Set by Argus API to Argus repository owner                                                                                             |
+| - [stackName](#global_argusMetadata_stackName )               | No      | string | No         | -          | Set by Argus API to Argus stack name                                                                                                   |
 
 #### <a name="global_argusMetadata_appName"></a>3.7.1. Property `stack > global > argusMetadata > appName`
 
@@ -5006,7 +5017,16 @@ Must be one of:
 
 **Description:** Set by Argus API to Argus environment name
 
-#### <a name="global_argusMetadata_repoName"></a>3.7.3. Property `stack > global > argusMetadata > repoName`
+#### <a name="global_argusMetadata_grafanaFolderUID"></a>3.7.3. Property `stack > global > argusMetadata > grafanaFolderUID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName
+
+#### <a name="global_argusMetadata_repoName"></a>3.7.4. Property `stack > global > argusMetadata > repoName`
 
 |              |          |
 | ------------ | -------- |
@@ -5015,7 +5035,7 @@ Must be one of:
 
 **Description:** Set by Argus API to Argus repository name
 
-#### <a name="global_argusMetadata_repoOwner"></a>3.7.4. Property `stack > global > argusMetadata > repoOwner`
+#### <a name="global_argusMetadata_repoOwner"></a>3.7.5. Property `stack > global > argusMetadata > repoOwner`
 
 |              |          |
 | ------------ | -------- |
@@ -5024,7 +5044,7 @@ Must be one of:
 
 **Description:** Set by Argus API to Argus repository owner
 
-#### <a name="global_argusMetadata_stackName"></a>3.7.5. Property `stack > global > argusMetadata > stackName`
+#### <a name="global_argusMetadata_stackName"></a>3.7.6. Property `stack > global > argusMetadata > stackName`
 
 |              |          |
 | ------------ | -------- |
@@ -6071,14 +6091,14 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                             |
-| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [datasources](#global_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                             |
-| - [enabled](#global_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                            |
-| - [extraPanels](#global_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                                  |
-| - [instanceSelector](#global_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                                   |
-| - [refresh](#global_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                                        |
-| - [resyncPeriod](#global_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect) |
+| Property                                                         | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                 |
+| ---------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#global_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                 |
+| - [enabled](#global_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                |
+| - [extraPanels](#global_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                      |
+| - [instanceSelector](#global_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                       |
+| - [refresh](#global_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                            |
+| - [resyncPeriod](#global_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect) |
 
 #### <a name="global_grafanaDashboard_datasources"></a>3.17.1. Property `stack > global > grafanaDashboard > datasources`
 
@@ -6302,7 +6322,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)
+**Description:** How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect)
 
 | Restrictions                      |                                                                                        |
 | --------------------------------- | -------------------------------------------------------------------------------------- |
@@ -9595,13 +9615,14 @@ must respect the following conditions
 
 **Description:** Argus metadata (provided by Argus API)
 
-| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                          |
-| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
-| - [appName](#cronJobs_pattern1_argusMetadata_appName )     | No      | string | No         | -          | Set by Argus API to Argus app name         |
-| - [envName](#cronJobs_pattern1_argusMetadata_envName )     | No      | string | No         | -          | Set by Argus API to Argus environment name |
-| - [repoName](#cronJobs_pattern1_argusMetadata_repoName )   | No      | string | No         | -          | Set by Argus API to Argus repository name  |
-| - [repoOwner](#cronJobs_pattern1_argusMetadata_repoOwner ) | No      | string | No         | -          | Set by Argus API to Argus repository owner |
-| - [stackName](#cronJobs_pattern1_argusMetadata_stackName ) | No      | string | No         | -          | Set by Argus API to Argus stack name       |
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                      |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| - [appName](#cronJobs_pattern1_argusMetadata_appName )                   | No      | string | No         | -          | Set by Argus API to Argus app name                                                                                                     |
+| - [envName](#cronJobs_pattern1_argusMetadata_envName )                   | No      | string | No         | -          | Set by Argus API to Argus environment name                                                                                             |
+| - [grafanaFolderUID](#cronJobs_pattern1_argusMetadata_grafanaFolderUID ) | No      | string | No         | -          | Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName |
+| - [repoName](#cronJobs_pattern1_argusMetadata_repoName )                 | No      | string | No         | -          | Set by Argus API to Argus repository name                                                                                              |
+| - [repoOwner](#cronJobs_pattern1_argusMetadata_repoOwner )               | No      | string | No         | -          | Set by Argus API to Argus repository owner                                                                                             |
+| - [stackName](#cronJobs_pattern1_argusMetadata_stackName )               | No      | string | No         | -          | Set by Argus API to Argus stack name                                                                                                   |
 
 ##### <a name="cronJobs_pattern1_argusMetadata_appName"></a>4.1.7.1. Property `stack > cronJobs > ^.*$ > argusMetadata > appName`
 
@@ -9621,7 +9642,16 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus environment name
 
-##### <a name="cronJobs_pattern1_argusMetadata_repoName"></a>4.1.7.3. Property `stack > cronJobs > ^.*$ > argusMetadata > repoName`
+##### <a name="cronJobs_pattern1_argusMetadata_grafanaFolderUID"></a>4.1.7.3. Property `stack > cronJobs > ^.*$ > argusMetadata > grafanaFolderUID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName
+
+##### <a name="cronJobs_pattern1_argusMetadata_repoName"></a>4.1.7.4. Property `stack > cronJobs > ^.*$ > argusMetadata > repoName`
 
 |              |          |
 | ------------ | -------- |
@@ -9630,7 +9660,7 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus repository name
 
-##### <a name="cronJobs_pattern1_argusMetadata_repoOwner"></a>4.1.7.4. Property `stack > cronJobs > ^.*$ > argusMetadata > repoOwner`
+##### <a name="cronJobs_pattern1_argusMetadata_repoOwner"></a>4.1.7.5. Property `stack > cronJobs > ^.*$ > argusMetadata > repoOwner`
 
 |              |          |
 | ------------ | -------- |
@@ -9639,7 +9669,7 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus repository owner
 
-##### <a name="cronJobs_pattern1_argusMetadata_stackName"></a>4.1.7.5. Property `stack > cronJobs > ^.*$ > argusMetadata > stackName`
+##### <a name="cronJobs_pattern1_argusMetadata_stackName"></a>4.1.7.6. Property `stack > cronJobs > ^.*$ > argusMetadata > stackName`
 
 |              |          |
 | ------------ | -------- |
@@ -10686,14 +10716,14 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                             |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                             |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                            |
-| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                                  |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                                   |
-| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                                        |
-| - [resyncPeriod](#cronJobs_pattern1_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect) |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                 |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                 |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                      |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                       |
+| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                            |
+| - [resyncPeriod](#cronJobs_pattern1_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect) |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>4.1.17.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -10917,7 +10947,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)
+**Description:** How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect)
 
 | Restrictions                      |                                                                                        |
 | --------------------------------- | -------------------------------------------------------------------------------------- |
@@ -14674,13 +14704,14 @@ must respect the following conditions
 
 **Description:** Argus metadata (provided by Argus API)
 
-| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description                          |
-| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ------------------------------------------ |
-| - [appName](#cronJobs_pattern1_argusMetadata_appName )     | No      | string | No         | -          | Set by Argus API to Argus app name         |
-| - [envName](#cronJobs_pattern1_argusMetadata_envName )     | No      | string | No         | -          | Set by Argus API to Argus environment name |
-| - [repoName](#cronJobs_pattern1_argusMetadata_repoName )   | No      | string | No         | -          | Set by Argus API to Argus repository name  |
-| - [repoOwner](#cronJobs_pattern1_argusMetadata_repoOwner ) | No      | string | No         | -          | Set by Argus API to Argus repository owner |
-| - [stackName](#cronJobs_pattern1_argusMetadata_stackName ) | No      | string | No         | -          | Set by Argus API to Argus stack name       |
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                      |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| - [appName](#cronJobs_pattern1_argusMetadata_appName )                   | No      | string | No         | -          | Set by Argus API to Argus app name                                                                                                     |
+| - [envName](#cronJobs_pattern1_argusMetadata_envName )                   | No      | string | No         | -          | Set by Argus API to Argus environment name                                                                                             |
+| - [grafanaFolderUID](#cronJobs_pattern1_argusMetadata_grafanaFolderUID ) | No      | string | No         | -          | Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName |
+| - [repoName](#cronJobs_pattern1_argusMetadata_repoName )                 | No      | string | No         | -          | Set by Argus API to Argus repository name                                                                                              |
+| - [repoOwner](#cronJobs_pattern1_argusMetadata_repoOwner )               | No      | string | No         | -          | Set by Argus API to Argus repository owner                                                                                             |
+| - [stackName](#cronJobs_pattern1_argusMetadata_stackName )               | No      | string | No         | -          | Set by Argus API to Argus stack name                                                                                                   |
 
 ##### <a name="cronJobs_pattern1_argusMetadata_appName"></a>7.1.7.1. Property `stack > cronJobs > ^.*$ > argusMetadata > appName`
 
@@ -14700,7 +14731,16 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus environment name
 
-##### <a name="cronJobs_pattern1_argusMetadata_repoName"></a>7.1.7.3. Property `stack > cronJobs > ^.*$ > argusMetadata > repoName`
+##### <a name="cronJobs_pattern1_argusMetadata_grafanaFolderUID"></a>7.1.7.3. Property `stack > cronJobs > ^.*$ > argusMetadata > grafanaFolderUID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName
+
+##### <a name="cronJobs_pattern1_argusMetadata_repoName"></a>7.1.7.4. Property `stack > cronJobs > ^.*$ > argusMetadata > repoName`
 
 |              |          |
 | ------------ | -------- |
@@ -14709,7 +14749,7 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus repository name
 
-##### <a name="cronJobs_pattern1_argusMetadata_repoOwner"></a>7.1.7.4. Property `stack > cronJobs > ^.*$ > argusMetadata > repoOwner`
+##### <a name="cronJobs_pattern1_argusMetadata_repoOwner"></a>7.1.7.5. Property `stack > cronJobs > ^.*$ > argusMetadata > repoOwner`
 
 |              |          |
 | ------------ | -------- |
@@ -14718,7 +14758,7 @@ must respect the following conditions
 
 **Description:** Set by Argus API to Argus repository owner
 
-##### <a name="cronJobs_pattern1_argusMetadata_stackName"></a>7.1.7.5. Property `stack > cronJobs > ^.*$ > argusMetadata > stackName`
+##### <a name="cronJobs_pattern1_argusMetadata_stackName"></a>7.1.7.6. Property `stack > cronJobs > ^.*$ > argusMetadata > stackName`
 
 |              |          |
 | ------------ | -------- |
@@ -15765,14 +15805,14 @@ Must be one of:
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                             |
-| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                             |
-| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                            |
-| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                                  |
-| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                                   |
-| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                                        |
-| - [resyncPeriod](#cronJobs_pattern1_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect) |
+| Property                                                                    | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                                 |
+| --------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [datasources](#cronJobs_pattern1_grafanaDashboard_datasources )           | No      | object          | No         | -          | -                                                                                                                                                 |
+| - [enabled](#cronJobs_pattern1_grafanaDashboard_enabled )                   | No      | boolean         | No         | -          | Enable Grafana dashboard (globally, can be overridden per service)                                                                                |
+| - [extraPanels](#cronJobs_pattern1_grafanaDashboard_extraPanels )           | No      | array of object | No         | -          | Extra panels to add to the Grafana dashboard                                                                                                      |
+| - [instanceSelector](#cronJobs_pattern1_grafanaDashboard_instanceSelector ) | No      | object          | No         | -          | Instance selector for the Grafana dashboard                                                                                                       |
+| - [refresh](#cronJobs_pattern1_grafanaDashboard_refresh )                   | No      | string          | No         | -          | Dashboard auto-refresh interval, empty string disables auto-refresh (global-only, a per-service setting has no effect)                            |
+| - [resyncPeriod](#cronJobs_pattern1_grafanaDashboard_resyncPeriod )         | No      | string          | No         | -          | How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect) |
 
 ##### <a name="cronJobs_pattern1_grafanaDashboard_datasources"></a>7.1.17.1. Property `stack > cronJobs > ^.*$ > grafanaDashboard > datasources`
 
@@ -15996,7 +16036,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)
+**Description:** How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect)
 
 | Restrictions                      |                                                                                        |
 | --------------------------------- | -------------------------------------------------------------------------------------- |
