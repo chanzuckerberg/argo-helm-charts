@@ -968,6 +968,7 @@ Must be one of:
 | - [scrapeInterval](#prometheusRemoteWrite_scrapeInterval )                                             | No      | string  | No         | -          | Scrape interval for pods, kube-state-metrics, kubelet, and cadvisor scrapes                                                                                                                                                                                                                                                                                                          |
 | - [scrapeKubeStateMetrics](#prometheusRemoteWrite_scrapeKubeStateMetrics )                             | No      | object  | No         | -          | Scrape kube-state-metrics service for kube_* metrics                                                                                                                                                                                                                                                                                                                                 |
 | - [scrapeKubelet](#prometheusRemoteWrite_scrapeKubelet )                                               | No      | object  | No         | -          | Scrape kubelet metrics from each node (kubelet_*, kubernetes_build_info)                                                                                                                                                                                                                                                                                                             |
+| - [scrapePushgateway](#prometheusRemoteWrite_scrapePushgateway )                                       | No      | object  | No         | -          | Scrape the Prometheus Pushgateway service with honor_labels, keeping the job, namespace and other labels pushers set                                                                                                                                                                                                                                                                 |
 | - [scrapeSelfRemoteWriteMetrics](#prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics )                 | No      | object  | No         | -          | Scrape this Alloy process /metrics (prometheus_remote_storage_* queue debug metrics) and send to remote_write for AMP cost/ingestion dashboards                                                                                                                                                                                                                                      |
 | - [scrapeTailscaleServices](#prometheusRemoteWrite_scrapeTailscaleServices )                           | No      | object  | No         | -          | Scrape Tailscale client metrics via ExternalName Services (requires tailscalesd syncer)                                                                                                                                                                                                                                                                                              |
 | - [scrapeTimeout](#prometheusRemoteWrite_scrapeTimeout )                                               | No      | string  | No         | -          | Scrape timeout for pods, kube-state-metrics, kubelet, and cadvisor scrapes                                                                                                                                                                                                                                                                                                           |
@@ -1606,7 +1607,80 @@ Must be one of:
 
 **Description:** When true (recommended for DaemonSet), each pod scrapes only its own node to avoid 23x duplication and high AMP ingestion
 
-### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics"></a>6.16. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics`
+### <a name="prometheusRemoteWrite_scrapePushgateway"></a>6.16. Property `grafana-alloy > prometheusRemoteWrite > scrapePushgateway`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+**Description:** Scrape the Prometheus Pushgateway service with honor_labels, keeping the job, namespace and other labels pushers set
+
+| Property                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                |
+| ------------------------------------------------------------------------------ | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#prometheusRemoteWrite_scrapePushgateway_enabled )                 | No      | boolean | No         | -          | Enable scraping the Pushgateway (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled). Leave off where another Prometheus already scrapes it. |
+| - [namespace](#prometheusRemoteWrite_scrapePushgateway_namespace )             | No      | string  | No         | -          | Namespace where the Pushgateway service runs                                                                                                                     |
+| - [scrapeInterval](#prometheusRemoteWrite_scrapePushgateway_scrapeInterval )   | No      | string  | No         | -          | Optional scrape interval override (defaults to prometheusRemoteWrite.scrapeInterval)                                                                             |
+| - [scrapeTimeout](#prometheusRemoteWrite_scrapePushgateway_scrapeTimeout )     | No      | string  | No         | -          | Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)                                                                               |
+| - [serviceSelector](#prometheusRemoteWrite_scrapePushgateway_serviceSelector ) | No      | string  | No         | -          | Label selector (key=value) to find the Pushgateway service                                                                                                       |
+| - [shardByNode](#prometheusRemoteWrite_scrapePushgateway_shardByNode )         | No      | boolean | No         | -          | When true (DaemonSet), discover the Pushgateway via role=endpoints and keep only the endpoint on this pod's node, so it's scraped once instead of once per node  |
+
+#### <a name="prometheusRemoteWrite_scrapePushgateway_enabled"></a>6.16.1. Property `grafana-alloy > prometheusRemoteWrite > scrapePushgateway > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** Enable scraping the Pushgateway (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled). Leave off where another Prometheus already scrapes it.
+
+#### <a name="prometheusRemoteWrite_scrapePushgateway_namespace"></a>6.16.2. Property `grafana-alloy > prometheusRemoteWrite > scrapePushgateway > namespace`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Namespace where the Pushgateway service runs
+
+#### <a name="prometheusRemoteWrite_scrapePushgateway_scrapeInterval"></a>6.16.3. Property `grafana-alloy > prometheusRemoteWrite > scrapePushgateway > scrapeInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Optional scrape interval override (defaults to prometheusRemoteWrite.scrapeInterval)
+
+#### <a name="prometheusRemoteWrite_scrapePushgateway_scrapeTimeout"></a>6.16.4. Property `grafana-alloy > prometheusRemoteWrite > scrapePushgateway > scrapeTimeout`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)
+
+#### <a name="prometheusRemoteWrite_scrapePushgateway_serviceSelector"></a>6.16.5. Property `grafana-alloy > prometheusRemoteWrite > scrapePushgateway > serviceSelector`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Label selector (key=value) to find the Pushgateway service
+
+#### <a name="prometheusRemoteWrite_scrapePushgateway_shardByNode"></a>6.16.6. Property `grafana-alloy > prometheusRemoteWrite > scrapePushgateway > shardByNode`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+**Description:** When true (DaemonSet), discover the Pushgateway via role=endpoints and keep only the endpoint on this pod's node, so it's scraped once instead of once per node
+
+### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics"></a>6.17. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1626,56 +1700,56 @@ Must be one of:
 | - [scrapeInterval](#prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_scrapeInterval ) | No      | string  | No         | -          | -                 |
 | - [scrapeTimeout](#prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_scrapeTimeout )   | No      | string  | No         | -          | -                 |
 
-#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_address"></a>6.16.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > address`
+#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_address"></a>6.17.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > address`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_enabled"></a>6.16.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > enabled`
+#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_enabled"></a>6.17.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_jobLabel"></a>6.16.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > jobLabel`
+#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_jobLabel"></a>6.17.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > jobLabel`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_metricsPath"></a>6.16.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > metricsPath`
+#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_metricsPath"></a>6.17.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > metricsPath`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_namespace"></a>6.16.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > namespace`
+#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_namespace"></a>6.17.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > namespace`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_scrapeInterval"></a>6.16.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > scrapeInterval`
+#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_scrapeInterval"></a>6.17.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > scrapeInterval`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_scrapeTimeout"></a>6.16.7. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > scrapeTimeout`
+#### <a name="prometheusRemoteWrite_scrapeSelfRemoteWriteMetrics_scrapeTimeout"></a>6.17.7. Property `grafana-alloy > prometheusRemoteWrite > scrapeSelfRemoteWriteMetrics > scrapeTimeout`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="prometheusRemoteWrite_scrapeTailscaleServices"></a>6.17. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices`
+### <a name="prometheusRemoteWrite_scrapeTailscaleServices"></a>6.18. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1697,7 +1771,7 @@ Must be one of:
 | - [scrapeInterval](#prometheusRemoteWrite_scrapeTailscaleServices_scrapeInterval ) | No      | string  | No         | -          | Scrape interval for Tailscale client metrics                                                                      |
 | - [scrapeTimeout](#prometheusRemoteWrite_scrapeTailscaleServices_scrapeTimeout )   | No      | string  | No         | -          | Scrape timeout for Tailscale client metrics                                                                       |
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_enabled"></a>6.17.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > enabled`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_enabled"></a>6.18.1. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1706,7 +1780,7 @@ Must be one of:
 
 **Description:** Enable scraping Tailscale client metrics (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled)
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_jobLabel"></a>6.17.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > jobLabel`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_jobLabel"></a>6.18.2. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > jobLabel`
 
 |              |          |
 | ------------ | -------- |
@@ -1715,7 +1789,7 @@ Must be one of:
 
 **Description:** Job label for scraped metrics
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_labelSelector"></a>6.17.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > labelSelector`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_labelSelector"></a>6.18.3. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > labelSelector`
 
 |              |          |
 | ------------ | -------- |
@@ -1724,7 +1798,7 @@ Must be one of:
 
 **Description:** Label selector to find Tailscale ExternalName Services
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_metricsPath"></a>6.17.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > metricsPath`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_metricsPath"></a>6.18.4. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > metricsPath`
 
 |              |          |
 | ------------ | -------- |
@@ -1733,7 +1807,7 @@ Must be one of:
 
 **Description:** Path to scrape metrics from on each target
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_namespace"></a>6.17.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > namespace`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_namespace"></a>6.18.5. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > namespace`
 
 |              |          |
 | ------------ | -------- |
@@ -1742,7 +1816,7 @@ Must be one of:
 
 **Description:** Namespace where Tailscale ExternalName Services are created
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_portName"></a>6.17.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > portName`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_portName"></a>6.18.6. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > portName`
 
 |              |          |
 | ------------ | -------- |
@@ -1751,7 +1825,7 @@ Must be one of:
 
 **Description:** Service port name to scrape (filters targets to only this port)
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_relayAddress"></a>6.17.7. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > relayAddress`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_relayAddress"></a>6.18.7. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > relayAddress`
 
 |              |          |
 | ------------ | -------- |
@@ -1760,7 +1834,7 @@ Must be one of:
 
 **Description:** Address of the metrics relay that rewrites the Host header for Tailscale web client compatibility
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_scrapeInterval"></a>6.17.8. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > scrapeInterval`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_scrapeInterval"></a>6.18.8. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > scrapeInterval`
 
 |              |          |
 | ------------ | -------- |
@@ -1769,7 +1843,7 @@ Must be one of:
 
 **Description:** Scrape interval for Tailscale client metrics
 
-#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_scrapeTimeout"></a>6.17.9. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > scrapeTimeout`
+#### <a name="prometheusRemoteWrite_scrapeTailscaleServices_scrapeTimeout"></a>6.18.9. Property `grafana-alloy > prometheusRemoteWrite > scrapeTailscaleServices > scrapeTimeout`
 
 |              |          |
 | ------------ | -------- |
@@ -1778,7 +1852,7 @@ Must be one of:
 
 **Description:** Scrape timeout for Tailscale client metrics
 
-### <a name="prometheusRemoteWrite_scrapeTimeout"></a>6.18. Property `grafana-alloy > prometheusRemoteWrite > scrapeTimeout`
+### <a name="prometheusRemoteWrite_scrapeTimeout"></a>6.19. Property `grafana-alloy > prometheusRemoteWrite > scrapeTimeout`
 
 |              |          |
 | ------------ | -------- |
@@ -1787,7 +1861,7 @@ Must be one of:
 
 **Description:** Scrape timeout for pods, kube-state-metrics, kubelet, and cadvisor scrapes
 
-### <a name="prometheusRemoteWrite_unixExporter"></a>6.19. Property `grafana-alloy > prometheusRemoteWrite > unixExporter`
+### <a name="prometheusRemoteWrite_unixExporter"></a>6.20. Property `grafana-alloy > prometheusRemoteWrite > unixExporter`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -1813,7 +1887,7 @@ Must be one of:
 | - [sysfsPath](#prometheusRemoteWrite_unixExporter_sysfsPath )                           | No      | string  | No         | -          | Path inside the Alloy container that maps to the host /sys.                                                                                                                                              |
 | - [udevDataPath](#prometheusRemoteWrite_unixExporter_udevDataPath )                     | No      | string  | No         | -          | Path inside the Alloy container that maps to the host /run/udev/data.                                                                                                                                    |
 
-#### <a name="prometheusRemoteWrite_unixExporter_disableCollectors"></a>6.19.1. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > disableCollectors`
+#### <a name="prometheusRemoteWrite_unixExporter_disableCollectors"></a>6.20.1. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > disableCollectors`
 
 |              |         |
 | ------------ | ------- |
@@ -1830,7 +1904,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="prometheusRemoteWrite_unixExporter_enableCollectors"></a>6.19.2. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > enableCollectors`
+#### <a name="prometheusRemoteWrite_unixExporter_enableCollectors"></a>6.20.2. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > enableCollectors`
 
 |              |         |
 | ------------ | ------- |
@@ -1847,7 +1921,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="prometheusRemoteWrite_unixExporter_enabled"></a>6.19.3. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > enabled`
+#### <a name="prometheusRemoteWrite_unixExporter_enabled"></a>6.20.3. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > enabled`
 
 |              |           |
 | ------------ | --------- |
@@ -1856,7 +1930,7 @@ Must be one of:
 
 **Description:** Enable the in-process unix/node exporter
 
-#### <a name="prometheusRemoteWrite_unixExporter_includeExporterMetrics"></a>6.19.4. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > includeExporterMetrics`
+#### <a name="prometheusRemoteWrite_unixExporter_includeExporterMetrics"></a>6.20.4. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > includeExporterMetrics`
 
 |              |           |
 | ------------ | --------- |
@@ -1865,7 +1939,7 @@ Must be one of:
 
 **Description:** Whether the exporter exposes its own self-metrics.
 
-#### <a name="prometheusRemoteWrite_unixExporter_jobLabel"></a>6.19.5. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > jobLabel`
+#### <a name="prometheusRemoteWrite_unixExporter_jobLabel"></a>6.20.5. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > jobLabel`
 
 |              |          |
 | ------------ | -------- |
@@ -1874,7 +1948,7 @@ Must be one of:
 
 **Description:** Job label applied to scraped metrics so they are indistinguishable from a separate node-exporter DaemonSet.
 
-#### <a name="prometheusRemoteWrite_unixExporter_metricRelabelConfigs"></a>6.19.6. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > metricRelabelConfigs`
+#### <a name="prometheusRemoteWrite_unixExporter_metricRelabelConfigs"></a>6.20.6. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > metricRelabelConfigs`
 
 |              |         |
 | ------------ | ------- |
@@ -1891,7 +1965,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="prometheusRemoteWrite_unixExporter_procfsPath"></a>6.19.7. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > procfsPath`
+#### <a name="prometheusRemoteWrite_unixExporter_procfsPath"></a>6.20.7. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > procfsPath`
 
 |              |          |
 | ------------ | -------- |
@@ -1900,7 +1974,7 @@ Must be one of:
 
 **Description:** Path inside the Alloy container that maps to the host /proc.
 
-#### <a name="prometheusRemoteWrite_unixExporter_rootfsPath"></a>6.19.8. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > rootfsPath`
+#### <a name="prometheusRemoteWrite_unixExporter_rootfsPath"></a>6.20.8. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > rootfsPath`
 
 |              |          |
 | ------------ | -------- |
@@ -1909,7 +1983,7 @@ Must be one of:
 
 **Description:** Path inside the Alloy container that maps to the host root filesystem. Set to /host/rootfs (or similar) when the host root is mounted into the container so filesystem collectors see real device sizes.
 
-#### <a name="prometheusRemoteWrite_unixExporter_scrapeInterval"></a>6.19.9. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > scrapeInterval`
+#### <a name="prometheusRemoteWrite_unixExporter_scrapeInterval"></a>6.20.9. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > scrapeInterval`
 
 |              |          |
 | ------------ | -------- |
@@ -1918,7 +1992,7 @@ Must be one of:
 
 **Description:** Scrape interval for the in-process unix exporter.
 
-#### <a name="prometheusRemoteWrite_unixExporter_scrapeTimeout"></a>6.19.10. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > scrapeTimeout`
+#### <a name="prometheusRemoteWrite_unixExporter_scrapeTimeout"></a>6.20.10. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > scrapeTimeout`
 
 |              |          |
 | ------------ | -------- |
@@ -1927,7 +2001,7 @@ Must be one of:
 
 **Description:** Scrape timeout for the in-process unix exporter.
 
-#### <a name="prometheusRemoteWrite_unixExporter_setCollectors"></a>6.19.11. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > setCollectors`
+#### <a name="prometheusRemoteWrite_unixExporter_setCollectors"></a>6.20.11. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > setCollectors`
 
 |              |         |
 | ------------ | ------- |
@@ -1944,7 +2018,7 @@ Must be one of:
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-#### <a name="prometheusRemoteWrite_unixExporter_sysfsPath"></a>6.19.12. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > sysfsPath`
+#### <a name="prometheusRemoteWrite_unixExporter_sysfsPath"></a>6.20.12. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > sysfsPath`
 
 |              |          |
 | ------------ | -------- |
@@ -1953,7 +2027,7 @@ Must be one of:
 
 **Description:** Path inside the Alloy container that maps to the host /sys.
 
-#### <a name="prometheusRemoteWrite_unixExporter_udevDataPath"></a>6.19.13. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > udevDataPath`
+#### <a name="prometheusRemoteWrite_unixExporter_udevDataPath"></a>6.20.13. Property `grafana-alloy > prometheusRemoteWrite > unixExporter > udevDataPath`
 
 |              |          |
 | ------------ | -------- |
