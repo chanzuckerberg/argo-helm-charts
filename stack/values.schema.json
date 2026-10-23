@@ -136,6 +136,10 @@
               "description": "Set by Argus API to Argus environment name",
               "type": "string"
             },
+            "grafanaFolderUID": {
+              "description": "Set by Argus API to the uid of the Grafana folder the stack dashboard goes in. When empty, the uid is derived from appName and envName",
+              "type": "string"
+            },
             "repoName": {
               "description": "Set by Argus API to Argus repository name",
               "type": "string"
@@ -615,7 +619,7 @@
               "pattern": "^([0-9]+(ms|s|m|h|d))?$"
             },
             "resyncPeriod": {
-              "description": "How often the grafana-operator re-applies drift for the stack dashboard and folders, minutes or hours only (global-only, a per-service setting has no effect)",
+              "description": "How often the grafana-operator re-applies drift for the stack dashboard, minutes or hours only (global-only, a per-service setting has no effect)",
               "type": "string",
               "pattern": "^[0-9]+(m|h)$"
             }
