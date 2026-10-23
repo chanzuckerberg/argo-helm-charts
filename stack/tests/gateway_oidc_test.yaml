@@ -553,10 +553,14 @@ tests:
   - documentIndex: 0
     equal:
       path: spec.rules[0].filters[0].type
+      value: RequestHeaderModifier
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[1].type
       value: ResponseHeaderModifier
   - documentIndex: 0
     equal:
-      path: spec.rules[0].filters[0].responseHeaderModifier.set[0].name
+      path: spec.rules[0].filters[1].responseHeaderModifier.set[0].name
       value: Strict-Transport-Security
   - documentIndex: 0
     equal:

@@ -33,6 +33,7 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
+{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
 
 {{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasBackendTrafficPolicy" .) "true") -}}
 {{- $g := .Values.gateway -}}
