@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway SecurityPolicy oidc passThroughAuthHeader
+templates:
+- gateway-securitypolicy-shared.yaml
+tests:
+- it: should render passThroughAuthHeader when the policy also verifies the token
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: machine-clients
+      securityPolicies:
+        machine-clients:
+          oidc:
+            passThroughAuthHeader: true
+          jwt:
+            enabled: true
+            providers:
+            - name: retool
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              audiences:
+              - 0oaexampleclientid
+    services:
+      service1: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - isKind:
+      of: SecurityPolicy
+  - equal:
+      path: spec.oidc.passThroughAuthHeader
+      value: true
+  - equal:
+      path: spec.jwt.providers[0].name
+      value: retool
+
+- it: should omit passThroughAuthHeader when it is not set
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      service1: {}
+  asserts:
+  - notExists:
+      path: spec.oidc.passThroughAuthHeader
+
+- it: should fail when passThroughAuthHeader is set without a jwt block to verify the token
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: unverified
+      securityPolicies:
+        unverified:
+          oidc:
+            passThroughAuthHeader: true
+    services:
+      service1: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: passThroughAuthHeader skips OIDC for any request carrying the JWT filter's header

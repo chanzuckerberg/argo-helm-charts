@@ -251,11 +251,19 @@ data:
       {{- range $idx, $endpoint := .Values.loki.endpoints }}
       endpoint {
         url = {{ $endpoint.url | quote }}
+        {{- if and $endpoint.basicAuth $endpoint.bearerAuth }}
+        {{- fail (printf "loki endpoint %s sets both basicAuth and bearerAuth; use one" $endpoint.url) }}
+        {{- end }}
         {{- if $endpoint.basicAuth }}
         {{- if $endpoint.basicAuth.envVar }}
         headers = {
           "Authorization" = "Basic " + env({{ $endpoint.basicAuth.envVar | quote }}),
         }
+        {{- end }}
+        {{- end }}
+        {{- if $endpoint.bearerAuth }}
+        {{- if $endpoint.bearerAuth.tokenFile }}
+        bearer_token_file = {{ $endpoint.bearerAuth.tokenFile | quote }}
         {{- end }}
         {{- end }}
       }

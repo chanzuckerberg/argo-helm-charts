@@ -1,0 +1,106 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test vanity ListenerSet deduplication across services
+templates:
+- listenerset.yaml
+tests:
+- it: should render one ListenerSet when several services share a vanity host
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: pet.dev-biohub.dev.czi.team
+    services:
+      client:
+        gateway:
+          paths:
+          - path: /
+            pathType: Prefix
+          rules:
+          - host: shared.apps.czbiohub.org
+            vanity:
+              enabled: true
+      docs:
+        gateway:
+          paths:
+          - path: /docs/
+            pathType: Prefix
+          rules:
+          - host: shared.apps.czbiohub.org
+            vanity:
+              enabled: true
+      server:
+        gateway:
+          paths:
+          - path: /api/
+            pathType: Prefix
+          rules:
+          - host: shared.apps.czbiohub.org
+            vanity:
+              enabled: true
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: metadata.name
+      value: release-name-stack-client-vanity-rule-0
+  - equal:
+      path: spec.listeners[0].hostname
+      value: shared.apps.czbiohub.org
+
+- it: should still render one ListenerSet per distinct vanity host
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: pet.dev-biohub.dev.czi.team
+    services:
+      client:
+        gateway:
+          paths:
+          - path: /
+            pathType: Prefix
+          rules:
+          - host: one.apps.czbiohub.org
+            vanity:
+              enabled: true
+      docs:
+        gateway:
+          paths:
+          - path: /docs/
+            pathType: Prefix
+          rules:
+          - host: two.apps.czbiohub.org
+            vanity:
+              enabled: true
+  asserts:
+  - hasDocuments:
+      count: 2
+
+- it: should keep the per-service name when only one service declares the host
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: pet.dev-biohub.dev.czi.team
+    services:
+      app:
+        gateway:
+          paths:
+          - path: /
+            pathType: Prefix
+          rules:
+          - host: solo.apps.czbiohub.org
+            vanity:
+              enabled: true
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: metadata.name
+      value: release-name-stack-app-vanity-rule-0
