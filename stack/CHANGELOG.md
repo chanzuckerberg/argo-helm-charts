@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.63.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.62.1...stack-v2.63.0) (2026-10-26)
+
+
+### Features
+
+* **stack:** stop rendering GrafanaFolder CRs and use Argus's grafanaFolderUID (CCIE-7593) ([#603](https://github.com/chanzuckerberg/argo-helm-charts/issues/603)) ([d3b0f2f](https://github.com/chanzuckerberg/argo-helm-charts/commit/d3b0f2f02da8a7fd23af4a4c254857a97ee00423))
+
 ## [2.62.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.62.0...stack-v2.62.1) (2026-10-21)
 
 
