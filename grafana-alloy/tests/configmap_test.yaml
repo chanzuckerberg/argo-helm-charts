@@ -2151,3 +2151,66 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'discovery\.relabel "dcgm_exporter" \{[\s\S]*?action        = "keepequal"'
+
+  - it: should not scrape the pushgateway by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "pushgateway"'
+
+  - it: should scrape the pushgateway service with honor_labels when scrapePushgateway is enabled
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+        scrapePushgateway:
+          enabled: true
+          scrapeInterval: 30s
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "pushgateway" \{\s*role = "service"\s*namespaces \{\s*names = \["loki"\]\s*\}\s*selectors \{\s*role  = "service"\s*label = "app\.kubernetes\.io/name=prometheus-pushgateway"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "pushgateway" \{\s*targets         = discovery\.relabel\.pushgateway\.output\s*forward_to      = \[prometheus\.relabel\.filter_metrics\.receiver\]\s*scrape_interval = "30s"\s*scrape_timeout  = "10s"\s*honor_labels    = true'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "pushgateway" \{[^}]*?keepequal'
+
+  - it: should node-shard the pushgateway scrape when shardByNode is true
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+        scrapePushgateway:
+          enabled: true
+          shardByNode: true
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "pushgateway" \{\s*role = "endpoints"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "pushgateway" \{[\s\S]*?__meta_kubernetes_endpoint_node_name[\s\S]*?action        = "keepequal"'

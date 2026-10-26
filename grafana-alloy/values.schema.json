@@ -614,6 +614,36 @@
             }
           }
         },
+        "scrapePushgateway": {
+          "description": "Scrape the Prometheus Pushgateway service with honor_labels, keeping the job, namespace and other labels pushers set",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Enable scraping the Pushgateway (requires alloyConfig.metrics.enabled and prometheusRemoteWrite.enabled). Leave off where another Prometheus already scrapes it.",
+              "type": "boolean"
+            },
+            "namespace": {
+              "description": "Namespace where the Pushgateway service runs",
+              "type": "string"
+            },
+            "scrapeInterval": {
+              "description": "Optional scrape interval override (defaults to prometheusRemoteWrite.scrapeInterval)",
+              "type": "string"
+            },
+            "scrapeTimeout": {
+              "description": "Optional scrape timeout override (defaults to prometheusRemoteWrite.scrapeTimeout)",
+              "type": "string"
+            },
+            "serviceSelector": {
+              "description": "Label selector (key=value) to find the Pushgateway service",
+              "type": "string"
+            },
+            "shardByNode": {
+              "description": "When true (DaemonSet), discover the Pushgateway via role=endpoints and keep only the endpoint on this pod's node, so it's scraped once instead of once per node",
+              "type": "boolean"
+            }
+          }
+        },
         "scrapeSelfRemoteWriteMetrics": {
           "description": "Scrape this Alloy process /metrics (prometheus_remote_storage_* queue debug metrics) and send to remote_write for AMP cost/ingestion dashboards",
           "type": "object",

@@ -451,6 +451,52 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapePushgateway .Values.prometheusRemoteWrite.scrapePushgateway.enabled }}
+    {{- $pgw := .Values.prometheusRemoteWrite.scrapePushgateway }}
+    {{- $pgwRole := "service" }}
+    {{- if $pgw.shardByNode }}
+    {{- $pgwRole = "endpoints" }}
+    {{- end }}
+    discovery.kubernetes "pushgateway" {
+      role = {{ $pgwRole | quote }}
+      namespaces {
+        names = [{{ ($pgw.namespace | default "loki") | quote }}]
+      }
+      selectors {
+        role  = {{ $pgwRole | quote }}
+        label = {{ ($pgw.serviceSelector | default "app.kubernetes.io/name=prometheus-pushgateway") | quote }}
+      }
+    }
+
+    discovery.relabel "pushgateway" {
+      targets = discovery.kubernetes.pushgateway.targets
+
+      rule {
+        target_label = "__metrics_path__"
+        replacement  = "/metrics"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
+        separator     = "/"
+        target_label  = "job"
+      }
+      {{- if $pgw.shardByNode }}
+{{- include "grafana-alloy.shardByEndpointNode" . | nindent 6 }}
+      {{- end }}
+    }
+
+    // honor_labels keeps the job, namespace and other labels each pusher set
+    // instead of renaming them to exported_*.
+    prometheus.scrape "pushgateway" {
+      targets         = discovery.relabel.pushgateway.output
+      forward_to      = [prometheus.relabel.filter_metrics.receiver]
+      scrape_interval = {{ $pgw.scrapeInterval | default $si | quote }}
+      scrape_timeout  = {{ $pgw.scrapeTimeout | default $st | quote }}
+      honor_labels    = true
+    }
+    {{- end }}
+
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
     {{- with .Values.prometheusRemoteWrite.scrapeEndpoints }}
     {{- if .enabled }}
