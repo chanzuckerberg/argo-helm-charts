@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.11.0...grafana-alloy-v0.12.0) (2026-10-26)
+
+
+### Features
+
+* **grafana-alloy:** add scrapePushgateway to scrape the Pushgateway with honor_labels (CCIE-7593) ([#602](https://github.com/chanzuckerberg/argo-helm-charts/issues/602)) ([9eebb11](https://github.com/chanzuckerberg/argo-helm-charts/commit/9eebb117b835e45b7b9f001399b85840a3f4c1ff))
+
 ## [0.11.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.10.1...grafana-alloy-v0.11.0) (2026-10-21)
 
 
