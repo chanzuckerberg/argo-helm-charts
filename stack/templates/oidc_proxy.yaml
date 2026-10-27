@@ -87,7 +87,11 @@ spec:
             - --whitelist-domain=.{{- .Values.ingress.host }}
             - --skip-provider-button=true
             - --pass-authorization-header=true
-            - --reverse-proxy
+            {{- /* No --reverse-proxy: with it oauth2-proxy trusts client-supplied
+                 X-Forwarded-* headers for skip-auth matching and the OAuth redirect
+                 URL (CVE-2026-40575). Behind ingress-nginx the request Host is
+                 preserved and cookie-secure keeps the redirect scheme https, so the
+                 flag is not needed. extraArgs may not add it back (guard below). */}}
             - --skip-jwt-bearer-tokens
             - --cookie-refresh={{ .Values.oidcProxy.cookieRefresh }}
 
@@ -124,6 +128,15 @@ spec:
             {{ end }}
             
             {{- end -}}
+            {{- range .Values.oidcProxy.extraArgs }}
+            {{- $arg := toString . }}
+            {{- if or (eq $arg "--reverse-proxy") (hasPrefix "--reverse-proxy=" $arg) }}
+            {{- fail "oidcProxy.extraArgs must not set --reverse-proxy: it makes oauth2-proxy trust client-supplied X-Forwarded-Uri for skip-auth matching (CVE-2026-40575)" }}
+            {{- end }}
+            {{- if or (hasPrefix "--trusted-ip" $arg) (hasPrefix "--real-client-ip-header" $arg) }}
+            {{- fail (printf "oidcProxy.extraArgs %q has no effect without --reverse-proxy, which this chart does not set" $arg) }}
+            {{- end }}
+            {{- end }}
             {{- if gt (len .Values.oidcProxy.extraArgs) 0 }}
             {{- toYaml .Values.oidcProxy.extraArgs | nindent 12}}
             {{- end }}
