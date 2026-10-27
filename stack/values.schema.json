@@ -360,6 +360,18 @@
                 }
               }
             },
+            "protectedPaths": {
+              "description": "Inverse of skipAuth, for an application that is public (or runs its own login) except for one subtree. Must be set per service (services.\u003cname\u003e.gateway.protectedPaths) and is rejected at the global level, because it describes one service's route split and a global value is inherited by every service, wrongly failing a non-OIDC or narrower sibling or silently splitting a fully-protected one. Only these path prefixes route through the SecurityPolicy-protected HTTPRoute. Every other gateway.paths request goes through the -public HTTPRoute, which carries no OIDC policy and strips the identity headers a policy would inject (see gateway.skipAuth for the list, including Authorization under forwardAccessToken and the gateway.skipAuthPreserveAuthorization opt-out). The OIDC callback and logout paths are added to the protected route automatically (under the policy's primary service's base path when the policy is shared across services, otherwise this service's base path derived from its first non-root gateway.paths prefix), and Gateway API precedence makes the split deterministic. Requires an OIDC securityPolicy. Mutually exclusive with skipAuth and gateway.rules. Each path must start with a slash, must not be /, must not end with /, must lie under a Prefix entry of gateway.paths, and no gateway.paths entry may equal or lie within it. Each prefix is matched as a native Gateway API PathPrefix, which is case-sensitive and splits on whole slash-separated segments, so /admin matches /admin and /admin/x but not /administrator, /admin.json or /Admin, with no length limit beyond the 1024-char Gateway API maximum. A backend that serves the same route in mixed case must list each case it accepts. A backend that strips a matrix-parameter suffix (a path segment introduced by a semicolon) can reach a protected prefix through the public route, the one request shape the edge does not normalize and the chart does not guard. Has no effect on an nginx Ingress. Protecting the subtree there relies on oidcProxy and a skipAuth inverse that does not cover the prefix, which the chart does not validate",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
             "rateLimit": {
               "description": "Local rate limit via a BackendTrafficPolicy (Envoy local token bucket, no burst concept)",
               "type": "object",
@@ -471,7 +483,7 @@
               }
             },
             "skipAuth": {
-              "description": "Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths. Each path is a literal Gateway API PathPrefix, not a regex, and must start with a slash: regex syntax carried over from oidcProxy.skipAuth would be matched literally, match no request, and silently leave the endpoint authenticated. A path of / is rejected because the public route would shadow the protected one for every request",
+              "description": "Paths served without authentication, rendered as a separate -public HTTPRoute pointing at this service and excluded from external-dns. Per service, so two services sharing a policy keep their own public paths. Each path is a literal Gateway API PathPrefix, not a regex, and must start with a slash: regex syntax carried over from oidcProxy.skipAuth would be matched literally, match no request, and silently leave the endpoint authenticated. A path of / is rejected because the public route would shadow the protected one for every request. Because the -public route carries no SecurityPolicy, it strips the oauth2-proxy identity headers a policy would otherwise inject (X-Forwarded-Email, X-Forwarded-User, X-Forwarded-Preferred-Username, X-Forwarded-Groups, X-Auth-Request-Email, X-Auth-Request-User, X-Auth-Request-Preferred-Username, X-Auth-Request-Groups, X-ID-Token, plus any header the policy's forwardIDToken or JWT claimToHeaders writes) so a client cannot forge them on an unauthenticated route, and when the policy sets oidc.forwardAccessToken it also strips Authorization. That Authorization strip removes a client's own bearer token (API key, webhook signature) on a route that has no gateway-issued token to protect. A skipAuth endpoint that does its own bearer auth should set gateway.skipAuthPreserveAuthorization true to keep Authorization. The identity-header strips always remain",
               "type": "array",
               "items": {
                 "type": "object",
@@ -484,6 +496,10 @@
                   }
                 }
               }
+            },
+            "skipAuthPreserveAuthorization": {
+              "description": "Keep the client's Authorization header on the -public (skipAuth / protectedPaths remainder) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well). Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it",
+              "type": "boolean"
             },
             "timeouts": {
               "description": "HTTPRoute timeouts. request maps to nginx proxy-read and send-timeout. connect (optional) renders a BackendTrafficPolicy",

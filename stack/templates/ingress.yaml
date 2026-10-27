@@ -33,6 +33,10 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
+{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
+{{- if and .Values.ingress.enabled (gt (len (.Values.gateway.protectedPaths | default list)) 0) (not .Values.ingress.oidcProtected) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths but renders an nginx Ingress with ingress.oidcProtected false, so those paths are served without authentication (protectedPaths applies only to the Envoy gateway). To keep the subtree protected on nginx, set ingress.oidcProtected: true and open the public paths with an oidcProxy.skipAuth inverse; or remove gateway.protectedPaths to accept those paths being public on the Ingress." .Values.name) -}}
+{{- end -}}
 
 {{- if .Values.ingress.enabled -}}
 ---

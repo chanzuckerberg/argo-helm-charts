@@ -33,6 +33,7 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
+{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
 {{- $policyYaml := include "securityPolicy.resolve" (dict "root" $global "name" .Values.name) -}}
@@ -41,7 +42,7 @@
 {{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (ne $policyYaml "") -}}
 {{- $p := fromYaml $policyYaml -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" (dict "policy" $p) -}}
-{{- if and $p.oidc (gt (len (.Values.gateway.skipAuth | default list)) 0) (or ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0)) }}
+{{- if and $p.oidc (or (gt (len (.Values.gateway.skipAuth | default list)) 0) (gt (len (.Values.gateway.protectedPaths | default list)) 0)) (or ($p.cors).enabled (gt (len ($p.ipAllowList | default list)) 0)) }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
