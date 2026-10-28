@@ -1,0 +1,142 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway skipAuth pathType
+templates:
+- gateway-oidc.yaml
+tests:
+- it: should default to PathPrefix when pathType is omitted
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          skipAuth:
+          - path: /api/v1
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.type
+      value: PathPrefix
+
+- it: should render Exact when pathType is Exact
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          skipAuth:
+          - path: /api/healthcheck
+            pathType: Exact
+            method: GET
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.type
+      value: Exact
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.value
+      value: /api/healthcheck
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].method
+      value: GET
+
+- it: should mix Exact and PathPrefix entries on one service
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          skipAuth:
+          - path: /docs-login
+            pathType: Exact
+          - path: /api/v1
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.type
+      value: Exact
+  - documentIndex: 0
+    equal:
+      path: spec.rules[1].matches[0].path.type
+      value: PathPrefix
+
+- it: should fail on an unknown pathType
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          skipAuth:
+          - path: /api/v1
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: "value must be one of 'PathPrefix', 'Exact'"
+
+- it: should still reject the root path under PathPrefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          skipAuth:
+          - path: /
+  asserts:
+  - failedTemplate:
+      errorMessage: 'gateway.skipAuth path / with pathType PathPrefix would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead, or use pathType Exact to expose only the root.'
+
+- it: should allow the root path under Exact
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          skipAuth:
+          - path: /
+            pathType: Exact
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.type
+      value: Exact
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.value
+      value: /
