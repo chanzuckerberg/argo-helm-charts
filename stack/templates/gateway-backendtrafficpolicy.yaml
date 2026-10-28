@@ -40,6 +40,9 @@
 {{- range $i, $rule := .Values.gateway.rules -}}
   {{- $routes = append $routes (printf "%s-rule-%d" (include "service.fullname" $service) $i) -}}
 {{- end -}}
+{{- if and (gt (len (.Values.gateway.skipAuth | default list)) 0) (ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "") -}}
+  {{- $routes = append $routes (printf "%s-public" (include "service.fullname" $service)) -}}
+{{- end -}}
 {{- range $routeName := $routes }}
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
