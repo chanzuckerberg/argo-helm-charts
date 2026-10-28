@@ -75,6 +75,10 @@ spec:
               {{- include "container.probe" .Values.readinessProbe | nindent 14 }}
             resources:
               {{- toYaml .Values.resources | nindent 14 }}
+            {{- with .Values.volumeMounts }}
+            volumeMounts:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
             {{- include "service.configuration" . | nindent 12 }}
             {{- include "service.nonsensitiveEnvVars" (list $global.Values.global $cronJob.Values) | nindent 12 }}
           {{- range $i, $container := .Values.sidecars }}
@@ -88,6 +92,10 @@ spec:
           {{- end -}}
           {{/* restartPolicy for a cronjob can only be OnFailure or Never, if not specified, set it to Never */}}
           restartPolicy: {{ if eq .Values.restartPolicy "OnFailure" }}OnFailure{{ else }}Never{{ end }}
+          {{- with .Values.volumes }}
+          volumes:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}
