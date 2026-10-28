@@ -1903,6 +1903,9 @@ https
 {{- $timeouts := .timeouts -}}
 {{- with $service -}}
 {{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- if .Values.gateway.redirect.enabled -}}
+{{- fail "gateway.skipAuth cannot be combined with gateway.redirect.enabled: a redirect-only route serves no backend, so there is nothing to exempt from authentication, and the public route would send the listed paths to the backend instead of redirecting them. Remove one or the other." -}}
+{{- end -}}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute

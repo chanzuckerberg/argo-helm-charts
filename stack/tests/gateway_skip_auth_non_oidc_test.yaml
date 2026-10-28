@@ -98,3 +98,62 @@ tests:
     equal:
       path: metadata.name
       value: release-name-stack-app
+
+- it: should fail when skipAuth is combined with a whole-route redirect
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        ba:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app:
+        gateway:
+          securityPolicy: ba
+          paths:
+          - path: /
+            pathType: Prefix
+          redirect:
+            enabled: true
+            hostname: new.example.com
+          skipAuth:
+          - path: /health
+  asserts:
+  - failedTemplate:
+      errorPattern: "gateway.skipAuth cannot be combined with gateway.redirect.enabled"
+
+- it: should still render a redirect route when skipAuth is absent
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        ba:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app:
+        gateway:
+          securityPolicy: ba
+          paths:
+          - path: /
+            pathType: Prefix
+          redirect:
+            enabled: true
+            hostname: new.example.com
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    exists:
+      path: spec.rules[0].filters[0].requestRedirect
