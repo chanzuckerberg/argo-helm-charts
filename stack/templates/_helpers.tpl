@@ -1895,3 +1895,88 @@ https
 {{- toYaml $annotations -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "gateway.publicRoute" -}}
+{{- $service := .ctx -}}
+{{- $global := .root -}}
+{{- $filters := .filters -}}
+{{- $timeouts := .timeouts -}}
+{{- with $service -}}
+{{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- if .Values.gateway.redirect.enabled -}}
+{{- fail "gateway.skipAuth cannot be combined with gateway.redirect.enabled: a redirect-only route serves no backend, so there is nothing to exempt from authentication, and the public route would send the listed paths to the backend instead of redirecting them. Remove one or the other." -}}
+{{- end -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "service.fullname" .  }}-public
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+  annotations:
+    {{- with (mergeOverwrite
+                (dict)
+                (.Values.annotations)
+                (.Values.gateway.annotations)
+                (dict "external-dns.alpha.kubernetes.io/exclude" "true")
+      ) }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- if .Values.gateway.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ include "stack.canonicalVanityListenerSet" (dict "root" $global "hostname" (.Values.gateway.vanity.hostname | default .Values.gateway.host)) }}
+    {{- else }}
+    - name: {{ .Values.gateway.gatewayName }}
+      namespace: {{ .Values.gateway.gatewayNamespace }}
+      {{- with (include "gateway.effectiveSectionName" .) }}
+      sectionName: {{ . }}
+      {{- end }}
+    {{- end }}
+    {{- range $i, $rule := .Values.gateway.rules }}
+    {{- if and $rule.vanity $rule.vanity.enabled }}
+    - group: gateway.networking.k8s.io
+      kind: ListenerSet
+      name: {{ include "stack.canonicalVanityListenerSet" (dict "root" $global "hostname" ($rule.vanity.hostname | default $rule.host)) }}
+    {{- end }}
+    {{- end }}
+  hostnames:
+    - {{ .Values.gateway.host }}
+  {{- range $i, $rule := .Values.gateway.rules }}
+    - {{ $rule.host }}
+  {{- end }}
+  rules:
+    {{- range (.Values.gateway.skipAuth | default list) }}
+    {{- if not (hasPrefix "/" .path) }}
+    {{- fail (printf "gateway.skipAuth path %q must start with /. The gateway matches these as literal path prefixes, not regexes, so anchors and quantifiers carried over from the nginx oidcProxy.skipAuth form would be taken literally, match no real request, and silently leave the endpoint authenticated. Write the plain prefix, for example /public/ rather than ^/public/." .path) }}
+    {{- end }}
+    {{- $pathType := .pathType | default "PathPrefix" }}
+    {{- if not (has $pathType (list "PathPrefix" "Exact")) }}
+    {{- fail (printf "gateway.skipAuth pathType %q is not valid. Use PathPrefix (the default) or Exact." $pathType) }}
+    {{- end }}
+    {{- if and (eq .path "/") (eq $pathType "PathPrefix") }}
+    {{- fail "gateway.skipAuth path / with pathType PathPrefix would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead, or use pathType Exact to expose only the root." }}
+    {{- end }}
+    - matches:
+        - path:
+            type: {{ $pathType }}
+            value: {{ .path }}
+          {{- if and .method (ne .method "*") }}
+          method: {{ .method }}
+          {{- end }}
+      backendRefs:
+        {{- include "service.backend.refs.direct" $service | nindent 8 }}
+      {{- if $filters }}
+      filters:
+        {{- $filters | nindent 8 }}
+      {{- end }}
+      {{- if $timeouts }}
+      timeouts:
+        {{- $timeouts | nindent 8 }}
+      {{- end }}
+    {{- end }}
+{{- end }}
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway skipAuth public route policy for non-OIDC policies
+templates:
+- gateway-securitypolicy.yaml
+- gateway-backendtrafficpolicy.yaml
+tests:
+- it: should carry ipAllowList onto the public route of a basicAuth policy without the credentials
+  template: gateway-securitypolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        locked:
+          basicAuth:
+            enabled: true
+            secretName: creds
+          ipAllowList:
+          - 10.0.0.0/8
+    services:
+      app:
+        gateway:
+          securityPolicy: locked
+          paths:
+          - path: /
+            pathType: Prefix
+          skipAuth:
+          - path: /health
+  asserts:
+  - containsDocument:
+      kind: SecurityPolicy
+      apiVersion: gateway.envoyproxy.io/v1alpha1
+      name: release-name-stack-app-public-security
+  - documentIndex: 0
+    isNull:
+      path: spec.basicAuth
+  - documentIndex: 0
+    exists:
+      path: spec.authorization
+
+- it: should carry the rate limit onto the public route
+  template: gateway-backendtrafficpolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        ba:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app:
+        gateway:
+          securityPolicy: ba
+          paths:
+          - path: /
+            pathType: Prefix
+          rateLimit:
+            enabled: true
+            requests: 5
+            unit: Second
+          skipAuth:
+          - path: /health
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentIndex: 1
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public-btp
+  - documentIndex: 1
+    equal:
+      path: spec.targetRefs[0].name
+      value: release-name-stack-app-public
+  - documentIndex: 1
+    exists:
+      path: spec.rateLimit
+
+- it: should not render a public policy when there is no skipAuth
+  template: gateway-backendtrafficpolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        ba:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app:
+        gateway:
+          securityPolicy: ba
+          paths:
+          - path: /
+            pathType: Prefix
+          rateLimit:
+            enabled: true
+            requests: 5
+            unit: Second
+  asserts:
+  - hasDocuments:
+      count: 1

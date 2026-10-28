@@ -39,6 +39,9 @@
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- $redirect := .Values.gateway.redirect -}}
+{{- if ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "" -}}
+{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $filters "timeouts" $timeouts) }}
+{{- end }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
