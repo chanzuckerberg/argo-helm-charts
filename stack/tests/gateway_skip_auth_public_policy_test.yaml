@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway skipAuth public route policy for non-OIDC policies
+templates:
+- gateway-securitypolicy.yaml
+tests:
+- it: should carry ipAllowList onto the public route of a basicAuth policy without the credentials
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        locked:
+          basicAuth:
+            enabled: true
+            secretName: creds
+          ipAllowList:
+          - 10.0.0.0/8
+    services:
+      app:
+        gateway:
+          securityPolicy: locked
+          paths:
+          - path: /
+            pathType: Prefix
+          skipAuth:
+          - path: /health
+  asserts:
+  - containsDocument:
+      kind: SecurityPolicy
+      apiVersion: gateway.envoyproxy.io/v1alpha1
+      name: release-name-stack-app-public-security
+  - documentIndex: 0
+    isNull:
+      path: spec.basicAuth
+  - documentIndex: 0
+    exists:
+      path: spec.authorization
