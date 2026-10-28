@@ -1,0 +1,100 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway skipAuth renders a public route for non-OIDC policies
+templates:
+- httproute.yaml
+tests:
+- it: should render a public route for a basicAuth policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        ba:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app:
+        gateway:
+          securityPolicy: ba
+          paths:
+          - path: /
+            pathType: Prefix
+          skipAuth:
+          - path: /health
+            pathType: Exact
+          - path: /api/v1
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: metadata.annotations["external-dns.alpha.kubernetes.io/exclude"]
+      value: "true"
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path.type
+      value: Exact
+  - documentIndex: 0
+    equal:
+      path: spec.rules[1].matches[0].path.type
+      value: PathPrefix
+
+- it: should render no public route when the service attaches no policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+    services:
+      app:
+        gateway:
+          paths:
+          - path: /
+            pathType: Prefix
+          skipAuth:
+          - path: /health
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app
+
+- it: should render no public route when skipAuth is empty
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      securityPolicies:
+        ba:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app:
+        gateway:
+          securityPolicy: ba
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app
