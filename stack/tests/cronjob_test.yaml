@@ -362,3 +362,99 @@ tests:
         equal:
           path: metadata.labels["argus/env-name"]
           value: "staging"
+
+  - it: should render cronjob volumes and volumeMounts
+    set:
+      cronJobs:
+        token-job:
+          schedule: "0 * * * *"
+          image:
+            repository: my-repo
+            tag: sha-mytag
+          volumes:
+            - name: api-tokens
+              projected:
+                sources:
+                  - serviceAccountToken:
+                      audience: orion
+                      expirationSeconds: 3600
+                      path: orion
+          volumeMounts:
+            - name: api-tokens
+              mountPath: /var/run/secrets/tokens
+              readOnly: true
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.volumes
+          value:
+            - name: api-tokens
+              projected:
+                sources:
+                  - serviceAccountToken:
+                      audience: orion
+                      expirationSeconds: 3600
+                      path: orion
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts
+          value:
+            - name: api-tokens
+              mountPath: /var/run/secrets/tokens
+              readOnly: true
+
+  - it: should inherit global volumes and volumeMounts
+    set:
+      global:
+        volumes:
+          - name: shared
+            emptyDir: {}
+        volumeMounts:
+          - name: shared
+            mountPath: /shared
+      cronJobs:
+        inherited-job:
+          schedule: "0 * * * *"
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.volumes
+          value:
+            - name: shared
+              emptyDir: {}
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts
+          value:
+            - name: shared
+              mountPath: /shared
+
+  - it: should omit volumes and volumeMounts when unset
+    set:
+      cronJobs:
+        plain-job:
+          schedule: "0 * * * *"
+    asserts:
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.template.spec.volumes
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts
+
+  - it: should not mount the services' persistence volume, which cronjobs have no claim for
+    set:
+      global:
+        persistence:
+          enabled: true
+          mountPath: /data
+      cronJobs:
+        plain-job:
+          schedule: "0 * * * *"
+    asserts:
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.template.spec.volumes
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts

@@ -1,10 +1,10 @@
 {
-  "stack": "2.63.0",
+  "stack": "2.64.0",
   "argus-config": "1.8.0",
   "sso-secret": "0.3.0",
   "grafana": "0.13.0",
   "argo-project": "1.0.2",
-  "basic-auth-secret": "0.4.0",
+  "basic-auth-secret": "0.5.0",
   "prom2parquet": "0.3.2",
   "karpenter-gpu-nodepool": "0.7.0",
   "grafana-alloy": "0.12.0",

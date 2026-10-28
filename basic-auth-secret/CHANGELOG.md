@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/basic-auth-secret-v0.4.0...basic-auth-secret-v0.5.0) (2026-10-28)
+
+
+### Features
+
+* **basic-auth-secret:** also project the htpasswd under the .htpasswd key ([#606](https://github.com/chanzuckerberg/argo-helm-charts/issues/606)) ([27baf3c](https://github.com/chanzuckerberg/argo-helm-charts/commit/27baf3c1c7eaea973b66d7817190aa2534cc77bd))
+
 ## [0.4.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/basic-auth-secret-v0.3.1...basic-auth-secret-v0.4.0) (2026-04-22)
 
 
