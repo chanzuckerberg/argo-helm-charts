@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.64.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.63.0...stack-v2.64.0) (2026-10-28)
+
+
+### Features
+
+* **stack:** let gateway.skipAuth express Exact paths ([#607](https://github.com/chanzuckerberg/argo-helm-charts/issues/607)) ([ef806c8](https://github.com/chanzuckerberg/argo-helm-charts/commit/ef806c8e43f71c1aa328605a284ce74ca65ceff1))
+* **stack:** render volumes and volumeMounts in cron jobs (CCIE-7636) ([#609](https://github.com/chanzuckerberg/argo-helm-charts/issues/609)) ([9c53443](https://github.com/chanzuckerberg/argo-helm-charts/commit/9c534433e803ee947ab6999b8c448a22b42b7ddd))
+
+
+### Bug Fixes
+
+* **stack:** gateway.skipAuth had no effect for non-OIDC policies ([#608](https://github.com/chanzuckerberg/argo-helm-charts/issues/608)) ([50303ec](https://github.com/chanzuckerberg/argo-helm-charts/commit/50303ecd86e221daf15b4bf72b62bdc4f65b94e6))
+* **stack:** stop oauth2-proxy trusting client-supplied forwarded headers ([#597](https://github.com/chanzuckerberg/argo-helm-charts/issues/597)) ([b3bc090](https://github.com/chanzuckerberg/argo-helm-charts/commit/b3bc090f23ca911c3e0d5c3d43913c6687c65f13))
+
 ## [2.63.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.62.1...stack-v2.63.0) (2026-10-26)
 
 
