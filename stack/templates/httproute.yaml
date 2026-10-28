@@ -39,8 +39,15 @@
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- $redirect := .Values.gateway.redirect -}}
-{{- if ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "" -}}
-{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $filters "timeouts" $timeouts) }}
+{{- $resolved := include "securityPolicy.resolve" (dict "root" $global "name" .Values.name) -}}
+{{- if ne $resolved "" -}}
+{{- $p := fromYaml $resolved -}}
+{{- /* The -public route carries no SecurityPolicy, so strip the identity headers a policy would inject on the protected route, regardless of policy type, or a client could forge them on this unauthenticated path. The helper's policy-specific extras (forwarded ID token, jwt claimToHeaders) stay gated inside it, so a basicAuth/cors/ipAllowList/jwt-without-claimToHeaders policy strips only the fixed oauth2-proxy set. A policy-less (securityPolicy none/empty) route renders no -public route at all, so there is nothing to strip. */ -}}
+{{- $publicFilters := $filters -}}
+{{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "Values" .Values "policy" $p) | trim -}}
+{{- end -}}
+{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts) }}
 {{- end }}
 ---
 apiVersion: gateway.networking.k8s.io/v1

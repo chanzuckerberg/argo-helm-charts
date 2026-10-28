@@ -1,0 +1,561 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway.skipAuth identity-header strip on the -public route
+templates:
+- gateway-oidc.yaml
+tests:
+- it: should strip the oauth2-proxy identity headers on the skipAuth public route
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /health
+          method: GET
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Forwarded-Email
+      - X-Forwarded-User
+      - X-Forwarded-Preferred-Username
+      - X-Forwarded-Groups
+      - X-Auth-Request-Email
+      - X-Auth-Request-User
+      - X-Auth-Request-Preferred-Username
+      - X-Auth-Request-Groups
+      - X-ID-Token
+      - X-Forwarded-Access-Token
+      - X-Auth-Request-Access-Token
+- it: should merge the identity-header strip into operator-set requestHeaders only on the public route
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          set:
+          - name: X-Tenant
+            value: edu
+          remove:
+          - X-Debug
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.set[0].name
+      value: X-Tenant
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Debug
+      - X-Forwarded-Email
+      - X-Forwarded-User
+      - X-Forwarded-Preferred-Username
+      - X-Forwarded-Groups
+      - X-Auth-Request-Email
+      - X-Auth-Request-User
+      - X-Auth-Request-Preferred-Username
+      - X-Auth-Request-Groups
+      - X-ID-Token
+      - X-Forwarded-Access-Token
+      - X-Auth-Request-Access-Token
+  - documentIndex: 1
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Debug
+- it: should also strip the headers a custom policy writes (forwardIDToken header and claimToHeaders)
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            forwardIDToken:
+              enabled: true
+              header: X-User-Token
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              extractFrom:
+                headers:
+                - name: X-User-Token
+              claimToHeaders:
+              - claim: email
+                header: X-Who
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-User-Token
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Who
+- it: should strip Authorization on the public route when the policy forwards the access token
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            forwardAccessToken: true
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: Authorization
+- it: should keep Authorization on the public route when skipAuthPreserveAuthorization is true but still strip identity headers
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuthPreserveAuthorization: true
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            forwardAccessToken: true
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    notContains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: Authorization
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-ID-Token
+- it: should strip Authorization on the public route when forwardIDToken writes it
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            forwardIDToken:
+              enabled: true
+              header: Authorization
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: Authorization
+- it: should keep Authorization but still strip identity headers when forwardIDToken writes Authorization and skipAuthPreserveAuthorization is true
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuthPreserveAuthorization: true
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            forwardIDToken:
+              enabled: true
+              header: Authorization
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    notContains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: Authorization
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-ID-Token
+- it: should dedup an operator remove entry against the identity strip case-insensitively
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          remove:
+          - x-id-token
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - x-id-token
+      - X-Forwarded-Email
+      - X-Forwarded-User
+      - X-Forwarded-Preferred-Username
+      - X-Forwarded-Groups
+      - X-Auth-Request-Email
+      - X-Auth-Request-User
+      - X-Auth-Request-Preferred-Username
+      - X-Auth-Request-Groups
+      - X-Forwarded-Access-Token
+      - X-Auth-Request-Access-Token
+- it: should fail when requestHeaders.set re-adds a header the public route strips
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          set:
+          - name: x-forwarded-email
+            value: admin@example.com
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: sets or adds "x-forwarded-email"
+- it: should not apply the public-route header guards to a plain OIDC service
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        requestHeaders:
+          set:
+          - name: X-Forwarded-User
+            value: fixed
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.set[0].name
+      value: X-Forwarded-User
+- it: should fail when the SecurityPolicy's identity headers alone exceed the 16-header cap
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              claimToHeaders:
+              - {claim: c1, header: X-Claim-1}
+              - {claim: c2, header: X-Claim-2}
+              - {claim: c3, header: X-Claim-3}
+              - {claim: c4, header: X-Claim-4}
+              - {claim: c5, header: X-Claim-5}
+              - {claim: c6, header: X-Claim-6}
+              - {claim: c7, header: X-Claim-7}
+              - {claim: c8, header: X-Claim-8}
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: already exceed the cap on their own
+- it: should fail with the at-most-N message when identity plus operator removes exceed the cap
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          remove:
+          - X-Op-1
+          - X-Op-2
+          - X-Op-3
+          - X-Op-4
+          - X-Op-5
+          - X-Op-6
+          - X-Op-7
+          - X-Op-8
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: may list at most 5 headers
+- it: should not strip a forwardIDToken header the policy does not write (enabled false)
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          set:
+          - name: X-Api-Key
+            value: fixed
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            forwardIDToken:
+              enabled: false
+              header: X-Api-Key
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    notContains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Api-Key
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.set[0].name
+      value: X-Api-Key
+- it: should not strip claimToHeaders targets when jwt is disabled
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          set:
+          - name: X-Tenant
+            value: edu
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+          jwt:
+            enabled: false
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              claimToHeaders:
+              - claim: tenant
+                header: X-Tenant
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    notContains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Tenant
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.set[0].name
+      value: X-Tenant
+- it: should keep Authorization but still strip identity when a claimToHeaders target is Authorization and skipAuthPreserveAuthorization is true
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuthPreserveAuthorization: true
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              claimToHeaders:
+              - claim: bearer
+                header: Authorization
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    notContains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: Authorization
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-ID-Token
+- it: should count identity independently so an overlapping operator remove is not misattributed
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          remove:
+          - x-id-token
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              claimToHeaders:
+              - {claim: c1, header: X-Claim-1}
+              - {claim: c2, header: X-Claim-2}
+              - {claim: c3, header: X-Claim-3}
+              - {claim: c4, header: X-Claim-4}
+              - {claim: c5, header: X-Claim-5}
+              - {claim: c6, header: X-Claim-6}
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: The 17 identity headers this service's SecurityPolicy injects
+  - failedTemplate:
+      errorPattern: already exceed the cap on their own
+- it: should strip both oauth2-proxy access-token headers when the policy forwards the access token
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: custom
+        skipAuthPreserveAuthorization: true
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        custom:
+          oidc:
+            clientID: my-client-id
+            provider:
+              issuer: https://auth.example.com
+            forwardAccessToken: true
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Forwarded-Access-Token
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Auth-Request-Access-Token

@@ -1,0 +1,259 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway.skipAuth identity-header strip on the non-OIDC -public route
+templates:
+- httproute.yaml
+tests:
+- it: should strip a non-OIDC policy's claimToHeaders targets on the skipAuth public route
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: jwtonly
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        jwtonly:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              claimToHeaders:
+              - claim: email
+                header: X-Tenant
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Tenant
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-Forwarded-Email
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      content: X-ID-Token
+- it: should strip the fixed oauth2-proxy identity headers for a basicAuth policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: ba
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        ba:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Forwarded-Email
+      - X-Forwarded-User
+      - X-Forwarded-Preferred-Username
+      - X-Forwarded-Groups
+      - X-Auth-Request-Email
+      - X-Auth-Request-User
+      - X-Auth-Request-Preferred-Username
+      - X-Auth-Request-Groups
+      - X-ID-Token
+      - X-Forwarded-Access-Token
+      - X-Auth-Request-Access-Token
+- it: should strip the fixed oauth2-proxy identity headers for a cors-only policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: corsonly
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        corsonly:
+          cors:
+            enabled: true
+            allowOrigins:
+            - https://app.example.com
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Forwarded-Email
+      - X-Forwarded-User
+      - X-Forwarded-Preferred-Username
+      - X-Forwarded-Groups
+      - X-Auth-Request-Email
+      - X-Auth-Request-User
+      - X-Auth-Request-Preferred-Username
+      - X-Auth-Request-Groups
+      - X-ID-Token
+      - X-Forwarded-Access-Token
+      - X-Auth-Request-Access-Token
+- it: should strip the fixed oauth2-proxy identity headers for an ipAllowList-only policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: locked
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        locked:
+          ipAllowList:
+          - 10.0.0.0/8
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Forwarded-Email
+      - X-Forwarded-User
+      - X-Forwarded-Preferred-Username
+      - X-Forwarded-Groups
+      - X-Auth-Request-Email
+      - X-Auth-Request-User
+      - X-Auth-Request-Preferred-Username
+      - X-Auth-Request-Groups
+      - X-ID-Token
+      - X-Forwarded-Access-Token
+      - X-Auth-Request-Access-Token
+- it: should strip only the fixed oauth2-proxy identity headers for a jwt policy without claimToHeaders
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: jwtnoclaims
+        skipAuth:
+        - path: /health
+      securityPolicies:
+        jwtnoclaims:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
+      value:
+      - X-Forwarded-Email
+      - X-Forwarded-User
+      - X-Forwarded-Preferred-Username
+      - X-Forwarded-Groups
+      - X-Auth-Request-Email
+      - X-Auth-Request-User
+      - X-Auth-Request-Preferred-Username
+      - X-Auth-Request-Groups
+      - X-ID-Token
+      - X-Forwarded-Access-Token
+      - X-Auth-Request-Access-Token
+- it: should fail with the already-fill-the-limit message when 16 identity headers plus an operator remove exceed the cap
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: jwtmax
+        skipAuth:
+        - path: /health
+        requestHeaders:
+          remove:
+          - X-Op-1
+      securityPolicies:
+        jwtmax:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              claimToHeaders:
+              - {claim: c1, header: X-Claim-1}
+              - {claim: c2, header: X-Claim-2}
+              - {claim: c3, header: X-Claim-3}
+              - {claim: c4, header: X-Claim-4}
+              - {claim: c5, header: X-Claim-5}
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: already fill the limit
+- it: should not strip anything on a policy-less skipAuth service
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: none
+        skipAuth:
+        - path: /health
+    services:
+      app: {}
+  asserts:
+  # securityPolicy none resolves to no policy, so no separate -public route is
+  # rendered and nothing injects identity headers to strip.
+  - hasDocuments:
+      count: 1
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app
+  - documentIndex: 0
+    notExists:
+      path: spec.rules[0].filters[0].requestHeaderModifier.remove
