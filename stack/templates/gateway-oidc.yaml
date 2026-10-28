@@ -39,7 +39,12 @@
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
-{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $filters "timeouts" $timeouts) }}
+{{- /* The -public route carries no OIDC policy, so strip the identity headers a policy would inject. Only computed when a public route exists, so a plain OIDC service that sets such a header is unaffected. */ -}}
+{{- $publicFilters := $filters -}}
+{{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "Values" .Values "policy" $p) | trim -}}
+{{- end -}}
+{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts) }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
