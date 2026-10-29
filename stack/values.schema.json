@@ -413,7 +413,7 @@
                   "type": "boolean"
                 },
                 "limit": {
-                  "description": "Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled)",
+                  "description": "Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds",
                   "type": "string"
                 }
               }

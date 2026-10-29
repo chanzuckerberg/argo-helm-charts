@@ -1108,10 +1108,10 @@ Must be one of:
 
 **Description:** Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap
 
-| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                |
-| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------ |
-| - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                 |
-| - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled) |
+| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
+| - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
 ###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>2.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
 
@@ -1129,7 +1129,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled)
+**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
 ##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>2.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
@@ -5761,10 +5761,10 @@ Must be one of:
 
 **Description:** Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap
 
-| Property                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                |
-| --------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------ |
-| - [enabled](#global_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                 |
-| - [limit](#global_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled) |
+| Property                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#global_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
+| - [limit](#global_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
 ##### <a name="global_gateway_requestBuffer_enabled"></a>3.16.14.1. Property `stack > global > gateway > requestBuffer > enabled`
 
@@ -5782,7 +5782,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled)
+**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
 #### <a name="global_gateway_requestHeaders"></a>3.16.15. Property `stack > global > gateway > requestHeaders`
 
@@ -10432,10 +10432,10 @@ Must be one of:
 
 **Description:** Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap
 
-| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                |
-| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------ |
-| - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                 |
-| - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled) |
+| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
+| - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
 ###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>4.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
 
@@ -10453,7 +10453,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled)
+**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
 ##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>4.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
@@ -15567,10 +15567,10 @@ Must be one of:
 
 **Description:** Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap
 
-| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                |
-| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------ |
-| - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                 |
-| - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled) |
+| Property                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_gateway_requestBuffer_enabled ) | No      | boolean | No         | -          | Enable request body buffering and its size limit                                                                                                                                                                                                                                                                                                                                                                      |
+| - [limit](#cronJobs_pattern1_gateway_requestBuffer_limit )     | No      | string  | No         | -          | Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds |
 
 ###### <a name="cronJobs_pattern1_gateway_requestBuffer_enabled"></a>7.1.16.14.1. Property `stack > cronJobs > ^.*$ > gateway > requestBuffer > enabled`
 
@@ -15588,7 +15588,7 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled)
+**Description:** Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds
 
 ##### <a name="cronJobs_pattern1_gateway_requestHeaders"></a>7.1.16.15. Property `stack > cronJobs > ^.*$ > gateway > requestHeaders`
 
