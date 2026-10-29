@@ -3,6 +3,9 @@
   "$id": "argo.helm.charts/envoy-gateway-resources",
   "title": "envoy-gateway-resources",
   "type": "object",
+  "required": [
+    "baseDomain"
+  ],
   "properties": {
     "accessLog": {
       "type": "object",
@@ -36,7 +39,9 @@
       "type": "string"
     },
     "baseDomain": {
-      "type": "string"
+      "description": "Base domain the gateway serves. The ApplicationSet injects this per cluster from the base-domain label, so an unlabelled cluster renders it empty rather than absent, which minLength catches and required would not.",
+      "type": "string",
+      "minLength": 1
     },
     "envoyService": {
       "type": "object",
