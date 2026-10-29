@@ -1,0 +1,270 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway requestBuffer body-size limit
+templates:
+  - gateway-backendtrafficpolicy.yaml
+tests:
+  - it: should render a requestBuffer limit as the only BackendTrafficPolicy field
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1:
+          gateway:
+            requestBuffer:
+              enabled: true
+              limit: 25Mi
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: BackendTrafficPolicy
+      - equal:
+          path: metadata.name
+          value: release-name-stack-service1-btp
+      - equal:
+          path: spec.requestBuffer.limit
+          value: "25Mi"
+      - notExists:
+          path: spec.rateLimit
+      - notExists:
+          path: spec.loadBalancer
+      - notExists:
+          path: spec.timeout
+
+  - it: should target the service HTTPRoute
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1:
+          gateway:
+            requestBuffer:
+              enabled: true
+              limit: 64Ki
+    asserts:
+      - equal:
+          path: spec.targetRefs[0].kind
+          value: HTTPRoute
+      - equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1
+      - equal:
+          path: spec.requestBuffer.limit
+          value: "64Ki"
+
+  - it: should render a requestBuffer limit alongside a rate limit
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1:
+          gateway:
+            rateLimit:
+              enabled: true
+              requests: 10
+              unit: Second
+            requestBuffer:
+              enabled: true
+              limit: 25Mi
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.requestBuffer.limit
+          value: "25Mi"
+      - equal:
+          path: spec.rateLimit.local.rules[0].limit.requests
+          value: 10
+
+  - it: should cover every extra rule host with its own policy
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1:
+          gateway:
+            rules:
+              - host: vanity.example.org
+                vanity:
+                  enabled: true
+            requestBuffer:
+              enabled: true
+              limit: 25Mi
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-rule-0-btp
+      - documentIndex: 1
+        equal:
+          path: spec.requestBuffer.limit
+          value: "25Mi"
+
+  - it: should cap the skipAuth public route so an exempt path cannot bypass the limit
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+        securityPolicies:
+          locked:
+            basicAuth:
+              enabled: true
+              secretName: creds
+      services:
+        app:
+          gateway:
+            securityPolicy: locked
+            paths:
+              - path: /
+                pathType: Prefix
+            skipAuth:
+              - path: /upload
+            requestBuffer:
+              enabled: true
+              limit: 25Mi
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-app-public-btp
+      - documentIndex: 1
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-app-public
+      - documentIndex: 1
+        equal:
+          path: spec.requestBuffer.limit
+          value: "25Mi"
+
+  - it: should cap the public route on every extra rule host too
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+        securityPolicies:
+          locked:
+            basicAuth:
+              enabled: true
+              secretName: creds
+      services:
+        app:
+          gateway:
+            securityPolicy: locked
+            rules:
+              - host: vanity.example.org
+                vanity:
+                  enabled: true
+            paths:
+              - path: /
+                pathType: Prefix
+            skipAuth:
+              - path: /upload
+            requestBuffer:
+              enabled: true
+              limit: 25Mi
+    asserts:
+      - hasDocuments:
+          count: 3
+      - documentIndex: 2
+        equal:
+          path: metadata.name
+          value: release-name-stack-app-public-btp
+      - documentIndex: 2
+        equal:
+          path: spec.requestBuffer.limit
+          value: "25Mi"
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: release-name-stack-app-rule-0-btp
+      - documentIndex: 1
+        equal:
+          path: spec.requestBuffer.limit
+          value: "25Mi"
+
+  - it: should render no public policy when skipAuth has no security policy to be exempt from
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        app:
+          gateway:
+            paths:
+              - path: /
+                pathType: Prefix
+            skipAuth:
+              - path: /upload
+            requestBuffer:
+              enabled: true
+              limit: 25Mi
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: release-name-stack-app-btp
+
+  - it: should render no policy when requestBuffer is disabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1:
+          gateway:
+            requestBuffer:
+              enabled: false
+              limit: 25Mi
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should fail when requestBuffer is enabled without a limit
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+      services:
+        service1:
+          gateway:
+            requestBuffer:
+              enabled: true
+    asserts:
+      - failedTemplate:
+          errorMessage: 'service "service1" sets gateway.requestBuffer.enabled without gateway.requestBuffer.limit, which would buffer every request with no cap and no 413'

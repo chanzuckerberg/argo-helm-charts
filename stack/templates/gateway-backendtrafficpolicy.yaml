@@ -87,6 +87,13 @@ spec:
     tcp:
       connectTimeout: {{ $g.timeouts.connect | quote }}
   {{- end }}
+  {{- if and $g.requestBuffer $g.requestBuffer.enabled }}
+  {{- if not $g.requestBuffer.limit }}
+  {{- fail (printf "service %q sets gateway.requestBuffer.enabled without gateway.requestBuffer.limit, which would buffer every request with no cap and no 413" $service.Values.name) }}
+  {{- end }}
+  requestBuffer:
+    limit: {{ $g.requestBuffer.limit | quote }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{ end }}
