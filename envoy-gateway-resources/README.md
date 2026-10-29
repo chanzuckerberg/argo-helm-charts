@@ -8,22 +8,22 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [accessLog](#accessLog )           | No      | object | No         | -          | -                 |
-| - [alternateNames](#alternateNames ) | No      | array  | No         | -          | -                 |
-| - [autoscaling](#autoscaling )       | No      | object | No         | -          | -                 |
-| - [awsRegion](#awsRegion )           | No      | string | No         | -          | -                 |
-| - [baseDomain](#baseDomain )         | No      | string | No         | -          | -                 |
-| - [envoyService](#envoyService )     | No      | object | No         | -          | -                 |
-| - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                 |
-| - [geoip](#geoip )                   | No      | object | No         | -          | -                 |
-| - [hsts](#hsts )                     | No      | object | No         | -          | -                 |
-| - [listenerSets](#listenerSets )     | No      | object | No         | -          | -                 |
-| - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                 |
-| - [resources](#resources )           | No      | object | No         | -          | -                 |
-| - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                 |
-| - [tlsPassthrough](#tlsPassthrough ) | No      | object | No         | -          | -                 |
+| Property                             | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                     |
+| ------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [accessLog](#accessLog )           | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [alternateNames](#alternateNames ) | No      | array  | No         | -          | -                                                                                                                                                                                                                     |
+| - [autoscaling](#autoscaling )       | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [awsRegion](#awsRegion )           | No      | string | No         | -          | -                                                                                                                                                                                                                     |
+| + [baseDomain](#baseDomain )         | No      | string | No         | -          | Base domain the gateway serves. The ApplicationSet injects this per cluster from the base-domain label, so an unlabelled cluster renders it empty rather than absent, which minLength catches and required would not. |
+| - [envoyService](#envoyService )     | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [gatewayName](#gatewayName )       | No      | string | No         | -          | -                                                                                                                                                                                                                     |
+| - [geoip](#geoip )                   | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [hsts](#hsts )                     | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [listenerSets](#listenerSets )     | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [proxyProtocol](#proxyProtocol )   | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [resources](#resources )           | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [serviceAccount](#serviceAccount ) | No      | object | No         | -          | -                                                                                                                                                                                                                     |
+| - [tlsPassthrough](#tlsPassthrough ) | No      | object | No         | -          | -                                                                                                                                                                                                                     |
 
 ## <a name="accessLog"></a>1. Property `envoy-gateway-resources > accessLog`
 
@@ -114,7 +114,13 @@
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
-| **Required** | No       |
+| **Required** | Yes      |
+
+**Description:** Base domain the gateway serves. The ApplicationSet injects this per cluster from the base-domain label, so an unlabelled cluster renders it empty rather than absent, which minLength catches and required would not.
+
+| Restrictions   |   |
+| -------------- | - |
+| **Min length** | 1 |
 
 ## <a name="envoyService"></a>6. Property `envoy-gateway-resources > envoyService`
 

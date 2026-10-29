@@ -1,4 +1,4 @@
-baseDomain: "example.dev.czi.team"
+baseDomain: "example.dev.czi.team" # @schema description: Base domain the gateway serves. The ApplicationSet injects this per cluster from the base-domain label, so an unlabelled cluster renders it empty rather than absent, which minLength catches and required would not.; required: true; minLength: 1
 awsRegion: "us-west-2"
 gatewayName: "envoy-gateway"
 alternateNames: []

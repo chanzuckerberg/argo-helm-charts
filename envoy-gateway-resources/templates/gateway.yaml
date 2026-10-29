@@ -108,8 +108,8 @@ spec:
     kind: ClusterIssuer
     name: letsencrypt-prod-eg
   privateKey:
-    algorithm: RSA
-    size: 4096
+    algorithm: ECDSA
+    size: 384
     rotationPolicy: Always
   secretName: {{ .Values.gatewayName }}-tls
   usages:

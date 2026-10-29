@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.65.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.64.0...stack-v2.65.0) (2026-10-29)
+
+
+### Features
+
+* **stack:** add gateway.requestBuffer for proxy-body-size parity (CCIE-7631) ([#612](https://github.com/chanzuckerberg/argo-helm-charts/issues/612)) ([b59ea60](https://github.com/chanzuckerberg/argo-helm-charts/commit/b59ea607a94a05a2fc97873230a5f9f43a3b4fb9))
+
 ## [2.64.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.63.0...stack-v2.64.0) (2026-10-28)
 
 

@@ -404,6 +404,20 @@
                 }
               }
             },
+            "requestBuffer": {
+              "description": "Cap the request body size via a BackendTrafficPolicy, the gateway equivalent of nginx proxy-body-size. Envoy buffers the whole body and answers 413 beyond the limit, so it is incompatible with streaming and protocol upgrades: do not enable it on a service carrying WebSocket, SSE or gRPC streaming, or on one whose nginx Ingress set proxy-request-buffering off, because requests hang instead of being forwarded. Leave it off where the app already enforces its own cap",
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "description": "Enable request body buffering and its size limit",
+                  "type": "boolean"
+                },
+                "limit": {
+                  "description": "Maximum request body size as a Kubernetes quantity, such as 25Mi or 64Ki (required when enabled). Enforcement is byte-exact at or above the gateway listener's per-connection buffer, 32Ki on this fleet, and was measured rejecting at exactly one byte over a 64Ki limit. Below that floor the value is NOT honoured and oversized bodies still reach the backend, so do not set a sub-32Ki cap and assume it holds",
+                  "type": "string"
+                }
+              }
+            },
             "requestHeaders": {
               "description": "Request header modifications (HTTPRoute RequestHeaderModifier filter)",
               "type": "object",

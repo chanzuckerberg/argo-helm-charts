@@ -871,7 +871,7 @@ Whether the service needs a BackendTrafficPolicy (sessionAffinity, rateLimit, or
 */}}
 {{- define "gateway.hasBackendTrafficPolicy" -}}
 {{- $g := .Values.gateway -}}
-{{- if or $g.sessionAffinity.enabled $g.rateLimit.enabled $g.timeouts.connect -}}true{{- end -}}
+{{- if or $g.sessionAffinity.enabled $g.rateLimit.enabled $g.timeouts.connect (and $g.requestBuffer $g.requestBuffer.enabled) -}}true{{- end -}}
 {{- end -}}
 
 {{/*
