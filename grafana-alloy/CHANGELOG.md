@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.12.0...grafana-alloy-v0.13.0) (2026-11-02)
+
+
+### Features
+
+* **grafana-alloy:** add alloyConfig.extraContent to append config to a hand-written pipeline ([#614](https://github.com/chanzuckerberg/argo-helm-charts/issues/614)) ([e9b68ae](https://github.com/chanzuckerberg/argo-helm-charts/commit/e9b68ae352c5069d88ea39168d85b19b7255be8e))
+
 ## [0.12.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.11.0...grafana-alloy-v0.12.0) (2026-10-26)
 
 
