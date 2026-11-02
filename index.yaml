@@ -3,7 +3,7 @@ entries:
   argo-project:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.09912555Z"
+    created: "2026-11-02T17:50:39.272583381Z"
     description: A Helm chart for an Argo project
     digest: ad2626ac998514b08df0a7520d5beb3b68495fa1cb1115b980a7749dea7253d9
     name: argo-project
@@ -13,7 +13,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.098832423Z"
+    created: "2026-11-02T17:50:39.272169339Z"
     description: A Helm chart for an Argo project
     digest: ebe6fc6d1565dc452acb3a446d8885b61c610c65597be957d1661a2d1bbddaff
     name: argo-project
@@ -24,7 +24,7 @@ entries:
   argus-config:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.107264884Z"
+    created: "2026-11-02T17:50:39.281001528Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 76239a41fef601aee73721187fa2294f6ff86c5ea07f92bd9772983a06c6c827
     name: argus-config
@@ -34,7 +34,7 @@ entries:
     version: 1.8.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.106758187Z"
+    created: "2026-11-02T17:50:39.280503573Z"
     description: A Helm chart for Argus Stack Configuration
     digest: b431fa0ab3ba2e1d6e8c603f37753da21d434c30470df3aa2403568017dae86c
     name: argus-config
@@ -44,7 +44,7 @@ entries:
     version: 1.7.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.106246066Z"
+    created: "2026-11-02T17:50:39.28000058Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 6d6a72debf3f36102e26ac8a0d89c7cea28ad53d852431d907569c35704bb3ab
     name: argus-config
@@ -54,7 +54,7 @@ entries:
     version: 1.7.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.105709371Z"
+    created: "2026-11-02T17:50:39.279510781Z"
     description: A Helm chart for Argus Stack Configuration
     digest: ae5ded09e213bab777f15194753b5d41ca532b0e39c9385d8e0572133e80f9d8
     name: argus-config
@@ -64,7 +64,7 @@ entries:
     version: 1.6.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.1052117Z"
+    created: "2026-11-02T17:50:39.279014122Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 57df78d6be9bf030d381922975ea4a103f9ba025943a9f94a6d049b747b16848
     name: argus-config
@@ -74,7 +74,7 @@ entries:
     version: 1.6.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.1047132Z"
+    created: "2026-11-02T17:50:39.278491864Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 9adc9bab9c1b26509593c7a0a0acb81cce117453190e04bbca6a7bd0a3664501
     name: argus-config
@@ -84,7 +84,7 @@ entries:
     version: 1.5.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.104272496Z"
+    created: "2026-11-02T17:50:39.278034729Z"
     description: A Helm chart for Argus Stack Configuration
     digest: d692c79570178529831183e71033daeebce38662da207ff9b91ff389d4e849d4
     name: argus-config
@@ -94,7 +94,7 @@ entries:
     version: 1.5.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.103806316Z"
+    created: "2026-11-02T17:50:39.277583731Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 87d877f9de32064c1f4e27dbe559a31d490df5f2bed17151cf2ca9ba382ba6f3
     name: argus-config
@@ -104,7 +104,7 @@ entries:
     version: 1.4.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.10329289Z"
+    created: "2026-11-02T17:50:39.277147765Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 3ee9dbf1aa5edcdc5bf8976cb3a0cddf69be5f97e1a4b53d6a86ad76212cadd7
     name: argus-config
@@ -114,7 +114,7 @@ entries:
     version: 1.4.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.102075649Z"
+    created: "2026-11-02T17:50:39.276687914Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 6aaad9088cf3ce85f550cee8094149cd2c15a57307db73c61372cb4d4b33eea5
     name: argus-config
@@ -124,7 +124,7 @@ entries:
     version: 1.4.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.101622121Z"
+    created: "2026-11-02T17:50:39.275383971Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 3d2d179e26e9e1596306eea0affb8a37c52b169431d727f6a99cb96e1a16eb77
     name: argus-config
@@ -134,7 +134,7 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.101282134Z"
+    created: "2026-11-02T17:50:39.274871977Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 59ee48542c1b6d97c8543e870d6ba3ebe27899e867c5b2caa8ba838a30cd5881
     name: argus-config
@@ -144,7 +144,7 @@ entries:
     version: 1.2.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.100959412Z"
+    created: "2026-11-02T17:50:39.274532182Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 61303b47db60afc49029d8cfdc87944bb5ba1ddb3b1025053adccf0a0bc99564
     name: argus-config
@@ -154,7 +154,7 @@ entries:
     version: 1.2.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.100699762Z"
+    created: "2026-11-02T17:50:39.274275791Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 3c4e8e352b7d07db72eef828fef367607401863f593316d7899043580278cd4c
     name: argus-config
@@ -164,7 +164,7 @@ entries:
     version: 1.2.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.100437347Z"
+    created: "2026-11-02T17:50:39.27399943Z"
     description: A Helm chart for Argus Stack Configuration
     digest: f873d7152b1a0d6b7d175a1f426253c2f9a2b8ac11f4867816587614bfc0e5d7
     name: argus-config
@@ -174,7 +174,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.100179091Z"
+    created: "2026-11-02T17:50:39.273742858Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 096cc72ff9c8bc5bd0f9606bbf58390ae5e013be4b7efccb2cfbedcb8ec2f856
     name: argus-config
@@ -184,7 +184,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.099933874Z"
+    created: "2026-11-02T17:50:39.273487313Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 737b916b0ee5d3ced28a7f153cce8f413d60aa9fe96e2d453f75c3039788e707
     name: argus-config
@@ -194,7 +194,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.09942698Z"
+    created: "2026-11-02T17:50:39.272874479Z"
     description: A Helm chart for Argus Stack Configuration
     digest: 45083dcad5dd850c8b772c78aae2ba7b8f5a88387d998facc02e8a0d872fcbd3
     name: argus-config
@@ -204,7 +204,7 @@ entries:
     version: 1.0.2-004399090cb0d9a6d4019216fd0c80b63db39a2e-b838543c7a2f3be8bde86768bfcc1b6b31409cf1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.099687672Z"
+    created: "2026-11-02T17:50:39.273227624Z"
     description: A Helm chart for Argus Stack Configuration
     digest: abd1ec87f62acfa2f4860b872094bf20efbe1f07dda240f69e485a2d9438b833
     name: argus-config
@@ -215,7 +215,7 @@ entries:
   basic-auth-secret:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.10802717Z"
+    created: "2026-11-02T17:50:39.281784476Z"
     description: External Secret for Basic Auth
     digest: a298856aa9bfb6d6f32b839645b01e3e7e8732104a71a16bc49b21683ce2139f
     name: basic-auth-secret
@@ -225,7 +225,7 @@ entries:
     version: 0.5.0
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.10775097Z"
+    created: "2026-11-02T17:50:39.28153323Z"
     description: External Secret for Basic Auth
     digest: 880ae7257f4df9d85a0c13a668f9db739007e8d82c8885378d90e98b3aa737cd
     name: basic-auth-secret
@@ -235,7 +235,7 @@ entries:
     version: 0.3.1
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.107502569Z"
+    created: "2026-11-02T17:50:39.281263818Z"
     description: External Secret for Basic Auth
     digest: deb0bd23265d8d9d0a37517731c789f47508c85d67db46882a89dad6353b8b24
     name: basic-auth-secret
@@ -245,140 +245,140 @@ entries:
     version: 0.2.0
   grafana:
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.113394357Z"
+    created: "2026-11-02T17:50:39.287258092Z"
     digest: 5c423deae2ab23421e59c06f1b33fdd263ba535d742837a42deb299c43d9b788
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.13.0.tgz
     version: 0.13.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.112343613Z"
+    created: "2026-11-02T17:50:39.2862003Z"
     digest: b2bb6cb799782d970d0033613de75a5afaddedd048a654b8a79426bf56b2aa6d
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.12.0.tgz
     version: 0.12.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.110784072Z"
+    created: "2026-11-02T17:50:39.2845834Z"
     digest: ecdcb212c3051eb7f951eaa46ab9397e5dc8b256fff97c05be6306893d23c2ad
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.11.1.tgz
     version: 0.11.1
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.109840913Z"
+    created: "2026-11-02T17:50:39.283612819Z"
     digest: ef20d6c8963372d8be8227c54b6bb3f943cac58a6984dfb48de6a73b4869a092
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.11.0.tgz
     version: 0.11.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.108922969Z"
+    created: "2026-11-02T17:50:39.282667961Z"
     digest: 6cc40aa3c71380acdd0f18fea4076d28b92cd0dec978d6ee8432379c425a4f3b
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.10.0.tgz
     version: 0.10.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.12538352Z"
+    created: "2026-11-02T17:50:39.299115713Z"
     digest: d4a13f479e4e2af016d00898cbc274420ff9c5b6b6791327d7d2332e98143bbe
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.9.2.tgz
     version: 0.9.2
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.12453074Z"
+    created: "2026-11-02T17:50:39.298231416Z"
     digest: 749a70b5746cf7bb9ba5e4d19ca0901b8c479280ca914143a43ac516ab19e264
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.9.1.tgz
     version: 0.9.1
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.123658236Z"
+    created: "2026-11-02T17:50:39.297372866Z"
     digest: 83734398b45c11586004e6606d9cff41b66263340f631ad3bdf27bc682ee90e7
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.9.0.tgz
     version: 0.9.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.122780291Z"
+    created: "2026-11-02T17:50:39.296500729Z"
     digest: a5aec75afdf7fa6823d079a867992eb42ac23465cf41319cac4b75bdf4ebd8db
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.8.2.tgz
     version: 0.8.2
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.121942888Z"
+    created: "2026-11-02T17:50:39.295657211Z"
     digest: 47ec8674f1812556d158b08979a1ee96b85839ad1d672c8dba0144fb8ba79db2
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.8.1.tgz
     version: 0.8.1
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.121107404Z"
+    created: "2026-11-02T17:50:39.294821865Z"
     digest: 7bc99adca8f291518de3878cc924ffcfc243b6faa01868eaa104adca3d2b9c64
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.8.0.tgz
     version: 0.8.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.120231691Z"
+    created: "2026-11-02T17:50:39.293924473Z"
     digest: 7c670b95201003e7a5794fd508f34c411dbce05fd0ec1a180af44d912ffb9ee1
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.7.0.tgz
     version: 0.7.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.118778143Z"
+    created: "2026-11-02T17:50:39.292529766Z"
     digest: 5567a66c831de56ba84abbd1d3338c6caeb1ba7a5239a6acff312b5d3240d6a3
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.6.4.tgz
     version: 0.6.4
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.118051427Z"
+    created: "2026-11-02T17:50:39.291830254Z"
     digest: bda9fa1e975aad2784b65fea17949aff0f0eeeafa3b2b1722edfda4db4415ef5
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.6.3.tgz
     version: 0.6.3
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.117353157Z"
+    created: "2026-11-02T17:50:39.291140819Z"
     digest: eeff871ad4694d4853da63eb7993fc0e6839d51a8bc44a05492255305bb004dc
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.6.2.tgz
     version: 0.6.2
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.116663807Z"
+    created: "2026-11-02T17:50:39.290430977Z"
     digest: 15ab09bd73f803bacb79d5a430055029bbf9a5bacb81cc830604be46e89d8527
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.6.1.tgz
     version: 0.6.1
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.115934194Z"
+    created: "2026-11-02T17:50:39.28975439Z"
     digest: 165549417a41b36c834b44bb85d3b0969b7e61c3fdffa4ce643d02d1b8204265
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.6.0.tgz
     version: 0.6.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.115233635Z"
+    created: "2026-11-02T17:50:39.289070755Z"
     digest: 66360c71d5d07e76b369beb1fa127b5838ce752bcbd95b3b4915b41ce5cf1c4f
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.5.0.tgz
     version: 0.5.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.114540346Z"
+    created: "2026-11-02T17:50:39.288395424Z"
     digest: 0c28940b966bd08445725d3c575aa9423fa2bcd3b4424b51a8431028e91f9b82
     name: grafana
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-0.4.0.tgz
     version: 0.4.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.113893489Z"
+    created: "2026-11-02T17:50:39.287760125Z"
     digest: 58d62a3d3800076d66058912aad3fad7d90ab2dc350d3647a0d94f97ae87d655
     name: grafana
     urls:
@@ -386,7 +386,21 @@ entries:
     version: 0.3.0
   grafana-alloy:
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.13534943Z"
+    created: "2026-11-02T17:50:39.313882805Z"
+    dependencies:
+    - condition: enabled
+      name: alloy
+      repository: https://grafana.github.io/helm-charts
+      version: 1.5.1
+    description: A Helm chart for deploying Grafana Alloy with custom configuration
+    digest: e49e6d876af2cc968df26ac2ee07a0489d94d94a6a2c6e269807ae51b9a88447
+    name: grafana-alloy
+    type: application
+    urls:
+    - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.14.0.tgz
+    version: 0.14.0
+  - apiVersion: v2
+    created: "2026-11-02T17:50:39.309096926Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -400,7 +414,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.13.0.tgz
     version: 0.13.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.130567414Z"
+    created: "2026-11-02T17:50:39.304340134Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -414,7 +428,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.10.0.tgz
     version: 0.10.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.167245594Z"
+    created: "2026-11-02T17:50:39.346354921Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -428,7 +442,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.9.0.tgz
     version: 0.9.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.162771711Z"
+    created: "2026-11-02T17:50:39.341695974Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -442,7 +456,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.8.1.tgz
     version: 0.8.1
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.158475255Z"
+    created: "2026-11-02T17:50:39.337313471Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -456,7 +470,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.7.0.tgz
     version: 0.7.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.153850866Z"
+    created: "2026-11-02T17:50:39.332539597Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -470,7 +484,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.6.0.tgz
     version: 0.6.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.149929629Z"
+    created: "2026-11-02T17:50:39.328594734Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -484,7 +498,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.5.0.tgz
     version: 0.5.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.146053011Z"
+    created: "2026-11-02T17:50:39.324782201Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -498,7 +512,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.4.0.tgz
     version: 0.4.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.141953584Z"
+    created: "2026-11-02T17:50:39.321442131Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -512,7 +526,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/grafana-alloy-0.3.0.tgz
     version: 0.3.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.138651159Z"
+    created: "2026-11-02T17:50:39.317359292Z"
     dependencies:
     - condition: enabled
       name: alloy
@@ -528,7 +542,7 @@ entries:
   karpenter-gpu-nodepool:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.178111028Z"
+    created: "2026-11-02T17:50:39.357635146Z"
     description: A Helm chart for deploying Karpenter NodePool with GPU support, NVIDIA
       device plugin, and optional DCGM exporter
     digest: 469c8349d45d200959ffbaa8822556966dd85bb5bae933c111f390f1e5c9e746
@@ -547,7 +561,7 @@ entries:
     version: 0.7.0
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.176426581Z"
+    created: "2026-11-02T17:50:39.355930371Z"
     description: A Helm chart for deploying Karpenter NodePool with GPU support, NVIDIA
       device plugin, and optional DCGM exporter
     digest: d1bc7edb7a36bfaf274b876e49cda7dbc8ef21c91825def96c4a9c082e207cc8
@@ -566,7 +580,7 @@ entries:
     version: 0.6.0
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.174683483Z"
+    created: "2026-11-02T17:50:39.354229025Z"
     description: A Helm chart for deploying Karpenter NodePool with GPU support, NVIDIA
       device plugin, and optional DCGM exporter
     digest: 1f6d8636ffafe51fb2791659d491f0ebd8a138d9b2694e587836b222966911eb
@@ -585,7 +599,7 @@ entries:
     version: 0.4.3
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.173079897Z"
+    created: "2026-11-02T17:50:39.3525695Z"
     description: A Helm chart for deploying Karpenter NodePool with GPU support, NVIDIA
       device plugin, and optional DCGM exporter
     digest: ae3dbd991f0c0cab1283c758567931599fff890f2229080ad62dec21584c5bd7
@@ -604,7 +618,7 @@ entries:
     version: 0.4.2
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.171455822Z"
+    created: "2026-11-02T17:50:39.350955161Z"
     description: A Helm chart for deploying Karpenter NodePool with GPU support, NVIDIA
       device plugin, and optional DCGM exporter
     digest: 862e44b406861581e4cd7ce605a77e654758dd4da8535c9b139b60522297b0d5
@@ -623,7 +637,7 @@ entries:
     version: 0.4.1
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.169318692Z"
+    created: "2026-11-02T17:50:39.349323427Z"
     description: A Helm chart for deploying Karpenter NodePool with GPU support and
       NVIDIA device plugin
     digest: 2d41a81b5a41ba59be6676ddabca0e3cf6e5789f145a80825dd31a5cb6284dae
@@ -642,7 +656,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.168230139Z"
+    created: "2026-11-02T17:50:39.347390839Z"
     description: A Helm chart for deploying Karpenter NodePool with GPU support and
       NVIDIA device plugin
     digest: ea198b5bef5bfc7989627fb15f39acce8b0fbc3911f306d85fd5e0840372016f
@@ -662,7 +676,7 @@ entries:
   karpenter-nodepool:
   - apiVersion: v2
     appVersion: "1.0"
-    created: "2026-11-02T15:15:21.178807608Z"
+    created: "2026-11-02T17:50:39.358342469Z"
     description: A Helm chart for deploying a generic Karpenter NodePool and its EC2NodeClass,
       defaulting to a cluster's default pool
     digest: 6fba4ff51f3aae4242fca2356b73650d054edb31395c0869ebfc11042dba8edf
@@ -680,7 +694,7 @@ entries:
     version: 0.1.0
   ops-telemetry:
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.185596466Z"
+    created: "2026-11-02T17:50:39.365206829Z"
     description: Durable OPS collector and native pipeline canary ingress
     digest: ce64d4c2300bbf626f307c89401e90299d4c1065702bc538b17be8930fae245e
     name: ops-telemetry
@@ -688,7 +702,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/ops-telemetry-0.3.0.tgz
     version: 0.3.0
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.183498261Z"
+    created: "2026-11-02T17:50:39.363105669Z"
     description: Durable OPS collector and native pipeline canary ingress
     digest: 910182b765adae3f538a6f85dd16ffdb3130895ae13e2051eb56288d1e960891
     name: ops-telemetry
@@ -696,7 +710,7 @@ entries:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/ops-telemetry-0.2.1.tgz
     version: 0.2.1
   - apiVersion: v2
-    created: "2026-11-02T15:15:21.180984139Z"
+    created: "2026-11-02T17:50:39.360955336Z"
     description: Durable OPS collector and native pipeline canary ingress
     digest: 93a841f9852e1fbc7bdfb628aca2d7bf2e69c11b87cfa9d85fcf81a2b14f5f02
     name: ops-telemetry
@@ -706,7 +720,7 @@ entries:
   prom2parquet:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.189857435Z"
+    created: "2026-11-02T17:50:39.369537927Z"
     description: A Helm chart for deploying prom2parquet - exports Prometheus metrics
       to Parquet format on S3
     digest: 3944b9a9aa1307c2e310cee71b79f0e84284003a7e32724486b83f08207b18ba
@@ -717,7 +731,7 @@ entries:
     version: 0.3.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.189087174Z"
+    created: "2026-11-02T17:50:39.368746979Z"
     description: A Helm chart for deploying prom2parquet - exports Prometheus metrics
       to Parquet format on S3
     digest: 744532c77bb96835500ab15277f7dd416a8553db5dd34d93781f0e330067d7aa
@@ -728,7 +742,7 @@ entries:
     version: 0.3.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.188317447Z"
+    created: "2026-11-02T17:50:39.36796225Z"
     description: A Helm chart for deploying prom2parquet - exports Prometheus metrics
       to Parquet format on S3
     digest: c8906482eca1f9b4d85ac8da82ae9995e41d79be89aeed4c70adf29d9cc25806
@@ -739,7 +753,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.187520839Z"
+    created: "2026-11-02T17:50:39.367167314Z"
     description: A Helm chart for deploying prom2parquet - exports Prometheus metrics
       to Parquet format on S3
     digest: b4eaf677f92ba1f67baf4792cc9a9bbbb3c0f0d1ccc8806a93ac131475a2bfaa
@@ -750,7 +764,7 @@ entries:
     version: 0.2.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.186883574Z"
+    created: "2026-11-02T17:50:39.366492442Z"
     description: A Helm chart for deploying prom2parquet - exports Prometheus metrics
       to Parquet format on S3
     digest: 1f9b3203054251cb10d28395fd3205a2171f2640ba5357b48cdedc7f726dd9f0
@@ -761,7 +775,7 @@ entries:
     version: 0.2.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-11-02T15:15:21.186253588Z"
+    created: "2026-11-02T17:50:39.365852991Z"
     description: A Helm chart for deploying prom2parquet - exports Prometheus metrics
       to Parquet format on S3
     digest: 73421474b2f38c8e09dc6b43b9a05bfa012f47a66571a8668d72076041593b7c
@@ -773,7 +787,7 @@ entries:
   sso-secret:
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2026-11-02T15:15:21.190467705Z"
+    created: "2026-11-02T17:50:39.370167721Z"
     description: A Helm chart to create an SSO secret
     digest: bac12ce417c80bb481ec1d21161f4eb35642409d3873ab19b26cc75d8d9d49bc
     name: sso-secret
@@ -783,7 +797,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2026-11-02T15:15:21.19026545Z"
+    created: "2026-11-02T17:50:39.369955621Z"
     description: A Helm chart to create an SSO secret
     digest: 40b5e38fe1de7abd534124b68cbd6dc15d1da3c035d6738cbeef9cf8dc97b85d
     name: sso-secret
@@ -793,7 +807,7 @@ entries:
     version: 0.2.1
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2026-11-02T15:15:21.190065402Z"
+    created: "2026-11-02T17:50:39.369748148Z"
     description: A Helm chart to create an SSO secret
     digest: cea99b1e3efaf51589bcb6a8198ce02f30a23450cc581868cab2b23461b18435
     name: sso-secret
@@ -804,7 +818,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.756642328Z"
+    created: "2026-11-02T17:50:39.936986033Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -818,7 +832,7 @@ entries:
     version: 2.65.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.747646152Z"
+    created: "2026-11-02T17:50:39.928620169Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -832,7 +846,7 @@ entries:
     version: 2.64.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.738673541Z"
+    created: "2026-11-02T17:50:39.920432141Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -846,7 +860,7 @@ entries:
     version: 2.63.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.730062652Z"
+    created: "2026-11-02T17:50:39.912069173Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -860,7 +874,7 @@ entries:
     version: 2.62.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.721120146Z"
+    created: "2026-11-02T17:50:39.903868665Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -874,7 +888,7 @@ entries:
     version: 2.62.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.71252899Z"
+    created: "2026-11-02T17:50:39.895394495Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -888,7 +902,7 @@ entries:
     version: 2.61.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.704243137Z"
+    created: "2026-11-02T17:50:39.887039519Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -902,7 +916,7 @@ entries:
     version: 2.61.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.695877047Z"
+    created: "2026-11-02T17:50:39.878496943Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -916,7 +930,7 @@ entries:
     version: 2.60.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.683668768Z"
+    created: "2026-11-02T17:50:39.86627428Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -930,7 +944,7 @@ entries:
     version: 2.59.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.676284195Z"
+    created: "2026-11-02T17:50:39.858655705Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -944,7 +958,7 @@ entries:
     version: 2.59.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.668867491Z"
+    created: "2026-11-02T17:50:39.851169215Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -958,7 +972,7 @@ entries:
     version: 2.58.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.661627959Z"
+    created: "2026-11-02T17:50:39.843716891Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -972,7 +986,7 @@ entries:
     version: 2.57.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.654459558Z"
+    created: "2026-11-02T17:50:39.834972365Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -986,7 +1000,7 @@ entries:
     version: 2.57.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.64692507Z"
+    created: "2026-11-02T17:50:39.828120542Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1000,7 +1014,7 @@ entries:
     version: 2.56.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.639738256Z"
+    created: "2026-11-02T17:50:39.818396532Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1014,7 +1028,7 @@ entries:
     version: 2.55.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.631519061Z"
+    created: "2026-11-02T17:50:39.811060777Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1028,7 +1042,7 @@ entries:
     version: 2.54.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.623316334Z"
+    created: "2026-11-02T17:50:39.803658052Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1042,7 +1056,7 @@ entries:
     version: 2.53.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.614874888Z"
+    created: "2026-11-02T17:50:39.794467426Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1056,7 +1070,7 @@ entries:
     version: 2.52.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.607514389Z"
+    created: "2026-11-02T17:50:39.786351996Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1070,7 +1084,7 @@ entries:
     version: 2.51.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.600072865Z"
+    created: "2026-11-02T17:50:39.779550954Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1084,7 +1098,7 @@ entries:
     version: 2.50.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.592641794Z"
+    created: "2026-11-02T17:50:39.772198747Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1098,7 +1112,7 @@ entries:
     version: 2.50.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.580086324Z"
+    created: "2026-11-02T17:50:39.760832017Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1112,7 +1126,7 @@ entries:
     version: 2.49.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.573044519Z"
+    created: "2026-11-02T17:50:39.751775847Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1126,7 +1140,7 @@ entries:
     version: 2.49.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.5658959Z"
+    created: "2026-11-02T17:50:39.744100592Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1140,7 +1154,7 @@ entries:
     version: 2.48.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.559137523Z"
+    created: "2026-11-02T17:50:39.735983299Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1154,7 +1168,7 @@ entries:
     version: 2.47.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.549196179Z"
+    created: "2026-11-02T17:50:39.72893463Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1168,7 +1182,7 @@ entries:
     version: 2.46.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.542045106Z"
+    created: "2026-11-02T17:50:39.722309799Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1182,7 +1196,7 @@ entries:
     version: 2.45.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.53583295Z"
+    created: "2026-11-02T17:50:39.715635804Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1196,7 +1210,7 @@ entries:
     version: 2.44.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.528714206Z"
+    created: "2026-11-02T17:50:39.70946668Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1210,7 +1224,7 @@ entries:
     version: 2.43.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.522579958Z"
+    created: "2026-11-02T17:50:39.702419791Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1224,7 +1238,7 @@ entries:
     version: 2.43.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.515676154Z"
+    created: "2026-11-02T17:50:39.69633298Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1238,7 +1252,7 @@ entries:
     version: 2.43.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.509516896Z"
+    created: "2026-11-02T17:50:39.689375706Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1252,7 +1266,7 @@ entries:
     version: 2.42.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.502938744Z"
+    created: "2026-11-02T17:50:39.683433181Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1266,7 +1280,7 @@ entries:
     version: 2.41.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.496488477Z"
+    created: "2026-11-02T17:50:39.676363982Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1280,7 +1294,7 @@ entries:
     version: 2.40.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.487554611Z"
+    created: "2026-11-02T17:50:39.667095245Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1294,7 +1308,7 @@ entries:
     version: 2.39.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.481841275Z"
+    created: "2026-11-02T17:50:39.662086182Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1308,7 +1322,7 @@ entries:
     version: 2.38.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.476807157Z"
+    created: "2026-11-02T17:50:39.656280746Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1322,7 +1336,7 @@ entries:
     version: 2.37.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.47117063Z"
+    created: "2026-11-02T17:50:39.651245976Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1336,7 +1350,7 @@ entries:
     version: 2.36.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.466145127Z"
+    created: "2026-11-02T17:50:39.645782452Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1350,7 +1364,7 @@ entries:
     version: 2.35.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.46000854Z"
+    created: "2026-11-02T17:50:39.640778074Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1364,7 +1378,7 @@ entries:
     version: 2.35.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.4547364Z"
+    created: "2026-11-02T17:50:39.635207138Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1378,7 +1392,7 @@ entries:
     version: 2.35.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.44894455Z"
+    created: "2026-11-02T17:50:39.630196647Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1392,7 +1406,7 @@ entries:
     version: 2.33.5
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.443951523Z"
+    created: "2026-11-02T17:50:39.6247143Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1406,7 +1420,7 @@ entries:
     version: 2.33.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.438475315Z"
+    created: "2026-11-02T17:50:39.619733528Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1420,7 +1434,7 @@ entries:
     version: 2.33.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.433481902Z"
+    created: "2026-11-02T17:50:39.613913069Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1434,7 +1448,7 @@ entries:
     version: 2.33.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.427885563Z"
+    created: "2026-11-02T17:50:39.608963721Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1448,7 +1462,7 @@ entries:
     version: 2.33.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.422861759Z"
+    created: "2026-11-02T17:50:39.60361428Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1462,7 +1476,7 @@ entries:
     version: 2.33.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.417451265Z"
+    created: "2026-11-02T17:50:39.598611814Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1476,7 +1490,7 @@ entries:
     version: 2.32.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.412473114Z"
+    created: "2026-11-02T17:50:39.593032771Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1490,7 +1504,7 @@ entries:
     version: 2.31.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.407091338Z"
+    created: "2026-11-02T17:50:39.58824055Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1504,7 +1518,7 @@ entries:
     version: 2.30.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.400468608Z"
+    created: "2026-11-02T17:50:39.581037396Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1518,7 +1532,7 @@ entries:
     version: 2.29.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.395127513Z"
+    created: "2026-11-02T17:50:39.576253692Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1532,7 +1546,7 @@ entries:
     version: 2.29.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.390396162Z"
+    created: "2026-11-02T17:50:39.570737344Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1546,7 +1560,7 @@ entries:
     version: 2.29.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.385164449Z"
+    created: "2026-11-02T17:50:39.565979059Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1560,7 +1574,7 @@ entries:
     version: 2.29.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.380448574Z"
+    created: "2026-11-02T17:50:39.560672571Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1574,7 +1588,7 @@ entries:
     version: 2.29.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.37534344Z"
+    created: "2026-11-02T17:50:39.555926257Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1588,7 +1602,7 @@ entries:
     version: 2.28.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.370685132Z"
+    created: "2026-11-02T17:50:39.550218273Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1602,7 +1616,7 @@ entries:
     version: 2.27.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.365619375Z"
+    created: "2026-11-02T17:50:39.545548889Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1616,7 +1630,7 @@ entries:
     version: 2.26.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.360986445Z"
+    created: "2026-11-02T17:50:39.540170361Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1630,7 +1644,7 @@ entries:
     version: 2.26.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.355808171Z"
+    created: "2026-11-02T17:50:39.535439448Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1644,7 +1658,7 @@ entries:
     version: 2.25.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.351611629Z"
+    created: "2026-11-02T17:50:39.530235138Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1658,7 +1672,7 @@ entries:
     version: 2.24.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.345535784Z"
+    created: "2026-11-02T17:50:39.526048825Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1672,7 +1686,7 @@ entries:
     version: 2.24.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.341417773Z"
+    created: "2026-11-02T17:50:39.521284567Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1686,7 +1700,7 @@ entries:
     version: 2.23.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.335413969Z"
+    created: "2026-11-02T17:50:39.517191463Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1700,7 +1714,7 @@ entries:
     version: 2.23.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.331300158Z"
+    created: "2026-11-02T17:50:39.512505555Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1714,7 +1728,7 @@ entries:
     version: 2.22.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.326187361Z"
+    created: "2026-11-02T17:50:39.508388288Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1728,7 +1742,7 @@ entries:
     version: 2.21.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.321767017Z"
+    created: "2026-11-02T17:50:39.503356619Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1742,7 +1756,7 @@ entries:
     version: 2.20.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.317136351Z"
+    created: "2026-11-02T17:50:39.49914908Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1756,7 +1770,7 @@ entries:
     version: 2.20.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.303365683Z"
+    created: "2026-11-02T17:50:39.485092233Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1770,7 +1784,7 @@ entries:
     version: 2.19.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.299343482Z"
+    created: "2026-11-02T17:50:39.481023572Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1784,7 +1798,7 @@ entries:
     version: 2.19.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.294880611Z"
+    created: "2026-11-02T17:50:39.476247695Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1798,7 +1812,7 @@ entries:
     version: 2.18.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.290578813Z"
+    created: "2026-11-02T17:50:39.471976682Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1812,7 +1826,7 @@ entries:
     version: 2.17.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.285833457Z"
+    created: "2026-11-02T17:50:39.46716559Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1826,7 +1840,7 @@ entries:
     version: 2.17.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.28197448Z"
+    created: "2026-11-02T17:50:39.463330099Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1840,7 +1854,7 @@ entries:
     version: 2.16.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.27824054Z"
+    created: "2026-11-02T17:50:39.459306435Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1854,7 +1868,7 @@ entries:
     version: 2.15.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.275091492Z"
+    created: "2026-11-02T17:50:39.456258562Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1868,7 +1882,7 @@ entries:
     version: 2.14.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.272106997Z"
+    created: "2026-11-02T17:50:39.453253093Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1882,7 +1896,7 @@ entries:
     version: 2.13.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.268625159Z"
+    created: "2026-11-02T17:50:39.449667979Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1896,7 +1910,7 @@ entries:
     version: 2.12.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.26564928Z"
+    created: "2026-11-02T17:50:39.446716671Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1910,7 +1924,7 @@ entries:
     version: 2.11.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.262705449Z"
+    created: "2026-11-02T17:50:39.443721655Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1924,7 +1938,7 @@ entries:
     version: 2.10.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.259177285Z"
+    created: "2026-11-02T17:50:39.440128279Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1938,7 +1952,7 @@ entries:
     version: 2.10.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.256016964Z"
+    created: "2026-11-02T17:50:39.436878546Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1952,7 +1966,7 @@ entries:
     version: 2.10.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.252815461Z"
+    created: "2026-11-02T17:50:39.433663791Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1966,7 +1980,7 @@ entries:
     version: 2.10.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.764761428Z"
+    created: "2026-11-02T17:50:39.945949535Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1980,7 +1994,7 @@ entries:
     version: 2.9.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.761874984Z"
+    created: "2026-11-02T17:50:39.943086325Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -1994,7 +2008,7 @@ entries:
     version: 2.8.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.758623734Z"
+    created: "2026-11-02T17:50:39.939001205Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2008,7 +2022,7 @@ entries:
     version: 2.7.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.687637126Z"
+    created: "2026-11-02T17:50:39.870244702Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2022,7 +2036,7 @@ entries:
     version: 2.6.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.685640451Z"
+    created: "2026-11-02T17:50:39.86825298Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2036,7 +2050,7 @@ entries:
     version: 2.6.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.58390133Z"
+    created: "2026-11-02T17:50:39.764706858Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2050,7 +2064,7 @@ entries:
     version: 2.5.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.581994803Z"
+    created: "2026-11-02T17:50:39.762763842Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2064,7 +2078,7 @@ entries:
     version: 2.5.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.491367319Z"
+    created: "2026-11-02T17:50:39.670797756Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2078,7 +2092,7 @@ entries:
     version: 2.4.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.489490676Z"
+    created: "2026-11-02T17:50:39.668930661Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2092,7 +2106,7 @@ entries:
     version: 2.4.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.402295512Z"
+    created: "2026-11-02T17:50:39.582897378Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2106,7 +2120,7 @@ entries:
     version: 2.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.312286536Z"
+    created: "2026-11-02T17:50:39.494186277Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2120,7 +2134,7 @@ entries:
     version: 2.2.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.310460386Z"
+    created: "2026-11-02T17:50:39.492322201Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2134,7 +2148,7 @@ entries:
     version: 2.2.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.308642647Z"
+    created: "2026-11-02T17:50:39.490488295Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2148,7 +2162,7 @@ entries:
     version: 2.2.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.306836863Z"
+    created: "2026-11-02T17:50:39.488674138Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2162,7 +2176,7 @@ entries:
     version: 2.2.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.305375667Z"
+    created: "2026-11-02T17:50:39.487232752Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2176,7 +2190,7 @@ entries:
     version: 2.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.249271379Z"
+    created: "2026-11-02T17:50:39.430087276Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2190,7 +2204,7 @@ entries:
     version: 2.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.247824534Z"
+    created: "2026-11-02T17:50:39.428639171Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2204,7 +2218,7 @@ entries:
     version: 2.1.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.246395897Z"
+    created: "2026-11-02T17:50:39.427208279Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2218,7 +2232,7 @@ entries:
     version: 2.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.244966996Z"
+    created: "2026-11-02T17:50:39.42575329Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2232,7 +2246,7 @@ entries:
     version: 2.1.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.243562704Z"
+    created: "2026-11-02T17:50:39.424316367Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2246,7 +2260,7 @@ entries:
     version: 2.0.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.224537118Z"
+    created: "2026-11-02T17:50:39.404988445Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2260,7 +2274,7 @@ entries:
     version: 1.20.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.222533066Z"
+    created: "2026-11-02T17:50:39.403534555Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2274,7 +2288,7 @@ entries:
     version: 1.20.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.221135436Z"
+    created: "2026-11-02T17:50:39.401389703Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2288,7 +2302,7 @@ entries:
     version: 1.20.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.218885633Z"
+    created: "2026-11-02T17:50:39.399146128Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2302,7 +2316,7 @@ entries:
     version: 1.19.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.217497258Z"
+    created: "2026-11-02T17:50:39.397719962Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2316,7 +2330,7 @@ entries:
     version: 1.18.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.21610021Z"
+    created: "2026-11-02T17:50:39.396329546Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2330,7 +2344,7 @@ entries:
     version: 1.17.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.214666428Z"
+    created: "2026-11-02T17:50:39.394921572Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2344,7 +2358,7 @@ entries:
     version: 1.16.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.213291583Z"
+    created: "2026-11-02T17:50:39.393532813Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2358,7 +2372,7 @@ entries:
     version: 1.16.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.211902281Z"
+    created: "2026-11-02T17:50:39.392117897Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2372,7 +2386,7 @@ entries:
     version: 1.16.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.210481192Z"
+    created: "2026-11-02T17:50:39.390717151Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2386,7 +2400,7 @@ entries:
     version: 1.16.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.209056985Z"
+    created: "2026-11-02T17:50:39.389298567Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2400,7 +2414,7 @@ entries:
     version: 1.16.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.206909697Z"
+    created: "2026-11-02T17:50:39.387618546Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2414,7 +2428,7 @@ entries:
     version: 1.15.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.205511623Z"
+    created: "2026-11-02T17:50:39.385908027Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2428,7 +2442,7 @@ entries:
     version: 1.14.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.20416077Z"
+    created: "2026-11-02T17:50:39.384439926Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2442,7 +2456,7 @@ entries:
     version: 1.13.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.202816891Z"
+    created: "2026-11-02T17:50:39.383074568Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2456,7 +2470,7 @@ entries:
     version: 1.12.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.201492491Z"
+    created: "2026-11-02T17:50:39.381680074Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2470,7 +2484,7 @@ entries:
     version: 1.11.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.200179151Z"
+    created: "2026-11-02T17:50:39.380331192Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2484,7 +2498,7 @@ entries:
     version: 1.11.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.19885311Z"
+    created: "2026-11-02T17:50:39.378977017Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2498,7 +2512,7 @@ entries:
     version: 1.10.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.197547951Z"
+    created: "2026-11-02T17:50:39.37760119Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2512,7 +2526,7 @@ entries:
     version: 1.10.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.19622438Z"
+    created: "2026-11-02T17:50:39.376189228Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2526,7 +2540,7 @@ entries:
     version: 1.10.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.19485587Z"
+    created: "2026-11-02T17:50:39.374765319Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2540,7 +2554,7 @@ entries:
     version: 1.10.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.242145463Z"
+    created: "2026-11-02T17:50:39.422840504Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2554,7 +2568,7 @@ entries:
     version: 1.9.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.240867455Z"
+    created: "2026-11-02T17:50:39.421514998Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2568,7 +2582,7 @@ entries:
     version: 1.9.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.23958065Z"
+    created: "2026-11-02T17:50:39.420202596Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2582,7 +2596,7 @@ entries:
     version: 1.9.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.238256062Z"
+    created: "2026-11-02T17:50:39.418882111Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2596,7 +2610,7 @@ entries:
     version: 1.9.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.236944626Z"
+    created: "2026-11-02T17:50:39.417497759Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2610,7 +2624,7 @@ entries:
     version: 1.9.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.234997509Z"
+    created: "2026-11-02T17:50:39.415377669Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2624,7 +2638,7 @@ entries:
     version: 1.8.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.233703172Z"
+    created: "2026-11-02T17:50:39.414165073Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2638,7 +2652,7 @@ entries:
     version: 1.7.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.23251624Z"
+    created: "2026-11-02T17:50:39.412969592Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2652,7 +2666,7 @@ entries:
     version: 1.6.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.231331573Z"
+    created: "2026-11-02T17:50:39.411776605Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2666,7 +2680,7 @@ entries:
     version: 1.6.1-b838543c7a2f3be8bde86768bfcc1b6b31409cf1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.230120272Z"
+    created: "2026-11-02T17:50:39.410559151Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2680,7 +2694,7 @@ entries:
     version: 1.6.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.228939354Z"
+    created: "2026-11-02T17:50:39.409378226Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2694,7 +2708,7 @@ entries:
     version: 1.5.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.227813329Z"
+    created: "2026-11-02T17:50:39.408250748Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2708,7 +2722,7 @@ entries:
     version: 1.4.8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.226672107Z"
+    created: "2026-11-02T17:50:39.407126676Z"
     dependencies:
     - name: argus-config
       repository: https://chanzuckerberg.github.io/argo-helm-charts
@@ -2722,7 +2736,7 @@ entries:
     version: 1.4.5
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.225437356Z"
+    created: "2026-11-02T17:50:39.405917024Z"
     description: A Helm chart for Happy Stack
     digest: ee110618102c701946e6bb09b4fa4f6eb3b3959adce3bdf4428fd41a9f4b215f
     name: stack
@@ -2732,7 +2746,7 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.219724981Z"
+    created: "2026-11-02T17:50:39.399974434Z"
     description: A Helm chart for Happy Stack
     digest: 8b6ec66f9078ac1c677d072d985eab5a6a6bcdbab78b09bab71a61ab59eaf68f
     name: stack
@@ -2742,7 +2756,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.192872174Z"
+    created: "2026-11-02T17:50:39.372646411Z"
     description: A Helm chart for Happy Stack
     digest: e2ae1793c041325cf2d635c75197bcfdd09f5fd3443f34a8c9f0850a43e30a58
     name: stack
@@ -2752,7 +2766,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.19207185Z"
+    created: "2026-11-02T17:50:39.371820353Z"
     description: A Helm chart for Happy Stack
     digest: 940f2cbf5b42cf219771154aa398d6da0c48c58f97e9789326d522579a202420
     name: stack
@@ -2762,7 +2776,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-11-02T15:15:21.19128133Z"
+    created: "2026-11-02T17:50:39.370996741Z"
     description: A Helm chart for Happy Stack
     digest: 912e11610c23d133929f7088ccaf097cfed0441a80604d6ddb3b9f7eb9bad99a
     name: stack
@@ -2770,4 +2784,4 @@ entries:
     urls:
     - https://github.com/chanzuckerberg/argo-helm-charts/raw/artifacts/stack-1.1.2.tgz
     version: 1.1.2
-generated: "2026-11-02T15:15:21.098335088Z"
+generated: "2026-11-02T17:50:39.271638654Z"
