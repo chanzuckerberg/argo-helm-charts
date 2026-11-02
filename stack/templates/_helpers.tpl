@@ -654,6 +654,18 @@ for it are unaffected. Emits email twice because consumers read either spelling.
   {{- $d := mergeOverwrite (deepCopy $skeleton) $def -}}
   {{- if $d.oidc -}}
     {{- $_ := set $d "oidc" (mergeOverwrite (deepCopy $oidcSkeleton) $d.oidc) -}}
+    {{- $prov := $d.oidc.provider -}}
+    {{- if eq ($prov.issuer | default "") "https://czi.okta.com" -}}
+      {{- if not $prov.authorizationEndpoint -}}
+        {{- $_ := set $prov "authorizationEndpoint" "https://czi.okta.com/oauth2/v1/authorize" -}}
+      {{- end -}}
+      {{- if not $prov.tokenEndpoint -}}
+        {{- $_ := set $prov "tokenEndpoint" "https://czi.okta.com/oauth2/v1/token" -}}
+      {{- end -}}
+      {{- if not $prov.endSessionEndpoint -}}
+        {{- $_ := set $prov "endSessionEndpoint" "https://czi.okta.com/oauth2/v1/logout" -}}
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
   {{- $_ := set $out $name $d -}}
 {{- end -}}
@@ -968,6 +980,9 @@ oidc:
     {{- end }}
     {{- if $p.oidc.provider.tokenEndpoint }}
     tokenEndpoint: {{ $p.oidc.provider.tokenEndpoint | quote }}
+    {{- end }}
+    {{- if $p.oidc.provider.endSessionEndpoint }}
+    endSessionEndpoint: {{ $p.oidc.provider.endSessionEndpoint | quote }}
     {{- end }}
   {{- if $p.oidc.clientID }}
   clientID: {{ $p.oidc.clientID | quote }}

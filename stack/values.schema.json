@@ -1470,13 +1470,18 @@
                     "type": "object",
                     "properties": {
                       "authorizationEndpoint": {
-                        "description": "Override only when the provider lacks discovery, setting both endpoints disables end-session logout",
+                        "description": "Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only",
+                        "type": "string"
+                      },
+                      "endSessionEndpoint": {
+                        "description": "Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set",
                         "type": "string"
                       },
                       "issuer": {
                         "type": "string"
                       },
                       "tokenEndpoint": {
+                        "description": "Pin the token endpoint instead of discovering it, see authorizationEndpoint",
                         "type": "string"
                       }
                     },
