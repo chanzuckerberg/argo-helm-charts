@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.13.0...grafana-alloy-v0.14.0) (2026-11-02)
+
+
+### Features
+
+* **grafana-alloy:** add scrapeSelected to scrape named Services and Pods once per cluster ([#616](https://github.com/chanzuckerberg/argo-helm-charts/issues/616)) ([8a4dc05](https://github.com/chanzuckerberg/argo-helm-charts/commit/8a4dc059748f34574e94f26ada8c847246557fde))
+
 ## [0.13.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/grafana-alloy-v0.12.0...grafana-alloy-v0.13.0) (2026-11-02)
 
 
