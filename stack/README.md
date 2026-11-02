@@ -4238,11 +4238,12 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
-| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
-| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
-| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only |
+| - [endSessionEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint )       | No      | string | No         | -          | Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set                                                                                                                                                                                                                                                                       |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | Pin the token endpoint instead of discovering it, see authorizationEndpoint                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>2.1.40.1.6.14.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
@@ -4251,21 +4252,32 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+**Description:** Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.14.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint"></a>2.1.40.1.6.14.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > endSessionEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>2.1.40.1.6.14.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.14.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>2.1.40.1.6.14.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** Pin the token endpoint instead of discovering it, see authorizationEndpoint
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>2.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
@@ -8891,11 +8903,12 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
-| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
-| - [authorizationEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
-| - [issuer](#global_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
-| - [tokenEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+| Property                                                                                                      | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only |
+| - [endSessionEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint )       | No      | string | No         | -          | Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set                                                                                                                                                                                                                                                                       |
+| - [issuer](#global_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [tokenEndpoint](#global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | Pin the token endpoint instead of discovering it, see authorizationEndpoint                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ###### <a name="global_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>3.40.1.6.14.1. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
@@ -8904,21 +8917,32 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+**Description:** Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.14.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint"></a>3.40.1.6.14.2. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > endSessionEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set
+
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_issuer"></a>3.40.1.6.14.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.14.3. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="global_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>3.40.1.6.14.4. Property `stack > global > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** Pin the token endpoint instead of discovering it, see authorizationEndpoint
 
 ###### <a name="global_securityPolicies_additionalProperties_oidc_refreshToken"></a>3.40.1.6.15. Property `stack > global > securityPolicies > additionalProperties > oidc > refreshToken`
 
@@ -13562,11 +13586,12 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
-| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
-| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
-| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only |
+| - [endSessionEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint )       | No      | string | No         | -          | Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set                                                                                                                                                                                                                                                                       |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | Pin the token endpoint instead of discovering it, see authorizationEndpoint                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>4.1.40.1.6.14.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
@@ -13575,21 +13600,32 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+**Description:** Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.14.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint"></a>4.1.40.1.6.14.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > endSessionEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>4.1.40.1.6.14.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.14.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>4.1.40.1.6.14.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** Pin the token endpoint instead of discovering it, see authorizationEndpoint
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>4.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
@@ -18697,11 +18733,12 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | --------------------------------------------------------------------------------------------------- |
-| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Override only when the provider lacks discovery, setting both endpoints disables end-session logout |
-| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                   |
-| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | -                                                                                                   |
+| Property                                                                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [authorizationEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint ) | No      | string | No         | -          | Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only |
+| - [endSessionEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint )       | No      | string | No         | -          | Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set                                                                                                                                                                                                                                                                       |
+| - [issuer](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer )                               | No      | string | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| - [tokenEndpoint](#cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint )                 | No      | string | No         | -          | Pin the token endpoint instead of discovering it, see authorizationEndpoint                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_authorizationEndpoint"></a>7.1.40.1.6.14.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > authorizationEndpoint`
 
@@ -18710,21 +18747,32 @@ Must be one of:
 | **Type**     | `string` |
 | **Required** | No       |
 
-**Description:** Override only when the provider lacks discovery, setting both endpoints disables end-session logout
+**Description:** Pin the authorization endpoint instead of discovering it. Envoy Gateway fetches the provider well-known document while translating the policy and marks the policy Invalid if that call fails, which answers 500 on every route the policy covers, so pinning all three endpoints removes a synchronous dependency on the provider being reachable at translation time. Set endSessionEndpoint too, or logout falls back to clearing the local session only
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.14.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_endSessionEndpoint"></a>7.1.40.1.6.14.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > endSessionEndpoint`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Pin the end-session endpoint instead of discovering it. Required alongside the other two to keep provider-side logout working, since nothing is discovered once the endpoints are set
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_issuer"></a>7.1.40.1.6.14.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > issuer`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.14.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_provider_tokenEndpoint"></a>7.1.40.1.6.14.4. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > provider > tokenEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
+
+**Description:** Pin the token endpoint instead of discovering it, see authorizationEndpoint
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_oidc_refreshToken"></a>7.1.40.1.6.15. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > oidc > refreshToken`
 
