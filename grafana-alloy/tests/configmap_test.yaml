@@ -2262,3 +2262,114 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: '^\s*logging \{\s*level = "info"\s*\}\s*$'
+
+  - it: should not render selected scrapes by default
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+    asserts:
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "selected_'
+
+  - it: should scrape selected pods on the local node only
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+        scrapeSelected:
+          - name: dcgm
+            role: pod
+            namespace: cw-exporters
+            labelSelector: app.kubernetes.io/name=dcgm-exporter
+            portNumber: 9400
+            jobLabel: dcgm-exporter
+            scrapeInterval: 60s
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "selected_dcgm" \{\s*role = "pod"\s*namespaces \{\s*names = \["cw-exporters"\]\s*\}\s*selectors \{\s*role = "pod"\s*label = "app\.kubernetes\.io/name=dcgm-exporter"\s*field = "spec\.nodeName=" \+ coalesce\(sys\.env\("NODE_NAME"\)'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'regex\s*=\s*"9400"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'target_label = "job"\s*replacement  = "dcgm-exporter"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.scrape "selected_dcgm" \{[^}]*scrape_interval = "60s"[^}]*honor_labels    = true'
+
+  - it: should node-shard selected services by default and skip sharding when shardByNode is false
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+        scrapeSelected:
+          - name: syncer
+            namespace: tenant
+            nameRegex: tenant-syncer
+            portName: metrics
+          - name: plain
+            namespace: tenant
+            nameRegex: plain-exporter
+            portName: http
+            shardByNode: false
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.kubernetes "selected_syncer" \{\s*role = "endpoints"'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "selected_syncer" \{[\s\S]*?__meta_kubernetes_endpoint_node_name[\s\S]*?action        = "keepequal"'
+      - notMatchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "selected_plain" \{[^}]*?keepequal'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'regex\s*=\s*"tenant-syncer"'
+
+  - it: should apply metricRelabelConfigs to a selected scrape before the shared filter
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        metrics:
+          enabled: true
+      prometheusRemoteWrite:
+        enabled: true
+        endpoints:
+          - url: http://prometheus.svc/api/v1/write
+        scrapeSelected:
+          - name: sacct
+            namespace: tenant
+            nameRegex: sacct
+            metricRelabelConfigs:
+              - source_labels: [__name__]
+                regex: 'slurm_job_.*'
+                action: keep
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'forward_to      = \[prometheus\.relabel\.selected_sacct_post\.receiver\]'
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'prometheus\.relabel "selected_sacct_post" \{\s*forward_to = \[prometheus\.relabel\.filter_metrics\.receiver\][\s\S]*?regex         = "slurm_job_\.\*"'
