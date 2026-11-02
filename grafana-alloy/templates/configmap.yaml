@@ -1168,4 +1168,8 @@ data:
     }
     {{- end }}
 {{- end }}
+{{- with .Values.alloyConfig.extraContent }}
+
+{{ . | nindent 4 }}
+{{- end }}
 {{- end }}
