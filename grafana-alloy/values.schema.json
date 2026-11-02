@@ -302,6 +302,10 @@
             }
           }
         },
+        "extraContent": {
+          "description": "Extra Alloy configuration appended verbatim after content or after the generated collection config. Lets a release that hand-writes its pipeline in content add components without copying the whole pipeline per cluster.",
+          "type": "string"
+        },
         "logging": {
           "description": "Logging configuration for Alloy",
           "type": "object",
