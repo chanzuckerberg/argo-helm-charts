@@ -2214,3 +2214,51 @@ tests:
       - matchRegex:
           path: data["config.alloy"]
           pattern: 'discovery\.relabel "pushgateway" \{[\s\S]*?__meta_kubernetes_endpoint_node_name[\s\S]*?action        = "keepequal"'
+
+  - it: should append extraContent after a hand-written content pipeline
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        content: |
+          logging {
+            level = "info"
+          }
+        extraContent: |
+          prometheus.scrape "extra" {
+            targets    = []
+            forward_to = []
+          }
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'logging \{[\s\S]*prometheus\.scrape "extra"'
+
+  - it: should append extraContent after the generated collection config
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        extraContent: |
+          prometheus.scrape "extra" {
+            targets    = []
+            forward_to = []
+          }
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: 'discovery\.relabel "pod_logs"[\s\S]*prometheus\.scrape "extra"'
+
+  - it: should not change the config when extraContent is empty
+    set:
+      enabled: true
+      clusterName: test-cluster
+      alloyConfig:
+        content: |
+          logging {
+            level = "info"
+          }
+    asserts:
+      - matchRegex:
+          path: data["config.alloy"]
+          pattern: '^\s*logging \{\s*level = "info"\s*\}\s*$'

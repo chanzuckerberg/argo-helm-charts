@@ -201,6 +201,7 @@ alloyConfig:
   # @schema description: Custom Alloy configuration content (River format). If empty, uses default collection config.
   # See https://grafana.com/docs/alloy/latest/reference/config-blocks/
   content: ""
+  extraContent: "" # @schema description: Extra Alloy configuration appended verbatim after content or after the generated collection config. Lets a release that hand-writes its pipeline in content add components without copying the whole pipeline per cluster.
 
   # @schema description: Logging configuration for Alloy
   logging:
