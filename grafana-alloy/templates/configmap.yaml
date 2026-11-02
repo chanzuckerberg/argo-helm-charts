@@ -751,6 +751,110 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled }}
+    {{- range $s := .Values.prometheusRemoteWrite.scrapeSelected }}
+    {{- $id := printf "selected_%s" ($s.name | replace "-" "_") }}
+    {{- $pod := eq ($s.role | default "endpoints") "pod" }}
+    {{- $shard := true }}
+    {{- if hasKey $s "shardByNode" }}{{ $shard = $s.shardByNode }}{{ end }}
+    {{- $relabel := $s.metricRelabelConfigs | default list }}
+    discovery.kubernetes {{ $id | quote }} {
+      role = {{ if $pod }}"pod"{{ else }}"endpoints"{{ end }}
+      namespaces {
+        names = [{{ $s.namespace | quote }}]
+      }
+      {{- if or $s.labelSelector (and $pod $shard) }}
+      selectors {
+        role = {{ if $pod }}"pod"{{ else }}"endpoints"{{ end }}
+        {{- with $s.labelSelector }}
+        label = {{ . | quote }}
+        {{- end }}
+        {{- if and $pod $shard }}
+        field = "spec.nodeName=" + coalesce(sys.env("NODE_NAME"), sys.env("HOSTNAME"), constants.hostname)
+        {{- end }}
+      }
+      {{- end }}
+    }
+
+    discovery.relabel {{ $id | quote }} {
+      targets = discovery.kubernetes.{{ $id }}.targets
+      {{- with $s.nameRegex }}
+
+      rule {
+        source_labels = [{{ if $pod }}"__meta_kubernetes_pod_name"{{ else }}"__meta_kubernetes_service_name"{{ end }}]
+        regex         = {{ . | quote }}
+        action        = "keep"
+      }
+      {{- end }}
+      {{- with $s.portName }}
+
+      rule {
+        source_labels = [{{ if $pod }}"__meta_kubernetes_pod_container_port_name"{{ else }}"__meta_kubernetes_endpoint_port_name"{{ end }}]
+        regex         = {{ . | quote }}
+        action        = "keep"
+      }
+      {{- end }}
+      {{- with $s.portNumber }}
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_port_number"]
+        regex         = {{ . | toString | quote }}
+        action        = "keep"
+      }
+      {{- end }}
+      {{- if and (not $pod) $shard }}
+{{- include "grafana-alloy.shardByEndpointNode" $ | nindent 6 }}
+      {{- end }}
+
+      rule {
+        target_label = "__metrics_path__"
+        replacement  = {{ $s.metricsPath | default "/metrics" | quote }}
+      }
+      {{- if $s.jobLabel }}
+
+      rule {
+        target_label = "job"
+        replacement  = {{ $s.jobLabel | quote }}
+      }
+      {{- else if $pod }}
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_controller_name"]
+        separator     = "/"
+        target_label  = "job"
+      }
+      {{- else }}
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_service_name"]
+        separator     = "/"
+        target_label  = "job"
+      }
+      {{- end }}
+
+      rule {
+        source_labels = [{{ if $pod }}"__meta_kubernetes_pod_node_name"{{ else }}"__meta_kubernetes_endpoint_node_name"{{ end }}]
+        target_label  = "node"
+      }
+    }
+
+    prometheus.scrape {{ $id | quote }} {
+      targets         = discovery.relabel.{{ $id }}.output
+      forward_to      = [{{ if gt (len $relabel) 0 }}prometheus.relabel.{{ $id }}_post.receiver{{ else }}prometheus.relabel.filter_metrics.receiver{{ end }}]
+      scrape_interval = {{ $s.scrapeInterval | default ($.Values.prometheusRemoteWrite.scrapeInterval | default "1m") | quote }}
+      scrape_timeout  = {{ $s.scrapeTimeout | default ($.Values.prometheusRemoteWrite.scrapeTimeout | default "10s") | quote }}
+      honor_labels    = true
+    }
+    {{- if gt (len $relabel) 0 }}
+
+    prometheus.relabel {{ printf "%s_post" $id | quote }} {
+      forward_to = [prometheus.relabel.filter_metrics.receiver]
+{{ include "grafana-alloy.promRelabelRules" $relabel }}
+    }
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
     {{- if and .Values.alloyConfig.metrics.enabled .Values.prometheusRemoteWrite.enabled .Values.prometheusRemoteWrite.scrapeHostNodeExporter .Values.prometheusRemoteWrite.scrapeHostNodeExporter.enabled }}
     {{- with .Values.prometheusRemoteWrite.scrapeHostNodeExporter }}
     {{- $hneRelabel := .metricRelabelConfigs | default list }}

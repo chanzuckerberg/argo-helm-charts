@@ -648,6 +648,10 @@
             }
           }
         },
+        "scrapeSelected": {
+          "description": "Scrape specific Services (role endpoints) or Pods (role pod) by name. Each item - name, namespace, optional role (endpoints or pod, default endpoints), nameRegex (service or pod name), labelSelector, portName, portNumber (pod only), jobLabel, metricsPath, scrapeInterval, scrapeTimeout, shardByNode (default true, scrape each target once from the pod on its node), metricRelabelConfigs",
+          "type": "array"
+        },
         "scrapeSelfRemoteWriteMetrics": {
           "description": "Scrape this Alloy process /metrics (prometheus_remote_storage_* queue debug metrics) and send to remote_write for AMP cost/ingestion dashboards",
           "type": "object",
