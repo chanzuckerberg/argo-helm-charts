@@ -157,6 +157,10 @@ tests:
         equal:
           path: automountServiceAccountToken
           value: true
+      - documentIndex: 1
+        equal:
+          path: imagePullSecrets[0].name
+          value: core-platform-ecr
   - it: configures a cronjob grace period without changing other cronjobs
     set:
       cronJobs:
@@ -170,7 +174,7 @@ tests:
         equal:
           path: spec.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
           value: 110
-      - documentIndex: 1
+      - documentIndex: 2
         notExists:
           path: spec.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
 
@@ -189,13 +193,16 @@ tests:
         equal:
           path: spec.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
           value: 110
-      - documentIndex: 1
+      - documentIndex: 2
         equal:
           path: spec.jobTemplate.spec.template.spec.terminationGracePeriodSeconds
           value: 0
 
   - it: should not make service account for cronjob
     set:
+      global:
+        serviceAccount:
+          create: false
       cronJobs:
         job2:
           enabled: true
@@ -247,7 +254,7 @@ tests:
           args: ["arg1", "arg2"]
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
 
   - it: should forward suspend/completions/parallelism/completionMode/ttlSecondsAfterFinished
     set:
@@ -265,7 +272,7 @@ tests:
           command: ["hello-world"]
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - documentIndex: 0
         equal:
           path: spec.suspend
@@ -354,7 +361,7 @@ tests:
             tag: latest
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - documentIndex: 0
         exists:
           path: metadata.labels["argus/env-name"]
