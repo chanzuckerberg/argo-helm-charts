@@ -183,6 +183,7 @@ global: # @schema description: Global configuration for the stack - this serves 
     annotations: {} # @schema description: Annotations to add to the service account
     imagePullSecrets: # @schema type: array; item: object; itemProperties: {"name": {"type": "string"}}
       - name: core-platform-ecr
+      - name: dhi-oci-registry
     name: "" # @schema description: Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
   podSecurityContext: # @schema description: Pod security context
