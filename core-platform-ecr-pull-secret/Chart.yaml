@@ -1,0 +1,5 @@
+apiVersion: v2
+name: core-platform-ecr-pull-secret
+description: Distributes core-platform-prod ECR credentials with External Secrets
+type: application
+version: 0.1.0
