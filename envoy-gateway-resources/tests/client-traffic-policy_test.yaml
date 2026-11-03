@@ -24,14 +24,22 @@ tests:
       - equal:
           path: spec.proxyProtocol.optional
           value: false
+      - equal:
+          path: spec.path.escapedSlashesAction
+          value: KeepUnchanged
 
-  - it: should render nothing when proxyProtocol and hsts are both off
+  - it: should preserve escaped slashes when proxyProtocol and hsts are both off
     set:
       proxyProtocol:
         enabled: false
     asserts:
       - hasDocuments:
-          count: 0
+          count: 1
+      - equal:
+          path: spec.path.escapedSlashesAction
+          value: KeepUnchanged
+      - notExists:
+          path: spec.proxyProtocol
 
   - it: should not set HSTS by default
     asserts:
