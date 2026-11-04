@@ -1,0 +1,45 @@
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: ECRAuthorizationToken
+metadata:
+  name: core-platform-ecr-source
+  namespace: {{ .Values.serviceAccountRef.namespace }}
+spec:
+  region: {{ .Values.aws.region }}
+  scope: private
+  auth:
+    jwt:
+      serviceAccountRef:
+        name: {{ .Values.serviceAccountRef.name }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: core-platform-ecr-source
+  namespace: {{ .Values.serviceAccountRef.namespace }}
+spec:
+  refreshInterval: {{ .Values.refreshInterval }}
+  target:
+    name: core-platform-ecr-source
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/dockerconfigjson
+      metadata:
+        annotations:
+          expiresAt: "{{ `{{ .expires_at }}` }}"
+      data:
+        .dockerconfigjson: |
+          {
+            "auths": {
+              "{{ .Values.registry }}": {
+                "username": "{{ `{{ .username }}` }}",
+                "password": "{{ `{{ .password }}` }}",
+                "auth": "{{ `{{ printf "%s:%s" .username .password | b64enc }}` }}"
+              }
+            }
+          }
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: ECRAuthorizationToken
+          name: core-platform-ecr-source
