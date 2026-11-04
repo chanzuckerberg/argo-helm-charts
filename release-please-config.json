@@ -21,6 +21,9 @@
     }
   ],
   "packages": {
+    "core-platform-ecr-pull-secret": {
+      "package-name": "core-platform-ecr-pull-secret"
+    },
     "argus-config": {
       "package-name": "argus-config"
     },
