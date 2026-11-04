@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/core-platform-ecr-pull-secret",
+  "title": "core-platform-ecr-pull-secret",
+  "type": "object",
+  "properties": {
+    "aws": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string"
+        }
+      }
+    },
+    "readerServiceAccountName": {
+      "type": "string"
+    },
+    "refreshInterval": {
+      "type": "string"
+    },
+    "registry": {
+      "type": "string"
+    },
+    "replicationRefreshInterval": {
+      "type": "string"
+    },
+    "serviceAccountRef": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

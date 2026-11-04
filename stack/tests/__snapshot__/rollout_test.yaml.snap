@@ -94,7 +94,7 @@ should work and render a Rollout with default values:
             kubernetes.io/arch: arm64
           restartPolicy: Always
           securityContext: {}
-          serviceAccountName: default
+          serviceAccountName: release-name-stack-service1
           shareProcessNamespace: false
           topologySpreadConstraints:
             - labelSelector:
@@ -218,7 +218,7 @@ should work and render a Rollout with supplied values:
             kubernetes.io/arch: arm64
           restartPolicy: Always
           securityContext: {}
-          serviceAccountName: default
+          serviceAccountName: release-name-stack-service1
           shareProcessNamespace: false
           topologySpreadConstraints:
             - labelSelector:
