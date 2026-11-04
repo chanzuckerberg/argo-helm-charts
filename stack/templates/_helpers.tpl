@@ -1011,7 +1011,7 @@ SecurityPolicy).
 {{- if le $allowed 0 -}}
 {{- fail (printf "the public route's RequestHeaderModifier would remove %d headers, but Gateway API allows 16. gateway.requestHeaders.remove cannot add any more on a service with skipAuth; the %d identity headers removed there automatically already fill the limit." (len $remove) $identityCount) -}}
 {{- else -}}
-{{- fail (printf "the public route's RequestHeaderModifier would remove %d headers, but Gateway API allows 16. gateway.requestHeaders.remove may list at most %d headers on a service with skipAuth, because %d identity headers are removed there automatically." (len $remove) $allowed $identityCount) -}}
+{{- fail (printf "the public route's RequestHeaderModifier would remove %d headers, but Gateway API allows 16. gateway.requestHeaders.remove may list at most %d headers outside the identity set on a service with skipAuth (an entry that repeats an identity header does not count), because %d identity headers are removed there automatically." (len $remove) $allowed $identityCount) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
