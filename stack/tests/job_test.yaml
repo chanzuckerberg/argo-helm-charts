@@ -106,6 +106,14 @@ tests:
         equal:
           path: automountServiceAccountToken
           value: true
+      - documentIndex: 1
+        equal:
+          path: imagePullSecrets[0].name
+          value: core-platform-ecr
+      - documentIndex: 1
+        equal:
+          path: imagePullSecrets[1].name
+          value: dhi-oci-registry
   - it: configures a job grace period without changing other jobs
     set:
       jobs:
@@ -117,7 +125,7 @@ tests:
         equal:
           path: spec.template.spec.terminationGracePeriodSeconds
           value: 110
-      - documentIndex: 1
+      - documentIndex: 2
         notExists:
           path: spec.template.spec.terminationGracePeriodSeconds
 
@@ -134,13 +142,16 @@ tests:
         equal:
           path: spec.template.spec.terminationGracePeriodSeconds
           value: 110
-      - documentIndex: 1
+      - documentIndex: 2
         equal:
           path: spec.template.spec.terminationGracePeriodSeconds
           value: 0
 
   - it: should not make service account for job
     set:
+      global:
+        serviceAccount:
+          create: false
       jobs:
         job2:
           image:
