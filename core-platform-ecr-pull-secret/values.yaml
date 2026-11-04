@@ -3,7 +3,10 @@ aws:
 
 registry: 533267185808.dkr.ecr.us-west-2.amazonaws.com
 refreshInterval: 6h
+replicationRefreshInterval: 1h
 
 serviceAccountRef:
   name: external-secrets-sa
   namespace: external-secrets
+
+readerServiceAccountName: core-platform-ecr-reader
