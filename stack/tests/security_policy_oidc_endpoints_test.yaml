@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test OIDC provider endpoints are pinned so the policy needs no discovery fetch
+templates:
+- gateway-securitypolicy-shared.yaml
+tests:
+- it: should pin all three endpoints on the built-in oidc-protected-default policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.oidc.provider.issuer
+      value: https://czi.okta.com
+  - equal:
+      path: spec.oidc.provider.authorizationEndpoint
+      value: https://czi.okta.com/oauth2/v1/authorize
+  - equal:
+      path: spec.oidc.provider.tokenEndpoint
+      value: https://czi.okta.com/oauth2/v1/token
+  - equal:
+      path: spec.oidc.provider.endSessionEndpoint
+      value: https://czi.okta.com/oauth2/v1/logout
+- it: should pin all three endpoints on the built-in oidc-identity-headers policy
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-identity-headers
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.oidc.provider.authorizationEndpoint
+      value: https://czi.okta.com/oauth2/v1/authorize
+  - equal:
+      path: spec.oidc.provider.endSessionEndpoint
+      value: https://czi.okta.com/oauth2/v1/logout
+- it: should render endSessionEndpoint when a declared policy sets it
+  set:
+    global:
+      ingress:
+        enabled: false
+      securityPolicies:
+        cognito:
+          oidc:
+            clientID: abc123
+            clientSecretName: cognito-secret
+            provider:
+              issuer: https://cognito-idp.us-west-2.amazonaws.com/us-west-2_example
+              authorizationEndpoint: https://example.auth.us-west-2.amazoncognito.com/oauth2/authorize
+              tokenEndpoint: https://example.auth.us-west-2.amazoncognito.com/oauth2/token
+              endSessionEndpoint: https://example.auth.us-west-2.amazoncognito.com/logout
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: cognito
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.oidc.provider.endSessionEndpoint
+      value: https://example.auth.us-west-2.amazoncognito.com/logout
+- it: should omit the endpoints when a declared policy sets only an issuer
+  set:
+    global:
+      ingress:
+        enabled: false
+      securityPolicies:
+        discovery-based:
+          oidc:
+            clientID: abc123
+            clientSecretName: some-secret
+            provider:
+              issuer: https://idp.example.com
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: discovery-based
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      service1: {}
+  asserts:
+  - equal:
+      path: spec.oidc.provider.issuer
+      value: https://idp.example.com
+  - notExists:
+      path: spec.oidc.provider.authorizationEndpoint
+  - notExists:
+      path: spec.oidc.provider.tokenEndpoint
+  - notExists:
+      path: spec.oidc.provider.endSessionEndpoint
