@@ -1,5 +1,6 @@
 {
-  "stack": "2.65.0",
+  "core-platform-ecr-pull-secret": "1.0.0",
+  "stack": "2.66.0",
   "argus-config": "1.8.0",
   "sso-secret": "0.3.0",
   "grafana": "0.13.0",

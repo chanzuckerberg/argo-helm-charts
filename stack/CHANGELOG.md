@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.66.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.65.0...stack-v2.66.0) (2026-11-04)
+
+
+### Features
+
+* **stack:** attach platform registry credentials ([#620](https://github.com/chanzuckerberg/argo-helm-charts/issues/620)) ([5ddb307](https://github.com/chanzuckerberg/argo-helm-charts/commit/5ddb30743f5bb1c96a5a66f610a7875102fe214f))
+
 ## [2.65.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.64.0...stack-v2.65.0) (2026-10-29)
 
 

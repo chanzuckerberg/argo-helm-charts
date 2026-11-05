@@ -12,10 +12,16 @@
         }
       }
     },
+    "readerServiceAccountName": {
+      "type": "string"
+    },
     "refreshInterval": {
       "type": "string"
     },
     "registry": {
+      "type": "string"
+    },
+    "replicationRefreshInterval": {
       "type": "string"
     },
     "serviceAccountRef": {

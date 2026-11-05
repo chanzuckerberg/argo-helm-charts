@@ -76,7 +76,7 @@ must respect the following conditions
 | - [gateway](#cronJobs_pattern1_gateway )                                             | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [image](#cronJobs_pattern1_image )                                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                           | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                           | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [ingress](#cronJobs_pattern1_ingress )                                             | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [initContainers](#cronJobs_pattern1_initContainers )                               | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
 | - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                             | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
@@ -1827,7 +1827,7 @@ Must be one of:
 
 |              |                   |
 | ------------ | ----------------- |
-| **Type**     | `array of string` |
+| **Type**     | `array of object` |
 | **Required** | No                |
 
 |                      | Array restrictions |
@@ -1843,6 +1843,18 @@ Must be one of:
 | [imagePullSecrets items](#cronJobs_pattern1_imagePullSecrets_items) | -           |
 
 ##### <a name="cronJobs_pattern1_imagePullSecrets_items"></a>2.1.19.1. stack > cronJobs > ^.*$ > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_imagePullSecrets_items_name"></a>2.1.19.1.1. Property `stack > cronJobs > ^.*$ > imagePullSecrets > imagePullSecrets items > name`
 
 |              |          |
 | ------------ | -------- |
@@ -4379,12 +4391,13 @@ Must be one of:
 
 **Description:** Service account configuration
 
-| Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                   |
-| --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_serviceAccount_annotations ) | No      | object  | No         | -          | Annotations to add to the service account                                                                           |
-| - [automount](#cronJobs_pattern1_serviceAccount_automount )     | No      | boolean | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
-| - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
-| - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
+| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                   |
+| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_serviceAccount_annotations )           | No      | object          | No         | -          | Annotations to add to the service account                                                                           |
+| - [automount](#cronJobs_pattern1_serviceAccount_automount )               | No      | boolean         | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
+| - [create](#cronJobs_pattern1_serviceAccount_create )                     | No      | boolean         | No         | -          | Specifies whether a service account should be created                                                               |
+| - [imagePullSecrets](#cronJobs_pattern1_serviceAccount_imagePullSecrets ) | No      | array of object | No         | -          | -                                                                                                                   |
+| - [name](#cronJobs_pattern1_serviceAccount_name )                         | No      | string          | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
 ##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>2.1.42.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
@@ -4414,7 +4427,45 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets"></a>2.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                    | Description |
+| ---------------------------------------------------------------------------------- | ----------- |
+| [imagePullSecrets items](#cronJobs_pattern1_serviceAccount_imagePullSecrets_items) | -           |
+
+###### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets_items"></a>2.1.42.4.1. stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_serviceAccount_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets_items_name"></a>2.1.42.4.1.1. Property `stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets > imagePullSecrets items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>2.1.42.5. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -4739,7 +4790,7 @@ Must be one of:
 | - [gateway](#global_gateway )                                             | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [grafanaDashboard](#global_grafanaDashboard )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [image](#global_image )                                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [imagePullSecrets](#global_imagePullSecrets )                           | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#global_imagePullSecrets )                           | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [ingress](#global_ingress )                                             | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [initContainers](#global_initContainers )                               | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
 | - [kedaAutoscaling](#global_kedaAutoscaling )                             | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
@@ -6490,7 +6541,7 @@ Must be one of:
 
 |              |                   |
 | ------------ | ----------------- |
-| **Type**     | `array of string` |
+| **Type**     | `array of object` |
 | **Required** | No                |
 
 |                      | Array restrictions |
@@ -6506,6 +6557,18 @@ Must be one of:
 | [imagePullSecrets items](#global_imagePullSecrets_items) | -           |
 
 #### <a name="global_imagePullSecrets_items"></a>3.19.1. stack > global > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                       | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#global_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+##### <a name="global_imagePullSecrets_items_name"></a>3.19.1.1. Property `stack > global > imagePullSecrets > imagePullSecrets items > name`
 
 |              |          |
 | ------------ | -------- |
@@ -9042,12 +9105,13 @@ Must be one of:
 
 **Description:** Service account configuration
 
-| Property                                             | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                   |
-| ---------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#global_serviceAccount_annotations ) | No      | object  | No         | -          | Annotations to add to the service account                                                                           |
-| - [automount](#global_serviceAccount_automount )     | No      | boolean | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
-| - [create](#global_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
-| - [name](#global_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
+| Property                                                       | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                   |
+| -------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#global_serviceAccount_annotations )           | No      | object          | No         | -          | Annotations to add to the service account                                                                           |
+| - [automount](#global_serviceAccount_automount )               | No      | boolean         | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
+| - [create](#global_serviceAccount_create )                     | No      | boolean         | No         | -          | Specifies whether a service account should be created                                                               |
+| - [imagePullSecrets](#global_serviceAccount_imagePullSecrets ) | No      | array of object | No         | -          | -                                                                                                                   |
+| - [name](#global_serviceAccount_name )                         | No      | string          | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
 #### <a name="global_serviceAccount_annotations"></a>3.42.1. Property `stack > global > serviceAccount > annotations`
 
@@ -9077,7 +9141,45 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-#### <a name="global_serviceAccount_name"></a>3.42.4. Property `stack > global > serviceAccount > name`
+#### <a name="global_serviceAccount_imagePullSecrets"></a>3.42.4. Property `stack > global > serviceAccount > imagePullSecrets`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                         | Description |
+| ----------------------------------------------------------------------- | ----------- |
+| [imagePullSecrets items](#global_serviceAccount_imagePullSecrets_items) | -           |
+
+##### <a name="global_serviceAccount_imagePullSecrets_items"></a>3.42.4.1. stack > global > serviceAccount > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                      | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#global_serviceAccount_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="global_serviceAccount_imagePullSecrets_items_name"></a>3.42.4.1.1. Property `stack > global > serviceAccount > imagePullSecrets > imagePullSecrets items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="global_serviceAccount_name"></a>3.42.5. Property `stack > global > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -9420,7 +9522,7 @@ must respect the following conditions
 | - [gateway](#cronJobs_pattern1_gateway )                                             | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [image](#cronJobs_pattern1_image )                                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                           | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                           | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [ingress](#cronJobs_pattern1_ingress )                                             | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [initContainers](#cronJobs_pattern1_initContainers )                               | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
 | - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                             | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
@@ -11171,7 +11273,7 @@ Must be one of:
 
 |              |                   |
 | ------------ | ----------------- |
-| **Type**     | `array of string` |
+| **Type**     | `array of object` |
 | **Required** | No                |
 
 |                      | Array restrictions |
@@ -11187,6 +11289,18 @@ Must be one of:
 | [imagePullSecrets items](#cronJobs_pattern1_imagePullSecrets_items) | -           |
 
 ##### <a name="cronJobs_pattern1_imagePullSecrets_items"></a>4.1.19.1. stack > cronJobs > ^.*$ > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_imagePullSecrets_items_name"></a>4.1.19.1.1. Property `stack > cronJobs > ^.*$ > imagePullSecrets > imagePullSecrets items > name`
 
 |              |          |
 | ------------ | -------- |
@@ -13723,12 +13837,13 @@ Must be one of:
 
 **Description:** Service account configuration
 
-| Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                   |
-| --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_serviceAccount_annotations ) | No      | object  | No         | -          | Annotations to add to the service account                                                                           |
-| - [automount](#cronJobs_pattern1_serviceAccount_automount )     | No      | boolean | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
-| - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
-| - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
+| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                   |
+| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_serviceAccount_annotations )           | No      | object          | No         | -          | Annotations to add to the service account                                                                           |
+| - [automount](#cronJobs_pattern1_serviceAccount_automount )               | No      | boolean         | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
+| - [create](#cronJobs_pattern1_serviceAccount_create )                     | No      | boolean         | No         | -          | Specifies whether a service account should be created                                                               |
+| - [imagePullSecrets](#cronJobs_pattern1_serviceAccount_imagePullSecrets ) | No      | array of object | No         | -          | -                                                                                                                   |
+| - [name](#cronJobs_pattern1_serviceAccount_name )                         | No      | string          | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
 ##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>4.1.42.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
@@ -13758,7 +13873,45 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets"></a>4.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                    | Description |
+| ---------------------------------------------------------------------------------- | ----------- |
+| [imagePullSecrets items](#cronJobs_pattern1_serviceAccount_imagePullSecrets_items) | -           |
+
+###### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets_items"></a>4.1.42.4.1. stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_serviceAccount_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets_items_name"></a>4.1.42.4.1.1. Property `stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets > imagePullSecrets items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>4.1.42.5. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |
@@ -14565,7 +14718,7 @@ must respect the following conditions
 | - [gateway](#cronJobs_pattern1_gateway )                                             | No      | object           | No         | -                       | Gateway API HTTPRoute configuration                                                                                                                                                                                                                                                                                                                                                                                          |
 | - [grafanaDashboard](#cronJobs_pattern1_grafanaDashboard )                           | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [image](#cronJobs_pattern1_image )                                                 | No      | object           | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                           | No      | array of string  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| - [imagePullSecrets](#cronJobs_pattern1_imagePullSecrets )                           | No      | array of object  | No         | -                       | -                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | - [ingress](#cronJobs_pattern1_ingress )                                             | No      | object           | No         | -                       | Ingress configuration                                                                                                                                                                                                                                                                                                                                                                                                        |
 | - [initContainers](#cronJobs_pattern1_initContainers )                               | No      | array            | No         | -                       | List of init containers                                                                                                                                                                                                                                                                                                                                                                                                      |
 | - [kedaAutoscaling](#cronJobs_pattern1_kedaAutoscaling )                             | No      | object           | No         | -                       | KEDA autoscaling configuration (creates a ScaledObject instead of HPA)                                                                                                                                                                                                                                                                                                                                                       |
@@ -16316,7 +16469,7 @@ Must be one of:
 
 |              |                   |
 | ------------ | ----------------- |
-| **Type**     | `array of string` |
+| **Type**     | `array of object` |
 | **Required** | No                |
 
 |                      | Array restrictions |
@@ -16332,6 +16485,18 @@ Must be one of:
 | [imagePullSecrets items](#cronJobs_pattern1_imagePullSecrets_items) | -           |
 
 ##### <a name="cronJobs_pattern1_imagePullSecrets_items"></a>7.1.19.1. stack > cronJobs > ^.*$ > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                  | Pattern | Type   | Deprecated | Definition | Title/Description |
+| --------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_imagePullSecrets_items_name"></a>7.1.19.1.1. Property `stack > cronJobs > ^.*$ > imagePullSecrets > imagePullSecrets items > name`
 
 |              |          |
 | ------------ | -------- |
@@ -18868,12 +19033,13 @@ Must be one of:
 
 **Description:** Service account configuration
 
-| Property                                                        | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                   |
-| --------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
-| - [annotations](#cronJobs_pattern1_serviceAccount_annotations ) | No      | object  | No         | -          | Annotations to add to the service account                                                                           |
-| - [automount](#cronJobs_pattern1_serviceAccount_automount )     | No      | boolean | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
-| - [create](#cronJobs_pattern1_serviceAccount_create )           | No      | boolean | No         | -          | Specifies whether a service account should be created                                                               |
-| - [name](#cronJobs_pattern1_serviceAccount_name )               | No      | string  | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
+| Property                                                                  | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                   |
+| ------------------------------------------------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| - [annotations](#cronJobs_pattern1_serviceAccount_annotations )           | No      | object          | No         | -          | Annotations to add to the service account                                                                           |
+| - [automount](#cronJobs_pattern1_serviceAccount_automount )               | No      | boolean         | No         | -          | Specifies whether to automatically mount a ServiceAccount's API credentials                                         |
+| - [create](#cronJobs_pattern1_serviceAccount_create )                     | No      | boolean         | No         | -          | Specifies whether a service account should be created                                                               |
+| - [imagePullSecrets](#cronJobs_pattern1_serviceAccount_imagePullSecrets ) | No      | array of object | No         | -          | -                                                                                                                   |
+| - [name](#cronJobs_pattern1_serviceAccount_name )                         | No      | string          | No         | -          | Name of the service account to use (if not set and create is true, a name is generated using the fullname template) |
 
 ##### <a name="cronJobs_pattern1_serviceAccount_annotations"></a>7.1.42.1. Property `stack > cronJobs > ^.*$ > serviceAccount > annotations`
 
@@ -18903,7 +19069,45 @@ Must be one of:
 
 **Description:** Specifies whether a service account should be created
 
-##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
+##### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets"></a>7.1.42.4. Property `stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets`
+
+|              |                   |
+| ------------ | ----------------- |
+| **Type**     | `array of object` |
+| **Required** | No                |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | See below          |
+
+| Each item of this array must be                                                    | Description |
+| ---------------------------------------------------------------------------------- | ----------- |
+| [imagePullSecrets items](#cronJobs_pattern1_serviceAccount_imagePullSecrets_items) | -           |
+
+###### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets_items"></a>7.1.42.4.1. stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets > imagePullSecrets items
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [name](#cronJobs_pattern1_serviceAccount_imagePullSecrets_items_name ) | No      | string | No         | -          | -                 |
+
+###### <a name="cronJobs_pattern1_serviceAccount_imagePullSecrets_items_name"></a>7.1.42.4.1.1. Property `stack > cronJobs > ^.*$ > serviceAccount > imagePullSecrets > imagePullSecrets items > name`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="cronJobs_pattern1_serviceAccount_name"></a>7.1.42.5. Property `stack > cronJobs > ^.*$ > serviceAccount > name`
 
 |              |          |
 | ------------ | -------- |

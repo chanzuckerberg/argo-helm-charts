@@ -62,7 +62,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   command: [] # @schema type: array; item: string; description: Command to run in the primary container
   args: [] # @schema type: array; item: string; description: Arguments to pass to the command in the primary container
 
-  imagePullSecrets: [] # @schema type: array; item: string
+  imagePullSecrets: [] # @schema type: array; item: object; itemProperties: {"name": {"type": "string"}}
   nameOverride: "" # @schema description: Name to prefix the K8s resources with, combined with the stack name prefix
   fullnameOverride: "" # @schema description: Name to prefix the K8s resources with, replaces the stack name prefix
 
@@ -178,9 +178,12 @@ global: # @schema description: Global configuration for the stack - this serves 
   podLabels: {} # @schema description: Global labels to add to all pods
 
   serviceAccount: # @schema description: Service account configuration
-    create: false # @schema description: Specifies whether a service account should be created
+    create: true # @schema description: Specifies whether a service account should be created
     automount: true # @schema description: Specifies whether to automatically mount a ServiceAccount's API credentials
     annotations: {} # @schema description: Annotations to add to the service account
+    imagePullSecrets: # @schema type: array; item: object; itemProperties: {"name": {"type": "string"}}
+      - name: core-platform-ecr
+      - name: dhi-oci-registry
     name: "" # @schema description: Name of the service account to use (if not set and create is true, a name is generated using the fullname template)
 
   podSecurityContext: # @schema description: Pod security context

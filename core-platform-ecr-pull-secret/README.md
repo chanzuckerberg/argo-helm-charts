@@ -8,12 +8,14 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [aws](#aws )                             | No      | object | No         | -          | -                 |
-| - [refreshInterval](#refreshInterval )     | No      | string | No         | -          | -                 |
-| - [registry](#registry )                   | No      | string | No         | -          | -                 |
-| - [serviceAccountRef](#serviceAccountRef ) | No      | object | No         | -          | -                 |
+| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [aws](#aws )                                               | No      | object | No         | -          | -                 |
+| - [readerServiceAccountName](#readerServiceAccountName )     | No      | string | No         | -          | -                 |
+| - [refreshInterval](#refreshInterval )                       | No      | string | No         | -          | -                 |
+| - [registry](#registry )                                     | No      | string | No         | -          | -                 |
+| - [replicationRefreshInterval](#replicationRefreshInterval ) | No      | string | No         | -          | -                 |
+| - [serviceAccountRef](#serviceAccountRef )                   | No      | object | No         | -          | -                 |
 
 ## <a name="aws"></a>1. Property `core-platform-ecr-pull-secret > aws`
 
@@ -34,21 +36,35 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="refreshInterval"></a>2. Property `core-platform-ecr-pull-secret > refreshInterval`
+## <a name="readerServiceAccountName"></a>2. Property `core-platform-ecr-pull-secret > readerServiceAccountName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="registry"></a>3. Property `core-platform-ecr-pull-secret > registry`
+## <a name="refreshInterval"></a>3. Property `core-platform-ecr-pull-secret > refreshInterval`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-## <a name="serviceAccountRef"></a>4. Property `core-platform-ecr-pull-secret > serviceAccountRef`
+## <a name="registry"></a>4. Property `core-platform-ecr-pull-secret > registry`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="replicationRefreshInterval"></a>5. Property `core-platform-ecr-pull-secret > replicationRefreshInterval`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="serviceAccountRef"></a>6. Property `core-platform-ecr-pull-secret > serviceAccountRef`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -61,14 +77,14 @@
 | - [name](#serviceAccountRef_name )           | No      | string | No         | -          | -                 |
 | - [namespace](#serviceAccountRef_namespace ) | No      | string | No         | -          | -                 |
 
-### <a name="serviceAccountRef_name"></a>4.1. Property `core-platform-ecr-pull-secret > serviceAccountRef > name`
+### <a name="serviceAccountRef_name"></a>6.1. Property `core-platform-ecr-pull-secret > serviceAccountRef > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="serviceAccountRef_namespace"></a>4.2. Property `core-platform-ecr-pull-secret > serviceAccountRef > namespace`
+### <a name="serviceAccountRef_namespace"></a>6.2. Property `core-platform-ecr-pull-secret > serviceAccountRef > namespace`
 
 |              |          |
 | ------------ | -------- |
