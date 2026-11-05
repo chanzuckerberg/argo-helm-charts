@@ -13,10 +13,10 @@ jobs:
     runs-on: ARM64
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Check Release
         id: chart_released
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
@@ -41,29 +41,29 @@ jobs:
     steps:
       - name: Parse Tag
         id: parse_tag
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: return context.ref.replace('refs/tags/', '')
       - name: Branch
         id: branch
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: return 'artifacts'
       - name: Generate token
         id: generate_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.GH_ACTIONS_HELPER_APP_ID }}
           private-key: ${{ secrets.GH_ACTIONS_HELPER_PK }}
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ steps.branch.outputs.result }}
           token: ${{ steps.generate_token.outputs.token }}
-      - uses: azure/setup-helm@v4
+      - uses: azure/setup-helm@v5
         with:
           version: '3.15.2'
       - name: Publish charts
