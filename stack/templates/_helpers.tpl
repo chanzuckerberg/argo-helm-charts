@@ -513,6 +513,21 @@ auth mechanisms; combining them is unsupported.
 {{- end -}}
 
 {{/*
+Gateway-only service whose HTTPRoute would target an oauth2-proxy that is not deployed.
+Scoped to the post-cutover shape, where no Ingress remains to justify the proxy.
+*/}}
+{{- define "validate.oidcProxyBackendExists" -}}
+{{- $ := .ctx -}}
+{{- $v := $.Values -}}
+{{- $gatewayOidc := eq (include "securityPolicy.isOidc" (dict "root" .root "name" .name)) "true" -}}
+{{- if and $v.gateway.enabled (not $v.ingress.enabled) (not ($v.oidcProxy).enabled) (not $gatewayOidc) (not ($v.gateway.tlsPassthrough).enabled) -}}
+  {{- if or $v.ingress.oidcProtected $v.gateway.oidcProtected -}}
+    {{- fail (printf "service %q renders an HTTPRoute whose backend is the oauth2-proxy, but the Ingress is gone and global.oidcProxy.enabled is false, so that Service does not exist and the route answers 5xx. Note ingress.oidcProtected selects the proxy for gateway routes too, so removing an ingress block that set it to false is enough to cause this. Set oidcProtected: false on the service, or protect it with an OIDC gateway.securityPolicy." .name) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Whether the service needs a SecurityPolicy (any of oidc, basicAuth, cors, ipAllowList).
 Returns "true"/"" .
 */}}
