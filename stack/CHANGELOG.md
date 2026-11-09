@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.66.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.66.0...stack-v2.66.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* **stack:** fail the render when a gateway-only service routes to a disabled oauth2-proxy ([#626](https://github.com/chanzuckerberg/argo-helm-charts/issues/626)) ([48d9eaa](https://github.com/chanzuckerberg/argo-helm-charts/commit/48d9eaaf3c60363615f9efa09f2d6322661d0adc))
+
 ## [2.66.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.65.0...stack-v2.66.0) (2026-11-04)
 
 
