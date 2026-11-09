@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test that a route only targets the oauth2-proxy when the proxy is deployed
+templates:
+- ingress.yaml
+- httproute.yaml
+- listenerset.yaml
+- gateway-oidc.yaml
+- gateway-securitypolicy.yaml
+- oidc_proxy.yaml
+tests:
+- it: a gateway route inheriting ingress.oidcProtected fails when the proxy is off
+  set:
+    global:
+      oidcProxy:
+        enabled: false
+    services:
+      web:
+        ingress:
+          oidcProtected: true
+        gateway:
+          enabled: true
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - template: listenerset.yaml
+    failedTemplate:
+      errorPattern: 'service "web" renders an HTTPRoute whose backend is the oauth2-proxy'
+- it: coexistence is left alone, the Ingress still justifies the proxy
+  set:
+    global:
+      oidcProxy:
+        enabled: false
+    services:
+      web:
+        ingress:
+          enabled: true
+          oidcProtected: true
+        gateway:
+          enabled: true
+          dnsOwner: ingress
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - template: httproute.yaml
+    hasDocuments:
+      count: 1
+- it: an OIDC securityPolicy service renders with the proxy off
+  set:
+    global:
+      oidcProxy:
+        enabled: false
+      securityPolicies:
+        app-oidc:
+          oidc: {}
+    services:
+      web:
+        ingress:
+          oidcProtected: true
+        gateway:
+          enabled: true
+          securityPolicy: app-oidc
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - template: gateway-oidc.yaml
+    hasDocuments:
+      count: 1
+- it: an unprotected service renders with the proxy off
+  set:
+    global:
+      oidcProxy:
+        enabled: false
+    services:
+      web:
+        ingress:
+          oidcProtected: false
+        gateway:
+          enabled: true
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - template: httproute.yaml
+    hasDocuments:
+      count: 1
+- it: coexistence renders while the proxy is enabled
+  set:
+    global:
+      oidcProxy:
+        enabled: true
+    services:
+      web:
+        ingress:
+          enabled: true
+          oidcProtected: true
+        gateway:
+          enabled: true
+          dnsOwner: ingress
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - template: ingress.yaml
+    hasDocuments:
+      count: 1
+  - template: httproute.yaml
+    hasDocuments:
+      count: 1
