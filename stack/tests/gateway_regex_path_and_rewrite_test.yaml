@@ -1,0 +1,561 @@
+suite: test gateway regex path matching and regex path rewrite
+templates:
+  - templates/httproute.yaml
+  - templates/gateway-oidc.yaml
+  - templates/gateway-securitypolicy-shared.yaml
+  - templates/gateway-httproutefilter.yaml
+tests:
+  - it: renders a RegularExpression path match
+    template: templates/httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          paths:
+            - path: /api/v[0-9]+/.*
+              pathType: RegularExpression
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: RegularExpression
+      - equal:
+          path: spec.rules[0].matches[0].path.value
+          value: /api/v[0-9]+/.*
+
+  - it: still maps Exact and defaults everything else to PathPrefix
+    template: templates/httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          paths:
+            - path: /exact
+              pathType: Exact
+            - path: /prefix
+              pathType: Prefix
+            - path: /unspecified
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: Exact
+      - equal:
+          path: spec.rules[1].matches[0].path.type
+          value: PathPrefix
+      - equal:
+          path: spec.rules[2].matches[0].path.type
+          value: PathPrefix
+
+  - it: renders a RegularExpression path match on a custom-host rule
+    template: templates/httproute.yaml
+    documentIndex: 1
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          rules:
+            - host: other.example.com
+              paths:
+                - path: /api/(.*)
+                  pathType: RegularExpression
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.hostnames[0]
+          value: other.example.com
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: RegularExpression
+
+  - it: renders no HTTPRouteFilter when no rewrite is configured
+    template: templates/gateway-httproutefilter.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders an HTTPRouteFilter for a regex rewrite
+    template: templates/gateway-httproutefilter.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          paths:
+            - path: /api/(.*)
+              pathType: RegularExpression
+          pathRewrite:
+            pattern: /api/(.*)
+            substitution: /\1
+      services:
+        service1: {}
+    asserts:
+      - isKind:
+          of: HTTPRouteFilter
+      - equal:
+          path: apiVersion
+          value: gateway.envoyproxy.io/v1alpha1
+      - equal:
+          path: metadata.name
+          value: release-name-stack-service1-path-rewrite
+      - equal:
+          path: spec.urlRewrite.path.type
+          value: ReplaceRegexMatch
+      - equal:
+          path: spec.urlRewrite.path.replaceRegexMatch.pattern
+          value: /api/(.*)
+      - equal:
+          path: spec.urlRewrite.path.replaceRegexMatch.substitution
+          value: /\1
+
+  - it: attaches the filter to the route via an ExtensionRef
+    template: templates/httproute.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          paths:
+            - path: /api/(.*)
+              pathType: RegularExpression
+          pathRewrite:
+            pattern: /api/(.*)
+            substitution: /\1
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.rules[0].filters[0].type
+          value: ExtensionRef
+      - equal:
+          path: spec.rules[0].filters[0].extensionRef
+          value:
+            group: gateway.envoyproxy.io
+            kind: HTTPRouteFilter
+            name: release-name-stack-service1-path-rewrite
+
+  - it: attaches the filter to custom-host rules too
+    template: templates/httproute.yaml
+    documentIndex: 1
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          rules:
+            - host: other.example.com
+              paths:
+                - path: /api/(.*)
+                  pathType: RegularExpression
+          pathRewrite:
+            pattern: /api/(.*)
+            substitution: /\1
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.rules[0].filters[0].extensionRef.name
+          value: release-name-stack-service1-path-rewrite
+
+  - it: renders a per-service filter so two services do not collide
+    template: templates/gateway-httproutefilter.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+      services:
+        service1:
+          gateway:
+            pathRewrite:
+              pattern: /a/(.*)
+              substitution: /\1
+        service2:
+          gateway:
+            pathRewrite:
+              pattern: /b/(.*)
+              substitution: /\1
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: fails when a pattern is set without a substitution
+    template: templates/gateway-httproutefilter.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          pathRewrite:
+            pattern: /api/(.*)
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'service "service1" sets gateway.pathRewrite without a substitution. Use \1, \2 and so on to reference capture groups from the pattern, mirroring the nginx rewrite-target it replaces.'
+
+  - it: ignores a rewrite on a service with the gateway disabled
+    template: templates/gateway-httproutefilter.yaml
+    set:
+      global:
+        ingress:
+          enabled: true
+        gateway:
+          enabled: false
+          host: app.example.com
+          pathRewrite:
+            pattern: /api/(.*)
+            substitution: /\1
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders a RegularExpression path match on an OIDC-protected route
+    template: templates/gateway-oidc.yaml
+    documentIndex: 0
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /ui
+              pathType: Prefix
+            - path: /api/(.*)
+              pathType: RegularExpression
+          rules:
+            - host: other.example.com
+              paths:
+                - path: /v2/(.*)
+                  pathType: RegularExpression
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.hostnames[0]
+          value: app.example.com
+      - equal:
+          path: spec.rules[1].matches[0].path.type
+          value: RegularExpression
+
+  - it: renders a RegularExpression path match on an OIDC-protected custom-host rule
+    template: templates/gateway-oidc.yaml
+    documentIndex: 1
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /ui
+              pathType: Prefix
+            - path: /api/(.*)
+              pathType: RegularExpression
+          rules:
+            - host: other.example.com
+              paths:
+                - path: /v2/(.*)
+                  pathType: RegularExpression
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.hostnames[0]
+          value: other.example.com
+      - equal:
+          path: spec.rules[0].matches[0].path.type
+          value: RegularExpression
+
+  - it: renders the filter for a service the gateway auto-enables
+    template: templates/gateway-httproutefilter.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+      services:
+        service1:
+          gateway:
+            host: app.example.com
+            paths:
+              - path: /api/(.*)
+                pathType: RegularExpression
+            pathRewrite:
+              pattern: /api/(.*)
+              substitution: /\1
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: release-name-stack-service1-path-rewrite
+
+  - it: renders no filter for a TLS passthrough service that has no HTTPRoute
+    template: templates/gateway-httproutefilter.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          tlsPassthrough:
+            enabled: true
+          pathRewrite:
+            pattern: /api/(.*)
+            substitution: /\1
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: rejects skipAuth alongside a RegularExpression path, which would shadow the public route
+    template: templates/gateway-oidc.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /
+              pathType: Prefix
+            - path: /api/.*
+              pathType: RegularExpression
+          skipAuth:
+            - path: /api/healthz
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'service "service1" combines gateway.skipAuth with a RegularExpression path ("/api/.*"). Envoy Gateway ranks a regex match above a path prefix however specific the prefix is, so the protected route would win over the -public route and the paths meant to be unauthenticated would silently require login. The -public route covers gateway.host and every gateway.rules host, so a regex under either one shadows it. Express the protected routes as Prefix or Exact paths, or drop skipAuth and let the regex route carry the policy.'
+
+  - it: allows skipAuth when no path is a regex
+    template: templates/gateway-oidc.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /
+              pathType: Prefix
+          skipAuth:
+            - path: /api/healthz
+      services:
+        service1: {}
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: never derives the OIDC callback from a regex path
+    template: templates/gateway-securitypolicy-shared.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /api/v[0-9]+/.*
+              pathType: RegularExpression
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'the OAuth2 callback "/oauth2/callback" for security policy "oidc-protected-default" is not covered by any gateway path of the services attached to it (service1), so login would fail. Give one of them a Prefix path that covers it.'
+
+  - it: derives the OIDC callback from the Prefix path when a regex path is also present
+    template: templates/gateway-securitypolicy-shared.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /api/v[0-9]+/.*
+              pathType: RegularExpression
+            - path: /ui
+              pathType: Prefix
+      services:
+        service1: {}
+    asserts:
+      - equal:
+          path: spec.oidc.redirectURL
+          value: https://app.example.com/ui/oauth2/callback
+
+  - it: picks the Prefix sibling as group primary when another service is regex only
+    template: templates/gateway-securitypolicy-shared.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+      services:
+        api:
+          gateway:
+            paths:
+              - path: /api/.*
+                pathType: RegularExpression
+        ui:
+          gateway:
+            paths:
+              - path: /ui
+                pathType: Prefix
+    asserts:
+      - equal:
+          path: spec.oidc.redirectURL
+          value: https://app.example.com/ui/oauth2/callback
+
+  - it: picks the Prefix sibling regardless of which service sorts first
+    template: templates/gateway-securitypolicy-shared.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+      services:
+        aaa-ui:
+          gateway:
+            paths:
+              - path: /ui
+                pathType: Prefix
+        zzz-api:
+          gateway:
+            paths:
+              - path: /api/.*
+                pathType: RegularExpression
+    asserts:
+      - equal:
+          path: spec.oidc.redirectURL
+          value: https://app.example.com/ui/oauth2/callback
+
+  - it: still fails when every service in the group is regex only
+    template: templates/gateway-securitypolicy-shared.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+      services:
+        api:
+          gateway:
+            paths:
+              - path: /api/.*
+                pathType: RegularExpression
+        v2:
+          gateway:
+            paths:
+              - path: /v2/.*
+                pathType: RegularExpression
+    asserts:
+      - failedTemplate:
+          errorMessage: 'the OAuth2 callback "/oauth2/callback" for security policy "oidc-protected-default" is not covered by any gateway path of the services attached to it (api v2), so login would fail. Give one of them a Prefix path that covers it.'
+
+  - it: rejects skipAuth when the RegularExpression path lives in a custom-host rule
+    template: templates/gateway-oidc.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /
+              pathType: Prefix
+          rules:
+            - host: other.example.com
+              paths:
+                - path: /api/.*
+                  pathType: RegularExpression
+          skipAuth:
+            - path: /api/healthz
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorMessage: 'service "service1" combines gateway.skipAuth with a RegularExpression path ("/api/.*"). Envoy Gateway ranks a regex match above a path prefix however specific the prefix is, so the protected route would win over the -public route and the paths meant to be unauthenticated would silently require login. The -public route covers gateway.host and every gateway.rules host, so a regex under either one shadows it. Express the protected routes as Prefix or Exact paths, or drop skipAuth and let the regex route carry the policy.'
+
+  - it: allows skipAuth with custom-host rules that use no regex
+    template: templates/gateway-oidc.yaml
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+            - path: /
+              pathType: Prefix
+          rules:
+            - host: other.example.com
+              paths:
+                - path: /api
+                  pathType: Prefix
+          skipAuth:
+            - path: /api/healthz
+      services:
+        service1: {}
+    asserts:
+      - notFailedTemplate: {}

@@ -1,0 +1,23 @@
+{{- $global := . -}}
+{{ range $serviceName, $serviceValues := .Values.services }}
+  {{- $values := fromYaml (include "service.context" (dict "root" $global "name" $serviceName)) -}}
+  {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
+  {{- $rewrite := ($values.gateway).pathRewrite | default dict -}}
+  {{- if and ($values.gateway).enabled (not ($values.gateway).tlsPassthrough.enabled) $rewrite.pattern }}
+    {{- include "validate.pathRewrite" (dict "name" $serviceName "rewrite" $rewrite) -}}
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: HTTPRouteFilter
+metadata:
+  name: {{ include "gateway.pathRewriteName" $service }}
+  labels:
+    {{- include "stack.labels" $service | nindent 4 }}
+spec:
+  urlRewrite:
+    path:
+      type: ReplaceRegexMatch
+      replaceRegexMatch:
+        pattern: {{ $rewrite.pattern | quote }}
+        substitution: {{ $rewrite.substitution | quote }}
+  {{- end }}
+{{ end }}
