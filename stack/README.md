@@ -3677,10 +3677,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
-| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
-| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [realm](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_realm )           | No      | string  | No         | -          | Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>2.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
 
@@ -3689,7 +3690,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>2.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_realm"></a>2.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > realm`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>2.1.40.1.2.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
 
 |              |          |
 | ------------ | -------- |
@@ -8415,10 +8425,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
-| ----------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
-| - [enabled](#global_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
-| - [secretName](#global_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+| Property                                                                            | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#global_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [realm](#global_securityPolicies_additionalProperties_basicAuth_realm )           | No      | string  | No         | -          | Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched |
+| - [secretName](#global_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="global_securityPolicies_additionalProperties_basicAuth_enabled"></a>3.40.1.2.1. Property `stack > global > securityPolicies > additionalProperties > basicAuth > enabled`
 
@@ -8427,7 +8438,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="global_securityPolicies_additionalProperties_basicAuth_secretName"></a>3.40.1.2.2. Property `stack > global > securityPolicies > additionalProperties > basicAuth > secretName`
+###### <a name="global_securityPolicies_additionalProperties_basicAuth_realm"></a>3.40.1.2.2. Property `stack > global > securityPolicies > additionalProperties > basicAuth > realm`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched
+
+###### <a name="global_securityPolicies_additionalProperties_basicAuth_secretName"></a>3.40.1.2.3. Property `stack > global > securityPolicies > additionalProperties > basicAuth > secretName`
 
 |              |          |
 | ------------ | -------- |
@@ -13171,10 +13191,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
-| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
-| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [realm](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_realm )           | No      | string  | No         | -          | Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>4.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
 
@@ -13183,7 +13204,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>4.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_realm"></a>4.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > realm`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>4.1.40.1.2.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
 
 |              |          |
 | ------------ | -------- |
@@ -18391,10 +18421,11 @@ Must be one of:
 | **Required**              | No          |
 | **Additional properties** | Not allowed |
 
-| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                |
-| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ---------------------------------------------------------------- |
-| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                |
-| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead |
+| Property                                                                                       | Pattern | Type    | Deprecated | Definition | Title/Description                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - [enabled](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled )       | No      | boolean | No         | -          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| - [realm](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_realm )           | No      | string  | No         | -          | Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched |
+| - [secretName](#cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName ) | No      | string  | No         | -          | Opaque Secret with a .htpasswd key, note nginx uses auth instead                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_enabled"></a>7.1.40.1.2.1. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > enabled`
 
@@ -18403,7 +18434,16 @@ Must be one of:
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>7.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_realm"></a>7.1.40.1.2.2. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > realm`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+**Description:** Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches gateway-generated 401s only, so 401s the application returns and public skipAuth routes are untouched
+
+###### <a name="cronJobs_pattern1_securityPolicies_additionalProperties_basicAuth_secretName"></a>7.1.40.1.2.3. Property `stack > cronJobs > ^.*$ > securityPolicies > additionalProperties > basicAuth > secretName`
 
 |              |          |
 | ------------ | -------- |
