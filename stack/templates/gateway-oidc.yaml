@@ -75,11 +75,7 @@ spec:
     {{- range $service.Values.gateway.paths }}
     - matches:
         - path:
-            {{- if eq .pathType "Exact" }}
-            type: Exact
-            {{- else }}
-            type: PathPrefix
-            {{- end }}
+            type: {{ include "gateway.pathMatchType" .pathType }}
             value: {{ .path }}
       backendRefs:
         {{- include "service.backend.refs.direct" $service | nindent 8 }}
@@ -132,11 +128,7 @@ spec:
     {{- range $ruleValues.paths }}
     - matches:
         - path:
-            {{- if eq .pathType "Exact" }}
-            type: Exact
-            {{- else }}
-            type: PathPrefix
-            {{- end }}
+            type: {{ include "gateway.pathMatchType" .pathType }}
             value: {{ .path }}
       backendRefs:
         {{- include "service.backend.refs.direct" $service | nindent 8 }}
