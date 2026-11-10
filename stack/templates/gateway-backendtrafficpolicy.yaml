@@ -34,14 +34,19 @@
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
 
-{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (eq (include "gateway.hasBackendTrafficPolicy" .) "true") -}}
+{{- $hasTrafficSettings := eq (include "gateway.hasBackendTrafficPolicy" .) "true" -}}
+{{- $realm := include "gateway.basicAuthRealm" (dict "root" $global "name" .Values.name) -}}
+{{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (or $hasTrafficSettings (ne $realm "")) -}}
 {{- $g := .Values.gateway -}}
+{{- $hsts := include "gateway.hstsValue" . -}}
 {{- $routes := list (include "service.fullname" .) -}}
 {{- range $i, $rule := .Values.gateway.rules -}}
   {{- $routes = append $routes (printf "%s-rule-%d" (include "service.fullname" $service) $i) -}}
 {{- end -}}
-{{- if and (gt (len (.Values.gateway.skipAuth | default list)) 0) (ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "") -}}
-  {{- $routes = append $routes (printf "%s-public" (include "service.fullname" $service)) -}}
+{{- $publicRoute := "" -}}
+{{- if and $hasTrafficSettings (gt (len (.Values.gateway.skipAuth | default list)) 0) (ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "") -}}
+  {{- $publicRoute = printf "%s-public" (include "service.fullname" $service) -}}
+  {{- $routes = append $routes $publicRoute -}}
 {{- end -}}
 {{- range $routeName := $routes }}
 ---
@@ -93,6 +98,23 @@ spec:
   {{- end }}
   requestBuffer:
     limit: {{ $g.requestBuffer.limit | quote }}
+  {{- end }}
+  {{- if and (ne $realm "") (ne $routeName $publicRoute) }}
+  responseOverride:
+    - source: Local
+      match:
+        statusCodes:
+          - value: 401
+      response:
+        header:
+          set:
+            - name: WWW-Authenticate
+              value: {{ printf "Basic realm=%q" $realm | quote }}
+            - name: Strict-Transport-Security
+              value: {{ $hsts | quote }}
+        body:
+          type: Inline
+          inline: "User authentication failed."
   {{- end }}
 {{- end }}
 {{- end }}

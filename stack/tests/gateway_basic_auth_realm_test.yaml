@@ -1,0 +1,328 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test basic-auth realm pinning via BackendTrafficPolicy responseOverride
+templates:
+  - gateway-backendtrafficpolicy.yaml
+tests:
+  - it: should render a BackendTrafficPolicy with a 401 responseOverride when the policy sets a realm and nothing else needs one
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+              realm: "example realm"
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        isKind:
+          of: BackendTrafficPolicy
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: release-name-stack-service1-btp
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].source
+          value: Local
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].match.statusCodes[0].value
+          value: 401
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].response.header.set[0].name
+          value: WWW-Authenticate
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].response.header.set[0].value
+          value: Basic realm="example realm"
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].response.header.set[1].name
+          value: Strict-Transport-Security
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].response.header.set[1].value
+          value: "max-age=31536000; includeSubDomains"
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].response.body.inline
+          value: User authentication failed.
+      - documentIndex: 0
+        notExists:
+          path: spec.requestBuffer
+
+  - it: should put the realm override and requestBuffer in the same per-route policy
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+          requestBuffer:
+            enabled: true
+            limit: 25Mi
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+              realm: "example realm"
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.requestBuffer.limit
+          value: 25Mi
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].response.header.set[0].value
+          value: Basic realm="example realm"
+
+  - it: should cover the vanity rule route as well as the primary route
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+          rules:
+            - host: www.example.org
+              vanity:
+                enabled: true
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+              realm: "example realm"
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1
+      - documentIndex: 1
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1-rule-0
+      - documentIndex: 1
+        equal:
+          path: spec.responseOverride[0].response.header.set[0].value
+          value: Basic realm="example realm"
+
+  - it: should not render a policy for the public skipAuth route when the realm is the only setting
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+          skipAuth:
+            - path: /health
+              method: GET
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+              realm: "example realm"
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1
+
+  - it: should keep traffic settings on the public route but never the realm override
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+          requestBuffer:
+            enabled: true
+            limit: 25Mi
+          skipAuth:
+            - path: /health
+              method: GET
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+              realm: "example realm"
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 1
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1-public
+      - documentIndex: 1
+        equal:
+          path: spec.requestBuffer.limit
+          value: 25Mi
+      - documentIndex: 1
+        notExists:
+          path: spec.responseOverride
+      - documentIndex: 0
+        exists:
+          path: spec.responseOverride
+
+  - it: should restate a custom Strict-Transport-Security value from responseHeaders.set
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+          responseHeaders:
+            set:
+              - name: Strict-Transport-Security
+                value: "max-age=600"
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+              realm: "example realm"
+      services:
+        service1: {}
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].response.header.set[1].value
+          value: max-age=600
+
+  - it: should render no responseOverride when basic auth has no realm
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+          requestBuffer:
+            enabled: true
+            limit: 25Mi
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        notExists:
+          path: spec.responseOverride
+
+  - it: should render nothing for a service whose policy has no realm and no traffic settings
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+      services:
+        service1: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should fail when a realm is set without basic auth enabled
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+          securityPolicy: gate
+        securityPolicies:
+          gate:
+            cors:
+              enabled: true
+            basicAuth:
+              realm: "example realm"
+      services:
+        service1: {}
+    asserts:
+      - failedTemplate:
+          errorPattern: sets basicAuth.realm without basicAuth.enabled
+
+  - it: should not touch a service that attaches a different policy
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: api.example.com
+        securityPolicies:
+          gate:
+            basicAuth:
+              enabled: true
+              secretName: htpasswd
+              realm: "example realm"
+      services:
+        service1:
+          gateway:
+            securityPolicy: gate
+        service2:
+          gateway:
+            securityPolicy: oidc-protected-default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentIndex: 0
+        equal:
+          path: spec.targetRefs[0].name
+          value: release-name-stack-service1
