@@ -437,6 +437,7 @@ exact match. Returns "true"/"".
     {{- if eq .path $callback -}}
       {{- $covered = true -}}
     {{- end -}}
+  {{- else if eq .pathType "RegularExpression" -}}
   {{- else -}}
     {{- $p := trimSuffix "/" .path -}}
     {{- if or (eq $p "") (eq $p $callback) (hasPrefix (printf "%s/" $p) $callback) -}}
@@ -461,7 +462,7 @@ host root. Input dict: "paths" (list). Returns "" or "/prefix" with no trailing 
 {{- $base := "" -}}
 {{- $found := false -}}
 {{- range $paths -}}
-  {{- if and (not $found) (ne (.pathType | default "Prefix") "Exact") (ne (.path | default "/") "/") -}}
+  {{- if and (not $found) (ne (.pathType | default "Prefix") "Exact") (ne (.pathType | default "Prefix") "RegularExpression") (ne (.path | default "/") "/") -}}
     {{- $base = trimSuffix "/" .path -}}
     {{- $found = true -}}
   {{- end -}}
@@ -800,7 +801,7 @@ Takes (dict "root" $ "key" <groupKey>).
     {{- $base := include "oidcProxyGateway.basePath" (dict "paths" $paths) -}}
     {{- $canHost := false -}}
     {{- range $paths -}}
-      {{- if ne (.pathType | default "Prefix") "Exact" -}}{{- $canHost = true -}}{{- end -}}
+      {{- if and (ne (.pathType | default "Prefix") "Exact") (ne (.pathType | default "Prefix") "RegularExpression") -}}{{- $canHost = true -}}{{- end -}}
     {{- end -}}
     {{- if or (eq $primary "") (and $canHost (not $primaryCanHost)) (and (eq $canHost $primaryCanHost) (lt (len $base) (len $primaryBase))) -}}
       {{- $primary = $n -}}
@@ -913,6 +914,13 @@ handled separately as a whole-route rule.
 - type: URLRewrite
   urlRewrite:
     hostname: {{ $g.hostRewrite | quote }}
+{{- end }}
+{{- if ($g.pathRewrite).pattern }}
+- type: ExtensionRef
+  extensionRef:
+    group: gateway.envoyproxy.io
+    kind: HTTPRouteFilter
+    name: {{ include "gateway.pathRewriteName" . }}
 {{- end }}
 {{- $rh := $g.requestHeaders -}}
 {{- if and $rh (or $rh.set $rh.add $rh.remove) }}
@@ -1962,6 +1970,15 @@ spec:
   {{- range $i, $rule := .Values.gateway.rules }}
     - {{ $rule.host }}
   {{- end }}
+  {{- $protectedPaths := .Values.gateway.paths | default list -}}
+  {{- range .Values.gateway.rules -}}
+    {{- $protectedPaths = concat $protectedPaths (.paths | default $service.Values.gateway.paths | default list) -}}
+  {{- end -}}
+  {{- range $protectedPaths -}}
+    {{- if eq .pathType "RegularExpression" -}}
+      {{- fail (printf "service %q combines gateway.skipAuth with a RegularExpression path (%q). Envoy Gateway ranks a regex match above a path prefix however specific the prefix is, so the protected route would win over the -public route and the paths meant to be unauthenticated would silently require login. The -public route covers gateway.host and every gateway.rules host, so a regex under either one shadows it. Express the protected routes as Prefix or Exact paths, or drop skipAuth and let the regex route carry the policy." $service.Values.name .path) -}}
+    {{- end -}}
+  {{- end }}
   rules:
     {{- range (.Values.gateway.skipAuth | default list) }}
     {{- if not (hasPrefix "/" .path) }}
@@ -1995,3 +2012,27 @@ spec:
 {{- end }}
 {{- end -}}
 {{- end -}}
+
+{{- define "gateway.pathMatchType" -}}
+{{- if eq . "Exact" -}}
+Exact
+{{- else if eq . "RegularExpression" -}}
+RegularExpression
+{{- else -}}
+PathPrefix
+{{- end -}}
+{{- end }}
+
+{{- define "gateway.pathRewriteName" -}}
+{{ include "service.fullname" . }}-path-rewrite
+{{- end }}
+
+{{- define "validate.pathRewrite" -}}
+{{- $r := .rewrite -}}
+{{- if not $r.pattern -}}
+{{- fail (printf "service %q sets gateway.pathRewrite without a pattern. Envoy Gateway rewrites the path by regex, so both pattern and substitution are required." .name) -}}
+{{- end -}}
+{{- if not $r.substitution -}}
+{{- fail (printf "service %q sets gateway.pathRewrite without a substitution. Use \\1, \\2 and so on to reference capture groups from the pattern, mirroring the nginx rewrite-target it replaces." .name) -}}
+{{- end -}}
+{{- end }}
