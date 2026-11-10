@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.67.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.66.1...stack-v2.67.0) (2026-11-10)
+
+
+### Features
+
+* **stack:** gateway equivalents for nginx use-regex and rewrite-target ([#629](https://github.com/chanzuckerberg/argo-helm-charts/issues/629)) ([7111ee8](https://github.com/chanzuckerberg/argo-helm-charts/commit/7111ee8464c7141c9b7fd4ad32264d366f963e42))
+
 ## [2.66.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.66.0...stack-v2.66.1) (2026-11-06)
 
 
