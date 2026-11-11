@@ -108,10 +108,9 @@ global:
     annotations: {}
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
-    hosts:
-      - paths:
-          - path: /
-            pathType: ImplementationSpecific
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
