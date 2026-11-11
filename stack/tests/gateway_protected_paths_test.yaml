@@ -1465,7 +1465,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: as the OIDC callback path
-- it: should fail when a public Exact entry is an encoded spelling of a protected prefix
+- it: should fail when a public Exact entry contains a percent-encoded octet
   set:
     global:
       ingress:

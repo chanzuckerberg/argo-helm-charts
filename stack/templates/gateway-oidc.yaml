@@ -49,8 +49,8 @@
 {{- $protectedRules := list -}}
 {{- $publicRules := list -}}
 {{- if gt (len $protected) 0 -}}
-{{- /* Base path for the auto OIDC callback/logout rules: the group primary's base when the policy is shared. */ -}}
-{{- $basePath := include "stack.gateway.callbackBasePath" (dict "root" $global "service" $service) -}}
+{{- /* Base path for the auto OIDC callback/logout rules, from this service's gateway.paths. */ -}}
+{{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" .Values.gateway.paths) -}}
 {{- $protectedRules = fromYamlArray (include "stack.gateway.protectedRules" (dict "root" $global "service" $service "policy" $p "basePath" $basePath)) -}}
 {{- include "stack.gateway.assertNoCollisions" (dict "root" $global "service" $service "rules" $protectedRules) -}}
 {{- /* the -public route carries every gateway.paths entry, i.e. the public remainder */ -}}
