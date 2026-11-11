@@ -1624,7 +1624,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: lies outside every gateway.protectedPaths prefix
+      errorPattern: is not under a gateway.protectedPaths prefix
 - it: should accept an oidc.apiRoutes path under a protected prefix
   set:
     global:
@@ -1649,4 +1649,85 @@ tests:
   asserts:
   - hasDocuments:
       count: 2
+- it: should fail when an oidc.apiRoutes entry is a RegularExpression
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: api-admin
+        paths:
+        - path: /
+      securityPolicies:
+        api-admin:
+          oidc:
+            apiRoutes:
+            - path: ^/admin/api
+              matchType: RegularExpression
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: uses RegularExpression, which the chart cannot place
+- it: should fail when an oidc.apiRoutes path differs in case from a caseSensitive protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: api-admin
+        paths:
+        - path: /
+      securityPolicies:
+        api-admin:
+          oidc:
+            apiRoutes:
+            - path: /Admin/api
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+            caseSensitive: true
+  asserts:
+  - failedTemplate:
+      errorPattern: is not under a gateway.protectedPaths prefix
+- it: should fail when another service claims this host as a vanity hostname
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+          - path: /
+          protectedPaths:
+          - path: /admin
+      other:
+        gateway:
+          host: other.example.com
+          securityPolicy: none
+          paths:
+          - path: /
+          vanity:
+            enabled: true
+            hostname: app.example.com
+  asserts:
+  - failedTemplate:
+      errorPattern: service other also routes host app.example.com
 
