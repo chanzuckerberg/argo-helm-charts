@@ -1579,4 +1579,26 @@ tests:
   asserts:
   - hasDocuments:
       count: 2
+- it: should fail protectedPaths with gateway.pathRewrite, which could rewrite a public request onto a protected path
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+        pathRewrite:
+          pattern: "^/public$"
+          substitution: "/admin"
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: sets gateway.protectedPaths with gateway.pathRewrite
 
