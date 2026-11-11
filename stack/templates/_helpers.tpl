@@ -2206,6 +2206,9 @@ PathPrefix
 {{- if ($service.Values.gateway.redirect | default dict).enabled -}}
 {{- fail (printf "service %s sets gateway.protectedPaths with gateway.redirect.enabled. A redirect-only route serves no backend, so there is nothing to protect; remove one or the other." $service.Values.name) -}}
 {{- end -}}
+{{- if (($service.Values.gateway.pathRewrite | default dict).pattern) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with gateway.pathRewrite. The rewrite filter attaches to every rule, including the -public remainder, so a public request could be rewritten onto a protected path and reach the backend without login. Remove one or the other." $service.Values.name) -}}
+{{- end -}}
 {{- /* The remainder renders on the -public route, and Envoy Gateway ranks a regex match above any prefix, so a regex entry there would shadow every protected prefix. */ -}}
 {{- range $service.Values.gateway.paths -}}
 {{- if eq (.pathType | default "Prefix") "RegularExpression" -}}
