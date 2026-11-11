@@ -598,7 +598,7 @@ tests:
     notContains:
       path: spec.rules[0].filters[0].requestHeaderModifier.remove
       content: x-debug
-- it: regression guard - the public strip set covers every header the resolved policy injects
+- it: should strip every header a policy with forwardAccessToken, forwardIDToken and claimToHeaders injects
   set:
     global:
       ingress:

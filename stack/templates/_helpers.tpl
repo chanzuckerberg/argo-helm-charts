@@ -926,15 +926,12 @@ backendRequest: {{ $t.backendRequest | quote }}
 {{- end -}}
 
 {{/*
-Rule filters for the policy-less -public route that gateway.skipAuth renders. Like
-gateway.ruleFiltersInner, plus a RequestHeaderModifier that removes exactly the identity headers
-the resolved policy injects on the protected route, so a client cannot forge them on this
-unauthenticated path. The strip set is policy-specific: an oidc policy injects the fixed
-oauth2-proxy set (plus any forwardIDToken header, forwarded access token or jwt claimToHeaders
-target), a jwt-only policy injects only its claimToHeaders targets, and basicAuth/cors/ipAllowList
-inject nothing so the set is empty and no RequestHeaderModifier is added for it. See the PR
-description for the full rationale. Input dict: "ctx" (the service context), "Values", optional
-"policy" (the resolved SecurityPolicy).
+Rule filters for the policy-less -public route that gateway.skipAuth renders: gateway.ruleFiltersInner
+plus a RequestHeaderModifier removing the identity headers the resolved policy injects on the protected
+route, so a client cannot forge them. oidc strips the fixed oauth2-proxy set plus forwardIDToken,
+forwardAccessToken and claimToHeaders targets; jwt-only strips its claimToHeaders targets; basicAuth, cors
+and ipAllowList add nothing. Input dict: "ctx" (service context), "Values", optional "policy" (resolved
+SecurityPolicy).
 */}}
 {{- define "gateway.publicRuleFiltersInner" -}}
 {{- $ctx := .ctx -}}
