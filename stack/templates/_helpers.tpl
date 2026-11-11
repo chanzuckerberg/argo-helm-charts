@@ -873,8 +873,8 @@ ignore it. Takes (dict "root" $ "name" <serviceName>).
 {{- $g := .ctx.Values.gateway -}}
 {{- if and $g.enabled (not ($g.tlsPassthrough | default dict).enabled) -}}
   {{- $skip := $g.skipAuth | default list -}}
-  {{- if and (gt (len $skip) 0) (eq (include "securityPolicy.resolve" (dict "root" $root "name" $name)) "") -}}
-    {{- fail (printf "service %q lists gateway.skipAuth paths but has no gateway.securityPolicy, so every path is already public and the entries do nothing. Attach a policy or remove skipAuth." $name) -}}
+  {{- if and (gt (len $skip) 0) (ne ($g.securityPolicy | default "") "none") (eq (include "securityPolicy.resolve" (dict "root" $root "name" $name)) "") -}}
+    {{- fail (printf "service %q lists gateway.skipAuth paths but has no gateway.securityPolicy, so every path is already public and the entries do nothing. Attach a policy, set securityPolicy none to make the whole service public on purpose, or remove skipAuth." $name) -}}
   {{- end -}}
   {{- if and $g.skipAuthPreserveAuthorization (eq (len $skip) 0) -}}
     {{- fail (printf "service %q sets gateway.skipAuthPreserveAuthorization but lists no gateway.skipAuth paths, so there is no public route for it to affect." $name) -}}

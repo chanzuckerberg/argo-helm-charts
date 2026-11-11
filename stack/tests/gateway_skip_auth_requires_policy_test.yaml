@@ -25,8 +25,8 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: service "app" lists gateway.skipAuth paths but has no gateway.securityPolicy
-- it: should fail when skipAuth is listed and securityPolicy is none
-  template: gateway-securitypolicy.yaml
+- it: should accept skipAuth when securityPolicy is none and render no public route
+  template: httproute.yaml
   set:
     global:
       ingress:
@@ -44,8 +44,9 @@ tests:
           skipAuth:
           - path: /health
   asserts:
-  - failedTemplate:
-      errorPattern: service "app" lists gateway.skipAuth paths but has no gateway.securityPolicy
+  - notFailedTemplate: {}
+  - hasDocuments:
+      count: 1
 - it: should render the public route when skipAuth is paired with a policy
   template: httproute.yaml
   set:
