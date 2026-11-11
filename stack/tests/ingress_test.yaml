@@ -227,7 +227,7 @@ tests:
     asserts:
       - failedTemplate:
           errorPattern: served without authentication
-  - it: allows an oidcProtected Ingress whose skipAuth does not touch the protected prefix
+  - it: fails when protectedPaths is set on an Ingress-only service, whose gateway stays disabled
     set:
       global:
         ingress:
@@ -243,6 +243,32 @@ tests:
             enabled: true
             oidcProtected: true
           gateway:
+            protectedPaths:
+              - path: /admin
+    asserts:
+      - failedTemplate:
+          errorPattern: its gateway is disabled, so no Envoy routes render
+  - it: allows an oidcProtected Ingress alongside the gateway when dnsOwner keeps both planes
+    set:
+      global:
+        ingress:
+          host: app.example.com
+          oidcProtected: true
+        oidcProxy:
+          enabled: true
+          skipAuth:
+            - path: /public
+      services:
+        app:
+          ingress:
+            enabled: true
+            oidcProtected: true
+          gateway:
+            host: app.example.com
+            dnsOwner: ingress
+            securityPolicy: oidc-protected-default
+            paths:
+              - path: /
             protectedPaths:
               - path: /admin
     asserts:
