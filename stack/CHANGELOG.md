@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.68.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.67.0...stack-v2.68.0) (2026-11-11)
+
+
+### Features
+
+* **stack:** pin the basic-auth realm with a route-scoped responseOverride ([#631](https://github.com/chanzuckerberg/argo-helm-charts/issues/631)) ([bb06173](https://github.com/chanzuckerberg/argo-helm-charts/commit/bb06173c45f575c18200d51364965d2402fe6434))
+
 ## [2.67.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.66.1...stack-v2.67.0) (2026-11-10)
 
 

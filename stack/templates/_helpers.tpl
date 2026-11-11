@@ -656,7 +656,7 @@ for it are unaffected. Emits email twice because consumers read either spelling.
 {{- $skeleton := dict
       "cors" (dict "enabled" false)
       "ipAllowList" (list)
-      "basicAuth" (dict "enabled" false)
+      "basicAuth" (dict "enabled" false "realm" "")
       "jwt" (dict "enabled" false "providers" (list))
       "annotations" (dict) -}}
 {{- $oidcSkeleton := dict
@@ -888,6 +888,28 @@ Whether the service needs a BackendTrafficPolicy (sessionAffinity, rateLimit, or
 {{- define "gateway.hasBackendTrafficPolicy" -}}
 {{- $g := .Values.gateway -}}
 {{- if or $g.sessionAffinity.enabled $g.rateLimit.enabled $g.timeouts.connect (and $g.requestBuffer $g.requestBuffer.enabled) -}}true{{- end -}}
+{{- end -}}
+
+{{- define "gateway.basicAuthRealm" -}}
+{{- $resolved := include "securityPolicy.resolve" (dict "root" .root "name" .name) -}}
+{{- if ne $resolved "" -}}
+  {{- $ba := (fromYaml $resolved).basicAuth | default dict -}}
+  {{- if $ba.realm -}}
+    {{- if not $ba.enabled -}}
+      {{- fail (printf "service %q attaches a securityPolicy that sets basicAuth.realm without basicAuth.enabled, so no basic-auth 401 exists for the realm to apply to. Enable basicAuth or drop the realm." .name) -}}
+    {{- end -}}
+    {{- $ba.realm -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "gateway.hstsValue" -}}
+{{- $g := .Values.gateway -}}
+{{- $v := $g.hsts.value -}}
+{{- range (($g.responseHeaders | default dict).set | default list) -}}
+  {{- if eq (lower .name) "strict-transport-security" -}}{{- $v = .value -}}{{- end -}}
+{{- end -}}
+{{- $v -}}
 {{- end -}}
 
 {{/*
