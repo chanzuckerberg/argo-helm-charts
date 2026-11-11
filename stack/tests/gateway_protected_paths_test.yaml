@@ -86,17 +86,11 @@ tests:
       path: spec.rules[2].matches[0].path
       value:
         type: RegularExpression
-        value: (?i)^/admin(/.*)?$
-  - documentIndex: 1
-    equal:
-      path: spec.rules[3].matches[0].path
-      value:
-        type: RegularExpression
-        value: (?i)^(?:/[^;%]*)[;%].*$
+        value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 4
+      count: 3
 - it: should render nothing extra when protectedPaths is empty
   set:
     global:
@@ -295,7 +289,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: (?i)^/api/admin(/.*)?$
+      value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:/|%2f)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     equal:
       path: spec.rules[0].matches[0].path.value
@@ -421,7 +415,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: (?i)^/admin(/.*)?$
+      value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
 - it: should strip identity headers on skipAuth public routes too
   set:
     global:
@@ -529,7 +523,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: entry on service app has no path
-- it: should fail on a double slash, dot segment or encoded slash
+- it: should fail on a dot segment in a protected path
   set:
     global:
       ingress:
@@ -576,7 +570,7 @@ tests:
           - path: /p15
   asserts:
   - failedTemplate:
-      errorPattern: allows 16
+      errorPattern: rules on its protected HTTPRoute
 - it: should fail when requestHeaders.set re-adds a header the public route strips
   set:
     global:
@@ -770,7 +764,7 @@ tests:
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 4
+      count: 3
 - it: should fail when a base path pushes an auto rule past the 1024-character limit
   set:
     global:
@@ -819,7 +813,7 @@ tests:
     contains:
       path: spec.rules[0].filters[0].requestHeaderModifier.remove
       content: Authorization
-- it: should fail when a public gateway.paths entry contains ; or %, which the guard would route to the protected side
+- it: should allow percent-encoded and semicolon public paths
   set:
     global:
       ingress:
@@ -841,8 +835,12 @@ tests:
           protectedPaths:
           - path: /admin
   asserts:
-  - failedTemplate:
-      errorPattern: contains ; or %
+  - hasDocuments:
+      count: 2
+  - documentIndex: 1
+    lengthEqual:
+      path: spec.rules
+      count: 3
 - it: should fail when a protected path is the OIDC logout path
   set:
     global:
@@ -1032,7 +1030,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: double slash or dot segment
-- it: should render a plain PathPrefix with no length limit for a long path in the default case-sensitive mode
+- it: should render a long prefix whose match stays under the 1024-character limit
   set:
     global:
       ingress:
@@ -1052,7 +1050,7 @@ tests:
       path: spec.rules[2].matches[0].path
       value:
         type: RegularExpression
-        value: (?i)^/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(/.*)?$
+        value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
 - it: should keep Authorization on the public route when skipAuthPreserveAuthorization is true but still strip identity headers
   set:
     global:
@@ -1532,7 +1530,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: sets gateway.protectedPaths with gateway.redirect.enabled
-- it: should match a protected path as a native PathPrefix when caseSensitive is true
+- it: should match the exact case only when caseSensitive is true, still tolerating encoded spellings
   set:
     global:
       ingress:
@@ -1558,49 +1556,18 @@ tests:
     equal:
       path: spec.rules[2].matches[0].path
       value:
-        type: PathPrefix
-        value: /admin
+        type: RegularExpression
+        value: '(?i)^(?:/|%2f)+(?:(?-i:a)|%61)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     equal:
       path: spec.rules[3].matches[0].path
       value:
         type: RegularExpression
-        value: (?i)^/api/v1\.0/keys(/.*)?$
-  - documentIndex: 1
-    equal:
-      path: spec.rules[4].matches[0].path.type
-      value: RegularExpression
+        value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:/|%2f)+(?:v|%76|%56)(?:1|%31)(?:\.|%2e)(?:0|%30)(?:(?:;|%3b)[^/]*)?(?:/|%2f)+(?:k|%6b|%4b)(?:e|%65|%45)(?:y|%79|%59)(?:s|%73|%53)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 5
-- it: should scope the ; and % guard to the service's own prefixes
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-        securityPolicy: oidc-protected-default
-        paths:
-        - path: /api
-        - path: /docs/
-        - path: /healthz
-          pathType: Exact
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
-    services:
-      app:
-        gateway:
-          protectedPaths:
-          - path: /api/admin
-  asserts:
-  - documentIndex: 1
-    equal:
-      path: spec.rules[3].matches[0].path.value
-      value: (?i)^(?:/api(?:/[^;%]*)?|/docs(?:/[^;%]*)?)[;%].*$
+      count: 4
 - it: should fail when a public gateway.paths entry differs from a protected prefix only by case
   set:
     global:
@@ -1648,4 +1615,123 @@ tests:
   asserts:
   - hasDocuments:
       count: 2
+- it: should fail when the same prefix appears in different case with different caseSensitive settings
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+            caseSensitive: true
+          - path: /Admin
+  asserts:
+  - failedTemplate:
+      errorPattern: differ in caseSensitive
+- it: should keep two case-sensitive prefixes that differ only by case
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+            caseSensitive: true
+          - path: /Admin
+            caseSensitive: true
+  asserts:
+  - documentIndex: 1
+    lengthEqual:
+      path: spec.rules
+      count: 4
+  - documentIndex: 1
+    equal:
+      path: spec.rules[3].matches[0].path.value
+      value: '(?i)^(?:/|%2f)+(?:(?-i:A)|%41)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+- it: should fail when a prefix renders a match longer than the 1024-character limit
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  asserts:
+  - failedTemplate:
+      errorPattern: allows 1024
+- it: should keep an Exact gateway.paths entry Exact on the public remainder
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+        - path: /healthz
+          pathType: Exact
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: spec.rules[1].matches[0].path
+      value:
+        type: Exact
+        value: /healthz
+- it: should name the callback when a protected path is the OIDC callback path
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /oauth2
+  asserts:
+  - failedTemplate:
+      errorPattern: as the OIDC callback path
 
