@@ -926,6 +926,102 @@ backendRequest: {{ $t.backendRequest | quote }}
 {{- end -}}
 
 {{/*
+Rule filters for the policy-less -public route that gateway.skipAuth renders: gateway.ruleFiltersInner
+plus a RequestHeaderModifier removing the identity headers the resolved policy injects on the protected
+route, so a client cannot forge them. oidc strips the fixed oauth2-proxy set plus forwardIDToken,
+forwardAccessToken and claimToHeaders targets; jwt-only strips its claimToHeaders targets; basicAuth, cors
+and ipAllowList add nothing. Input dict: "ctx" (service context), "Values", optional "policy" (resolved
+SecurityPolicy).
+*/}}
+{{- define "gateway.publicRuleFiltersInner" -}}
+{{- $ctx := .ctx -}}
+{{- $gw := deepCopy .Values.gateway -}}
+{{- $rh := deepCopy ($gw.requestHeaders | default dict) -}}
+{{- $remove := $rh.remove | default list -}}
+{{- /* dedup the operator's own remove list case-insensitively: Envoy matches header names case-insensitively, so casing variants are one header and must not double-count against the 16-header cap */ -}}
+{{- $opDeduped := list -}}
+{{- $seenOp := dict -}}
+{{- range $r := $remove -}}
+{{- if not (hasKey $seenOp (lower $r)) -}}
+{{- $_ := set $seenOp (lower $r) true -}}
+{{- $opDeduped = append $opDeduped $r -}}
+{{- end -}}
+{{- end -}}
+{{- $remove = $opDeduped -}}
+{{- $identity := list -}}
+{{- with .policy -}}
+{{- /* the fixed oauth2-proxy identity set is the OIDC signal set: only an oidc policy injects it, so only an oidc public route must strip it. basicAuth, cors, ipAllowList and jwt inject none of these. */ -}}
+{{- if .oidc -}}
+{{- $identity = list "X-Forwarded-Email" "X-Forwarded-User" "X-Forwarded-Preferred-Username" "X-Forwarded-Groups" "X-Auth-Request-Email" "X-Auth-Request-User" "X-Auth-Request-Preferred-Username" "X-Auth-Request-Groups" "X-ID-Token" "X-Forwarded-Access-Token" "X-Auth-Request-Access-Token" -}}
+{{- end -}}
+{{- /* plus the headers this policy writes: the forwarded ID token (oidc only) and every jwt claim target */ -}}
+{{- /* only strip the forwarded ID token header the policy actually writes: the render side gates it on forwardIDToken.enabled, so match that or we would reject an operator header the policy never injects */ -}}
+{{- if (((.oidc | default dict).forwardIDToken) | default dict).enabled -}}
+{{- with ((.oidc | default dict).forwardIDToken | default dict).header -}}
+{{- /* when the forwarded ID token goes to Authorization, honour skipAuthPreserveAuthorization like the forwardAccessToken branch below */ -}}
+{{- if not (and (eq (lower .) "authorization") (eq (toString $gw.skipAuthPreserveAuthorization) "true")) -}}
+{{- $identity = append $identity . -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- if and (.oidc | default dict).forwardAccessToken (ne (toString $gw.skipAuthPreserveAuthorization) "true") -}}
+{{- /* the OAuth2 filter rewrites Authorization to the access token on protected paths; skipAuthPreserveAuthorization keeps a public endpoint's own bearer token */ -}}
+{{- $identity = append $identity "Authorization" -}}
+{{- end -}}
+{{- /* claimToHeaders only reach the backend when jwt is enabled, mirroring the render side's jwt.enabled gate */ -}}
+{{- if (.jwt | default dict).enabled -}}
+{{- range ((.jwt | default dict).providers | default list) -}}
+{{- range (.claimToHeaders | default list) -}}
+{{- with .header -}}
+{{- /* a claim target of Authorization honours skipAuthPreserveAuthorization too */ -}}
+{{- if not (and (eq (lower .) "authorization") (eq (toString $gw.skipAuthPreserveAuthorization) "true")) -}}
+{{- $identity = append $identity . -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $h := $identity -}}
+{{- range concat ($rh.set | default list) ($rh.add | default list) -}}
+{{- if eq (lower (.name | default "")) (lower $h) -}}
+{{- fail (printf "gateway.requestHeaders sets or adds %q, which the unauthenticated -public route removes to stop clients forging it. Envoy applies set and add after remove, so the value would reach the backend on public paths. Remove it from gateway.requestHeaders on this service." .name) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- /* dedup case-insensitively: Envoy matches header names case-insensitively, so each counts once against the 16-header cap */ -}}
+{{- range $h := $identity -}}
+{{- $seen := false -}}
+{{- range $r := $remove -}}{{- if eq (lower $r) (lower $h) -}}{{- $seen = true -}}{{- end -}}{{- end -}}
+{{- if not $seen -}}
+{{- $remove = append $remove $h -}}
+{{- end -}}
+{{- end -}}
+{{- if gt (len $remove) 16 -}}
+{{- /* the identity header count is the case-insensitively-unique identity set itself, derived independently: deduping $remove against it can collapse an operator remove that overlaps an identity header, so subtracting the operator list would undercount identity and misattribute the overlap to the operator */ -}}
+{{- $idSet := dict -}}
+{{- range $identity -}}{{- $_ := set $idSet (lower .) true -}}{{- end -}}
+{{- $identityCount := len $idSet -}}
+{{- if gt $identityCount 16 -}}
+{{- fail (printf "the public route's RequestHeaderModifier would remove %d headers, but Gateway API allows 16. The %d identity headers stripped on the public route (the fixed oauth2-proxy set, plus any forwardIDToken header, forwarded access token or claimToHeaders target the policy injects) already exceed the cap on their own, so no gateway.requestHeaders.remove can fit. Reduce the policy's forwardIDToken/forwardAccessToken or claimToHeaders headers." (len $remove) $identityCount) -}}
+{{- else -}}
+{{- $allowed := sub 16 $identityCount -}}
+{{- if le $allowed 0 -}}
+{{- fail (printf "the public route's RequestHeaderModifier would remove %d headers, but Gateway API allows 16. gateway.requestHeaders.remove cannot add any more on a service with skipAuth; the %d identity headers removed there automatically already fill the limit." (len $remove) $identityCount) -}}
+{{- else -}}
+{{- fail (printf "the public route's RequestHeaderModifier would remove %d headers, but Gateway API allows 16. gateway.requestHeaders.remove may list at most %d headers outside the identity set on a service with skipAuth (an entry that repeats an identity header does not count), because %d identity headers are removed there automatically." (len $remove) $allowed $identityCount) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- $_ := set $rh "remove" $remove -}}
+{{- $_ := set $gw "requestHeaders" $rh -}}
+{{- /* render with the real service context: filters such as pathRewrite name their HTTPRouteFilter from the release and service */ -}}
+{{- $vals := deepCopy $ctx.Values -}}
+{{- $_ := set $vals "gateway" $gw -}}
+{{- include "gateway.ruleFiltersInner" (dict "Chart" $ctx.Chart "Release" $ctx.Release "Capabilities" $ctx.Capabilities "Values" $vals) -}}
+{{- end -}}
+
+{{/*
 HTTPRoute per-rule filters list (no "filters:" key). Caller indents under a rule.
 Covers hostRewrite (URLRewrite) and request/response header modifiers. Redirect is
 handled separately as a whole-route rule.

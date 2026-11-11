@@ -39,8 +39,15 @@
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- $redirect := .Values.gateway.redirect -}}
-{{- if ne (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) "" -}}
-{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $filters "timeouts" $timeouts) }}
+{{- $resolved := include "securityPolicy.resolve" (dict "root" $global "name" .Values.name) -}}
+{{- if ne $resolved "" -}}
+{{- $p := fromYaml $resolved -}}
+{{- /* The -public route carries no SecurityPolicy, so strip what the resolved policy injects; the helper decides the per-policy set. */ -}}
+{{- $publicFilters := $filters -}}
+{{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
+{{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "ctx" $service "Values" .Values "policy" $p) | trim -}}
+{{- end -}}
+{{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts) }}
 {{- end }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
