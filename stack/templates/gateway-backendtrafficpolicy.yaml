@@ -105,6 +105,11 @@ spec:
       match:
         statusCodes:
           - value: 401
+        responseHeaders:
+          - name: WWW-Authenticate
+            value:
+              type: Prefix
+              value: "Basic "
       response:
         header:
           set:

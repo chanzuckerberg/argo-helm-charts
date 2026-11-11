@@ -44,6 +44,18 @@ tests:
           value: 401
       - documentIndex: 0
         equal:
+          path: spec.responseOverride[0].match.responseHeaders[0].name
+          value: WWW-Authenticate
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].match.responseHeaders[0].value.type
+          value: Prefix
+      - documentIndex: 0
+        equal:
+          path: spec.responseOverride[0].match.responseHeaders[0].value.value
+          value: "Basic "
+      - documentIndex: 0
+        equal:
           path: spec.responseOverride[0].response.header.set[0].name
           value: WWW-Authenticate
       - documentIndex: 0
