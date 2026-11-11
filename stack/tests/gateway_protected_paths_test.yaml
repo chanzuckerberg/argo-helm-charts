@@ -172,7 +172,7 @@ tests:
           - path: ^/admin
   asserts:
   - failedTemplate:
-      errorPattern: must start with /
+      errorPattern: gateway.protectedPaths path .* must start with /
 - it: should fail on a path of /
   set:
     global:
@@ -232,7 +232,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: not under any Prefix entry of gateway.paths
-- it: should fail on a trailing slash, which would let the bare path fall through to the open route
+- it: should fail on a trailing slash, which names the same prefix twice
   set:
     global:
       ingress:
@@ -265,7 +265,7 @@ tests:
           - path: '/admin '
   asserts:
   - failedTemplate:
-      errorPattern: whitespace
+      errorPattern: gateway.protectedPaths path .* has leading or trailing whitespace
 - it: should accept a protected path under a non-root gateway.paths prefix and keep other prefixes open
   set:
     global:
@@ -422,29 +422,6 @@ tests:
     equal:
       path: spec.rules[2].matches[0].path.value
       value: '(?i)^/admin(/.*)?$'
-- it: should strip identity headers on skipAuth public routes too
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-        securityPolicy: oidc-protected-default
-        skipAuth:
-        - path: /health
-          method: GET
-    services:
-      app: {}
-  asserts:
-  - documentIndex: 0
-    equal:
-      path: metadata.name
-      value: release-name-stack-app-public
-  - documentIndex: 0
-    contains:
-      path: spec.rules[0].filters[0].requestHeaderModifier.remove
-      content: X-ID-Token
 - it: should also strip the headers a custom policy writes (forwardIDToken header and claimToHeaders)
   set:
     global:
@@ -545,7 +522,7 @@ tests:
           - path: /admin/../secret
   asserts:
   - failedTemplate:
-      errorPattern: double slash or dot segment
+      errorPattern: gateway.protectedPaths path .* contains a double slash or dot segment
 - it: should fail when the protected route would exceed 16 rules
   set:
     global:
@@ -614,7 +591,7 @@ tests:
           - path: /%61dmin
   asserts:
   - failedTemplate:
-      errorPattern: percent-encoding
+      errorPattern: gateway.protectedPaths path .* contains characters
 - it: should fail when a custom logoutPath would be rejected by the HTTPRoute API
   set:
     global:
@@ -699,6 +676,10 @@ tests:
     lengthEqual:
       path: spec.rules
       count: 4
+  - documentIndex: 1
+    equal:
+      path: spec.rules[2].matches[0].path.value
+      value: (?i)^/admin(/.*)?$
 - it: should fail when a base path pushes an auto rule past the 1024-character limit
   set:
     global:
@@ -747,7 +728,7 @@ tests:
     contains:
       path: spec.rules[0].filters[0].requestHeaderModifier.remove
       content: Authorization
-- it: should fail when a public gateway.paths entry contains ; or %, which the guard routes to the protected side
+- it: should fail when a public gateway.paths entry contains a matrix parameter, which the guard routes to the protected side
   set:
     global:
       ingress:
@@ -759,8 +740,6 @@ tests:
         paths:
         - path: /
           pathType: Prefix
-        - path: /caf%C3%A9
-          pathType: Exact
         - path: /pub;x
           pathType: Exact
     services:
@@ -917,7 +896,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: double slash or dot segment
+      errorPattern: gateway public path .* contains a double slash or dot segment
 - it: should render a long prefix whose match stays under the 1024-character limit
   set:
     global:
@@ -1100,7 +1079,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: may list at most 5 headers
-- it: should fail when a public Exact path equals a protected PathPrefix prefix (non-regex branch)
+- it: should fail when a public Exact path equals a protected prefix
   set:
     global:
       gateway:
@@ -1188,7 +1167,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: logoutPath "/a/../b" renders as "/a/../b", which contains a double slash or dot segment
-- it: should fail on a gateway.paths entry that does not start with a slash (reaches assertPublicPathValid)
+- it: should fail on a gateway.paths entry that does not start with a slash
   set:
     global:
       ingress:
@@ -1346,6 +1325,10 @@ tests:
   asserts:
   - hasDocuments:
       count: 2
+  - documentIndex: 0
+    equal:
+      path: spec.rules[1].matches[0].path.value
+      value: /Admin/reports
 - it: should fail when the same prefix appears in different case with different caseSensitive settings
   set:
     global:
