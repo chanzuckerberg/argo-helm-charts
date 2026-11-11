@@ -86,11 +86,17 @@ tests:
       path: spec.rules[2].matches[0].path
       value:
         type: RegularExpression
-        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        value: '(?i)^/admin(/.*)?$'
+  - documentIndex: 1
+    equal:
+      path: spec.rules[3].matches[0].path
+      value:
+        type: RegularExpression
+        value: ^.*[;%].*$
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 3
+      count: 4
 - it: should render nothing extra when protectedPaths is empty
   set:
     global:
@@ -289,7 +295,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+      value: '(?i)^/api/admin(/.*)?$'
   - documentIndex: 1
     equal:
       path: spec.rules[0].matches[0].path.value
@@ -415,7 +421,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+      value: '(?i)^/admin(/.*)?$'
 - it: should strip identity headers on skipAuth public routes too
   set:
     global:
@@ -592,52 +598,6 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: sets or adds "x-forwarded-email"
-- it: should fail when another service on the same host publishes a path inside the protected prefix
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-    services:
-      app:
-        gateway:
-          securityPolicy: oidc-protected-default
-          protectedPaths:
-          - path: /admin
-      api:
-        gateway:
-          securityPolicy: none
-          paths:
-          - path: /admin/api
-            pathType: Prefix
-  asserts:
-  - failedTemplate:
-      errorPattern: routes "/admin/api" on host app.example.com outside the OIDC policy
-- it: should allow another service on the same host outside the protected prefix
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-    services:
-      app:
-        gateway:
-          securityPolicy: oidc-protected-default
-          protectedPaths:
-          - path: /admin
-      api:
-        gateway:
-          securityPolicy: none
-          paths:
-          - path: /api
-            pathType: Prefix
-  asserts:
-  - hasDocuments:
-      count: 2
 - it: should reject a percent-encoded protected path (Envoy decodes before matching)
   set:
     global:
@@ -679,32 +639,6 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: logoutPath "logout" renders as "logout"
-- it: should catch another service's rules host publishing inside the protected prefix
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-    services:
-      app:
-        gateway:
-          host: app.example.com
-          securityPolicy: oidc-protected-default
-          protectedPaths:
-          - path: /admin
-      other:
-        gateway:
-          host: other.example.com
-          securityPolicy: none
-          rules:
-          - host: app.example.com
-            paths:
-            - path: /admin/x
-              pathType: Prefix
-  asserts:
-  - failedTemplate:
-      errorPattern: service other routes "/admin/x" on host app.example.com
 - it: should not apply the public-route header guards to a plain OIDC service
   set:
     global:
@@ -764,7 +698,7 @@ tests:
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 3
+      count: 4
 - it: should fail when a base path pushes an auto rule past the 1024-character limit
   set:
     global:
@@ -813,7 +747,7 @@ tests:
     contains:
       path: spec.rules[0].filters[0].requestHeaderModifier.remove
       content: Authorization
-- it: should allow percent-encoded and semicolon public paths
+- it: should fail when a public gateway.paths entry contains ; or %, which the guard routes to the protected side
   set:
     global:
       ingress:
@@ -835,12 +769,8 @@ tests:
           protectedPaths:
           - path: /admin
   asserts:
-  - hasDocuments:
-      count: 2
-  - documentIndex: 1
-    lengthEqual:
-      path: spec.rules
-      count: 3
+  - failedTemplate:
+      errorPattern: contains ; or %
 - it: should fail when a protected path is the OIDC logout path
   set:
     global:
@@ -928,32 +858,6 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: contains a character the HTTPRoute API rejects or that YAML normalises
-- it: should fail when another same-host service publishes a leading-whitespace public path
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-        securityPolicy: oidc-protected-default
-    services:
-      app:
-        gateway:
-          protectedPaths:
-          - path: /admin
-      b:
-        gateway:
-          enabled: true
-          host: app.example.com
-          securityPolicy: ''
-          protectedPaths: []
-          paths:
-          - path: ' /admin'
-            pathType: Exact
-  asserts:
-  - failedTemplate:
-      errorPattern: on service b has leading or trailing whitespace
 - it: should fail on an unknown protectedPaths key
   set:
     global:
@@ -1034,7 +938,7 @@ tests:
       path: spec.rules[2].matches[0].path
       value:
         type: RegularExpression
-        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        value: '(?i)^/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(/.*)?$'
 - it: should keep Authorization on the public route when skipAuthPreserveAuthorization is true but still strip identity headers
   set:
     global:
@@ -1082,38 +986,6 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: must be set per service
-- it: should carry the group primary's OIDC callback and logout onto a non-primary member's protected route
-  set:
-    global:
-      gateway:
-        enabled: true
-        securityPolicy: oidc-protected-default
-    services:
-      app:
-        gateway:
-          paths:
-          - path: /
-            pathType: Prefix
-      admin:
-        gateway:
-          paths:
-          - path: /admin
-            pathType: Prefix
-          protectedPaths:
-          - path: /admin/secret
-  asserts:
-  - documentSelector:
-      path: metadata.name
-      value: release-name-stack-admin
-    equal:
-      path: spec.rules[0].matches[0].path.value
-      value: /oauth2
-  - documentSelector:
-      path: metadata.name
-      value: release-name-stack-admin
-    equal:
-      path: spec.rules[1].matches[0].path.value
-      value: /logout
 - it: should strip Authorization on the public route when forwardIDToken writes it
   set:
     global:
@@ -1266,103 +1138,6 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: collides with the OIDC path "/logout"
-- it: should fail when an OIDC sibling's skipAuth overlaps this service's auto OIDC logout path
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-    services:
-      app:
-        gateway:
-          securityPolicy: oidc-protected-default
-          protectedPaths:
-          - path: /admin
-      api:
-        gateway:
-          securityPolicy: oidc-protected-default
-          skipAuth:
-          - path: /logout
-  asserts:
-  - failedTemplate:
-      errorPattern: service api routes "/logout" on host app.example.com outside the OIDC policy, overlapping the OIDC logout path "/logout"
-- it: should fail when an OIDC sibling with its own protectedPaths publishes paths inside this service's protected prefix
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-    services:
-      app:
-        gateway:
-          securityPolicy: oidc-protected-default
-          protectedPaths:
-          - path: /admin
-      api:
-        gateway:
-          securityPolicy: oidc-protected-default
-          paths:
-          - path: /admin/sub
-            pathType: Prefix
-          protectedPaths:
-          - path: /admin/sub/secret
-  asserts:
-  - failedTemplate:
-      errorPattern: service api routes "/admin/sub" on host app.example.com outside the OIDC policy, overlapping the path "/admin" that service app protects
-- it: should fail when an OIDC sibling's skipAuth on the main host overlaps this service's protected prefix
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-    services:
-      app:
-        gateway:
-          securityPolicy: oidc-protected-default
-          protectedPaths:
-          - path: /admin
-      api:
-        gateway:
-          securityPolicy: oidc-protected-default
-          skipAuth:
-          - path: /admin/open
-  asserts:
-  - failedTemplate:
-      errorPattern: service api routes "/admin/open" on host app.example.com outside the OIDC policy, overlapping the path "/admin" that service app protects
-- it: should fail when an OIDC sibling's skipAuth on a rules host overlaps this service's protected prefix
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-    services:
-      app:
-        gateway:
-          host: app.example.com
-          securityPolicy: oidc-protected-default
-          protectedPaths:
-          - path: /admin
-      other:
-        gateway:
-          host: other.example.com
-          securityPolicy: oidc-protected-default
-          skipAuth:
-          - path: /admin/open
-          rules:
-          - host: app.example.com
-            paths:
-            - path: /x
-              pathType: Prefix
-  asserts:
-  - failedTemplate:
-      errorPattern: service other routes "/admin/open" on host app.example.com outside the OIDC policy, overlapping the path "/admin" that service app protects
 - it: should fail when the OIDC callback base path contains a dot segment
   set:
     global:
@@ -1461,34 +1236,6 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: combines gateway.protectedPaths with a RegularExpression path
-- it: should fail when another service on the same host routes a RegularExpression path outside the policy
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
-    services:
-      app:
-        gateway:
-          securityPolicy: oidc-protected-default
-          paths:
-          - path: /
-          protectedPaths:
-          - path: /admin
-      other:
-        gateway:
-          securityPolicy: none
-          paths:
-          - path: ^/static/.*
-            pathType: RegularExpression
-  asserts:
-  - failedTemplate:
-      errorPattern: service other routes the RegularExpression path
 - it: should fail protectedPaths with gateway.redirect.enabled
   set:
     global:
@@ -1514,7 +1261,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: sets gateway.protectedPaths with gateway.redirect.enabled
-- it: should match the exact case only when caseSensitive is true, still tolerating encoded spellings
+- it: should match a protected path as a native PathPrefix when caseSensitive is true
   set:
     global:
       ingress:
@@ -1540,18 +1287,18 @@ tests:
     equal:
       path: spec.rules[2].matches[0].path
       value:
-        type: RegularExpression
-        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:(?-i:a)|%61)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        type: PathPrefix
+        value: /admin
   - documentIndex: 1
     equal:
       path: spec.rules[3].matches[0].path
       value:
         type: RegularExpression
-        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:v|%76|%56)(?:1|%31)(?:\.|%2e)(?:0|%30)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:k|%6b|%4b)(?:e|%65|%45)(?:y|%79|%59)(?:s|%73|%53)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        value: '(?i)^/api/v1\.0/keys(/.*)?$'
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 4
+      count: 5
 - it: should fail when a public gateway.paths entry differs from a protected prefix only by case
   set:
     global:
@@ -1645,11 +1392,11 @@ tests:
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 4
+      count: 5
   - documentIndex: 1
     equal:
       path: spec.rules[3].matches[0].path.value
-      value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:(?-i:A)|%41)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+      value: /Admin
 - it: should fail when a prefix renders a match longer than the 1024-character limit
   set:
     global:
@@ -1666,7 +1413,7 @@ tests:
       app:
         gateway:
           protectedPaths:
-          - path: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          - path: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
   asserts:
   - failedTemplate:
       errorPattern: allows 1024
@@ -1741,34 +1488,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: collides with gateway.protectedPaths "/admin"
-- it: should fail when a same-host sibling publishes an encoded spelling of a protected prefix
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-        securityPolicy: oidc-protected-default
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
-    services:
-      app:
-        gateway:
-          paths:
-          - path: /
-          protectedPaths:
-          - path: /admin
-      other:
-        gateway:
-          securityPolicy: none
-          paths:
-          - path: /Admin;x
-  asserts:
-  - failedTemplate:
-      errorPattern: overlapping the path "/admin"
+      errorPattern: contains ; or %
 - it: should fail on a semicolon inside a protected prefix
   set:
     global:
@@ -1789,4 +1509,91 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: a semicolon, which backends strip
+- it: should fail when another service routes the same host
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          securityPolicy: oidc-protected-default
+          paths:
+          - path: /
+          protectedPaths:
+          - path: /admin
+      api:
+        gateway:
+          securityPolicy: none
+          paths:
+          - path: /api
+  asserts:
+  - failedTemplate:
+      errorPattern: service api also routes host app.example.com
+- it: should fail when another service reaches this host through a gateway.rules entry
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+          - path: /
+          protectedPaths:
+          - path: /admin
+      other:
+        gateway:
+          host: other.example.com
+          securityPolicy: none
+          paths:
+          - path: /
+          rules:
+          - host: app.example.com
+            paths:
+            - path: /assets
+  asserts:
+  - failedTemplate:
+      errorPattern: service other also routes host app.example.com
+- it: should allow another service on a different host
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+          - path: /
+          protectedPaths:
+          - path: /admin
+      other:
+        gateway:
+          host: other.example.com
+          securityPolicy: none
+          paths:
+          - path: /admin/public
+  asserts:
+  - hasDocuments:
+      count: 2
 
