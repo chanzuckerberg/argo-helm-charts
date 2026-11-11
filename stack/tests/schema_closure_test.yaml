@@ -1,0 +1,304 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test the gateway, ingress and oidcProxy schemas reject unknown keys
+templates:
+- httproute.yaml
+- gateway-securitypolicy.yaml
+- gateway-securitypolicy-shared.yaml
+- oidc_proxy.yaml
+tests:
+- it: should reject an unknown key under a service gateway block
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+    services:
+      app:
+        gateway:
+          securityPolicy: oidc-protected-default
+          sessionAffinty:
+            enabled: true
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: sessionAffinty
+- it: should reject an unknown key under the global gateway block
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        hostnames:
+        - other.example.com
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: hostnames
+- it: should reject an unknown key under global.ingress
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: true
+        host: app.example.com
+        ingressClassName: nginx
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: ingressClassName
+- it: should reject an unknown key under global.oidcProxy
+  template: oidc_proxy.yaml
+  set:
+    global:
+      oidcProxy:
+        enabled: true
+        replicas: 2
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: replicas
+- it: should reject the retired oidcProxy.additionalHeaders key
+  template: oidc_proxy.yaml
+  set:
+    global:
+      oidcProxy:
+        enabled: true
+        additionalHeaders:
+        - X-Forwarded-User
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: additionalHeaders
+- it: should reject a non-integer path weight
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        paths:
+        - path: /
+          pathType: Prefix
+          weight: heavy
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: weight
+- it: should reject a pathType outside the accepted spellings
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        paths:
+        - path: /
+          pathType: Regex
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: pathType
+- it: should accept every pathType spelling the template understands
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        paths:
+        - path: /a
+          pathType: Prefix
+        - path: /b
+          pathType: PathPrefix
+        - path: /c
+          pathType: Exact
+        - path: /d.*
+          pathType: RegularExpression
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: spec.rules[1].matches[0].path.type
+      value: PathPrefix
+  - equal:
+      path: spec.rules[3].matches[0].path.type
+      value: RegularExpression
+- it: should render a rule path weight on the HTTPRoute backendRef
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        rules:
+        - host: other.example.com
+          paths:
+          - path: /
+            pathType: Prefix
+            weight: 10
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentIndex: 1
+    equal:
+      path: spec.rules[0].backendRefs[0].weight
+      value: 10
+- it: should reject an unknown key inside a gateway rule vanity block
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        rules:
+        - host: other.example.com
+          vanity:
+            enabled: true
+            issuer: letsencrypt-prod-eg
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: issuer
+- it: should reject an ingress tls entry whose hosts is not a list
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: true
+        host: app.example.com
+        tls:
+        - hosts: app.example.com
+          secretName: app-tls
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: hosts
+- it: should accept a jwt provider that sets recomputeRoute
+  template: gateway-securitypolicy-shared.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+      securityPolicies:
+        jwtonly:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              recomputeRoute: true
+              claimToHeaders:
+              - claim: email
+                header: X-Email
+    services:
+      app:
+        gateway:
+          securityPolicy: jwtonly
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: spec.jwt.providers[0].recomputeRoute
+      value: true
+- it: should reject a jwt provider claimToHeaders entry with an unknown key
+  template: gateway-securitypolicy-shared.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+      securityPolicies:
+        jwtonly:
+          jwt:
+            enabled: true
+            providers:
+            - name: okta
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/keys
+              claimToHeaders:
+              - claim: email
+                headerName: X-Email
+    services:
+      app:
+        gateway:
+          securityPolicy: jwtonly
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: headerName
+- it: should still report the removed oidcProtected key with its replacement
+  template: gateway-securitypolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+    services:
+      app:
+        gateway:
+          oidcProtected: true
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: gateway.oidcProtected, which was removed in stack 2.55.0
+- it: should still report the removed global gateway cors key with its replacement
+  template: gateway-securitypolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        cors:
+          enabled: true
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: global.gateway.cors was removed in stack 2.55.0

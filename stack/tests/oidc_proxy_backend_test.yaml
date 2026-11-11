@@ -109,3 +109,54 @@ tests:
   - template: httproute.yaml
     hasDocuments:
       count: 1
+- it: global.oidcProxy.port is rendered everywhere the proxy port appears
+  set:
+    global:
+      oidcProxy:
+        enabled: true
+        port: 8080
+    services:
+      web:
+        ingress:
+          enabled: true
+          oidcProtected: true
+        gateway:
+          enabled: true
+          dnsOwner: ingress
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - template: oidc_proxy.yaml
+    documentIndex: 0
+    contains:
+      path: spec.template.spec.containers[0].args
+      content: --http-address=0.0.0.0:8080
+  - template: oidc_proxy.yaml
+    documentIndex: 0
+    equal:
+      path: spec.template.spec.containers[0].ports[0].containerPort
+      value: 8080
+  - template: oidc_proxy.yaml
+    documentIndex: 1
+    equal:
+      path: spec.ports[0].port
+      value: 8080
+  - template: oidc_proxy.yaml
+    documentIndex: 1
+    equal:
+      path: spec.ports[0].targetPort
+      value: 8080
+  - template: oidc_proxy.yaml
+    documentIndex: 2
+    equal:
+      path: spec.rules[0].http.paths[0].backend.service.port.number
+      value: 8080
+  - template: ingress.yaml
+    equal:
+      path: spec.rules[0].http.paths[0].backend.service.port.number
+      value: 8080
+  - template: httproute.yaml
+    equal:
+      path: spec.rules[0].backendRefs[0].port
+      value: 8080

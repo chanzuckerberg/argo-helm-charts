@@ -369,7 +369,17 @@
                   },
                   "pathType": {
                     "description": "HTTPRoute path match type, one of Prefix, Exact or RegularExpression. RegularExpression takes an RE2 pattern matched against the whole path and is the equivalent of an nginx use-regex location. Anything else is treated as Prefix",
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "Prefix",
+                      "PathPrefix",
+                      "Exact",
+                      "RegularExpression"
+                    ]
+                  },
+                  "weight": {
+                    "description": "Optional backendRef weight",
+                    "type": "integer"
                   }
                 }
               }
@@ -470,7 +480,53 @@
             },
             "rules": {
               "description": "List of additional HTTPRoute rules with custom hosts. Each entry takes host, optional paths, and an optional vanity block (enabled, hostname, clusterIssuer) that renders a per-host ListenerSet so the extra host can be a vanity domain, mirroring gateway.vanity",
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "paths": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "pathType": {
+                          "type": "string",
+                          "enum": [
+                            "Prefix",
+                            "PathPrefix",
+                            "Exact",
+                            "RegularExpression"
+                          ]
+                        },
+                        "weight": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "vanity": {
+                    "type": "object",
+                    "properties": {
+                      "clusterIssuer": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "hostname": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
             },
             "sectionName": {
               "description": "Optional section name (listener name) on the Gateway",
@@ -574,7 +630,13 @@
                 }
               }
             }
-          }
+          },
+          "patternProperties": {
+            "^(oidcProtected|cors|ipAllowList|basicAuth|jwt)$": {
+              "description": "Removed in stack 2.55.0. The render fails with the global.securityPolicies replacement to use."
+            }
+          },
+          "additionalProperties": false
         },
         "grafanaDashboard": {
           "type": "object",
@@ -746,20 +808,67 @@
                   },
                   "pathType": {
                     "description": "Ingress path type",
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "Prefix",
+                      "Exact",
+                      "ImplementationSpecific"
+                    ]
                   }
                 }
               }
             },
             "rules": {
               "description": "List of ingress rules",
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "host": {
+                    "type": "string"
+                  },
+                  "paths": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "pathType": {
+                          "type": "string",
+                          "enum": [
+                            "Prefix",
+                            "Exact",
+                            "ImplementationSpecific"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             },
             "tls": {
               "description": "List of ingress TLS configurations",
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hosts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "secretName": {
+                    "type": "string"
+                  }
+                }
+              }
             }
-          }
+          },
+          "additionalProperties": false
         },
         "initContainers": {
           "description": "List of init containers",
@@ -867,12 +976,9 @@
           }
         },
         "oidcProxy": {
+          "description": "oauth2-proxy deployment used by OIDC-protected Ingress routes",
           "type": "object",
           "properties": {
-            "additionalHeaders": {
-              "description": "Additional headers to add",
-              "type": "array"
-            },
             "additionalSecrets": {
               "description": "Additional secrets to mount",
               "type": "array"
@@ -908,6 +1014,10 @@
                   "type": "string"
                 }
               }
+            },
+            "port": {
+              "description": "Port the oauth2-proxy container listens on and its Service exposes",
+              "type": "integer"
             },
             "replicaCount": {
               "description": "Number of replicas",
@@ -977,7 +1087,8 @@
               "description": "Volume mounts for the OIDC proxy",
               "type": "array"
             }
-          }
+          },
+          "additionalProperties": false
         },
         "pdb": {
           "description": "PodDisruptionBudget configuration. Exactly one PDB is always created per service, because a pod matched by more than one PDB can never be evicted.",
@@ -1353,9 +1464,55 @@
                     "type": "boolean"
                   },
                   "providers": {
+                    "description": "JWT providers rendered onto the SecurityPolicy. Every field the Envoy Gateway JWTProvider accepts passes through unchanged, so keys beyond the typed ones are allowed",
                     "type": "array",
                     "items": {
-                      "type": "object"
+                      "type": "object",
+                      "properties": {
+                        "audiences": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "claimToHeaders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "claim": {
+                                "type": "string"
+                              },
+                              "header": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        },
+                        "extractFrom": {
+                          "type": "object"
+                        },
+                        "issuer": {
+                          "type": "string"
+                        },
+                        "localJWKS": {
+                          "type": "object"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "recomputeRoute": {
+                          "type": "boolean"
+                        },
+                        "remoteJWKS": {
+                          "type": "object"
+                        },
+                        "remoteJWKSUri": {
+                          "description": "Shorthand for remoteJWKS.uri",
+                          "type": "string"
+                        }
+                      }
                     }
                   },
                   "remoteJWKSUri": {

@@ -17,23 +17,6 @@ tests:
     asserts:
       - isKind:
           of: Ingress
-  - it: adds additional nginx auth headers when using additionalHeaders
-    set:
-      global:
-        ingress:
-          host: "stack.play.dev.czi.team"
-        oidcProxy:
-          enabled: true
-          additionalHeaders:
-            - X-Forwarded-User
-            - blahblahblah
-      services:
-        service1:
-          ingress:
-            oidcProtected: true
-    asserts:
-      - isKind:
-          of: Ingress
   - it: adds auth-snippet with using skipAuth
     set:
       global:
