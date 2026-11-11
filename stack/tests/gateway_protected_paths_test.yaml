@@ -1601,4 +1601,52 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: sets gateway.protectedPaths with gateway.pathRewrite
+- it: should fail when an oidc.apiRoutes path lies outside every protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: api-admin
+        paths:
+        - path: /
+      securityPolicies:
+        api-admin:
+          oidc:
+            apiRoutes:
+            - path: /api
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: lies outside every gateway.protectedPaths prefix
+- it: should accept an oidc.apiRoutes path under a protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: api-admin
+        paths:
+        - path: /
+      securityPolicies:
+        api-admin:
+          oidc:
+            apiRoutes:
+            - path: /admin/api
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - hasDocuments:
+      count: 2
 

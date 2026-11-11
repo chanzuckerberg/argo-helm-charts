@@ -44,7 +44,7 @@
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- $protected := .Values.gateway.protectedPaths | default list -}}
-{{- /* protectedPaths: only the listed prefixes, plus the OIDC callback and logout, stay on the
+{{- /* protectedPaths: only the listed prefixes, plus the OIDC callback, logout and the ;/% guard rule, stay on the
        policy-protected route; every other gateway.paths request goes through the -public route */ -}}
 {{- $protectedRules := list -}}
 {{- $publicRules := list -}}
@@ -98,7 +98,7 @@ spec:
     - {{ .Values.gateway.host }}
   rules:
     {{- if gt (len $protectedRules) 0 }}
-    {{- /* protectedPaths set: only the listed prefixes, plus the auto /oauth2 callback and /logout, stay on this protected route. */ -}}
+    {{- /* protectedPaths set: only the listed prefixes, plus the auto /oauth2 callback, /logout and the ;/% guard rule, stay on this protected route. */ -}}
     {{- range $protectedRules }}
     - matches:
         - path:
