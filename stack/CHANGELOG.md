@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.68.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.68.0...stack-v2.68.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* **stack:** strip oauth2-proxy identity headers on the skipAuth public route ([#610](https://github.com/chanzuckerberg/argo-helm-charts/issues/610)) ([bcd956b](https://github.com/chanzuckerberg/argo-helm-charts/commit/bcd956b25cb8a6ba72be2820e8282552a98ea6cc))
+
 ## [2.68.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.67.0...stack-v2.68.0) (2026-11-11)
 
 
