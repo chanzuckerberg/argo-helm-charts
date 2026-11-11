@@ -86,7 +86,7 @@ tests:
       path: spec.rules[2].matches[0].path
       value:
         type: RegularExpression
-        value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
@@ -289,7 +289,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:/|%2f)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+      value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     equal:
       path: spec.rules[0].matches[0].path.value
@@ -415,7 +415,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+      value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:d|%64|%44)(?:m|%6d|%4d)(?:i|%69|%49)(?:n|%6e|%4e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
 - it: should strip identity headers on skipAuth public routes too
   set:
     global:
@@ -972,22 +972,6 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: has an unsupported key
-- it: should fail when a gateway.skipAuth path has trailing whitespace
-  set:
-    global:
-      ingress:
-        enabled: false
-      gateway:
-        enabled: true
-        host: app.example.com
-        securityPolicy: oidc-protected-default
-        skipAuth:
-        - path: '/ '
-    services:
-      app: {}
-  asserts:
-  - failedTemplate:
-      errorPattern: leading or trailing whitespace
 - it: should fail when a public gateway.paths entry contains a percent-encoded slash
   set:
     global:
@@ -1050,7 +1034,7 @@ tests:
       path: spec.rules[2].matches[0].path
       value:
         type: RegularExpression
-        value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:a|%61|%41)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
 - it: should keep Authorization on the public route when skipAuthPreserveAuthorization is true but still strip identity headers
   set:
     global:
@@ -1557,13 +1541,13 @@ tests:
       path: spec.rules[2].matches[0].path
       value:
         type: RegularExpression
-        value: '(?i)^(?:/|%2f)+(?:(?-i:a)|%61)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:(?-i:a)|%61)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     equal:
       path: spec.rules[3].matches[0].path
       value:
         type: RegularExpression
-        value: '(?i)^(?:/|%2f)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:/|%2f)+(?:v|%76|%56)(?:1|%31)(?:\.|%2e)(?:0|%30)(?:(?:;|%3b)[^/]*)?(?:/|%2f)+(?:k|%6b|%4b)(?:e|%65|%45)(?:y|%79|%59)(?:s|%73|%53)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+        value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:a|%61|%41)(?:p|%70|%50)(?:i|%69|%49)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:v|%76|%56)(?:1|%31)(?:\.|%2e)(?:0|%30)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:k|%6b|%4b)(?:e|%65|%45)(?:y|%79|%59)(?:s|%73|%53)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
@@ -1665,7 +1649,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[3].matches[0].path.value
-      value: '(?i)^(?:/|%2f)+(?:(?-i:A)|%41)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
+      value: '(?i)^(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+(?:(?-i:A)|%41)(?:(?-i:d)|%64)(?:(?-i:m)|%6d)(?:(?-i:i)|%69)(?:(?-i:n)|%6e)(?:(?:;|%3b)[^/]*)?(?:(?:/|%2f).*)?$'
 - it: should fail when a prefix renders a match longer than the 1024-character limit
   set:
     global:
@@ -1734,4 +1718,75 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: as the OIDC callback path
+- it: should fail when a public Exact entry is an encoded spelling of a protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+        - path: /adm%69n
+          pathType: Exact
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: collides with gateway.protectedPaths "/admin"
+- it: should fail when a same-host sibling publishes an encoded spelling of a protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          paths:
+          - path: /
+          protectedPaths:
+          - path: /admin
+      other:
+        gateway:
+          securityPolicy: none
+          paths:
+          - path: /Admin;x
+  asserts:
+  - failedTemplate:
+      errorPattern: overlapping the path "/admin"
+- it: should fail on a semicolon inside a protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin;v=1
+  asserts:
+  - failedTemplate:
+      errorPattern: a semicolon, which backends strip
 

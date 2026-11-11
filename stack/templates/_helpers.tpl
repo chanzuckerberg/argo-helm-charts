@@ -2061,10 +2061,6 @@ https
 {{- if and (eq .path "/") (eq $pathType "PathPrefix") -}}
 {{- fail "gateway.skipAuth path / with pathType PathPrefix would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead, or use pathType Exact to expose only the root." -}}
 {{- end -}}
-{{- /* skipAuth renders onto the policy-less -public route exactly like gateway.paths, so hold it to the
-       same charset/whitespace/dot-segment rules. A value such as "/ " or "/ #x" YAML-normalises to / and
-       would otherwise slip past the explicit / rejection above, making the whole service public. */ -}}
-{{- include "stack.gateway.assertPublicPathValid" (dict "value" .path "service" $service.Values.name) -}}
 {{- $rules = append $rules (dict "path" .path "pathType" $pathType "method" (.method | default "") "weight" 0) -}}
 {{- end -}}
 {{- end -}}
@@ -2213,28 +2209,26 @@ PathPrefix
 {{- end -}}
 {{- end -}}
 
-{{- /* Match for one protected prefix. A RegularExpression that keeps the PathPrefix segment boundary but also
-     matches the spellings a backend may fold or decode into the same path, which the edge leaves untouched:
-     mixed case (unless caseSensitive), percent-encoded characters, encoded or repeated slashes, and a plain or
-     encoded matrix parameter after any segment. /admin covers /Admin, /adm%69n, /admin;x and /admin%2Fx, not /administrator
-     or /admin.json. Takes (dict "path" <prefix> "caseSensitive" <bool>). */ -}}
+{{- /* Match for one protected prefix: a RegularExpression with the PathPrefix segment boundary that also matches
+     spellings a backend may fold or decode into the same path and Envoy may pass through: mixed case (unless
+     caseSensitive), percent-encoded characters, encoded or repeated slashes, and a plain or encoded matrix
+     parameter after any segment, including an empty leading one (/;x/admin). /admin covers /Admin, /adm%69n,
+     /admin;x and /admin%2Fx, not /administrator or /admin.json. Takes (dict "path" <prefix> "caseSensitive" <bool>). */ -}}
 {{- define "stack.gateway.prefixMatch" -}}
 {{- $cs := .caseSensitive -}}
-{{- $hex := dict "a" "61" "b" "62" "c" "63" "d" "64" "e" "65" "f" "66" "g" "67" "h" "68" "i" "69" "j" "6a" "k" "6b" "l" "6c" "m" "6d" "n" "6e" "o" "6f" "p" "70" "q" "71" "r" "72" "s" "73" "t" "74" "u" "75" "v" "76" "w" "77" "x" "78" "y" "79" "z" "7a" "A" "41" "B" "42" "C" "43" "D" "44" "E" "45" "F" "46" "G" "47" "H" "48" "I" "49" "J" "4a" "K" "4b" "L" "4c" "M" "4d" "N" "4e" "O" "4f" "P" "50" "Q" "51" "R" "52" "S" "53" "T" "54" "U" "55" "V" "56" "W" "57" "X" "58" "Y" "59" "Z" "5a" "0" "30" "1" "31" "2" "32" "3" "33" "4" "34" "5" "35" "6" "36" "7" "37" "8" "38" "9" "39" "-" "2d" "." "2e" "_" "5f" "~" "7e" "!" "21" "$" "24" "&" "26" "'" "27" "(" "28" ")" "29" "*" "2a" "+" "2b" "," "2c" "=" "3d" ":" "3a" "@" "40" -}}
+{{- $sep := "(?:(?:/|%2f)+(?:(?:;|%3b)[^/]*)?)+" -}}
 {{- $out := "" -}}
 {{- range $seg := splitList "/" (trimPrefix "/" .path) -}}
-{{- $out = printf "%s(?:/|%%2f)+" $out -}}
+{{- $out = printf "%s%s" $out $sep -}}
 {{- range $ch := splitList "" $seg -}}
 {{- $lc := lower $ch -}}
 {{- $uc := upper $ch -}}
-{{- if not (hasKey $hex $lc) -}}
-{{- $out = printf "%s%s" $out (regexQuoteMeta $ch) -}}
+{{- if eq $lc $uc -}}
+{{- $out = printf "%s(?:%s|%%%x)" $out (regexQuoteMeta $ch) $ch -}}
 {{- else if $cs -}}
-{{- $out = printf "%s(?:(?-i:%s)|%%%s)" $out (regexQuoteMeta $ch) (index $hex $ch) -}}
-{{- else if ne $lc $uc -}}
-{{- $out = printf "%s(?:%s|%%%s|%%%s)" $out (regexQuoteMeta $lc) (index $hex $lc) (index $hex $uc) -}}
+{{- $out = printf "%s(?:(?-i:%s)|%%%x)" $out (regexQuoteMeta $ch) $ch -}}
 {{- else -}}
-{{- $out = printf "%s(?:%s|%%%s)" $out (regexQuoteMeta $ch) (index $hex $ch) -}}
+{{- $out = printf "%s(?:%s|%%%x|%%%x)" $out (regexQuoteMeta $lc) $lc $uc -}}
 {{- end -}}
 {{- end -}}
 {{- $out = printf "%s(?:(?:;|%%3b)[^/]*)?" $out -}}
@@ -2310,8 +2304,8 @@ PathPrefix
 {{- fail (printf "gateway.protectedPaths path / on service %s would protect the whole service. Remove protectedPaths and attach the policy to the route as usual." $service.Values.name) -}}
 {{- end -}}
 {{- /* Anything the HTTPRoute CRD would reject must fail here: a rejected protected route with an accepted -public route leaves the whole service unauthenticated. */ -}}
-{{- if not (regexMatch "^[-A-Za-z0-9/._~!$&'()*+,;=:@]+$" $pp) -}}
-{{- fail (printf "gateway.protectedPaths path %q on service %s contains characters the HTTPRoute API rejects or that Envoy normalises before matching (percent-encoding, non-ASCII). A rejected protected route with an accepted -public route leaves every path unauthenticated; a percent-encoded prefix never matches the decoded request path. Write the plain path." $pp $service.Values.name) -}}
+{{- if not (regexMatch "^[-A-Za-z0-9/._~!$&'()*+,=:@]+$" $pp) -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s contains characters the HTTPRoute API rejects, that Envoy normalises before matching (percent-encoding, non-ASCII), or a semicolon, which backends strip as a matrix parameter. A rejected protected route with an accepted -public route leaves every path unauthenticated; a percent-encoded prefix never matches the decoded request path. Write the plain path." $pp $service.Values.name) -}}
 {{- end -}}
 {{- if or (contains "//" $pp) (contains "/./" $pp) (contains "/../" $pp) (hasSuffix "/." $pp) (hasSuffix "/.." $pp) -}}
 {{- fail (printf "gateway.protectedPaths path %q on service %s contains a double slash or dot segment. The HTTPRoute API rejects these, and Envoy normalises them away before matching, so write the plain path." $pp $service.Values.name) -}}
@@ -2351,7 +2345,7 @@ PathPrefix
 {{- end -}}
 {{- range $protectedRules -}}
 {{- if gt (len .match) 1024 -}}
-{{- fail (printf "the protected route of service %s would carry the match %q (%d characters), but the HTTPRoute API allows 1024. The API server would refuse the protected route while accepting the -public route. Shorten the prefix or the base path it is prefixed with." $service.Values.name (trunc 60 .match) (len .match)) -}}
+{{- fail (printf "gateway.protectedPaths %q on service %s renders a %d-character match, but the HTTPRoute API allows 1024. The API server would refuse the protected route while accepting the -public route. Shorten the prefix or the base path it is prefixed with." .path $service.Values.name (len .match)) -}}
 {{- end -}}
 {{- end -}}
 {{- $autoCount := 0 -}}
@@ -2388,7 +2382,7 @@ PathPrefix
 {{- $hit := false -}}
 {{- $cg := ternary $gp (lower $gp) $pr.caseSensitive -}}
 {{- $cp := ternary $pr.path (lower $pr.path) $pr.caseSensitive -}}
-{{- if or (eq $cg $cp) (eq (trimSuffix "/" $cg) $cp) (hasPrefix (printf "%s/" $cp) $cg) -}}{{- $hit = true -}}{{- end -}}
+{{- if or (eq $cg $cp) (eq (trimSuffix "/" $cg) $cp) (hasPrefix (printf "%s/" $cp) $cg) (and (not $pr.auto) (regexMatch $pr.match $gp)) -}}{{- $hit = true -}}{{- end -}}
 {{- if $hit -}}
 {{- if $pr.auto -}}
 {{- fail (printf "gateway.paths entry %q on service %s collides with the OIDC path %q that protectedPaths keeps on the protected route. Remove it from gateway.paths; the login flow is routed automatically." $gp $service.Values.name $pr.path) -}}
@@ -2437,7 +2431,7 @@ PathPrefix
 {{- $hit := false -}}
 {{- $co := ternary $op (lower $op) $pr.caseSensitive -}}
 {{- $cp := ternary $pr.path (lower $pr.path) $pr.caseSensitive -}}
-{{- if or (eq $co $cp) (eq (trimSuffix "/" $co) $cp) (hasPrefix (printf "%s/" $cp) $co) -}}{{- $hit = true -}}{{- end -}}
+{{- if or (eq $co $cp) (eq (trimSuffix "/" $co) $cp) (hasPrefix (printf "%s/" $cp) $co) (and (not $pr.auto) (regexMatch $pr.match $op)) -}}{{- $hit = true -}}{{- end -}}
 {{- if $hit -}}
 {{- if $pr.auto -}}
 {{- fail (printf "service %s routes %q on host %s outside the OIDC policy, overlapping the OIDC %s path %q that service %s keeps on its protected route. The login flow is routed automatically; remove it from this service or move one service to its own host." $otherName $op $service.Values.gateway.host (ternary "logout" "callback" (eq $pr.pathType "Exact")) $pr.path $service.Values.name) -}}
