@@ -2180,7 +2180,7 @@ PathPrefix
 {{- $v := .value -}}
 {{- $service := .service -}}
 {{- if ne $v (trim $v) -}}
-{{- fail (printf "gateway public path %q on service %s has leading or trailing whitespace. YAML strips it when the HTTPRoute is applied, so the route the API server matches would differ from the configured value and could shadow a protectedPaths prefix, serving it unauthenticated. Write the path exactly as the application serves it." $v $service) -}}
+{{- fail (printf "gateway public path %q on service %s has leading or trailing whitespace. YAML strips it when the HTTPRoute is applied, so the route the API server matches would differ from the configured value. Write the path exactly as the application serves it." $v $service) -}}
 {{- end -}}
 {{- if not (hasPrefix "/" $v) -}}
 {{- fail (printf "gateway public path %q on service %s must start with /. Paths are literal Gateway API prefixes, not regexes." $v $service) -}}
@@ -2189,19 +2189,18 @@ PathPrefix
 {{- fail (printf "gateway public path %q on service %s contains a percent-encoded slash (%%2f or %%2F). The HTTPRoute API rejects an encoded slash, so the -public route would be refused while the protected route is accepted, failing closed. Remove the encoded slash and write the plain path segments." $v $service) -}}
 {{- end -}}
 {{- if not (regexMatch "^([-A-Za-z0-9/._~!$&'()*+,;=:@]|%[0-9a-fA-F]{2})+$" $v) -}}
-{{- fail (printf "gateway public path %q on service %s contains a character the HTTPRoute API rejects or that YAML normalises before the API server sees it (whitespace, #, control or non-ASCII characters, or a bare %% not part of a %%XX octet). The rendered route would then differ from this value and could shadow a protectedPaths prefix, serving it unauthenticated. Write the plain path, percent-encoding any reserved bytes as %%XX." $v $service) -}}
+{{- fail (printf "gateway public path %q on service %s contains a character the HTTPRoute API rejects or that YAML normalises before the API server sees it (whitespace, #, control or non-ASCII characters, or a bare %% not part of a %%XX octet). The rendered route would then differ from this value. Write the plain path, percent-encoding any reserved bytes as %%XX." $v $service) -}}
 {{- end -}}
 {{- if or (contains "//" $v) (contains "/./" $v) (contains "/../" $v) (hasSuffix "/." $v) (hasSuffix "/.." $v) -}}
-{{- fail (printf "gateway public path %q on service %s contains a double slash or dot segment. The HTTPRoute API rejects these and Envoy normalises them away before matching, so the rendered route would differ from this value and could shadow a protectedPaths prefix, serving it unauthenticated. Write the plain path." $v $service) -}}
+{{- fail (printf "gateway public path %q on service %s contains a double slash or dot segment. The HTTPRoute API rejects these and Envoy normalises them away before matching, so the rendered route would differ from this value. Write the plain path." $v $service) -}}
 {{- end -}}
 {{- end -}}
 
-{{- /* Base path for the auto OIDC callback/logout rules. When the SecurityPolicy is shared across a group
-     of services it must match the policy's redirectURL/logoutPath, which derive from the group primary's
-     base path (securityPolicy.groupPrimary), not this service's. So a non-primary member's protected route
-     carries the primary's /oauth2 and /logout matches; this is harmless because both routes target the same
-     policy and the OAuth2 filter answers those paths before any backend, so the member never proxies them.
-     With no group, falls back to this service's own base path. Returns the base path string. */ -}}
+{{- /* Base path for the auto OIDC callback/logout rules. With a shared SecurityPolicy it must match the
+     policy's redirectURL/logoutPath, which derive from the group primary's base path, so a non-primary
+     member's protected route carries the primary's /oauth2 and /logout. Harmless: both routes target the
+     same policy and the OAuth2 filter answers those paths before any backend. Without a group, this
+     service's own base path. */ -}}
 {{- define "stack.gateway.callbackBasePath" -}}
 {{- $root := .root -}}
 {{- $service := .service -}}
@@ -2212,6 +2211,35 @@ PathPrefix
 {{- else -}}
 {{- include "oidcProxyGateway.basePath" (dict "paths" $service.Values.gateway.paths) -}}
 {{- end -}}
+{{- end -}}
+
+{{- /* Match for one protected prefix. A RegularExpression that keeps the PathPrefix segment boundary but also
+     matches the spellings a backend may fold or decode into the same path, which the edge leaves untouched:
+     mixed case (unless caseSensitive), percent-encoded characters, encoded or repeated slashes, and a plain or
+     encoded matrix parameter after any segment. /admin covers /Admin, /adm%69n, /admin;x and /admin%2Fx, not /administrator
+     or /admin.json. Takes (dict "path" <prefix> "caseSensitive" <bool>). */ -}}
+{{- define "stack.gateway.prefixMatch" -}}
+{{- $cs := .caseSensitive -}}
+{{- $hex := dict "a" "61" "b" "62" "c" "63" "d" "64" "e" "65" "f" "66" "g" "67" "h" "68" "i" "69" "j" "6a" "k" "6b" "l" "6c" "m" "6d" "n" "6e" "o" "6f" "p" "70" "q" "71" "r" "72" "s" "73" "t" "74" "u" "75" "v" "76" "w" "77" "x" "78" "y" "79" "z" "7a" "A" "41" "B" "42" "C" "43" "D" "44" "E" "45" "F" "46" "G" "47" "H" "48" "I" "49" "J" "4a" "K" "4b" "L" "4c" "M" "4d" "N" "4e" "O" "4f" "P" "50" "Q" "51" "R" "52" "S" "53" "T" "54" "U" "55" "V" "56" "W" "57" "X" "58" "Y" "59" "Z" "5a" "0" "30" "1" "31" "2" "32" "3" "33" "4" "34" "5" "35" "6" "36" "7" "37" "8" "38" "9" "39" "-" "2d" "." "2e" "_" "5f" "~" "7e" "!" "21" "$" "24" "&" "26" "'" "27" "(" "28" ")" "29" "*" "2a" "+" "2b" "," "2c" "=" "3d" ":" "3a" "@" "40" -}}
+{{- $out := "" -}}
+{{- range $seg := splitList "/" (trimPrefix "/" .path) -}}
+{{- $out = printf "%s(?:/|%%2f)+" $out -}}
+{{- range $ch := splitList "" $seg -}}
+{{- $lc := lower $ch -}}
+{{- $uc := upper $ch -}}
+{{- if not (hasKey $hex $lc) -}}
+{{- $out = printf "%s%s" $out (regexQuoteMeta $ch) -}}
+{{- else if $cs -}}
+{{- $out = printf "%s(?:(?-i:%s)|%%%s)" $out (regexQuoteMeta $ch) (index $hex $ch) -}}
+{{- else if ne $lc $uc -}}
+{{- $out = printf "%s(?:%s|%%%s|%%%s)" $out (regexQuoteMeta $lc) (index $hex $lc) (index $hex $uc) -}}
+{{- else -}}
+{{- $out = printf "%s(?:%s|%%%s)" $out (regexQuoteMeta $ch) (index $hex $ch) -}}
+{{- end -}}
+{{- end -}}
+{{- $out = printf "%s(?:(?:;|%%3b)[^/]*)?" $out -}}
+{{- end -}}
+{{- printf "(?i)^%s(?:(?:/|%%2f).*)?$" $out -}}
 {{- end -}}
 
 {{- define "stack.gateway.protectedRules" -}}
@@ -2302,48 +2330,34 @@ PathPrefix
 {{- end -}}
 {{- $dup := false -}}
 {{- range $protectedRules -}}
-{{- if or (eq .path $pp) (and (not (and $cs .caseSensitive)) (eq (lower .path) (lower $pp))) -}}
 {{- if .auto -}}
+{{- if or (eq .path $pp) (and (not $cs) (eq (lower .path) (lower $pp))) -}}
 {{- fail (printf "gateway.protectedPaths %q on service %s is already kept on the protected route as the OIDC %s path, so listing it is redundant; remove it." $pp $service.Values.name (ternary "logout" "callback" (eq .pathType "Exact"))) -}}
 {{- end -}}
+{{- else if and (eq .path $pp) (eq .caseSensitive $cs) -}}
 {{- $dup = true -}}
+{{- else if eq (lower .path) (lower $pp) -}}
+{{- if and (not .caseSensitive) (not $cs) -}}
+{{- $dup = true -}}
+{{- else if ne .caseSensitive $cs -}}
+{{- fail (printf "gateway.protectedPaths entries %q and %q on service %s are the same prefix in different case but differ in caseSensitive, so one would silently override the other. Keep one entry (case-insensitive by default), or make both caseSensitive." .path $pp $service.Values.name) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- if not $dup -}}
-{{- if $cs -}}
-{{- /* Opt-in native PathPrefix: splits on whole / segments, so /admin matches /admin and /admin/x but not /administrator, and only in this exact case. */ -}}
-{{- $protectedRules = append $protectedRules (dict "path" $pp "match" $pp "pathType" "PathPrefix" "auto" false "caseSensitive" true) -}}
-{{- else -}}
-{{- /* Default: a case-insensitive RE2 match with the same segment boundary, so /Admin and /ADMIN/x stay protected on backends that fold case. Envoy Gateway ranks a regex above any prefix, so it also wins over the -public remainder. */ -}}
-{{- $protectedRules = append $protectedRules (dict "path" $pp "match" (printf "(?i)^%s(/.*)?$" (regexQuoteMeta $pp)) "pathType" "RegularExpression" "auto" false "caseSensitive" false) -}}
-{{- end -}}
+{{- /* Envoy Gateway ranks a regex above any PathPrefix, so this also wins over the -public remainder. */ -}}
+{{- $protectedRules = append $protectedRules (dict "path" $pp "match" (include "stack.gateway.prefixMatch" (dict "path" $pp "caseSensitive" $cs)) "pathType" "RegularExpression" "auto" false "caseSensitive" $cs) -}}
 {{- end -}}
 {{- end -}}
 {{- range $protectedRules -}}
-{{- if gt (len .path) 1024 -}}
-{{- fail (printf "the protected route of service %s would carry the path %q (%d characters), but the HTTPRoute API allows 1024. The API server would refuse the protected route while accepting the -public route. Shorten the path or the base path it is prefixed with." $service.Values.name (trunc 60 .path) (len .path)) -}}
+{{- if gt (len .match) 1024 -}}
+{{- fail (printf "the protected route of service %s would carry the match %q (%d characters), but the HTTPRoute API allows 1024. The API server would refuse the protected route while accepting the -public route. Shorten the prefix or the base path it is prefixed with." $service.Values.name (trunc 60 .match) (len .match)) -}}
 {{- end -}}
-{{- end -}}
-{{- /* Fail closed on request shapes the edge does not normalise: a matrix parameter (/admin;x) or a percent-encoded octet (/adm%69n) can reach a protected handler on backends that strip or decode them. Any path under this service's own prefixes that carries ; or % goes to the protected route; scoping to the prefixes keeps a same-host sibling's paths out. A public entry that itself contains ; or % can therefore never be served and is rejected. Appended last so it never masks a duplicate or collision error. */ -}}
-{{- $guardAlts := list -}}
-{{- range $service.Values.gateway.paths -}}
-{{- $gp := .path | default "/" -}}
-{{- if ne (.pathType | default "Prefix") "Exact" -}}
-{{- $base := trimSuffix "/" $gp -}}
-{{- if eq $base "" -}}
-{{- $guardAlts = append $guardAlts "/[^;%]*" -}}
-{{- else -}}
-{{- $guardAlts = append $guardAlts (printf "%s(?:/[^;%%]*)?" (regexQuoteMeta $base)) -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-{{- if gt (len $guardAlts) 0 -}}
-{{- $protectedRules = append $protectedRules (dict "path" "" "match" (printf "(?i)^(?:%s)[;%%].*$" (join "|" $guardAlts)) "pathType" "RegularExpression" "auto" true "guard" true "caseSensitive" true) -}}
 {{- end -}}
 {{- $autoCount := 0 -}}
 {{- range $protectedRules -}}{{- if .auto -}}{{- $autoCount = add1 $autoCount -}}{{- end -}}{{- end -}}
 {{- if gt (len $protectedRules) 16 -}}
-{{- fail (printf "service %s would render %d rules on its protected HTTPRoute (%d protectedPaths prefixes plus %d automatic %s: the OIDC callback, the guard for paths containing ; or %%, and where configured the logout rule), but the HTTPRoute API allows 16. The API server would refuse the protected route while accepting the -public route. Protect at most %d prefixes, or group them under a shared prefix." $service.Values.name (len $protectedRules) (sub (len $protectedRules) $autoCount) $autoCount (ternary "rule" "rules" (eq $autoCount 1)) (sub 16 $autoCount)) -}}
+{{- fail (printf "service %s would render %d rules on its protected HTTPRoute (%d protectedPaths prefixes plus %d automatic %s: the OIDC callback, and where configured the logout rule), but the HTTPRoute API allows 16. The API server would refuse the protected route while accepting the -public route. Protect at most %d prefixes, or group them under a shared prefix." $service.Values.name (len $protectedRules) (sub (len $protectedRules) $autoCount) $autoCount (ternary "rule" "rules" (eq $autoCount 1)) (sub 16 $autoCount)) -}}
 {{- end -}}
 {{- toYaml $protectedRules -}}
 {{- end -}}
@@ -2371,13 +2385,10 @@ PathPrefix
 {{- range $service.Values.gateway.paths -}}
 {{- $gp := .path | default "/" -}}
 {{- include "stack.gateway.assertPublicPathValid" (dict "value" $gp "service" $service.Values.name) -}}
-{{- if or (contains ";" $gp) (contains "%" $gp) -}}
-{{- fail (printf "gateway.paths entry %q on service %s contains ; or %%. With protectedPaths every request whose path carries a matrix parameter or a percent-encoded octet is routed to the protected route, so this entry could never be served publicly. Remove it or write the plain path." $gp $service.Values.name) -}}
-{{- end -}}
 {{- $hit := false -}}
-{{- $cg := ternary $gp (lower $gp) (eq (toString $pr.caseSensitive) "true") -}}
-{{- $cp := ternary $pr.path (lower $pr.path) (eq (toString $pr.caseSensitive) "true") -}}
-{{- if and (not $pr.guard) (or (eq $cg $cp) (eq (trimSuffix "/" $cg) $cp) (hasPrefix (printf "%s/" $cp) $cg)) -}}{{- $hit = true -}}{{- end -}}
+{{- $cg := ternary $gp (lower $gp) $pr.caseSensitive -}}
+{{- $cp := ternary $pr.path (lower $pr.path) $pr.caseSensitive -}}
+{{- if or (eq $cg $cp) (eq (trimSuffix "/" $cg) $cp) (hasPrefix (printf "%s/" $cp) $cg) -}}{{- $hit = true -}}{{- end -}}
 {{- if $hit -}}
 {{- if $pr.auto -}}
 {{- fail (printf "gateway.paths entry %q on service %s collides with the OIDC path %q that protectedPaths keeps on the protected route. Remove it from gateway.paths; the login flow is routed automatically." $gp $service.Values.name $pr.path) -}}
@@ -2424,9 +2435,9 @@ PathPrefix
 {{- include "stack.gateway.assertPublicPathValid" (dict "value" $op "service" $otherName) -}}
 {{- range $pr := $protectedRules -}}
 {{- $hit := false -}}
-{{- $co := ternary $op (lower $op) (eq (toString $pr.caseSensitive) "true") -}}
-{{- $cp := ternary $pr.path (lower $pr.path) (eq (toString $pr.caseSensitive) "true") -}}
-{{- if and (not $pr.guard) (or (eq $co $cp) (eq (trimSuffix "/" $co) $cp) (hasPrefix (printf "%s/" $cp) $co)) -}}{{- $hit = true -}}{{- end -}}
+{{- $co := ternary $op (lower $op) $pr.caseSensitive -}}
+{{- $cp := ternary $pr.path (lower $pr.path) $pr.caseSensitive -}}
+{{- if or (eq $co $cp) (eq (trimSuffix "/" $co) $cp) (hasPrefix (printf "%s/" $cp) $co) -}}{{- $hit = true -}}{{- end -}}
 {{- if $hit -}}
 {{- if $pr.auto -}}
 {{- fail (printf "service %s routes %q on host %s outside the OIDC policy, overlapping the OIDC %s path %q that service %s keeps on its protected route. The login flow is routed automatically; remove it from this service or move one service to its own host." $otherName $op $service.Values.gateway.host (ternary "logout" "callback" (eq $pr.pathType "Exact")) $pr.path $service.Values.name) -}}
