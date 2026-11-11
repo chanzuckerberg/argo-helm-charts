@@ -1273,6 +1273,10 @@
                   "enabled": {
                     "type": "boolean"
                   },
+                  "realm": {
+                    "description": "Fixed realm for the WWW-Authenticate challenge on basic-auth 401s, equivalent to the nginx auth-realm annotation. Without it Envoy uses the full request URI as the realm, so a browser treats every path as its own protection space and prompts once per path. Rendered as a responseOverride on each protected route's BackendTrafficPolicy that matches only gateway-generated 401s already carrying a Basic challenge, so 401s the application returns, JWT failures and public skipAuth routes are untouched. The override replaces the reply, which drops CORS response headers from that one 401 when cors is also enabled on the policy, so cross-origin scripts cannot read a basic-auth failure, though they could never act on a Basic challenge anyway",
+                    "type": "string"
+                  },
                   "secretName": {
                     "description": "Opaque Secret with a .htpasswd key, note nginx uses auth instead",
                     "type": "string"
