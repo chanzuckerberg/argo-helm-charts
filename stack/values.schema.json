@@ -112,7 +112,7 @@
               "type": "string"
             },
             "appSourceTargetRevision": {
-              "description": "Set by Argus API to ARGOCD_APP_SOURCE_REPO_URL",
+              "description": "Set by Argus API to ARGOCD_APP_SOURCE_TARGET_REVISION",
               "type": "string"
             }
           }
