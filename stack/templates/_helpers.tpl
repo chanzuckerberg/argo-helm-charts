@@ -2300,7 +2300,7 @@ PathPrefix
 {{- /* Opt-in native PathPrefix: whole-segment match in this exact case only. */ -}}
 {{- $protectedRules = append $protectedRules (dict "path" $pp "match" $pp "pathType" "PathPrefix" "auto" false "caseSensitive" true) -}}
 {{- else -}}
-{{- /* Default: case-insensitive regex with the same segment boundary. Envoy Gateway ranks a regex above any PathPrefix, so it also wins over the -public remainder. */ -}}
+{{- /* Default: case-insensitive regex with the same segment boundary. Envoy Gateway ranks Exact, then RegularExpression, then PathPrefix (internal/gatewayapi/sort.go), so it also wins over the -public remainder. */ -}}
 {{- $protectedRules = append $protectedRules (dict "path" $pp "match" (printf "(?i)^%s(/.*)?$" (regexQuoteMeta $pp)) "pathType" "RegularExpression" "auto" false "caseSensitive" false) -}}
 {{- end -}}
 {{- end -}}
@@ -2320,7 +2320,7 @@ PathPrefix
 {{- end -}}
 {{- end -}}
 {{- if not $under -}}
-{{- fail (printf "securityPolicies oidc.apiRoutes entry %q lies outside every gateway.protectedPaths prefix of service %s, so it would be served by the public route and the denyRedirect matcher would never apply. Move it under a protected prefix or remove it." $ap $service.Values.name) -}}
+{{- fail (printf "securityPolicies oidc.apiRoutes entry %q is not under a gateway.protectedPaths prefix of service %s, so some or all of it would be served by the public route, where the denyRedirect matcher never applies. Move it under a protected prefix, give this service its own policy, or remove it." $ap $service.Values.name) -}}
 {{- end -}}
 {{- end -}}
 {{- /* Fail closed on shapes the edge does not normalise: a matrix parameter (/admin;x) or an encoded octet (/adm%69n) can reach a protected handler on a backend that strips or decodes them, so every path on the host carrying ; or % goes to the protected route. assertNoCollisions therefore requires the service to be alone on its host and rejects public entries containing either. */ -}}
@@ -2386,8 +2386,8 @@ PathPrefix
 {{- $ov := fromYaml (include "service.context" (dict "root" $global "name" $otherName)) -}}
 {{- $og := $ov.gateway | default dict -}}
 {{- if and $og.enabled (not (($og.tlsPassthrough | default dict).enabled)) -}}
-{{- $shared := eq ($og.host | default "") $service.Values.gateway.host -}}
-{{- range ($og.rules | default list) -}}{{- if eq (.host | default "") $service.Values.gateway.host -}}{{- $shared = true -}}{{- end -}}{{- end -}}
+{{- $shared := or (eq ($og.host | default "") $service.Values.gateway.host) (eq (($og.vanity | default dict).hostname | default "") $service.Values.gateway.host) -}}
+{{- range ($og.rules | default list) -}}{{- if or (eq (.host | default "") $service.Values.gateway.host) (eq ((.vanity | default dict).hostname | default "") $service.Values.gateway.host) -}}{{- $shared = true -}}{{- end -}}{{- end -}}
 {{- if $shared -}}
 {{- fail (printf "service %s also routes host %s. gateway.protectedPaths on service %s sends every request on that host whose path contains ; or %% to its own protected route, so the service must be the only one on its host. Move one of them to its own host, or remove protectedPaths." $otherName $service.Values.gateway.host $service.Values.name) -}}
 {{- end -}}
