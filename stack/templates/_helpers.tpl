@@ -2177,7 +2177,7 @@ PathPrefix
 {{- fail (printf "gateway public path %q on service %s has leading or trailing whitespace. YAML strips it when the HTTPRoute is applied, so the route the API server matches would differ from the configured value. Write the path exactly as the application serves it." $v $service) -}}
 {{- end -}}
 {{- if not (hasPrefix "/" $v) -}}
-{{- fail (printf "gateway public path %q on service %s must start with /. Paths are literal Gateway API prefixes, not regexes." $v $service) -}}
+{{- fail (printf "gateway public path %q on service %s must start with /. Write the plain prefix, for example /public." $v $service) -}}
 {{- end -}}
 {{- if regexMatch "(?i)%2f" $v -}}
 {{- fail (printf "gateway public path %q on service %s contains a percent-encoded slash (%%2f or %%2F). The HTTPRoute API rejects an encoded slash, so the -public route would be refused while the protected route is accepted, failing closed. Remove the encoded slash and write the plain path segments." $v $service) -}}
@@ -2255,7 +2255,7 @@ PathPrefix
 {{- fail (printf "gateway.protectedPaths path %q on service %s has leading or trailing whitespace. Write the path exactly as the application serves it." $pp $service.Values.name) -}}
 {{- end -}}
 {{- if not (hasPrefix "/" $pp) -}}
-{{- fail (printf "gateway.protectedPaths path %q on service %s must start with /. Paths are literal Gateway API prefixes, not regexes." $pp $service.Values.name) -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s must start with /. Write the plain prefix, for example /admin, and the chart builds the match." $pp $service.Values.name) -}}
 {{- end -}}
 {{- if eq $pp "/" -}}
 {{- fail (printf "gateway.protectedPaths path / on service %s would protect the whole service. Remove protectedPaths and attach the policy to the route as usual." $service.Values.name) -}}
@@ -2305,6 +2305,24 @@ PathPrefix
 {{- end -}}
 {{- end -}}
 {{- end -}}
+{{- /* An oidc.apiRoutes matcher lives on the policy, which targets only the protected route, so a path outside every protected prefix would never be reached and its API callers would get a redirect instead of a 401. */ -}}
+{{- range (($p.oidc | default dict).apiRoutes | default list) -}}
+{{- $ap := .path | default "" -}}
+{{- if eq (.matchType | default "Prefix") "RegularExpression" -}}
+{{- fail (printf "securityPolicies oidc.apiRoutes entry %q uses RegularExpression, which the chart cannot place under a gateway.protectedPaths prefix of service %s. Use a Prefix or Exact apiRoutes path under a protected prefix." $ap $service.Values.name) -}}
+{{- end -}}
+{{- $under := false -}}
+{{- range $protectedRules -}}
+{{- if not .auto -}}
+{{- $a := ternary $ap (lower $ap) .caseSensitive -}}
+{{- $b := ternary .path (lower .path) .caseSensitive -}}
+{{- if or (eq $a $b) (hasPrefix (printf "%s/" $b) $a) -}}{{- $under = true -}}{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- if not $under -}}
+{{- fail (printf "securityPolicies oidc.apiRoutes entry %q lies outside every gateway.protectedPaths prefix of service %s, so it would be served by the public route and the denyRedirect matcher would never apply. Move it under a protected prefix or remove it." $ap $service.Values.name) -}}
+{{- end -}}
+{{- end -}}
 {{- /* Fail closed on shapes the edge does not normalise: a matrix parameter (/admin;x) or an encoded octet (/adm%69n) can reach a protected handler on a backend that strips or decodes them, so every path on the host carrying ; or % goes to the protected route. assertNoCollisions therefore requires the service to be alone on its host and rejects public entries containing either. */ -}}
 {{- $protectedRules = append $protectedRules (dict "path" "" "match" "^.*[;%].*$" "pathType" "RegularExpression" "auto" true "guard" true "caseSensitive" true) -}}
 {{- range $protectedRules -}}
@@ -2336,7 +2354,7 @@ PathPrefix
 {{- $global := .root -}}
 {{- $service := .service -}}
 {{- $protectedRules := .rules -}}
-{{- /* Every gateway.paths entry must be strictly broader than every protected rule, including the
+{{- /* Every gateway.paths entry must be strictly broader than every protected prefix, including the
        auto-added callback and logout. An equal or narrower entry on the -public route would win
        Gateway API precedence and serve the protected path without authentication. */ -}}
 {{- range $service.Values.gateway.paths -}}
