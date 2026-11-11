@@ -103,7 +103,7 @@ spec:
     - matches:
         - path:
             type: {{ .pathType }}
-            value: {{ .path }}
+            value: {{ .match | default .path | quote }}
       backendRefs:
         {{- include "service.backend.refs.direct" $service | nindent 8 }}
       {{- if $filters }}

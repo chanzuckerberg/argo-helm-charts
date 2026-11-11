@@ -85,12 +85,18 @@ tests:
     equal:
       path: spec.rules[2].matches[0].path
       value:
-        type: PathPrefix
-        value: /admin
+        type: RegularExpression
+        value: (?i)^/admin(/.*)?$
+  - documentIndex: 1
+    equal:
+      path: spec.rules[3].matches[0].path
+      value:
+        type: RegularExpression
+        value: (?i)^(?:/[^;%]*)[;%].*$
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 3
+      count: 4
 - it: should render nothing extra when protectedPaths is empty
   set:
     global:
@@ -289,7 +295,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: /api/admin
+      value: (?i)^/api/admin(/.*)?$
   - documentIndex: 1
     equal:
       path: spec.rules[0].matches[0].path.value
@@ -415,7 +421,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: /admin
+      value: (?i)^/admin(/.*)?$
 - it: should strip identity headers on skipAuth public routes too
   set:
     global:
@@ -745,7 +751,7 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: tlsPassthrough enabled
-- it: should render a duplicated protected path once
+- it: should render a protected path listed twice in different case once
   set:
     global:
       ingress:
@@ -759,12 +765,12 @@ tests:
         gateway:
           protectedPaths:
           - path: /admin
-          - path: /admin
+          - path: /Admin
   asserts:
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
-      count: 3
+      count: 4
 - it: should fail when a base path pushes an auto rule past the 1024-character limit
   set:
     global:
@@ -813,7 +819,7 @@ tests:
     contains:
       path: spec.rules[0].filters[0].requestHeaderModifier.remove
       content: Authorization
-- it: should allow percent-encoded and semicolon public paths
+- it: should fail when a public gateway.paths entry contains ; or %, which the guard would route to the protected side
   set:
     global:
       ingress:
@@ -835,12 +841,8 @@ tests:
           protectedPaths:
           - path: /admin
   asserts:
-  - hasDocuments:
-      count: 2
-  - documentIndex: 1
-    lengthEqual:
-      path: spec.rules
-      count: 3
+  - failedTemplate:
+      errorPattern: contains ; or %
 - it: should fail when a protected path is the OIDC logout path
   set:
     global:
@@ -1049,8 +1051,8 @@ tests:
     equal:
       path: spec.rules[2].matches[0].path
       value:
-        type: PathPrefix
-        value: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        type: RegularExpression
+        value: (?i)^/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(/.*)?$
 - it: should keep Authorization on the public route when skipAuthPreserveAuthorization is true but still strip identity headers
   set:
     global:
@@ -1530,4 +1532,120 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: sets gateway.protectedPaths with gateway.redirect.enabled
+- it: should match a protected path as a native PathPrefix when caseSensitive is true
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+            caseSensitive: true
+          - path: /api/v1.0/keys
+  asserts:
+  - documentIndex: 1
+    equal:
+      path: spec.rules[2].matches[0].path
+      value:
+        type: PathPrefix
+        value: /admin
+  - documentIndex: 1
+    equal:
+      path: spec.rules[3].matches[0].path
+      value:
+        type: RegularExpression
+        value: (?i)^/api/v1\.0/keys(/.*)?$
+  - documentIndex: 1
+    equal:
+      path: spec.rules[4].matches[0].path.type
+      value: RegularExpression
+  - documentIndex: 1
+    lengthEqual:
+      path: spec.rules
+      count: 5
+- it: should scope the ; and % guard to the service's own prefixes
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /api
+        - path: /docs/
+        - path: /healthz
+          pathType: Exact
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /api/admin
+  asserts:
+  - documentIndex: 1
+    equal:
+      path: spec.rules[3].matches[0].path.value
+      value: (?i)^(?:/api(?:/[^;%]*)?|/docs(?:/[^;%]*)?)[;%].*$
+- it: should fail when a public gateway.paths entry differs from a protected prefix only by case
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+        - path: /Admin/reports
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: collides with gateway.protectedPaths "/admin"
+- it: should allow a public gateway.paths entry that differs only by case from a caseSensitive protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+        - path: /Admin/reports
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+            caseSensitive: true
+  asserts:
+  - hasDocuments:
+      count: 2
 
