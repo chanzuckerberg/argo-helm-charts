@@ -707,6 +707,9 @@ Takes (dict "root" $ "name" <serviceName>).
 {{- if ne $name "" -}}
   {{- $defs := fromYaml (include "securityPolicy.definitions" $root) -}}
   {{- if not (hasKey $defs $name) -}}
+    {{- if hasKey ((index $root.Values.services .name).securityPolicies | default dict) $name -}}
+      {{- fail (printf "service %q sets securityPolicies, but named policies are read only from global.securityPolicies, so this block is ignored and protects nothing. Move it under global.securityPolicies and attach it with gateway.securityPolicy." .name) -}}
+    {{- end -}}
     {{- fail (printf "service %q sets gateway.securityPolicy: %q but global.securityPolicies has no such entry. Declare it, or use oidc-protected-default." .name $name) -}}
   {{- end -}}
   {{- index $defs $name | toYaml -}}
@@ -849,6 +852,44 @@ ignore it. Takes (dict "root" $ "name" <serviceName>).
 {{- range $k := (list "oidcProtected" "cors" "ipAllowList" "basicAuth" "jwt") -}}
   {{- if hasKey ($root.Values.global.gateway | default dict) $k -}}
     {{- fail (printf "global.gateway.%s was removed in stack 2.55.0. Move it into a global.securityPolicies entry and attach it with gateway.securityPolicy." $k) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "validate.serviceLevelGlobalBlocks" -}}
+{{- range $name, $sv := .Values.services -}}
+  {{- if hasKey ($sv | default dict) "securityPolicies" -}}
+    {{- fail (printf "service %q sets securityPolicies, but named policies are read only from global.securityPolicies, so this block is ignored and protects nothing. Move it under global.securityPolicies and attach it with gateway.securityPolicy." $name) -}}
+  {{- end -}}
+  {{- if hasKey ($sv | default dict) "oidcProxy" -}}
+    {{- fail (printf "service %q sets oidcProxy, but the OIDC proxy is configured only from global.oidcProxy, so this block is ignored. Move it to global.oidcProxy." $name) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "validate.serviceSkipAuthAndRedirect" -}}
+{{- $root := .root -}}
+{{- $name := .name -}}
+{{- $g := .ctx.Values.gateway -}}
+{{- if and $g.enabled (not ($g.tlsPassthrough | default dict).enabled) -}}
+  {{- $skip := $g.skipAuth | default list -}}
+  {{- if and (gt (len $skip) 0) (eq (include "securityPolicy.resolve" (dict "root" $root "name" $name)) "") -}}
+    {{- fail (printf "service %q lists gateway.skipAuth paths but has no gateway.securityPolicy, so every path is already public and the entries do nothing. Attach a policy or remove skipAuth." $name) -}}
+  {{- end -}}
+  {{- if and $g.skipAuthPreserveAuthorization (eq (len $skip) 0) -}}
+    {{- fail (printf "service %q sets gateway.skipAuthPreserveAuthorization but lists no gateway.skipAuth paths, so there is no public route for it to affect." $name) -}}
+  {{- end -}}
+  {{- if ($g.redirect | default dict).enabled -}}
+    {{- $paths := $g.paths | default list -}}
+    {{- $onlyRoot := le (len $paths) 1 -}}
+    {{- range $paths -}}
+      {{- if or (ne (.path | default "/") "/") (not (has (.pathType | default "Prefix") (list "Prefix" "PathPrefix"))) -}}
+        {{- $onlyRoot = false -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $onlyRoot -}}
+      {{- fail (printf "service %q enables gateway.redirect and also sets gateway.paths, but a redirect route matches every path on its host and the paths are ignored. Remove gateway.paths or disable the redirect." $name) -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- end -}}

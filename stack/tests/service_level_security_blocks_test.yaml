@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test service-level securityPolicies and oidcProxy blocks are rejected
+templates:
+- gateway-securitypolicy-shared.yaml
+tests:
+- it: should fail when a service declares and attaches its own securityPolicies block
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+    services:
+      app:
+        securityPolicies:
+          mine:
+            basicAuth:
+              enabled: true
+              secretName: creds
+        gateway:
+          securityPolicy: mine
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: service "app" sets securityPolicies, but named policies are read only from global.securityPolicies
+- it: should fail when a service declares a securityPolicies block it never attaches
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+    services:
+      app:
+        securityPolicies:
+          mine:
+            basicAuth:
+              enabled: true
+              secretName: creds
+        gateway:
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: service "app" sets securityPolicies, but named policies are read only from global.securityPolicies
+- it: should fail when an ingress service declares its own oidcProxy block
+  set:
+    global:
+      ingress:
+        enabled: true
+        host: api.example.com
+    services:
+      app:
+        oidcProxy:
+          enabled: true
+        ingress:
+          oidcProtected: true
+  asserts:
+  - failedTemplate:
+      errorPattern: service "app" sets oidcProxy, but the OIDC proxy is configured only from global.oidcProxy
+- it: should accept the same blocks under global
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: api.example.com
+      oidcProxy:
+        enabled: false
+      securityPolicies:
+        mine:
+          basicAuth:
+            enabled: true
+            secretName: creds
+    services:
+      app:
+        gateway:
+          securityPolicy: mine
+          paths:
+          - path: /
+            pathType: Prefix
+  asserts:
+  - hasDocuments:
+      count: 1
+  - isKind:
+      of: SecurityPolicy

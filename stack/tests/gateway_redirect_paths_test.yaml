@@ -1,0 +1,121 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway.redirect rejects custom gateway.paths it would ignore
+templates:
+- gateway-securitypolicy.yaml
+- httproute.yaml
+- ingress.yaml
+tests:
+- it: should fail when a redirect service also sets custom paths
+  template: gateway-securitypolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: old.example.com
+    services:
+      app:
+        gateway:
+          redirect:
+            enabled: true
+            hostname: new.example.com
+          paths:
+          - path: /api
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: service "app" enables gateway.redirect and also sets gateway.paths
+- it: should fail when the redirect service lists more than the root path
+  template: gateway-securitypolicy.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: old.example.com
+    services:
+      app:
+        gateway:
+          redirect:
+            enabled: true
+            hostname: new.example.com
+          paths:
+          - path: /
+            pathType: Prefix
+          - path: /docs
+            pathType: Prefix
+  asserts:
+  - failedTemplate:
+      errorPattern: service "app" enables gateway.redirect and also sets gateway.paths
+- it: should render the redirect with the default root path
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: old.example.com
+    services:
+      app:
+        gateway:
+          redirect:
+            enabled: true
+            hostname: new.example.com
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: spec.rules[0].filters[0].requestRedirect.hostname
+      value: new.example.com
+- it: should render the redirect when the root path is restated explicitly
+  template: httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: old.example.com
+    services:
+      app:
+        gateway:
+          redirect:
+            enabled: true
+            hostname: new.example.com
+          paths:
+          - path: /
+            pathType: PathPrefix
+  asserts:
+  - hasDocuments:
+      count: 1
+  - exists:
+      path: spec.rules[0].filters[0].requestRedirect
+- it: should not fire on an ingress service that inherits a global redirect block
+  templates:
+  - ingress.yaml
+  - httproute.yaml
+  set:
+    global:
+      ingress:
+        enabled: true
+        host: old.example.com
+      gateway:
+        enabled: false
+        redirect:
+          enabled: true
+          hostname: new.example.com
+        paths:
+        - path: /api
+          pathType: Prefix
+    services:
+      app: {}
+  asserts:
+  - template: ingress.yaml
+    hasDocuments:
+      count: 1
+  - template: httproute.yaml
+    hasDocuments:
+      count: 0

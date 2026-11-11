@@ -1,6 +1,7 @@
 {{- $root := . -}}
 {{- include "validate.gatewaySecurityExclusive" $root -}}
 {{- include "securityPolicy.validateRemovedGlobalKeys" (dict "root" $root) -}}
+{{- include "validate.serviceLevelGlobalBlocks" $root -}}
 {{- $keys := list -}}
 {{- range $name, $_ := .Values.services -}}
   {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}

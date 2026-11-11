@@ -35,9 +35,10 @@
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
+{{- include "securityPolicy.validateRemovedKeys" (dict "root" $global "name" .Values.name) -}}
+{{- include "validate.serviceSkipAuthAndRedirect" (dict "root" $global "name" .Values.name "ctx" .) -}}
 {{- $policyYaml := include "securityPolicy.resolve" (dict "root" $global "name" .Values.name) -}}
 {{- $policyName := include "securityPolicy.name" (dict "root" $global "name" .Values.name) -}}
-{{- include "securityPolicy.validateRemovedKeys" (dict "root" $global "name" .Values.name) -}}
 {{- if and .Values.gateway.enabled (not .Values.gateway.tlsPassthrough.enabled) (ne $policyYaml "") -}}
 {{- $p := fromYaml $policyYaml -}}
 {{- $suffix := include "gateway.securityPolicy.suffix" (dict "policy" $p) -}}

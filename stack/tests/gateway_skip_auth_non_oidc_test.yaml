@@ -2,8 +2,10 @@
 suite: test gateway skipAuth renders a public route for non-OIDC policies
 templates:
 - httproute.yaml
+- gateway-securitypolicy.yaml
 tests:
 - it: should render a public route for a basicAuth policy
+  template: httproute.yaml
   set:
     global:
       ingress:
@@ -47,7 +49,8 @@ tests:
       path: spec.rules[1].matches[0].path.type
       value: PathPrefix
 
-- it: should render no public route when the service attaches no policy
+- it: should fail when the service lists skipAuth but attaches no policy
+  template: gateway-securitypolicy.yaml
   set:
     global:
       ingress:
@@ -64,14 +67,11 @@ tests:
           skipAuth:
           - path: /health
   asserts:
-  - hasDocuments:
-      count: 1
-  - documentIndex: 0
-    equal:
-      path: metadata.name
-      value: release-name-stack-app
+  - failedTemplate:
+      errorPattern: service "app" lists gateway.skipAuth paths but has no gateway.securityPolicy
 
 - it: should render no public route when skipAuth is empty
+  template: httproute.yaml
   set:
     global:
       ingress:
@@ -100,6 +100,7 @@ tests:
       value: release-name-stack-app
 
 - it: should fail when skipAuth is combined with a whole-route redirect
+  template: httproute.yaml
   set:
     global:
       ingress:
@@ -129,6 +130,7 @@ tests:
       errorPattern: "gateway.skipAuth cannot be combined with gateway.redirect.enabled"
 
 - it: should still render a redirect route when skipAuth is absent
+  template: httproute.yaml
   set:
     global:
       ingress:
