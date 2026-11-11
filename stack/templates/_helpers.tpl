@@ -2166,12 +2166,10 @@ PathPrefix
 {{- end -}}
 {{- end }}
 
-{{- /* Validates one path that will be rendered onto an unauthenticated -public route (this service's
-       gateway.paths, or another same-host service's gateway.paths/rules/skipAuth). The value is emitted
+{{- /* Validates one gateway.paths entry rendered onto the unauthenticated -public route. The value is emitted
        as an unquoted plain scalar, so the API server sees the YAML-normalised string, not the raw one the
        collision check compared. Any whitespace, comment or out-of-charset character makes those two differ
-       and could slip a normalised Exact/PathPrefix past assertNoCollisions, shadowing a protected path. We
-       require the configured string to equal what the API server will see. */ -}}
+       and could slip a normalised Exact/PathPrefix past assertNoCollisions, shadowing a protected path. */ -}}
 {{- define "stack.gateway.assertPublicPathValid" -}}
 {{- $v := .value -}}
 {{- $service := .service -}}
@@ -2190,12 +2188,6 @@ PathPrefix
 {{- if or (contains "//" $v) (contains "/./" $v) (contains "/../" $v) (hasSuffix "/." $v) (hasSuffix "/.." $v) -}}
 {{- fail (printf "gateway public path %q on service %s contains a double slash or dot segment. The HTTPRoute API rejects these and Envoy normalises them away before matching, so the rendered route would differ from this value. Write the plain path." $v $service) -}}
 {{- end -}}
-{{- end -}}
-
-{{- /* Base path for the auto OIDC callback/logout rules, from this service's own gateway.paths. A shared
-     SecurityPolicy group puts several services on one host, which protectedPaths rejects, so no group case. */ -}}
-{{- define "stack.gateway.callbackBasePath" -}}
-{{- include "oidcProxyGateway.basePath" (dict "paths" .service.Values.gateway.paths) -}}
 {{- end -}}
 
 {{- define "stack.gateway.protectedRules" -}}
@@ -2320,7 +2312,7 @@ PathPrefix
 {{- $autoCount := 0 -}}
 {{- range $protectedRules -}}{{- if .auto -}}{{- $autoCount = add1 $autoCount -}}{{- end -}}{{- end -}}
 {{- if gt (len $protectedRules) 16 -}}
-{{- fail (printf "service %s would render %d rules on its protected HTTPRoute (%d protectedPaths prefixes plus %d automatic %s: the OIDC callback, the guard for paths containing ; or %%, and where configured the logout rule), but the HTTPRoute API allows 16. The API server would refuse the protected route while accepting the -public route. Protect at most %d prefixes, or group them under a shared prefix." $service.Values.name (len $protectedRules) (sub (len $protectedRules) $autoCount) $autoCount (ternary "rule" "rules" (eq $autoCount 1)) (sub 16 $autoCount)) -}}
+{{- fail (printf "service %s would render %d rules on its protected HTTPRoute (%d protectedPaths prefixes plus %d automatic %s), but the HTTPRoute API allows 16, so the API server would refuse it while accepting the -public route. Protect at most %d prefixes, or group them under a shared prefix." $service.Values.name (len $protectedRules) (sub (len $protectedRules) $autoCount) $autoCount (ternary "rule" "rules" (eq $autoCount 1)) (sub 16 $autoCount)) -}}
 {{- end -}}
 {{- toYaml $protectedRules -}}
 {{- end -}}
@@ -2344,13 +2336,16 @@ PathPrefix
 {{- /* Every gateway.paths entry must be strictly broader than every protected rule, including the
        auto-added callback and logout. An equal or narrower entry on the -public route would win
        Gateway API precedence and serve the protected path without authentication. */ -}}
-{{- range $pr := $protectedRules -}}
 {{- range $service.Values.gateway.paths -}}
 {{- $gp := .path | default "/" -}}
 {{- include "stack.gateway.assertPublicPathValid" (dict "value" $gp "service" $service.Values.name) -}}
 {{- if or (contains ";" $gp) (contains "%" $gp) -}}
-{{- fail (printf "gateway.paths entry %q on service %s contains ; or %%. With protectedPaths every request whose path carries a matrix parameter or a percent-encoded octet is routed to the protected route, so this entry could never be served publicly. Remove it or write the plain path." $gp $service.Values.name) -}}
+{{- fail (printf "gateway.paths entry %q on service %s contains ; or %%. With protectedPaths every request whose path carries a matrix parameter or a percent-encoded octet is routed to the protected route, so this entry could never be served publicly. Remove it from gateway.paths; such requests are still served, by the protected route, and require login." $gp $service.Values.name) -}}
 {{- end -}}
+{{- end -}}
+{{- range $pr := $protectedRules -}}
+{{- range $service.Values.gateway.paths -}}
+{{- $gp := .path | default "/" -}}
 {{- $hit := false -}}
 {{- $cg := ternary $gp (lower $gp) $pr.caseSensitive -}}
 {{- $cp := ternary $pr.path (lower $pr.path) $pr.caseSensitive -}}
@@ -2373,7 +2368,7 @@ PathPrefix
 {{- $shared := eq ($og.host | default "") $service.Values.gateway.host -}}
 {{- range ($og.rules | default list) -}}{{- if eq (.host | default "") $service.Values.gateway.host -}}{{- $shared = true -}}{{- end -}}{{- end -}}
 {{- if $shared -}}
-{{- fail (printf "service %s also routes host %s. gateway.protectedPaths on service %s sends every request on that host whose path contains ; or %% to its own protected route, so the service must be the only one on its host. Move one of them to its own host." $otherName $service.Values.gateway.host $service.Values.name) -}}
+{{- fail (printf "service %s also routes host %s. gateway.protectedPaths on service %s sends every request on that host whose path contains ; or %% to its own protected route, so the service must be the only one on its host. Move one of them to its own host, or remove protectedPaths." $otherName $service.Values.gateway.host $service.Values.name) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
