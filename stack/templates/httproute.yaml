@@ -45,7 +45,7 @@
 {{- /* The -public route carries no SecurityPolicy, so strip the identity headers the resolved policy injects on the protected route, or a client could forge them on this unauthenticated path. The strip is policy-specific (computed in the helper): a jwt policy strips only its claimToHeaders targets, while basicAuth, cors and ipAllowList inject nothing, so nothing is stripped. The fixed oauth2-proxy set is OIDC-only and handled on the gateway-oidc.yaml path. A policy-less (securityPolicy none/empty) route renders no -public route at all. */ -}}
 {{- $publicFilters := $filters -}}
 {{- if gt (len (.Values.gateway.skipAuth | default list)) 0 -}}
-{{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "Values" .Values "policy" $p) | trim -}}
+{{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "ctx" $service "Values" .Values "policy" $p) | trim -}}
 {{- end -}}
 {{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts) }}
 {{- end }}

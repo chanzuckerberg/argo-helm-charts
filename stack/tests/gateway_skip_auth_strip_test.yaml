@@ -652,3 +652,37 @@ tests:
     contains:
       path: spec.rules[0].filters[0].requestHeaderModifier.remove
       content: X-ID-Token
+- it: should keep the pathRewrite filter, named from the release, on the public route alongside the identity strip
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+        skipAuth:
+        - path: /healthz
+        pathRewrite:
+          pattern: "^/api/(.*)$"
+          substitution: "/\\1"
+      securityPolicies:
+        oidc-protected-default:
+          oidc: {}
+    services:
+      app: {}
+  asserts:
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].filters[0].extensionRef.name
+      value: release-name-stack-app-path-rewrite
+  - documentIndex: 0
+    contains:
+      path: spec.rules[0].filters[1].requestHeaderModifier.remove
+      content: X-ID-Token

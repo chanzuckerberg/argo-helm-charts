@@ -933,10 +933,11 @@ unauthenticated path. The strip set is policy-specific: an oidc policy injects t
 oauth2-proxy set (plus any forwardIDToken header, forwarded access token or jwt claimToHeaders
 target), a jwt-only policy injects only its claimToHeaders targets, and basicAuth/cors/ipAllowList
 inject nothing so the set is empty and no RequestHeaderModifier is added for it. See the PR
-description for the full rationale. Input dict: "Values", optional "policy" (the resolved
-SecurityPolicy).
+description for the full rationale. Input dict: "ctx" (the service context), "Values", optional
+"policy" (the resolved SecurityPolicy).
 */}}
 {{- define "gateway.publicRuleFiltersInner" -}}
+{{- $ctx := .ctx -}}
 {{- $gw := deepCopy .Values.gateway -}}
 {{- $rh := deepCopy ($gw.requestHeaders | default dict) -}}
 {{- $remove := $rh.remove | default list -}}
@@ -1017,7 +1018,10 @@ SecurityPolicy).
 {{- end -}}
 {{- $_ := set $rh "remove" $remove -}}
 {{- $_ := set $gw "requestHeaders" $rh -}}
-{{- include "gateway.ruleFiltersInner" (dict "Values" (dict "gateway" $gw)) -}}
+{{- /* render with the real service context: filters such as pathRewrite name their HTTPRouteFilter from the release and service */ -}}
+{{- $vals := deepCopy $ctx.Values -}}
+{{- $_ := set $vals "gateway" $gw -}}
+{{- include "gateway.ruleFiltersInner" (dict "Chart" $ctx.Chart "Release" $ctx.Release "Capabilities" $ctx.Capabilities "Values" $vals) -}}
 {{- end -}}
 
 {{/*
