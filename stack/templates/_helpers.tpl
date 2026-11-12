@@ -2328,7 +2328,7 @@ PathPrefix
 {{- $protectedRules = append $protectedRules (dict "path" "" "match" "^.*[;%].*$" "pathType" "RegularExpression" "auto" true "guard" true "caseSensitive" true) -}}
 {{- range $protectedRules -}}
 {{- if gt (len .match) 1024 -}}
-{{- fail (printf "gateway.protectedPaths %q on service %s renders a %d-character match, but the HTTPRoute API allows 1024. The API server would refuse the protected route while accepting the -public route. Shorten the prefix or the base path it is prefixed with." .path $service.Values.name (len .match)) -}}
+{{- fail (printf "%s %q on service %s renders a %d-character match, but the HTTPRoute API allows 1024. The API server would refuse the protected route while accepting the -public route. Shorten the prefix or the base path it is prefixed with." (ternary "the automatic OIDC path" "gateway.protectedPaths" .auto) .path $service.Values.name (len .match)) -}}
 {{- end -}}
 {{- end -}}
 {{- $autoCount := 0 -}}

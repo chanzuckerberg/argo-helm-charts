@@ -136,9 +136,6 @@ tests:
             enabled: true
             requests: 10
             unit: Second
-        securityPolicies:
-          oidc-protected-default:
-            oidc: {}
       services:
         app:
           gateway:

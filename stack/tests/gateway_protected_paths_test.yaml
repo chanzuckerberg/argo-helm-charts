@@ -92,7 +92,7 @@ tests:
       path: spec.rules[3].matches[0].path
       value:
         type: RegularExpression
-        value: ^.*[;%].*$
+        value: '^.*[;%].*$'
   - documentIndex: 1
     lengthEqual:
       path: spec.rules
@@ -679,7 +679,7 @@ tests:
   - documentIndex: 1
     equal:
       path: spec.rules[2].matches[0].path.value
-      value: (?i)^/admin(/.*)?$
+      value: '(?i)^/admin(/.*)?$'
 - it: should fail when a base path pushes an auto rule past the 1024-character limit
   set:
     global:
@@ -1204,9 +1204,6 @@ tests:
         - path: /
         - path: ^/v[0-9]+/.*
           pathType: RegularExpression
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1229,9 +1226,6 @@ tests:
         redirect:
           enabled: true
           url: https://elsewhere.example.com
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1251,9 +1245,6 @@ tests:
         securityPolicy: oidc-protected-default
         paths:
         - path: /
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1290,9 +1281,6 @@ tests:
         paths:
         - path: /
         - path: /Admin/reports
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1313,9 +1301,6 @@ tests:
         paths:
         - path: /
         - path: /Admin/reports
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1338,9 +1323,6 @@ tests:
         enabled: true
         host: app.example.com
         securityPolicy: oidc-protected-default
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1360,9 +1342,6 @@ tests:
         enabled: true
         host: app.example.com
         securityPolicy: oidc-protected-default
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1389,9 +1368,6 @@ tests:
         enabled: true
         host: app.example.com
         securityPolicy: oidc-protected-default
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1413,9 +1389,6 @@ tests:
         - path: /
         - path: /healthz
           pathType: Exact
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1437,9 +1410,6 @@ tests:
         enabled: true
         host: app.example.com
         securityPolicy: oidc-protected-default
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1461,9 +1431,6 @@ tests:
         - path: /
         - path: /adm%69n
           pathType: Exact
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1481,9 +1448,6 @@ tests:
         enabled: true
         host: app.example.com
         securityPolicy: oidc-protected-default
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1500,9 +1464,6 @@ tests:
       gateway:
         enabled: true
         host: app.example.com
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1526,9 +1487,6 @@ tests:
         enabled: false
       gateway:
         enabled: true
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1558,9 +1516,6 @@ tests:
         enabled: false
       gateway:
         enabled: true
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1706,9 +1661,6 @@ tests:
         enabled: false
       gateway:
         enabled: true
-      securityPolicies:
-        oidc-protected-default:
-          oidc: {}
     services:
       app:
         gateway:
@@ -1755,4 +1707,3 @@ tests:
   asserts:
   - hasDocuments:
       count: 2
-
