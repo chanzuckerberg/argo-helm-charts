@@ -2387,8 +2387,8 @@ PathPrefix
 {{- $ov := fromYaml (include "service.context" (dict "root" $global "name" $otherName)) -}}
 {{- $og := $ov.gateway | default dict -}}
 {{- if and $og.enabled (not (($og.tlsPassthrough | default dict).enabled)) -}}
-{{- $shared := or (eq ($og.host | default "") $service.Values.gateway.host) (eq (($og.vanity | default dict).hostname | default "") $service.Values.gateway.host) -}}
-{{- range ($og.rules | default list) -}}{{- if or (eq (.host | default "") $service.Values.gateway.host) (eq ((.vanity | default dict).hostname | default "") $service.Values.gateway.host) -}}{{- $shared = true -}}{{- end -}}{{- end -}}
+{{- $shared := or (eq ($og.host | default "") $service.Values.gateway.host) (and (($og.vanity | default dict).enabled | default false) (eq (($og.vanity | default dict).hostname | default "") $service.Values.gateway.host)) -}}
+{{- range ($og.rules | default list) -}}{{- if or (eq (.host | default "") $service.Values.gateway.host) (and ((.vanity | default dict).enabled | default false) (eq ((.vanity | default dict).hostname | default "") $service.Values.gateway.host)) -}}{{- $shared = true -}}{{- end -}}{{- end -}}
 {{- if $shared -}}
 {{- fail (printf "service %s also routes host %s. gateway.protectedPaths on service %s sends every request on that host whose path contains ; or %% to its own protected route, so the service must be the only one on its host. Move one of them to its own host, or remove protectedPaths." $otherName $service.Values.gateway.host $service.Values.name) -}}
 {{- end -}}

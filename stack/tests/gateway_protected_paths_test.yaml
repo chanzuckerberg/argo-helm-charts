@@ -1707,3 +1707,32 @@ tests:
   asserts:
   - hasDocuments:
       count: 2
+- it: should ignore a sibling's disabled vanity hostname that equals this host
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+    services:
+      app:
+        gateway:
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+          - path: /
+          protectedPaths:
+          - path: /admin
+      other:
+        gateway:
+          host: other.example.com
+          securityPolicy: none
+          paths:
+          - path: /
+          vanity:
+            enabled: false
+            hostname: app.example.com
+  asserts:
+  - hasDocuments:
+      count: 2
+
