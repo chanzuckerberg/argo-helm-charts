@@ -1730,4 +1730,29 @@ tests:
   asserts:
   - failedTemplate:
       errorPattern: service other also routes host app.example.com
+- it: should accept an oidc.apiRoutes matcher that carries a query string under a protected prefix
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: api-admin
+        paths:
+        - path: /
+      securityPolicies:
+        api-admin:
+          oidc:
+            apiRoutes:
+            - path: /admin?mode=raw
+              matchType: Exact
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - hasDocuments:
+      count: 2
 
