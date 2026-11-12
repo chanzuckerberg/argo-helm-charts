@@ -2307,7 +2307,8 @@ PathPrefix
 {{- end -}}
 {{- /* An oidc.apiRoutes matcher lives on the policy, which targets only the protected route, so a path outside every protected prefix would never be reached and its API callers would get a redirect instead of a 401. */ -}}
 {{- range (($p.oidc | default dict).apiRoutes | default list) -}}
-{{- $ap := .path | default "" -}}
+{{- /* the matcher runs on :path, which carries the query string; containment is about the path part only */ -}}
+{{- $ap := regexReplaceAll "\\?.*$" (.path | default "") "" -}}
 {{- if eq (.matchType | default "Prefix") "RegularExpression" -}}
 {{- fail (printf "securityPolicies oidc.apiRoutes entry %q uses RegularExpression, which the chart cannot place under a gateway.protectedPaths prefix of service %s. Use a Prefix or Exact apiRoutes path under a protected prefix." $ap $service.Values.name) -}}
 {{- end -}}
