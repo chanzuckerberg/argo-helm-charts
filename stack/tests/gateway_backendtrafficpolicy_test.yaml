@@ -121,3 +121,42 @@ tests:
         equal:
           path: spec.targetRefs[0].name
           value: release-name-stack-service1-rule-0
+  - it: should also target the protectedPaths public remainder route
+    set:
+      global:
+        ingress:
+          enabled: false
+        gateway:
+          enabled: true
+          host: app.example.com
+          securityPolicy: oidc-protected-default
+          paths:
+          - path: /
+          rateLimit:
+            enabled: true
+            requests: 10
+            unit: Second
+      services:
+        app:
+          gateway:
+            protectedPaths:
+            - path: /admin
+    asserts:
+    - hasDocuments:
+        count: 2
+    - documentIndex: 0
+      equal:
+        path: spec.targetRefs[0].name
+        value: release-name-stack-app
+    - documentIndex: 1
+      equal:
+        path: metadata.name
+        value: release-name-stack-app-public-btp
+    - documentIndex: 1
+      equal:
+        path: spec.targetRefs[0].name
+        value: release-name-stack-app-public
+    - documentIndex: 1
+      equal:
+        path: spec.rateLimit.local.rules[0].limit.requests
+        value: 10
