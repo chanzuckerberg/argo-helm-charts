@@ -2,7 +2,7 @@ baseDomain: "example.dev.czi.team" # @schema description: Base domain the gatewa
 awsRegion: "us-west-2"
 gatewayName: "envoy-gateway"
 alternateNames: []
-extraDns01Zones: [] # @schema description: Additional DNS zones the letsencrypt-prod-eg dns01 solver may answer for, on top of baseDomain. Use it when a stack serves a vanity host whose zone lives in the cluster account and http01 cannot reach the gateway, for example behind CloudFront; items: {type: string}
+extraDns01Zones: [] # @schema description: Additional DNS zones the letsencrypt-prod-eg dns01 solver may answer for, on top of baseDomain. Use it when a stack serves a vanity host whose zone lives in the cluster account and http01 cannot reach the gateway, for example behind CloudFront
 
 listenerSets:
   enabled: true
