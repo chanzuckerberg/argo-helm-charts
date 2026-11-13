@@ -51,6 +51,10 @@
         }
       }
     },
+    "extraDns01Zones": {
+      "description": "Additional DNS zones the letsencrypt-prod-eg dns01 solver may answer for, on top of baseDomain. Use it when a stack serves a vanity host whose zone lives in the cluster account and http01 cannot reach the gateway, for example behind CloudFront",
+      "type": "array"
+    },
     "gatewayName": {
       "type": "string"
     },
