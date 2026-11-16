@@ -7,7 +7,7 @@ jobs:
   lint-test:
     strategy:
       matrix:
-        k8s_ver: [v1.33.0, v1.34.0, v1.35.0]
+        k8s_ver: [v1.35.8, v1.36.4, v1.37.0]
         helm_ver: [v3.13.2, v3.15.4, v3.16.1, v4.0.4]
 
     runs-on: ubuntu-latest
@@ -31,6 +31,7 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1.9.0
         with:
+          version: v0.33.0
           node_image: kindest/node:${{ matrix.k8s_ver }}
 
       - name: Validate chart template with default values
