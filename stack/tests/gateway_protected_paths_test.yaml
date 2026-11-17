@@ -591,7 +591,7 @@ tests:
           - path: /%61dmin
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path .* contains characters
+      errorPattern: gateway.protectedPaths path .* must be a plain path
 - it: should fail when a custom logoutPath would be rejected by the HTTPRoute API
   set:
     global:
@@ -1142,7 +1142,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: the OIDC callback of service app renders as "/app/../x/oauth2", which contains a double slash or dot segment
+      errorPattern: the OIDC callback of service app renders as "/app/../x/oauth2".*contains a double slash or dot segment
 - it: should fail when a custom logoutPath contains a dot segment
   set:
     global:

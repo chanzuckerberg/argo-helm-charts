@@ -37,7 +37,7 @@
 {{- include "validate.gatewayRuleHost" . -}}
 
 {{- if and .Values.gateway.enabled .Values.gateway.tlsPassthrough.enabled (gt (len (.Values.gateway.protectedPaths | default list)) 0) -}}
-{{- fail (printf "service %s sets gateway.protectedPaths with tlsPassthrough enabled. A passthrough TLSRoute carries no HTTP paths and no SecurityPolicy, so nothing could be protected. Remove protectedPaths or disable tlsPassthrough." .Values.name) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with tlsPassthrough enabled; a TLSRoute carries no HTTP paths. Remove one." .Values.name) -}}
 {{- end -}}
 {{- if and .Values.gateway.enabled (eq (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
