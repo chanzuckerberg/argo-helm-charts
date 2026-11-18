@@ -136,7 +136,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: sets gateway.protectedPaths with gateway.skipAuth, which is not supported
+      errorPattern: sets both gateway.protectedPaths and gateway.skipAuth
 - it: should fail when protectedPaths is combined with gateway.rules
   set:
     global:
@@ -172,7 +172,7 @@ tests:
           - path: ^/admin
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "\^/admin" on service app must be a plain path starting with /
+      errorPattern: gateway.protectedPaths path "\^/admin" on service app must be a plain path
 - it: should fail on a path of /
   set:
     global:
@@ -248,7 +248,7 @@ tests:
           - path: /admin/
   asserts:
   - failedTemplate:
-      errorPattern: without the trailing slash
+      errorPattern: must not end with /
 - it: should fail on surrounding whitespace
   set:
     global:
@@ -265,7 +265,7 @@ tests:
           - path: '/admin '
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "/admin " on service app must be a plain path starting with /, with no whitespace
+      errorPattern: gateway.protectedPaths path "/admin " on service app must be a plain path
 - it: should accept a protected path under a non-root gateway.paths prefix and keep other prefixes open
   set:
     global:
@@ -505,7 +505,7 @@ tests:
           - {}
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "" on service app must be a plain path
+      errorPattern: entry on service app has no path
 - it: should fail on a dot segment in a protected path
   set:
     global:
@@ -522,7 +522,7 @@ tests:
           - path: /admin/../secret
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path .* must be a plain path .* no double slash or dot segment
+      errorPattern: gateway.protectedPaths path .* must be a plain path.*no double slash or dot segment
 - it: should fail when the protected route would exceed 16 rules
   set:
     global:
@@ -788,7 +788,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: gateway public path " /admin" on service app must be a plain path starting with /, with no whitespace
+      errorPattern: gateway public path " /admin" on service app must be a plain path
 - it: should fail unconditionally when the OIDC callback base path carries whitespace, even with an empty logout path
   set:
     global:
@@ -836,7 +836,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: gateway public path "/admin #legacy" on service app must be a plain path
+      errorPattern: 'gateway public path "/admin #legacy" on service app must be a plain path'
 - it: should fail on an unknown protectedPaths key
   set:
     global:
@@ -896,7 +896,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: gateway public path "/pub//x" on service app must be a plain path .* no double slash or dot segment
+      errorPattern: gateway public path "/pub//x" on service app must be a plain path.*no double slash or dot segment
 - it: should render a long prefix whose match stays under the 1024-character limit
   set:
     global:
@@ -1142,7 +1142,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: the OIDC callback of service app renders as "/app/../x/oauth2".*must be a plain path .* no double slash or dot segment
+      errorPattern: the OIDC callback of service app renders as "/app/../x/oauth2".*must be a plain path.*no double slash or dot segment
 - it: should fail when a custom logoutPath contains a dot segment
   set:
     global:
@@ -1166,7 +1166,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: logoutPath "/a/../b" renders as "/a/../b", which must be a plain path .* no double slash or dot segment
+      errorPattern: logoutPath "/a/../b" renders as "/a/../b", which must be a plain path.*no double slash or dot segment
 - it: should fail on a gateway.paths entry that does not start with a slash
   set:
     global:
@@ -1190,7 +1190,7 @@ tests:
           - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: gateway public path "badpath" on service app must be a plain path starting with /
+      errorPattern: gateway public path "badpath" on service app must be a plain path
 - it: should fail when a gateway.paths entry is a RegularExpression, which would outrank the protected prefix
   set:
     global:
@@ -1455,7 +1455,7 @@ tests:
           - path: /admin;v=1
   asserts:
   - failedTemplate:
-      errorPattern: a semicolon, which backends strip
+      errorPattern: percent-encoding or semicolon
 - it: should fail when another service routes the same host
   set:
     global:
@@ -1735,4 +1735,85 @@ tests:
   asserts:
   - hasDocuments:
       count: 2
+- it: should fail when the protected route would render exactly 17 rules
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /p1
+          - path: /p2
+          - path: /p3
+          - path: /p4
+          - path: /p5
+          - path: /p6
+          - path: /p7
+          - path: /p8
+          - path: /p9
+          - path: /p10
+          - path: /p11
+          - path: /p12
+          - path: /p13
+          - path: /p14
+  asserts:
+  - failedTemplate:
+      errorPattern: would render 17 rules on its protected HTTPRoute
+- it: should fail on a single-dot segment inside a protected path
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin/./x
+  asserts:
+  - failedTemplate:
+      errorPattern: gateway.protectedPaths path "/admin/./x" on service app must be a plain path
+- it: should fail on a protected path ending in a dot segment
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin/.
+  asserts:
+  - failedTemplate:
+      errorPattern: gateway.protectedPaths path "/admin/." on service app must be a plain path
+- it: should fail on a protected path ending in a parent segment
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin/..
+  asserts:
+  - failedTemplate:
+      errorPattern: gateway.protectedPaths path "/admin/.." on service app must be a plain path
 
