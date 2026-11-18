@@ -248,6 +248,22 @@ tests:
     asserts:
       - failedTemplate:
           errorPattern: its gateway is disabled, so no Envoy routes render
+  - it: fails when protectedPaths is set with both the gateway and the Ingress disabled, rather than rendering no routes
+    set:
+      global:
+        ingress:
+          host: app.example.com
+      services:
+        app:
+          ingress:
+            enabled: false
+          gateway:
+            enabled: false
+            protectedPaths:
+              - path: /admin
+    asserts:
+      - failedTemplate:
+          errorPattern: its gateway is disabled, so no Envoy routes render
   - it: allows an oidcProtected Ingress alongside the gateway when dnsOwner keeps both planes
     set:
       global:
