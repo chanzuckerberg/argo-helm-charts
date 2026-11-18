@@ -1095,6 +1095,41 @@ handled separately as a whole-route rule.
 SecurityPolicy spec body (no "targetRefs"). Input dict: "ctx" (service), "host", "public" (bool).
 Public routes (skipAuth) carry only cors/authorization, never oidc/basicAuth.
 */}}
+{{- define "validate.passThroughAuthHeader" -}}
+{{- $p := .policy -}}
+{{- $name := .policyName -}}
+{{- $providers := (($p.jwt | default dict).providers) | default list -}}
+{{- $readsHeader := eq (len $providers) 0 -}}
+{{- range $providers -}}
+  {{- if or (not (kindIs "map" .extractFrom)) (gt (len (.extractFrom.headers | default list)) 0) -}}
+    {{- $readsHeader = true -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $readsHeader -}}
+  {{- fail (printf "securityPolicies.%s.oidc.passThroughAuthHeader needs a jwt provider that reads a header, but every provider reads only cookies or query parameters. Envoy Gateway rejects such a policy and then serves its routes with no authentication at all. Give a provider extractFrom.headers, or omit extractFrom so it reads Authorization." $name) -}}
+{{- end -}}
+{{- $fwd := (($p.oidc | default dict).forwardIDToken) | default dict -}}
+{{- if $fwd.enabled -}}
+  {{- $fwdHeader := lower ($fwd.header | default "") -}}
+  {{- $defaultReader := eq (len $providers) 0 -}}
+  {{- range $providers -}}
+    {{- if not (kindIs "map" .extractFrom) -}}
+      {{- $defaultReader = true -}}
+    {{- else -}}
+      {{- $provider := .name -}}
+      {{- range (.extractFrom.headers | default list) -}}
+        {{- if eq (lower (.name | default "")) $fwdHeader -}}
+          {{- fail (printf "securityPolicies.%s: jwt provider %s reads %s, the header oidc.forwardIDToken writes, while oidc.passThroughAuthHeader is on. Envoy Gateway rejects such a policy and then serves its routes with no authentication at all. Have the provider read the bearer token from Authorization by omitting extractFrom, or set oidc.forwardIDToken.enabled: false." $name $provider .name) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if and $defaultReader (eq $fwdHeader "authorization") -}}
+    {{- fail (printf "securityPolicies.%s: oidc.forwardIDToken writes Authorization, which a jwt provider without extractFrom also reads, while oidc.passThroughAuthHeader is on. Envoy Gateway rejects such a policy and then serves its routes with no authentication at all. Forward the ID token in another header, such as the default X-ID-Token." $name) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "gateway.securityPolicy.body" -}}
 {{- $ := .ctx -}}
 {{- $p := .policy -}}
@@ -1129,6 +1164,7 @@ oidc:
   {{- if not $p.jwt.enabled }}
   {{- fail (printf "securityPolicies.%s.oidc.passThroughAuthHeader skips OIDC for any request carrying the JWT filter's header, but the policy has no jwt block to verify it, so every such request would reach the backend unauthenticated. Set jwt.enabled: true with a providers entry for the clients you mean to admit." $policyName) -}}
   {{- end }}
+  {{- include "validate.passThroughAuthHeader" (dict "policy" $p "policyName" $policyName) }}
   passThroughAuthHeader: {{ $p.oidc.passThroughAuthHeader }}
   {{- end }}
   {{- if $p.oidc.forwardIDToken.enabled }}
