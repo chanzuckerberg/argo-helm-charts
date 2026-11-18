@@ -2227,7 +2227,7 @@ PathPrefix
 {{- if and .Values.ingress.enabled (not .Values.ingress.oidcProtected) -}}
 {{- fail (printf "service %s sets gateway.protectedPaths but renders an nginx Ingress with ingress.oidcProtected false, so those paths are served without authentication there. Set oidcProtected true and list public prefixes in oidcProxy.skipAuth, or remove protectedPaths." $name) -}}
 {{- end -}}
-{{- if and .Values.ingress.enabled (not $g.enabled) -}}
+{{- if not $g.enabled -}}
 {{- fail (printf "service %s sets gateway.protectedPaths but its gateway is disabled, so no Envoy routes render. Set gateway.dnsOwner (or gateway.enabled: true), or remove protectedPaths." $name) -}}
 {{- end -}}
 {{- end -}}
