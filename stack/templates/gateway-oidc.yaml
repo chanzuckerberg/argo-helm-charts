@@ -40,14 +40,15 @@
 {{- $p := fromYaml (include "securityPolicy.resolve" (dict "root" $global "name" .Values.name)) -}}
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
-{{- /* Rules of the policy-protected route: every gateway.paths entry, or under protectedPaths only the listed prefixes plus the OIDC callback, logout and ;/% guard rule, with gateway.paths moving to the -public route. */ -}}
+{{- /* Rules of the policy-protected route: every gateway.paths entry, or under protectedPaths only the listed prefixes plus the OIDC callback, logout and ;/% guard rule, with gateway.paths moving to the -public route. Protected rules carry match (rendered) beside path (as written); gateway.paths entries carry only path. */ -}}
+{{- $protected := gt (len (.Values.gateway.protectedPaths | default list)) 0 -}}
 {{- $rules := .Values.gateway.paths -}}
-{{- if gt (len (.Values.gateway.protectedPaths | default list)) 0 -}}
-{{- $rules = fromYamlArray (include "stack.gateway.protectedRules" (dict "root" $global "service" $service "policy" $p)) -}}
+{{- if $protected -}}
+{{- $rules = fromYamlArray (include "gateway.protectedRules" (dict "root" $global "service" $service "policy" $p)) -}}
 {{- end -}}
 {{- /* The -public route carries no OIDC policy, so strip the identity headers the policy would inject. Only computed when a public route exists (skipAuth, or the protectedPaths remainder), so a plain OIDC service that sets such a header is unaffected. */ -}}
 {{- $publicFilters := $filters -}}
-{{- if or (gt (len (.Values.gateway.protectedPaths | default list)) 0) (gt (len (.Values.gateway.skipAuth | default list)) 0) -}}
+{{- if or $protected (gt (len (.Values.gateway.skipAuth | default list)) 0) -}}
 {{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "ctx" $service "Values" .Values "policy" $p) | trim -}}
 {{- end -}}
 {{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts) }}
@@ -87,7 +88,7 @@ spec:
     - matches:
         - path:
             type: {{ include "gateway.pathMatchType" .pathType }}
-            value: {{ if .match }}{{ .match | quote }}{{ else }}{{ .path }}{{ end }}
+            value: {{ if $protected }}{{ .match | quote }}{{ else }}{{ .path }}{{ end }}
       backendRefs:
         {{- include "service.backend.refs.direct" $service | nindent 8 }}
           {{- if .weight }}

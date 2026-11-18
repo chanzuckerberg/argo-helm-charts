@@ -2169,10 +2169,10 @@ PathPrefix
 {{- end -}}
 {{- end }}
 
-{{- /* Rejects a path the HTTPRoute API would refuse, which on the protected route would leave the -public route standing alone. Takes (dict "label" "value"). */ -}}
-{{- define "stack.gateway.assertPlainPath" -}}
+{{- /* Rejects a path that YAML would normalise or the HTTPRoute API would refuse; on the protected route that leaves the -public route standing alone. Also rejects ; and %, which the guard rule claims. Takes (dict "label" "value"). */ -}}
+{{- define "gateway.assertPlainPath" -}}
 {{- if or (not (hasPrefix "/" .value)) (not (regexMatch "^[-A-Za-z0-9/._~!$&'()*+,=:@]+$" .value)) (contains "//" .value) (contains "/./" .value) (contains "/../" .value) (hasSuffix "/." .value) (hasSuffix "/.." .value) -}}
-{{- fail (printf "%s must be a plain path starting with /, with no whitespace, percent-encoding, non-ASCII, or a semicolon, which backends strip, and no double slash or dot segment. Write the plain path." .label) -}}
+{{- fail (printf "%s must be a plain path: start with /, ASCII only, no whitespace, percent-encoding or semicolon, no double slash or dot segment. Write the plain path." .label) -}}
 {{- end -}}
 {{- end -}}
 
@@ -2181,41 +2181,54 @@ PathPrefix
 {{- if gt (len (((.root.Values.global).gateway | default dict).protectedPaths | default list)) 0 -}}
 {{- fail "gateway.protectedPaths must be set per service (services.NAME.gateway.protectedPaths), not globally: a global value is inherited by every service." -}}
 {{- end -}}
+{{- $root := .root -}}
 {{- with .ctx -}}
 {{- $g := .Values.gateway -}}
+{{- $name := .Values.name -}}
 {{- if gt (len ($g.protectedPaths | default list)) 0 -}}
-{{- range list
-      (list (and $g.enabled $g.tlsPassthrough.enabled) "with tlsPassthrough enabled; a TLSRoute carries no HTTP paths. Remove one.")
-      (list (and $g.enabled (ne (include "securityPolicy.isOidc" (dict "root" $.root "name" .Values.name)) "true")) "but its gateway.securityPolicy is not an OIDC policy. Set one, or remove protectedPaths.")
-      (list (and .Values.ingress.enabled (not .Values.ingress.oidcProtected)) "but renders an nginx Ingress with ingress.oidcProtected false, so those paths are served without authentication there. Set oidcProtected true and list public prefixes in oidcProxy.skipAuth, or remove protectedPaths.")
-      (list (and .Values.ingress.enabled (not $g.enabled)) "but its gateway is disabled, so no Envoy routes render. Set gateway.dnsOwner (or gateway.enabled: true), or remove protectedPaths.") -}}
-{{- if index . 0 -}}{{- fail (printf "service %s sets gateway.protectedPaths %s" $.ctx.Values.name (index . 1)) -}}{{- end -}}
+{{- if and $g.enabled $g.tlsPassthrough.enabled -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with tlsPassthrough enabled; a TLSRoute carries no HTTP paths. Remove one." $name) -}}
+{{- end -}}
+{{- if and $g.enabled (ne (include "securityPolicy.isOidc" (dict "root" $root "name" $name)) "true") -}}
+{{- fail (printf "service %s sets gateway.protectedPaths but its gateway.securityPolicy is not an OIDC policy. Set one, or remove protectedPaths." $name) -}}
+{{- end -}}
+{{- if and .Values.ingress.enabled (not .Values.ingress.oidcProtected) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths but renders an nginx Ingress with ingress.oidcProtected false, so those paths are served without authentication there. Set oidcProtected true and list public prefixes in oidcProxy.skipAuth, or remove protectedPaths." $name) -}}
+{{- end -}}
+{{- if and .Values.ingress.enabled (not $g.enabled) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths but its gateway is disabled, so no Envoy routes render. Set gateway.dnsOwner (or gateway.enabled: true), or remove protectedPaths." $name) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
 
-{{- /* Builds the protected HTTPRoute's rules for a service with gateway.protectedPaths (dicts of path, match, pathType, auto, guard, caseSensitive, as YAML) and runs every check that needs the resolved OIDC policy. Takes (dict "root" $ "service" "policy"). */ -}}
-{{- define "stack.gateway.protectedRules" -}}
+{{- /* Builds the protected HTTPRoute's rules for a service with gateway.protectedPaths (dicts, as YAML: path as written, match as rendered, pathType, auto, guard, caseSensitive) and runs every check that needs the resolved OIDC policy. Takes (dict "root" $ "service" "policy"). */ -}}
+{{- define "gateway.protectedRules" -}}
+{{- $root := .root -}}
 {{- $p := .policy -}}
 {{- $g := .service.Values.gateway -}}
 {{- $name := .service.Values.name -}}
 {{- $rules := list -}}
-{{- range $k, $v := dict
-      "skipAuth" (list (gt (len ($g.skipAuth | default list)) 0) "list public prefixes in gateway.paths instead")
-      "rules" (list (gt (len ($g.rules | default list)) 0) "move the extra hosts to their own service")
-      "redirect.enabled" (list (($g.redirect | default dict).enabled) "a redirect route has nothing to protect")
-      "pathRewrite" (list ((($g.pathRewrite | default dict).pattern)) "the rewrite also applies to the public route and could rewrite onto a protected path") -}}
-{{- if index $v 0 -}}{{- fail (printf "service %s sets gateway.protectedPaths with gateway.%s, which is not supported: %s. Remove one." $name $k (index $v 1)) -}}{{- end -}}
+{{- if gt (len ($g.skipAuth | default list)) 0 -}}
+{{- fail (printf "service %s sets both gateway.protectedPaths and gateway.skipAuth. Keep one: list public prefixes in gateway.paths, or remove protectedPaths." $name) -}}
+{{- end -}}
+{{- if gt (len ($g.rules | default list)) 0 -}}
+{{- fail (printf "service %s sets gateway.protectedPaths together with gateway.rules, which is not supported. Move the extra hosts to their own service." $name) -}}
+{{- end -}}
+{{- if (($g.redirect | default dict).enabled) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with gateway.redirect.enabled. A redirect route has nothing to protect; remove one." $name) -}}
+{{- end -}}
+{{- if ((($g.pathRewrite | default dict).pattern)) -}}
+{{- fail (printf "service %s sets gateway.protectedPaths with gateway.pathRewrite. The rewrite also applies to the public route and could rewrite onto a protected path; remove one." $name) -}}
 {{- end -}}
 {{- /* The OAuth2 filter answers the callback and logout only on the route the policy targets. Checked even with no prefix listed: a base path the API server rejects drops the protected route while the -public one stays, leaving every path unauthenticated. */ -}}
 {{- $basePath := include "oidcProxyGateway.basePath" (dict "paths" $g.paths) -}}
 {{- $callback := printf "%s/oauth2" $basePath -}}
-{{- include "stack.gateway.assertPlainPath" (dict "label" (printf "the OIDC callback of service %s renders as %q (from the gateway.paths base path %q), which" $name $callback $basePath) "value" $callback) -}}
+{{- include "gateway.assertPlainPath" (dict "label" (printf "the OIDC callback of service %s renders as %q (from the gateway.paths base path %q), which" $name $callback $basePath) "value" $callback) -}}
 {{- $rules = append $rules (dict "path" $callback "match" $callback "pathType" "PathPrefix" "auto" true "caseSensitive" true) -}}
 {{- if $p.oidc.logoutPath -}}
 {{- $lp := printf "%s%s" $basePath $p.oidc.logoutPath -}}
-{{- include "stack.gateway.assertPlainPath" (dict "label" (printf "securityPolicies.%s.oidc.logoutPath %q renders as %q, which" (include "securityPolicy.name" (dict "root" $.root "name" $name)) $p.oidc.logoutPath $lp) "value" $lp) -}}
+{{- include "gateway.assertPlainPath" (dict "label" (printf "securityPolicies.%s.oidc.logoutPath %q renders as %q, which" (include "securityPolicy.name" (dict "root" $root "name" $name)) $p.oidc.logoutPath $lp) "value" $lp) -}}
 {{- $rules = append $rules (dict "path" $lp "match" $lp "pathType" "Exact" "auto" true "caseSensitive" true) -}}
 {{- end -}}
 {{- /* gateway.paths render unquoted on the -public route, so each must survive YAML normalisation exactly as compared below, carry no ; or % (the guard rule claims those), and not be a regex, which Envoy Gateway ranks above every protected prefix. */ -}}
@@ -2227,18 +2240,24 @@ PathPrefix
 {{- if or (contains ";" $gp) (contains "%" $gp) -}}
 {{- fail (printf "gateway.paths entry %q on service %s contains ; or %%. With protectedPaths such requests go to the protected route, so this entry can never be public; remove it." $gp $name) -}}
 {{- end -}}
-{{- include "stack.gateway.assertPlainPath" (dict "label" (printf "gateway public path %q on service %s" $gp $name) "value" $gp) -}}
+{{- include "gateway.assertPlainPath" (dict "label" (printf "gateway public path %q on service %s" $gp $name) "value" $gp) -}}
 {{- end -}}
 {{- range $g.protectedPaths -}}
 {{- $pp := .path | default "" -}}
+{{- if not $pp -}}
+{{- fail (printf "a gateway.protectedPaths entry on service %s has no path. Each entry needs path: /<prefix>." $name) -}}
+{{- end -}}
 {{- $cs := .caseSensitive | default false -}}
 {{- range $k, $_ := omit . "path" "caseSensitive" -}}
 {{- fail (printf "gateway.protectedPaths entry %q on service %s has an unsupported key %q. Only path and caseSensitive are allowed." $pp $name $k) -}}
 {{- end -}}
-{{- include "stack.gateway.assertPlainPath" (dict "label" (printf "gateway.protectedPaths path %q on service %s" $pp $name) "value" $pp) -}}
-{{- if hasSuffix "/" $pp -}}
-{{- fail (printf "gateway.protectedPaths path %q on service %s must not end with /: path / alone would protect the whole service, and a prefix is written without the trailing slash, as %q." $pp $name (trimSuffix "/" $pp)) -}}
+{{- include "gateway.assertPlainPath" (dict "label" (printf "gateway.protectedPaths path %q on service %s" $pp $name) "value" $pp) -}}
+{{- if eq $pp "/" -}}
+{{- fail (printf "gateway.protectedPaths path / on service %s would protect the whole service. Remove protectedPaths." $name) -}}
+{{- else if hasSuffix "/" $pp -}}
+{{- fail (printf "gateway.protectedPaths path %q on service %s must not end with /. Write the prefix as %q." $pp $name (trimSuffix "/" $pp)) -}}
 {{- end -}}
+{{- /* An Exact entry covers no subtree, so it cannot host a prefix. */ -}}
 {{- $covered := false -}}
 {{- range $g.paths -}}
 {{- $base := trimSuffix "/" (.path | default "/") -}}
@@ -2284,6 +2303,7 @@ PathPrefix
 {{- end -}}
 {{- end -}}
 {{- /* Fail closed on shapes the edge does not normalise: a matrix parameter (/admin;x) or an encoded octet (/adm%69n) can reach a protected handler on a backend that strips or decodes them, so every path on the host carrying ; or % goes to the protected route. */ -}}
+{{- /* Appended last so the rule count and the collision loop below see it; the loop skips it via .guard. */ -}}
 {{- $rules = append $rules (dict "path" "" "match" "^.*[;%].*$" "pathType" "RegularExpression" "auto" true "guard" true "caseSensitive" true) -}}
 {{- $autoCount := 0 -}}
 {{- range $rules -}}
@@ -2301,17 +2321,20 @@ PathPrefix
 {{- $gp := .path | default "/" -}}
 {{- $cg := ternary $gp (lower $gp) $pr.caseSensitive -}}
 {{- $cp := ternary $pr.path (lower $pr.path) $pr.caseSensitive -}}
-{{- if and (not $pr.guard) (or (eq $cg $cp) (eq (trimSuffix "/" $cg) $cp) (hasPrefix (printf "%s/" $cp) $cg)) -}}
+{{- if and (not $pr.guard) (or (eq (trimSuffix "/" $cg) $cp) (hasPrefix (printf "%s/" $cp) $cg)) -}}
 {{- fail (printf "gateway.paths entry %q on service %s collides with %s %q; the public route would shadow the protected one. Remove it from gateway.paths." $gp $name (ternary "the OIDC path" "gateway.protectedPaths" $pr.auto) $pr.path) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
 {{- /* The guard rule takes every ; or % path on the host and outranks any sibling's PathPrefix, so the service must be alone on its host, vanity and gateway.rules hosts included. */ -}}
-{{- range $otherName, $_ := $.root.Values.services -}}
-{{- $og := (fromYaml (include "service.context" (dict "root" $.root "name" $otherName))).gateway | default dict -}}
+{{- range $otherName, $_ := $root.Values.services -}}
+{{- $og := (fromYaml (include "service.context" (dict "root" $root "name" $otherName))).gateway | default dict -}}
 {{- if and (ne $otherName $name) $og.enabled (not (($og.tlsPassthrough | default dict).enabled)) -}}
 {{- $hosts := list -}}
-{{- range append ($og.rules | default list) $og -}}{{- $hosts = append $hosts (.host | default "") -}}{{- if ((.vanity | default dict).enabled) -}}{{- $hosts = append $hosts ((.vanity | default dict).hostname | default "") -}}{{- end -}}{{- end -}}
+{{- range append ($og.rules | default list) $og -}}
+{{- $hosts = append $hosts (.host | default "") -}}
+{{- if ((.vanity | default dict).enabled) -}}{{- $hosts = append $hosts ((.vanity | default dict).hostname | default "") -}}{{- end -}}
+{{- end -}}
 {{- if has $g.host $hosts -}}
 {{- fail (printf "service %s also routes host %s. gateway.protectedPaths on service %s sends every ; or %% path on that host to its own route, so it must be alone on the host. Move one, or remove protectedPaths." $otherName $g.host $name) -}}
 {{- end -}}
