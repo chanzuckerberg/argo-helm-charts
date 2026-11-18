@@ -271,3 +271,23 @@ tests:
   - equal:
       path: spec.jwt.providers[0].extractFrom.headers[0].name
       value: X-Machine-Token
+
+- it: should fail when the only jwt provider sets an empty extractFrom
+  set:
+    global:
+      gateway:
+        securityPolicy: empty-extractor
+      securityPolicies:
+        empty-extractor:
+          oidc:
+            passThroughAuthHeader: true
+          jwt:
+            enabled: true
+            providers:
+            - name: empty
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: "needs a jwt provider that reads a header"
