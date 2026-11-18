@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "argo.helm.charts/argo-helm-charts-CCIE-7819",
-  "title": "argo-helm-charts-CCIE-7819",
+  "$id": "argo.helm.charts/agent-registry-operator",
+  "title": "agent-registry-operator",
   "type": "object",
   "properties": {
     "affinity": {
