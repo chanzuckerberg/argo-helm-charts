@@ -33,13 +33,7 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
-{{- include "validate.protectedPathsNotGlobal" (dict "root" $global) -}}
-{{- if and .Values.ingress.enabled (gt (len (.Values.gateway.protectedPaths | default list)) 0) (not .Values.ingress.oidcProtected) -}}
-{{- fail (printf "service %s sets gateway.protectedPaths but renders an nginx Ingress with ingress.oidcProtected false, so those paths are served without authentication there. Set oidcProtected true and list public prefixes in oidcProxy.skipAuth, or remove protectedPaths." .Values.name) -}}
-{{- end -}}
-{{- if and .Values.ingress.enabled (gt (len (.Values.gateway.protectedPaths | default list)) 0) (not .Values.gateway.enabled) -}}
-{{- fail (printf "service %s sets gateway.protectedPaths but its gateway is disabled, so no Envoy routes render. Set gateway.dnsOwner (or gateway.enabled: true), or remove protectedPaths." .Values.name) -}}
-{{- end -}}
+{{- include "validate.protectedPaths" (dict "ctx" . "root" $global) -}}
 
 {{- if .Values.ingress.enabled -}}
 ---
