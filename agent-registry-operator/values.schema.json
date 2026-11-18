@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argo.helm.charts/agent-registry-operator",
+  "title": "agent-registry-operator",
+  "type": "object",
+  "properties": {
+    "affinity": {
+      "type": "object"
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "pullPolicy": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "imagePullSecrets": {
+      "type": "array"
+    },
+    "managedNamespaces": {
+      "type": "array"
+    },
+    "nodeSelector": {
+      "type": "object",
+      "properties": {
+        "kubernetes.io/arch": {
+          "type": "string"
+        }
+      }
+    },
+    "providers": {
+      "type": "object",
+      "properties": {
+        "anthropic": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        },
+        "aws": {
+          "type": "object",
+          "properties": {
+            "clusterOIDCProvider": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "permissionsBoundaryPolicyName": {
+              "type": "string"
+            },
+            "provisionerRoleName": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            }
+          }
+        },
+        "tailscale": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          }
+        },
+        "requests": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "anthropicAudience": {
+          "type": "string"
+        },
+        "anthropicOrganizationID": {
+          "type": "string"
+        },
+        "awsRegion": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "git-branch-guard.sh": {
+              "type": "string"
+            },
+            "managed-settings.json": {
+              "type": "string"
+            },
+            "ssh-guard.sh": {
+              "type": "string"
+            }
+          }
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "engPortalProfilesURL": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "nodeArchitecture": {
+          "type": "string"
+        },
+        "otelHeadersSecretName": {
+          "type": "string"
+        },
+        "tailscaleAudience": {
+          "type": "string"
+        },
+        "tailscaleClientID": {
+          "type": "string"
+        },
+        "tailscaleIdentityConfigMap": {
+          "type": "string"
+        },
+        "tailscaleTag": {
+          "type": "string"
+        },
+        "workspaceStorageClass": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "tolerations": {
+      "type": "array"
+    }
+  }
+}
