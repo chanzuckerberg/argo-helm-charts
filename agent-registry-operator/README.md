@@ -102,17 +102,6 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                                 | Pattern | Type   | Deprecated | Definition | Title/Description |
-| -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [kubernetes.io/arch](#nodeSelector_kubernetesio/arch ) | No      | string | No         | -          | -                 |
-
-### <a name="nodeSelector_kubernetesio/arch"></a>5.1. Property `agent-registry-operator > nodeSelector > kubernetes.io/arch`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
 ## <a name="providers"></a>6. Property `agent-registry-operator > providers`
 
 |                           |                  |
