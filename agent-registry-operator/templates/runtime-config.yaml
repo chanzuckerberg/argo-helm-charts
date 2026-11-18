@@ -1,0 +1,23 @@
+{{- if .Values.runtime.enabled }}
+{{- $root := . }}
+{{- $namespaces := .Values.managedNamespaces }}
+{{- if not $namespaces }}
+{{- $namespaces = list .Release.Namespace }}
+{{- end }}
+{{- range $namespace := $namespaces }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-registry-runtime
+  namespace: {{ $namespace }}
+  labels:
+    {{- include "agent-registry-operator.labels" $root | nindent 4 }}
+data:
+  image: {{ $root.Values.runtime.image | quote }}
+  {{- range $name, $contents := $root.Values.runtime.config }}
+  {{ $name }}: |
+{{ $contents | indent 4 }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}
