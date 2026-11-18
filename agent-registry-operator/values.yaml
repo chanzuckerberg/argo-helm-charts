@@ -50,8 +50,7 @@ resources:
     cpu: 300m
     memory: 256Mi
 
-nodeSelector:
-  kubernetes.io/arch: arm64
+nodeSelector: {}
 
 tolerations: []
 affinity: {}
