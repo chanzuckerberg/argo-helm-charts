@@ -2089,6 +2089,11 @@ https
 {{- $timeouts := .timeouts -}}
 {{- $rules := list -}}
 {{- with $service -}}
+{{- $authentication := .Values.gateway.authentication | default dict -}}
+{{- $pathSource := "gateway.skipAuth" -}}
+{{- if gt (len ($authentication.publicPaths | default list)) 0 -}}
+{{- $pathSource = "gateway.authentication.publicPaths" -}}
+{{- end -}}
 {{- $publicPaths := fromYamlArray (include "gateway.publicPaths" .) -}}
 {{- if eq (include "gateway.authenticationDefault" .) "public" -}}
 {{- range .Values.gateway.paths -}}
@@ -2096,7 +2101,11 @@ https
 {{- end -}}
 {{- else if gt (len $publicPaths) 0 -}}
 {{- if .Values.gateway.redirect.enabled -}}
-{{- fail "gateway.skipAuth cannot be combined with gateway.redirect.enabled; gateway.authentication.publicPaths has the same restriction. A redirect-only route serves no backend, so there is nothing to exempt from authentication." -}}
+{{- if eq $pathSource "gateway.skipAuth" -}}
+{{- fail "gateway.skipAuth cannot be combined with gateway.redirect.enabled: a redirect-only route serves no backend, so there is nothing to exempt from authentication, and the public route would send the listed paths to the backend instead of redirecting them. Remove one or the other." -}}
+{{- else -}}
+{{- fail "gateway.authentication.publicPaths cannot be combined with gateway.redirect.enabled: a redirect-only route serves no backend, so there is nothing to exempt from authentication. Remove one or the other." -}}
+{{- end -}}
 {{- end -}}
 {{- range $publicPaths -}}
 {{- if not (hasPrefix "/" .path) -}}
@@ -2107,7 +2116,11 @@ https
 {{- fail (printf "gateway public pathType %q is not valid. Use PathPrefix (the default) or Exact." $pathType) -}}
 {{- end -}}
 {{- if and (eq .path "/") (eq $pathType "PathPrefix") -}}
-{{- fail "a gateway public path / with pathType PathPrefix would make the whole service public. Set gateway.authentication.default to public with protectedPaths, list specific public prefixes or use pathType Exact." -}}
+{{- if eq $pathSource "gateway.skipAuth" -}}
+{{- fail "gateway.skipAuth path / with pathType PathPrefix would make the whole service public: the -public HTTPRoute shadows the policy-protected route for every request. List the specific prefixes that should be unauthenticated instead, or use pathType Exact to expose only the root." -}}
+{{- else -}}
+{{- fail "gateway.authentication.publicPaths path / with pathType PathPrefix would make the whole service public. Set gateway.authentication.default to public with protectedPaths, list specific public prefixes or use pathType Exact." -}}
+{{- end -}}
 {{- end -}}
 {{- $rules = append $rules (dict "path" .path "pathType" $pathType "method" (.method | default "") "weight" 0) -}}
 {{- end -}}
@@ -2160,7 +2173,11 @@ spec:
   {{- end -}}
   {{- range $protectedPaths -}}
     {{- if eq .pathType "RegularExpression" -}}
-      {{- fail (printf "service %q combines public authentication exceptions with a RegularExpression path (%q). Envoy Gateway ranks a regex match above a path prefix however specific the prefix is, so the protected route would win over the -public route. Express the protected routes as Prefix or Exact paths, or remove the public exception." $service.Values.name .path) -}}
+      {{- if eq $pathSource "gateway.skipAuth" -}}
+      {{- fail (printf "service %q combines gateway.skipAuth with a RegularExpression path (%q). Envoy Gateway ranks a regex match above a path prefix however specific the prefix is, so the protected route would win over the -public route and the paths meant to be unauthenticated would silently require login. The -public route covers gateway.host and every gateway.rules host, so a regex under either one shadows it. Express the protected routes as Prefix or Exact paths, or drop skipAuth and let the regex route carry the policy." $service.Values.name .path) -}}
+      {{- else -}}
+      {{- fail (printf "service %q combines gateway.authentication.publicPaths with a RegularExpression path (%q). Envoy Gateway ranks a regex match above a path prefix however specific the prefix is, so the protected route would win over the -public route. Express the protected routes as Prefix or Exact paths, or remove the public exception." $service.Values.name .path) -}}
+      {{- end -}}
     {{- end -}}
   {{- end }}
   rules:

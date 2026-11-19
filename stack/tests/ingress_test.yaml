@@ -22,7 +22,7 @@ tests:
                 pathType: Prefix
     asserts:
       - failedTemplate:
-          errorPattern: must be set per service
+          errorPattern: must keep default protected with empty path lists globally
   - it: adds nginx auth annotations when oidcProxy.enabled=true
     set:
       global:
