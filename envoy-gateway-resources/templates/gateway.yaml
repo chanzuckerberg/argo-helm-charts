@@ -78,6 +78,9 @@ spec:
       - selector:
           dnsZones:
             - "{{ .Values.baseDomain }}"
+            {{- range .Values.extraDns01Zones }}
+            - {{ . | quote }}
+            {{- end }}
         dns01:
           route53:
             region: {{ .Values.awsRegion }}

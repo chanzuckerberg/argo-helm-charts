@@ -221,6 +221,38 @@ tests:
       - exists:
           path: spec.acme.solvers[0].dns01.route53
 
+  - it: should add extra dns01 zones after the base domain
+    set:
+      gatewayName: test-gateway
+      baseDomain: test-cluster.example.com
+      extraDns01Zones:
+        - vanity.example.org
+        - other.example.net
+    documentIndex: 2
+    asserts:
+      - equal:
+          path: spec.acme.solvers[0].selector.dnsZones[0]
+          value: test-cluster.example.com
+      - equal:
+          path: spec.acme.solvers[0].selector.dnsZones[1]
+          value: vanity.example.org
+      - equal:
+          path: spec.acme.solvers[0].selector.dnsZones[2]
+          value: other.example.net
+      - lengthEqual:
+          path: spec.acme.solvers[0].selector.dnsZones
+          count: 3
+
+  - it: should keep a single dns01 zone when no extra zones are set
+    set:
+      gatewayName: test-gateway
+      baseDomain: test-cluster.example.com
+    documentIndex: 2
+    asserts:
+      - lengthEqual:
+          path: spec.acme.solvers[0].selector.dnsZones
+          count: 1
+
   - it: should configure HTTP01 solver with gateway reference
     set:
       gatewayName: test-gateway
