@@ -139,8 +139,10 @@ tests:
       services:
         app:
           gateway:
-            protectedPaths:
-            - path: /admin
+            authentication:
+              default: public
+              protectedPaths:
+              - path: /admin
     asserts:
     - hasDocuments:
         count: 2

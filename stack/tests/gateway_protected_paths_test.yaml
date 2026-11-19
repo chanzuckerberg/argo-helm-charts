@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
-suite: test gateway.protectedPaths (OIDC on a subtree only)
+suite: test gateway.authentication.protectedPaths (OIDC on a subtree only)
 templates:
 - gateway-oidc.yaml
 tests:
@@ -15,8 +15,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - hasDocuments:
       count: 2
@@ -97,7 +99,7 @@ tests:
     lengthEqual:
       path: spec.rules
       count: 4
-- it: should render nothing extra when protectedPaths is empty
+- it: should preserve protected-by-default behavior when authentication is omitted
   set:
     global:
       ingress:
@@ -107,9 +109,7 @@ tests:
         host: app.example.com
         securityPolicy: oidc-protected-default
     services:
-      app:
-        gateway:
-          protectedPaths: []
+      app: {}
   asserts:
   - hasDocuments:
       count: 1
@@ -132,11 +132,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: sets both gateway.protectedPaths and gateway.skipAuth
+      errorPattern: public path exceptions while gateway.authentication.default is already public
 - it: should fail when protectedPaths is combined with gateway.rules
   set:
     global:
@@ -151,8 +153,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: with gateway.rules, which is not supported
@@ -168,11 +172,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: ^/admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: ^/admin
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "\^/admin" on service app must be a plain path
+      errorPattern: gateway.authentication.protectedPaths path "\^/admin" on service app must be a plain path
 - it: should fail on a path of /
   set:
     global:
@@ -185,8 +191,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /
   asserts:
   - failedTemplate:
       errorPattern: would protect the whole service
@@ -207,11 +215,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: collides with gateway.protectedPaths
+      errorPattern: collides with gateway.authentication.protectedPaths
 - it: should fail when a protected path is outside every gateway.paths prefix
   set:
     global:
@@ -227,8 +237,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: not under any Prefix entry of gateway.paths
@@ -244,8 +256,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin/
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin/
   asserts:
   - failedTemplate:
       errorPattern: must not end with /
@@ -261,11 +275,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: '/admin '
+          authentication:
+            default: public
+            protectedPaths:
+            - path: '/admin '
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "/admin " on service app must be a plain path
+      errorPattern: gateway.authentication.protectedPaths path "/admin " on service app must be a plain path
 - it: should accept a protected path under a non-root gateway.paths prefix and keep other prefixes open
   set:
     global:
@@ -283,8 +299,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /api/admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /api/admin
   asserts:
   - hasDocuments:
       count: 2
@@ -321,8 +339,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: collides with the OIDC path "/oauth2"
@@ -344,8 +364,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     equal:
@@ -386,8 +408,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     equal:
@@ -408,8 +432,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
       other: {}
   asserts:
   - hasDocuments:
@@ -455,8 +481,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     contains:
@@ -482,8 +510,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     equal:
@@ -501,8 +531,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - {}
+          authentication:
+            default: public
+            protectedPaths:
+            - {}
   asserts:
   - failedTemplate:
       errorPattern: entry on service app has no path
@@ -518,11 +550,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin/../secret
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin/../secret
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path .* must be a plain path.*no double slash or dot segment
+      errorPattern: gateway.authentication.protectedPaths path .* must be a plain path.*no double slash or dot segment
 - it: should fail when the protected route would exceed 16 rules
   set:
     global:
@@ -535,22 +569,24 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /p1
-          - path: /p2
-          - path: /p3
-          - path: /p4
-          - path: /p5
-          - path: /p6
-          - path: /p7
-          - path: /p8
-          - path: /p9
-          - path: /p10
-          - path: /p11
-          - path: /p12
-          - path: /p13
-          - path: /p14
-          - path: /p15
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /p1
+            - path: /p2
+            - path: /p3
+            - path: /p4
+            - path: /p5
+            - path: /p6
+            - path: /p7
+            - path: /p8
+            - path: /p9
+            - path: /p10
+            - path: /p11
+            - path: /p12
+            - path: /p13
+            - path: /p14
+            - path: /p15
   asserts:
   - failedTemplate:
       errorPattern: rules on its protected HTTPRoute
@@ -570,8 +606,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: sets or adds "x-forwarded-email"
@@ -587,11 +625,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /%61dmin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /%61dmin
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path .* must be a plain path
+      errorPattern: gateway.authentication.protectedPaths path .* must be a plain path
 - it: should fail when a custom logoutPath would be rejected by the HTTPRoute API
   set:
     global:
@@ -611,8 +651,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: logoutPath "logout" renders as "logout"
@@ -651,8 +693,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: tlsPassthrough enabled
@@ -668,9 +712,11 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
-          - path: /Admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+            - path: /Admin
   asserts:
   - documentIndex: 1
     lengthEqual:
@@ -697,8 +743,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: the automatic OIDC path .* allows 1024
@@ -721,8 +769,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     contains:
@@ -745,8 +795,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: contains ; or %
@@ -762,8 +814,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /logout
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /logout
   asserts:
   - failedTemplate:
       errorPattern: is already kept on the protected route as the OIDC logout path
@@ -784,8 +838,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: gateway public path " /admin" on service app must be a plain path
@@ -810,8 +866,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: the OIDC callback of service app renders as
@@ -832,8 +890,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: 'gateway public path "/admin #legacy" on service app must be a plain path'
@@ -849,9 +909,11 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
-            foo: bar
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+              foo: bar
   asserts:
   - failedTemplate:
       errorPattern: has an unsupported key
@@ -870,8 +932,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /app/admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /app/admin
   asserts:
   - failedTemplate:
       errorPattern: gateway.paths entry "/app/x%2Fy" on service app contains ; or %
@@ -892,8 +956,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: gateway public path "/pub//x" on service app must be a plain path.*no double slash or dot segment
@@ -909,8 +975,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
   asserts:
   - documentIndex: 1
     equal:
@@ -938,8 +1006,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     notContains:
@@ -958,13 +1028,15 @@ tests:
         enabled: true
         host: app.example.com
         securityPolicy: oidc-protected-default
-        protectedPaths:
-        - path: /admin
+        authentication:
+          default: public
+          protectedPaths:
+          - path: /admin
     services:
       app: {}
   asserts:
   - failedTemplate:
-      errorPattern: must be set per service
+      errorPattern: must keep default protected with empty path lists globally
 - it: should strip Authorization on the public route when forwardIDToken writes it
   set:
     global:
@@ -983,8 +1055,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     contains:
@@ -1009,8 +1083,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     notContains:
@@ -1050,8 +1126,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: already exceed the cap on their own
@@ -1074,8 +1152,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: may list at most 5 headers
@@ -1093,11 +1173,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: collides with gateway.protectedPaths
+      errorPattern: collides with gateway.authentication.protectedPaths
 - it: should fail when a public Exact path equals the auto OIDC logout path
   set:
     global:
@@ -1112,8 +1194,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: collides with the OIDC path "/logout"
@@ -1138,8 +1222,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: the OIDC callback of service app renders as "/app/../x/oauth2".*must be a plain path.*no double slash or dot segment
@@ -1162,8 +1248,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: logoutPath "/a/../b" renders as "/a/../b", which must be a plain path.*no double slash or dot segment
@@ -1186,8 +1274,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: gateway public path "badpath" on service app must be a plain path
@@ -1207,11 +1297,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: combines gateway.protectedPaths with a RegularExpression path
+      errorPattern: combines gateway.authentication.protectedPaths with a RegularExpression path
 - it: should fail protectedPaths with gateway.redirect.enabled
   set:
     global:
@@ -1229,11 +1321,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: sets gateway.protectedPaths with gateway.redirect.enabled
+      errorPattern: sets gateway.authentication.protectedPaths with gateway.redirect.enabled
 - it: should match a protected path as a native PathPrefix when caseSensitive is true
   set:
     global:
@@ -1248,10 +1342,12 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
-            caseSensitive: true
-          - path: /api/v1.0/keys
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+              caseSensitive: true
+            - path: /api/v1.0/keys
   asserts:
   - documentIndex: 1
     equal:
@@ -1284,11 +1380,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: collides with gateway.protectedPaths "/admin"
+      errorPattern: collides with gateway.authentication.protectedPaths "/admin"
 - it: should allow a public gateway.paths entry that differs only by case from a caseSensitive protected prefix
   set:
     global:
@@ -1304,9 +1402,11 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
-            caseSensitive: true
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+              caseSensitive: true
   asserts:
   - hasDocuments:
       count: 2
@@ -1326,10 +1426,12 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
-            caseSensitive: true
-          - path: /Admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+              caseSensitive: true
+            - path: /Admin
   asserts:
   - failedTemplate:
       errorPattern: differ in caseSensitive
@@ -1345,11 +1447,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
-            caseSensitive: true
-          - path: /Admin
-            caseSensitive: true
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+              caseSensitive: true
+            - path: /Admin
+              caseSensitive: true
   asserts:
   - documentIndex: 1
     lengthEqual:
@@ -1371,11 +1475,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths .* allows 1024
+      errorPattern: gateway.authentication.protectedPaths .* allows 1024
 - it: should keep an Exact gateway.paths entry Exact on the public remainder
   set:
     global:
@@ -1392,8 +1498,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - documentIndex: 0
     equal:
@@ -1413,8 +1521,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /oauth2
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /oauth2
   asserts:
   - failedTemplate:
       errorPattern: as the OIDC callback path
@@ -1434,8 +1544,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: contains ; or %
@@ -1451,8 +1563,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin;v=1
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin;v=1
   asserts:
   - failedTemplate:
       errorPattern: percent-encoding or semicolon
@@ -1470,8 +1584,10 @@ tests:
           securityPolicy: oidc-protected-default
           paths:
           - path: /
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
       api:
         gateway:
           securityPolicy: none
@@ -1494,8 +1610,10 @@ tests:
           securityPolicy: oidc-protected-default
           paths:
           - path: /
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
       other:
         gateway:
           host: other.example.com
@@ -1523,8 +1641,10 @@ tests:
           securityPolicy: oidc-protected-default
           paths:
           - path: /
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
       other:
         gateway:
           host: other.example.com
@@ -1551,11 +1671,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: sets gateway.protectedPaths with gateway.pathRewrite
+      errorPattern: sets gateway.authentication.protectedPaths with gateway.pathRewrite
 - it: should fail when an oidc.apiRoutes path lies outside every protected prefix
   set:
     global:
@@ -1575,11 +1697,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
-      errorPattern: is not under a gateway.protectedPaths prefix
+      errorPattern: is not under a gateway.authentication.protectedPaths prefix
 - it: should accept an oidc.apiRoutes path under a protected prefix
   set:
     global:
@@ -1599,8 +1723,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - hasDocuments:
       count: 2
@@ -1624,8 +1750,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - failedTemplate:
       errorPattern: uses RegularExpression, which the chart cannot place
@@ -1648,12 +1776,14 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
-            caseSensitive: true
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+              caseSensitive: true
   asserts:
   - failedTemplate:
-      errorPattern: is not under a gateway.protectedPaths prefix
+      errorPattern: is not under a gateway.authentication.protectedPaths prefix
 - it: should fail when another service claims this host as a vanity hostname
   set:
     global:
@@ -1668,8 +1798,10 @@ tests:
           securityPolicy: oidc-protected-default
           paths:
           - path: /
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
       other:
         gateway:
           host: other.example.com
@@ -1702,8 +1834,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - hasDocuments:
       count: 2
@@ -1721,8 +1855,10 @@ tests:
           securityPolicy: oidc-protected-default
           paths:
           - path: /
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
       other:
         gateway:
           host: other.example.com
@@ -1747,21 +1883,23 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /p1
-          - path: /p2
-          - path: /p3
-          - path: /p4
-          - path: /p5
-          - path: /p6
-          - path: /p7
-          - path: /p8
-          - path: /p9
-          - path: /p10
-          - path: /p11
-          - path: /p12
-          - path: /p13
-          - path: /p14
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /p1
+            - path: /p2
+            - path: /p3
+            - path: /p4
+            - path: /p5
+            - path: /p6
+            - path: /p7
+            - path: /p8
+            - path: /p9
+            - path: /p10
+            - path: /p11
+            - path: /p12
+            - path: /p13
+            - path: /p14
   asserts:
   - failedTemplate:
       errorPattern: would render 17 rules on its protected HTTPRoute
@@ -1777,11 +1915,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin/./x
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin/./x
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "/admin/./x" on service app must be a plain path
+      errorPattern: gateway.authentication.protectedPaths path "/admin/./x" on service app must be a plain path
 - it: should fail on a protected path ending in a dot segment
   set:
     global:
@@ -1794,11 +1934,13 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin/.
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin/.
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "/admin/." on service app must be a plain path
+      errorPattern: gateway.authentication.protectedPaths path "/admin/." on service app must be a plain path
 - it: should fail on a protected path ending in a parent segment
   set:
     global:
@@ -1811,9 +1953,11 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin/..
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin/..
   asserts:
   - failedTemplate:
-      errorPattern: gateway.protectedPaths path "/admin/.." on service app must be a plain path
+      errorPattern: gateway.authentication.protectedPaths path "/admin/.." on service app must be a plain path
 

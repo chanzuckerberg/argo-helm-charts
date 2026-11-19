@@ -33,7 +33,7 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
-{{- include "validate.protectedPaths" (dict "ctx" . "root" $global) -}}
+{{- include "validate.pathAuthentication" (dict "ctx" . "root" $global) -}}
 
 {{- if .Values.ingress.enabled -}}
 ---
