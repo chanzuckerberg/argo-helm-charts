@@ -25,7 +25,6 @@ providers:
 
 runtime:
   enabled: false
-  namespaces: []
   image: ""
   nodeArchitecture: arm64
   workspaceStorageClass: ""

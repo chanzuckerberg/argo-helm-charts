@@ -1,19 +1,14 @@
 {{- if .Values.runtime.enabled }}
-{{- $root := . }}
-{{- range $namespace := .Values.runtime.namespaces }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: agent-registry-runtime
-  namespace: {{ $namespace }}
+  name: agent-registry-runtime-source
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "agent-registry-operator.labels" $root | nindent 4 }}
+    {{- include "agent-registry-operator.labels" . | nindent 4 }}
 data:
-  image: {{ $root.Values.runtime.image | quote }}
-  {{- range $name, $contents := $root.Values.runtime.config }}
+  {{- range $name, $contents := .Values.runtime.config }}
   {{ $name }}: |
 {{ $contents | indent 4 }}
   {{- end }}
----
-{{- end }}
 {{- end }}

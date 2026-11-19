@@ -61,6 +61,8 @@ spec:
               value: {{ required "runtime.image is required" .Values.runtime.image | quote }}
             - name: RUNTIME_CONFIG_MAP_NAME
               value: agent-registry-runtime
+            - name: RUNTIME_CONFIG_DIRECTORY
+              value: /etc/agent-registry-runtime
             - name: RUNTIME_NODE_ARCHITECTURE
               value: {{ .Values.runtime.nodeArchitecture | quote }}
             - name: RUNTIME_WORKSPACE_STORAGE_CLASS
@@ -94,6 +96,12 @@ spec:
             - name: RUNTIME_TAILSCALE_TAG
               value: {{ .Values.runtime.tailscaleTag | quote }}
             {{- end }}
+          {{- if .Values.runtime.enabled }}
+          volumeMounts:
+            - name: runtime-config-source
+              mountPath: /etc/agent-registry-runtime
+              readOnly: true
+          {{- end }}
           ports:
             - name: health
               containerPort: 8081
@@ -116,6 +124,12 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 65532
+      {{- if .Values.runtime.enabled }}
+      volumes:
+        - name: runtime-config-source
+          configMap:
+            name: agent-registry-runtime-source
+      {{- end }}
       securityContext:
         runAsNonRoot: true
       nodeSelector:

@@ -130,9 +130,6 @@
         "image": {
           "type": "string"
         },
-        "namespaces": {
-          "type": "array"
-        },
         "nodeArchitecture": {
           "type": "string"
         },
