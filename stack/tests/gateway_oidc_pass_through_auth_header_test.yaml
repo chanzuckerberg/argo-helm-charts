@@ -2,15 +2,20 @@
 suite: test gateway SecurityPolicy oidc passThroughAuthHeader
 templates:
 - gateway-securitypolicy-shared.yaml
+set:
+  global:
+    ingress:
+      enabled: false
+    gateway:
+      enabled: true
+      host: api.example.com
+  services:
+    service1: {}
 tests:
 - it: should render passThroughAuthHeader when the policy also verifies the token
   set:
     global:
-      ingress:
-        enabled: false
       gateway:
-        enabled: true
-        host: api.example.com
         securityPolicy: machine-clients
       securityPolicies:
         machine-clients:
@@ -24,8 +29,6 @@ tests:
               remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
               audiences:
               - 0oaexampleclientid
-    services:
-      service1: {}
   asserts:
   - hasDocuments:
       count: 1
@@ -41,14 +44,8 @@ tests:
 - it: should omit passThroughAuthHeader when it is not set
   set:
     global:
-      ingress:
-        enabled: false
       gateway:
-        enabled: true
-        host: api.example.com
         securityPolicy: oidc-protected-default
-    services:
-      service1: {}
   asserts:
   - notExists:
       path: spec.oidc.passThroughAuthHeader
@@ -56,18 +53,241 @@ tests:
 - it: should fail when passThroughAuthHeader is set without a jwt block to verify the token
   set:
     global:
-      ingress:
-        enabled: false
       gateway:
-        enabled: true
-        host: api.example.com
         securityPolicy: unverified
       securityPolicies:
         unverified:
           oidc:
             passThroughAuthHeader: true
-    services:
-      service1: {}
   asserts:
   - failedTemplate:
       errorPattern: passThroughAuthHeader skips OIDC for any request carrying the JWT filter's header
+
+- it: should fail when a jwt provider reads the header forwardIDToken writes
+  set:
+    global:
+      gateway:
+        securityPolicy: collision
+      securityPolicies:
+        collision:
+          oidc:
+            passThroughAuthHeader: true
+          jwt:
+            enabled: true
+            optional: true
+            providers:
+            - name: okta-id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                headers:
+                - name: X-ID-Token
+  asserts:
+  - failedTemplate:
+      errorPattern: "jwt provider okta-id-token reads X-ID-Token, the header oidc.forwardIDToken writes"
+
+- it: should fail when the built-in oidc-identity-headers policy turns on passThroughAuthHeader
+  set:
+    global:
+      gateway:
+        securityPolicy: oidc-identity-headers
+      securityPolicies:
+        oidc-identity-headers:
+          oidc:
+            passThroughAuthHeader: true
+  asserts:
+  - failedTemplate:
+      errorPattern: "declaring your own jwt.providers if this is the built-in oidc-identity-headers policy"
+
+- it: should match the forwarded header case-insensitively
+  set:
+    global:
+      gateway:
+        securityPolicy: collision
+      securityPolicies:
+        collision:
+          oidc:
+            passThroughAuthHeader: true
+            forwardIDToken:
+              enabled: true
+              header: X-Upstream-Token
+          jwt:
+            enabled: true
+            providers:
+            - name: lower
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                headers:
+                - name: x-upstream-token
+  asserts:
+  - failedTemplate:
+      errorPattern: "jwt provider lower reads x-upstream-token"
+
+- it: should fail when forwardIDToken writes Authorization and a provider reads Authorization
+  set:
+    global:
+      gateway:
+        securityPolicy: collision
+      securityPolicies:
+        collision:
+          oidc:
+            passThroughAuthHeader: true
+            forwardIDToken:
+              enabled: true
+              header: Authorization
+          jwt:
+            enabled: true
+            providers:
+            - name: bearer
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+  asserts:
+  - failedTemplate:
+      errorPattern: "oidc.forwardIDToken writes Authorization, which a jwt provider without extractFrom also reads"
+
+- it: should fail when forwardIDToken writes Authorization and the default provider reads it
+  set:
+    global:
+      gateway:
+        securityPolicy: collision
+      securityPolicies:
+        collision:
+          oidc:
+            passThroughAuthHeader: true
+            forwardIDToken:
+              enabled: true
+              header: authorization
+          jwt:
+            enabled: true
+            issuer: https://auth.example.com
+            remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+  asserts:
+  - failedTemplate:
+      errorPattern: "oidc.forwardIDToken writes Authorization"
+
+- it: should fail when no jwt provider reads a header
+  set:
+    global:
+      gateway:
+        securityPolicy: cookies-only
+      securityPolicies:
+        cookies-only:
+          oidc:
+            passThroughAuthHeader: true
+          jwt:
+            enabled: true
+            providers:
+            - name: cookie
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                cookies:
+                - session
+  asserts:
+  - failedTemplate:
+      errorPattern: "needs a jwt provider that reads a header"
+
+- it: should render a bearer provider alongside the default forwarded ID token
+  set:
+    global:
+      gateway:
+        securityPolicy: cli-bearer
+      securityPolicies:
+        cli-bearer:
+          oidc:
+            passThroughAuthHeader: true
+          jwt:
+            enabled: true
+            optional: true
+            providers:
+            - name: okta-cli-bearer
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              audiences:
+              - 0oaexampleclientid
+  asserts:
+  - equal:
+      path: spec.oidc.forwardIDToken.header
+      value: X-ID-Token
+  - equal:
+      path: spec.oidc.passThroughAuthHeader
+      value: true
+  - notExists:
+      path: spec.jwt.providers[0].extractFrom
+
+- it: should render a provider reading the forwarded header when forwardIDToken is off
+  set:
+    global:
+      gateway:
+        securityPolicy: no-forward
+      securityPolicies:
+        no-forward:
+          oidc:
+            passThroughAuthHeader: true
+            forwardIDToken:
+              enabled: false
+          jwt:
+            enabled: true
+            providers:
+            - name: id-token
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                headers:
+                - name: X-ID-Token
+  asserts:
+  - notExists:
+      path: spec.oidc.forwardIDToken
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.headers[0].name
+      value: X-ID-Token
+
+- it: should render when forwardIDToken writes Authorization and every provider reads another header
+  set:
+    global:
+      gateway:
+        securityPolicy: split
+      securityPolicies:
+        split:
+          oidc:
+            passThroughAuthHeader: true
+            forwardIDToken:
+              enabled: true
+              header: Authorization
+          jwt:
+            enabled: true
+            providers:
+            - name: machine
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom:
+                headers:
+                - name: X-Machine-Token
+  asserts:
+  - equal:
+      path: spec.oidc.forwardIDToken.header
+      value: Authorization
+  - equal:
+      path: spec.jwt.providers[0].extractFrom.headers[0].name
+      value: X-Machine-Token
+
+- it: should fail when the only jwt provider sets an empty extractFrom
+  set:
+    global:
+      gateway:
+        securityPolicy: empty-extractor
+      securityPolicies:
+        empty-extractor:
+          oidc:
+            passThroughAuthHeader: true
+          jwt:
+            enabled: true
+            providers:
+            - name: empty
+              issuer: https://auth.example.com
+              remoteJWKSUri: https://auth.example.com/oauth2/v1/keys
+              extractFrom: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: "needs a jwt provider that reads a header"
