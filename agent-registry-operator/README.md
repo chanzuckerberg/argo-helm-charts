@@ -274,7 +274,6 @@
 | - [enabled](#runtime_enabled )                                       | No      | boolean | No         | -          | -                 |
 | - [engPortalProfilesURL](#runtime_engPortalProfilesURL )             | No      | string  | No         | -          | -                 |
 | - [image](#runtime_image )                                           | No      | string  | No         | -          | -                 |
-| - [namespaces](#runtime_namespaces )                                 | No      | array   | No         | -          | -                 |
 | - [nodeArchitecture](#runtime_nodeArchitecture )                     | No      | string  | No         | -          | -                 |
 | - [otelHeadersSecretName](#runtime_otelHeadersSecretName )           | No      | string  | No         | -          | -                 |
 | - [tailscaleAudience](#runtime_tailscaleAudience )                   | No      | string  | No         | -          | -                 |
@@ -360,64 +359,49 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="runtime_namespaces"></a>7.8. Property `agent-registry-operator > runtime > namespaces`
-
-|              |         |
-| ------------ | ------- |
-| **Type**     | `array` |
-| **Required** | No      |
-
-|                      | Array restrictions |
-| -------------------- | ------------------ |
-| **Min items**        | N/A                |
-| **Max items**        | N/A                |
-| **Items unicity**    | False              |
-| **Additional items** | False              |
-| **Tuple validation** | N/A                |
-
-### <a name="runtime_nodeArchitecture"></a>7.9. Property `agent-registry-operator > runtime > nodeArchitecture`
+### <a name="runtime_nodeArchitecture"></a>7.8. Property `agent-registry-operator > runtime > nodeArchitecture`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="runtime_otelHeadersSecretName"></a>7.10. Property `agent-registry-operator > runtime > otelHeadersSecretName`
+### <a name="runtime_otelHeadersSecretName"></a>7.9. Property `agent-registry-operator > runtime > otelHeadersSecretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="runtime_tailscaleAudience"></a>7.11. Property `agent-registry-operator > runtime > tailscaleAudience`
+### <a name="runtime_tailscaleAudience"></a>7.10. Property `agent-registry-operator > runtime > tailscaleAudience`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="runtime_tailscaleClientID"></a>7.12. Property `agent-registry-operator > runtime > tailscaleClientID`
+### <a name="runtime_tailscaleClientID"></a>7.11. Property `agent-registry-operator > runtime > tailscaleClientID`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="runtime_tailscaleIdentityConfigMap"></a>7.13. Property `agent-registry-operator > runtime > tailscaleIdentityConfigMap`
+### <a name="runtime_tailscaleIdentityConfigMap"></a>7.12. Property `agent-registry-operator > runtime > tailscaleIdentityConfigMap`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="runtime_tailscaleTag"></a>7.14. Property `agent-registry-operator > runtime > tailscaleTag`
+### <a name="runtime_tailscaleTag"></a>7.13. Property `agent-registry-operator > runtime > tailscaleTag`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-### <a name="runtime_workspaceStorageClass"></a>7.15. Property `agent-registry-operator > runtime > workspaceStorageClass`
+### <a name="runtime_workspaceStorageClass"></a>7.14. Property `agent-registry-operator > runtime > workspaceStorageClass`
 
 |              |          |
 | ------------ | -------- |
