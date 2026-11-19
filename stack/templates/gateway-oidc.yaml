@@ -33,7 +33,7 @@
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
 {{- with $service }}
 {{- include "validate.gatewayIngressCoexistence" (dict "ctx" . "root" $global "name" .Values.name) -}}
-{{- include "validate.protectedPaths" (dict "ctx" . "root" $global) -}}
+{{- include "validate.pathAuthentication" (dict "ctx" . "root" $global) -}}
 {{- include "validate.gatewayRuleHost" . -}}
 
 {{- if and .Values.gateway.enabled (eq (include "securityPolicy.isOidc" (dict "root" $global "name" .Values.name)) "true") (not .Values.gateway.tlsPassthrough.enabled) -}}
@@ -41,14 +41,14 @@
 {{- $filters := include "gateway.ruleFiltersInner" $service | trim -}}
 {{- $timeouts := include "gateway.ruleTimeoutsInner" $service | trim -}}
 {{- /* Rules of the policy-protected route: every gateway.paths entry, or under protectedPaths only the listed prefixes plus the OIDC callback, logout and ;/% guard rule, with gateway.paths moving to the -public route. Protected rules carry match (rendered) beside path (as written); gateway.paths entries carry only path. */ -}}
-{{- $protected := gt (len (.Values.gateway.protectedPaths | default list)) 0 -}}
+{{- $protected := eq (include "gateway.authenticationDefault" .) "public" -}}
 {{- $rules := .Values.gateway.paths -}}
 {{- if $protected -}}
 {{- $rules = fromYamlArray (include "gateway.protectedRules" (dict "root" $global "service" $service "policy" $p)) -}}
 {{- end -}}
 {{- /* The -public route carries no OIDC policy, so strip the identity headers the policy would inject. Only computed when a public route exists (skipAuth, or the protectedPaths remainder), so a plain OIDC service that sets such a header is unaffected. */ -}}
 {{- $publicFilters := $filters -}}
-{{- if or $protected (gt (len (.Values.gateway.skipAuth | default list)) 0) -}}
+{{- if or $protected (gt (len (fromYamlArray (include "gateway.publicPaths" .))) 0) -}}
 {{- $publicFilters = include "gateway.publicRuleFiltersInner" (dict "ctx" $service "Values" .Values "policy" $p) | trim -}}
 {{- end -}}
 {{- include "gateway.publicRoute" (dict "ctx" $service "root" $global "filters" $publicFilters "timeouts" $timeouts) }}

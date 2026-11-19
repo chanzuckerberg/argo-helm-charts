@@ -10,8 +10,10 @@ tests:
           host: "stack.play.dev.czi.team"
           oidcProtected: false
         gateway:
-          protectedPaths:
-            - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+              - path: /admin
       services:
         service1:
           ingress:
@@ -202,8 +204,10 @@ tests:
       services:
         app:
           gateway:
-            protectedPaths:
-              - path: /admin
+            authentication:
+              default: public
+              protectedPaths:
+                - path: /admin
         docs:
           ingress:
             enabled: true
@@ -222,8 +226,10 @@ tests:
             enabled: true
           gateway:
             securityPolicy: oidc-protected-default
-            protectedPaths:
-              - path: /admin
+            authentication:
+              default: public
+              protectedPaths:
+                - path: /admin
     asserts:
       - failedTemplate:
           errorPattern: served without authentication
@@ -243,8 +249,10 @@ tests:
             enabled: true
             oidcProtected: true
           gateway:
-            protectedPaths:
-              - path: /admin
+            authentication:
+              default: public
+              protectedPaths:
+                - path: /admin
     asserts:
       - failedTemplate:
           errorPattern: its gateway is disabled, so no Envoy routes render
@@ -259,8 +267,10 @@ tests:
             enabled: false
           gateway:
             enabled: false
-            protectedPaths:
-              - path: /admin
+            authentication:
+              default: public
+              protectedPaths:
+                - path: /admin
     asserts:
       - failedTemplate:
           errorPattern: its gateway is disabled, so no Envoy routes render
@@ -285,8 +295,10 @@ tests:
             securityPolicy: oidc-protected-default
             paths:
               - path: /
-            protectedPaths:
-              - path: /admin
+            authentication:
+              default: public
+              protectedPaths:
+                - path: /admin
     asserts:
       - isKind:
           of: Ingress

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
-suite: test gateway.protectedPaths SecurityPolicy targeting
+suite: test gateway.authentication.protectedPaths SecurityPolicy targeting
 templates:
 - gateway-securitypolicy.yaml
 - gateway-securitypolicy-shared.yaml
@@ -17,8 +17,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - hasDocuments:
       count: 1
@@ -53,8 +55,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - hasDocuments:
       count: 1
@@ -89,8 +93,10 @@ tests:
     services:
       app:
         gateway:
-          protectedPaths:
-          - path: /admin
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
   asserts:
   - hasDocuments:
       count: 1
