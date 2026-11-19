@@ -1,4 +1,4 @@
-{{- if .Values.runtime.enabled }}
+{{- if .Values.agent.runtime.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "agent-registry-operator.labels" . | nindent 4 }}
 data:
-  {{- range $name, $contents := .Values.runtime.config }}
+  {{- range $name, $contents := .Values.agent.runtime.config }}
   {{ $name }}: |
 {{ $contents | indent 4 }}
   {{- end }}

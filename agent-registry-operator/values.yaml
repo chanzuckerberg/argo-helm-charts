@@ -23,24 +23,25 @@ providers:
   tailscale:
     enabled: false
 
-runtime:
-  enabled: false
-  image: ""
-  nodeArchitecture: arm64
-  workspaceStorageClass: ""
-  awsRegion: us-west-2
-  anthropicAudience: https://api.anthropic.com
-  anthropicOrganizationID: ""
-  tailscaleAudience: ""
-  tailscaleClientID: ""
-  tailscaleIdentityConfigMap: agent-registry-cluster-identity
-  tailscaleTag: tag:agent
-  engPortalProfilesURL: ""
-  otelHeadersSecretName: "-"
-  config:
-    managed-settings.json: "{}"
-    git-branch-guard.sh: ""
-    ssh-guard.sh: ""
+agent:
+  runtime:
+    enabled: false
+    image: ""
+    nodeArchitecture: arm64
+    workspaceStorageClass: ""
+    awsRegion: us-west-2
+    anthropicAudience: https://api.anthropic.com
+    anthropicOrganizationID: ""
+    tailscaleAudience: ""
+    tailscaleClientID: ""
+    tailscaleIdentityConfigMap: agent-registry-cluster-identity
+    tailscaleTag: tag:agent
+    engPortalProfilesURL: ""
+    otelHeadersSecretName: "-"
+    config:
+      managed-settings.json: "{}"
+      git-branch-guard.sh: ""
+      ssh-guard.sh: ""
 
 resources:
   requests:

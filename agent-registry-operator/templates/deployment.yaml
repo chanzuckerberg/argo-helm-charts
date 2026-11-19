@@ -43,10 +43,10 @@ spec:
             - name: TAILSCALE_RECONCILIATION_ENABLED
               value: {{ .Values.providers.tailscale.enabled | quote }}
             - name: RUNTIME_RECONCILIATION_ENABLED
-              value: {{ .Values.runtime.enabled | quote }}
-            {{- if or .Values.providers.aws.enabled .Values.runtime.enabled }}
+              value: {{ .Values.agent.runtime.enabled | quote }}
+            {{- if or .Values.providers.aws.enabled .Values.agent.runtime.enabled }}
             - name: AWS_REGION
-              value: {{ ternary .Values.providers.aws.region .Values.runtime.awsRegion .Values.providers.aws.enabled | quote }}
+              value: {{ ternary .Values.providers.aws.region .Values.agent.runtime.awsRegion .Values.providers.aws.enabled | quote }}
             {{- end }}
             {{- if .Values.providers.aws.enabled }}
             - name: AWS_CLUSTER_OIDC_PROVIDER
@@ -56,47 +56,47 @@ spec:
             - name: AWS_PERMISSIONS_BOUNDARY_POLICY_NAME
               value: {{ .Values.providers.aws.permissionsBoundaryPolicyName | quote }}
             {{- end }}
-            {{- if .Values.runtime.enabled }}
+            {{- if .Values.agent.runtime.enabled }}
             - name: RUNTIME_IMAGE
-              value: {{ required "runtime.image is required" .Values.runtime.image | quote }}
+              value: {{ required "agent.runtime.image is required" .Values.agent.runtime.image | quote }}
             - name: RUNTIME_CONFIG_MAP_NAME
               value: agent-registry-runtime
             - name: RUNTIME_CONFIG_DIRECTORY
               value: /etc/agent-registry-runtime
             - name: RUNTIME_NODE_ARCHITECTURE
-              value: {{ .Values.runtime.nodeArchitecture | quote }}
+              value: {{ .Values.agent.runtime.nodeArchitecture | quote }}
             - name: RUNTIME_WORKSPACE_STORAGE_CLASS
-              value: {{ required "runtime.workspaceStorageClass is required" .Values.runtime.workspaceStorageClass | quote }}
+              value: {{ required "agent.runtime.workspaceStorageClass is required" .Values.agent.runtime.workspaceStorageClass | quote }}
             - name: RUNTIME_ENG_PORTAL_PROFILES_URL
-              value: {{ .Values.runtime.engPortalProfilesURL | quote }}
+              value: {{ .Values.agent.runtime.engPortalProfilesURL | quote }}
             - name: RUNTIME_OTEL_HEADERS_SECRET_NAME
-              value: {{ .Values.runtime.otelHeadersSecretName | quote }}
+              value: {{ .Values.agent.runtime.otelHeadersSecretName | quote }}
             - name: RUNTIME_ANTHROPIC_TOKEN_AUDIENCE
-              value: {{ .Values.runtime.anthropicAudience | quote }}
+              value: {{ .Values.agent.runtime.anthropicAudience | quote }}
             - name: ANTHROPIC_ORGANIZATION_ID
-              value: {{ required "runtime.anthropicOrganizationID is required" .Values.runtime.anthropicOrganizationID | quote }}
+              value: {{ required "agent.runtime.anthropicOrganizationID is required" .Values.agent.runtime.anthropicOrganizationID | quote }}
             - name: RUNTIME_TAILSCALE_TOKEN_AUDIENCE
-              {{- if .Values.runtime.tailscaleAudience }}
-              value: {{ .Values.runtime.tailscaleAudience | quote }}
+              {{- if .Values.agent.runtime.tailscaleAudience }}
+              value: {{ .Values.agent.runtime.tailscaleAudience | quote }}
               {{- else }}
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Values.runtime.tailscaleIdentityConfigMap }}
+                  name: {{ .Values.agent.runtime.tailscaleIdentityConfigMap }}
                   key: tailscale_audience
               {{- end }}
             - name: RUNTIME_TAILSCALE_CLIENT_ID
-              {{- if .Values.runtime.tailscaleClientID }}
-              value: {{ .Values.runtime.tailscaleClientID | quote }}
+              {{- if .Values.agent.runtime.tailscaleClientID }}
+              value: {{ .Values.agent.runtime.tailscaleClientID | quote }}
               {{- else }}
               valueFrom:
                 configMapKeyRef:
-                  name: {{ .Values.runtime.tailscaleIdentityConfigMap }}
+                  name: {{ .Values.agent.runtime.tailscaleIdentityConfigMap }}
                   key: tailscale_client_id
               {{- end }}
             - name: RUNTIME_TAILSCALE_TAG
-              value: {{ .Values.runtime.tailscaleTag | quote }}
+              value: {{ .Values.agent.runtime.tailscaleTag | quote }}
             {{- end }}
-          {{- if .Values.runtime.enabled }}
+          {{- if .Values.agent.runtime.enabled }}
           volumeMounts:
             - name: runtime-config-source
               mountPath: /etc/agent-registry-runtime
@@ -124,7 +124,7 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 65532
-      {{- if .Values.runtime.enabled }}
+      {{- if .Values.agent.runtime.enabled }}
       volumes:
         - name: runtime-config-source
           configMap:

@@ -7,6 +7,69 @@
     "affinity": {
       "type": "object"
     },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "runtime": {
+          "type": "object",
+          "properties": {
+            "anthropicAudience": {
+              "type": "string"
+            },
+            "anthropicOrganizationID": {
+              "type": "string"
+            },
+            "awsRegion": {
+              "type": "string"
+            },
+            "config": {
+              "type": "object",
+              "properties": {
+                "git-branch-guard.sh": {
+                  "type": "string"
+                },
+                "managed-settings.json": {
+                  "type": "string"
+                },
+                "ssh-guard.sh": {
+                  "type": "string"
+                }
+              }
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "engPortalProfilesURL": {
+              "type": "string"
+            },
+            "image": {
+              "type": "string"
+            },
+            "nodeArchitecture": {
+              "type": "string"
+            },
+            "otelHeadersSecretName": {
+              "type": "string"
+            },
+            "tailscaleAudience": {
+              "type": "string"
+            },
+            "tailscaleClientID": {
+              "type": "string"
+            },
+            "tailscaleIdentityConfigMap": {
+              "type": "string"
+            },
+            "tailscaleTag": {
+              "type": "string"
+            },
+            "workspaceStorageClass": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "image": {
       "type": "object",
       "properties": {
@@ -92,64 +155,6 @@
               "type": "string"
             }
           }
-        }
-      }
-    },
-    "runtime": {
-      "type": "object",
-      "properties": {
-        "anthropicAudience": {
-          "type": "string"
-        },
-        "anthropicOrganizationID": {
-          "type": "string"
-        },
-        "awsRegion": {
-          "type": "string"
-        },
-        "config": {
-          "type": "object",
-          "properties": {
-            "git-branch-guard.sh": {
-              "type": "string"
-            },
-            "managed-settings.json": {
-              "type": "string"
-            },
-            "ssh-guard.sh": {
-              "type": "string"
-            }
-          }
-        },
-        "enabled": {
-          "type": "boolean"
-        },
-        "engPortalProfilesURL": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string"
-        },
-        "nodeArchitecture": {
-          "type": "string"
-        },
-        "otelHeadersSecretName": {
-          "type": "string"
-        },
-        "tailscaleAudience": {
-          "type": "string"
-        },
-        "tailscaleClientID": {
-          "type": "string"
-        },
-        "tailscaleIdentityConfigMap": {
-          "type": "string"
-        },
-        "tailscaleTag": {
-          "type": "string"
-        },
-        "workspaceStorageClass": {
-          "type": "string"
         }
       }
     },
