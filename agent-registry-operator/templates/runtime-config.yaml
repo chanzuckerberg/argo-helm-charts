@@ -1,10 +1,6 @@
 {{- if .Values.runtime.enabled }}
 {{- $root := . }}
-{{- $namespaces := .Values.managedNamespaces }}
-{{- if not $namespaces }}
-{{- $namespaces = list .Release.Namespace }}
-{{- end }}
-{{- range $namespace := $namespaces }}
+{{- range $namespace := .Values.runtime.namespaces }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

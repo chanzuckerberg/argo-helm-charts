@@ -2,5 +2,5 @@ image:
   repository: registry.example.com/agent-registry/operator
   tag: sha-test
 
-managedNamespaces:
-  - argus-test
+watchNamespaces:
+  - argus-*

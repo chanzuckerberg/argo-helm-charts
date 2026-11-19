@@ -9,7 +9,7 @@ serviceAccount:
   name: agent-registry-operator
   annotations: {}
 
-managedNamespaces: []
+watchNamespaces: []
 
 providers:
   aws:
@@ -25,6 +25,7 @@ providers:
 
 runtime:
   enabled: false
+  namespaces: []
   image: ""
   nodeArchitecture: arm64
   workspaceStorageClass: ""

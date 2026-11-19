@@ -1,8 +1,5 @@
 {{- $tag := required "image.tag is required" .Values.image.tag }}
-{{- $namespaces := .Values.managedNamespaces }}
-{{- if not $namespaces }}
-{{- $namespaces = list .Release.Namespace }}
-{{- end }}
+{{- $watchNamespaces := required "watchNamespaces is required" .Values.watchNamespaces }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,7 +35,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: WATCH_NAMESPACES
-              value: {{ join "," $namespaces | quote }}
+              value: {{ join "," $watchNamespaces | quote }}
             - name: AWS_RECONCILIATION_ENABLED
               value: {{ .Values.providers.aws.enabled | quote }}
             - name: ANTHROPIC_RECONCILIATION_ENABLED

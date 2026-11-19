@@ -24,9 +24,6 @@
     "imagePullSecrets": {
       "type": "array"
     },
-    "managedNamespaces": {
-      "type": "array"
-    },
     "nodeSelector": {
       "type": "object"
     },
@@ -133,6 +130,9 @@
         "image": {
           "type": "string"
         },
+        "namespaces": {
+          "type": "array"
+        },
         "nodeArchitecture": {
           "type": "string"
         },
@@ -168,6 +168,9 @@
       }
     },
     "tolerations": {
+      "type": "array"
+    },
+    "watchNamespaces": {
       "type": "array"
     }
   }
