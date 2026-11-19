@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.68.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.68.1...stack-v2.68.2) (2026-11-19)
+
+
+### Bug Fixes
+
+* **stack:** refuse SecurityPolicies that Envoy Gateway would drop for pass-through auth ([#637](https://github.com/chanzuckerberg/argo-helm-charts/issues/637)) ([ae64c37](https://github.com/chanzuckerberg/argo-helm-charts/commit/ae64c37926645fd2edf53ece9a59a9cbb321f977))
+
 ## [2.68.1](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.68.0...stack-v2.68.1) (2026-11-11)
 
 
