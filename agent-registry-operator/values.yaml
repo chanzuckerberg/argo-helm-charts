@@ -29,7 +29,7 @@ agent:
     image: ""
     nodeArchitecture: arm64
     workspaceStorageClass: ""
-    awsRegion: us-west-2
+    defaultAwsRegion: us-west-2
     anthropicAudience: https://api.anthropic.com
     anthropicOrganizationID: ""
     tailscaleAudience: ""

@@ -19,9 +19,6 @@
             "anthropicOrganizationID": {
               "type": "string"
             },
-            "awsRegion": {
-              "type": "string"
-            },
             "config": {
               "type": "object",
               "properties": {
@@ -35,6 +32,9 @@
                   "type": "string"
                 }
               }
+            },
+            "defaultAwsRegion": {
+              "type": "string"
             },
             "enabled": {
               "type": "boolean"

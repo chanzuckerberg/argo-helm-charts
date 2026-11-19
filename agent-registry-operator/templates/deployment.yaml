@@ -46,7 +46,7 @@ spec:
               value: {{ .Values.agent.runtime.enabled | quote }}
             {{- if or .Values.providers.aws.enabled .Values.agent.runtime.enabled }}
             - name: AWS_REGION
-              value: {{ ternary .Values.providers.aws.region .Values.agent.runtime.awsRegion .Values.providers.aws.enabled | quote }}
+              value: {{ ternary .Values.providers.aws.region .Values.agent.runtime.defaultAwsRegion .Values.providers.aws.enabled | quote }}
             {{- end }}
             {{- if .Values.providers.aws.enabled }}
             - name: AWS_CLUSTER_OIDC_PROVIDER
