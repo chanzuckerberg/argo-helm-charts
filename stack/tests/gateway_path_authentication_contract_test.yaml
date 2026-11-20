@@ -197,3 +197,36 @@ tests:
       value:
         type: PathPrefix
         value: /
+- it: should reject protectedPaths outside gateway.authentication rather than ignore it
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: service app sets gateway.protectedPaths, which is not a chart key
+- it: should reject a global protectedPaths outside gateway.authentication rather than ignore it
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: /admin
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: gateway.protectedPaths is not a chart key

@@ -2243,10 +2243,17 @@ PathPrefix
 {{- if or (eq ($globalAuthentication.default | default "protected") "public") (gt (len ($globalAuthentication.publicPaths | default list)) 0) (gt (len ($globalAuthentication.protectedPaths | default list)) 0) -}}
 {{- fail "gateway.authentication must keep default protected with empty path lists globally. Set publicPaths or default public with protectedPaths under services.NAME.gateway.authentication." -}}
 {{- end -}}
+{{- /* protectedPaths lives under gateway.authentication. The schema does not reject unknown keys, so a top-level gateway.protectedPaths would otherwise be ignored and the service would render fully protected without warning. */ -}}
+{{- if hasKey (((.root.Values.global).gateway | default dict)) "protectedPaths" -}}
+{{- fail "gateway.protectedPaths is not a chart key and would be ignored. Set services.NAME.gateway.authentication.default to public and list the prefixes under services.NAME.gateway.authentication.protectedPaths." -}}
+{{- end -}}
 {{- $root := .root -}}
 {{- with .ctx -}}
 {{- $g := .Values.gateway -}}
 {{- $name := .Values.name -}}
+{{- if hasKey $g "protectedPaths" -}}
+{{- fail (printf "service %s sets gateway.protectedPaths, which is not a chart key and would be ignored. Set gateway.authentication.default to public and list the prefixes under gateway.authentication.protectedPaths." $name) -}}
+{{- end -}}
 {{- $authentication := $g.authentication | default dict -}}
 {{- $default := $authentication.default | default "protected" -}}
 {{- $publicPaths := $authentication.publicPaths | default list -}}
