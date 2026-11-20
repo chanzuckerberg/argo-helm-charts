@@ -68,7 +68,8 @@ api:
   enabled: false
   # The API's app-config.yaml. The API reads it instead of the app-config
   # files baked into its image; see those in chanzuckerberg/agent-registry for
-  # the fields.
+  # the fields. It's read at startup, so a change takes effect on the next
+  # rollout of the agent-registry-api Deployment.
   config: {}
 
 stack:
@@ -117,8 +118,7 @@ stack:
         - --verbose
       service:
         port: 8080
-      # The agent-registry-api-secret-writes admission policy matches this
-      # name in any namespace.
+      # templates/api-rbac.yaml and api-secret-policy.yaml bind this name.
       serviceAccount:
         create: true
         name: agent-registry-api
@@ -154,6 +154,7 @@ stack:
           path: /readyz
           port: http
       volumes:
+        # Rendered by templates/api-config.yaml.
         - name: api-config
           configMap:
             name: agent-registry-api-config

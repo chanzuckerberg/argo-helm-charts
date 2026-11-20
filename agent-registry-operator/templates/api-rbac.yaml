@@ -28,8 +28,8 @@ rules:
     verbs:
       - get
       - list
-  # GitHub user credentials live in profile-owned Secrets. The
-  # agent-registry-api-secret-writes admission policy limits writes to them.
+  # GitHub user credentials live in profile-owned Secrets.
+  # templates/api-secret-policy.yaml limits writes to them.
   - apiGroups:
       - ""
     resources:
