@@ -7,7 +7,10 @@ imagePullSecrets: []
 
 serviceAccount:
   name: agent-registry-operator
-  annotations: {}
+  annotations:
+    # The operator's AWS web identity token lives 1 hour instead of the EKS
+    # default of 24 (SecEng, 2026-11-19).
+    eks.amazonaws.com/token-expiration: "3600"
 
 watchNamespaces: []
 
