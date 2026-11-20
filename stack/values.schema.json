@@ -265,6 +265,57 @@
                 }
               }
             },
+            "authentication": {
+              "description": "Authentication behavior for gateway.paths. Omitted or default protected preserves the existing contract where every gateway.paths entry requires the configured securityPolicy, with publicPaths as explicit exceptions. default public explicitly inverts authentication. gateway.paths remains the routing envelope, but only protectedPaths requires OIDC",
+              "type": "object",
+              "properties": {
+                "default": {
+                  "description": "Whether gateway.paths requires authentication by default. protected is fail-closed and backward compatible. public must be set explicitly and requires at least one protectedPaths entry",
+                  "type": "string",
+                  "enum": [
+                    "protected",
+                    "public"
+                  ]
+                },
+                "protectedPaths": {
+                  "description": "OIDC-protected prefixes when default is explicitly public. Set per service, never globally. Requires an OIDC gateway.securityPolicy, and the service must be the only one on its host. Listed prefixes render on the policy-protected HTTPRoute together with the OIDC callback and logout paths, which sit under the first non-root Prefix of gateway.paths. The gateway.paths routing envelope renders on the policy-less public HTTPRoute and strips the identity headers the policy would inject. Each prefix matches case-insensitively on a whole segment, so /admin covers /admin/x and /Admin but not /administrator or /admin.json. caseSensitive true matches the exact spelling only. Any request on the host whose path contains a semicolon or a percent-encoded octet goes to the protected route. Each path starts with /, is not /, has no trailing slash and lies under a Prefix entry of gateway.paths. No gateway.paths entry may equal or lie within a prefix, contain a semicolon or percent sign, or be a RegularExpression. An oidc.apiRoutes path must lie under a prefix. Mutually exclusive with publicPaths, skipAuth, gateway.rules, gateway.redirect, gateway.pathRewrite and tlsPassthrough. Prefixes plus the automatic callback, guard and logout rules share the 16-rule HTTPRoute limit, and each rendered match stays within 1024 characters. No effect on an nginx Ingress: a service rendering one must keep the gateway enabled, set ingress.oidcProtected true and list its public prefixes in oidcProxy.skipAuth",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "caseSensitive": {
+                        "type": "boolean"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "publicPaths": {
+                  "description": "Exceptions when default is protected. Equivalent to gateway.skipAuth, which remains supported for backward compatibility. Do not set both",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "pathType": {
+                        "type": "string",
+                        "enum": [
+                          "PathPrefix",
+                          "Exact"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
             "backendTLS": {
               "description": "TLS to the upstream Service via a BackendTLSPolicy (gateway.networking.k8s.io/v1)",
               "type": "object",
@@ -358,7 +409,7 @@
               }
             },
             "paths": {
-              "description": "List of HTTPRoute paths",
+              "description": "List of HTTPRoute paths served by this service. Authentication does not change which paths route here. gateway.authentication decides whether those paths require login",
               "type": "array",
               "items": {
                 "type": "object",
@@ -521,7 +572,7 @@
               }
             },
             "skipAuthPreserveAuthorization": {
-              "description": "Keep the client's Authorization header on the -public (skipAuth) route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public/skipAuth endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it",
+              "description": "Keep the client's Authorization header on the policy-less public route instead of stripping it. Affects services whose SecurityPolicy sets oidc.forwardAccessToken (which otherwise adds Authorization to the public route's strip list so a client-sent bearer cannot be mistaken for the gateway-issued access token) or sets oidc.forwardIDToken.header to Authorization (which otherwise strips the forwarded ID token's Authorization header on that route as well), or has a jwt claimToHeaders target of Authorization. Set true when a public endpoint does its own bearer authentication (API keys, webhook signatures, service tokens) and must receive the client's Authorization header. The oauth2-proxy identity-header strips (X-Forwarded-*, X-Auth-Request-*, X-ID-Token and any policy-written claim headers) always remain regardless of this flag. This governs only Authorization. Default false keeps the safe behaviour of stripping it",
               "type": "boolean"
             },
             "timeouts": {

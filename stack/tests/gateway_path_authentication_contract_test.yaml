@@ -1,0 +1,232 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test gateway path authentication contract
+templates:
+- gateway-oidc.yaml
+tests:
+- it: should protect every gateway.paths entry when authentication is omitted
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 1
+  - equal:
+      path: metadata.name
+      value: release-name-stack-app
+  - equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: PathPrefix
+        value: /
+- it: should keep gateway.paths protected and render publicPaths separately
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      app:
+        gateway:
+          authentication:
+            default: protected
+            publicPaths:
+            - path: /health
+              pathType: Exact
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: Exact
+        value: /health
+  - documentIndex: 1
+    equal:
+      path: metadata.name
+      value: release-name-stack-app
+  - documentIndex: 1
+    equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: PathPrefix
+        value: /
+- it: should require an explicit public default before protectedPaths changes routing
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        paths:
+        - path: /
+          pathType: Prefix
+    services:
+      app:
+        gateway:
+          authentication:
+            default: public
+            protectedPaths:
+            - path: /admin
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentIndex: 0
+    equal:
+      path: metadata.name
+      value: release-name-stack-app-public
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: PathPrefix
+        value: /
+  - documentIndex: 1
+    equal:
+      path: metadata.name
+      value: release-name-stack-app
+  - documentIndex: 1
+    equal:
+      path: spec.rules[2].matches[0].path
+      value:
+        type: RegularExpression
+        value: '(?i)^/admin(/.*)?$'
+- it: should reject protectedPaths without an explicit public default
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          authentication:
+            protectedPaths:
+            - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: authentication.default is protected
+- it: should reject a public default without protectedPaths
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          authentication:
+            default: public
+  asserts:
+  - failedTemplate:
+      errorPattern: default to public without protectedPaths
+- it: should reject publicPaths and skipAuth together
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /ready
+    services:
+      app:
+        gateway:
+          authentication:
+            publicPaths:
+            - path: /health
+  asserts:
+  - failedTemplate:
+      errorPattern: sets both gateway.authentication.publicPaths and gateway.skipAuth
+- it: should keep skipAuth backward compatible
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        skipAuth:
+        - path: /health
+          pathType: Exact
+    services:
+      app: {}
+  asserts:
+  - hasDocuments:
+      count: 2
+  - documentIndex: 0
+    equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: Exact
+        value: /health
+  - documentIndex: 1
+    equal:
+      path: spec.rules[0].matches[0].path
+      value:
+        type: PathPrefix
+        value: /
+- it: should reject protectedPaths outside gateway.authentication rather than ignore it
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+    services:
+      app:
+        gateway:
+          protectedPaths:
+          - path: /admin
+  asserts:
+  - failedTemplate:
+      errorPattern: service app sets gateway.protectedPaths, which is not a chart key
+- it: should reject a global protectedPaths outside gateway.authentication rather than ignore it
+  set:
+    global:
+      ingress:
+        enabled: false
+      gateway:
+        enabled: true
+        host: app.example.com
+        securityPolicy: oidc-protected-default
+        protectedPaths:
+        - path: /admin
+    services:
+      app: {}
+  asserts:
+  - failedTemplate:
+      errorPattern: gateway.protectedPaths is not a chart key
