@@ -1,0 +1,59 @@
+{{- if .Values.api.enabled }}
+# Copied from config/rbac/api-rbac.yaml in chanzuckerberg/agent-registry.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: agent-registry-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-registry-operator.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - agents.czi.team
+    resources:
+      - agentprofiles
+      - agents
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+  # Agent runtime events, read through GET /agents/{name}/events.
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - get
+      - list
+  # GitHub user credentials live in profile-owned Secrets. The
+  # agent-registry-api-secret-writes admission policy limits writes to them.
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: agent-registry-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-registry-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: agent-registry-api
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.stack.services.api.serviceAccount.name }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
