@@ -174,7 +174,7 @@ tests:
           pattern: 'container=\\"envoy\\"'
       - matchRegex:
           path: spec.json
-          pattern: 'envoy_cluster_name=~\\"httproute/\$namespace/[A-Za-z0-9-]+-service1\(-rule-\[0-9\]\+\)\?/rule/\.\*\\"'
+          pattern: 'envoy_cluster_name=~\\"httproute/\$namespace/[A-Za-z0-9-]+-service1\(-rule-\[0-9\]\+\|-public\)\?/rule/\.\*\\"'
 
   - it: should convert envoy latency from milliseconds to seconds
     set:
@@ -235,4 +235,4 @@ tests:
     asserts:
       - matchRegex:
           path: spec.json
-          pattern: '\(-rule-\[0-9\]\+\)\?/rule/'
+          pattern: '\(-rule-\[0-9\]\+\|-public\)\?/rule/'
