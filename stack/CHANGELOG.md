@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.69.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.68.2...stack-v2.69.0) (2026-11-20)
+
+
+### Features
+
+* **stack:** add gateway.authentication, with explicit public or protected routing using protectedPaths ([#594](https://github.com/chanzuckerberg/argo-helm-charts/issues/594)) ([5244520](https://github.com/chanzuckerberg/argo-helm-charts/commit/524452027717e43ed89567315d6e5dddb79102fc))
+
+
+### Bug Fixes
+
+* **stack:** include the skipAuth -public route in dashboard Envoy panels ([#641](https://github.com/chanzuckerberg/argo-helm-charts/issues/641)) ([79d0f6f](https://github.com/chanzuckerberg/argo-helm-charts/commit/79d0f6fafb6334b0e25e50020cf7aca737e6f741))
+
 ## [2.68.2](https://github.com/chanzuckerberg/argo-helm-charts/compare/stack-v2.68.1...stack-v2.68.2) (2026-11-19)
 
 
