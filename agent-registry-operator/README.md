@@ -53,8 +53,8 @@
 | -------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [anthropicAudience](#agent_runtime_anthropicAudience )                   | No      | string  | No         | -          | -                 |
 | - [anthropicOrganizationID](#agent_runtime_anthropicOrganizationID )       | No      | string  | No         | -          | -                 |
-| - [awsRegion](#agent_runtime_awsRegion )                                   | No      | string  | No         | -          | -                 |
 | - [config](#agent_runtime_config )                                         | No      | object  | No         | -          | -                 |
+| - [defaultAwsRegion](#agent_runtime_defaultAwsRegion )                     | No      | string  | No         | -          | -                 |
 | - [enabled](#agent_runtime_enabled )                                       | No      | boolean | No         | -          | -                 |
 | - [engPortalProfilesURL](#agent_runtime_engPortalProfilesURL )             | No      | string  | No         | -          | -                 |
 | - [image](#agent_runtime_image )                                           | No      | string  | No         | -          | -                 |
@@ -80,14 +80,7 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_awsRegion"></a>2.1.3. Property `agent-registry-operator > agent > runtime > awsRegion`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="agent_runtime_config"></a>2.1.4. Property `agent-registry-operator > agent > runtime > config`
+#### <a name="agent_runtime_config"></a>2.1.3. Property `agent-registry-operator > agent > runtime > config`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -101,21 +94,28 @@
 | - [managed-settings.json](#agent_runtime_config_managed-settingsjson ) | No      | string | No         | -          | -                 |
 | - [ssh-guard.sh](#agent_runtime_config_ssh-guardsh )                   | No      | string | No         | -          | -                 |
 
-##### <a name="agent_runtime_config_git-branch-guardsh"></a>2.1.4.1. Property `agent-registry-operator > agent > runtime > config > git-branch-guard.sh`
+##### <a name="agent_runtime_config_git-branch-guardsh"></a>2.1.3.1. Property `agent-registry-operator > agent > runtime > config > git-branch-guard.sh`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="agent_runtime_config_managed-settingsjson"></a>2.1.4.2. Property `agent-registry-operator > agent > runtime > config > managed-settings.json`
+##### <a name="agent_runtime_config_managed-settingsjson"></a>2.1.3.2. Property `agent-registry-operator > agent > runtime > config > managed-settings.json`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="agent_runtime_config_ssh-guardsh"></a>2.1.4.3. Property `agent-registry-operator > agent > runtime > config > ssh-guard.sh`
+##### <a name="agent_runtime_config_ssh-guardsh"></a>2.1.3.3. Property `agent-registry-operator > agent > runtime > config > ssh-guard.sh`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="agent_runtime_defaultAwsRegion"></a>2.1.4. Property `agent-registry-operator > agent > runtime > defaultAwsRegion`
 
 |              |          |
 | ------------ | -------- |
