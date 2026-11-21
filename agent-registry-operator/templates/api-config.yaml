@@ -1,0 +1,18 @@
+{{- if .Values.api.enabled }}
+{{- $api := .Values.stack.services.api }}
+{{- $_ := required "stack.services.api.image.tag is required" $api.image.tag }}
+{{- $_ := required "stack.services.api.gateway.host is required" $api.gateway.host }}
+{{- if not .Values.api.config.trusted_issuers }}
+{{- fail "api.config.trusted_issuers is required" }}
+{{- end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-registry-api-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-registry-operator.labels" . | nindent 4 }}
+data:
+  app-config.yaml: |
+    {{- toYaml .Values.api.config | nindent 4 }}
+{{- end }}

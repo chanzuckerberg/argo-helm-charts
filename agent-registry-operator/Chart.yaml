@@ -1,6 +1,13 @@
 apiVersion: v2
 name: agent-registry-operator
-description: Agent Registry operator and custom resource definitions
+description: Agent Registry operator, API and custom resource definitions
 type: application
 version: 0.1.0
 appVersion: "0.14.1"
+
+dependencies:
+  # The Agent Registry API, off unless api.enabled is set.
+  - name: stack
+    version: 2.68.2
+    repository: https://chanzuckerberg.github.io/argo-helm-charts
+    condition: api.enabled
