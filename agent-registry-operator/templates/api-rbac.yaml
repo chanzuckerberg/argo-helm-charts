@@ -1,10 +1,8 @@
 {{- if .Values.api.enabled }}
-# Copied from config/rbac/api-rbac.yaml in chanzuckerberg/agent-registry.
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   name: agent-registry-api
-  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "agent-registry-operator.labels" . | nindent 4 }}
 rules:
@@ -20,7 +18,6 @@ rules:
       - list
       - patch
       - update
-  # Agent runtime events, read through GET /agents/{name}/events.
   - apiGroups:
       - ""
     resources:
@@ -28,8 +25,37 @@ rules:
     verbs:
       - get
       - list
-  # GitHub user credentials live in profile-owned Secrets.
-  # templates/api-secret-policy.yaml limits writes to them.
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - create
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: agent-registry-api
+  labels:
+    {{- include "agent-registry-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: agent-registry-api
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.stack.services.api.serviceAccount.name }}
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: agent-registry-api-secrets
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-registry-operator.labels" . | nindent 4 }}
+rules:
   - apiGroups:
       - ""
     resources:
@@ -44,14 +70,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: agent-registry-api
+  name: agent-registry-api-secrets
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "agent-registry-operator.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: agent-registry-api
+  name: agent-registry-api-secrets
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.stack.services.api.serviceAccount.name }}

@@ -8,6 +8,7 @@ watchNamespaces:
 api:
   enabled: true
   config:
+    owner_namespaces: true
     admin_groups:
       - example-admins
     allowed_origins:
