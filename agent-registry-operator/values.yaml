@@ -1,0 +1,57 @@
+image:
+  repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/agent-registry/operator
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+serviceAccount:
+  name: agent-registry-operator
+  annotations: {}
+
+watchNamespaces: []
+
+providers:
+  aws:
+    enabled: false
+    region: us-west-2
+    clusterOIDCProvider: ""
+    provisionerRoleName: agent-provisioner
+    permissionsBoundaryPolicyName: agent-permissions-boundary
+  anthropic:
+    enabled: false
+  tailscale:
+    enabled: false
+
+agent:
+  runtime:
+    enabled: false
+    image: ""
+    nodeArchitecture: arm64
+    workspaceStorageClass: ""
+    defaultAwsRegion: us-west-2
+    anthropicAudience: https://api.anthropic.com
+    anthropicOrganizationID: ""
+    tailscaleAudience: ""
+    tailscaleClientID: ""
+    tailscaleIdentityConfigMap: agent-registry-cluster-identity
+    tailscaleTag: tag:agent
+    engPortalProfilesURL: ""
+    otelHeadersSecretName: "-"
+    config:
+      managed-settings.json: "{}"
+      git-branch-guard.sh: ""
+      ssh-guard.sh: ""
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+nodeSelector: {}
+
+tolerations: []
+affinity: {}

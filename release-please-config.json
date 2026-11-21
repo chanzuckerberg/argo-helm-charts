@@ -56,6 +56,9 @@
     },
     "ops-telemetry": {
       "package-name": "ops-telemetry"
+    },
+    "agent-registry-operator": {
+      "package-name": "agent-registry-operator"
     }
   }
 }
