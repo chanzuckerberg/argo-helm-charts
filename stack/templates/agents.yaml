@@ -1,0 +1,47 @@
+{{- $global := . -}}
+{{- range $name, $workload := ((.Values.agents | default dict).workloads | default dict) }}
+{{- $profile := required (printf "agents.workloads.%s.profile is required" $name) $workload.profile }}
+{{- $spec := dict "profileRef" (dict "name" $profile) }}
+{{- range $field := list "harness" "model" "suspended" "timeout" "purpose" "schedule" }}
+{{- if hasKey $workload $field }}
+{{- $_ := set $spec $field (get $workload $field) }}
+{{- end }}
+{{- end }}
+{{- if $workload.image }}
+{{- $_ := set $spec "image" (required (printf "agents.workloads.%s.image.repository is required" $name) $workload.image.repository) }}
+{{- if hasKey $workload.image "tag" }}
+{{- $_ := set $spec "imageTag" $workload.image.tag }}
+{{- end }}
+{{- end }}
+{{- $runtime := dict }}
+{{- if $workload.command }}
+{{- $_ := set $runtime "command" $workload.command }}
+{{- end }}
+{{- if $workload.resources }}
+{{- $_ := set $runtime "resources" $workload.resources }}
+{{- end }}
+{{- $environment := include "stack.agentEnvironment" (dict "root" $global "workload" $workload) | fromYamlArray }}
+{{- if $environment }}
+{{- $_ := set $runtime "env" $environment }}
+{{- end }}
+{{- $environmentFrom := include "stack.agentEnvironmentFrom" (dict "root" $global "workload" $workload) | fromYamlArray }}
+{{- if $environmentFrom }}
+{{- $_ := set $runtime "envFrom" $environmentFrom }}
+{{- end }}
+{{- if $runtime }}
+{{- $_ := set $spec "runtime" $runtime }}
+{{- end }}
+{{- $ctx := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global -}}
+---
+apiVersion: agents.czi.team/v1alpha1
+kind: Agent
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "stack.labels" $ctx | nindent 4 }}
+    {{- with $global.Values.global.argusMetadata.stackName }}
+    agents.czi.team/stack: {{ . }}
+    {{- end }}
+spec:
+  {{- toYaml $spec | nindent 2 }}
+{{- end }}

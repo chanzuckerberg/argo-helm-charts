@@ -1,6 +1,6 @@
 {{ $global := . }}
 {{- $kind := default "Deployment" .Values.global.deploymentKind }}
-{{ range $serviceName, $serviceValues := .Values.services }}
+{{ range $serviceName, $serviceValues := fromYaml (include "stack.networkEndpoints" $global) }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $serviceName -}}
@@ -15,7 +15,7 @@ metadata:
   labels:
     {{- include "service.labels" . | nindent 4 }}
   annotations:
-    {{- if eq $kind "Rollout" }}
+    {{- if and (eq $kind "Rollout") (not .Values.agentEndpoint) }}
     {{- toYaml (mergeOverwrite
                 (dict)
                 (fromYaml (include "stack.annotations" $service ))
@@ -28,7 +28,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
       name: http
   selector:

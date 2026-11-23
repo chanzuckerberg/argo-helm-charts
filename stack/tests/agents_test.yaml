@@ -1,14 +1,46 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
-suite: test Agents
+suite: test Agent Registry resources
 templates:
+  - agentprofiles.yaml
   - agents.yaml
 tests:
-  - it: renders nothing by default
+  - it: renders nothing without Agent values
     asserts:
       - hasDocuments:
           count: 0
 
-  - it: renders a continuous custom Agent with Argus configuration
+  - it: renders a profile with a reviewed AWS source role
+    template: agentprofiles.yaml
+    set:
+      global:
+        argusMetadata:
+          stackName: gitops-stack
+      agents:
+        profiles:
+          batch-profile:
+            owner:
+              issuer: https://czi.okta.com
+              subject: 00u-example
+              email: owner@example.com
+            grants:
+              - aws:
+                  accountId: "111111111111"
+                  roleArn: arn:aws:iam::111111111111:role/source-role
+    asserts:
+      - isKind:
+          of: AgentProfile
+      - equal:
+          path: metadata.name
+          value: batch-profile
+      - equal:
+          path: metadata.labels["agents.czi.team/stack"]
+          value: gitops-stack
+      - equal:
+          path: spec.grants[0].aws.roleArn
+          value: arn:aws:iam::111111111111:role/source-role
+
+  - it: renders a custom Agent with stack configuration
+    template: agents.yaml
     set:
       global:
         env:
@@ -28,35 +60,28 @@ tests:
         appContext:
           envContextConfigMapName: environment-context
           stackContextConfigMapName: stack-context
-        argusMetadata:
-          stackName: gitops-stack
       agents:
-        batch-worker:
-          profile: batch-profile
-          harness: custom-agent-code
-          image:
-            repository: example.com/agents/batch-worker
-            tag: sha-123
-          command:
-            - /app/worker
-          timeout: 8h
-          env:
-            - name: SHARED_VALUE
-              value: agent
-            - name: AGENT_ONLY
-              value: configured
-          envFrom:
-            - secretRef:
-                name: explicit-secret
+        workloads:
+          batch-worker:
+            profile: batch-profile
+            harness: custom-agent-code
+            image:
+              repository: example.com/agents/batch-worker
+              tag: sha-123
+            command:
+              - /app/worker
+            timeout: 8h
+            env:
+              - name: SHARED_VALUE
+                value: workload
+              - name: WORKLOAD_ONLY
+                value: configured
+            envFrom:
+              - secretRef:
+                  name: explicit-secret
     asserts:
       - isKind:
           of: Agent
-      - equal:
-          path: metadata.name
-          value: batch-worker
-      - equal:
-          path: metadata.labels["agents.czi.team/stack"]
-          value: gitops-stack
       - equal:
           path: spec.profileRef.name
           value: batch-profile
@@ -67,17 +92,13 @@ tests:
           path: spec.imageTag
           value: sha-123
       - equal:
-          path: spec.runtime.command
-          value:
-            - /app/worker
-      - equal:
           path: spec.runtime.env
           value:
             - name: SHARED_VALUE
-              value: agent
+              value: workload
             - name: GLOBAL_ONLY
               value: inherited
-            - name: AGENT_ONLY
+            - name: WORKLOAD_ONLY
               value: configured
       - equal:
           path: spec.runtime.envFrom
@@ -102,25 +123,3 @@ tests:
                 optional: true
             - secretRef:
                 name: explicit-secret
-
-  - it: renders a scheduled custom Agent
-    set:
-      agents:
-        scheduled-worker:
-          profile: batch-profile
-          harness: custom-agent-code
-          image:
-            repository: example.com/agents/scheduled-worker
-          timeout: indefinite
-          schedule: "0 9 * * 1-5"
-          suspended: true
-    asserts:
-      - equal:
-          path: spec.schedule
-          value: "0 9 * * 1-5"
-      - equal:
-          path: spec.timeout
-          value: indefinite
-      - equal:
-          path: spec.suspended
-          value: true

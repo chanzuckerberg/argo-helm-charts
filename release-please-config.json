@@ -21,9 +21,6 @@
     }
   ],
   "packages": {
-    "agents": {
-      "package-name": "agents"
-    },
     "core-platform-ecr-pull-secret": {
       "package-name": "core-platform-ecr-pull-secret"
     },

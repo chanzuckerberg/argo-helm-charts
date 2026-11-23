@@ -1,5 +1,5 @@
 {{- $global := . -}}
-{{ range $serviceName, $serviceValues := .Values.services }}
+{{ range $serviceName, $serviceValues := fromYaml (include "stack.networkEndpoints" $global) }}
   {{- $values := fromYaml (include "service.context" (dict "root" $global "name" $serviceName)) -}}
   {{- $service := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $values -}}
   {{- $rewrite := ($values.gateway).pathRewrite | default dict -}}
