@@ -388,6 +388,11 @@ spec:
                 type: string
               imageTag:
                 type: string
+              longLived:
+                description: |-
+                  LongLived marks the owner's one long-lived Agent, whose finite timeout
+                  may run past the usual cap. The API sets it only at creation.
+                type: boolean
               model:
                 minLength: 1
                 type: string
