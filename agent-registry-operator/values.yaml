@@ -32,6 +32,7 @@ agent:
     image: ""
     nodeArchitecture: arm64
     workspaceStorageClass: ""
+    workspaceFileSystemID: ""
     defaultAwsRegion: us-west-2
     anthropicAudience: https://api.anthropic.com
     anthropicOrganizationID: ""

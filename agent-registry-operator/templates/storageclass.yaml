@@ -1,0 +1,18 @@
+{{- if .Values.agent.runtime.enabled }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ required "agent.runtime.workspaceStorageClass is required" .Values.agent.runtime.workspaceStorageClass }}
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true,Prune=false,Delete=false
+provisioner: efs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: false
+parameters:
+  provisioningMode: efs-ap
+  fileSystemId: {{ required "agent.runtime.workspaceFileSystemID is required" .Values.agent.runtime.workspaceFileSystemID | quote }}
+  directoryPerms: "750"
+  uid: "1000"
+  gid: "1000"
+{{- end }}
