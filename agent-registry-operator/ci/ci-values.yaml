@@ -5,6 +5,14 @@ image:
 watchNamespaces:
   - argus-*
 
+agent:
+  runtime:
+    enabled: true
+    image: registry.example.com/agent-registry/runtime:sha-test
+    workspaceStorageClass: efs-agent-workspaces
+    workspaceFileSystemID: fs-0123456789abcdef0
+    anthropicOrganizationID: example-organization
+
 api:
   enabled: true
   config:
