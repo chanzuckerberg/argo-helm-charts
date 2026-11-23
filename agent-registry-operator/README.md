@@ -66,6 +66,7 @@
 | - [tailscaleClientID](#agent_runtime_tailscaleClientID )                   | No      | string  | No         | -          | -                 |
 | - [tailscaleIdentityConfigMap](#agent_runtime_tailscaleIdentityConfigMap ) | No      | string  | No         | -          | -                 |
 | - [tailscaleTag](#agent_runtime_tailscaleTag )                             | No      | string  | No         | -          | -                 |
+| - [workspaceFileSystemID](#agent_runtime_workspaceFileSystemID )           | No      | string  | No         | -          | -                 |
 | - [workspaceStorageClass](#agent_runtime_workspaceStorageClass )           | No      | string  | No         | -          | -                 |
 
 #### <a name="agent_runtime_anthropicAudience"></a>2.1.1. Property `agent-registry-operator > agent > runtime > anthropicAudience`
@@ -187,7 +188,14 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_workspaceStorageClass"></a>2.1.14. Property `agent-registry-operator > agent > runtime > workspaceStorageClass`
+#### <a name="agent_runtime_workspaceFileSystemID"></a>2.1.14. Property `agent-registry-operator > agent > runtime > workspaceFileSystemID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="agent_runtime_workspaceStorageClass"></a>2.1.15. Property `agent-registry-operator > agent > runtime > workspaceStorageClass`
 
 |              |          |
 | ------------ | -------- |
