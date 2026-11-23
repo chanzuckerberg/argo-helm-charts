@@ -8,12 +8,11 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                 | Pattern | Type    | Deprecated | Definition | Title/Description                                  |
-| ------------------------ | ------- | ------- | ---------- | ---------- | -------------------------------------------------- |
-| - [agents](#agents )     | No      | object  | No         | -          | Agent specifications keyed by resource name        |
-| - [enabled](#enabled )   | No      | boolean | No         | -          | Render Agent Registry resources                    |
-| - [global](#global )     | No      | object  | No         | -          | -                                                  |
-| - [profiles](#profiles ) | No      | object  | No         | -          | AgentProfile specifications keyed by resource name |
+| Property                 | Pattern | Type   | Deprecated | Definition | Title/Description                                  |
+| ------------------------ | ------- | ------ | ---------- | ---------- | -------------------------------------------------- |
+| - [agents](#agents )     | No      | object | No         | -          | Agent specifications keyed by resource name        |
+| - [global](#global )     | No      | object | No         | -          | -                                                  |
+| - [profiles](#profiles ) | No      | object | No         | -          | AgentProfile specifications keyed by resource name |
 
 ## <a name="agents"></a>1. Property `agents > agents`
 
@@ -29,16 +28,7 @@
 | ----------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [](#agents_additionalProperties ) | No      | object | No         | -          | -                 |
 
-## <a name="enabled"></a>2. Property `agents > enabled`
-
-|              |           |
-| ------------ | --------- |
-| **Type**     | `boolean` |
-| **Required** | No        |
-
-**Description:** Render Agent Registry resources
-
-## <a name="global"></a>3. Property `agents > global`
+## <a name="global"></a>2. Property `agents > global`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -53,7 +43,7 @@
 | - [argusMetadata](#global_argusMetadata ) | No      | object          | No         | -          | Argus metadata                                               |
 | - [env](#global_env )                     | No      | array of object | No         | -          | Non-sensitive environment variables inherited by every Agent |
 
-### <a name="global_appContext"></a>3.1. Property `agents > global > appContext`
+### <a name="global_appContext"></a>2.1. Property `agents > global > appContext`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -68,7 +58,7 @@
 | - [envContextConfigMapName](#global_appContext_envContextConfigMapName )     | No      | string | No         | -          | Environment context ConfigMap name |
 | - [stackContextConfigMapName](#global_appContext_stackContextConfigMapName ) | No      | string | No         | -          | Stack context ConfigMap name       |
 
-#### <a name="global_appContext_envContextConfigMapName"></a>3.1.1. Property `agents > global > appContext > envContextConfigMapName`
+#### <a name="global_appContext_envContextConfigMapName"></a>2.1.1. Property `agents > global > appContext > envContextConfigMapName`
 
 |              |          |
 | ------------ | -------- |
@@ -77,7 +67,7 @@
 
 **Description:** Environment context ConfigMap name
 
-#### <a name="global_appContext_stackContextConfigMapName"></a>3.1.2. Property `agents > global > appContext > stackContextConfigMapName`
+#### <a name="global_appContext_stackContextConfigMapName"></a>2.1.2. Property `agents > global > appContext > stackContextConfigMapName`
 
 |              |          |
 | ------------ | -------- |
@@ -86,7 +76,7 @@
 
 **Description:** Stack context ConfigMap name
 
-### <a name="global_appSecrets"></a>3.2. Property `agents > global > appSecrets`
+### <a name="global_appSecrets"></a>2.2. Property `agents > global > appSecrets`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -103,7 +93,7 @@
 | - [envSecret](#global_appSecrets_envSecret )               | No      | object | No         | -          | -                 |
 | - [stackSecret](#global_appSecrets_stackSecret )           | No      | object | No         | -          | -                 |
 
-#### <a name="global_appSecrets_clusterCLISecret"></a>3.2.1. Property `agents > global > appSecrets > clusterCLISecret`
+#### <a name="global_appSecrets_clusterCLISecret"></a>2.2.1. Property `agents > global > appSecrets > clusterCLISecret`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -115,7 +105,7 @@
 | --------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------- |
 | - [secretName](#global_appSecrets_clusterCLISecret_secretName ) | No      | string | No         | -          | Cluster CLI Secret name |
 
-##### <a name="global_appSecrets_clusterCLISecret_secretName"></a>3.2.1.1. Property `agents > global > appSecrets > clusterCLISecret > secretName`
+##### <a name="global_appSecrets_clusterCLISecret_secretName"></a>2.2.1.1. Property `agents > global > appSecrets > clusterCLISecret > secretName`
 
 |              |          |
 | ------------ | -------- |
@@ -124,7 +114,7 @@
 
 **Description:** Cluster CLI Secret name
 
-#### <a name="global_appSecrets_clusterSecret"></a>3.2.2. Property `agents > global > appSecrets > clusterSecret`
+#### <a name="global_appSecrets_clusterSecret"></a>2.2.2. Property `agents > global > appSecrets > clusterSecret`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -136,7 +126,7 @@
 | ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ------------------- |
 | - [secretName](#global_appSecrets_clusterSecret_secretName ) | No      | string | No         | -          | Cluster Secret name |
 
-##### <a name="global_appSecrets_clusterSecret_secretName"></a>3.2.2.1. Property `agents > global > appSecrets > clusterSecret > secretName`
+##### <a name="global_appSecrets_clusterSecret_secretName"></a>2.2.2.1. Property `agents > global > appSecrets > clusterSecret > secretName`
 
 |              |          |
 | ------------ | -------- |
@@ -145,7 +135,7 @@
 
 **Description:** Cluster Secret name
 
-#### <a name="global_appSecrets_envSecret"></a>3.2.3. Property `agents > global > appSecrets > envSecret`
+#### <a name="global_appSecrets_envSecret"></a>2.2.3. Property `agents > global > appSecrets > envSecret`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -157,7 +147,7 @@
 | -------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------------- |
 | - [secretName](#global_appSecrets_envSecret_secretName ) | No      | string | No         | -          | Environment Secret name |
 
-##### <a name="global_appSecrets_envSecret_secretName"></a>3.2.3.1. Property `agents > global > appSecrets > envSecret > secretName`
+##### <a name="global_appSecrets_envSecret_secretName"></a>2.2.3.1. Property `agents > global > appSecrets > envSecret > secretName`
 
 |              |          |
 | ------------ | -------- |
@@ -166,7 +156,7 @@
 
 **Description:** Environment Secret name
 
-#### <a name="global_appSecrets_stackSecret"></a>3.2.4. Property `agents > global > appSecrets > stackSecret`
+#### <a name="global_appSecrets_stackSecret"></a>2.2.4. Property `agents > global > appSecrets > stackSecret`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -178,7 +168,7 @@
 | ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [secretName](#global_appSecrets_stackSecret_secretName ) | No      | string | No         | -          | Stack Secret name |
 
-##### <a name="global_appSecrets_stackSecret_secretName"></a>3.2.4.1. Property `agents > global > appSecrets > stackSecret > secretName`
+##### <a name="global_appSecrets_stackSecret_secretName"></a>2.2.4.1. Property `agents > global > appSecrets > stackSecret > secretName`
 
 |              |          |
 | ------------ | -------- |
@@ -187,7 +177,7 @@
 
 **Description:** Stack Secret name
 
-### <a name="global_argusMetadata"></a>3.3. Property `agents > global > argusMetadata`
+### <a name="global_argusMetadata"></a>2.3. Property `agents > global > argusMetadata`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -201,7 +191,7 @@
 | ----------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
 | - [stackName](#global_argusMetadata_stackName ) | No      | string | No         | -          | Argus stack name  |
 
-#### <a name="global_argusMetadata_stackName"></a>3.3.1. Property `agents > global > argusMetadata > stackName`
+#### <a name="global_argusMetadata_stackName"></a>2.3.1. Property `agents > global > argusMetadata > stackName`
 
 |              |          |
 | ------------ | -------- |
@@ -210,7 +200,7 @@
 
 **Description:** Argus stack name
 
-### <a name="global_env"></a>3.4. Property `agents > global > env`
+### <a name="global_env"></a>2.4. Property `agents > global > env`
 
 |              |                   |
 | ------------ | ----------------- |
@@ -231,7 +221,7 @@
 | ------------------------------- | ----------- |
 | [env items](#global_env_items)  | -           |
 
-#### <a name="global_env_items"></a>3.4.1. agents > global > env > env items
+#### <a name="global_env_items"></a>2.4.1. agents > global > env > env items
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -245,21 +235,21 @@
 | - [value](#global_env_items_value )         | No      | string | No         | -          | -                 |
 | - [valueFrom](#global_env_items_valueFrom ) | No      | object | No         | -          | -                 |
 
-##### <a name="global_env_items_name"></a>3.4.1.1. Property `agents > global > env > env items > name`
+##### <a name="global_env_items_name"></a>2.4.1.1. Property `agents > global > env > env items > name`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_env_items_value"></a>3.4.1.2. Property `agents > global > env > env items > value`
+##### <a name="global_env_items_value"></a>2.4.1.2. Property `agents > global > env > env items > value`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-##### <a name="global_env_items_valueFrom"></a>3.4.1.3. Property `agents > global > env > env items > valueFrom`
+##### <a name="global_env_items_valueFrom"></a>2.4.1.3. Property `agents > global > env > env items > valueFrom`
 
 |                           |                  |
 | ------------------------- | ---------------- |
@@ -267,7 +257,7 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-## <a name="profiles"></a>4. Property `agents > profiles`
+## <a name="profiles"></a>3. Property `agents > profiles`
 
 |                           |                  |
 | ------------------------- | ---------------- |

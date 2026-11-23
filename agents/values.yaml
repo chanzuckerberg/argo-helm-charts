@@ -1,5 +1,3 @@
-enabled: false # @schema description: Render Agent Registry resources
-
 global:
   env: [] # @schema type: array; item: object; itemProperties: {"name": {"type": "string"}, "value": {"type": "string"}, "valueFrom": {"type": "object"}}; description: Non-sensitive environment variables inherited by every Agent
   appSecrets: # @schema description: Argus-managed Secret names

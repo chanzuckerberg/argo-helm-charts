@@ -1,4 +1,3 @@
-{{- if .Values.enabled }}
 {{- range $name, $agent := .Values.agents }}
 {{- $profile := required (printf "agents.%s.profile is required" $name) $agent.profile }}
 {{- $spec := dict "profileRef" (dict "name" $profile) }}
@@ -40,5 +39,4 @@ metadata:
     {{- include "agents.labels" $ | nindent 4 }}
 spec:
   {{- toYaml $spec | nindent 2 }}
-{{- end }}
 {{- end }}

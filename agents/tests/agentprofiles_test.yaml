@@ -10,7 +10,6 @@ tests:
 
   - it: renders a reviewed profile and AWS source role
     set:
-      enabled: true
       global:
         argusMetadata:
           stackName: gitops-stack

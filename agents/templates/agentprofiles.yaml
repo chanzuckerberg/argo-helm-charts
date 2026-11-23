@@ -1,4 +1,3 @@
-{{- if .Values.enabled }}
 {{- range $name, $profile := .Values.profiles }}
 ---
 apiVersion: agents.czi.team/v1alpha1
@@ -9,5 +8,4 @@ metadata:
     {{- include "agents.labels" $ | nindent 4 }}
 spec:
   {{- toYaml $profile | nindent 2 }}
-{{- end }}
 {{- end }}

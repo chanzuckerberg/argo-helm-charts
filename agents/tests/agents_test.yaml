@@ -10,7 +10,6 @@ tests:
 
   - it: renders a continuous custom Agent with Argus configuration
     set:
-      enabled: true
       global:
         env:
           - name: SHARED_VALUE
@@ -106,7 +105,6 @@ tests:
 
   - it: renders a scheduled custom Agent
     set:
-      enabled: true
       agents:
         scheduled-worker:
           profile: batch-profile

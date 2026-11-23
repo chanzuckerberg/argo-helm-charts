@@ -9,10 +9,6 @@
       "type": "object",
       "additionalProperties": true
     },
-    "enabled": {
-      "description": "Render Agent Registry resources",
-      "type": "boolean"
-    },
     "global": {
       "type": "object",
       "properties": {
