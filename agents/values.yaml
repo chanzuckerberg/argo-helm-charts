@@ -1,0 +1,22 @@
+enabled: false # @schema description: Render Agent Registry resources
+
+global:
+  env: [] # @schema type: array; item: object; itemProperties: {"name": {"type": "string"}, "value": {"type": "string"}, "valueFrom": {"type": "object"}}; description: Non-sensitive environment variables inherited by every Agent
+  appSecrets: # @schema description: Argus-managed Secret names
+    clusterSecret:
+      secretName: "" # @schema description: Cluster Secret name
+    clusterCLISecret:
+      secretName: "" # @schema description: Cluster CLI Secret name
+    envSecret:
+      secretName: "" # @schema description: Environment Secret name
+    stackSecret:
+      secretName: "" # @schema description: Stack Secret name
+  appContext: # @schema description: Argus-managed context ConfigMap names
+    envContextConfigMapName: "" # @schema description: Environment context ConfigMap name
+    stackContextConfigMapName: "" # @schema description: Stack context ConfigMap name
+  argusMetadata: # @schema description: Argus metadata
+    stackName: "" # @schema description: Argus stack name
+
+profiles: {} # @schema type: object; additionalProperties: true; description: AgentProfile specifications keyed by resource name
+
+agents: {} # @schema type: object; additionalProperties: true; description: Agent specifications keyed by resource name

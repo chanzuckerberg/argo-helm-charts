@@ -1,4 +1,5 @@
 {
+  "agents": "0.1.0",
   "core-platform-ecr-pull-secret": "1.0.0",
   "stack": "2.68.2",
   "argus-config": "1.8.0",
