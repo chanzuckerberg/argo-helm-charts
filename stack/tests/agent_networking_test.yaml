@@ -4,6 +4,7 @@ templates:
   - service.yaml
   - httproute.yaml
   - gateway-backendtrafficpolicy.yaml
+  - agent-networkpolicy.yaml
 tests:
   - it: renders a Service and Envoy route for a continuous custom Agent
     set:
@@ -58,6 +59,17 @@ tests:
           value:
             requests: 10
             unit: Second
+      - template: agent-networkpolicy.yaml
+        equal:
+          path: spec.ingress[0]
+          value:
+            from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: envoy-gateway
+            ports:
+              - port: 8080
+                protocol: TCP
 
   - it: rejects networking for a scheduled Agent
     template: service.yaml
