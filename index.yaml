@@ -1242,7 +1242,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 1ce2f34b39400a34be091088b120a58594907c84eadd1c62c290ccd17637a81b
+    digest: 8e05481473d683c302991cb5ef1a36bc780ee6385ee9b38334cd2b50da015727
     name: stack
     type: application
     urls:
