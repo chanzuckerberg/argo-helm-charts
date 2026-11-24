@@ -105,10 +105,51 @@
       "type": "object",
       "properties": {
         "anthropic": {
-          "type": "object",
+          "allOf": [
+            {
+              "if": {
+                "required": [
+                  "enabled"
+                ],
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "brokerURL",
+                  "resourcePrefix"
+                ],
+                "properties": {
+                  "brokerURL": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "resourcePrefix": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          ],
           "properties": {
+            "brokerAudience": {
+              "type": "string"
+            },
+            "brokerTokenFile": {
+              "type": "string"
+            },
+            "brokerURL": {
+              "type": "string"
+            },
             "enabled": {
               "type": "boolean"
+            },
+            "resourcePrefix": {
+              "type": "string"
             }
           }
         },
