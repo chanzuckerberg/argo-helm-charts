@@ -21,6 +21,7 @@
 | - [serviceAccount](#serviceAccount )     | No      | object | No         | -          | -                 |
 | - [stack](#stack )                       | No      | object | No         | -          | -                 |
 | - [tolerations](#tolerations )           | No      | array  | No         | -          | -                 |
+| - [tunDevicePlugin](#tunDevicePlugin )   | No      | object | No         | -          | -                 |
 | - [watchNamespaces](#watchNamespaces )   | No      | array  | No         | -          | -                 |
 
 ## <a name="affinity"></a>1. Property `agent-registry-operator > affinity`
@@ -1478,7 +1479,130 @@
 | **Additional items** | False              |
 | **Tuple validation** | N/A                |
 
-## <a name="watchNamespaces"></a>12. Property `agent-registry-operator > watchNamespaces`
+## <a name="tunDevicePlugin"></a>12. Property `agent-registry-operator > tunDevicePlugin`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                       | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ---------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [deviceCount](#tunDevicePlugin_deviceCount ) | No      | integer | No         | -          | -                 |
+| - [image](#tunDevicePlugin_image )             | No      | object  | No         | -          | -                 |
+| - [resources](#tunDevicePlugin_resources )     | No      | object  | No         | -          | -                 |
+
+### <a name="tunDevicePlugin_deviceCount"></a>12.1. Property `agent-registry-operator > tunDevicePlugin > deviceCount`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `integer` |
+| **Required** | No        |
+
+### <a name="tunDevicePlugin_image"></a>12.2. Property `agent-registry-operator > tunDevicePlugin > image`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [pullPolicy](#tunDevicePlugin_image_pullPolicy ) | No      | string | No         | -          | -                 |
+| - [repository](#tunDevicePlugin_image_repository ) | No      | string | No         | -          | -                 |
+| - [tag](#tunDevicePlugin_image_tag )               | No      | string | No         | -          | -                 |
+
+#### <a name="tunDevicePlugin_image_pullPolicy"></a>12.2.1. Property `agent-registry-operator > tunDevicePlugin > image > pullPolicy`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="tunDevicePlugin_image_repository"></a>12.2.2. Property `agent-registry-operator > tunDevicePlugin > image > repository`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="tunDevicePlugin_image_tag"></a>12.2.3. Property `agent-registry-operator > tunDevicePlugin > image > tag`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+### <a name="tunDevicePlugin_resources"></a>12.3. Property `agent-registry-operator > tunDevicePlugin > resources`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                           | Pattern | Type   | Deprecated | Definition | Title/Description |
+| -------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [limits](#tunDevicePlugin_resources_limits )     | No      | object | No         | -          | -                 |
+| - [requests](#tunDevicePlugin_resources_requests ) | No      | object | No         | -          | -                 |
+
+#### <a name="tunDevicePlugin_resources_limits"></a>12.3.1. Property `agent-registry-operator > tunDevicePlugin > resources > limits`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                              | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ----------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [cpu](#tunDevicePlugin_resources_limits_cpu )       | No      | string | No         | -          | -                 |
+| - [memory](#tunDevicePlugin_resources_limits_memory ) | No      | string | No         | -          | -                 |
+
+##### <a name="tunDevicePlugin_resources_limits_cpu"></a>12.3.1.1. Property `agent-registry-operator > tunDevicePlugin > resources > limits > cpu`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="tunDevicePlugin_resources_limits_memory"></a>12.3.1.2. Property `agent-registry-operator > tunDevicePlugin > resources > limits > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="tunDevicePlugin_resources_requests"></a>12.3.2. Property `agent-registry-operator > tunDevicePlugin > resources > requests`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
+| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
+| - [cpu](#tunDevicePlugin_resources_requests_cpu )       | No      | string | No         | -          | -                 |
+| - [memory](#tunDevicePlugin_resources_requests_memory ) | No      | string | No         | -          | -                 |
+
+##### <a name="tunDevicePlugin_resources_requests_cpu"></a>12.3.2.1. Property `agent-registry-operator > tunDevicePlugin > resources > requests > cpu`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+##### <a name="tunDevicePlugin_resources_requests_memory"></a>12.3.2.2. Property `agent-registry-operator > tunDevicePlugin > resources > requests > memory`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+## <a name="watchNamespaces"></a>13. Property `agent-registry-operator > watchNamespaces`
 
 |              |         |
 | ------------ | ------- |
