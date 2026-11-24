@@ -18,7 +18,6 @@ providers:
   aws:
     enabled: false
     region: us-west-2
-    clusterOIDCProvider: ""
     provisionerRoleName: agent-provisioner
     permissionsBoundaryPolicyName: agent-permissions-boundary
   anthropic:
