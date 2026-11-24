@@ -990,7 +990,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 3765a2d9f27813162da8b43e25f48e5260b72071d6911f2b986133efd1019176
+    digest: 1ed947cf9972fb492dbf80d36e531876e507ee776e2a22f7b1f947a4924c8935
     name: stack
     type: application
     urls:
@@ -1004,7 +1004,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 3fe2f22bf473a9e789e8f969bd4aeb783ba200fad162f6b6631f730af8da0002
+    digest: 0b53cad833c2c818038d5f38dc634aebd0bdcd7e2cc359d2f3d9d62de1dd2f21
     name: stack
     type: application
     urls:
@@ -1018,7 +1018,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: e7e01b344d863f60307849a00af732148fd697c78f639d8452098fa7dc99c545
+    digest: 4cacc250ed1922f1d6610b99a55d5e0a0082b66064113a36e1e5fb1d1ae98b38
     name: stack
     type: application
     urls:
@@ -1032,7 +1032,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 4a6edda581151ee2a1f645f3e623cbf38c34a590a84f9f23155c779a69df0cd0
+    digest: 998648efe82d3710908f51a0f2fd291a53d2425d9245a85796998a036c214957
     name: stack
     type: application
     urls:
@@ -1046,7 +1046,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: bc26a0a48cfb0053bc063297f81492140e309ed265d934b6f3c1fdf1c2323488
+    digest: a427af653caaae338aa4966f518a74009101d79aa6bc1765a7a80c89a92bdc97
     name: stack
     type: application
     urls:
@@ -1060,7 +1060,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 9145c187e0bbda89e080ad396c429d1698811ae2f8df14cb10f1afae60c9b492
+    digest: ff7d6015dd071305cedfe7fd01aa8e76027a47bb5eee8bf786856487f69fa5bd
     name: stack
     type: application
     urls:
@@ -1074,7 +1074,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 28d62baf73ff4977b7b8f308b331abcaf0e93edc38219df9c63f052daf31f8a7
+    digest: 5362622f01d6aaa87ad7134e038843eddca964c8526981ab5f1fcd3bb7e1e2e3
     name: stack
     type: application
     urls:
@@ -1088,7 +1088,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 42602fc5884f6d3674c044b62de78733411498725b92f9e976552e699a0ff120
+    digest: 5124c7ccefc900bda73f75e78b612b7077a1270396d922baa35ea78178306b12
     name: stack
     type: application
     urls:
@@ -1102,7 +1102,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: e1e722844f55a76d8e1dce4ba07423867785205144e3d49cd428b5303cf1a403
+    digest: 5c1a796f7da293b3dce32a8d390ed9541174b5ef44d74604b2cc2af1a269d3ef
     name: stack
     type: application
     urls:
@@ -1116,7 +1116,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: aa8981ec2a9ea0c15a9d8f34ce028750b921b5da2a02ef2330984cade4cf78a8
+    digest: 0f82d3c2e2bb5e06d62b30012749ce79bf781e8119d2d44c3b518e62c6a80715
     name: stack
     type: application
     urls:
@@ -1130,7 +1130,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 73015b3e4e7963dd4eaf15e9d9526bb434d4fd28b8ba74940b316efef670d3c5
+    digest: eaae2589ca82e58195d22b7d29cf63766a22bbc82306174751ee5ab5a5a508e7
     name: stack
     type: application
     urls:
@@ -1144,7 +1144,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: cbc9cbec9c8ba7ca32cd2ed4f44cf37e371900365eafd45bea0bc46c021ff8a5
+    digest: 7d116a57599f0ab4a4b4ea82521b603e3c1fbc2617f1257c36cdad1912a8632a
     name: stack
     type: application
     urls:
@@ -1158,7 +1158,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 016790fa5281d8a22e86cbb399492af9e947b20a505d988ec7cffc27fe82d748
+    digest: f681ccb4dbaeb29d2cc19d6a8d10b32931948c10e3533f41678c616fa01f9bc6
     name: stack
     type: application
     urls:
@@ -1172,7 +1172,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 3d271a4099d29f22e18474d69da82740ab7b0495572b36cffdbbd06b9b140933
+    digest: b000e98611a5eb6b66cc1bd6f18582e9476b3d8b83274bfa2d0f375595f85467
     name: stack
     type: application
     urls:
@@ -1186,7 +1186,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 867d9f2357eb5c4d15a8d963c7e3ec9c4263511e880d4d75ea3804fdb1ef2448
+    digest: dddb9eff939d30d49fd4cfc20c9648b75bb979332c9480162e68ca677080bf31
     name: stack
     type: application
     urls:
@@ -1200,7 +1200,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: bbd7ed3d33d7bc761eea5176782cfa978bb6d9c442a36252d40b96f14a2ac788
+    digest: fb761f21ba742d821a5f2958360662da5dec29bc75956c1486be560f6e7a2c3a
     name: stack
     type: application
     urls:
@@ -1214,7 +1214,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 34165c0bb8eae9edca4e0244cfbd22a50dd1c2f7780d52e60c5bb03d13cdfc44
+    digest: 9d76a3f6ff0152f6e94a95be7d8774a03f8d8df54dad5d7bc62101ac6dbf52a0
     name: stack
     type: application
     urls:
@@ -1228,7 +1228,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: f5e15538ead9d3d399e7cf5fd9193607d2365e20451a4afcc98ffb20e9b139aa
+    digest: d57f3fb368ce23d1c1690bacfe0a264d1b180488512861bc04e6f55364cfddd2
     name: stack
     type: application
     urls:
@@ -1256,7 +1256,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 034f8f59aa4e209b76070bc8c2429228dd600bd632564a9dcbe81cd855098171
+    digest: 804c5a30d1ed34e5de4ae778f1c2b21084929c5b3ece1f93d7400e844d2d868c
     name: stack
     type: application
     urls:
@@ -1270,7 +1270,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 4d7bd6397981a4634ea32e034af55ee12873c84e82b4f51d8c6a8e78a054e9e4
+    digest: e30c0f92d68c52af176f544bec878875035694481610d8b5247f86ccd40a45c3
     name: stack
     type: application
     urls:
@@ -1284,7 +1284,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 9d114f0ef783bf266ddfaaa1c054ce2fd6fea2703643504960cdc9aca31deb4e
+    digest: 7a1732f0f637a5273decd6468c6ad66b888e2d1cbecd55170c4f8636c84a7671
     name: stack
     type: application
     urls:
@@ -1298,7 +1298,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 4a8f4285f1a6861b861492d158aef7e693d0c5287a01a037b76c6311cc9b695d
+    digest: 664a0cd4055a10ff33396b12102151aa5731735a315ef4d43a7872e7f92873dd
     name: stack
     type: application
     urls:
@@ -1312,7 +1312,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 03243671d5cdf70b2a1988ad2b6e87a3c0a3314ec7cfb853e613770433a61d8a
+    digest: 8ea97f30bf14aef4eac9a7d937b8fc95c4a7af785c95ba20f23b33b0db2f08f0
     name: stack
     type: application
     urls:
@@ -1326,7 +1326,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 270560ee250e09599e155268a7a6f47ac4648b57fdba7a008ae329f9150b2df7
+    digest: 56d794cd02f33935b9e548bee594f17446a136c415ea75dc45a048091c968bbc
     name: stack
     type: application
     urls:
@@ -1340,7 +1340,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 7b463fedf258c8a053d456e7662604fa4e0dad0c535cf48de927aa92d0da84ac
+    digest: 74a00db45a509bd23f58c567968ff6c15586765fc4c2e8eec4f60c6549e8a443
     name: stack
     type: application
     urls:
@@ -1354,7 +1354,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: bb83137dc860f018439c7be210bbb5bc98685c68abf6fb2f119010fbec1e9d53
+    digest: e0bb5890ef2e0ed55da76475e6dd761ea55b41480870a7f71f17adb618632618
     name: stack
     type: application
     urls:
@@ -1368,7 +1368,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: a8d32fbe4a4fac507425dd5cfdd0eec26ab8ace31ecbfaeb4a60295408799fc9
+    digest: 9ded7d625cee6d71d7fdc8059f5476814f9f0b6d9044b121034fd76a7b4234f0
     name: stack
     type: application
     urls:
@@ -1382,7 +1382,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 01010d1468a64966ff51fff9739177c6c60d7ba8f5cf0440c6a75c336ce9aced
+    digest: 11915864f588ba79a424eb1a10e41ad2195325d94e90c47f85b5f0f22954c558
     name: stack
     type: application
     urls:
@@ -1396,7 +1396,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: c6d74c51f21a7a9cc1a18666c9b81df1b4773c3026f4fecf1e231d3b67feb34e
+    digest: 6a1266ec41a06600a7cab366f8c1d4fc3d083a9467cf1aeaf64ae11cf97be4de
     name: stack
     type: application
     urls:
@@ -1410,7 +1410,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 36bc266c1ea79102ccb1be96ed722f4481510242b334c2a85f3be78e382b5b87
+    digest: c5669363723343c2dc642aff115c405b731e8a6dc4a09bc0744f3c8cfdfc3874
     name: stack
     type: application
     urls:
@@ -1424,7 +1424,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 87d0cd200e79323f7f242097a676b97595384058f43f9e6e63deecb20c6b4d39
+    digest: 83a58244c615acfd05b0948e09f530256a8cb4e33543bacb92be729a431b165c
     name: stack
     type: application
     urls:
@@ -1438,7 +1438,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 771d06d998a4f9545ae20fd088aa19ceefc9f07afd2a74d8f40401af00ff660d
+    digest: 8cbf850533354d60239118284d6f9510303516533c1e626b3375359ec490e39f
     name: stack
     type: application
     urls:
@@ -1452,7 +1452,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: d81070f04daf36ba39660e0b3d6b287bccdc97ba2619e1009638cbc64c8da821
+    digest: bfc0283d6a1be358fa14533812911c253ea9341dcebc7e482e0a7a87e0126f5e
     name: stack
     type: application
     urls:
@@ -1466,7 +1466,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 455fa3e41272a28bb51084de50a969d760d550304901caa5c7a22a06fb8b540e
+    digest: f41f0e1a82ca9095850657c0d23d99280859c403b64ea668d1db29b624869d8f
     name: stack
     type: application
     urls:
@@ -1480,7 +1480,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 6d2c74e254840cca4a7d301c25da9037b199d033ff3f850e35a148230ed97b2a
+    digest: 0de1ddcb6436643007efbc5c37cdc483b9b84d258eecd4963b3d591594ffe653
     name: stack
     type: application
     urls:
@@ -1494,7 +1494,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 1c041894e6de42e2f76d8345de89bd6633d0fd9fa5b7c5533b9fcad04b90da83
+    digest: a0e53c62900d60a24216158185e2711d30ad55a3802028e1761d9cf599341021
     name: stack
     type: application
     urls:
@@ -1508,7 +1508,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.8.0
     description: A Helm chart for Argus Stack
-    digest: 08a9445eb406754ff143533031f902453610384fcc01949a7fc7c995161a6c18
+    digest: 5ce8dc4e0b50932c486177011ada0dbdf49e7de50cc93305d81279f28925c7ba
     name: stack
     type: application
     urls:
@@ -1522,7 +1522,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: bb1544ce8affb72ee12ffbb16caf1fc159126e57510d876d08995d052037057b
+    digest: f1ed0e52386f06a87e0a44409eb0aa1d62cef402cb56cb86a6076dc1b4d22bca
     name: stack
     type: application
     urls:
@@ -1536,7 +1536,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 392b088b67364bcec0b4dd5eea293e134e71339b82af4310c9ff3d42b979d755
+    digest: 69d770b052bd9aff67e617def811f7025c241b9f80679ec5cfa229e488d21137
     name: stack
     type: application
     urls:
@@ -1550,7 +1550,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: a65f32cf2eeff69c837bfc5faa4f28d1805d3fe5cb7755dc8d5d61fed7de6552
+    digest: 8b1ec4d6e75b73a5f45f978f97c6d4fdcc9cad86897b61b8f4d1ced64ee48964
     name: stack
     type: application
     urls:
@@ -1564,7 +1564,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: dde9d3aeafc701ca3b4bb858538fb90ede2e77e7b389a20e8b07f2a83656b020
+    digest: 08a1db66736a45af13edb7cec4331de74c1550774e357f7ef85f41448d0f5262
     name: stack
     type: application
     urls:
@@ -1578,7 +1578,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: b174825a30ecd91657a090503bb20c4f5523c8a16bcd7e0655539ada05c2c537
+    digest: 831035976f2c8ad3139bb891e4bca376d5a36a109ff933ffb9d7f838997541c1
     name: stack
     type: application
     urls:
@@ -1592,7 +1592,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 6b1b41c345dd73917f97e44ddc28c37f33e85036587937e8882aaa28e83163fa
+    digest: 12890a0f2501bde279b85c34d8cbf135e28de3012d562db15f61734e09853343
     name: stack
     type: application
     urls:
@@ -1606,7 +1606,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 5f42314b799fada1412082a74d2f81d44f9231e401a525b802dca659a84e7f5b
+    digest: 4e7363780a7da651987b7b825f7b6b46d0a1ec7b4ea4f7a25dbaaa9e7a7975fc
     name: stack
     type: application
     urls:
@@ -1620,7 +1620,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: e7c63ba3a4f4515b5b4dabb3e53c621def471a047ee05aaa6be2f801ef7616c7
+    digest: 393f7e4f0dc729834e84b5467865a2f61942eea8d5d87370225681f73f36f116
     name: stack
     type: application
     urls:
@@ -1634,7 +1634,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 8a356c2ffd1e0a3ae74ecbad3a7ca44b1ac22181d4f963abf5a31a444027f823
+    digest: 227139fff0b06b98c30ae7b75b3933812402e6b7c87ec75016b5d8d51e7cc9af
     name: stack
     type: application
     urls:
@@ -1648,7 +1648,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: e539855029c35c393a5495c8caeab285a02c953b393f2129db429dd2fb4dc64e
+    digest: 711ebeb3da1c2ee932a2950a72d36e14682229248efb8d9cfe1a431f9542ec5b
     name: stack
     type: application
     urls:
@@ -1662,7 +1662,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: ae9e3f0a7f5e930f4ce99dc0b0ee25f2dfe0a18fc5548ecc331d6200f8dcf9b5
+    digest: 058a310736fe6f251a9b49cd971346f50ead2146f275a33e426a56d7a94866f7
     name: stack
     type: application
     urls:
@@ -1676,7 +1676,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 42fa2f01462390e317dde46b1da56f369214b991fc8e824a6c56a682779510ff
+    digest: 82355b36e4e9a4f3acbe8528be75d212cf2dbbb4d10f304a056d65b1c7601926
     name: stack
     type: application
     urls:
@@ -1690,7 +1690,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: bf48c3ca4436262b419e6acbd2688e36e472e5139c990d27cb2b95caf087c2df
+    digest: af667dd75fec42d55933c925187f425d00f46429c6ee66db3eda13af35a90d0e
     name: stack
     type: application
     urls:
@@ -1704,7 +1704,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 5787103c4664c62e3617f424a5cc58d3217a5f782a2a117867a8c862d9964156
+    digest: 18b8265ec0ee762867bbc407cd6d9f97f0603231a272b2190df75c39c68c31dc
     name: stack
     type: application
     urls:
@@ -1718,7 +1718,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 1fb4688cb8b0c24a09fc11f35cb8b1fa8e0a503c0d9951e3b7f84439c2aac460
+    digest: 850a48cb4803309bf51d2e747f8ea839713c7ee1458b87b82174c1bee9c669e5
     name: stack
     type: application
     urls:
@@ -1732,7 +1732,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 5099b03d1fec4568747fa2f06d75c7d530f6a9d1b3fc71bf242f656c133b10d4
+    digest: e28e70e2c31ecda69e01ff297410cddf020ab46309b3159ead618cf1b03438e9
     name: stack
     type: application
     urls:
@@ -1746,7 +1746,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 6dfcb9274d3c78fc6eb2f057038e6b2b4a1043b1588e2ff25e881dbab283fc2a
+    digest: 42bd15da1bb78adf5c737f53aa2c50a97d0a7472294efeb2d6be0de39a512fc0
     name: stack
     type: application
     urls:
@@ -1760,7 +1760,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: e79ba0ea9d12e0100d0e9395d22346355f66cfb95955333ebad8b92a99d8bd62
+    digest: ba7abfd253d5dda35b5ce15775ce92c41d104674a49c4a2a72b2d38dd69f0f8a
     name: stack
     type: application
     urls:
@@ -1774,7 +1774,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.7.0
     description: A Helm chart for Argus Stack
-    digest: 488c02a20dd9bf260d07e98f550db10147557b5588657ebbc291db7f86827b77
+    digest: 37674b50ce824ba98bd8f2bea56032682761c2ba33d3c9e7543c68c34e0c56fc
     name: stack
     type: application
     urls:
@@ -1788,7 +1788,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.6.1
     description: A Helm chart for Argus Stack
-    digest: 4ea6c292d5440a0ef8477d8cd62c040edac2564c9081ed9a6c8ae2c588865840
+    digest: 77e603c72396b427649855b260a257e7de12184091c20c288afd8c363ed7b4eb
     name: stack
     type: application
     urls:
@@ -1802,7 +1802,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.6.1
     description: A Helm chart for Argus Stack
-    digest: c576834dbe190c76f1bbe6d772decfb81d16f76e7d465127dbcc352e8aa5be1e
+    digest: 3902eeb18125fc7ec18b6821683464f06fe7eb380b3b640a4e72c307c1d08540
     name: stack
     type: application
     urls:
@@ -1816,7 +1816,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.6.1
     description: A Helm chart for Argus Stack
-    digest: 1df57a47a4a15934d66e146bd57c12c2e1d2884e62f06115ff438880c9054100
+    digest: c1ea31981bc3ea4784d1230a7af49a3a14129a8f8fc0fdfc3b2d934844b14b09
     name: stack
     type: application
     urls:
@@ -1830,7 +1830,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.6.1
     description: A Helm chart for Argus Stack
-    digest: 3f83e7c3e5255cfb3e9718e267f0ba3bf8afb4b0768f5edf55d8a9ffa0275603
+    digest: 89b4548459f6c4dbefe5a4b755377d4f74e376dffcaf2bc15f874b549069592b
     name: stack
     type: application
     urls:
@@ -1844,7 +1844,7 @@ entries:
       repository: https://chanzuckerberg.github.io/argo-helm-charts
       version: 1.6.1
     description: A Helm chart for Argus Stack
-    digest: 38c40bb198ad7ad8916b8ee52a54d7109e40bba3977d0b391a78d5ddf78b1767
+    digest: a035c4db2bfeef0ec46e6ae471cb0ed8499bcc909970144adaa369b7e33c90e0
     name: stack
     type: application
     urls:
