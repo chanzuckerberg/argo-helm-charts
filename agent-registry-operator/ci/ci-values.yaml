@@ -1,0 +1,46 @@
+image:
+  repository: registry.example.com/agent-registry/operator
+  tag: sha-test
+
+watchNamespaces:
+  - argus-*
+
+providers:
+  tailscale:
+    enabled: true
+
+agent:
+  runtime:
+    enabled: true
+    image: registry.example.com/agent-registry/runtime:sha-test
+    workspaceStorageClass: efs-agent-workspaces
+    anthropicOrganizationID: example-organization
+
+api:
+  enabled: true
+  config:
+    owner_namespaces: true
+    admin_groups:
+      - example-admins
+    allowed_origins:
+      - https://portal.example.com
+    trusted_issuers:
+      - issuer_url: https://issuer.example.com
+        client_id: example-client
+        team_format:
+          teams_key: groups
+
+stack:
+  global:
+    securityPolicies:
+      api-auth:
+        cors:
+          allowOrigins:
+            - https://portal.example.com
+  services:
+    api:
+      image:
+        repository: registry.example.com/agent-registry/api
+        tag: sha-test
+      gateway:
+        host: agents.example.com
