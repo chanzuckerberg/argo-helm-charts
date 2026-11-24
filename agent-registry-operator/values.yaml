@@ -46,6 +46,20 @@ agent:
       git-branch-guard.sh: ""
       ssh-guard.sh: ""
 
+tunDevicePlugin:
+  image:
+    repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/docker.io/central/squat/generic-device-plugin
+    tag: "0.2.0"
+    pullPolicy: IfNotPresent
+  deviceCount: 1000
+  resources:
+    requests:
+      cpu: 50m
+      memory: 10Mi
+    limits:
+      cpu: 50m
+      memory: 20Mi
+
 resources:
   requests:
     cpu: 100m

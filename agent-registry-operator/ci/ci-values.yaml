@@ -5,6 +5,17 @@ image:
 watchNamespaces:
   - argus-*
 
+providers:
+  tailscale:
+    enabled: true
+
+agent:
+  runtime:
+    enabled: true
+    image: registry.example.com/agent-registry/runtime:sha-test
+    workspaceStorageClass: efs-agent-workspaces
+    anthropicOrganizationID: example-organization
+
 api:
   enabled: true
   config:
