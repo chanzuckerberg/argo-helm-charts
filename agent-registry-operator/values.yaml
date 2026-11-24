@@ -20,7 +20,6 @@ providers:
     region: us-west-2
     provisionerRoleName: agent-provisioner
     permissionsBoundaryPolicyName: agent-permissions-boundary
-  # @schema allOf: [{"if":{"properties":{"enabled":{"const":true}},"required":["enabled"]},"then":{"properties":{"brokerURL":{"type":"string","minLength":1},"resourcePrefix":{"type":"string","minLength":1}},"required":["brokerURL","resourcePrefix"]}}]
   anthropic:
     enabled: false
     brokerURL: ""
