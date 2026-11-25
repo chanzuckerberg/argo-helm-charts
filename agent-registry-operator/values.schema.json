@@ -107,8 +107,20 @@
         "anthropic": {
           "type": "object",
           "properties": {
+            "brokerAudience": {
+              "type": "string"
+            },
+            "brokerTokenFile": {
+              "type": "string"
+            },
+            "brokerURL": {
+              "type": "string"
+            },
             "enabled": {
               "type": "boolean"
+            },
+            "resourcePrefix": {
+              "type": "string"
             }
           }
         },

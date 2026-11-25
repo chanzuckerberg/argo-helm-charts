@@ -303,16 +303,48 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-| Property                                   | Pattern | Type    | Deprecated | Definition | Title/Description |
-| ------------------------------------------ | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [enabled](#providers_anthropic_enabled ) | No      | boolean | No         | -          | -                 |
+| Property                                                   | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ---------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [brokerAudience](#providers_anthropic_brokerAudience )   | No      | string  | No         | -          | -                 |
+| - [brokerTokenFile](#providers_anthropic_brokerTokenFile ) | No      | string  | No         | -          | -                 |
+| - [brokerURL](#providers_anthropic_brokerURL )             | No      | string  | No         | -          | -                 |
+| - [enabled](#providers_anthropic_enabled )                 | No      | boolean | No         | -          | -                 |
+| - [resourcePrefix](#providers_anthropic_resourcePrefix )   | No      | string  | No         | -          | -                 |
 
-#### <a name="providers_anthropic_enabled"></a>7.1.1. Property `agent-registry-operator > providers > anthropic > enabled`
+#### <a name="providers_anthropic_brokerAudience"></a>7.1.1. Property `agent-registry-operator > providers > anthropic > brokerAudience`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="providers_anthropic_brokerTokenFile"></a>7.1.2. Property `agent-registry-operator > providers > anthropic > brokerTokenFile`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="providers_anthropic_brokerURL"></a>7.1.3. Property `agent-registry-operator > providers > anthropic > brokerURL`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="providers_anthropic_enabled"></a>7.1.4. Property `agent-registry-operator > providers > anthropic > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
+
+#### <a name="providers_anthropic_resourcePrefix"></a>7.1.5. Property `agent-registry-operator > providers > anthropic > resourcePrefix`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
 
 ### <a name="providers_aws"></a>7.2. Property `agent-registry-operator > providers > aws`
 

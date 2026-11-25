@@ -1,0 +1,139 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: requires the broker URL when Anthropic is enabled
+    set:
+      image.tag: sha-test
+      watchNamespaces:
+        - argus-test
+      providers.anthropic:
+        enabled: true
+        resourcePrefix: biohub
+    asserts:
+      - failedTemplate:
+          errorPattern: providers.anthropic.brokerURL is required
+
+  - it: requires the resource prefix when Anthropic is enabled
+    set:
+      image.tag: sha-test
+      watchNamespaces:
+        - argus-test
+      providers.anthropic:
+        enabled: true
+        brokerURL: https://anthropic-broker.example.com
+    asserts:
+      - failedTemplate:
+          errorPattern: providers.anthropic.resourcePrefix is required
+
+  - it: configures the Anthropic broker client
+    set:
+      image.tag: sha-test
+      watchNamespaces:
+        - argus-test
+      providers.anthropic:
+        enabled: true
+        brokerURL: https://anthropic-broker.example.com
+        resourcePrefix: biohub
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ANTHROPIC_BROKER_URL
+            value: https://anthropic-broker.example.com
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ANTHROPIC_BROKER_IDENTITY_TOKEN_FILE
+            value: /var/run/secrets/anthropic-broker/token
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ANTHROPIC_RESOURCE_PREFIX
+            value: biohub
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: anthropic-broker-token
+            mountPath: /var/run/secrets/anthropic-broker
+            readOnly: true
+      - equal:
+          path: spec.template.spec.volumes[0]
+          value:
+            name: anthropic-broker-token
+            projected:
+              sources:
+                - serviceAccountToken:
+                    audience: agent-registry-anthropic-broker
+                    expirationSeconds: 600
+                    path: token
+
+  - it: supports custom broker identity token settings
+    set:
+      image.tag: sha-test
+      watchNamespaces:
+        - argus-test
+      providers.anthropic:
+        enabled: true
+        brokerURL: https://anthropic-broker.example.com
+        brokerAudience: custom-audience
+        brokerTokenFile: /var/run/secrets/custom-identity/identity.jwt
+        resourcePrefix: biohub
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: anthropic-broker-token
+            mountPath: /var/run/secrets/custom-identity
+            readOnly: true
+      - equal:
+          path: spec.template.spec.volumes[0].projected.sources[0].serviceAccountToken
+          value:
+            audience: custom-audience
+            expirationSeconds: 600
+            path: identity.jwt
+
+  - it: preserves runtime and broker volumes together
+    set:
+      image.tag: sha-test
+      watchNamespaces:
+        - argus-test
+      providers.anthropic:
+        enabled: true
+        brokerURL: https://anthropic-broker.example.com
+        resourcePrefix: biohub
+      agent.runtime:
+        enabled: true
+        image: registry.example.com/agent-registry/runtime:sha-test
+        workspaceStorageClass: efs-agent-workspaces
+        anthropicOrganizationID: example-organization
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: runtime-config-source
+            mountPath: /etc/agent-registry-runtime
+            readOnly: true
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: anthropic-broker-token
+            mountPath: /var/run/secrets/anthropic-broker
+            readOnly: true
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: runtime-config-source
+            configMap:
+              name: agent-registry-runtime-source
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: anthropic-broker-token
+            projected:
+              sources:
+                - serviceAccountToken:
+                    audience: agent-registry-anthropic-broker
+                    expirationSeconds: 600
+                    path: token

@@ -22,6 +22,10 @@ providers:
     permissionsBoundaryPolicyName: agent-permissions-boundary
   anthropic:
     enabled: false
+    brokerURL: ""
+    brokerAudience: agent-registry-anthropic-broker
+    brokerTokenFile: /var/run/secrets/anthropic-broker/token
+    resourcePrefix: ""
   tailscale:
     enabled: false
 
