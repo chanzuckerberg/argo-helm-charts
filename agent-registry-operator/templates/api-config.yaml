@@ -5,6 +5,9 @@
 {{- if not .Values.api.config.trusted_issuers }}
 {{- fail "api.config.trusted_issuers is required" }}
 {{- end }}
+{{- if .Values.api.config.owner_namespaces }}
+{{- $_ := set .Values.api.config "owner_namespace_service_account" .Values.stack.services.api.serviceAccount.name }}
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
