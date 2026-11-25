@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/agent-registry-operator-v0.2.0...agent-registry-operator-v0.3.0) (2026-11-25)
+
+
+### Features
+
+* **agent-registry:** add team-owner CRD schema ([#656](https://github.com/chanzuckerberg/argo-helm-charts/issues/656)) ([f8658b8](https://github.com/chanzuckerberg/argo-helm-charts/commit/f8658b8a2c45bc3b4b9c325d2afbbe22b2d9a317))
+* **agent-registry:** configure Anthropic broker client ([#652](https://github.com/chanzuckerberg/argo-helm-charts/issues/652)) ([c9bfeb4](https://github.com/chanzuckerberg/argo-helm-charts/commit/c9bfeb4b963c5cb621db285d1b3ae57d722b9ace))
+* **agent-registry:** remove cluster OIDC setting ([#650](https://github.com/chanzuckerberg/argo-helm-charts/issues/650)) ([2c7f898](https://github.com/chanzuckerberg/argo-helm-charts/commit/2c7f8984dad6a2f882e1d03c936cdbdc0068e3f8))
+
 ## [0.2.0](https://github.com/chanzuckerberg/argo-helm-charts/compare/agent-registry-operator-v0.1.0...agent-registry-operator-v0.2.0) (2026-11-24)
 
 
