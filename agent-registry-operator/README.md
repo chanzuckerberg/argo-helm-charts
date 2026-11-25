@@ -324,41 +324,33 @@
 
 | Property                                                                         | Pattern | Type    | Deprecated | Definition | Title/Description |
 | -------------------------------------------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
-| - [clusterOIDCProvider](#providers_aws_clusterOIDCProvider )                     | No      | string  | No         | -          | -                 |
 | - [enabled](#providers_aws_enabled )                                             | No      | boolean | No         | -          | -                 |
 | - [permissionsBoundaryPolicyName](#providers_aws_permissionsBoundaryPolicyName ) | No      | string  | No         | -          | -                 |
 | - [provisionerRoleName](#providers_aws_provisionerRoleName )                     | No      | string  | No         | -          | -                 |
 | - [region](#providers_aws_region )                                               | No      | string  | No         | -          | -                 |
 
-#### <a name="providers_aws_clusterOIDCProvider"></a>7.2.1. Property `agent-registry-operator > providers > aws > clusterOIDCProvider`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="providers_aws_enabled"></a>7.2.2. Property `agent-registry-operator > providers > aws > enabled`
+#### <a name="providers_aws_enabled"></a>7.2.1. Property `agent-registry-operator > providers > aws > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-#### <a name="providers_aws_permissionsBoundaryPolicyName"></a>7.2.3. Property `agent-registry-operator > providers > aws > permissionsBoundaryPolicyName`
+#### <a name="providers_aws_permissionsBoundaryPolicyName"></a>7.2.2. Property `agent-registry-operator > providers > aws > permissionsBoundaryPolicyName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="providers_aws_provisionerRoleName"></a>7.2.4. Property `agent-registry-operator > providers > aws > provisionerRoleName`
+#### <a name="providers_aws_provisionerRoleName"></a>7.2.3. Property `agent-registry-operator > providers > aws > provisionerRoleName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="providers_aws_region"></a>7.2.5. Property `agent-registry-operator > providers > aws > region`
+#### <a name="providers_aws_region"></a>7.2.4. Property `agent-registry-operator > providers > aws > region`
 
 |              |          |
 | ------------ | -------- |

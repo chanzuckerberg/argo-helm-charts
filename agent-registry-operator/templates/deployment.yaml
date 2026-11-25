@@ -49,8 +49,6 @@ spec:
               value: {{ ternary .Values.providers.aws.region .Values.agent.runtime.defaultAwsRegion .Values.providers.aws.enabled | quote }}
             {{- end }}
             {{- if .Values.providers.aws.enabled }}
-            - name: AWS_CLUSTER_OIDC_PROVIDER
-              value: {{ required "providers.aws.clusterOIDCProvider is required" .Values.providers.aws.clusterOIDCProvider | quote }}
             - name: AWS_PROVISIONER_ROLE_NAME
               value: {{ .Values.providers.aws.provisionerRoleName | quote }}
             - name: AWS_PERMISSIONS_BOUNDARY_POLICY_NAME
