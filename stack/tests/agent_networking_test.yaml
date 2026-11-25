@@ -66,7 +66,7 @@ tests:
             from:
               - namespaceSelector:
                   matchLabels:
-                    kubernetes.io/metadata.name: envoy-gateway
+                    kubernetes.io/metadata.name: envoy-gateway-controller
             ports:
               - port: 8080
                 protocol: TCP
