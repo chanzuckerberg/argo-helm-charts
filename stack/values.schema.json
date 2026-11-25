@@ -9,7 +9,7 @@
       "type": "object",
       "properties": {
         "profiles": {
-          "description": "AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App; their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment.",
+          "description": "AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App, and their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment.",
           "type": "object",
           "additionalProperties": true
         },

@@ -31,7 +31,7 @@
 
 | Property                          | Pattern | Type   | Deprecated | Definition | Title/Description                                  |
 | --------------------------------- | ------- | ------ | ---------- | ---------- | -------------------------------------------------- |
-| - [profiles](#agents_profiles )   | No      | object | No         | -          | AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App; their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment. |
+| - [profiles](#agents_profiles )   | No      | object | No         | -          | AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App, and their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment. |
 | - [workloads](#agents_workloads ) | No      | object | No         | -          | Agent specifications keyed by resource name        |
 
 ### <a name="agents_profiles"></a>1.1. Property `stack > agents > profiles`
@@ -42,7 +42,7 @@
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
 
-**Description:** AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App; their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment.
+**Description:** AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App, and their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment.
 
 | Property                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
 | -------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
