@@ -20,18 +20,7 @@
               "type": "string"
             },
             "config": {
-              "type": "object",
-              "properties": {
-                "git-branch-guard.sh": {
-                  "type": "string"
-                },
-                "managed-settings.json": {
-                  "type": "string"
-                },
-                "ssh-guard.sh": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             },
             "defaultAwsRegion": {
               "type": "string"
@@ -48,10 +37,10 @@
             "nodeArchitecture": {
               "type": "string"
             },
-            "otelHeadersSecretName": {
+            "otelEndpoint": {
               "type": "string"
             },
-            "otelEndpoint": {
+            "otelHeadersSecretName": {
               "type": "string"
             },
             "tailscaleAudience": {

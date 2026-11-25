@@ -62,6 +62,7 @@
 | - [engPortalProfilesURL](#agent_runtime_engPortalProfilesURL )             | No      | string  | No         | -          | -                 |
 | - [image](#agent_runtime_image )                                           | No      | string  | No         | -          | -                 |
 | - [nodeArchitecture](#agent_runtime_nodeArchitecture )                     | No      | string  | No         | -          | -                 |
+| - [otelEndpoint](#agent_runtime_otelEndpoint )                             | No      | string  | No         | -          | -                 |
 | - [otelHeadersSecretName](#agent_runtime_otelHeadersSecretName )           | No      | string  | No         | -          | -                 |
 | - [tailscaleAudience](#agent_runtime_tailscaleAudience )                   | No      | string  | No         | -          | -                 |
 | - [tailscaleClientID](#agent_runtime_tailscaleClientID )                   | No      | string  | No         | -          | -                 |
@@ -90,33 +91,6 @@
 | **Type**                  | `object`         |
 | **Required**              | No               |
 | **Additional properties** | Any type allowed |
-
-| Property                                                               | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [git-branch-guard.sh](#agent_runtime_config_git-branch-guardsh )     | No      | string | No         | -          | -                 |
-| - [managed-settings.json](#agent_runtime_config_managed-settingsjson ) | No      | string | No         | -          | -                 |
-| - [ssh-guard.sh](#agent_runtime_config_ssh-guardsh )                   | No      | string | No         | -          | -                 |
-
-##### <a name="agent_runtime_config_git-branch-guardsh"></a>2.1.3.1. Property `agent-registry-operator > agent > runtime > config > git-branch-guard.sh`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="agent_runtime_config_managed-settingsjson"></a>2.1.3.2. Property `agent-registry-operator > agent > runtime > config > managed-settings.json`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="agent_runtime_config_ssh-guardsh"></a>2.1.3.3. Property `agent-registry-operator > agent > runtime > config > ssh-guard.sh`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
 
 #### <a name="agent_runtime_defaultAwsRegion"></a>2.1.4. Property `agent-registry-operator > agent > runtime > defaultAwsRegion`
 
@@ -153,42 +127,49 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_otelHeadersSecretName"></a>2.1.9. Property `agent-registry-operator > agent > runtime > otelHeadersSecretName`
+#### <a name="agent_runtime_otelEndpoint"></a>2.1.9. Property `agent-registry-operator > agent > runtime > otelEndpoint`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_tailscaleAudience"></a>2.1.10. Property `agent-registry-operator > agent > runtime > tailscaleAudience`
+#### <a name="agent_runtime_otelHeadersSecretName"></a>2.1.10. Property `agent-registry-operator > agent > runtime > otelHeadersSecretName`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_tailscaleClientID"></a>2.1.11. Property `agent-registry-operator > agent > runtime > tailscaleClientID`
+#### <a name="agent_runtime_tailscaleAudience"></a>2.1.11. Property `agent-registry-operator > agent > runtime > tailscaleAudience`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_tailscaleIdentityConfigMap"></a>2.1.12. Property `agent-registry-operator > agent > runtime > tailscaleIdentityConfigMap`
+#### <a name="agent_runtime_tailscaleClientID"></a>2.1.12. Property `agent-registry-operator > agent > runtime > tailscaleClientID`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_tailscaleTag"></a>2.1.13. Property `agent-registry-operator > agent > runtime > tailscaleTag`
+#### <a name="agent_runtime_tailscaleIdentityConfigMap"></a>2.1.13. Property `agent-registry-operator > agent > runtime > tailscaleIdentityConfigMap`
 
 |              |          |
 | ------------ | -------- |
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="agent_runtime_workspaceStorageClass"></a>2.1.14. Property `agent-registry-operator > agent > runtime > workspaceStorageClass`
+#### <a name="agent_runtime_tailscaleTag"></a>2.1.14. Property `agent-registry-operator > agent > runtime > tailscaleTag`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="agent_runtime_workspaceStorageClass"></a>2.1.15. Property `agent-registry-operator > agent > runtime > workspaceStorageClass`
 
 |              |          |
 | ------------ | -------- |
