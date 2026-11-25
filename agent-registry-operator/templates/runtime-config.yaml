@@ -1,4 +1,15 @@
 {{- if .Values.agent.runtime.enabled }}
+{{- $managedSettings := .Files.Get "files/runtime/managed-settings.json" | fromJson }}
+{{- $_ := set $managedSettings "claudeMd" (.Files.Get "files/runtime/CLAUDE.md") }}
+{{- if .Values.agent.runtime.otelEndpoint }}
+{{- $_ = set (get $managedSettings "env") "OTEL_EXPORTER_OTLP_ENDPOINT" .Values.agent.runtime.otelEndpoint }}
+{{- end }}
+{{- $defaults := dict
+  "managed-settings.json" ($managedSettings | toPrettyJson)
+  "git-branch-guard.sh" (.Files.Get "files/runtime/git-branch-guard.sh")
+  "ssh-guard.sh" (.Files.Get "files/runtime/ssh-guard.sh")
+}}
+{{- $config := mergeOverwrite $defaults .Values.agent.runtime.config }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,7 +18,7 @@ metadata:
   labels:
     {{- include "agent-registry-operator.labels" . | nindent 4 }}
 data:
-  {{- range $name, $contents := .Values.agent.runtime.config }}
+  {{- range $name, $contents := $config }}
   {{ $name }}: |
 {{ $contents | indent 4 }}
   {{- end }}

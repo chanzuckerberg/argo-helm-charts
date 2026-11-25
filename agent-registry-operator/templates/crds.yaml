@@ -20,8 +20,11 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.owner.email
-      name: Owner
+    - jsonPath: .spec.owner.individual.email
+      name: Individual
+      type: string
+    - jsonPath: .spec.owner.team.name
+      name: Team
       type: string
     - jsonPath: .status.conditions[?(@.type=="Ready")].status
       name: Ready
@@ -81,10 +84,23 @@ spec:
                       - roleArn
                       type: object
                     github:
-                      description: |-
-                        GitHubGrant enables the owner's GitHub identity. Repositories are only the
-                        initial clone selection, chosen after authorization, so they may be empty.
                       properties:
+                        app:
+                          properties:
+                            appId:
+                              format: int64
+                              minimum: 1
+                              type: integer
+                            installationId:
+                              format: int64
+                              minimum: 1
+                              type: integer
+                          required:
+                          - appId
+                          - installationId
+                          type: object
+                        oauth:
+                          type: object
                         repositories:
                           items:
                             maxLength: 128
@@ -93,12 +109,17 @@ spec:
                           type: array
                           x-kubernetes-list-type: set
                       type: object
+                      x-kubernetes-validations:
+                      - message: GitHub grant must select exactly one authentication
+                          mode
+                        rule: has(self.oauth) != has(self.app)
                     openai:
                       type: object
                     tailscale:
                       type: object
                   type: object
                   x-kubernetes-preserve-unknown-fields: true
+                maxItems: 100
                 type: array
                 x-kubernetes-list-type: atomic
               managedConfiguration:
@@ -121,26 +142,46 @@ spec:
                 type: array
                 x-kubernetes-list-type: atomic
               owner:
+                maxProperties: 1
+                minProperties: 1
                 properties:
-                  email:
-                    format: email
-                    type: string
-                  issuer:
-                    type: string
-                  subject:
-                    minLength: 1
-                    type: string
-                required:
-                - subject
+                  individual:
+                    properties:
+                      email:
+                        format: email
+                        type: string
+                      issuer:
+                        type: string
+                      subject:
+                        minLength: 1
+                        type: string
+                    required:
+                    - subject
+                    type: object
+                  team:
+                    properties:
+                      name:
+                        maxLength: 128
+                        minLength: 1
+                        type: string
+                    required:
+                    - name
+                    type: object
                 type: object
                 x-kubernetes-validations:
+                - message: owner kind is immutable
+                  rule: has(self.individual) == has(oldSelf.individual) && has(self.team)
+                    == has(oldSelf.team)
                 - message: owner subject is immutable
-                  rule: self.subject == oldSelf.subject
+                  rule: '!has(self.individual) || self.individual.subject == oldSelf.individual.subject'
                 - message: owner email is immutable after it is set
-                  rule: '!has(oldSelf.email) || (has(self.email) && self.email ==
-                    oldSelf.email)'
+                  rule: '!has(self.individual) || !has(oldSelf.individual.email) ||
+                    (has(self.individual.email) && self.individual.email == oldSelf.individual.email)'
                 - message: owner issuer is immutable after it is set
-                  rule: '!has(oldSelf.issuer) || self.issuer == oldSelf.issuer'
+                  rule: '!has(self.individual) || !has(oldSelf.individual.issuer)
+                    || self.individual.issuer == oldSelf.individual.issuer'
+                - message: owner team is immutable
+                  rule: '!has(self.team) || self.team.name == oldSelf.team.name'
               runtimeDefaults:
                 properties:
                   resources:
@@ -207,6 +248,11 @@ spec:
             required:
             - owner
             type: object
+            x-kubernetes-validations:
+            - message: individual owners require GitHub OAuth and team owners require
+                a GitHub App
+              rule: '!has(self.grants) || self.grants.all(g, !has(g.github) || (has(self.owner.individual)
+                && has(g.github.oauth)) || (has(self.owner.team) && has(g.github.app)))'
           status:
             properties:
               conditions:
