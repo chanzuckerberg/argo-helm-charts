@@ -87,13 +87,6 @@ api:
     enabled: false
     clientID: ""
     redirectURLs: []
-    clientSecret:
-      remoteRef:
-        key: ""
-        property: GITHUB_CLIENT_SECRET
-      secretStoreRef:
-        name: aws-secretsmanager
-        kind: ClusterSecretStore
   # The API's app-config.yaml. The API reads it instead of the app-config
   # files baked into its image; see those in chanzuckerberg/agent-registry for
   # the fields. It's read at startup, so a change takes effect on the next
