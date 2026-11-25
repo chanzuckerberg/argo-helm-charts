@@ -6,6 +6,10 @@ watchNamespaces:
   - argus-*
 
 providers:
+  anthropic:
+    enabled: true
+    brokerURL: https://anthropic-broker.example.com
+    resourcePrefix: biohub
   tailscale:
     enabled: true
 
