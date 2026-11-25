@@ -5,6 +5,18 @@
 {{- if not .Values.api.config.trusted_issuers }}
 {{- fail "api.config.trusted_issuers is required" }}
 {{- end }}
+{{- if .Values.api.config.owner_namespaces }}
+{{- $_ := set .Values.api.config "owner_namespace_service_account" .Values.stack.services.api.serviceAccount.name }}
+{{- end }}
+{{- if .Values.api.github.enabled }}
+{{- $_ := required "api.github.clientID is required" .Values.api.github.clientID }}
+{{- $_ := required "api.github.redirectURLs is required" .Values.api.github.redirectURLs }}
+{{- $_ := set .Values.api.config "github" (dict
+  "client_id" .Values.api.github.clientID
+  "client_secret" "{{.GITHUB_CLIENT_SECRET}}"
+  "redirect_urls" .Values.api.github.redirectURLs
+) }}
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
