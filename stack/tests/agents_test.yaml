@@ -19,9 +19,10 @@ tests:
         profiles:
           batch-profile:
             owner:
-              issuer: https://czi.okta.com
-              subject: 00u-example
-              email: owner@example.com
+              individual:
+                issuer: https://czi.okta.com
+                subject: 00u-example
+                email: owner@example.com
             grants:
               - aws:
                   accountId: "111111111111"
@@ -38,6 +39,31 @@ tests:
       - equal:
           path: spec.grants[0].aws.roleArn
           value: arn:aws:iam::111111111111:role/source-role
+
+  - it: renders a team profile with a GitHub App grant
+    template: agentprofiles.yaml
+    set:
+      agents:
+        profiles:
+          batch-profile:
+            owner:
+              team:
+                name: science-data
+            grants:
+              - github:
+                  app:
+                    appId: 4783816
+                    installationId: 158028824
+    asserts:
+      - equal:
+          path: spec.owner.team.name
+          value: science-data
+      - equal:
+          path: spec.grants[0].github.app.appId
+          value: 4783816
+      - equal:
+          path: spec.grants[0].github.app.installationId
+          value: 158028824
 
   - it: renders a custom Agent with stack configuration
     template: agents.yaml
