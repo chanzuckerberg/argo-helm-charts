@@ -10,7 +10,7 @@ tests:
         - argus-test
       providers.anthropic:
         enabled: true
-        resourcePrefix: czi
+        resourcePrefix: biohub
     asserts:
       - failedTemplate:
           errorPattern: providers.anthropic.brokerURL is required
@@ -35,7 +35,7 @@ tests:
       providers.anthropic:
         enabled: true
         brokerURL: https://anthropic-broker.example.com
-        resourcePrefix: czi
+        resourcePrefix: biohub
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
@@ -51,7 +51,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: ANTHROPIC_RESOURCE_PREFIX
-            value: czi
+            value: biohub
       - contains:
           path: spec.template.spec.containers[0].volumeMounts
           content:
@@ -79,7 +79,7 @@ tests:
         brokerURL: https://anthropic-broker.example.com
         brokerAudience: custom-audience
         brokerTokenFile: /var/run/secrets/custom-identity/identity.jwt
-        resourcePrefix: czi
+        resourcePrefix: biohub
     asserts:
       - contains:
           path: spec.template.spec.containers[0].volumeMounts
@@ -102,7 +102,7 @@ tests:
       providers.anthropic:
         enabled: true
         brokerURL: https://anthropic-broker.example.com
-        resourcePrefix: czi
+        resourcePrefix: biohub
       agent.runtime:
         enabled: true
         image: registry.example.com/agent-registry/runtime:sha-test

@@ -9,7 +9,7 @@ providers:
   anthropic:
     enabled: true
     brokerURL: https://anthropic-broker.example.com
-    resourcePrefix: czi
+    resourcePrefix: biohub
   tailscale:
     enabled: true
 
