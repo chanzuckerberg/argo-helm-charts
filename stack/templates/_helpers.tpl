@@ -129,7 +129,7 @@ parentRef it. Input: dict "root" $global "hostname" <string>.
 {{- $root := .root -}}
 {{- $want := .hostname -}}
 {{- $found := "" -}}
-{{- range $sname, $sv := $root.Values.services -}}
+{{- range $sname, $sv := fromYaml (include "stack.networkEndpoints" $root) -}}
   {{- $sv = $sv | default dict -}}
   {{- $g := mergeOverwrite (deepCopy (($root.Values.global).gateway | default dict)) ((get $sv "gateway") | default dict) -}}
   {{- $off := and (hasKey $g "enabled") (eq ($g.enabled | toString) "false") -}}
@@ -204,7 +204,11 @@ argus/repo-owner: {{ .repoOwner }}
 {{- end }}
 
 {{- define "service.selectorLabels" -}}
+{{- if .Values.agentEndpoint }}
+agents.czi.team/agent: {{ .Values.agentName }}
+{{- else }}
 app.kubernetes.io/service: {{ include "service.fullname" . }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -249,6 +253,19 @@ env:
 {{- else -}}
 env: []
 {{- end }}
+{{- end }}
+
+{{- define "stack.agentEnvironment" -}}
+{{- $rendered := fromYaml (include "service.nonsensitiveEnvVars" (list .root.Values.global .workload)) -}}
+{{- toYaml ($rendered.env | default list) -}}
+{{- end }}
+
+{{- define "stack.agentEnvironmentFrom" -}}
+{{- $values := fromYaml (.root.Values.global | toYaml) -}}
+{{- $values = mergeOverwrite $values .workload -}}
+{{- $ctx := dict "Chart" .root.Chart "Release" .root.Release "Capabilities" .root.Capabilities "Values" $values -}}
+{{- $rendered := fromYaml (include "service.configuration" $ctx | default "{}") -}}
+{{- toYaml ($rendered.envFrom | default list) -}}
 {{- end }}
 
 {{- define "image" -}}
@@ -532,6 +549,39 @@ Scoped to the post-cutover shape, where no Ingress remains to justify the proxy.
 Whether the service needs a SecurityPolicy (any of oidc, basicAuth, cors, ipAllowList).
 Returns "true"/"" .
 */}}
+{{- define "stack.networkEndpoints" -}}
+{{- $endpoints := deepCopy (.Values.services | default dict) -}}
+{{- range $name, $workload := ((.Values.agents | default dict).workloads | default dict) -}}
+  {{- if or (hasKey $workload "service") (hasKey $workload "gateway") -}}
+    {{- if ne ($workload.harness | default "") "custom-agent-code" -}}
+      {{- fail (printf "agents.workloads.%s networking requires harness: custom-agent-code" $name) -}}
+    {{- end -}}
+    {{- if $workload.schedule -}}
+      {{- fail (printf "agents.workloads.%s networking is not supported for scheduled Agents" $name) -}}
+    {{- end -}}
+    {{- $targetPort := (($workload.service | default dict).targetPort | default "") -}}
+    {{- if or (eq (toString $targetPort) "") (not (regexMatch "^[0-9]+$" (toString $targetPort))) -}}
+      {{- fail (printf "agents.workloads.%s networking requires a numeric service.targetPort" $name) -}}
+    {{- end -}}
+    {{- $endpointName := printf "agent-%s" $name -}}
+    {{- if hasKey $endpoints $endpointName -}}
+      {{- fail (printf "agents.workloads.%s conflicts with services.%s" $name $endpointName) -}}
+    {{- end -}}
+    {{- $endpoint := dict
+          "agentEndpoint" true
+          "agentName" $name
+          "ingress" (dict "enabled" false)
+          "service" (deepCopy ($workload.service | default dict))
+          "gateway" (deepCopy ($workload.gateway | default dict)) -}}
+    {{- if $workload.annotations -}}
+      {{- $_ := set $endpoint "annotations" (deepCopy $workload.annotations) -}}
+    {{- end -}}
+    {{- $_ := set $endpoints $endpointName $endpoint -}}
+  {{- end -}}
+{{- end -}}
+{{- toYaml $endpoints -}}
+{{- end -}}
+
 {{/*
 Merged per-service context, mirroring the preamble each gateway template applies:
 global values overlaid with the service block, plus the ingress/gateway
@@ -540,7 +590,7 @@ auto-enable and auto-disable rules. Takes (dict "root" $ "name" <serviceName>).
 {{- define "service.context" -}}
 {{- $root := .root -}}
 {{- $serviceName := .name -}}
-{{- $serviceValues := index $root.Values.services $serviceName -}}
+{{- $serviceValues := index (fromYaml (include "stack.networkEndpoints" $root)) $serviceName -}}
 {{- $values := fromYaml ($root.Values.global | toYaml) -}}
 {{- $_ := set $values "name" $serviceName -}}
 {{- $values = mergeOverwrite $values $serviceValues -}}
@@ -772,7 +822,7 @@ Takes (dict "root" $ "key" <groupKey>).
 {{- $root := .root -}}
 {{- $key := .key -}}
 {{- $members := list -}}
-{{- range $name, $_ := $root.Values.services -}}
+{{- range $name, $_ := fromYaml (include "stack.networkEndpoints" $root) -}}
   {{- $v := fromYaml (include "service.context" (dict "root" $root "name" $name)) -}}
   {{- $g := $v.gateway | default dict -}}
   {{- if and $g.enabled (not (($g.tlsPassthrough | default dict).enabled)) -}}
@@ -833,7 +883,7 @@ ignore it. Takes (dict "root" $ "name" <serviceName>).
 
 {{- define "securityPolicy.validateRemovedKeys" -}}
 {{- $root := .root -}}
-{{- $sv := index $root.Values.services .name -}}
+{{- $sv := index (fromYaml (include "stack.networkEndpoints" $root)) .name -}}
 {{- $g := ($sv.gateway | default dict) -}}
 {{- range $k := (list "oidcProtected" "cors" "ipAllowList" "basicAuth" "jwt") -}}
   {{- if hasKey $g $k -}}
@@ -2414,7 +2464,7 @@ PathPrefix
 {{- end -}}
 {{- end -}}
 {{- /* The guard rule takes every ; or % path on the host and outranks any sibling's PathPrefix, so the service must be alone on its host, vanity and gateway.rules hosts included. */ -}}
-{{- range $otherName, $_ := $root.Values.services -}}
+{{- range $otherName, $_ := fromYaml (include "stack.networkEndpoints" $root) -}}
 {{- $og := (fromYaml (include "service.context" (dict "root" $root "name" $otherName))).gateway | default dict -}}
 {{- if and (ne $otherName $name) $og.enabled (not (($og.tlsPassthrough | default dict).enabled)) -}}
 {{- $hosts := list -}}

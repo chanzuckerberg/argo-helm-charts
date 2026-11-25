@@ -1,5 +1,5 @@
 {{- $global := . -}}
-{{ range $serviceName, $serviceValues := .Values.services }}
+{{ range $serviceName, $serviceValues := fromYaml (include "stack.networkEndpoints" $global) }}
   {{- $globalValuesDict := $global.Values.global | toYaml -}}
   {{- $values := fromYaml $globalValuesDict -}}
   {{- $values = set $values "name" $serviceName -}}

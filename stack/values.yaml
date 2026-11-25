@@ -125,6 +125,7 @@ global: # @schema description: Global configuration for the stack - this serves 
   service: # @schema description: Service configuration
     type: ClusterIP # @schema description: Service type
     port: 80 # @schema type: number; description: Service port
+    targetPort: http # @schema oneOf: [{ "type": "string" },{ "type": "number" }]; description: Target container port
 
   initContainers: [] # @schema type: array; description: List of init containers
   sidecars: [] # @schema type: array; description: List of sidecars
@@ -447,6 +448,10 @@ global: # @schema description: Global configuration for the stack - this serves 
     #           mode: "absolute"
     #           steps:
     #             - color: "green"
+
+agents: # @schema description: Agent Registry resources
+  profiles: {} # @schema type: object; additionalProperties: true; description: AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App, and their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment.
+  workloads: {} # @schema type: object; additionalProperties: true; description: Agent specifications keyed by resource name
 
 services: # @schema patternProperties: { "^.*$": {"$ref": "#/properties/global", "type": "object", "unevaluatedProperties": false } }; description: Services to deploy
   {}

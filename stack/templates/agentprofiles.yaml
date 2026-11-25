@@ -1,0 +1,16 @@
+{{- $global := . -}}
+{{- range $name, $profile := ((.Values.agents | default dict).profiles | default dict) }}
+{{- $ctx := dict "Chart" $global.Chart "Release" $global.Release "Capabilities" $global.Capabilities "Values" $global.Values.global -}}
+---
+apiVersion: agents.czi.team/v1alpha1
+kind: AgentProfile
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "stack.labels" $ctx | nindent 4 }}
+    {{- with $global.Values.global.argusMetadata.stackName }}
+    agents.czi.team/stack: {{ . }}
+    {{- end }}
+spec:
+  {{- toYaml $profile | nindent 2 }}
+{{- end }}
