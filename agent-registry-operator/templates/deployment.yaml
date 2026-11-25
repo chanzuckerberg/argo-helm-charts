@@ -54,6 +54,14 @@ spec:
             - name: AWS_PERMISSIONS_BOUNDARY_POLICY_NAME
               value: {{ .Values.providers.aws.permissionsBoundaryPolicyName | quote }}
             {{- end }}
+            {{- if .Values.providers.anthropic.enabled }}
+            - name: ANTHROPIC_BROKER_URL
+              value: {{ required "providers.anthropic.brokerURL is required" .Values.providers.anthropic.brokerURL | quote }}
+            - name: ANTHROPIC_BROKER_IDENTITY_TOKEN_FILE
+              value: {{ .Values.providers.anthropic.brokerTokenFile | quote }}
+            - name: ANTHROPIC_RESOURCE_PREFIX
+              value: {{ required "providers.anthropic.resourcePrefix is required" .Values.providers.anthropic.resourcePrefix | quote }}
+            {{- end }}
             {{- if .Values.agent.runtime.enabled }}
             - name: RUNTIME_IMAGE
               value: {{ required "agent.runtime.image is required" .Values.agent.runtime.image | quote }}
@@ -94,11 +102,18 @@ spec:
             - name: RUNTIME_TAILSCALE_TAG
               value: {{ .Values.agent.runtime.tailscaleTag | quote }}
             {{- end }}
-          {{- if .Values.agent.runtime.enabled }}
+          {{- if or .Values.agent.runtime.enabled .Values.providers.anthropic.enabled }}
           volumeMounts:
+            {{- if .Values.agent.runtime.enabled }}
             - name: runtime-config-source
               mountPath: /etc/agent-registry-runtime
               readOnly: true
+            {{- end }}
+            {{- if .Values.providers.anthropic.enabled }}
+            - name: anthropic-broker-token
+              mountPath: {{ dir .Values.providers.anthropic.brokerTokenFile | quote }}
+              readOnly: true
+            {{- end }}
           {{- end }}
           ports:
             - name: health
@@ -122,11 +137,22 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 65532
-      {{- if .Values.agent.runtime.enabled }}
+      {{- if or .Values.agent.runtime.enabled .Values.providers.anthropic.enabled }}
       volumes:
+        {{- if .Values.agent.runtime.enabled }}
         - name: runtime-config-source
           configMap:
             name: agent-registry-runtime-source
+        {{- end }}
+        {{- if .Values.providers.anthropic.enabled }}
+        - name: anthropic-broker-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  audience: {{ .Values.providers.anthropic.brokerAudience | quote }}
+                  expirationSeconds: 600
+                  path: {{ base .Values.providers.anthropic.brokerTokenFile | quote }}
+        {{- end }}
       {{- end }}
       securityContext:
         runAsNonRoot: true
