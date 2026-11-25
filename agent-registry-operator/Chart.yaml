@@ -2,7 +2,7 @@ apiVersion: v2
 name: agent-registry-operator
 description: Agent Registry operator, API and custom resource definitions
 type: application
-version: 0.2.0
+version: 0.3.0
 appVersion: "0.14.1"
 
 dependencies:
