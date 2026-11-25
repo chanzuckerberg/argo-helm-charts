@@ -78,6 +78,47 @@
         },
         "enabled": {
           "type": "boolean"
+        },
+        "github": {
+          "type": "object",
+          "properties": {
+            "clientID": {
+              "type": "string"
+            },
+            "clientSecret": {
+              "type": "object",
+              "properties": {
+                "remoteRef": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "property": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "secretStoreRef": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "redirectURLs": {
+              "type": "array"
+            }
+          }
         }
       }
     },
