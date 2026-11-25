@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test runtime configuration
+templates:
+  - templates/runtime-config.yaml
+tests:
+  - it: renders the managed Claude policy by default
+    set:
+      agent:
+        runtime:
+          enabled: true
+          otelEndpoint: https://otel.example.com
+    asserts:
+      - isNotEmpty:
+          path: data["managed-settings.json"]
+      - isNotEmpty:
+          path: data["git-branch-guard.sh"]
+      - isNotEmpty:
+          path: data["ssh-guard.sh"]
+      - matchRegex:
+          path: data["managed-settings.json"]
+          pattern: '"allowManagedHooksOnly": true'
+      - matchRegex:
+          path: data["managed-settings.json"]
+          pattern: '"claudeMd": "# Managed Agent Policy'
+      - matchRegex:
+          path: data["managed-settings.json"]
+          pattern: 'https://otel\.example\.com'
+
+  - it: accepts file overrides
+    set:
+      agent:
+        runtime:
+          enabled: true
+          config:
+            managed-settings.json: '{"custom":true}'
+            git-branch-guard.sh: custom-git
+            ssh-guard.sh: custom-ssh
+    asserts:
+      - equal:
+          path: data["managed-settings.json"]
+          value: '{"custom":true}'
+      - equal:
+          path: data["git-branch-guard.sh"]
+          value: custom-git
+      - equal:
+          path: data["ssh-guard.sh"]
+          value: custom-ssh

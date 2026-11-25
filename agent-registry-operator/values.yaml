@@ -40,10 +40,8 @@ agent:
     tailscaleTag: tag:agent
     engPortalProfilesURL: ""
     otelHeadersSecretName: "-"
-    config:
-      managed-settings.json: "{}"
-      git-branch-guard.sh: ""
-      ssh-guard.sh: ""
+    otelEndpoint: https://alloy-otlp.dev-central-o11y.dev.czi.team
+    config: {}
 
 tunDevicePlugin:
   image:
