@@ -38,10 +38,13 @@ tests:
     asserts:
       - equal:
           path: data["managed-settings.json"]
-          value: '{"custom":true}'
+          value: |
+            {"custom":true}
       - equal:
           path: data["git-branch-guard.sh"]
-          value: custom-git
+          value: |
+            custom-git
       - equal:
           path: data["ssh-guard.sh"]
-          value: custom-ssh
+          value: |
+            custom-ssh
