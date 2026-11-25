@@ -4,6 +4,22 @@
   "title": "stack",
   "type": "object",
   "properties": {
+    "agents": {
+      "description": "Agent Registry resources",
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "description": "AgentProfile specifications keyed by resource name. Individual owners use GitHub OAuth. Team owners may declare a GitHub App, and their custom image reads GITHUB_APP_PRIVATE_KEY from the Argus Secrets injected into its environment.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "workloads": {
+          "description": "Agent specifications keyed by resource name",
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
     "argus-config": {
       "description": "Allows values for the argus-config Helm chart",
       "type": "object"
@@ -341,6 +357,10 @@
                   "type": "string"
                 }
               }
+            },
+            "dataPlaneNamespace": {
+              "description": "Namespace containing the Envoy data-plane pods that connect to backends",
+              "type": "string"
             },
             "dnsOwner": {
               "description": "Which routing mode external-dns publishes when ingress and gateway are both enabled (coexistence). The non-owning side gets the external-dns exclude annotation. Flip to gateway to move the DNS record from the nginx NLB to the Envoy gateway NLB with both paths still serving. Setting this at the service level marks coexistence intent (the gateway is not auto-disabled by an explicitly enabled ingress) and never enables routing by itself. Gateway hosts the ingress does not serve keep publishing during coexistence",
@@ -1589,6 +1609,17 @@
             "port": {
               "description": "Service port",
               "type": "number"
+            },
+            "targetPort": {
+              "description": "Target container port",
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
             },
             "type": {
               "description": "Service type",

@@ -1,0 +1,27 @@
+{{- $global := . -}}
+{{- range $name, $_ := fromYaml (include "stack.networkEndpoints" $global) }}
+{{- $values := fromYaml (include "service.context" (dict "root" $global "name" $name)) -}}
+{{- if and $values.agentEndpoint $values.gateway.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "stack.fullname" $global }}-{{ $name }}-gateway
+  labels:
+    {{- include "stack.labels" $global | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      agents.czi.team/agent: {{ $values.agentName }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ $values.gateway.dataPlaneNamespace }}
+      ports:
+        - port: {{ $values.service.targetPort }}
+          protocol: TCP
+{{- end }}
+{{- end }}

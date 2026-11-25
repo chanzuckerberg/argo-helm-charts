@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test Agent networking
+templates:
+  - service.yaml
+  - httproute.yaml
+  - gateway-backendtrafficpolicy.yaml
+  - agent-networkpolicy.yaml
+tests:
+  - it: renders a Service and Envoy route for a continuous custom Agent
+    set:
+      agents:
+        workloads:
+          api-agent:
+            profile: api-profile
+            harness: custom-agent-code
+            image:
+              repository: example.com/agents/api
+            timeout: 8h
+            service:
+              port: 80
+              targetPort: 8080
+            gateway:
+              host: api-agent.example.org
+              paths:
+                - path: /
+                  pathType: Prefix
+              securityPolicy: none
+              rateLimit:
+                enabled: true
+                requests: 10
+                unit: Second
+    asserts:
+      - template: service.yaml
+        equal:
+          path: metadata.name
+          value: release-name-stack-agent-api-agent
+      - template: service.yaml
+        equal:
+          path: spec.selector
+          value:
+            agents.czi.team/agent: api-agent
+      - template: service.yaml
+        equal:
+          path: spec.ports[0].targetPort
+          value: 8080
+      - template: httproute.yaml
+        equal:
+          path: spec.hostnames[0]
+          value: api-agent.example.org
+      - template: httproute.yaml
+        equal:
+          path: spec.rules[0].backendRefs[0]
+          value:
+            name: release-name-stack-agent-api-agent
+            port: 80
+      - template: gateway-backendtrafficpolicy.yaml
+        equal:
+          path: spec.rateLimit.local.rules[0].limit
+          value:
+            requests: 10
+            unit: Second
+      - template: agent-networkpolicy.yaml
+        equal:
+          path: spec.ingress[0]
+          value:
+            from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: envoy-gateway-controller
+            ports:
+              - port: 8080
+                protocol: TCP
+
+  - it: rejects networking for a scheduled Agent
+    template: service.yaml
+    set:
+      agents:
+        workloads:
+          scheduled-agent:
+            profile: batch-profile
+            harness: custom-agent-code
+            image:
+              repository: example.com/agents/batch
+            timeout: indefinite
+            schedule: "0 9 * * 1-5"
+            service:
+              port: 80
+              targetPort: 8080
+    asserts:
+      - failedTemplate:
+          errorMessage: agents.workloads.scheduled-agent networking is not supported for scheduled Agents
+
+  - it: rejects networking for a Claude Code Agent
+    template: service.yaml
+    set:
+      agents:
+        workloads:
+          claude-agent:
+            profile: claude-profile
+            harness: claude-code
+            model: claude-sonnet-5-5
+            timeout: 8h
+            service:
+              port: 80
+              targetPort: 8080
+    asserts:
+      - failedTemplate:
+          errorMessage: "agents.workloads.claude-agent networking requires harness: custom-agent-code"

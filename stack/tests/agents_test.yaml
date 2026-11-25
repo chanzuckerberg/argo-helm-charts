@@ -1,0 +1,151 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test Agent Registry resources
+templates:
+  - agentprofiles.yaml
+  - agents.yaml
+tests:
+  - it: renders nothing without Agent values
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: renders a profile with a reviewed AWS source role
+    template: agentprofiles.yaml
+    set:
+      global:
+        argusMetadata:
+          stackName: gitops-stack
+      agents:
+        profiles:
+          batch-profile:
+            owner:
+              individual:
+                issuer: https://czi.okta.com
+                subject: 00u-example
+                email: owner@example.com
+            grants:
+              - aws:
+                  accountId: "111111111111"
+                  roleArn: arn:aws:iam::111111111111:role/source-role
+    asserts:
+      - isKind:
+          of: AgentProfile
+      - equal:
+          path: metadata.name
+          value: batch-profile
+      - equal:
+          path: metadata.labels["agents.czi.team/stack"]
+          value: gitops-stack
+      - equal:
+          path: spec.grants[0].aws.roleArn
+          value: arn:aws:iam::111111111111:role/source-role
+
+  - it: renders a team profile with a GitHub App grant
+    template: agentprofiles.yaml
+    set:
+      agents:
+        profiles:
+          batch-profile:
+            owner:
+              team:
+                name: science-data
+            grants:
+              - github:
+                  app:
+                    appId: 4783816
+                    installationId: 158028824
+    asserts:
+      - equal:
+          path: spec.owner.team.name
+          value: science-data
+      - equal:
+          path: spec.grants[0].github.app.appId
+          value: 4783816
+      - equal:
+          path: spec.grants[0].github.app.installationId
+          value: 158028824
+
+  - it: renders a custom Agent with stack configuration
+    template: agents.yaml
+    set:
+      global:
+        env:
+          - name: SHARED_VALUE
+            value: global
+          - name: GLOBAL_ONLY
+            value: inherited
+        appSecrets:
+          clusterSecret:
+            secretName: cluster-secret
+          clusterCLISecret:
+            secretName: cluster-cli-secret
+          envSecret:
+            secretName: environment-secret
+          stackSecret:
+            secretName: stack-secret
+        appContext:
+          envContextConfigMapName: environment-context
+          stackContextConfigMapName: stack-context
+      agents:
+        workloads:
+          batch-worker:
+            profile: batch-profile
+            harness: custom-agent-code
+            image:
+              repository: example.com/agents/batch-worker
+              tag: sha-123
+            command:
+              - /app/worker
+            timeout: 8h
+            env:
+              - name: SHARED_VALUE
+                value: workload
+              - name: WORKLOAD_ONLY
+                value: configured
+            envFrom:
+              - secretRef:
+                  name: explicit-secret
+    asserts:
+      - isKind:
+          of: Agent
+      - equal:
+          path: spec.profileRef.name
+          value: batch-profile
+      - equal:
+          path: spec.image
+          value: example.com/agents/batch-worker
+      - equal:
+          path: spec.imageTag
+          value: sha-123
+      - equal:
+          path: spec.runtime.env
+          value:
+            - name: SHARED_VALUE
+              value: workload
+            - name: GLOBAL_ONLY
+              value: inherited
+            - name: WORKLOAD_ONLY
+              value: configured
+      - equal:
+          path: spec.runtime.envFrom
+          value:
+            - secretRef:
+                name: cluster-secret
+                optional: true
+            - secretRef:
+                name: cluster-cli-secret
+                optional: true
+            - secretRef:
+                name: environment-secret
+                optional: true
+            - secretRef:
+                name: stack-secret
+                optional: true
+            - configMapRef:
+                name: environment-context
+                optional: true
+            - configMapRef:
+                name: stack-context
+                optional: true
+            - secretRef:
+                name: explicit-secret
