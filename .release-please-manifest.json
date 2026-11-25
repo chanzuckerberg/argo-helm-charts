@@ -1,6 +1,6 @@
 {
   "core-platform-ecr-pull-secret": "1.0.0",
-  "stack": "2.68.2",
+  "stack": "2.69.0",
   "argus-config": "1.8.0",
   "sso-secret": "0.3.0",
   "grafana": "0.13.0",
@@ -10,5 +10,6 @@
   "karpenter-gpu-nodepool": "0.7.0",
   "grafana-alloy": "0.14.0",
   "karpenter-nodepool": "0.1.0",
-  "ops-telemetry": "0.3.0"
+  "ops-telemetry": "0.3.0",
+  "agent-registry-operator": "0.3.0"
 }

@@ -1,0 +1,197 @@
+image:
+  repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/agent-registry/operator
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+serviceAccount:
+  name: agent-registry-operator
+  annotations:
+    # The operator's AWS web identity token lives 1 hour instead of the EKS
+    # default of 24 (SecEng, 2026-11-19).
+    eks.amazonaws.com/token-expiration: "3600"
+
+watchNamespaces: []
+
+providers:
+  aws:
+    enabled: false
+    region: us-west-2
+    provisionerRoleName: agent-provisioner
+    permissionsBoundaryPolicyName: agent-permissions-boundary
+  anthropic:
+    enabled: false
+    brokerURL: ""
+    brokerAudience: agent-registry-anthropic-broker
+    brokerTokenFile: /var/run/secrets/anthropic-broker/token
+    resourcePrefix: ""
+  tailscale:
+    enabled: false
+
+agent:
+  runtime:
+    enabled: false
+    image: ""
+    nodeArchitecture: arm64
+    workspaceStorageClass: ""
+    defaultAwsRegion: us-west-2
+    anthropicAudience: https://api.anthropic.com
+    anthropicOrganizationID: ""
+    tailscaleAudience: ""
+    tailscaleClientID: ""
+    tailscaleIdentityConfigMap: agent-registry-cluster-identity
+    tailscaleTag: tag:agent
+    engPortalProfilesURL: ""
+    otelHeadersSecretName: "-"
+    otelEndpoint: https://alloy-otlp.dev-central-o11y.dev.czi.team
+    config: {}
+
+tunDevicePlugin:
+  image:
+    repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/docker.io/central/squat/generic-device-plugin
+    tag: "0.2.0"
+    pullPolicy: IfNotPresent
+  deviceCount: 1000
+  resources:
+    requests:
+      cpu: 50m
+      memory: 10Mi
+    limits:
+      cpu: 50m
+      memory: 20Mi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+nodeSelector: {}
+
+tolerations: []
+affinity: {}
+
+# The Agent Registry API, deployed with the Argus stack chart (values under
+# stack). A cluster that runs it sets api.enabled, api.config,
+# stack.services.api.image.tag, stack.services.api.gateway.host and the CORS
+# origins of the api-auth security policy. The gateway accepts only Okta
+# tokens; the API then checks the audience against api.config.
+api:
+  enabled: false
+  github:
+    enabled: false
+    clientID: ""
+    redirectURLs: []
+  # The API's app-config.yaml. The API reads it instead of the app-config
+  # files baked into its image; see those in chanzuckerberg/agent-registry for
+  # the fields. It's read at startup, so a change takes effect on the next
+  # rollout of the agent-registry-api Deployment.
+  config: {}
+
+stack:
+  global:
+    # Names the API's resources agent-registry-api.
+    fullnameOverride: agent-registry
+    replicaCount: 1
+    autoscaling:
+      enabled: false
+    grafanaDashboard:
+      enabled: false
+    ingress:
+      enabled: false
+    securityPolicies:
+      api-auth:
+        cors:
+          enabled: true
+          allowOrigins: []
+          allowMethods:
+            - GET
+            - POST
+            - PATCH
+            - DELETE
+            - OPTIONS
+          allowHeaders:
+            - Authorization
+            - Content-Type
+            - If-Match
+          exposeHeaders:
+            - ETag
+            - X-Request-Id
+          allowCredentials: true
+        jwt:
+          enabled: true
+          providers:
+            - name: okta
+              issuer: https://czi.okta.com
+              remoteJWKSUri: https://czi.okta.com/oauth2/v1/keys
+  services:
+    api:
+      image:
+        repository: 533267185808.dkr.ecr.us-west-2.amazonaws.com/core-platform/agent-registry/api
+        tag: ""
+      args:
+        - --config-directory=/etc/agent-registry-api
+        - --verbose
+      service:
+        port: 8080
+      # templates/api-rbac.yaml and api-secret-policy.yaml bind this name.
+      serviceAccount:
+        create: true
+        name: agent-registry-api
+        automount: true
+      resources:
+        limits:
+          cpu: 300m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      gateway:
+        enabled: true
+        host: ""
+        securityPolicy: api-auth
+        paths:
+          - path: /api
+            pathType: Prefix
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 65532
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: http
+      readinessProbe:
+        httpGet:
+          path: /readyz
+          port: http
+      volumes:
+        # Rendered by templates/api-config.yaml.
+        - name: api-config
+          configMap:
+            name: agent-registry-api-config
+        - name: api-tmp
+          emptyDir: {}
+        - name: aws-entitlement-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  audience: aws-oidc-entitlements
+                  expirationSeconds: 600
+                  path: token
+      volumeMounts:
+        - name: api-config
+          mountPath: /etc/agent-registry-api
+          readOnly: true
+        - name: api-tmp
+          mountPath: /tmp
+        - name: aws-entitlement-token
+          mountPath: /var/run/secrets/aws-oidc
+          readOnly: true

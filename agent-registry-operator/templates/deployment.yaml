@@ -1,0 +1,168 @@
+{{- $tag := required "image.tag is required" .Values.image.tag }}
+{{- $watchNamespaces := required "watchNamespaces is required" .Values.watchNamespaces }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "agent-registry-operator.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agent-registry-operator.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "agent-registry-operator.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "agent-registry-operator.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      automountServiceAccountToken: true
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: operator
+          image: {{ printf "%s:%s" .Values.image.repository $tag | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: WATCH_NAMESPACES
+              value: {{ join "," $watchNamespaces | quote }}
+            - name: AWS_RECONCILIATION_ENABLED
+              value: {{ .Values.providers.aws.enabled | quote }}
+            - name: ANTHROPIC_RECONCILIATION_ENABLED
+              value: {{ .Values.providers.anthropic.enabled | quote }}
+            - name: TAILSCALE_RECONCILIATION_ENABLED
+              value: {{ .Values.providers.tailscale.enabled | quote }}
+            - name: RUNTIME_RECONCILIATION_ENABLED
+              value: {{ .Values.agent.runtime.enabled | quote }}
+            {{- if or .Values.providers.aws.enabled .Values.agent.runtime.enabled }}
+            - name: AWS_REGION
+              value: {{ ternary .Values.providers.aws.region .Values.agent.runtime.defaultAwsRegion .Values.providers.aws.enabled | quote }}
+            {{- end }}
+            {{- if .Values.providers.aws.enabled }}
+            - name: AWS_PROVISIONER_ROLE_NAME
+              value: {{ .Values.providers.aws.provisionerRoleName | quote }}
+            - name: AWS_PERMISSIONS_BOUNDARY_POLICY_NAME
+              value: {{ .Values.providers.aws.permissionsBoundaryPolicyName | quote }}
+            {{- end }}
+            {{- if .Values.providers.anthropic.enabled }}
+            - name: ANTHROPIC_BROKER_URL
+              value: {{ required "providers.anthropic.brokerURL is required" .Values.providers.anthropic.brokerURL | quote }}
+            - name: ANTHROPIC_BROKER_IDENTITY_TOKEN_FILE
+              value: {{ .Values.providers.anthropic.brokerTokenFile | quote }}
+            - name: ANTHROPIC_RESOURCE_PREFIX
+              value: {{ required "providers.anthropic.resourcePrefix is required" .Values.providers.anthropic.resourcePrefix | quote }}
+            {{- end }}
+            {{- if .Values.agent.runtime.enabled }}
+            - name: RUNTIME_IMAGE
+              value: {{ required "agent.runtime.image is required" .Values.agent.runtime.image | quote }}
+            - name: RUNTIME_CONFIG_MAP_NAME
+              value: agent-registry-runtime
+            - name: RUNTIME_CONFIG_DIRECTORY
+              value: /etc/agent-registry-runtime
+            - name: RUNTIME_NODE_ARCHITECTURE
+              value: {{ .Values.agent.runtime.nodeArchitecture | quote }}
+            - name: RUNTIME_WORKSPACE_STORAGE_CLASS
+              value: {{ required "agent.runtime.workspaceStorageClass is required" .Values.agent.runtime.workspaceStorageClass | quote }}
+            - name: RUNTIME_ENG_PORTAL_PROFILES_URL
+              value: {{ .Values.agent.runtime.engPortalProfilesURL | quote }}
+            - name: RUNTIME_OTEL_HEADERS_SECRET_NAME
+              value: {{ .Values.agent.runtime.otelHeadersSecretName | quote }}
+            - name: RUNTIME_ANTHROPIC_TOKEN_AUDIENCE
+              value: {{ .Values.agent.runtime.anthropicAudience | quote }}
+            - name: ANTHROPIC_ORGANIZATION_ID
+              value: {{ required "agent.runtime.anthropicOrganizationID is required" .Values.agent.runtime.anthropicOrganizationID | quote }}
+            - name: RUNTIME_TAILSCALE_TOKEN_AUDIENCE
+              {{- if .Values.agent.runtime.tailscaleAudience }}
+              value: {{ .Values.agent.runtime.tailscaleAudience | quote }}
+              {{- else }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.agent.runtime.tailscaleIdentityConfigMap }}
+                  key: tailscale_audience
+              {{- end }}
+            - name: RUNTIME_TAILSCALE_CLIENT_ID
+              {{- if .Values.agent.runtime.tailscaleClientID }}
+              value: {{ .Values.agent.runtime.tailscaleClientID | quote }}
+              {{- else }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.agent.runtime.tailscaleIdentityConfigMap }}
+                  key: tailscale_client_id
+              {{- end }}
+            - name: RUNTIME_TAILSCALE_TAG
+              value: {{ .Values.agent.runtime.tailscaleTag | quote }}
+            {{- end }}
+          {{- if or .Values.agent.runtime.enabled .Values.providers.anthropic.enabled }}
+          volumeMounts:
+            {{- if .Values.agent.runtime.enabled }}
+            - name: runtime-config-source
+              mountPath: /etc/agent-registry-runtime
+              readOnly: true
+            {{- end }}
+            {{- if .Values.providers.anthropic.enabled }}
+            - name: anthropic-broker-token
+              mountPath: {{ dir .Values.providers.anthropic.brokerTokenFile | quote }}
+              readOnly: true
+            {{- end }}
+          {{- end }}
+          ports:
+            - name: health
+              containerPort: 8081
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: health
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+      {{- if or .Values.agent.runtime.enabled .Values.providers.anthropic.enabled }}
+      volumes:
+        {{- if .Values.agent.runtime.enabled }}
+        - name: runtime-config-source
+          configMap:
+            name: agent-registry-runtime-source
+        {{- end }}
+        {{- if .Values.providers.anthropic.enabled }}
+        - name: anthropic-broker-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  audience: {{ .Values.providers.anthropic.brokerAudience | quote }}
+                  expirationSeconds: 600
+                  path: {{ base .Values.providers.anthropic.brokerTokenFile | quote }}
+        {{- end }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
