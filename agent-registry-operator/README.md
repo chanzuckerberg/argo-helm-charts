@@ -235,7 +235,6 @@
 | Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description |
 | ------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [clientID](#api_github_clientID )         | No      | string  | No         | -          | -                 |
-| - [clientSecret](#api_github_clientSecret ) | No      | object  | No         | -          | -                 |
 | - [enabled](#api_github_enabled )           | No      | boolean | No         | -          | -                 |
 | - [redirectURLs](#api_github_redirectURLs ) | No      | array   | No         | -          | -                 |
 
@@ -246,81 +245,14 @@
 | **Type**     | `string` |
 | **Required** | No       |
 
-#### <a name="api_github_clientSecret"></a>3.3.2. Property `agent-registry-operator > api > github > clientSecret`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                     | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------------ | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [remoteRef](#api_github_clientSecret_remoteRef )           | No      | object | No         | -          | -                 |
-| - [secretStoreRef](#api_github_clientSecret_secretStoreRef ) | No      | object | No         | -          | -                 |
-
-##### <a name="api_github_clientSecret_remoteRef"></a>3.3.2.1. Property `agent-registry-operator > api > github > clientSecret > remoteRef`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                   | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ---------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [key](#api_github_clientSecret_remoteRef_key )           | No      | string | No         | -          | -                 |
-| - [property](#api_github_clientSecret_remoteRef_property ) | No      | string | No         | -          | -                 |
-
-###### <a name="api_github_clientSecret_remoteRef_key"></a>3.3.2.1.1. Property `agent-registry-operator > api > github > clientSecret > remoteRef > key`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="api_github_clientSecret_remoteRef_property"></a>3.3.2.1.2. Property `agent-registry-operator > api > github > clientSecret > remoteRef > property`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-##### <a name="api_github_clientSecret_secretStoreRef"></a>3.3.2.2. Property `agent-registry-operator > api > github > clientSecret > secretStoreRef`
-
-|                           |                  |
-| ------------------------- | ---------------- |
-| **Type**                  | `object`         |
-| **Required**              | No               |
-| **Additional properties** | Any type allowed |
-
-| Property                                                | Pattern | Type   | Deprecated | Definition | Title/Description |
-| ------------------------------------------------------- | ------- | ------ | ---------- | ---------- | ----------------- |
-| - [kind](#api_github_clientSecret_secretStoreRef_kind ) | No      | string | No         | -          | -                 |
-| - [name](#api_github_clientSecret_secretStoreRef_name ) | No      | string | No         | -          | -                 |
-
-###### <a name="api_github_clientSecret_secretStoreRef_kind"></a>3.3.2.2.1. Property `agent-registry-operator > api > github > clientSecret > secretStoreRef > kind`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-###### <a name="api_github_clientSecret_secretStoreRef_name"></a>3.3.2.2.2. Property `agent-registry-operator > api > github > clientSecret > secretStoreRef > name`
-
-|              |          |
-| ------------ | -------- |
-| **Type**     | `string` |
-| **Required** | No       |
-
-#### <a name="api_github_enabled"></a>3.3.3. Property `agent-registry-operator > api > github > enabled`
+#### <a name="api_github_enabled"></a>3.3.2. Property `agent-registry-operator > api > github > enabled`
 
 |              |           |
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
 
-#### <a name="api_github_redirectURLs"></a>3.3.4. Property `agent-registry-operator > api > github > redirectURLs`
+#### <a name="api_github_redirectURLs"></a>3.3.3. Property `agent-registry-operator > api > github > redirectURLs`
 
 |              |         |
 | ------------ | ------- |
