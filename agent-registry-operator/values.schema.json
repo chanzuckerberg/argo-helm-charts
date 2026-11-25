@@ -78,6 +78,20 @@
         },
         "enabled": {
           "type": "boolean"
+        },
+        "github": {
+          "type": "object",
+          "properties": {
+            "clientID": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "redirectURLs": {
+              "type": "array"
+            }
+          }
         }
       }
     },

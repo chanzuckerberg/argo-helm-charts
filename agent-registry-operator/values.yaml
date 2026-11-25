@@ -83,6 +83,10 @@ affinity: {}
 # tokens; the API then checks the audience against api.config.
 api:
   enabled: false
+  github:
+    enabled: false
+    clientID: ""
+    redirectURLs: []
   # The API's app-config.yaml. The API reads it instead of the app-config
   # files baked into its image; see those in chanzuckerberg/agent-registry for
   # the fields. It's read at startup, so a change takes effect on the next

@@ -1,0 +1,28 @@
+suite: test API configuration
+templates:
+  - api-config.yaml
+tests:
+  - it: configures GitHub authorization
+    set:
+      api:
+        enabled: true
+        github:
+          enabled: true
+          clientID: github-client
+          redirectURLs:
+            - https://eng-portal.example.com/agent-registry/github/callback
+        config:
+          trusted_issuers:
+            - issuer_url: https://issuer.example.com
+              client_id: issuer-client
+      stack:
+        services:
+          api:
+            image:
+              tag: sha-test
+            gateway:
+              host: agents.example.com
+    asserts:
+      - matchRegex:
+          path: data["app-config.yaml"]
+          pattern: "github:\\n  client_id: github-client\\n  client_secret: '{{.GITHUB_CLIENT_SECRET}}'\\n  redirect_urls:\\n  - https://eng-portal.example.com/agent-registry/github/callback"

@@ -207,6 +207,7 @@
 | -------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
 | - [config](#api_config )   | No      | object  | No         | -          | -                 |
 | - [enabled](#api_enabled ) | No      | boolean | No         | -          | -                 |
+| - [github](#api_github )   | No      | object  | No         | -          | -                 |
 
 ### <a name="api_config"></a>3.1. Property `agent-registry-operator > api > config`
 
@@ -222,6 +223,49 @@
 | ------------ | --------- |
 | **Type**     | `boolean` |
 | **Required** | No        |
+
+### <a name="api_github"></a>3.3. Property `agent-registry-operator > api > github`
+
+|                           |                  |
+| ------------------------- | ---------------- |
+| **Type**                  | `object`         |
+| **Required**              | No               |
+| **Additional properties** | Any type allowed |
+
+| Property                                    | Pattern | Type    | Deprecated | Definition | Title/Description |
+| ------------------------------------------- | ------- | ------- | ---------- | ---------- | ----------------- |
+| - [clientID](#api_github_clientID )         | No      | string  | No         | -          | -                 |
+| - [enabled](#api_github_enabled )           | No      | boolean | No         | -          | -                 |
+| - [redirectURLs](#api_github_redirectURLs ) | No      | array   | No         | -          | -                 |
+
+#### <a name="api_github_clientID"></a>3.3.1. Property `agent-registry-operator > api > github > clientID`
+
+|              |          |
+| ------------ | -------- |
+| **Type**     | `string` |
+| **Required** | No       |
+
+#### <a name="api_github_enabled"></a>3.3.2. Property `agent-registry-operator > api > github > enabled`
+
+|              |           |
+| ------------ | --------- |
+| **Type**     | `boolean` |
+| **Required** | No        |
+
+#### <a name="api_github_redirectURLs"></a>3.3.3. Property `agent-registry-operator > api > github > redirectURLs`
+
+|              |         |
+| ------------ | ------- |
+| **Type**     | `array` |
+| **Required** | No      |
+
+|                      | Array restrictions |
+| -------------------- | ------------------ |
+| **Min items**        | N/A                |
+| **Max items**        | N/A                |
+| **Items unicity**    | False              |
+| **Additional items** | False              |
+| **Tuple validation** | N/A                |
 
 ## <a name="image"></a>4. Property `agent-registry-operator > image`
 
