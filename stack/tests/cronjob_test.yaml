@@ -469,3 +469,80 @@ tests:
       - documentIndex: 0
         notExists:
           path: spec.jobTemplate.spec.template.spec.containers[0].volumeMounts
+
+  - it: should inherit global podSecurityContext and securityContext
+    set:
+      global:
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+      cronJobs:
+        hardened-job:
+          schedule: "0 * * * *"
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.securityContext
+          value:
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].securityContext
+          value:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+
+  - it: should merge a cronjob-level securityContext override onto the global one, key by key
+    set:
+      global:
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      cronJobs:
+        override-job:
+          schedule: "0 * * * *"
+          podSecurityContext:
+            runAsUser: 2000
+          securityContext:
+            readOnlyRootFilesystem: false
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.securityContext
+          value:
+            runAsNonRoot: true
+            runAsUser: 2000
+      - documentIndex: 0
+        equal:
+          path: spec.jobTemplate.spec.template.spec.containers[0].securityContext
+          value:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+
+  - it: should omit podSecurityContext and securityContext when unset
+    set:
+      cronJobs:
+        plain-job:
+          schedule: "0 * * * *"
+    asserts:
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.template.spec.securityContext
+      - documentIndex: 0
+        notExists:
+          path: spec.jobTemplate.spec.template.spec.containers[0].securityContext
